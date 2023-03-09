@@ -1,0 +1,125 @@
+.answerContainer {
+    padding: 20px;
+    background: rgb(249, 249, 249);
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: transparent solid 1px;
+}
+
+.answerLogo {
+    font-size: 28px;
+}
+
+.answerText {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    white-space: pre-line;
+}
+
+.selected {
+    outline: 2px solid rgba(115, 118, 225, 1);
+}
+
+.citationLearnMore {
+    margin-right: 5px;
+    font-weight: 600;
+    line-height: 24px;
+}
+
+.citation {
+    font-weight: 500;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 0px 8px;
+    background: #d1dbfa;
+    color: #123bb6;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.citation:hover {
+    text-decoration: underline;
+}
+
+.followupQuestionsList {
+    margin-top: 10px;
+}
+
+.followupQuestionLearnMore {
+    margin-right: 5px;
+    font-weight: 600;
+    line-height: 24px;
+}
+
+.followupQuestion {
+    font-weight: 600;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 0px 8px;
+    background: #e8ebfa;
+    color: black;
+    font-style: italic;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.supContainer {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.supContainer:hover {
+    text-decoration: underline;
+}
+
+sup {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    vertical-align: top;
+    top: -1;
+    margin: 0px 2px;
+    min-width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: #d1dbfa;
+    color: #123bb6;
+    text-decoration-color: transparent;
+    outline: transparent solid 1px;
+    cursor: pointer;
+}
+
+.retryButton {
+    width: fit-content;
+}
+
+@keyframes loading {
+    0% {
+        content: "";
+    }
+    25% {
+        content: ".";
+    }
+    50% {
+        content: "..";
+    }
+    75% {
+        content: "...";
+    }
+    100% {
+        content: "";
+    }
+}
+
+.loadingdots::after {
+    content: "";
+    animation: loading 1s infinite;
+}
