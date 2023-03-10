@@ -106,7 +106,7 @@ module cognitiveServices 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: chatGptModelName
-          version: '1'
+          version: '0301'
         }
         scaleSettings: {
           scaleType: 'Standard'
