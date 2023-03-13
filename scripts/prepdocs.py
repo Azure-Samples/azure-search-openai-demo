@@ -5,7 +5,7 @@ import io
 import re
 import time
 from pypdf import PdfReader, PdfWriter
-from azure.identity import DefaultAzureCredential
+from azure.identity import AzureDeveloperCliCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.storage.blob import BlobServiceClient
 from azure.search.documents.indexes import SearchIndexClient
@@ -35,7 +35,8 @@ parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output
 args = parser.parse_args()
 
 # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-default_creds = DefaultAzureCredential() if args.searchkey == None or args.storagekey == None else None
+tenant_id = os.environ['AZURE_TENANT_ID']
+default_creds = AzureDeveloperCliCredential(tenant_id=tenant_id) if args.searchkey == None or args.storagekey == None else None
 search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
 if not args.skipblobs:
     storage_creds = default_creds if args.storagekey == None else args.storagekey
