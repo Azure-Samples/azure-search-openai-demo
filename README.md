@@ -17,16 +17,17 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ## Getting Started
 
-** NOTE ** In order to deploy and run this example, you'll need an Azure subscription with access enabled for the Azure OpenAI service. You can request access [here](https://aka.ms/oaiapply).
+> **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply).
 
 ### Prerequisites
 
 - Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
 - Python (install from [here](https://www.python.org/downloads/))
-    - **Imporant**: Python and the pip package manager must in the path in Windows for the setup scripts to work.
+    - **Imporant**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
 - Node.js (install from [here](https://nodejs.org/en/download/))
 - Git (install from [here](https://git-scm.com/downloads))
-- Powershell (pwsh) (install from [here](https://learn.microsoft.com/en-us/powershell/))
+- Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
+   - **Imporant**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
 
 ### Installation
 
@@ -61,3 +62,10 @@ Once in the web app:
 
 ### Note
 >Note: The PDF documents used in this demo contain information generated using a language model (Azure OpenAI Service). The information contained in these documents is only for demonstration purposes and does not reflect the opinions or beliefs of Microsoft. Microsoft makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the information contained in this document. All rights reserved to Microsoft.
+
+### FAQ
+
+***Question***: Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?
+
+***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The menthod of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
+
