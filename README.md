@@ -23,7 +23,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 - Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
 - Python (install from [here](https://www.python.org/downloads/))
-    - **Imporant**: Python and the pip package manager must in the path in Windows for the setup scripts to work.
+    - **Imporant**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
 - Node.js (install from [here](https://nodejs.org/en/download/))
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
@@ -65,7 +65,7 @@ Once in the web app:
 
 ### FAQ
 
-***Question***: Why do we need to break up (chunk) the PDFs into chunks when Azure Cognitive Search support searching large documents?
+***Question***: Why do we need to break up (chunk) the PDFs into chunks when Azure Cognitive Search supports searching large documents?
 
 ***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The menthod of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
