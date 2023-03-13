@@ -38,7 +38,7 @@ args = parser.parse_args()
 default_creds = DefaultAzureCredential() if args.searchkey == None or args.storagekey == None else None
 search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
 if not args.skipblobs:
-    storage_creds = default_creds if args.storagekey == None else AzureKeyCredential(args.storagekey)
+    storage_creds = default_creds if args.storagekey == None else args.storagekey
 
 def blob_name_from_file_page(filename, page):
     return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
