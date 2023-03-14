@@ -28,7 +28,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
    - **Imporant**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
-- Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as User Access Administrator or Owner.  
+- Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).  
 
 ### Installation
 
