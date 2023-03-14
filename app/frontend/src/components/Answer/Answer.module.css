@@ -19,6 +19,16 @@
     white-space: pre-line;
 }
 
+.answerText table {
+    border-collapse: collapse;
+}
+
+.answerText td,
+.answerText th {
+    border: 1px solid;
+    padding: 5px;
+}
+
 .selected {
     outline: 2px solid rgba(115, 118, 225, 1);
 }
