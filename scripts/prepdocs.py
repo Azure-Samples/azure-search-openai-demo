@@ -11,6 +11,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import *
 from azure.search.documents import SearchClient
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -32,6 +33,9 @@ parser.add_argument("--index", help="Name of the Azure Cognitive Search index wh
 parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
 parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
 parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
+parser.add_argument("--localpdfparser", action="store_true", help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents")
+parser.add_argument("--formrecognizerservice", required=False, help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)")
+parser.add_argument("--formrecognizerkey", required=False, help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)")
 parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 args = parser.parse_args()
 
@@ -41,24 +45,42 @@ default_creds = azd_credential if args.searchkey == None or args.storagekey == N
 search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
 if not args.skipblobs:
     storage_creds = default_creds if args.storagekey == None else args.storagekey
+if not args.localpdfparser:
+    # check if Azure Form Recognizer credentials are provided
+    if args.formrecognizerservice == None:
+        print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
+        exit(1)
+    formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
 
-def blob_name_from_file_page(filename, page):
-    return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
+def blob_name_from_file_page(filename, page = 0):
+    if os.path.splitext(filename)[1].lower() == ".pdf":
+        return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
+    else:
+        return os.path.basename(filename)
 
-def upload_blobs(pages):
+def upload_blobs(filename):
     blob_service = BlobServiceClient(account_url=f"https://{args.storageaccount}.blob.core.windows.net", credential=storage_creds)
     blob_container = blob_service.get_container_client(args.container)
     if not blob_container.exists():
         blob_container.create_container()
-    for i in range(len(pages)):
-        blob_name = blob_name_from_file_page(filename, i)
-        if args.verbose: print(f"\tUploading blob for page {i} -> {blob_name}")
-        f = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_page(pages[i])
-        writer.write(f)
-        f.seek(0)
-        blob_container.upload_blob(blob_name, f, overwrite=True)
+
+    # if file is PDF split into pages and upload each page as a separate blob
+    if os.path.splitext(filename)[1].lower() == ".pdf":
+        reader = PdfReader(filename)
+        pages = reader.pages
+        for i in range(len(pages)):
+            blob_name = blob_name_from_file_page(filename, i)
+            if args.verbose: print(f"\tUploading blob for page {i} -> {blob_name}")
+            f = io.BytesIO()
+            writer = PdfWriter()
+            writer.add_page(pages[i])
+            writer.write(f)
+            f.seek(0)
+            blob_container.upload_blob(blob_name, f, overwrite=True)
+    else:
+        blob_name = blob_name_from_file_page(filename)
+        with open(filename,"rb") as data:
+            blob_container.upload_blob(blob_name, data, overwrite=True)
 
 def remove_blobs(filename):
     if args.verbose: print(f"Removing blobs for '{filename or '<all>'}'")
@@ -74,17 +96,34 @@ def remove_blobs(filename):
             if args.verbose: print(f"\tRemoving blob {b}")
             blob_container.delete_blob(b)
 
-def split_text(pages):
+def get_document_text(filename):
+    offset = 0
+    page_map = []
+    if args.localpdfparser:
+        reader = PdfReader(filename)
+        pages = reader.pages
+        for page_num, p in enumerate(pages):
+            page_text = p.extract_text()
+            page_map.append((page_num, offset, page_text))
+            offset += len(page_text)
+    else:
+        if args.verbose: print(f"Extracting text from '{filename}' using Azure Form Recognizer")
+        form_recognizer_client = DocumentAnalysisClient(endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/", credential=formrecognizer_creds, headers={"x-ms-useragent": "azure-search-chat-demo/1.0.0"})
+        with open(filename, "rb") as f:
+            poller = form_recognizer_client.begin_analyze_document("prebuilt-layout", document = f)
+        form_recognizer_results = poller.result()
+
+        for page_num, page in enumerate(form_recognizer_results.pages):
+            page_text = " ".join([form_recognizer_results.content[span.offset:span.offset + span.length] for span in page.spans])
+            page_map.append((page_num, offset, page_text))
+            offset += len(page_text)
+
+    return page_map
+
+def split_text(page_map):
     SENTENCE_ENDINGS = [".", "!", "?"]
     WORDS_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
     if args.verbose: print(f"Splitting '{filename}' into sections")
-
-    page_map = []
-    offset = 0
-    for i, p in enumerate(pages):
-        text = p.extract_text()
-        page_map.append((i, offset, text))
-        offset += len(text)
 
     def find_page(offset):
         l = len(page_map)
@@ -131,8 +170,8 @@ def split_text(pages):
     if start + SECTION_OVERLAP < end:
         yield (all_text[start:end], find_page(start))
 
-def create_sections(filename, pages):
-    for i, (section, pagenum) in enumerate(split_text(pages)):
+def create_sections(filename, page_map):
+    for i, (section, pagenum) in enumerate(split_text(page_map)):
         yield {
             "id": f"{filename}-{i}".replace(".", "_").replace(" ", "_"),
             "content": section,
@@ -219,9 +258,8 @@ else:
             remove_blobs(None)
             remove_from_index(None)
         else:
-            reader = PdfReader(filename)
-            pages = reader.pages
             if not args.skipblobs:
-                upload_blobs(pages)
-            sections = create_sections(os.path.basename(filename), pages)
+                upload_blobs(filename)
+            page_map = get_document_text(filename)
+            sections = create_sections(os.path.basename(filename), page_map)
             index_sections(os.path.basename(filename), sections)
