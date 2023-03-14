@@ -12,12 +12,15 @@
         {
             "label": "Start App (Script)",
             "type": "shell",
-            "command": "start.cmd",
+            "command": "${workspaceFolder}/app/start.sh",
+            "windows": {
+                "command": "start.cmd"
+              },
             "presentation": {
                 "reveal": "silent"
             },
             "options": {
-                "cwd": "${workspaceFolder}/app"
+                "cwd": "${workspaceFolder}/app",
             },
             "problemMatcher": []
         }
