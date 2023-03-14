@@ -96,6 +96,21 @@ def remove_blobs(filename):
             if args.verbose: print(f"\tRemoving blob {b}")
             blob_container.delete_blob(b)
 
+def table_to_html(table):
+    html = "<table>"
+    rows = [sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index) for i in range(table.row_count)]
+    for row_cells in rows:
+        html += "<tr>"
+        for cell in row_cells:
+            tag = "th" if (cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
+            cell_spans = ""
+            if cell.column_span > 1: cell_spans += f" colSpan={cell.column_span}"
+            if cell.row_span > 1: cell_spans += f" rowSpan={cell.row_span}"
+            html += f"<{tag}{cell_spans}>{cell.content}</{tag}>"
+        html +="</tr>"
+    html += "</table>"
+    return html
+
 def get_document_text(filename):
     offset = 0
     page_map = []
@@ -114,7 +129,31 @@ def get_document_text(filename):
         form_recognizer_results = poller.result()
 
         for page_num, page in enumerate(form_recognizer_results.pages):
-            page_text = " ".join([form_recognizer_results.content[span.offset:span.offset + span.length] for span in page.spans])
+            tables_on_page = [table for table in form_recognizer_results.tables if table.bounding_regions[0].page_number == page_num + 1]
+
+            # mark all positions of the table spans in the page
+            page_offset = page.spans[0].offset
+            page_length = page.spans[0].length
+            table_chars = [-1]*page_length
+            for table_id, table in enumerate(tables_on_page):
+                for span in table.spans:
+                    # replace all table spans with "table_id" in table_chars array
+                    for i in range(span.length):
+                        idx = span.offset - page_offset + i
+                        if idx >=0 and idx < page_length:
+                            table_chars[idx] = table_id
+
+            # build page text by replacing charcters in table spans with table html
+            page_text = ""
+            added_tables = set()
+            for idx, table_id in enumerate(table_chars):
+                if table_id == -1:
+                    page_text += form_recognizer_results.content[page_offset + idx]
+                elif not table_id in added_tables:
+                    page_text += table_to_html(tables_on_page[table_id])
+                    added_tables.add(table_id)
+
+            page_text += " "
             page_map.append((page_num, offset, page_text))
             offset += len(page_text)
 
@@ -164,8 +203,18 @@ def split_text(page_map):
         if start > 0:
             start += 1
 
-        yield (all_text[start:end], find_page(start))
-        start = end - SECTION_OVERLAP
+        section_text = all_text[start:end]
+        yield (section_text, find_page(start))
+
+        last_table_start = section_text.rfind("<table")
+        if (last_table_start > 2 * SENTENCE_SEARCH_LIMIT and last_table_start > section_text.rfind("</table")):
+            # If the section ends with an unclosed table, we need to start the next section with the table.
+            # If table starts inside SENTENCE_SEARCH_LIMIT, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
+            # If last table starts inside SECTION_OVERLAP, keep overlapping
+            if args.verbose: print(f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}")
+            start = min(end - SECTION_OVERLAP, start + last_table_start)
+        else:
+            start = end - SECTION_OVERLAP
         
     if start + SECTION_OVERLAP < end:
         yield (all_text[start:end], find_page(start))
