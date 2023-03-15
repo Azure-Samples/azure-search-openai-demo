@@ -15,7 +15,7 @@ param appServicePlanName string = ''
 param resourceGroupName string = ''
 param backendServiceName string = ''
 param searchServicesName string = ''
-param searchServicesSkuName string = 'standard'
+param searchServicesSkuName string = 'basic'
 param storageAccountName string = ''
 param containerName string = 'content'
 param searchIndexName string = 'gptkbindex'
@@ -131,7 +131,7 @@ module searchServices 'core/search/search-services.bicep' = {
     sku: {
       name: searchServicesSkuName
     }
-    semanticSearch: 'free'
+    semanticSearch: 'disabled'
   }
 }
 
