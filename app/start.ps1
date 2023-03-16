@@ -15,6 +15,10 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
+
+Write-Host 'Creating python virtual environment "backend/backend_env"'
+python -m venv backend/backend_env
+
 Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
