@@ -19,6 +19,6 @@ Write-Host "Environment variables set."
 
 Write-Host 'Creating python virtual environment "scripts/.venv"'
 
-python -m venv scripts/.venv
-./scripts/.venv/scripts/python pip install -r ./scripts/requirements.txt
-./scripts/.venv/scripts/python ./scripts/prepdocs.py '.\data\*' --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX -v
+python -m venv ./scripts/.venv
+./scripts/.venv/scripts/pip3 install -r ./scripts/requirements.txt
+./scripts/prepdocs.py '.\data\*' --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX -v

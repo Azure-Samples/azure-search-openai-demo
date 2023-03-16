@@ -14,7 +14,7 @@
             "type": "shell",
             "command": "${workspaceFolder}/app/start.sh",
             "windows": {
-                "command": "start.cmd"
+                "command": "pwsh ${workspaceFolder}/app/start.ps1"
               },
             "presentation": {
                 "reveal": "silent"
