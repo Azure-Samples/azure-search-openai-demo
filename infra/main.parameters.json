@@ -11,14 +11,29 @@
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
+    "openAiServiceName": {
+      "value": "${AZURE_OPENAI_SERVICE}"
+    },
+    "openAiResourceGroupName": {
+      "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
+    },
+    "openAiSkuName": {
+      "value": "S0"
+    },
     "searchServiceName": {
       "value": "${AZURE_SEARCH_SERVICE}"
     },
-    "cognitiveServicesSkuName": {
-      "value": "S0"
+    "searchServiceResourceGroupName": {
+      "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
     },
-    "searchServicesSkuName": {
+    "searchServiceSkuName": {
       "value": "standard"
+    },
+    "storageAccountName": {
+      "value": "${AZURE_STORAGE_ACCOUNT}"
+    },
+    "storageResourceGroupName": {
+      "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
     }
   }
 }

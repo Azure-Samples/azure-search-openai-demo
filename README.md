@@ -23,26 +23,54 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 - Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
 - Python (install from [here](https://www.python.org/downloads/))
-    - **Imporant**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
+    - **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
 - Node.js (install from [here](https://nodejs.org/en/download/))
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
-   - **Imporant**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
+   - **Important**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
+- Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).  
 
 ### Installation
 
-Starting from scratch:
+#### Project Initialization
+
 1. Create a new folder and switch to it in the terminal
-2. Run "azd up -t azure-search-openai-demo"
-    * For the target location, the regions that currently support the models used in this sample are East US or South Central US. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
+1. Run `azd init -t azure-search-openai-demo`
+    * For the target location, the regions that currently support the models used in this sample are **East US** or **South Central US**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
 
-Deploying or re-deploying a local clone of the repo:
-* Simply run "azd up"
+#### Starting from scratch:
 
-Running locally:
+Execute the following command, if you don't have any pre-existing Azure services and want to start from a fresh deployment.
+
+1. Run `azd up`
+    
+#### Use existing resources:
+
+1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
+1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
+1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing ChatGPT deployment}`. Only needed if your ChatGPT deployment is not the default 'chat'.
+1. Run `azd env set AZURE_OPENAI_GPT_DEPLOYMENT {Name of existing GPT deployment}`. Only needed if your ChatGPT deployment is not the default 'davinci'.
+
+1. Run `azd up`
+
+> NOTE: You can also use existing Search and Storage Accounts.  See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+
+#### Deploying or re-deploying a local clone of the repo:
+* Simply run `azd up`
+
+#### Running locally:
 * Run `./app/start.cmd` or run the "VS Code Task: Start App" to start the project locally.
 
-** AZURE RESOURCE COSTS ** by default this sample will create Azure App Service and Azure Cognitive Search resources that have a monthly cost. You can switch them to free versions of each of them if you want to avoid this cost by changing the parameters file under the infra folder (though there are some limits to consider; for example, you can have up to 1 free Cognitive Search resource per subscription.)
+#### Sharing Environments
+
+Run the following if you want to give someone else access to completely deployed and existing environment.
+
+1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
+1. Run `azd init -t azure-search-openai-demo`
+1. Run `azd env refresh` - Note that they will need the azd environment name, subscription Id, and location to run this command - you can find those values in your `./azure/{env name}/.env` file.  This will populate their azd environment's .env file with all the settings needed to run the app locally.
+1. Run `pwsh ./scripts/roles.ps1` - This will assign all of the necessary roles to the user so they can run the app locally.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Just be sure to set the `AZURE_PRINCIPAL_ID` environment variable in the azd .env file or in the active shell to their Azure Id, which they can get with `az account show`.
+
+**AZURE RESOURCE COSTS** by default this sample will create Azure App Service and Azure Cognitive Search resources that have a monthly cost. You can switch them to free versions of each of them if you want to avoid this cost by changing the parameters file under the infra folder (though there are some limits to consider; for example, you can have up to 1 free Cognitive Search resource per subscription.)
 
 ### Quickstart
 
@@ -67,5 +95,5 @@ Once in the web app:
 
 ***Question***: Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?
 
-***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The menthod of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
+***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
