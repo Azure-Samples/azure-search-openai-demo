@@ -14,7 +14,8 @@
             "version": "16",
             "nodeGypDependencies": false
         },
-        "ghcr.io/devcontainers/features/powershell:1.1.0": {}
+        "ghcr.io/devcontainers/features/powershell:1.1.0": {},
+        "ghcr.io/devcontainers/features/azure-cli:1.0.8": {}
     },
     "customizations": {
         "vscode": {
