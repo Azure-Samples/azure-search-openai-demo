@@ -1,19 +1,25 @@
  #!/bin/sh
 
-if ! command -v python &> /dev/null
-then
-    echo 'Python not found on $PATH'
-    exit -1
-fi
-
 echo ""
 echo "Loading azd .env file from current environment"
 echo ""
 
-while IFS='=' read -r key value; do
-    value=$(echo "$value" | sed 's/^"//' | sed 's/"$//')
-    export "$key=$value"
-done < <(azd env get-values)
+# Run the command and capture the output
+output=$(azd env get-values)
+
+# Loop over each line of the output and extract the key and value
+echo "$output" | while read line; do
+  # Split the line into key and value
+  key=$(echo "$line" | cut -d= -f1)
+  value=$(echo "$line" | cut -d= -f2-)
+
+  # Remove the double quotes from the value using sed
+  value=$(echo "$value" | sed 's/"//g')
+
+  # Set the environment variable
+  export "$key"="$value"
+done
+
 
 echo 'Creating python virtual environment "scripts/.venv"'
 python -m venv scripts/.venv

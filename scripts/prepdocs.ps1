@@ -1,8 +1,3 @@
-if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
-  Write-Host 'Python not found on $PATH'
-  exit -1
-}
-
 Write-Host ""
 Write-Host "Loading azd .env file from current environment"
 Write-Host ""
