@@ -72,8 +72,9 @@ Execute the following command, if you don't have any pre-existing Azure services
 * Simply run `azd up`
 
 #### Running locally:
-* Change dir to `app`
-* Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
+1. Run `azd login`
+2. Change dir to `app`
+3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
 
 #### Sharing Environments
 
