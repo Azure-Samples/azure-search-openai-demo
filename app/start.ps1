@@ -28,12 +28,11 @@ Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
 
-$venvPath = "scripts"
-if (-not (Test-Path -Path "./backend/backend_env/$venvPath/python")) {
+$venvPythonPath = "./scripts/.venv/scripts/python.exe"
+if (Test-Path -Path "/usr") {
   # fallback to Linux venv path
-  $venvPath = "bin"
-} 
-$venvPythonPath = "./backend/backend_env/$venvPath/python"
+  $venvPythonPath = "./scripts/.venv/bin/python"
+}
 
 Set-Location backend
 Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r requirements.txt" -Wait
