@@ -22,21 +22,25 @@ if (-not $pythonCmd) {
   # fallback to python3 if python not found
   $pythonCmd = Get-Command python3 -ErrorAction SilentlyContinue
 }
-Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./backend/backend_env" -Wait
+Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./backend/backend_env" -Wait -NoNewWindow
 
 Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
 
 $venvPath = "scripts"
-if (-not (Test-Path -Path "./backend/backend_env/$venvPath/python")) {
+if (-not (Test-Path -Path "./backend/backend_env/$venvPath")) {
   # fallback to Linux venv path
   $venvPath = "bin"
 } 
-$venvPythonPath = "./backend/backend_env/$venvPath/python"
+$venvPythonPath = "./scripts/.venv/$venvPath/python.exe"
+if (-not (Test-Path -Path $venvPythonPath)) {
+  # fallback to Linux venv path
+  $venvPythonPath = "./scripts/.venv/$venvPath/python"
+} 
 
 Set-Location backend
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r requirements.txt" -Wait
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r requirements.txt" -Wait -NoNewWindow
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore backend python packages"
     exit $LASTEXITCODE
@@ -67,7 +71,7 @@ Write-Host ""
 Set-Location ../backend
 Start-Process http://127.0.0.1:5000
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "./app.py" -Wait
+Start-Process -FilePath $venvPythonPath -ArgumentList "./app.py" -Wait -NoNewWindow
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start backend"
