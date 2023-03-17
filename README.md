@@ -17,7 +17,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ## Getting Started
 
-> **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). For a free Azure subscription, please visit [here](https://azure.microsoft.com/free/cognitive-search/)
+> **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [here](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
 
 ### Prerequisites
 
