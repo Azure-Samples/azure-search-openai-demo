@@ -41,6 +41,7 @@ Deploying or re-deploying a local clone of the repo:
 
 Running locally:
 * Run `./app/start.cmd` or run the "VS Code Task: Start App" to start the project locally.
+* Or from the App folder run `./start.ps1` from a Powershell terminal
 
 ** AZURE RESOURCE COSTS ** by default this sample will create Azure App Service and Azure Cognitive Search resources that have a monthly cost. You can switch them to free versions of each of them if you want to avoid this cost by changing the parameters file under the infra folder (though there are some limits to consider; for example, you can have up to 1 free Cognitive Search resource per subscription.)
 
