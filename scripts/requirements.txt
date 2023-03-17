@@ -1,5 +1,4 @@
 pypdf==3.5.0
-# Azure Developer Credential is part of the python identity preview
-azure-identity==1.13.0b2
+azure-identity==1.13.0b3
 azure-search-documents==11.4.0b3
 azure-storage-blob==12.14.1
