@@ -19,18 +19,22 @@ if (-not $pythonCmd) {
 }
 
 Write-Host 'Creating python virtual environment "scripts/.venv"'
-Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./scripts/.venv" -Wait
+Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./scripts/.venv" -Wait -NoNewWindow
 
 $venvPath = "scripts"
-if (-not (Test-Path -Path "./scripts/.venv/$venvPath/python")) {
+if (-not (Test-Path -Path "./scripts/.venv/$venvPath")) {
   # fallback to Linux venv path
   $venvPath = "bin"
 } 
-$venvPythonPath = "./scripts/.venv/$venvPath/python"
+$venvPythonPath = "./scripts/.venv/$venvPath/python.exe"
+if (-not (Test-Path -Path $venvPythonPath)) {
+  # fallback to Linux venv path
+  $venvPythonPath = "./scripts/.venv/$venvPath/python"
+} 
 
 Write-Host 'Installing dependencies from "requirements.txt" into virtual environment'
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r ./scripts/requirements.txt" -Wait
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r ./scripts/requirements.txt" -Wait -NoNewWindow
 
 Write-Host 'Running "prepdocs.py"'
-$cdw = (Get-Location)
-Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/prepdocs.py $cdw/data/* --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX --tenantid $env:AZURE_TENANT_ID -v" -Wait
+$cwd = (Get-Location)
+Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/prepdocs.py $cwd/data/* --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX --tenantid $env:AZURE_TENANT_ID -v" -Wait -NoNewWindow
