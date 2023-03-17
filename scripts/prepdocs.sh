@@ -4,22 +4,12 @@ echo ""
 echo "Loading azd .env file from current environment"
 echo ""
 
-# Run the command and capture the output
-output=$(azd env get-values)
-
-# Loop over each line of the output and extract the key and value
-echo "$output" | while read line; do
-  # Split the line into key and value
-  key=$(echo "$line" | cut -d= -f1)
-  value=$(echo "$line" | cut -d= -f2-)
-
-  # Remove the double quotes from the value using sed
-  value=$(echo "$value" | sed 's/"//g')
-
-  # Set the environment variable
-  export "$key"="$value"
-done
-
+while IFS='=' read -r key value; do
+    value=$(echo "$value" | sed 's/^"//' | sed 's/"$//')
+    export "$key=$value"
+done <<EOF
+$(azd env get-values)
+EOF
 
 echo 'Creating python virtual environment "scripts/.venv"'
 python -m venv scripts/.venv
