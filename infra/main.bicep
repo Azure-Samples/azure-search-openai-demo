@@ -283,4 +283,3 @@ output AZURE_STORAGE_CONTAINER string = containerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output BACKEND_URI string = backend.outputs.uri
-output AZURE_TENANT_ID string = tenant().tenantId
