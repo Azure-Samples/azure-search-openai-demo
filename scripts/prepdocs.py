@@ -210,7 +210,9 @@ else:
         create_search_index()
     
     print(f"Processing files...")
+    print(args.files)
     for filename in glob.glob(args.files):
+        print(filename)
         if args.verbose: print(f"Processing '{filename}'")
         if args.remove:
             remove_blobs(filename)
