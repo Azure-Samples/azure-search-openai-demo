@@ -28,10 +28,10 @@ Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
 
-$venvPythonPath = "./scripts/.venv/scripts/python.exe"
+$venvPythonPath = "./backend/backend_env/scripts/python.exe"
 if (Test-Path -Path "/usr") {
   # fallback to Linux venv path
-  $venvPythonPath = "./scripts/.venv/bin/python"
+  $venvPythonPath = "./backend/backend_env/bin/python"
 }
 
 Set-Location backend
