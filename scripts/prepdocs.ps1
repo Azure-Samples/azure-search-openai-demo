@@ -26,9 +26,9 @@ if (-not (Test-Path -Path "./scripts/.venv/$venvPath/python")) {
   # fallback to Linux venv path
   $venvPath = "bin"
 } 
+$venvPythonPath = "./scripts/.venv/$venvPath/python"
 
 Write-Host 'Installing dependencies from "requirements.txt" into virtual environment'
-$venvPythonPath = "./scripts/.venv/$venvPath/python"
 Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r ./scripts/requirements.txt" -Wait
 
 Write-Host 'Running "prepdocs.py"'

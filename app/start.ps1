@@ -17,13 +17,26 @@ if ($LASTEXITCODE -ne 0) {
 
 
 Write-Host 'Creating python virtual environment "backend/backend_env"'
-python -m venv backend/backend_env
+$pythonCmd = Get-Command python -ErrorAction SilentlyContinue
+if (-not $pythonCmd) {
+  # fallback to python3 if python not found
+  $pythonCmd = Get-Command python3 -ErrorAction SilentlyContinue
+}
+Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./backend/backend_env" -Wait
 
 Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
+
+$venvPath = "scripts"
+if (-not (Test-Path -Path "./backend/backend_env/$venvPath/python")) {
+  # fallback to Linux venv path
+  $venvPath = "bin"
+} 
+$venvPythonPath = "./backend/backend_env/$venvPath/python"
+
 Set-Location backend
-./backend_env/scripts/python -m pip install -r requirements.txt
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r requirements.txt" -Wait
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore backend python packages"
     exit $LASTEXITCODE
@@ -53,7 +66,9 @@ Write-Host "Starting backend"
 Write-Host ""
 Set-Location ../backend
 Start-Process http://127.0.0.1:5000
-./backend_env/scripts/python ./app.py
+
+Start-Process -FilePath $venvPythonPath -ArgumentList "./app.py" -Wait
+
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start backend"
     exit $LASTEXITCODE
