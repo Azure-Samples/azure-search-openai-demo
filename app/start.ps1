@@ -23,7 +23,7 @@ Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
 Set-Location backend
-./backend_env/scripts/pip3 install -r requirements.txt
+./backend_env/scripts/python -m pip install -r requirements.txt
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore backend python packages"
     exit $LASTEXITCODE
