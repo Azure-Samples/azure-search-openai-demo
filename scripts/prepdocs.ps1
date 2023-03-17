@@ -19,4 +19,4 @@ Write-Host 'Installing dependencies from "requirements.txt" into virtual environ
 ./scripts/.venv/scripts/python -m pip install -r ./scripts/requirements.txt
 
 Write-Host 'Running "prepdocs.py"'
-./scripts/.venv/scripts/python ./scripts/prepdocs.py '.\data\*' --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX -v
+./scripts/.venv/scripts/python ./scripts/prepdocs.py '.\data\*' --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX --tenantid $env:AZURE_TENANT_ID -v
