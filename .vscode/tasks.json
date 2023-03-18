@@ -12,6 +12,7 @@
         {
             "label": "Start App (Script)",
             "type": "shell",
+            // replace with "./start.sh" for linux based OS
             "command": "start.cmd",
             "presentation": {
                 "reveal": "silent"

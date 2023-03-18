@@ -10,11 +10,16 @@ services:
     host: appservice
 hooks:
     postprovision:
+    # un-comment below for linux based OS and comment out shell and run 
+    # shell: sh
+    # run: ./scripts/prepdocs.sh
       shell: pwsh
       run: ./scripts/prepdocs.ps1
       interactive: true
       continueOnError: false
     predeploy:
+      # un-comment below for linux based OS and comment out shell
+      # shell: sh
         shell: pwsh
         run:  cd ./app/frontend;npm install;npm run build
         interactive: true
