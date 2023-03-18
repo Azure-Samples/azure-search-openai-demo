@@ -36,9 +36,9 @@ args = parser.parse_args()
 
 # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
 default_creds = DefaultAzureCredential() if args.searchkey == None or args.storagekey == None else None
-search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
+search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey.strip())
 if not args.skipblobs:
-    storage_creds = default_creds if args.storagekey == None else args.storagekey
+    storage_creds = default_creds if args.storagekey == None else args.storagekey.strip().strip("=")+"=="
 
 def blob_name_from_file_page(filename, page):
     return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
