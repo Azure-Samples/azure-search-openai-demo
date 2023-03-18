@@ -12,7 +12,10 @@
         {
             "label": "Start App (Script)",
             "type": "shell",
-            "command": "start.cmd",
+            "command": "./start.sh",
+            "windows": {
+                "command": ".\\start.cmd"
+              },
             "presentation": {
                 "reveal": "silent"
             },
