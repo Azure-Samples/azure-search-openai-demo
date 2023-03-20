@@ -24,6 +24,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
 - Python (install from [here](https://www.python.org/downloads/))
     - **Imporant**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
+    - **Imporant**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.
 - Node.js (install from [here](https://nodejs.org/en/download/))
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
