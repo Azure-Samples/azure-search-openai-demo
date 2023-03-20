@@ -15,12 +15,12 @@
             "command": "${workspaceFolder}/app/start.sh",
             "windows": {
                 "command": "pwsh ${workspaceFolder}/app/start.ps1"
-              },
+            },
             "presentation": {
                 "reveal": "silent"
             },
             "options": {
-                "cwd": "${workspaceFolder}/app",
+                "cwd": "${workspaceFolder}/app"
             },
             "problemMatcher": []
         }

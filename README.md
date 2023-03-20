@@ -27,14 +27,15 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 ### Prerequisites
 
 #### To Run Locally
-- Azure Developer CLI (install from [here](https://aka.ms/azure-dev/install))
-- Python (install from [here](https://www.python.org/downloads/))
+- [Azure Developer CLI](https://aka.ms/azure-dev/install)
+- [Python 3+](https://www.python.org/downloads/)
     - **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
-- Node.js (install from [here](https://nodejs.org/en/download/))
-- Git (install from [here](https://git-scm.com/downloads))
-- Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
-   - **Important**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
-- Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).  
+- [Node.js](https://nodejs.org/en/download/)
+- [Git](https://git-scm.com/downloads)
+- [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
+   - **Important**: Ensure you can run `pwsh.exe` from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
+
+>NOTE: Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).  
 
 #### To Run in GitHub Codespaces or VS Code Remote Containers
 
