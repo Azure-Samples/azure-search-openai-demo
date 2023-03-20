@@ -28,7 +28,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - Git (install from [here](https://git-scm.com/downloads))
 - Powershell (pwsh) (install from [here](https://github.com/powershell/powershell))
    - **Imporant**: Ensure you can run pwsh.exe from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
-
+- local venv( Create from [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments))
 ### Installation
 
 Starting from scratch:
@@ -38,6 +38,13 @@ Starting from scratch:
 
 Deploying or re-deploying a local clone of the repo:
 * Simply run "azd up"
+
+Starting from your git repository:
+1. Clone your forked of repository `git clone <your repo>`
+2. Change current working directory to your repo`cd <your repo>`
+3. Create your local python venv environment `python venv .venv`
+4. Run "azd up -t azure-search-openai-demo"
+    * For the target location, the regions that currently support the models used in this sample are East US or South Central US. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
 
 Running locally:
 * Run `./app/start.cmd` or run the "VS Code Task: Start App" to start the project locally.
