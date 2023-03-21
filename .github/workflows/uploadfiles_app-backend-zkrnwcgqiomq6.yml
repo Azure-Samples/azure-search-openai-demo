@@ -30,6 +30,18 @@ jobs:
       - name: Install dependencies
         working-directory: ./app/backend
         run: pip install -r requirements.txt
+
+      - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '19.x'
+
+      - name: Build with tsc and vite
+        working-directory: ./app/backend
+        run: |
+          npm install typescript
+          npm create vite@latest
+          tsc && vite build
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
