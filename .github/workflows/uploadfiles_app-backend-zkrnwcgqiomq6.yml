@@ -37,7 +37,7 @@ jobs:
           node-version: "19.x"
 
       - name: Build with tsc and vite
-        working-directory: ./app/backend
+        working-directory: ./app/frontend
         run: |
           npm install typescript
           npm create vite@latest
