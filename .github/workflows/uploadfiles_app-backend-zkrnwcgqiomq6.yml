@@ -28,7 +28,8 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r app/backend/requirements.txt
+        working-directory: ./app/backend
+        run: pip install -r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
@@ -59,5 +60,6 @@ jobs:
         id: deploy-to-webapp
         with:
           app-name: 'app-backend-zkrnwcgqiomq6'
+          working-directory: ./app/backend
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6892637064C541729CAD56F218DCBAA1 }}
