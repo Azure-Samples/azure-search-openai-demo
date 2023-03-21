@@ -134,7 +134,7 @@ def split_text(pages):
 def create_sections(filename, pages):
     for i, (section, pagenum) in enumerate(split_text(pages)):
         yield {
-            "id": f"{filename}-{i}".replace(".", "_").replace(" ", "_"),
+            "id": re.sub("[^0-9a-zA-Z_-]","_",f"{filename}-{i}"),
             "content": section,
             "category": args.category,
             "sourcepage": blob_name_from_file_page(filename, pagenum),
