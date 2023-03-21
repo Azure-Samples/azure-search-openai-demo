@@ -28,6 +28,7 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
+        working-directory: ./app/backend
         run: pip install -r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
