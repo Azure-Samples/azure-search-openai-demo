@@ -41,7 +41,7 @@ jobs:
         run: |
           npm install typescript
           npm create vite@latest
-          tsc && vite build
+          npm run build
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
