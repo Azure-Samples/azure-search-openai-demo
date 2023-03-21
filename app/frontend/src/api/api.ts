@@ -1,4 +1,4 @@
-import { AskRequest, AskResponse, ChatRequest } from "./models";
+import { AskRequest, AskResponse, ChatRequest, UploadFileRequest, UploadFileResponse  } from "./models";
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
     const response = await fetch("/ask", {
@@ -63,4 +63,19 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
 
 export function getCitationFilePath(citation: string): string {
     return `/content/${citation}`;
+}
+
+export async function uploadApi(request: UploadFileRequest): Promise<UploadFileResponse> {
+    const response = await fetch("/upload", {
+        method: "POST",
+        body: request.formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to upload file: ${response.statusText}`);
+    }
+
+    const data: UploadFileResponse = await response.json();
+
+    return data;
 }

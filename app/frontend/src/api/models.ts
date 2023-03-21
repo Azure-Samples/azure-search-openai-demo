@@ -39,3 +39,12 @@ export type ChatRequest = {
     approach: Approaches;
     overrides?: AskRequestOverrides;
 };
+
+export type UploadFileRequest = {
+    formData: FormData;
+};
+
+export type UploadFileResponse = {
+    success: boolean;
+    message?: string;
+};

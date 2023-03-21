@@ -1,0 +1,44 @@
+.uploadContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+}
+
+.uploadTopSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.uploadTitle {
+    font-size: 4rem;
+    font-weight: 600;
+    margin-top: 130px;
+}
+
+.fileInputContainer {
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    height: 50px;
+    width: 25%;
+    padding: 15px;
+    background: white;
+}
+
+.uploadButton {
+    margin-top: 20px;
+}
+.uploadInput {
+    display: none;
+}
+
+.successMessage {
+    color: green;
+    margin-top: 20px;
+}
+.errorMessage {
+    color: red;
+    margin-top: 20px;
+}
