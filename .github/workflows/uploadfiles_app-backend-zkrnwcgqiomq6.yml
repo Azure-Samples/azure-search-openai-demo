@@ -20,21 +20,21 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v1
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
-      
+
       - name: Install dependencies
         working-directory: ./app/backend
         run: pip install -r requirements.txt
 
       - name: Install Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '19.x'
+        uses: actions/setup-node@v2
+        with:
+          node-version: "19.x"
 
       - name: Build with tsc and vite
         working-directory: ./app/backend
@@ -42,9 +42,9 @@ jobs:
           npm install typescript
           npm create vite@latest
           tsc && vite build
-        
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-      
+
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
         with:
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Production'
+      name: "Production"
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -66,11 +66,11 @@ jobs:
         with:
           name: python-app
           path: .
-          
-      - name: 'Deploy to Azure Web App'
+
+      - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'app-backend-zkrnwcgqiomq6'
-          slot-name: 'Production'
+          app-name: "app-backend-zkrnwcgqiomq6"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F123B74F38CD4931829EE442F79A9834 }}
