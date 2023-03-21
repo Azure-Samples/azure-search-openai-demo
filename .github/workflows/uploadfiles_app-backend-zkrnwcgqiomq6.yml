@@ -54,11 +54,7 @@ jobs:
         with:
           name: python-app
           path: .
-          
-      - name: Install dependencies
-        working-directory: ./app/backend
-        run: pip install -r requirements.txt
-        
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
