@@ -26,10 +26,6 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-      
-      - name: Install dependencies
-        working-directory: ./app/backend
-        run: pip install -r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
@@ -55,6 +51,10 @@ jobs:
           name: python-app
           path: .
           
+      - name: Install dependencies
+        working-directory: ./app/backend
+        run: pip install -r requirements.txt
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
