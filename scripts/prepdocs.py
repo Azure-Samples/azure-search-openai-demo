@@ -5,7 +5,7 @@ import io
 import re
 import time
 from pypdf import PdfReader, PdfWriter
-from azure.identity import DefaultAzureCredential
+from azure.identity import AzureDeveloperCliCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.storage.blob import BlobServiceClient
 from azure.search.documents.indexes import SearchIndexClient
@@ -26,6 +26,7 @@ parser.add_argument("--skipblobs", action="store_true", help="Skip uploading ind
 parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
 parser.add_argument("--container", help="Azure Blob Storage container name")
 parser.add_argument("--storagekey", required=False, help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)")
+parser.add_argument("--tenantid", required=False, help="Optional. Use this to define the Azure directory where to authenticate)")
 parser.add_argument("--searchservice", help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
 parser.add_argument("--index", help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
 parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
@@ -35,7 +36,8 @@ parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output
 args = parser.parse_args()
 
 # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-default_creds = DefaultAzureCredential() if args.searchkey == None or args.storagekey == None else None
+azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid)
+default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
 search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
 if not args.skipblobs:
     storage_creds = default_creds if args.storagekey == None else args.storagekey
@@ -132,7 +134,7 @@ def split_text(pages):
 def create_sections(filename, pages):
     for i, (section, pagenum) in enumerate(split_text(pages)):
         yield {
-            "id": f"{filename}-{i}".replace(".", "_").replace(" ", "_"),
+            "id": re.sub("[^0-9a-zA-Z_-]","_",f"{filename}-{i}"),
             "content": section,
             "category": args.category,
             "sourcepage": blob_name_from_file_page(filename, pagenum),
@@ -175,7 +177,7 @@ def index_sections(filename, sections):
         batch.append(s)
         i += 1
         if i % 1000 == 0:
-            results = search_client.index_documents(batch=batch)
+            results = search_client.upload_documents(documents=batch)
             succeeded = sum([1 for r in results if r.succeeded])
             if args.verbose: print(f"\tIndexed {len(results)} sections, {succeeded} succeeded")
             batch = []

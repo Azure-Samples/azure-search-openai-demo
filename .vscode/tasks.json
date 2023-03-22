@@ -12,7 +12,10 @@
         {
             "label": "Start App (Script)",
             "type": "shell",
-            "command": "start.cmd",
+            "command": "${workspaceFolder}/app/start.sh",
+            "windows": {
+                "command": "pwsh ${workspaceFolder}/app/start.ps1"
+            },
             "presentation": {
                 "reveal": "silent"
             },
