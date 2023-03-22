@@ -31,6 +31,13 @@ param openAiResourceGroupName string = ''
 param openAiResourceGroupLocation string = location
 
 param openAiSkuName string = 'S0'
+
+param formRecognizerServiceName string = ''
+param formRecognizerResourceGroupName string = ''
+param formRecognizerResourceGroupLocation string = location
+
+param formRecognizerSkuName string = 'S0'
+
 param gptDeploymentName string = 'davinci'
 param gptModelName string = 'text-davinci-003'
 param chatGptDeploymentName string = 'chat'
@@ -52,6 +59,10 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 
 resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(openAiResourceGroupName)) {
   name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
+}
+
+resource formRecognizerResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(formRecognizerResourceGroupName)) {
+  name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup.name
 }
 
 resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
@@ -140,6 +151,19 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
   }
 }
 
+module formrecognizer 'core/ai/formrecognizer.bicep' = {
+  name: 'formrecognizer'
+  scope: formRecognizerResourceGroup
+  params: {
+    name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
+    location: formRecognizerResourceGroupLocation
+    tags: tags
+    sku: {
+      name: formRecognizerSkuName
+    }
+  }
+}
+
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
   scope: searchServiceResourceGroup
@@ -190,6 +214,16 @@ module openAiRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: principalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    principalType: 'User'
+  }
+}
+
+module formRecognizerRoleUser 'core/security/role.bicep' = {
+  scope: formRecognizerResourceGroup
+  name: 'formrecognizer-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'User'
   }
 }
@@ -273,6 +307,9 @@ output AZURE_OPENAI_SERVICE string = openAi.outputs.name
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
 output AZURE_OPENAI_GPT_DEPLOYMENT string = gptDeploymentName
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
+
+output AZURE_FORMRECOGNIZER_SERVICE string = formrecognizer.outputs.name
+output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name

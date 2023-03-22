@@ -20,6 +20,15 @@
     "openAiSkuName": {
       "value": "S0"
     },
+    "formRecognizerServiceName": {
+      "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
+    },
+    "formRecognizerResourceGroupName": {
+      "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
+    },
+    "formRecognizerSkuName": {
+      "value": "S0"
+    },
     "searchServiceName": {
       "value": "${AZURE_SEARCH_SERVICE}"
     },

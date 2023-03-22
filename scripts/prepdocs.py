@@ -1,6 +1,7 @@
 import os
 import argparse
 import glob
+import html
 import io
 import re
 import time
@@ -11,6 +12,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import *
 from azure.search.documents import SearchClient
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -32,6 +34,9 @@ parser.add_argument("--index", help="Name of the Azure Cognitive Search index wh
 parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
 parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
 parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
+parser.add_argument("--localpdfparser", action="store_true", help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents")
+parser.add_argument("--formrecognizerservice", required=False, help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)")
+parser.add_argument("--formrecognizerkey", required=False, help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)")
 parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 args = parser.parse_args()
 
@@ -41,24 +46,42 @@ default_creds = azd_credential if args.searchkey == None or args.storagekey == N
 search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
 if not args.skipblobs:
     storage_creds = default_creds if args.storagekey == None else args.storagekey
+if not args.localpdfparser:
+    # check if Azure Form Recognizer credentials are provided
+    if args.formrecognizerservice == None:
+        print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
+        exit(1)
+    formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
 
-def blob_name_from_file_page(filename, page):
-    return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
+def blob_name_from_file_page(filename, page = 0):
+    if os.path.splitext(filename)[1].lower() == ".pdf":
+        return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
+    else:
+        return os.path.basename(filename)
 
-def upload_blobs(pages):
+def upload_blobs(filename):
     blob_service = BlobServiceClient(account_url=f"https://{args.storageaccount}.blob.core.windows.net", credential=storage_creds)
     blob_container = blob_service.get_container_client(args.container)
     if not blob_container.exists():
         blob_container.create_container()
-    for i in range(len(pages)):
-        blob_name = blob_name_from_file_page(filename, i)
-        if args.verbose: print(f"\tUploading blob for page {i} -> {blob_name}")
-        f = io.BytesIO()
-        writer = PdfWriter()
-        writer.add_page(pages[i])
-        writer.write(f)
-        f.seek(0)
-        blob_container.upload_blob(blob_name, f, overwrite=True)
+
+    # if file is PDF split into pages and upload each page as a separate blob
+    if os.path.splitext(filename)[1].lower() == ".pdf":
+        reader = PdfReader(filename)
+        pages = reader.pages
+        for i in range(len(pages)):
+            blob_name = blob_name_from_file_page(filename, i)
+            if args.verbose: print(f"\tUploading blob for page {i} -> {blob_name}")
+            f = io.BytesIO()
+            writer = PdfWriter()
+            writer.add_page(pages[i])
+            writer.write(f)
+            f.seek(0)
+            blob_container.upload_blob(blob_name, f, overwrite=True)
+    else:
+        blob_name = blob_name_from_file_page(filename)
+        with open(filename,"rb") as data:
+            blob_container.upload_blob(blob_name, data, overwrite=True)
 
 def remove_blobs(filename):
     if args.verbose: print(f"Removing blobs for '{filename or '<all>'}'")
@@ -74,17 +97,73 @@ def remove_blobs(filename):
             if args.verbose: print(f"\tRemoving blob {b}")
             blob_container.delete_blob(b)
 
-def split_text(pages):
+def table_to_html(table):
+    table_html = "<table>"
+    rows = [sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index) for i in range(table.row_count)]
+    for row_cells in rows:
+        table_html += "<tr>"
+        for cell in row_cells:
+            tag = "th" if (cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
+            cell_spans = ""
+            if cell.column_span > 1: cell_spans += f" colSpan={cell.column_span}"
+            if cell.row_span > 1: cell_spans += f" rowSpan={cell.row_span}"
+            table_html += f"<{tag}{cell_spans}>{html.escape(cell.content)}</{tag}>"
+        table_html +="</tr>"
+    table_html += "</table>"
+    return table_html
+
+def get_document_text(filename):
+    offset = 0
+    page_map = []
+    if args.localpdfparser:
+        reader = PdfReader(filename)
+        pages = reader.pages
+        for page_num, p in enumerate(pages):
+            page_text = p.extract_text()
+            page_map.append((page_num, offset, page_text))
+            offset += len(page_text)
+    else:
+        if args.verbose: print(f"Extracting text from '{filename}' using Azure Form Recognizer")
+        form_recognizer_client = DocumentAnalysisClient(endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/", credential=formrecognizer_creds, headers={"x-ms-useragent": "azure-search-chat-demo/1.0.0"})
+        with open(filename, "rb") as f:
+            poller = form_recognizer_client.begin_analyze_document("prebuilt-layout", document = f)
+        form_recognizer_results = poller.result()
+
+        for page_num, page in enumerate(form_recognizer_results.pages):
+            tables_on_page = [table for table in form_recognizer_results.tables if table.bounding_regions[0].page_number == page_num + 1]
+
+            # mark all positions of the table spans in the page
+            page_offset = page.spans[0].offset
+            page_length = page.spans[0].length
+            table_chars = [-1]*page_length
+            for table_id, table in enumerate(tables_on_page):
+                for span in table.spans:
+                    # replace all table spans with "table_id" in table_chars array
+                    for i in range(span.length):
+                        idx = span.offset - page_offset + i
+                        if idx >=0 and idx < page_length:
+                            table_chars[idx] = table_id
+
+            # build page text by replacing charcters in table spans with table html
+            page_text = ""
+            added_tables = set()
+            for idx, table_id in enumerate(table_chars):
+                if table_id == -1:
+                    page_text += form_recognizer_results.content[page_offset + idx]
+                elif not table_id in added_tables:
+                    page_text += table_to_html(tables_on_page[table_id])
+                    added_tables.add(table_id)
+
+            page_text += " "
+            page_map.append((page_num, offset, page_text))
+            offset += len(page_text)
+
+    return page_map
+
+def split_text(page_map):
     SENTENCE_ENDINGS = [".", "!", "?"]
     WORDS_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
     if args.verbose: print(f"Splitting '{filename}' into sections")
-
-    page_map = []
-    offset = 0
-    for i, p in enumerate(pages):
-        text = p.extract_text()
-        page_map.append((i, offset, text))
-        offset += len(text)
 
     def find_page(offset):
         l = len(page_map)
@@ -125,14 +204,24 @@ def split_text(pages):
         if start > 0:
             start += 1
 
-        yield (all_text[start:end], find_page(start))
-        start = end - SECTION_OVERLAP
+        section_text = all_text[start:end]
+        yield (section_text, find_page(start))
+
+        last_table_start = section_text.rfind("<table")
+        if (last_table_start > 2 * SENTENCE_SEARCH_LIMIT and last_table_start > section_text.rfind("</table")):
+            # If the section ends with an unclosed table, we need to start the next section with the table.
+            # If table starts inside SENTENCE_SEARCH_LIMIT, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
+            # If last table starts inside SECTION_OVERLAP, keep overlapping
+            if args.verbose: print(f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}")
+            start = min(end - SECTION_OVERLAP, start + last_table_start)
+        else:
+            start = end - SECTION_OVERLAP
         
     if start + SECTION_OVERLAP < end:
         yield (all_text[start:end], find_page(start))
 
-def create_sections(filename, pages):
-    for i, (section, pagenum) in enumerate(split_text(pages)):
+def create_sections(filename, page_map):
+    for i, (section, pagenum) in enumerate(split_text(page_map)):
         yield {
             "id": re.sub("[^0-9a-zA-Z_-]","_",f"{filename}-{i}"),
             "content": section,
@@ -219,9 +308,8 @@ else:
             remove_blobs(None)
             remove_from_index(None)
         else:
-            reader = PdfReader(filename)
-            pages = reader.pages
             if not args.skipblobs:
-                upload_blobs(pages)
-            sections = create_sections(os.path.basename(filename), pages)
+                upload_blobs(filename)
+            page_map = get_document_text(filename)
+            sections = create_sections(os.path.basename(filename), page_map)
             index_sections(os.path.basename(filename), sections)
