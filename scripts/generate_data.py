@@ -2,7 +2,7 @@ from utils.whisper import transcribe
 from utils.download_yt import download_video
 
 if __name__ == '__main__':
-    with open('scripts/utils/links_videos_huberman.txt', 'r') as f:
+    with open('data/links/huberman.txt', 'r') as f:
         for link in f.readlines():
             file_processed_path = download_video(link)
             transcribed = transcribe(file_processed_path)
