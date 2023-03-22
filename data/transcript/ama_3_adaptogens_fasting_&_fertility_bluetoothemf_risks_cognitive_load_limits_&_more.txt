@@ -1,0 +1,237 @@
+Welcome to the Human Relap podcast, where we discuss science, science-based tools for everyday life.
+I'm Andrew Huberman and I'm a professor of neurobiology and up-the-mology at Stanford School of Medicine.
+Today is an Ask Me Anything or AMA episode, which is part of our premium subscriber content.
+Our premium channel was launched in order to raise support for the standard Huberman-Lap podcast channel,
+which still comes out once a week every Monday, and of course is zero cost to consumer.
+The premium channel is also designed to support exciting research being done at major universities like Stanford and elsewhere,
+research that done on humans that should lead to protocols for mental health, physical health, and performance in the near future.
+If you'd like to check out the premium channel subscription model, you can go to HubermanLap.com slash premium,
+and there you can subscribe for $10 a month or $100 a year.
+We also have a lifetime subscriber option.
+For those of you that are already HubermanLap podcast premium subscribers, and you're watching and or hearing this,
+please go to HubermanLap.com slash premium and download the premium podcast feed.
+And for those of you that are not already HubermanLap premium podcast subscribers,
+you will be able to hear the first 15 minutes or so of this episode,
+and hopefully that will allow you to discern whether or not you would like to become a premium subscriber.
+Without further ado, let's get to answering your questions.
+And as always, I will strive to be as accurate as possible as thorough as possible,
+and yet as concise as possible.
+The first question today is about adaptogens.
+Some of you may have heard of adaptogens.
+I'm guessing many of you have not heard of adaptogens.
+The strict definition of adaptogens is still evolving,
+meaning no one really knows what adaptogens mean and what's included in adaptogens and what's excluded from adaptogens.
+But the most common definition of an adaptogen is a compound
+that is typically a supplement or a drug, although it could be a behavior if you really think about it,
+that helps you adapt to and buffer stress.
+So when you hear about adaptogens, there are three main categories of adaptogens that come to mind.
+The first are things that are contained in food.
+So these would be vitamins or micronutrients that one could easily find in food,
+but one would have to consume a fairly restricted number or type of foods in order to obtain them.
+And in order to obtain those things, or consume a lot of those foods in order to get sufficient dosages of those adaptogen compounds in order to buffer stress.
+Some good examples of these would be any kind of vitamin either water soluble or fat soluble that can adjust or reduce what are so called reactive oxygen species.
+And then that's what gives rise to this idea that anti-oxidants are good for us.
+Now over the last 10 years or so there's been a shift.
+A shift has occurred well about 10 years ago, you often heard about antioxidants, antioxidants, antioxidants and vitamins, antioxidants in this food, this superfood, etc.
+And why were people talking about antioxidants?
+We'll just remind you, reactive oxygen species are types of reactions and molecules that occur in cells when cells get stressed and or age.
+And antioxidants are the compounds that reduce those reactive oxygen species.
+Reactive oxygen species are bad for cells because they tend to hinder the function of mitochondria which are associated with energy production in those cells.
+So what do we know for sure? We know that as cells get older or as any cell or biological system, organ, tissue, etc.
+Get stressed a lot over time.
+The number of reactive oxygen species increases in those cells and tissues and organs and antioxidants, which can include certain vitamins,
+but also some micronutrients, are effective in reducing those reactive oxygen species.
+Now what's occurred over the last 10 years is that we know that reactive oxygen species are a major source of depleting cell or function by way of depleting mitochondrial function.
+But they are just one of many mechanisms that can deplete cell or function by the mitochondrial function.
+So nowadays you'll hear about reactive oxygen species and antioxidants, but not as much as you used to.
+Now you hear a lot more about inflammatory responses and inflammatory cytokines also be in an issue.
+And the truth is all of these things are an issue.
+So going back to this question about adaptogens, adaptogens include these three categories.
+I've told you the first, which are the vitamins and micronutrients that are contained in food that can reduce reactive oxygen species and other aspects of cell or stress such as inflammatory cytokines.
+What are some of those things that occur in foods? Well, in order to answer that, let's just think about what sorts of foods themselves can act as adaptogens.
+It's commonly held that the dark leafy greens type foods for those of you that eat plants, and I think the majority of people out there do eat plants.
+I know that the carnivore diet and lion diet and some other diets tend to exclude plants, and we'll address that briefly at some point in today's discussion.
+Dark leafy greens are known to contain a number of compounds in the form of vitamins and micronutrients that are very effective in reducing reactive oxygen species and inflammatory cytokines.
+So if you're somebody who's interested in adaptogens and adaptogenic processes, reducing stress and buffering stress, which of course has its role in buffering daily stress in order to help you sleep better to improve cell or function for longevity, sports performance, cognitive performance.
+That is all good, and it makes sense why people would be interested in adaptogens, but remember that the two main adaptogens that you should think to first are going to be behaviors and nutrition.
+I've started with nutrition on purpose, as I mentioned, we'll get to behaviors in a moment.
+So if you're interested in adaptogens at all, I highly recommend that you include at least two to four servings of dark leafy greens and or cruciferous vegetables per day.
+I think that be highly advantageous and just be aware that excessively heating dark leafy greens are cruciferous vegetables can actually destroy the very nutrients and micronutrients that act in an adaptogenic way.
+That does not mean that you need to eat raw broccoli or cauliflower, just a thought of that makes me nauseous.
+It's very hard to digest. Some people might like that or can digest it more easily than others.
+So it's perfectly fine to cook your cruciferous vegetables and dark leafy greens, but you don't want to overcook them.
+What's overcooking and what's undercooking, there's no strict cut-off in terms of temperature, but basically what the literature says is that if you heat vegetables to the point where the colored fluid is leaching out of them into a broth type, you know, into water or whatever fluid surrounds them.
+Well, then you would be well off to ingest that fluid as well because it contained in the water or the fluid that's leaching out from the cruciferous vegetables or from the dark leafy greens are going to be a lot of those very adaptogens.
+While the molecules that you're interested in in the first place.
+Okay, so I probably surprise some people by starting off my answer to the question of what are adaptogens.
+Are they worth thinking about and pursuing and if so, how can I get them by talking about food?
+But I think it is important to understand that you can get a lot of adaptogens from food and indeed some of the best adaptogens do come from dark leafy greens and cruciferous vegetables.
+So I'd be remiss if I didn't mention that.
+The other two categories of adaptogens are going to be supplement based adaptogens and then behavioral adaptogens.
+Again, here adaptogen defined is anything that can buffer stress in a substantial or meaningful way in order to support cellular health, organ health and overall daily living and functioning, including sleep and performance and mental health.
+So the second category of adaptogen are going to be supplements and here again I just want to take a step back.
+Make sure that we are clear about our operational definition about what a supplement is.
+We had an episode all about how to design a rational guide to supplementation, which included, for example, the idea that for some people, the optimal dosage of many supplements is going to be zero and for other people, the dosage will be something else.
+But to really pinpoint the key message from that episode that I'd like to reiterate now.
+But the key message from that episode that I'd like to reiterate now is that many people think of supplements as just vitamin supplements.
+And for that reason, you'll often hear the argument, oh well aren't supplements just expensive urine.
+Couldn't you get all of that from food aren't you just urinating out all the water soluble vitamins and maybe even storing excess amounts of the fat soluble vitamins in a way that's unhealthy or not cost effective.
+And so on.
+When we talk about supplements, yes it can include vitamin supplements.
+However, there are many compounds that we would describe as supplements that are not vitamin supplements and that you could not obtain from food or that you could never obtain from food in sufficient enough qualities to have a robust positive biological effect without consuming the enormous number of calories or overriding your your gut mechanically.
+For instance, if there were say, um, a herb and we'll talk about such herbs in a moment that contained an effective adaptogen.
+But you would never want to eat the plant itself or include that herb in any kind of recipe.
+Well then chances are this herb, which we'll define in a moment, is not a vitamin supplement.
+It is probably not even best thought of as a supplement.
+It's best thought of as a compound that sold over the counter, much like a prescription drug.
+Although it's not prescription. It doesn't require prescription to get it. So there are a lot of things like that that we include under the umbrella of this word supplements.
+And unfortunately because of that a lot of people think, oh, you don't need supplements. And of course, you don't need supplements per se.
+But many people do derive tremendous benefit from them.
+In the context of adaptogens, there are two or three in particular that can be very beneficial for buffering the stress response,
+especially over short periods of time of about two to three weeks.
+So when would you use these? Well, for instance, if you are in a particularly stressful mode of life either because of family or relational or school or work demands or new kid in the house or any number of different things,
+or you've been ill or you're recovering from injury, taking an adaptogen in the form of supplement can actually be very useful for buffering this hormone
+and the general systems associated with called cortisol.
+It's very healthy to have high levels of cortisol early in the day, shortly after you wake up,
+and then that ought to taper off toward the afternoon and evening. However, if cortisol is chronically elevated throughout the day or if that peaking cortisol is arriving to late in the day,
+that is known to be associated with mental health and physical health issues.
+As I've been shown by labs at Stanford and elsewhere, it's been shown in animal models and in humans.
+Many times before, and I'll just remind you again, one of the best ways to restrict that cortisol peak to the early part of the day is to get morning sunlight in your eyes,
+as soon as you can, once the sun is up, get outside, face in the direction of the sun, even on overcast days, don't wear sunglasses, look at it for five to thirty minutes,
+definitely blink so you don't damage your eyes, so on and so forth.
+Five minutes or thirty minutes will five minutes on a clear day, should be sufficient, longer would be fine.
+Again, blink so that you protect your eyes, blink as needed, face in the general direction of the sun.
+On days when you have a lot of overcast or it's really dark, dense cloud cover,
+well then you'd want to be outside longer, and if you don't have access to sunlight for whatever reason, then you want to do the same thing with bright artificial lights indoors,
+either so-called sad lamp or otherwise, that's a great way to restrict that cortisol peak to early in the day.
+But even if you're doing that, if you have a stressful life for whatever reason, even if you're getting that morning sunlight, which I hope you are, you're getting your exercise, you're trying to sleep better,
+and more as we all should, most of the time, well then you're, you may be somebody who wants to take a,
+adaptogen in the form of a supplement, and the three supplements that could be very effective in buffering cortisol are ashoaganda,
+which I'll talk about first, lion's main, and chaga, lion's main and chaga are in the fungi group, so they count as mushrooms, they are not psychedelic mushrooms.
+Let's talk about ashoaganda first. Ashoaganda is at the top of the list because it is indeed a very potent adaptogen.
+How can I say that? Well, there are a number of studies now, including several excellent ones in humans that report that taking two doses of 300 milligrams of ashoaganda per day.
+Per day can vary dramatically buffer cortisol. So this is something that you would have a near impossible time accessing from food.
+I can't imagine that unless you're cooking with the very sources of ashoaganda, and extracting exact amounts that you'd be able to get this, in any other form except supplement form.
+So here I'm going to just briefly reference a paper and we can provide a reference to the reference link to this. That is, this is a paper from 2012 that's had a lot of excellent follow-up papers that
+support it, the title of the paper is a perspective randomized double-blind placebo controlled study of safety and efficacy of high concentration of full spectrum extract of ashoaganda root in reducing stress and anxiety in adults.
+And it's a really nice study, not a huge subject pool, but both men and women, and it's carried out for long enough that they got to see some really interesting results.
+And the, I think the most interesting result is that taking 300 milligrams of ashoaganda twice a day led to enormous, I mean just enormous changes in serum cortisol.
+This statistical significance that they observed in the study was really fantastic, it fantastically high statistical significance.
+They saw the effects of ashoaganda on day 15, having initiated the ashoaganda consumption on day one, of course day 30 and day 45.
+And again, this was dramatic reductions in stress as perceived by people, so subjective stress and cortisol level. So ashoaganda is very potent at reducing cortisol. How would you recapitulate this if you wanted to use ashoaganda to buffer stress?
+Well, a couple of key points mentioned earlier that you want your cortisol peaks come earlier in the day.
+Therefore, you would not want to buffer cortisol early in the day. In fact, cortisol peaking early in the day provides an anti-inflammatory immune supporting, focus and mood supporting effect all day long.
+And you recommend that people take their first dose of ashoaganda of anywhere from 250 to 300 milligrams sometime in the early afternoon and then again in the evening as opposed to taking a morning dose and an afternoon dose.
+Also, if you're somebody who's exercising for sake of trying to induce adaptations like hypertrophy the growth of muscles or strength or improve your endurance in any way muscular endurance or more traditional cardiovascular endurance.
+I recommend that you not take your ashoaganda prior to exercise because part of the adaptation response is triggered by increases in cortisol during exercise sort of in the same way that
+Some of the best adaptations to exercise are reductions in blood pressure and resting heart rate.
+And those are stimulated by increases in blood pressure and increases in heart rate during exercise. That's just how these biological systems work.
+So the takeaway is pretty simple. If you're interested in using ashoaganda as an adaptogen, I would restrict it to later in the day if you can and not before exercise divided into two doses of 250 to 300 milligrams.
+That's what this paper and other papers like it seem to indicate.
+And then a very important final point about ashoaganda, which is that if you're going to take ashoaganda, I recommend not taking it for longer than a month and a half as they did in this study.
+In fact, I was suggest that you only take ashoaganda around periods of kind of moderate to extreme stress. What's moderate, what's extreme is going to depend on what you're going through.
+Only you know how much stress in life events you can tolerate. So if you've had trouble sleeping and that's unusual for you, you're dealing with a very difficult life circumstances or you're excessive work demand or a new kid, as I mentioned before.
+Well, then buffering stress with ashoaganda, buffering cortisol in the afternoon and evening can be very beneficial for you. But then I would say after about 30 days maximum, I would take it least two to four weeks off two weeks is probably enough but four weeks off because you don't want to chronically buffer cortisol. It's just not a good idea.
+But that said, I think ashoaganda is a very powerful adaptogen. I would place it the top list of supplement-based adaptogens, but keep in mind that even if you're taking a supplement-based adaptogen, that's no reason to abandon the nutrition and behavioral type adaptogenic effects that you can create through eating dark leafy greens cruciferous vegetables, then we'll talk about the behaviors in a moment.
+The other two supplement-based adaptogens, as I mentioned, are Lyonsmene Mushroom and Chaga. And I get asked a lot about Lyonsmene and Chaga for sake of their purported roles in acting as Nutropix, as, quote, unquote, smart drugs.
+There are fewer data on the beneficial roles of Lyonsmene and Chaga for sake of Nutropix effects. We're doing an entire episode on Nutropix at some point.
+But there have been a few studies showing that Lyonsmene and supplementation and Chaga supplementation can improve memory and may be even divergent thinking associated with creativity and things of that.
+So again, these are not psychedelic mushrooms. That said, there are good data showing that a thousand milligrams, that is one gram of Lyonsmene per day and or, okay, we'll talk about the end or portion of the moment and or Chaga, mushroom at 500 to 1500 milligrams per day, can act as adaptogens.
+And again, reducing cortisol, but also and mainly reducing some of the anti-inflammatory cytokines that are known to circulate in high abundance when you're under a lot of psychological and or physical stress, things like interlucin six and some related molecules.
+So here's what I would recommend. If you are interested in exploring adaptogens, I'm a big fan as some of you probably know if you heard that episode on rational guide supplementation.
+Big fan of mainly focusing on taking supplements in singling ingredient formulations so that you can figure out what dosages are best for you and so that you can toggle in and out those adaptogens as needed.
+So I of course am a fan of taking certain blends and mixes the one that we talk about a lot on this podcast and we have been a sponsor from the beginning. I've taken for a decade now long before I ever had a podcast is athletic greens, which some of you might note does contain some of our shwagandal, though the levels of our shwagandal that are contained in that.
+Let it greens are low enough that I don't see any issue with taking athletic greens consistently day to day every day because you're not getting anywhere near that 600 milligrams dosage.
+But the idea is that if you are going to take any adaptogen for sake of buffering stress over the short term say for a week or two weeks or a month and then taking that recommended time off.
+I would start with Ashwaganda and then if you feel you need something else to buffer stress.
+Keeping in mind of course that you're doing the behavioral and nutritional things to buffer stress as well. You can never abandon those right.
+Well then I would suggest adding a thousand milligrams or a thousand milligrams of chaga per day and seeing how that further benefits your your system in terms of buffering stress.
+How do you measure if your stress is being reduced? Well, you're going to be sleeping better at night.
+You're going to feel subjectively better lower levels of anxiety. All the things that are measured in the types of studies I described before.
+Well, of course, there's nothing preventing you from taking 600 milligrams of Ashwaganda gram of lines may and a gram of chaga. I know some people like to just kind of go full tilt and everything.
+But I am a big believer in really trying to isolate which supplements and molecules work best for you and which ones don't.
+Do you need to cycle on and off lines may and chaga? I'm not aware of any data showing that you do.
+If, however, you're taking them every day, I recommend that you cycle off them after a period of 30 days or so.
+And I want to be very clear about this just because I said cycle off after a period of 30 days or so does not mean that you can't take them for a shorter period of time.
+So for instance, if you know that you're coming up on a big week of stress.
+Well, then you could take Ashwaganda and or lines may and end or chaga for that week or just that week or heading into that week or in the following week and then stop.
+There's no reason why you couldn't take them even just for one day, although the effects tend to be a bit cumulative.
+At least when we're talking about buffering anxiety.
+In terms of buffering cortisol, that's a very potent effect that as far as we know is going to take place on day one.
+Again, keep that cortisol buffering effect away from exercise.
+At least don't take it before exercise and try and buffer your cortisol in the afternoon and evening.
+And this is assuming that you're working a conventional shift and you're not up all night and sleeping all day for sake of shift work.
+Okay, so hopefully that clarifies things about what adaptions are.
+In fact, I never actually read the specific question, but I think I've touched on a number of issues that relate to the specific question.
+And then I'll answer the last portion of the answer to this question in a moment as it relates to behavioral tools that connect as adaptions.
+The question itself was there's a lot of mixed information about out there about adaptions like Ashwaganda and I think that relates to what I said earlier, which is the definition of an adaption has not really been cemented in various.
+Different in different communities and it's generally used as a matter of convenience rather than really strictly defining what it is and hopefully we've defined it accurately and broadly enough today as something that buffers stress.
+The second part of the question was what does the scientific evidence say about adaptions and their ability to mediate body stress response?
+They say quite a lot and they say that the stress response can be buffered substantially by certain adaptions.
+Mainly dark leafy greens, cruciferous vegetables, Ashwaganda, lines mane and chaga and of course all the behavioral things that are critical to what list off in a moment.
+And then the third portion of the question is is there any solid evidence that has an effect on neuro transmitters or the HPA which is part of the stress modulation access?
+The best evidence is that adaptions can reduce cortisol itself.
+There is very little evidence that adaptions can directly modulate neurotransmitters or neuromodulators like dopamine serotonin etc.
+But by adjusting the timing and levels of cortisol especially in the afternoon and evening, that is going to have indirect effects on levels of dopamine or up in effort etc.
+But not direct effects.
+So the general contour that makes for an ideal diurnal schedule, you heard of nocturnal, the opposite as diurnal being awake during the daytime and sleep at night.
+The ideal landscape of neurotransmitters is higher levels of dopamine, no up in effort and in the early part of the day and cortisol.
+So called catacolymine, dopamine or up in effort and in effort.
+And high levels of cortisol early in the day as directed by sunlight, exercise, caffeine, hydration, movement, all that stuff being awake and busy and outside or indoors with bright lights and moving about in the early part of the day and into the early afternoon.
+And that's the best possible way that we are aware of to try and get those catacolymines released at the highest levels in the early part of the day.
+And then the ideal contour of a 24 hour cycle will be in the later half of the day, the evening and nighttime, you have higher levels of things like serotonin, the GABA, or JIC system, all the things that are somewhat sedative and preparing you for sleep and lower levels of the catacolymines in cortisol as I described before.
+So to directly answer the question, is there any evidence that adaptogens can alter your neurotransmitters?
+Yes, but only indirectly. And yet that indirect control over neurotransmitters is substantial and is important.
+And if you do what I described, such as getting morning sunlight and ideally, you'd get a little bit of deliberate cold water exposure, by the way, to boost adrenaline and or more of an effort and dopamine, those catacolymines early in the day.
+So quick one minute cold shower even or three minute cold shower, if you have access to a nice bath early in the day, plus some sunlight doesn't matter which one you do first.
+And that early in the day is really going to create that peak of cortisol, dopamine, epinephrine early in the day.
+I can't emphasize how beneficial all of that can be. And exercise if you can early in the day, some people can't exercise till later in the day.
+I'd rather see people exercise later in the day than not at all provided. It does not disrupt their nighttime sleep, which of course, sleep is the foundation of mental health, physical health and performance.
+So yes, there's modulation or neurotransmitters, but most of those are downstream of the effects on cortisol that we've been talking about.
+So we've defined nutritional adaptogens supplement-based adaptogens, although I don't really like the word supplements anymore.
+Unless we're talking about vitamin supplements, for reasons we talked about earlier.
+And then there's the third category of adaptogens, which are the behavioral tools that you can use to buffer stress, which qualifies those as an adaptogen.
+And I think it's really important that we always keep in mind the yes there are supplements, yes there are prescription drugs out there. In fact, there are prescription drugs that you can get from a doctor that will potently zero out your cortisol.
+But most doctors are very reluctant to prescribe those drugs because cortisol provides a very important and functional role early in the day.
+Behavior is our very effective at reducing cortisol. What are the most effective behaviors to reduce cortisol? Well, we talked about one to restrict cortisol the early part of the day, which is viewing morning sunlight.
+But how would you buffer cortisol in the late afternoon? It's going to be all the things associated with reducing stress. For instance, 10 minutes or even my laboratory and other laboratories have shown is even five minutes a day of just what would be called mindfulness meditation.
+Very simple. You don't need to over complicate this. You could use a great app like the waking up app or another app of the sort.
+Or you can simply sit down, eyes closed, breathe through your nose and just concentrate on your breathing every time your mind drifts to something else. Bring it back to your breathing.
+That's shown to reduce stress. You could do a five minute deliberate breath work practice. My laboratory is published and work related to that.
+The breath work practice could be any number of things. The two that I recommend the most would be double inhale followed by a full exhale and then repeat for a period of five minutes known to substantially reduce anxiety stress.
+And the various physiological systems associated with a ralzo. You could also use box breathing inhale, hold exhale, hold for equal durations for a period of five minutes will substantially reduce stress.
+I'm a big fan as many of you know of yoga knee drill, which involves no movement. It involves just lying there listening to a script. Lots of yoga knee drill scripts available online.
+If you're not interested in the intentions and other things including yoga knee drill, you can buffer stress using an adaptogen like NSTR non sleep deep rest. If you're interested in trying these sorts of things, there's an NSDR protocol that's 10 minutes long. Just put my name, human and NSTR into the search browser on YouTube and virtue san is provided in the program.
+NSTR that's completely zero cost and works very well for reducing stress. It will also help teach your system and teach you how to learn to fall asleep better at night.
+So any of those practices is five to ten minute breathing practice or meditation or a NSTR yoga knee drill. If you can do longer 20 or 30 minutes in the afternoon, that's known to buffer cortisol substantially as well.
+I'm not just answering stress in real time. I highly recommend a tool over and over because it's so effective. The fastest way we know to buffer stress and calm down is the so called physiological side.
+Big inhale through the nose until your lungs are empty but then sneak in a little bit more air by a second inhale.
+Maximumly inflate the lungs that are long exhale until your lungs are empty. One to three of those will reduce your stress substantially. Over time that should reduce that is buffer your cortisol acting as an adaptogen.
+There are a lot of things you can take a hot bath, take a hot shower, you can list it to some pleasant music. Anything that reduces your stress technically is an adaptogen.
+I hope I've thoroughly answered your question by yours. I mean, of course this answer is going out to all of you. This is a question that was asked by Justin Beva-Lakwa.
+I hope I pronounced that correctly, Justin. Thank you for that question. I think there are a lot of people interested in adaptogens.
+Now you can use nutrition such as cruciferous vegetables, dark leafy greens. I should also mention if you're not ingesting enough calories each day.
+Well, then you are going to be in a mild mode of stress.
+That's not to say that some people shouldn't take in fewer calories than they burn in order to lose weight. Some people really need to do that for their health or for whatever other reason.
+But if you restrict calories too much, you are going to increase cortisol output. So keep that in mind. So in just sufficient calories for you and for your goals, aim to get dark leafy greens and cruciferous vegetables. Don't overcook them.
+If you want to explore supplements, the best supplements to adaptogen are going to be Ashwaganda, Lines, Maine and Chaga.
+One or two or three of those, although if you're going to pick one, I'd recommend Ashwaganda 600 milligrams per day, taking it in the later half of the day.
+And then there are the behavioral tools that we just talked about now, which are anything that reduces stress can reduce cortisol and in doing so are technically adaptogens.
+If you want to know more behavioral tools and other tools for adjusting stress and learn more about adaptogens, we did a whole episode called Mastering Stress.
+So you can look to that episode. Also pretty clearly defines I like to think what short term medium term and long term stress really are.
+Keep in mind stress is part of life learning how to work with it, how to dance with it, how to buffer it is terrific. But zeroing out cortisol is not the goal.
+The goal is to learn to modulate and control your cortisol and that's really what adaptogens are all about.
+Thank you for joining for the beginning of this Ask Me Anything episode. To hear the full episode and to hear future episodes of these Ask Me Anything sessions.
+Plus, to receive transcripts of them and transcripts of the Human-Lab podcast standard channel and premium tools not released anywhere else, please go to HubertmanLab.com slash premium.
+Just to remind you why we launched the HubertmanLab podcast premium channel. It's really twofold. First of all, it's to raise support for the standard HubertmanLab podcast channel, which of course will still be continued to be released every Monday in full length.
+We are not going to change the format or anything about the standard HubertmanLab podcast and to fund research. In particular research done on human beings. So not animal models, but on human beings, which I think we all agree is a species that we are most interested in.
+And we are going to specifically fund research that is aimed toward developing further protocols for mental health, physical health and performance. And those protocols will be distributed through all channels, not just the premium channel, but through all channels.
+You've earned the lab podcast and other media channels. So the idea here is to give you information to your burning questions in depth and allow you the opportunity to support the kind of research that provides that those kinds of answers in the first place.
+Now, and especially exciting feature of the premium channel is that the tiny foundation has generously offered to do a dollar for dollar match on all funds raised for research through the premium channel.
+So this is a terrific way that they're going to amplify whatever funds come in through the premium channel to further support research for science and science related tools for mental health, physical health and performance.
+If you'd like to sign up for the HubertmanLab premium channel, again there's a cost of $10 per month or you can pay $100 up front for the entire year.
+That will give you access to all the AMAs, you can ask questions and get answers to your questions, and you'll of course get answers to all the questions that other people ask as well.
+There will also be some premium content, such as transcripts of the AMAs and various transcripts and protocols of HubertmanLab podcast episodes and not found elsewhere.
+And again, you'll be supporting research for mental health, physical health and performance.
+You can sign up for the premium channel by going to HubertmanLab.com slash premium, again that's HubertmanLab.com slash premium.
+And as always, thank you for your interest in science.
