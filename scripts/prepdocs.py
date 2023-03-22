@@ -177,7 +177,7 @@ def index_sections(filename, sections):
         batch.append(s)
         i += 1
         if i % 1000 == 0:
-            results = search_client.index_documents(batch=batch)
+            results = search_client.upload_documents(documents=batch)
             succeeded = sum([1 for r in results if r.succeeded])
             if args.verbose: print(f"\tIndexed {len(results)} sections, {succeeded} succeeded")
             batch = []
