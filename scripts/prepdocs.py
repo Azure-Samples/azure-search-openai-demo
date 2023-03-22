@@ -1,6 +1,7 @@
 import os
 import argparse
 import glob
+import html
 import io
 import re
 import time
@@ -97,19 +98,19 @@ def remove_blobs(filename):
             blob_container.delete_blob(b)
 
 def table_to_html(table):
-    html = "<table>"
+    table_html = "<table>"
     rows = [sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index) for i in range(table.row_count)]
     for row_cells in rows:
-        html += "<tr>"
+        table_html += "<tr>"
         for cell in row_cells:
             tag = "th" if (cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
             cell_spans = ""
             if cell.column_span > 1: cell_spans += f" colSpan={cell.column_span}"
             if cell.row_span > 1: cell_spans += f" rowSpan={cell.row_span}"
-            html += f"<{tag}{cell_spans}>{cell.content}</{tag}>"
-        html +="</tr>"
-    html += "</table>"
-    return html
+            table_html += f"<{tag}{cell_spans}>{html.escape(cell.content)}</{tag}>"
+        table_html +="</tr>"
+    table_html += "</table>"
+    return table_html
 
 def get_document_text(filename):
     offset = 0
