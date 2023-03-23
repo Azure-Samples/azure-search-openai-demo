@@ -151,11 +151,12 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
   }
 }
 
-module formrecognizer 'core/ai/formrecognizer.bicep' = {
+module formRecognizer 'core/ai/cognitiveservices.bicep' = {
   name: 'formrecognizer'
   scope: formRecognizerResourceGroup
   params: {
     name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
+    kind: 'FormRecognizer'
     location: formRecognizerResourceGroupLocation
     tags: tags
     sku: {
@@ -308,7 +309,7 @@ output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
 output AZURE_OPENAI_GPT_DEPLOYMENT string = gptDeploymentName
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
 
-output AZURE_FORMRECOGNIZER_SERVICE string = formrecognizer.outputs.name
+output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
