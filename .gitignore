@@ -148,3 +148,5 @@ static/
 
 # Project specific
 data/video
+data/audio
+data/transcript
