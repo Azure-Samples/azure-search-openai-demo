@@ -23,7 +23,6 @@ param searchIndexName string = 'gptkbindex'
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
-
 param storageContainerName string = 'content'
 
 param openAiServiceName string = ''
