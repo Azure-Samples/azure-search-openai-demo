@@ -43,6 +43,12 @@
     },
     "storageResourceGroupName": {
       "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
+    },
+    "gptDeploymentName": {
+      "value": "${AZURE_OPENAI_GPT_DEPLOYMENT}"
+    },
+    "chatGptDeploymentName": {
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
     }
   }
 }
