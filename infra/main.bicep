@@ -23,8 +23,7 @@ param searchIndexName string = 'gptkbindex'
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
-
-param containerName string = 'content'
+param storageContainerName string = 'content'
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
@@ -104,7 +103,7 @@ module backend 'core/host/appservice.bicep' = {
     managedIdentity: true
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
-      AZURE_STORAGE_CONTAINER: containerName
+      AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_OPENAI_SERVICE: openAi.outputs.name
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
@@ -201,7 +200,7 @@ module storage 'core/storage/storage-account.bicep' = {
     }
     containers: [
       {
-        name: 'content'
+        name: storageContainerName
         publicAccess: 'None'
       }
     ]
@@ -317,7 +316,7 @@ output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
-output AZURE_STORAGE_CONTAINER string = containerName
+output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output BACKEND_URI string = backend.outputs.uri
