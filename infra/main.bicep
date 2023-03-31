@@ -11,20 +11,19 @@ param location string
 
 param appServicePlanName string = ''
 param backendServiceName string = ''
-param resourceGroupName string = ''
+param resourceGroupName string = 'iotgs-unmsbox-rg-02'
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
-param searchServiceResourceGroupLocation string = location
+param searchServiceResourceGroupLocation string = 'westeurope'
 
 param searchServiceSkuName string = 'standard'
 param searchIndexName string = 'gptkbindex'
 
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
-param storageResourceGroupLocation string = location
-
-param containerName string = 'content'
+param storageResourceGroupLocation string = 'westeurope'
+param storageContainerName string = 'content'
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
@@ -34,7 +33,7 @@ param openAiSkuName string = 'S0'
 
 param formRecognizerServiceName string = ''
 param formRecognizerResourceGroupName string = ''
-param formRecognizerResourceGroupLocation string = location
+param formRecognizerResourceGroupLocation string = 'westeurope'
 
 param formRecognizerSkuName string = 'S0'
 
@@ -51,7 +50,7 @@ var resourceToken = toLower(uniqueString(subscription().id, environmentName, loc
 var tags = { 'azd-env-name': environmentName }
 
 // Organize resources in a resource group
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(resourceGroupName)) {
   name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
   location: location
   tags: tags
@@ -104,7 +103,7 @@ module backend 'core/host/appservice.bicep' = {
     managedIdentity: true
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
-      AZURE_STORAGE_CONTAINER: containerName
+      AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_OPENAI_SERVICE: openAi.outputs.name
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
@@ -201,7 +200,7 @@ module storage 'core/storage/storage-account.bicep' = {
     }
     containers: [
       {
-        name: 'content'
+        name: storageContainerName
         publicAccess: 'None'
       }
     ]
@@ -317,7 +316,7 @@ output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
-output AZURE_STORAGE_CONTAINER string = containerName
+output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output BACKEND_URI string = backend.outputs.uri
