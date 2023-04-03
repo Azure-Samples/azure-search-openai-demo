@@ -5,29 +5,29 @@ metadata:
   template: azure-search-openai-demo@0.0.2-beta
 services:
   backend:
-    project: ./app/backend
-    language: py
+    project: ../../app/backend-dotnet
+    language: dotnet
     host: appservice
 hooks:
     postprovision:
       windows:
         shell: pwsh
-        run: ./scripts/prepdocs.ps1
+        run: ../../scripts/prepdocs.ps1
         interactive: true
         continueOnError: false
       posix:
         shell: sh
-        run: ./scripts/prepdocs.sh
+        run: ../../scripts/prepdocs.sh
         interactive: true
         continueOnError: false
     predeploy:
       windows:
         shell: pwsh
-        run:  cd ./app/frontend;npm install;npm run build
+        run:  $env:AZURE_SEARCH_OPENAI_USE_DOTNET="true";cd ../../app/frontend;npm install;npm run build
         interactive: true
         continueOnError: false
       posix:
         shell: sh
-        run:  cd ./app/frontend;npm install;npm run build
+        run:  set AZURE_SEARCH_OPENAI_USE_DOTNET="true";cd ../../app/frontend;npm install;npm run build
         interactive: true
         continueOnError: false

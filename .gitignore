@@ -145,3 +145,9 @@ cython_debug/
 npm-debug.log*
 node_modules
 static/
+
+# dotnet
+.vs/
+bin/
+obj/
+wwwroot/
