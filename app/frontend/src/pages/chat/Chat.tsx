@@ -12,6 +12,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -33,6 +34,17 @@ const Chat = () => {
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    var playEnd = true;
+    var speak = false;
+    const player = new sdk.SpeakerAudioDestination();
+    player.onAudioStart = function(_) {
+        speak = true;
+        playEnd = false;
+      }
+    player.onAudioEnd = function (_) {
+        playEnd = true;
+        speak = false;
+      };
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -123,6 +135,50 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
+    const startSynthesis = (message: string) => {
+
+        // using cognitive services speech sdk to speak the message
+        // https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/get-started-speech-to-text?tabs=script%2Cwindowsinstall&pivots=programming-language-javascript
+        var speechConfig = sdk.SpeechConfig.fromSubscription("yoursubscriptionkey", "yourregion");
+        speechConfig.speechSynthesisVoiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoyiNeural)";
+        // var audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
+        
+        var audioConfig  = sdk.AudioConfig.fromSpeakerOutput(player);
+        var synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
+        synthesizer.SynthesisCanceled = function (s, e) {
+            const cancellationDetails = sdk.CancellationDetails.fromResult(e.result);
+            let str = "(cancel) Reason: " + sdk.CancellationReason[cancellationDetails.reason];
+            if (cancellationDetails.reason === sdk.CancellationReason.Error) {
+              str += ": " + e.result.errorDetails;
+            }
+            console.log(e);
+          };
+        synthesizer.speakTextAsync(message,
+            function (result) {
+          if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
+            console.log("synthesis finished.");
+          } else {
+            console.error("Speech synthesis canceled, " + result.errorDetails +
+                "\nDid you set the speech resource key and region values?");
+          }
+          synthesizer.close();
+        },
+            function (err) {
+          console.trace("err - " + err);
+          synthesizer.close();
+        });
+    };
+
+    const stopSynthesis = () => {
+        // Stop playing the audio
+        player.pause();
+        speak = false;
+    };
+    const resumeSynthesis = () => {
+        // Stop playing the audio
+        player.resume();
+        speak = true;
+    };
 
     return (
         <div className={styles.container}>
@@ -152,6 +208,7 @@ const Chat = () => {
                                             onCitationClicked={c => onShowCitation(c, index)}
                                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                            onSpeechSynthesisClicked={() => speak===false ? (playEnd===true? startSynthesis(answer[1].answer) : resumeSynthesis()):stopSynthesis()}
                                             onFollowupQuestionClicked={q => makeApiRequest(q)}
                                             showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                         />

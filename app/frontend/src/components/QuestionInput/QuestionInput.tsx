@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Stack, TextField } from "@fluentui/react";
-import { Send28Filled } from "@fluentui/react-icons";
+import { Mic28Filled, Send28Filled } from "@fluentui/react-icons";
 
 import styles from "./QuestionInput.module.css";
+import * as sdk from "microsoft-cognitiveservices-speech-sdk";
+
 
 interface Props {
     onSend: (question: string) => void;
@@ -26,6 +28,28 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         }
     };
 
+    const startRecording = () => {
+        const speechConfig = sdk.SpeechConfig.fromSubscription(
+            "yoursubscriptionkey",
+            "yourregion"
+          );
+          speechConfig.speechRecognitionLanguage = "zh-CN";
+        var audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
+        var recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
+        recognizer.recognizeOnceAsync(
+            (result) => {
+                console.log(result);
+                recognizer.close();
+                setQuestion(result.text);
+            },
+        (err) => {
+            console.log(err);
+            recognizer.close();
+        }
+);
+    };
+
     const onEnterPress = (ev: React.KeyboardEvent<Element>) => {
         if (ev.key === "Enter" && !ev.shiftKey) {
             ev.preventDefault();
@@ -42,7 +66,6 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
     };
 
     const sendQuestionDisabled = disabled || !question.trim();
-
     return (
         <Stack horizontal className={styles.questionInputContainer}>
             <TextField
@@ -62,6 +85,16 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                     onClick={sendQuestion}
                 >
                     <Send28Filled primaryFill="rgba(115, 118, 225, 1)" />
+                </div>
+            </div>
+            <div className={styles.questionInputButtonsContainer}>
+                <div
+                    className={`${styles.questionAudioInputSendButton} ${sendQuestionDisabled ? styles.questionAudioInputSendButtonDisabled : ""}`}
+                    aria-label="Ask question button"
+                    onClick={startRecording}
+                >
+                    <Mic28Filled primaryFill="rgba(115, 118, 225, 1)" />
+                    
                 </div>
             </div>
         </Stack>

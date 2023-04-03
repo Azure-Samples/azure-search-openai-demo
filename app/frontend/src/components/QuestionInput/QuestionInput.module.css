@@ -20,8 +20,20 @@
 
 .questionInputSendButton {
     cursor: pointer;
+    width: 28;
+    height: 28;
 }
 
 .questionInputSendButtonDisabled {
+    opacity: 0.4;
+}
+
+
+.questionAudioInputSendButton{
+    cursor: pointer;
+    size: 0cap;
+}
+
+.questionAudioInputSendButtonDisabled {
     opacity: 0.4;
 }

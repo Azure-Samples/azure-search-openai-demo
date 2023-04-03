@@ -14,6 +14,7 @@ interface Props {
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
+    onSpeechSynthesisClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -25,6 +26,7 @@ export const Answer = ({
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onFollowupQuestionClicked,
+    onSpeechSynthesisClicked,
     showFollowupQuestions
 }: Props) => {
     const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
@@ -52,6 +54,13 @@ export const Answer = ({
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.data_points.length}
+                        />
+                        <IconButton
+                            style={{ color: "black" }}
+                            iconProps={{ iconName: "Volume3" }}
+                            title="Speak anwser"
+                            ariaLabel="Speak anwser"
+                            onClick={() => onSpeechSynthesisClicked()}
                         />
                     </div>
                 </Stack>
