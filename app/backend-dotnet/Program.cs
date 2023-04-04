@@ -40,9 +40,10 @@ builder.Services.Add(ServiceDescriptor.Singleton(searchClient));
 var AZURE_OPENAI_CHATGPT_DEPLOYMENT = builder.Configuration.GetValue<string>("AZURE_OPENAI_CHATGPT_DEPLOYMENT");
 var AZURE_OPENAI_GPT_DEPLOYMENT = builder.Configuration.GetValue<string>("AZURE_OPENAI_GPT_DEPLOYMENT");
 var AZURE_OPENAI_SERVICE = builder.Configuration.GetValue<string>("AZURE_OPENAI_SERVICE");
-var tokenRequestContext = new TokenRequestContext(new[] { "https://cognitiveservices.azure.com/.default" });
-var openAIToken = azureCredential.GetToken(tokenRequestContext);
 var openAIClient = new OpenAIClient(new Uri($"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"), azureCredential);
+
+// semantic kernel doesn't support Azure AAD credential for now
+// so we implement our own textcompletion backend
 var openAIService = new AzureOpenAITextCompletionService(openAIClient, AZURE_OPENAI_GPT_DEPLOYMENT);
 var kernel = Kernel.Builder.Build();
 kernel.Config.AddTextCompletion(AZURE_OPENAI_GPT_DEPLOYMENT, (kernel) => openAIService, true);
