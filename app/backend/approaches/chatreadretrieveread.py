@@ -1,3 +1,4 @@
+from __future__ import annotations
 import openai
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
@@ -48,7 +49,7 @@ Search query:
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, history: 'list[dict]', overrides: dict) -> any:
+    def run(self, history: list[dict], overrides: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
