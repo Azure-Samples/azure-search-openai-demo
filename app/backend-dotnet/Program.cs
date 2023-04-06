@@ -34,7 +34,7 @@ builder.Services.Add(ServiceDescriptor.Singleton(blobContainerClient));
 var AZURE_SEARCH_SERVICE = builder.Configuration.GetValue<string>("AZURE_SEARCH_SERVICE");
 var AZURE_SEARCH_INDEX = builder.Configuration.GetValue<string>("AZURE_SEARCH_INDEX");
 var searchClient = new SearchClient(new Uri($"https://{AZURE_SEARCH_SERVICE}.search.windows.net"), AZURE_SEARCH_INDEX, azureCredential);
-builder.Services.Add(ServiceDescriptor.Singleton(searchClient));
+builder.Services.AddSingleton(searchClient);
 
 // add semantic kernel
 var AZURE_OPENAI_CHATGPT_DEPLOYMENT = builder.Configuration.GetValue<string>("AZURE_OPENAI_CHATGPT_DEPLOYMENT");
