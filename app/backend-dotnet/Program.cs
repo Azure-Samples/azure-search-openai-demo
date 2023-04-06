@@ -28,7 +28,7 @@ builder.Services.Add(ServiceDescriptor.Singleton(blobServiceClient));
 // Add blob container client
 var AZURE_STORAGE_CONTAINER = builder.Configuration.GetValue<string>("AZURE_STORAGE_CONTAINER");
 var blobContainerClient = blobServiceClient.GetBlobContainerClient(AZURE_STORAGE_CONTAINER);
-builder.Services.Add(ServiceDescriptor.Singleton(blobContainerClient));
+builder.Services.AddSingleton(blobContainerClient);
 
 // Add search client
 var AZURE_SEARCH_SERVICE = builder.Configuration.GetValue<string>("AZURE_SEARCH_SERVICE");
