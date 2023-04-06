@@ -1,23 +1,22 @@
-﻿using Microsoft.SemanticKernel.Orchestration;
+﻿namespace Services;
+
+using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SemanticFunctions;
 using System.Text.Json.Serialization;
 
-namespace IMJohn.Services
+internal interface IApproachService
 {
-    public interface IApproachService
+    class Reply
     {
-        class Reply
-        {
-            [JsonPropertyName("data_points")]
-            public string[] DataPoints { get; set; }
+        [JsonPropertyName("data_points")]
+        public string[] DataPoints { get; set; }
 
-            [JsonPropertyName("answer")]
-            public string Answer { get; set; }
+        [JsonPropertyName("answer")]
+        public string Answer { get; set; }
 
-            [JsonPropertyName("thoughts")]
-            public string Thoughts { get; set; }
-        }
-
-        Task<Reply> RunAsync(ContextVariables variable, PromptTemplateConfig config);
+        [JsonPropertyName("thoughts")]
+        public string Thoughts { get; set; }
     }
+
+    Task<Reply> RunAsync(ContextVariables variable, PromptTemplateConfig config);
 }
