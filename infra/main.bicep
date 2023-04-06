@@ -97,9 +97,10 @@ module backend 'core/host/appservice.bicep' = {
     location: location
     tags: union(tags, { 'azd-service-name': 'backend' })
     appServicePlanId: appServicePlan.outputs.id
-    runtimeName: 'python'
-    runtimeVersion: '3.10'
-    scmDoBuildDuringDeployment: true
+    runtimeName: 'dotnetcore'
+    runtimeVersion: '7.0'
+    scmDoBuildDuringDeployment: false
+    enableOryxBuild: false
     managedIdentity: true
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name

@@ -6,7 +6,6 @@ metadata:
 services:
   backend:
     project: ./app/backend
-    language: py
     host: appservice
 hooks:
     postprovision:
