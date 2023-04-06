@@ -47,7 +47,7 @@ var openAIClient = new OpenAIClient(new Uri($"https://{AZURE_OPENAI_SERVICE}.ope
 var openAIService = new AzureOpenAITextCompletionService(openAIClient, AZURE_OPENAI_GPT_DEPLOYMENT);
 var kernel = Kernel.Builder.Build();
 kernel.Config.AddTextCompletion(AZURE_OPENAI_GPT_DEPLOYMENT, (kernel) => openAIService, true);
-builder.Services.Add(ServiceDescriptor.Singleton(kernel));
+builder.Services.AddSingleton(kernel);
 
 // add RetrieveThenReadApproachService
 builder.Services.Add(ServiceDescriptor.Scoped<RetrieveThenReadApproachService, RetrieveThenReadApproachService>());
