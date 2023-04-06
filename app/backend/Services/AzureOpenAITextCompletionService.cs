@@ -4,7 +4,7 @@ using Azure.AI.OpenAI;
 using Microsoft.SemanticKernel.AI;
 using Microsoft.SemanticKernel.AI.TextCompletion;
 
-public class AzureOpenAITextCompletionService : ITextCompletion
+internal sealed class AzureOpenAITextCompletionService : ITextCompletion
 {
     private readonly OpenAIClient _openAIClient;
     private readonly string _deployedModelName;
