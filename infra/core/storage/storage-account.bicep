@@ -15,6 +15,7 @@ param kind string = 'StorageV2'
 param minimumTlsVersion string = 'TLS1_2'
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Disabled'
+param supportsHttpsTrafficOnly bool = true
 param sku object = { name: 'Standard_LRS' }
 
 param containers array = []
@@ -33,6 +34,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     defaultToOAuthAuthentication: defaultToOAuthAuthentication
     dnsEndpointType: dnsEndpointType
     minimumTlsVersion: minimumTlsVersion
+    supportsHttpsTrafficOnly: true
     networkAcls: {
       bypass: 'AzureServices'
       defaultAction: 'Allow'
