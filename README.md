@@ -50,7 +50,7 @@ You can run this repo virtually by using GitHub Codespaces or VS Code Remote Con
 #### Project Initialization
 
 1. Create a new folder and switch to it in the terminal
-1. Run `azd login`
+1. Run `azd auth login`
 1. Run `azd init -t azure-search-openai-demo`
     * For the target location, the regions that currently support the models used in this sample are **East US** or **South Central US**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
 
