@@ -122,3 +122,5 @@ Once in the web app:
 ### Troubleshooting
 
 If you see this error while running `azd deploy`: `read /tmp/azd1992237260/backend_env/lib64: is a directory`, then delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.  This issue is being tracked here: https://github.com/Azure/azure-dev/issues/1237
+
+If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run 'azd deploy'. 
