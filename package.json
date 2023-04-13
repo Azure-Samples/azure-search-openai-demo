@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "microsoft-cognitiveservices-speech-sdk": "^1.26.0",
-    "react-icons": "^4.8.0"
-  }
-}
