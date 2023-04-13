@@ -35,7 +35,7 @@ const Chat = () => {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: AskResponse, speechUrl: string][]>([]);
+    const [answers, setAnswers] = useState<[user: string, response: AskResponse, speechUrl: string | null][]>([]);
     const [runningIndex, setRunningIndex] = useState<number>(-1);
 
     const makeApiRequest = async (question: string) => {
@@ -58,12 +58,12 @@ const Chat = () => {
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions,
-                    autoSpeakAnswer: useAutoSpeakAnswers
+                    autoSpeakAnswers: useAutoSpeakAnswers
                 }
             };
             const result = await chatApi(request);
             const speechUrl = await getSpeechApi(result.answer);
-            setAnswers([...answers, [question, result,speechUrl]]);
+            setAnswers([...answers, [question, result, speechUrl]]);
             if(useAutoSpeakAnswers){
                 startOrStopSynthesis(speechUrl, answers.length);
             }
@@ -127,12 +127,17 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const startOrStopSynthesis = (url: string, index: number) => {
-        if(runningIndex === index && audio!=undefined) {
+    const startOrStopSynthesis = (url: string | null, index: number) => {
+        if(runningIndex === index) {
             audio.pause();
             setRunningIndex(-1);
             return;
         }
+        
+        if(url === null) {
+            return;
+        }
+
         audio = new Audio(url);
         audio.play();
         setRunningIndex(index);

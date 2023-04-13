@@ -28,7 +28,7 @@ const OneShot = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
-    const [answer, setAnswer] = useState<[AskResponse, string]>();
+    const [answer, setAnswer] = useState<[AskResponse, string | null]>();
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
@@ -54,7 +54,7 @@ const OneShot = () => {
                     top: retrieveCount,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
-                    autoSpeakAnswer: useAutoSpeakAnswers
+                    autoSpeakAnswers: useAutoSpeakAnswers
                 }
             };
             const result = await askApi(request);
@@ -127,12 +127,17 @@ const OneShot = () => {
         }
     };
 
-    const startOrStopSynthesis = (url: string) => {
-        if(isSpeaking && audio!=undefined) {
+    const startOrStopSynthesis = (url: string | null) => {
+        if(isSpeaking) {
             audio.pause();
             setIsSpeaking(false);
             return;
         }
+        
+        if(url === null) {
+            return;
+        }
+
         audio = new Audio(url);
         audio.play();
         setIsSpeaking(true);

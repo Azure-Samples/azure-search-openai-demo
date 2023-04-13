@@ -32,7 +32,6 @@ speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY')
 # The language of the voice that speaks.
 speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
 
-
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
 # keys for each service
@@ -122,13 +121,11 @@ def speech():
     ensure_openai_token()
     text = request.json["text"]
     try:
-        audio_config = speechsdk.audio.AudioOutputConfig(filename="./file.wav")
-        speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
-        speech_synthesizer.speak_text_async(text).get()
-        wav = open("./file.wav", "rb")
-        return wav.read()
+        synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+        result = synthesizer.speak_text_async(text).get()
+        return result.audio_data, 200, {"Content-Type": "audio/wav"}
     except Exception as e:
-        logging.exception("Exception in /chat")
+        logging.exception("Exception in /speech")
         return jsonify({"error": str(e)}), 500
 
 
@@ -139,4 +136,4 @@ def ensure_openai_token():
         openai.api_key = openai_token.token
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run()

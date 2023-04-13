@@ -61,8 +61,8 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
-export async function getSpeechApi(text: string): Promise<string> {
-    const url = await fetch("/speech", {
+export async function getSpeechApi(text: string): Promise<string|null> {
+    return await fetch("/speech", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -70,9 +70,14 @@ export async function getSpeechApi(text: string): Promise<string> {
         body: JSON.stringify({
             text: text
         })
-    }).then((response) => response.blob())
-    .then((blob) => URL.createObjectURL(blob));
-    return url;
+    }).then((response) => { 
+        if(response.status == 200){
+            return response.blob();
+        } else {
+            console.log("Unable to get speech");
+            return null;
+        }
+    }).then((blob) => blob ? URL.createObjectURL(blob) : null);
 }
 
 export function getCitationFilePath(citation: string): string {

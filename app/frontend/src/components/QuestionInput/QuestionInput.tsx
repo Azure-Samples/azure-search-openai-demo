@@ -16,7 +16,7 @@ const SpeechRecognition =
 const recognition = new SpeechRecognition();
 recognition.continuous = false;
 recognition.lang = "en-US";
-recognition.interimResults = false;
+recognition.interimResults = true;
 recognition.maxAlternatives = 1;
 
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
@@ -93,7 +93,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
             {!isRecording && 
             (<div className={styles.questionInputButtonsContainer}>
                 <div
-                    className={`${styles.questionAudioInputSendButton} ${sendQuestionDisabled ? styles.questionAudioInputSendButtonDisabled : ""}`}
+                    className={`${styles.questionAudioInputSendButton}`}
                     aria-label="Ask question button"
                     onClick={startRecording}
                 >
@@ -104,7 +104,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
             {isRecording && 
             (<div className={styles.questionInputButtonsContainer}>
                 <div
-                    className={`${styles.questionAudioInputSendButton} ${sendQuestionDisabled ? styles.questionAudioInputSendButtonDisabled : ""}`}
+                    className={`${styles.questionAudioInputSendButton}`}
                     aria-label="Ask question button"
                     onClick={stopRecording}
                 >

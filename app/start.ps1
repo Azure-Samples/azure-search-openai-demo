@@ -29,7 +29,7 @@ Write-Host "Restoring backend python packages"
 Write-Host ""
 
 Set-Location backend
-$venvPythonPath = "C:\Users\sowu\AppData\Local\Programs\Python\Python311\python.exe"
+$venvPythonPath = "./backend_env/scripts/python.exe"
 if (Test-Path -Path "/usr") {
   # fallback to Linux venv path
   $venvPythonPath = "./backend_env/bin/python"
@@ -66,7 +66,7 @@ Write-Host ""
 Set-Location ../backend
 Start-Process http://127.0.0.1:5000
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "./app.py --host=0.0.0.0" -Wait -NoNewWindow 
+Start-Process -FilePath $venvPythonPath -ArgumentList "./app.py" -Wait -NoNewWindow 
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start backend"

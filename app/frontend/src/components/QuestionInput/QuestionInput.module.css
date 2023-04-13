@@ -22,6 +22,10 @@
     cursor: pointer;
 }
 
+.questionAudioInputSendButton {
+    cursor: pointer;
+}
+
 .questionInputSendButtonDisabled {
     opacity: 0.4;
 }
