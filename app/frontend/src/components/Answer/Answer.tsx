@@ -61,8 +61,8 @@ export const Answer = ({
                             (<IconButton
                                 style={{ color: "red" }}
                                 iconProps={{ iconName: "Volume3" }}
-                                title="Speak anwser"
-                                ariaLabel="Speak anwser"
+                                title="Speak answer"
+                                ariaLabel="Speak answer"
                                 onClick={() => onSpeechSynthesisClicked()}
                             />)
                         }
@@ -70,8 +70,8 @@ export const Answer = ({
                             (<IconButton
                                 style={{ color: "black" }}
                                 iconProps={{ iconName: "Volume3" }}
-                                title="Speak anwser"
-                                ariaLabel="Speak anwser"
+                                title="Speak answer"
+                                ariaLabel="Speak answer"
                                 onClick={() => onSpeechSynthesisClicked()}
                             />)
                         }
