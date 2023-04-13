@@ -1,10 +1,8 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { Stack, TextField } from "@fluentui/react";
 import { Mic28Filled, Send28Filled } from "@fluentui/react-icons";
 
 import styles from "./QuestionInput.module.css";
-import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-
 
 interface Props {
     onSend: (question: string) => void;
@@ -13,8 +11,17 @@ interface Props {
     clearOnSend?: boolean;
 }
 
+const SpeechRecognition =
+  (window as any).speechRecognition || (window as any).webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.continuous = false;
+recognition.lang = "en-US";
+recognition.interimResults = false;
+recognition.maxAlternatives = 1;
+
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
     const [question, setQuestion] = useState<string>("");
+    const [isRecording, setIsRecording] = useState<boolean>(false);
 
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
@@ -26,28 +33,6 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         if (clearOnSend) {
             setQuestion("");
         }
-    };
-
-    const startRecording = () => {
-        const speechConfig = sdk.SpeechConfig.fromSubscription(
-            "yoursubscriptionkey",
-            "yourregion"
-          );
-          speechConfig.speechRecognitionLanguage = "zh-CN";
-        var audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
-        var recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
-
-        recognizer.recognizeOnceAsync(
-            (result) => {
-                console.log(result);
-                recognizer.close();
-                setQuestion(result.text);
-            },
-        (err) => {
-            console.log(err);
-            recognizer.close();
-        }
-);
     };
 
     const onEnterPress = (ev: React.KeyboardEvent<Element>) => {
@@ -65,7 +50,25 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         }
     };
 
+    const startRecording = () => {  
+        console.log("start recording");
+        const recognition = new SpeechRecognition();
+        setIsRecording(true);
+        recognition.start();
+        recognition.onresult = (event: { results: { transcript: SetStateAction<string>; }[][]; }) => {
+            setQuestion(event.results[0][0].transcript);
+            setIsRecording(false);
+          };
+    }
+    
+    const stopRecording = () => { 
+        console.log("stop recording"); 
+        recognition.stop();
+        setIsRecording(false);
+    }
+
     const sendQuestionDisabled = disabled || !question.trim();
+
     return (
         <Stack horizontal className={styles.questionInputContainer}>
             <TextField
@@ -87,7 +90,8 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                     <Send28Filled primaryFill="rgba(115, 118, 225, 1)" />
                 </div>
             </div>
-            <div className={styles.questionInputButtonsContainer}>
+            {!isRecording && 
+            (<div className={styles.questionInputButtonsContainer}>
                 <div
                     className={`${styles.questionAudioInputSendButton} ${sendQuestionDisabled ? styles.questionAudioInputSendButtonDisabled : ""}`}
                     aria-label="Ask question button"
@@ -96,7 +100,18 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                     <Mic28Filled primaryFill="rgba(115, 118, 225, 1)" />
                     
                 </div>
-            </div>
+            </div>)}
+            {isRecording && 
+            (<div className={styles.questionInputButtonsContainer}>
+                <div
+                    className={`${styles.questionAudioInputSendButton} ${sendQuestionDisabled ? styles.questionAudioInputSendButtonDisabled : ""}`}
+                    aria-label="Ask question button"
+                    onClick={stopRecording}
+                >
+                    <Mic28Filled primaryFill="rgba(250, 0, 0, 0.7)" />
+                    
+                </div>
+            </div>)}
         </Stack>
     );
 };

@@ -4,7 +4,7 @@ import { SparkleFilled } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
 
-import { chatApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import { chatApi, Approaches, AskResponse, ChatRequest, ChatTurn, getSpeechApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -12,7 +12,8 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import * as sdk from "microsoft-cognitiveservices-speech-sdk";
+
+var audio = new Audio();
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -22,6 +23,7 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useAutoSpeakAnswers, setUseAutoSpeakAnswers] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -33,18 +35,8 @@ const Chat = () => {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
-    var playEnd = true;
-    var speak = false;
-    const player = new sdk.SpeakerAudioDestination();
-    player.onAudioStart = function(_) {
-        speak = true;
-        playEnd = false;
-      }
-    player.onAudioEnd = function (_) {
-        playEnd = true;
-        speak = false;
-      };
+    const [answers, setAnswers] = useState<[user: string, response: AskResponse, speechUrl: string][]>([]);
+    const [runningIndex, setRunningIndex] = useState<number>(-1);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -65,11 +57,16 @@ const Chat = () => {
                     top: retrieveCount,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
-                    suggestFollowupQuestions: useSuggestFollowupQuestions
+                    suggestFollowupQuestions: useSuggestFollowupQuestions,
+                    autoSpeakAnswer: useAutoSpeakAnswers
                 }
             };
             const result = await chatApi(request);
-            setAnswers([...answers, [question, result]]);
+            const speechUrl = await getSpeechApi(result.answer);
+            setAnswers([...answers, [question, result,speechUrl]]);
+            if(useAutoSpeakAnswers){
+                startOrStopSynthesis(speechUrl, answers.length);
+            }
         } catch (e) {
             setError(e);
         } finally {
@@ -111,6 +108,10 @@ const Chat = () => {
         setUseSuggestFollowupQuestions(!!checked);
     };
 
+    const onEnableAutoSpeakAnswersChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseAutoSpeakAnswers(!!checked);
+    };
+
     const onExampleClicked = (example: string) => {
         makeApiRequest(example);
     };
@@ -126,6 +127,20 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const startOrStopSynthesis = (url: string, index: number) => {
+        if(runningIndex === index && audio!=undefined) {
+            audio.pause();
+            setRunningIndex(-1);
+            return;
+        }
+        audio = new Audio(url);
+        audio.play();
+        setRunningIndex(index);
+        audio.addEventListener('ended', () => {
+            setRunningIndex(-1);
+        });
+    };
+
     const onToggleTab = (tab: AnalysisPanelTabs, index: number) => {
         if (activeAnalysisPanelTab === tab && selectedAnswer === index) {
             setActiveAnalysisPanelTab(undefined);
@@ -134,50 +149,6 @@ const Chat = () => {
         }
 
         setSelectedAnswer(index);
-    };
-    const startSynthesis = (message: string) => {
-
-        // using cognitive services speech sdk to speak the message
-        // https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/get-started-speech-to-text?tabs=script%2Cwindowsinstall&pivots=programming-language-javascript
-        var speechConfig = sdk.SpeechConfig.fromSubscription("yoursubscriptionkey", "yourregion");
-        speechConfig.speechSynthesisVoiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoyiNeural)";
-        // var audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
-        
-        var audioConfig  = sdk.AudioConfig.fromSpeakerOutput(player);
-        var synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-        synthesizer.SynthesisCanceled = function (s, e) {
-            const cancellationDetails = sdk.CancellationDetails.fromResult(e.result);
-            let str = "(cancel) Reason: " + sdk.CancellationReason[cancellationDetails.reason];
-            if (cancellationDetails.reason === sdk.CancellationReason.Error) {
-              str += ": " + e.result.errorDetails;
-            }
-            console.log(e);
-          };
-        synthesizer.speakTextAsync(message,
-            function (result) {
-          if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
-            console.log("synthesis finished.");
-          } else {
-            console.error("Speech synthesis canceled, " + result.errorDetails +
-                "\nDid you set the speech resource key and region values?");
-          }
-          synthesizer.close();
-        },
-            function (err) {
-          console.trace("err - " + err);
-          synthesizer.close();
-        });
-    };
-
-    const stopSynthesis = () => {
-        // Stop playing the audio
-        player.pause();
-        speak = false;
-    };
-    const resumeSynthesis = () => {
-        // Stop playing the audio
-        player.resume();
-        speak = true;
     };
 
     return (
@@ -204,11 +175,12 @@ const Chat = () => {
                                         <Answer
                                             key={index}
                                             answer={answer[1]}
+                                            isSpeaking = {runningIndex === index}
                                             isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
                                             onCitationClicked={c => onShowCitation(c, index)}
                                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                            onSpeechSynthesisClicked={() => speak===false ? (playEnd===true? startSynthesis(answer[1].answer) : resumeSynthesis()):stopSynthesis()}
+                                            onSpeechSynthesisClicked={() => startOrStopSynthesis(answer[2], index)}
                                             onFollowupQuestionClicked={q => makeApiRequest(q)}
                                             showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                         />
@@ -301,6 +273,12 @@ const Chat = () => {
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useAutoSpeakAnswers}
+                        label="Automatically speak answers"
+                        onChange={onEnableAutoSpeakAnswersChange}
                     />
                 </Panel>
             </div>

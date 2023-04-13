@@ -61,6 +61,20 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
+export async function getSpeechApi(text: string): Promise<string> {
+    const url = await fetch("/speech", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            text: text
+        })
+    }).then((response) => response.blob())
+    .then((blob) => URL.createObjectURL(blob));
+    return url;
+}
+
 export function getCitationFilePath(citation: string): string {
     return `/content/${citation}`;
 }

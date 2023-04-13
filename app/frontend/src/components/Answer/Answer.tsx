@@ -11,6 +11,7 @@ import { AnswerIcon } from "./AnswerIcon";
 interface Props {
     answer: AskResponse;
     isSelected?: boolean;
+    isSpeaking?: boolean;
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
@@ -22,11 +23,12 @@ interface Props {
 export const Answer = ({
     answer,
     isSelected,
+    isSpeaking,
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
-    onFollowupQuestionClicked,
     onSpeechSynthesisClicked,
+    onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
     const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
@@ -55,13 +57,24 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.data_points.length}
                         />
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "Volume3" }}
-                            title="Speak anwser"
-                            ariaLabel="Speak anwser"
-                            onClick={() => onSpeechSynthesisClicked()}
-                        />
+                        {isSpeaking && 
+                            (<IconButton
+                                style={{ color: "red" }}
+                                iconProps={{ iconName: "Volume3" }}
+                                title="Speak anwser"
+                                ariaLabel="Speak anwser"
+                                onClick={() => onSpeechSynthesisClicked()}
+                            />)
+                        }
+                        {!isSpeaking && 
+                            (<IconButton
+                                style={{ color: "black" }}
+                                iconProps={{ iconName: "Volume3" }}
+                                title="Speak anwser"
+                                ariaLabel="Speak anwser"
+                                onClick={() => onSpeechSynthesisClicked()}
+                            />)
+                        }
                     </div>
                 </Stack>
             </Stack.Item>

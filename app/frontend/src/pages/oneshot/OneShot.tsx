@@ -9,7 +9,7 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-import * as sdk from "microsoft-cognitiveservices-speech-sdk";
+
 const OneShot = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [approach, setApproach] = useState<Approaches>(Approaches.RetrieveThenRead);
@@ -128,30 +128,6 @@ const OneShot = () => {
             text: "Read-Decompose-Ask"
         }
     ];
-    const startSynthesis = (message: string) => {
-        // using cognitive services speech sdk to speak the message
-        // https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/get-started-speech-to-text?tabs=script%2Cwindowsinstall&pivots=programming-language-javascript
-        var speechConfig = sdk.SpeechConfig.fromSubscription("yoursubscriptionkey", "yourregion");
-        speechConfig.speechSynthesisVoiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoyiNeural)";
-        // var audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
-        var player = new sdk.SpeakerAudioDestination();
-        var audioConfig  = sdk.AudioConfig.fromSpeakerOutput(player);
-        var synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-        synthesizer.speakTextAsync(message,
-            function (result) {
-          if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
-            console.log("synthesis finished.");
-          } else {
-            console.error("Speech synthesis canceled, " + result.errorDetails +
-                "\nDid you set the speech resource key and region values?");
-          }
-          synthesizer.close();
-        },
-            function (err) {
-          console.trace("err - " + err);
-          synthesizer.close();
-        });
-    };
 
     return (
         <div className={styles.oneshotContainer}>
@@ -175,8 +151,8 @@ const OneShot = () => {
                             answer={answer}
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
-                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)} 
-                            onSpeechSynthesisClicked={() => startSynthesis(answer.answer)}                           
+                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
+                            onSpeechSynthesisClicked={() => {}}
                         />
                     </div>
                 )}

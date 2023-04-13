@@ -11,6 +11,7 @@ from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
+import azure.cognitiveservices.speech as speechsdk
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -24,6 +25,13 @@ AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMEN
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
+
+# This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
+speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY'), region=os.environ.get('SPEECH_REGION'))
+
+# The language of the voice that speaks.
+speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
+
 
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
@@ -109,6 +117,21 @@ def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
+@app.route("/speech", methods=["POST"])
+def speech():
+    ensure_openai_token()
+    text = request.json["text"]
+    try:
+        audio_config = speechsdk.audio.AudioOutputConfig(filename="./file.wav")
+        speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+        speech_synthesizer.speak_text_async(text).get()
+        wav = open("./file.wav", "rb")
+        return wav.read()
+    except Exception as e:
+        logging.exception("Exception in /chat")
+        return jsonify({"error": str(e)}), 500
+
+
 def ensure_openai_token():
     global openai_token
     if openai_token.expires_on < int(time.time()) - 60:
@@ -116,4 +139,4 @@ def ensure_openai_token():
         openai.api_key = openai_token.token
     
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
