@@ -6,7 +6,7 @@
 <!-- Mark one with an "x". -->
 ```
 [ ] Yes
-[ ] No
+[x] No
 ```
 
 ## Pull Request Type
@@ -18,7 +18,7 @@ What kind of change does this Pull Request introduce?
 [ ] Feature
 [ ] Code style update (formatting, local variables)
 [ ] Refactoring (no functional changes, no api changes)
-[ ] Documentation content changes
+[x] Documentation content changes
 [ ] Other... Please describe:
 ```
 
