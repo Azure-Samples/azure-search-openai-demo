@@ -74,7 +74,7 @@ export async function getSpeechApi(text: string): Promise<string|null> {
         if(response.status == 200){
             return response.blob();
         } else {
-            console.log("Unable to get speech");
+            console.error("Unable to get speech synthesis.");
             return null;
         }
     }).then((blob) => blob ? URL.createObjectURL(blob) : null);

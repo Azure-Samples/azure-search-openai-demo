@@ -14,7 +14,7 @@ interface Props {
 const SpeechRecognition =
   (window as any).speechRecognition || (window as any).webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
-recognition.continuous = false;
+recognition.continuous = true;
 recognition.lang = "en-US";
 recognition.interimResults = true;
 recognition.maxAlternatives = 1;

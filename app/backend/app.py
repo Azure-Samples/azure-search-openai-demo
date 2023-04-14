@@ -26,11 +26,8 @@ KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
 
-# Requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
-speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY'), region=os.environ.get('SPEECH_REGION'))
-
-# The language of the voice that speaks.
-speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
+SPEECH_KEY = os.environ.get("SPEECH_KE")
+SPEECH_REGION = os.environ.get("SPEECH_REGION")
 
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
@@ -121,6 +118,8 @@ def speech():
     ensure_openai_token()
     text = request.json["text"]
     try:
+        speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
+        speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
         return result.audio_data, 200, {"Content-Type": "audio/wav"}
@@ -135,4 +134,4 @@ def ensure_openai_token():
         openai.api_key = openai_token.token
     
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
