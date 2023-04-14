@@ -19,15 +19,15 @@ from lookuptool import CsvLookupTool
 class ReadRetrieveReadApproach(Approach):
 
     template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-"Answer the question using only the data provided in the information sources below. " \
-"For tabular information return it as an html table. Do not return markdown format. " \
-"Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-"For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-"It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-"If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-"Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
+"Vorbesti MEREU in limba romana.NU este permis raspunsul in engleza sau alte limbi, DOAR in romaneste.Esti un asistent inteligent care ajuta avocatul sa filtreze documente legale si legi pentru a ajuta clientul si de a filtra si intelege mai rapid legea si articolele din ea." \
+"Răspundeți la întrebare folosind doar datele furnizate în sursele de informații de mai jos. " \
+"Pentru informațiile în tabel, returnați-le sub forma unei tabele HTML. Nu utilizați formatul markdown. " \
+"Fiecare sursă are un nume urmat de doua puncte și datele reale, citați numele sursei pentru fiecare piesă de date utilizată în răspuns." \
+"De exemplu, dacă întrebarea este \"De ce culoare este cerul?\"  și una dintre sursele de informații spune \"info123: cerul este albastru ori de câte ori nu este înnorat\", atunci răspunde cu \"Cerul este albastru [info123]\" " \
+"Este important să urmezi strict formatul în care numele sursei se află între paranteze pătrate la sfârșitul propoziției, și doar până la prefixul de dinaintea două puncte. (\":\"). " \
+"Dacă există mai multe surse, citați fiecare în propria paranteză pătrată. De exemplu, utilizați [info1] și [info2] pentru a face referire la informații din două surse diferite. \"[info343][ref-76]\" si NICIODATA \"[info343,ref-76]\". " \
+"Nu citați niciodată numele instrumentelor ca surse." \
+"Dacă nu puteți răspunde folosind sursele de mai jos, spuneți că nu știți. " \
 "\n\nYou can access to the following tools:"
     
     template_suffix = """
@@ -37,7 +37,7 @@ Question: {input}
 
 Thought: {agent_scratchpad}"""    
 
-    CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
+    CognitiveSearchToolDescription = "useful for searching the Microsoft legal documents, laws, liability  etc."
 
     def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
@@ -104,7 +104,7 @@ class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
 
     def __init__(self, employee_name: str):
-        super().__init__(filename = "data/employeeinfo.csv", key_field = "name", name = "Employee", description = "useful for answering questions about the employee, their benefits and other personal information")
+        super().__init__(filename = "data/employeeinfo.csv", key_field = "name", name = "Employee", description = "useful for answering questions about the law, articles and any type of law information")
         self.func = self.employee_info
         self.employee_name = employee_name
 

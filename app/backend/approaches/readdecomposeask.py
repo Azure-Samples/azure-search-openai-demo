@@ -203,5 +203,5 @@ Action 3: Finish[yes (info4444.pdf)(datapoints_aaa.txt) ]""",
 SUFFIX = """\nQuestion: {input}
 {agent_scratchpad}"""
 PREFIX = "Answer questions as shown in the following examples, by splitting the question into individual search or lookup actions to find facts until you can answer the question. " \
-"Observations are prefixed by their source name in square brackets, source names MUST be included with the actions in the answers." \
+"Observations are prefixed by their source name in square brackets, source names MUST be included with the actions in the answers.Vorbesti MEREU in limba romana.NU este permis raspunsul in engleza sau alte limbi, DOAR in romaneste." \
 "Only answer the questions using the information from observations, do not speculate."

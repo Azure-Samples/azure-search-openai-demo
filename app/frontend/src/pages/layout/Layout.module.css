@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #222222;
+    background-color: #000f1e;
     color: #f2f2f2;
 }
 
@@ -20,7 +20,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    /* margin-right: 40px; */
     color: #f2f2f2;
     text-decoration: none;
 }
@@ -29,7 +29,7 @@
     height: 40px;
 }
 
-.headerTitle {
+.title {
     margin-left: 12px;
     font-weight: 600;
 }
@@ -55,8 +55,12 @@
 }
 
 .headerNavPageLinkActive {
-    color: #f2f2f2;
+    color: #050505;
     text-decoration: none;
+    border-radius: 86px;
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #fc5048);
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 .headerNavLeftMargin {
@@ -75,4 +79,56 @@
 
 .githubLogo {
     height: 20px;
+}
+
+.testbutton {
+    width: 150px;
+    height: 50px;
+    border-radius: 86px;
+    position: relative;
+    left: calc(50% - 75px);
+    top: calc(50% - 25px);
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+    cursor: pointer;
+    line-height: 8px;
+}
+
+.testbutton:before {
+    content: "";
+    z-index: 1;
+    position: absolute;
+    display: block;
+    width: 80%;
+    height: 70%;
+    top: 15%;
+    left: 10%;
+    transition: 0.3s opacity ease-in-out;
+    filter: blur(15px);
+    opacity: 0;
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+}
+
+.testbutton:hover:before {
+    opacity: 1;
+    transition: 0.3s opacity ease-in-out;
+    filter: blur(25px);
+    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+}
+
+.testbutton:after {
+    content: "CLICK ME!";
+    text-align: center;
+    line-height: 40px;
+    font-size: 18px;
+    color: rgba(235, 235, 235, 1);
+    font-weight: bold;
+    z-index: 5;
+    position: absolute;
+    display: block;
+    border-radius: 180px;
+    width: 92%;
+    height: 80%;
+    top: 10%;
+    left: 4%;
+    background-color: rgb(19, 20, 22);
 }
