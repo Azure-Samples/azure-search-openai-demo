@@ -22,7 +22,7 @@ const OneShot = () => {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
-    const [useAutoSpeakAnswers, setUseAutoSpeakAnswers] = useState<boolean>(false);
+    const [useAutoSpeakAnswers, setUseAutoSpeakAnswers] = useState<boolean>(true);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -61,7 +61,7 @@ const OneShot = () => {
             const speechUrl = await getSpeechApi(result.answer);
             setAnswer([result, speechUrl]);
             if(useAutoSpeakAnswers) {
-                startOrStopSynthesis(speechUrl);
+                startSynthesis(speechUrl);
             }
         } catch (e) {
             setError(e);
@@ -127,11 +127,10 @@ const OneShot = () => {
         }
     };
 
-    const startOrStopSynthesis = (url: string | null) => {
+    const startSynthesis = (url: string | null) => {
         if(isSpeaking) {
             audio.pause();
             setIsSpeaking(false);
-            return;
         }
         
         if(url === null) {
@@ -144,6 +143,11 @@ const OneShot = () => {
         audio.addEventListener('ended', () => {
             setIsSpeaking(false);
         });
+    };
+
+    const stopSynthesis = () => {
+        audio.pause();
+        setIsSpeaking(false);
     };
 
     const approaches: IChoiceGroupOption[] = [
@@ -185,7 +189,7 @@ const OneShot = () => {
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
-                            onSpeechSynthesisClicked={() => startOrStopSynthesis(answer[1])}
+                            onSpeechSynthesisClicked={() => isSpeaking? stopSynthesis(): startSynthesis(answer[1])}
                         />
                     </div>
                 )}

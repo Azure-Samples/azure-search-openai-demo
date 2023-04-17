@@ -59,6 +59,9 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
             setQuestion(event.results[0][0].transcript);
             setIsRecording(false);
           };
+        recognition.onend = () => {
+            setIsRecording(false);
+        };
     }
     
     const stopRecording = () => { 

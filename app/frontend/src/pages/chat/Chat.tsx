@@ -23,7 +23,7 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
-    const [useAutoSpeakAnswers, setUseAutoSpeakAnswers] = useState<boolean>(false);
+    const [useAutoSpeakAnswers, setUseAutoSpeakAnswers] = useState<boolean>(true);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -134,6 +134,11 @@ const Chat = () => {
             return;
         }
         
+        if(runningIndex !== -1) {
+            audio.pause();
+            setRunningIndex(-1);
+        }
+
         if(url === null) {
             return;
         }
