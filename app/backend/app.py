@@ -120,9 +120,10 @@ def speech():
     try:
         speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
         speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
+        speech_config.speech_synthesis_output_format = speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
-        return result.audio_data, 200, {"Content-Type": "audio/wav"}
+        return result.audio_data, 200, {"Content-Type": "audio/mp3"}
     except Exception as e:
         logging.exception("Exception in /speech")
         return jsonify({"error": str(e)}), 500
