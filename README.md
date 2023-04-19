@@ -30,7 +30,8 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - [Azure Developer CLI](https://aka.ms/azure-dev/install)
 - [Python 3+](https://www.python.org/downloads/)
     - **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
-    - **Important**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.    
+    - **Important**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`. 
+    - **Important**: Please note that `azd up` would look for py launcher, make sure py launcher is the environment path. After successful installation of Python (with py launcher selected in the installer), put the location (i.e., C:\Windows) in the system path environment variable.
 - [Node.js](https://nodejs.org/en/download/)
 - [Git](https://git-scm.com/downloads)
 - [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
