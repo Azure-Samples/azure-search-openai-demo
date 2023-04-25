@@ -1,33 +1,22 @@
 <!--
 IF SUFFICIENT INFORMATION IS NOT PROVIDED VIA THE FOLLOWING TEMPLATE THE ISSUE MIGHT BE CLOSED WITHOUT FURTHER CONSIDERATION OR INVESTIGATION
 -->
-> Please provide us with the following information:
-> ---------------------------------------------------------------
-
 ### This issue is for a: (mark with an `x`)
 ```
-- [ ] bug report -> please search issues before submitting
-- [ ] feature request
-- [ ] documentation issue or request
-- [ ] regression (a behavior that used to work and stopped in a new release)
+[ ] bug report -> please search issues before submitting
+[ ] feature request
+[ ] documentation issue or request
+[ ] regression (a behavior that used to work and stopped in a new release)
 ```
 
-### Minimal steps to reproduce
+### Description
+Please include any relevant information, including repro steps for a bug (with log messages, version, OS, etc..)
 >
-
-### Any log messages given by the failure
->
-
 ### Expected/desired behavior
->
+Please include any acceptance criteria here (should look like tasks to complete for the issue to be resolved)
 
-### OS and Version?
-> Windows 7, 8 or 10. Linux (which distribution). macOS (Yosemite? El Capitan? Sierra?)
-
-### Versions
+- [ ] 
 >
 
 ### Mention any other details that might be useful
-
-> ---------------------------------------------------------------
-> Thanks! We'll be in touch soon.
+> 
