@@ -3,6 +3,8 @@ from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from approaches.approach import Approach
 from text import nonewlines
+from typing import List
+
 
 # Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
 # top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
@@ -48,7 +50,7 @@ Search query:
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, history: list[dict], overrides: dict) -> any:
+    def run(self, history: List[dict], overrides: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
