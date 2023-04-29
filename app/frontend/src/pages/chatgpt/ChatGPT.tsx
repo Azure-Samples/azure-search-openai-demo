@@ -4,7 +4,7 @@ import { SparkleFilled } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
 
-import { chatApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import { chatGPTApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -47,7 +47,8 @@ const Chat = () => {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
-                approach: Approaches.ReadRetrieveRead,
+                // Change the approach here to route to GPT model
+                approach: Approaches.AskChatGPT,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -57,7 +58,7 @@ const Chat = () => {
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 }
             };
-            const result = await chatApi(request);
+            const result = await chatGPTApi(request);
             setAnswers([...answers, [question, result]]);
         } catch (e) {
             setError(e);
@@ -181,12 +182,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <QuestionInput
-                            clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
-                            disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
-                        />
+                        <QuestionInput clearOnSend placeholder="Type a message here." disabled={isLoading} onSend={question => makeApiRequest(question)} />
                     </div>
                 </div>
 

@@ -10,6 +10,7 @@ from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.chatgptread import ChatGPTReadApproach
 from azure.storage.blob import BlobServiceClient
 
 # Replace these with your own values, either in environment variables or directly here
@@ -60,7 +61,11 @@ ask_approaches = {
 }
 
 chat_approaches = {
-    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)  
+}
+## BDL: added anothera set of approaches for vanilla chatgpt
+chatgpt_approaches = {
+    'chatgpt': ChatGPTReadApproach(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
 }
 
 app = Flask(__name__)
@@ -94,7 +99,8 @@ def ask():
     except Exception as e:
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
-    
+
+## BDL: this is the orignal chat function
 @app.route("/chat", methods=["POST"])
 def chat():
     ensure_openai_token()
@@ -107,6 +113,21 @@ def chat():
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
+        return jsonify({"error": str(e)}), 500
+
+## BDL: this is the new chatGPT function adding
+@app.route("/chatgpt", methods=["POST"])
+def chatgpt():
+    ensure_openai_token()
+    approach = request.json["approach"]
+    try:
+        impl = chatgpt_approaches.get(approach)
+        if not impl:
+            return jsonify({"error": "unknown approach"}), 400
+        r = impl.run(request.json["history"], request.json.get("overrides") or {})
+        return jsonify(r)
+    except Exception as e:
+        logging.exception("Exception in /chatgpt")
         return jsonify({"error": str(e)}), 500
 
 def ensure_openai_token():

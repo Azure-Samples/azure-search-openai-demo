@@ -13,8 +13,8 @@ const EXAMPLES: ExampleModel[] = [
         value: "Explain quantum computing in simple terms"
     },
     {
-        text: "Write a rock anthem about how working from home has its perks and drawbacks.",
-        value: "Write a rock anthem about how working from home has its perks and drawbacks."
+        text: "Can you write a haiku about working late on a friday night?",
+        value: "Can you write a haiku about working late on a friday night?"
     },
     {
         text: "How do I make an HTTP request in Python?",
