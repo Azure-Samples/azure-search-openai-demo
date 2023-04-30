@@ -42,6 +42,11 @@ param gptModelName string = 'text-davinci-003'
 param chatGptDeploymentName string = 'chat'
 param chatGptModelName string = 'gpt-35-turbo'
 
+param cosmosdbAccountName string = ''
+param cosmosdbResourceGroupName string = ''
+param cosmosdbResourceGroupLocation string = location
+// param cosmosdbContainerName string = 'content'
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -70,6 +75,10 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
+}
+
+resource cosmosdbResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(cosmosdbResourceGroupName)) {
+  name: !empty(cosmosdbResourceGroupName) ? cosmosdbResourceGroupName : resourceGroup.name
 }
 
 // Create an App Service Plan to group applications under the same payment plan and SKU
@@ -207,6 +216,16 @@ module storage 'core/storage/storage-account.bicep' = {
   }
 }
 
+module cosmosdb 'core/cosmos/cosmos-db.bicep' = {
+  name: 'cosmosdb'
+  scope: cosmosdbResourceGroup
+  params: {
+    name: !empty(cosmosdbAccountName) ? cosmosdbAccountName : '${abbrs.documentDBDatabaseAccounts}${resourceToken}'
+    location: cosmosdbResourceGroupLocation
+    tags: tags
+  }
+}
+
 // USER ROLES
 module openAiRoleUser 'core/security/role.bicep' = {
   scope: openAiResourceGroup
@@ -318,5 +337,7 @@ output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.n
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_COSMOSDB_ACCOUNT string = cosmosdb.outputs.name
 
 output BACKEND_URI string = backend.outputs.uri

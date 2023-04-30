@@ -2,7 +2,7 @@
 
 name: azure-search-openai-demo
 metadata:
-  template: azure-search-openai-demo@0.0.2-beta
+  template: chatgpt-on-azure@0.0.1-alpha
 services:
   backend:
     project: ./app/backend
@@ -22,7 +22,7 @@ services:
           continueOnError: false
 hooks:
     postprovision:
-      windows:
+      windows:az
         shell: pwsh
         run: ./scripts/prepdocs.ps1
         interactive: true
