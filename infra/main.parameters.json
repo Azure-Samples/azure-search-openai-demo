@@ -47,5 +47,8 @@
     "keyVaultResourceName":{
         "value": "${AZURE_KEY_VAULT_RESOURCE_NAME}"
     },
+    "cosmosdbAccountName": {
+      "value": "${AZURE_COSMOSDB_ACCOUNT_NAME}"
+    }
   }
 }
