@@ -10,7 +10,7 @@ from text import nonewlines
 class RetrieveThenReadApproach(Approach):
 
     template = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
+"You are an SAP On Azure CoPilot and Advisor helping SAP Customers with their SAP on Azure related questions. " + \
 "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
 "Answer the following question using only the data provided in the sources below. " + \
 "For tabular information return it as an html table. Do not return markdown format. "  + \
@@ -19,7 +19,7 @@ class RetrieveThenReadApproach(Approach):
 """
 
 ###
-Question: 'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+Question: '?'
 
 Sources:
 info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.

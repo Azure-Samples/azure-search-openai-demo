@@ -18,9 +18,12 @@ resource account 'Microsoft.CognitiveServices/accounts@2022-10-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    networkAcls:{
+    defaultAction: 'Allow'
+    }
+    }
+    sku: sku
   }
-  sku: sku
-}
 
 @batchSize(1)
 resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2022-10-01' = [for deployment in deployments: {
