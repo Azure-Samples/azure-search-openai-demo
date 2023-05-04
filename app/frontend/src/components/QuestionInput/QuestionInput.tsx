@@ -28,7 +28,6 @@ catch(err){
     recognition = null;
 }
 
-
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
     const [question, setQuestion] = useState<string>("");
     const [isRecording, setIsRecording] = useState<boolean>(false);
