@@ -11,13 +11,23 @@ interface Props {
     clearOnSend?: boolean;
 }
 
+var recognition: { continuous: boolean; lang: string; interimResults: boolean; maxAlternatives: number; start: () => void; onresult: (event: { results: { transcript: SetStateAction<string>; }[][]; }) => void; onend: () => void; stop: () => void; } | null = null;
 const SpeechRecognition =
-  (window as any).speechRecognition || (window as any).webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-recognition.continuous = true;
-recognition.lang = "en-US";
-recognition.interimResults = true;
-recognition.maxAlternatives = 1;
+    (window as any).speechRecognition || (window as any).webkitSpeechRecognition;
+try{
+    recognition = new SpeechRecognition();    
+    if(recognition != null){
+        recognition.continuous = true;
+        recognition.lang = "en-US";
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+    }
+}
+catch(err){
+    console.log("SpeechRecognition not supported");
+    recognition = null;
+}
+
 
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
     const [question, setQuestion] = useState<string>("");
@@ -50,9 +60,12 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         }
     };
 
-    const startRecording = () => {  
+    const startRecording = () => {
+        if(recognition == null){
+            console.log("SpeechRecognition not supported");
+            return;
+        }  
         console.log("start recording");
-        const recognition = new SpeechRecognition();
         setIsRecording(true);
         recognition.start();
         recognition.onresult = (event: { results: { transcript: SetStateAction<string>; }[][]; }) => {
@@ -65,6 +78,10 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
     }
     
     const stopRecording = () => { 
+        if(recognition == null){
+            console.log("SpeechRecognition not supported");
+            return;
+        }
         console.log("stop recording"); 
         recognition.stop();
         setIsRecording(false);
