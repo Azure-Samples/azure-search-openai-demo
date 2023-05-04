@@ -11,13 +11,13 @@ const EXAMPLES: ExampleModel[] = [
     {
         //   text: "What is included in my Northwind Health Plus plan that is not in standard?",
         //  value: "What is included in my Northwind Health Plus plan that is not in standard?"
-        text: "What are supported Azure VM SKUs with 2TB memory for SAP HANA?",
-        value: "What are supported Azure VM SKUs with 2TB memory for SAP HANA?"
+        text: "What is Azure Center for SAP Solutions?",
+        value: "What is Azure Center for SAP Solutions?"
     },
-    { text: "How do I deploy SAP S/4 HANA system in HA configuration?", value: "How do I deploy SAP S/4 HANA system in HA configuration" },
+    { text: "What are the steps to deploy RHEL PCS Cluster?", value: "What are the steps to deploy RHEL PCS Cluster?" },
     {
-        text: "Future: What happen to SP1 system last night between 1:00AM and 4AM system time?",
-        value: "Future: What happen to SP1 system last night between 1:00AM and 4AM system time?"
+        text: "What happen to PP1 system between 1:00 AM and 4:30 AM CST?",
+        value: "What happen to PP1 system between 1:00 AM and 4:30 AM CST?"
     }
 ];
 
