@@ -55,6 +55,6 @@
     },
     "speechRegion": {
       "value": "${SPEECH_REGION}"
-    },
+    }
   }
 }
