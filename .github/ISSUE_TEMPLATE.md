@@ -14,5 +14,7 @@ Please include any relevant information, including repro steps for a bug (with l
 Please include any acceptance criteria here (should look like tasks to complete for the issue to be resolved)
 - [ ] 
 
+### Design/Wiki Reference
+Please add URLs to the design/wiki. Please note that README should be updated with relevant information as part of feature development to be code complete.
 ### Mention any other details that might be useful
 > 
