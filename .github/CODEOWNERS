@@ -1,0 +1,5 @@
+# Codeowners for chatgpt-on-azure
+
+# Global owners of repo
+# One of these owners needs to approve every pull request
+*       @bdleavitt @kjpap
