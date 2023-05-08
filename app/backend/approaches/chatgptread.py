@@ -19,6 +19,7 @@ class ChatGPTReadApproach(Approach):
         else:
             system_prompt = prompt_override
         
+        ## Use the "ChatCompletions" format for the input prompt messages.
         messages = [
             {"role": "system", "content": f"{system_prompt}"},
         ]
