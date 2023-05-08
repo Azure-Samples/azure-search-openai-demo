@@ -18,6 +18,10 @@ resource account 'Microsoft.CognitiveServices/accounts@2022-10-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    // added this because workflow validation throws error and says it's required
+    networkAcls: {
+      defaultAction: 'Allow'
+    }  
   }
   sku: sku
 }

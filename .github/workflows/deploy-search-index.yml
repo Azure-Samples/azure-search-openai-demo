@@ -1,0 +1,69 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to update search index Only
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: deploy.search.index.only
+on:
+  workflow_dispatch:
+    inputs:
+      deployToDev:
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      deployToQA:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      deployToProd:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      logLevel:
+        description: 'Log level'     
+        required: false
+        default: 'warning' 
+        type: choice
+        options:
+          - info
+          - warning
+          - debug 
+
+jobs:
+# ------------------------------------------------------------------------------------------------------------------------
+  update-search-dev:
+    if: inputs.deployToDev == 'true'
+    name: DEV Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+
+# ------------------------------------------------------------------------------------------------------------------------
+  update-search-qa:
+    if: inputs.deployToQA == 'true'
+    name: QA Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+
+# ------------------------------------------------------------------------------------------------------------------------
+  update-search-prod:
+    if: inputs.deployToProd == 'true'
+    name: PROD Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'
+    

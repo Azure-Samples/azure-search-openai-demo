@@ -1,0 +1,118 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Reusable Called Workflow to deploy an already built Website App
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# See: https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-azure/deploying-python-to-azure-app-service
+# See: https://github.com/Azure/actions-workflow-samples/blob/master/AppService/python-webapp-on-azure.yml#L14
+# ------------------------------------------------------------------------------------------------------------------------
+name: template.deploy.website
+run-name: Deploy Website App
+on:
+  workflow_call:
+    inputs:
+      envCode:
+        required: true
+        type: string
+      deployDirectory:
+        required: false
+        type: string
+        default: './app/backend'
+      listFilesAfterCheckout:
+        required: false
+        type: boolean
+        default: false
+      listFilesBeforeDeploy:
+        required: false
+        type: boolean
+        default: false
+      securityScan:
+        required: false
+        type: string
+        default: 'false'
+    
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  scan-code:
+    if: inputs.securityScan == 'true'
+    name: Scan Source Code
+    uses: ./.github/workflows/template-security-scan.yml
+
+# ------------------------------------------------------------------------------------------------------------------------
+  deploy:
+    name: Deploy ${{ inputs.envCode }} Website
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.envCode }}
+    env:
+      PYTHON_VERSION: '3.8' 
+      AZURE_STORAGE_ACCOUNT: 'st${{ vars.RESOURCE_TOKEN }}'
+      AZURE_STORAGE_CONTAINER: 'content'
+      AZURE_SEARCH_SERVICE: 'gptkb-${{ vars.RESOURCE_TOKEN }}'
+      AZURE_SEARCH_INDEX: 'gptkbindex'
+      AZURE_FORMRECOGNIZER_SERVICE: 'cog-fr-${{ vars.RESOURCE_TOKEN }}'
+      AZURE_BACKEND_SERVICE: 'app-backend-${{ vars.RESOURCE_TOKEN }}'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: List Files
+        if: inputs.listFilesAfterCheckout == true
+        run: 
+          tree ${{ env.GITHUB_ACTION_PATH }}
+        continue-on-error: true
+
+      - name: Update Conditional Variable
+        id: vars
+        shell: bash
+        run: |
+          echo "BACKEND_SERVICE_NAME=${{ vars.BACKEND_SERVICE_NAME }}"
+          echo "AZURE_BACKEND_SERVICE=${{ env.AZURE_BACKEND_SERVICE }}"
+          if [[ '${{ vars.BACKEND_SERVICE_NAME }}' == '' ]]; then readonly backendService=${{ env.AZURE_BACKEND_SERVICE }}; else readonly backendService=${{ vars.BACKEND_SERVICE_NAME }}; fi
+          echo "new backendService=$backendService"
+          echo "backendService=$backendService" >> $GITHUB_OUTPUT
+
+      - name: Display Variables
+        run: |-
+          echo "environmentName=${{ inputs.envCode }}"
+          echo "BACKEND_SERVICE_NAME=${{ vars.BACKEND_SERVICE_NAME }}"
+          echo "RESOURCE_TOKEN=${{ vars.RESOURCE_TOKEN }}"
+          echo "AZURE_BACKEND_SERVICE=${{ env.AZURE_BACKEND_SERVICE }}"
+          echo "backendService=${{ steps.vars.outputs.backendService }}"
+          echo "package=${{ inputs.deployDirectory  }}"
+        continue-on-error: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create Python Environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r ./app/backend/requirements.txt
+
+      - name: Build website (Pre-Package Hooks)
+        run:  cd ./app/frontend;npm install;npm run build
+
+      - name: Log into Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: List Files
+        if: inputs.listFilesBeforeDeploy == true
+        run: 
+          tree ${{ env.GITHUB_ACTION_PATH }}
+        continue-on-error: true
+
+      - name: Deploy Python Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ steps.vars.outputs.backendService }}
+          package: ${{ inputs.deployDirectory }}

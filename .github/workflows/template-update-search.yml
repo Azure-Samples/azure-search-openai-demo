@@ -1,0 +1,83 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Reusable Called Workflow to update the search index
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: template.deploy.search
+run-name: Deploy Search Index
+on:
+  workflow_call:
+    inputs:
+      envCode:
+        required: true
+        type: string
+      listFilesAfterCheckout:
+        required: false
+        type: boolean
+        default: false
+  
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  deploy:
+    name: Update ${{ inputs.envCode }} Search Index
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.envCode }}
+    env:
+      PYTHON_VERSION: '3.8' 
+      STARTUP_COMMAND: '' 
+      AZURE_STORAGE_ACCOUNT: 'st${{ vars.RESOURCE_TOKEN }}'
+      AZURE_STORAGE_CONTAINER: 'content'
+      AZURE_SEARCH_SERVICE: 'gptkb-${{ vars.RESOURCE_TOKEN }}'
+      AZURE_SEARCH_INDEX: 'gptkbindex'
+      AZURE_FORMRECOGNIZER_SERVICE: 'cog-fr-${{ vars.RESOURCE_TOKEN }}'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: List Files
+        if: inputs.listFilesAfterCheckout == true
+        run: 
+          tree ${{ env.GITHUB_ACTION_PATH }}
+        continue-on-error: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create Python Virtual Environment
+        run: |
+          python -m venv scripts/.venv
+          source scripts/.venv/bin/activate
+          pip install -r ./scripts/requirements.txt
+
+      # the prepdocs.sh script uses the azd command, so we need to install it, then log in
+      - name: Install AZD Utility
+        shell: bash
+        run: |
+          curl -fsSL https://aka.ms/install-azd.sh | bash 
+
+      - name: AZD Login
+        shell: bash
+        run: |
+          azd auth login --tenant-id ${{ secrets.AZURE_TENANT_ID }} --client-id ${{ secrets.AZURE_CLIENT_ID }} --client-secret ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      # From azd Post-Provision Hooks - ./scripts/prepdocs.sh
+      # this hangs if you just run the .sh file...
+      - name: Process Documents
+        shell: bash
+        run: |
+          ./scripts/.venv/bin/python3 ./scripts/prepdocs.py './data/*' --storageaccount '${{ env.AZURE_STORAGE_ACCOUNT }}' --container '${{ env.AZURE_STORAGE_CONTAINER }}' --searchservice '${{ env.AZURE_SEARCH_SERVICE }}' --index '${{ env.AZURE_SEARCH_INDEX }}' --formrecognizerservice '${{ env.AZURE_FORMRECOGNIZER_SERVICE }}' --tenantid '${{ vars.AZURE_TENANT_ID }}' -v
+
+      # # From azd Post-Provision Hooks
+      # - name: Process Documents
+      #   shell: bash
+      #   run: |
+      #     ./scripts/prepdocs.sh
+      
+      - name: AZD logout
+        run: |
+          azd auth logout

@@ -1,0 +1,133 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to deploy Azure Resources and Website App
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: deploy.infra.and.website
+on: 
+  workflow_dispatch:
+    inputs:
+      deployToDev:
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      deployToQA:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      deployToProd:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      securityScan:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      logLevel:
+        description: 'Log level'     
+        required: false
+        default: 'warning' 
+        type: choice
+        options:
+          - info
+          - warning
+          - debug 
+  
+jobs:
+# ------------------------------------------------------------------------------------------------------------------------
+  infra-dev:
+    if: inputs.deployToDev == 'true'
+    name: DEV Infra
+    uses: ./.github/workflows/template-infra.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+      securityScan: ${{ inputs.securityScan }}
+
+  deploy-dev:
+    if: inputs.deployToDev == 'true'
+    needs: infra-dev
+    name: DEV Web Deploy
+    uses: ./.github/workflows/template-deploy-python-website.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+      
+  update-search-dev:
+    if: inputs.deployToDev == 'true'
+    needs: deploy-dev
+    name: DEV Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+
+# ------------------------------------------------------------------------------------------------------------------------
+  infra-qa:
+    if: inputs.deployToQA == 'true'
+    name: QA Infra
+    uses: ./.github/workflows/template-infra.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+      securityScan: ${{ inputs.securityScan }}
+
+  deploy-qa:
+    if: inputs.deployToQA == 'true'
+    needs: infra-qa
+    name: QA Web Deploy
+    uses: ./.github/workflows/template-deploy-python-website.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+      
+  update-search-qa:
+    if: inputs.deployToQA == 'true'
+    needs: deploy-qa
+    name: QA Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+
+# ------------------------------------------------------------------------------------------------------------------------
+  infra-prod:
+    if: inputs.deployToProd == 'true'
+    name: PROD Infra
+    uses: ./.github/workflows/template-infra.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'
+      securityScan: ${{ inputs.securityScan }}
+
+  deploy-prod:
+    if: inputs.deployToProd == 'true'
+    needs: infra-prod
+    name: PROD Web Deploy
+    uses: ./.github/workflows/template-deploy-python-website.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'
+      
+  update-search-prod:
+    if: inputs.deployToProd == 'true'
+    needs: deploy-prod
+    name: PROD Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'
+  

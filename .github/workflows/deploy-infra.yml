@@ -1,0 +1,79 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to deploy Azure Resources Only
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: deploy.infra.only
+on: 
+  workflow_dispatch:
+    inputs:
+      deployToDev:
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      deployToQA:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      deployToProd:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      securityScan:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      logLevel:
+        description: 'Log level'     
+        required: false
+        default: 'warning' 
+        type: choice
+        options:
+          - info
+          - warning
+          - debug 
+  
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  infra-dev:
+    if: inputs.deployToDev == 'true'
+    name: Create DEV Infra
+    uses: ./.github/workflows/template-infra.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+      securityScan: ${{ inputs.securityScan }}
+
+# ------------------------------------------------------------------------------------------------------------------------
+  infra-qa:
+    if: inputs.deployToQA == 'true'
+    name: Create QA Infra
+    uses: ./.github/workflows/template-infra.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+      securityScan: ${{ inputs.securityScan }}
+
+# ------------------------------------------------------------------------------------------------------------------------
+  infra-prod:
+    if: inputs.deployToProd == 'true'
+    name: Create PROD Infra
+    uses: ./.github/workflows/template-infra.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'
+      securityScan: ${{ inputs.securityScan }}
+        

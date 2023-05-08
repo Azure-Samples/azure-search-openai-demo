@@ -1,0 +1,105 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow to deploy Python Website App Only
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: deploy.website.only
+on:
+  workflow_dispatch:
+    inputs:
+      deployToDev:
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+      deployToQA:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      deployToProd:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      securityScan:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
+      logLevel:
+        description: 'Log level'     
+        required: false
+        default: 'warning' 
+        type: choice
+        options:
+          - info
+          - warning
+          - debug 
+  
+jobs:
+# ------------------------------------------------------------------------------------------------------------------------
+  deploy-dev:
+    if: inputs.deployToDev == 'true'
+    name: Deploy DEV Website
+    uses: ./.github/workflows/template-deploy-python-website.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+      securityScan: ${{ inputs.securityScan }}
+      
+  update-search-dev:
+    if: inputs.deployToDev == 'true'
+    needs: deploy-dev
+    name: DEV Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'dev'
+ 
+# ------------------------------------------------------------------------------------------------------------------------
+  deploy-qa:
+    if: inputs.deployToQA == 'true'
+    name: QA Web Deploy
+    uses: ./.github/workflows/template-deploy-python-website.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+      securityScan: ${{ inputs.securityScan }}
+      
+  update-search-qa:
+    if: inputs.deployToQA == 'true'
+    needs: deploy-qa
+    name: QA Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'qa'
+
+# ------------------------------------------------------------------------------------------------------------------------
+  deploy-prod:
+    if: inputs.deployToProd == 'true'
+    name: PROD Web Deploy
+    uses: ./.github/workflows/template-deploy-python-website.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'
+      securityScan: ${{ inputs.securityScan }}
+      
+  update-search-prod:
+    if: inputs.deployToProd == 'true'
+    needs: deploy-prod
+    name: PROD Search Index
+    uses: ./.github/workflows/template-update-search.yml
+    secrets: inherit
+    with:
+      envCode: 'prod'

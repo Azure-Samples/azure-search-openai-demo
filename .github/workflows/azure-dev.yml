@@ -1,0 +1,52 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Workflow triggered by azd command
+# ------------------------------------------------------------------------------------------------------------------------
+name: azd.cli.workflow
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+          - info
+          - warning
+          - debug 
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  # pull_request:
+  #   branches:
+  #     - main
+  #     - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azure-dev-cli-apps:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure Dev Provision
+        run: azd provision --no-prompt
+        env:
+          AZURE_ENV_NAME: ${{ var.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ var.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ var.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure Dev Deploy
+        run: azd deploy --no-prompt
+        env:
+          AZURE_ENV_NAME: ${{ var.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ var.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ var.AZURE_SUBSCRIPTION_ID }}

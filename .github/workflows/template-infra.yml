@@ -1,0 +1,90 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Reusable Called Workflow to deploy Azure Resources Only
+# ------------------------------------------------------------------------------------------------------------------------
+# You need to set up secrets in the GitHub Secrets Repository before running these workflows.
+#   See readme.md for details
+# ------------------------------------------------------------------------------------------------------------------------
+name: template.deploy.infra
+run-name: Deploy Infra
+on:
+  workflow_call:
+    inputs:
+      envCode:
+        required: true
+        type: string
+      securityScan:
+        required: false
+        type: string
+        default: 'false'
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  scan-code:
+    name: Scan Source Code
+    if: inputs.securityScan == 'true'
+    uses: ./.github/workflows/template-security-scan.yml
+
+# ------------------------------------------------------------------------------------------------------------------------
+  deploy:
+    name: Create ${{ inputs.envCode }} Infra
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.envCode }}
+    
+    steps:
+    - name: Display Variables
+      run: |-
+        echo "environmentName=${{ inputs.envCode }}"
+        echo "location=${{ vars.AZURE_LOCATION }}"
+        echo "resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }}"
+        echo "appSuffix=${{ vars.APP_SUFFIX }}"
+        echo "BACKEND_SERVICE_NAME=${{ vars.BACKEND_SERVICE_NAME }}"
+        echo "principalId=${{ vars.USER_PRINCIPAL_ID }}"
+        echo "Pipeline Workspace Directory Contents:"
+        tree ${{ env.GITHUB_ACTION_PATH }}
+      continue-on-error: true
+      # echo "openAiServiceName=${{ vars.openAiServiceName }}"
+      # echo "openAiSkuName=${{ vars.AZURE_OPENAI_SKU }}"
+      # echo "formRecognizerServiceName=${{ vars.AZURE_FORMRECOGNIZER_SERVICE }}"
+      # echo "formRecognizerSkuName=${{ vars.AZURE_FORMRECOGNIZER_SKU }}"
+      # echo "searchServiceName=${{ vars.AZURE_SEARCH_SERVICE }}"
+      # echo "storageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT }}"
+
+    - name: Checkout Code
+      uses: actions/checkout@main
+
+    - name: List Files
+      run: 
+        tree ${{ env.GITHUB_ACTION_PATH }}
+      continue-on-error: true
+
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy Azure Resources
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        region: ${{ vars.AZURE_LOCATION }}
+        resourceGroupName: ${{ vars.RESOURCE_GROUP_NAME }}
+        template: infra/main.bicep
+        parameters: >
+          environmentName=${{ inputs.envCode }}
+          location=${{ vars.AZURE_LOCATION }}
+          resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }}
+          appSuffix=${{ vars.APP_SUFFIX }}
+          backendServiceName=${{ vars.BACKEND_SERVICE_NAME }}
+          principalId=${{ vars.USER_PRINCIPAL_ID }}
+
+    # openAiServiceName=${{ vars.AZURE_OPENAI_SERVICE }}
+    # openAiResourceGroupName=${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
+    # openAiSkuName=${{ vars.AZURE_OPENAI_SKU }}
+    # formRecognizerResourceGroupName=${{ env.generatedFormRecognizerResourceGroupName }}
+    # searchServiceResourceGroupName=${{ env.generatedSearchServiceResourceGroupName }}
+    # storageResourceGroupName=${{ env.generatedStorageResourceGroupName }}
+    # formRecognizerServiceName=${{ vars.AZURE_FORMRECOGNIZER_SERVICE }}
+    # formRecognizerSkuName=${{ vars.AZURE_FORMRECOGNIZER_SKU }}
+    # searchServiceName=${{ vars.AZURE_SEARCH_SERVICE }}
+    # storageAccountName=${{ vars.AZURE_STORAGE_ACCOUNT }}

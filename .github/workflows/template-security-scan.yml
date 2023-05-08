@@ -1,0 +1,38 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# GHA Reusable Called Workflow to scan files for security issues
+# NOTE: If you get the error: 'Resource not accessible by integration' on the upload step
+# then you will need to go into the Repository -> Settings -> Workflow Permissions
+# and enable the "Read and write permissions" to be able to publish the results
+# ------------------------------------------------------------------------------------------------------------------------
+name: template.security.scan
+run-name: Run Security Scan
+on:
+  workflow_call:
+  
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+  scanner:
+    name: Security Scan
+    runs-on: ubuntu-latest  #windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          5.0.x
+          6.0.x
+
+    - name: Run MS SecDevOps Analysis
+      continue-on-error: true
+      uses: microsoft/security-devops-action@preview
+      id: msdo
+
+    - name: Upload MS SecDevOps alerts to Security tab
+      continue-on-error: true
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.msdo.outputs.sarifFile }}
