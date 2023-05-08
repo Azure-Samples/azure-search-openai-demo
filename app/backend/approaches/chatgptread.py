@@ -12,7 +12,7 @@ class ChatGPTReadApproach(Approach):
         ## add a system prompt to the messages
         ## then convert the input history to the chat/completions "messages" format
         
-        ## if the systme override for the prompt is set, use that for the ssytem prompt. Otherwise, use the default
+        ## if the system override for the prompt is set, use that for the system prompt. Otherwise, use the default
         prompt_override = overrides.get("prompt_template")
         if prompt_override is None:
             system_prompt = "You are an AI chatbot that responds to whatever the user says."
