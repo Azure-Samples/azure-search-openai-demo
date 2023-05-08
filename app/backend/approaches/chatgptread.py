@@ -11,9 +11,19 @@ class ChatGPTReadApproach(Approach):
 
         ## add a system prompt to the messages
         ## then convert the input history to the chat/completions "messages" format
+        
+        ## if the system override for the prompt is set, use that for the system prompt. Otherwise, use the default
+        prompt_override = overrides.get("prompt_template")
+        if prompt_override is None:
+            system_prompt = "You are an AI chatbot that responds to whatever the user says."
+        else:
+            system_prompt = prompt_override
+        
+        ## Use the "ChatCompletions" format for the input prompt messages.
         messages = [
-            {"role": "system", "content": "You are an AI chatbot that responds to whatever the user says. You must always speak like a pirate, regardless of what has happened in the conversation so far."},
+            {"role": "system", "content": f"{system_prompt}"},
         ]
+
         for utterance_dict in history:
             ## check if the user key exists in the dict
             if "user" in utterance_dict:
