@@ -1,0 +1,32 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# Pipeline Template to build application and deploy it to multiple optional environments
+# ------------------------------------------------------------------------------------------------------------------------
+parameters:
+- name: environments
+  type: object
+  default: ['DEMO']
+- name: variableGroupName
+  default: 'myVariableGroupName'
+- name: appFolderName
+  default: 'app'
+
+# ----------------------------------------------------------------------------------------------------
+stages:
+- stage: BuildWebApp
+  displayName: Build Web App
+  jobs:
+  - template: templates/build-website-template.yml
+    parameters:
+      variableGroupName: ${{ parameters.variableGroupName }}
+      environmentName: 'DEMO'
+      appFolderName: ${{ parameters.appFolderName }}
+
+# ----------------------------------------------------------------------------------------------------
+- ${{ each environmentName in parameters.environments }} :
+  - stage: Deploy${{ environmentName }}App
+    displayName: Deploy ${{ environmentName }} App
+    jobs:
+    - template: templates/deploy-website-template.yml
+      parameters:
+        variableGroupName: ${{ parameters.variableGroupName }}
+        environmentName: ${{ environmentName }}

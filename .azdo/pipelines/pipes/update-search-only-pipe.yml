@@ -1,0 +1,20 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# Pipeline Template to update the search index only
+# ------------------------------------------------------------------------------------------------------------------------
+parameters:
+- name: environments
+  type: object
+  default: ['DEMO']
+- name: variableGroupName
+  default: 'myVariableGroupName'
+
+# ----------------------------------------------------------------------------------------------------
+stages:
+- ${{ each environmentName in parameters.environments }} :
+  - stage: Update${{ environmentName }}Search
+    displayName: Update ${{ environmentName }} Search
+    jobs:
+    - template: templates/update-search-template.yml
+      parameters:
+        variableGroupName: ${{ parameters.variableGroupName }}
+        environmentName: ${{ environmentName }}

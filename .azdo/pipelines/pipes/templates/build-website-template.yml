@@ -1,0 +1,96 @@
+# ----------------------------------------------------------------------------------------------------
+# Template to build Azure Website and create artifacts
+# ----------------------------------------------------------------------------------------------------
+parameters: 
+- name: variableGroupName
+  default:  'myVariableGroup'
+- name: environmentName
+  default:  'DEMO'
+- name: appFolderName
+  default: 'app'
+- name: zipFileName
+  default: 'App.zip'
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+- deployment: BuildWebsite
+  displayName: Initialize Build Website
+  environment: ${{ parameters.environmentName }}
+
+- job: BuildWebApp
+  displayName: Build Web App
+
+  variables:
+    - group: ${{ parameters.variableGroupName }}
+    - name: appFolderName
+      value: '${{ parameters.appFolderName }}'
+    - name: zipFileName
+      value: '${{ parameters.zipFileName }}'
+    - name: appDirectory
+      value: '$(System.DefaultWorkingDirectory)/$(appFolderName)'
+    - name: frontEndDirectory
+      value: '$(System.DefaultWorkingDirectory)/$(appFolderName)/frontend/'
+    - name: backendDirectory
+      value: '$(System.DefaultWorkingDirectory)/$(appFolderName)/backend/'
+
+  steps:
+  - task: CmdLine@2
+    inputs:
+      script: |
+        echo "appFolderName=$(appFolderName)"
+        echo "appDirectory=$(appDirectory)"
+        echo "frontEndDirectory=$(frontEndDirectory)"
+        echo "backendDirectory=$(backendDirectory)"
+        echo "Directory of System.DefaultWorkingDirectory:"
+        tree $(System.DefaultWorkingDirectory)
+    displayName: 'Display Variables'
+    continueOnError: true
+
+  - task: UsePythonVersion@0
+    displayName: 'Set Python Version'
+    inputs:
+      versionSpec: 3.8
+
+  # - bash: |
+  #     cd $(System.DefaultWorkingDirectory)
+  #     python -m pip install --upgrade pip
+  #     python -m venv scripts/.venv
+  #     source scripts/.venv/bin/activate
+  #     pip install -r ./scripts/requirements.txt
+  #   displayName: 'Install Dependencies'
+
+  - bash: |
+      cd $(backendDirectory)
+      python -m pip install --upgrade pip
+      python -m venv venv
+      source venv/bin/activate
+      pip install -r requirements.txt
+    displayName: 'Install Dependencies'
+    continueOnError: true
+
+  - bash: |
+      cd $(frontEndDirectory)
+      npm install
+      npm run build
+    displayName: 'npm build frontend'
+
+  - task: CmdLine@2
+    inputs:
+      script: |
+        echo "Directory of System.DefaultWorkingDirectory:"
+        tree $(System.DefaultWorkingDirectory)
+    displayName: 'Display Files'
+    continueOnError: true
+
+  - task: ArchiveFiles@2
+    displayName: 'Build Artifact'
+    inputs:
+      rootFolderOrFile: '$(backendDirectory)'
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/$(zipFileName)
+      replaceExistingArchive: true
+
+  - upload: $(Build.ArtifactStagingDirectory)/$(zipFileName)
+    displayName: 'Upload package'
+    artifact: drop

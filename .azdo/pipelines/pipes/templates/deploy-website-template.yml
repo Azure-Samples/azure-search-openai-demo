@@ -1,0 +1,125 @@
+# ----------------------------------------------------------------------------------------------------
+# Template to deploy a pre-built Azure Website artifact to one environment
+# ----------------------------------------------------------------------------------------------------
+parameters: 
+- name: variableGroupName
+  default:  'myVariableGroup'
+- name: environmentName
+  default:  'DEMO'
+- name: zipFileName
+  default: 'App.zip'
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+- deployment: Deploy${{ parameters.environmentName }}Website
+  displayName: Initialize ${{ parameters.environmentName }} Deploy Website
+  environment: ${{ parameters.environmentName }}
+
+- job: DeployApplication${{ parameters.environmentName }}Website
+  displayName: Deploy ${{ parameters.environmentName }} Website
+  variables:
+    - group: ${{ parameters.variableGroupName }}
+    - name: environmentNameLower
+      value: ${{ lower(parameters.environmentName) }}
+    - name: zipFileName
+      value: '${{ parameters.zipFileName }}'
+
+  steps:
+  - task: DownloadPipelineArtifact@2
+    displayName: 'Download Artifacts'
+    inputs:
+      artifact: drop
+
+  # - task: ExtractFiles@1
+  #   displayName: 'Extract Artifacts'
+  #   inputs:
+  #     archiveFilePatterns: $(Pipeline.Workspace)/$(zipFileName)
+  #     destinationFolder: $(Pipeline.Workspace)/publish
+
+  - bash: |
+      backendServiceNameEnv=$(echo "$(backendServiceNamePrefix)-$(environmentNameLower)" | tr '[:upper:]' '[:lower:]')
+      echo "backendServiceNameEnv=$backendServiceNameEnv"
+      echo "##vso[task.setvariable variable=backendServiceNameEnv]$backendServiceNameEnv"
+    displayName: 'Create Variables'
+
+  - task: CmdLine@2
+    inputs:
+      script: |
+        echo "serviceConnectionName=$(serviceConnectionName)"
+        echo "environmentNameLower=$(environmentNameLower)"
+        echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
+        echo "backendServiceNameEnv=$(backendServiceNameEnv)"
+        echo "zipFileName=$(zipFileName)"
+        echo "Pipeline workspace: $(Pipeline.Workspace)"
+        echo "DefaultWorkingDirectory: $(System.DefaultWorkingDirectory)"
+        echo "Directory of pipeline workspace:"
+        tree $(Pipeline.Workspace)
+    displayName: 'Display Variables and Tree'
+    continueOnError: true
+
+  - task: AzureRmWebAppDeployment@4
+    displayName: 'Publish App to Azure'
+    inputs:
+      ConnectionType: AzureRM
+      azureSubscription: $(serviceConnectionName)
+      appType: webAppLinux
+      WebAppName: $(backendServiceNameEnv)
+      packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+      deploymentMethod: zipDeployment
+
+  # - task: AzureRmWebAppDeployment@4
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     ConnectionType: AzureRM
+  #     azureSubscription: $(serviceConnectionName)
+  #     appType: webAppLinux
+  #     WebAppName: $(backendServiceNameEnv)
+  #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+  #     deploymentMethod: zipDeployment
+
+  # - task: AzureWebApp@1
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     azureSubscription: $(serviceConnectionName)
+  #     appName: $(backendServiceNameEnv)
+  #     package: $(Pipeline.Workspace)/publish
+  #     deploymentMethod: auto
+  # ----------------------------------------------------------------------------------------------------
+  # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-web-app-v1?view=azure-pipelines&viewFallbackFrom=azure-devops#deployment-methods  # --> deploys output.tar.gz
+  # ----------------------------------------------------------------------------------------------------
+
+  # - task: AzureWebApp@1
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     azureSubscription: $(serviceConnectionName)
+  #     appName: $(backendServiceNameEnv)
+  #     package: $(Pipeline.Workspace)/$(zipFileName)
+  #     deploymentMethod: zipDeploy 
+
+
+  # ----------------------------------------------------------------------------------------------------
+  # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-rm-web-app-deployment-v4?view=azure-pipelines
+  # ----------------------------------------------------------------------------------------------------
+
+  # --> deploys output.tar.gz
+  # - task: AzureRmWebAppDeployment@4
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     ConnectionType: AzureRM
+  #     azureSubscription: $(serviceConnectionName)
+  #     appType: webAppLinux
+  #     WebAppName: $(backendServiceNameEnv)
+  #     Package: $(Pipeline.Workspace)/$(zipFileName)
+  #     enableCustomDeployment: true
+  #     deploymentMethod: zipDeployment
+
+  # --> deploys output.tar.gz
+  # - task: AzureRmWebAppDeployment@4
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     ConnectionType: AzureRM
+  #     azureSubscription: $(serviceConnectionName)
+  #     appType: webAppLinux
+  #     WebAppName: $(backendServiceNameEnv)
+  #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+  #     deploymentMethod: zipDeployment

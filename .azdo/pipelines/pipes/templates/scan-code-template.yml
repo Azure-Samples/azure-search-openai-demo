@@ -1,0 +1,63 @@
+# ----------------------------------------------------------------------------------------------------
+# Code Scanning Template
+# ----------------------------------------------------------------------------------------------------
+# Microsoft Secure DevOps Scan
+# To enable this, you must add Azure DevOps Extension to your Azure DevOps Organization
+# See https://marketplace.visualstudio.com/items?itemName=ms-securitydevops.microsoft-security-devops-azdevops
+# ----------------------------------------------------------------------------------------------------
+# PSRule is a static analysis tool for Bicep Files
+# https://marketplace.visualstudio.com/items?itemName=bewhite.psrule-vscode
+# To view the PSRule Output, add the SARIF SAST Scans Tab extension to your organization
+# https://marketplace.visualstudio.com/items?itemName=sariftools.scans
+# ----------------------------------------------------------------------------------------------------
+parameters:
+- name: environmentName
+  default: 'DEMO'
+- name: runDevSecOpsScan
+  default: 'true'
+- name: runPsRuleScan
+  default: 'true'
+
+# ----------------------------------------------------------------------------------------------------
+jobs:
+- deployment: CodeScanDeployment
+  displayName: Initialize Code Scans
+  environment: ${{ parameters.environmentName }}
+
+- ${{ if eq(lower(parameters.runDevSecOpsScan), 'true') }}:
+  - job: SecurityScanJob
+    displayName: MS DevSecOps Scan Job
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use dotnet 3.1'
+      inputs:
+        version: 3.1.x
+        
+    - task: UseDotNet@2
+      displayName: 'Use dotnet 6.0'
+      inputs:
+        version: 6.0.x
+
+    - task: MicrosoftSecurityDevOps@1
+      displayName: 'Run Microsoft Security DevOps'
+      continueOnError: true
+
+# ----------------------------------------------------------------------------------------------------
+- ${{ if eq(lower(parameters.runPsRuleScan), 'true') }}:
+  - job: BicepScanJob
+    displayName: PSRule Bicep Scan Job
+    steps:
+    - task: ps-rule-assert@2
+      displayName: Run PSRule Analysis
+      inputs:
+        modules: 'PSRule.Rules.Azure'
+        outputFormat: Sarif
+        outputPath: reports/PSRuleOutput.sarif
+      continueOnError: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish PSRule Results
+      inputs:
+        pathToPublish: reports/PSRuleOutput.sarif
+        artifactName: CodeAnalysisLogs
+      continueOnError: true

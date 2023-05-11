@@ -1,0 +1,130 @@
+# ----------------------------------------------------------------------------------------------------
+# Template to deploy Azure Resources for one environment
+# ----------------------------------------------------------------------------------------------------
+parameters:
+- name: variableGroupName
+  default: 'myVariableGroup'
+- name: environmentName
+  default: 'DEMO'
+- name: templateFolderName
+  default: 'infra'
+- name: templateFileName
+  default: 'main.bicep'
+
+# ----------------------------------------------------------------------------------------------------
+jobs:
+- deployment: CreateInfra
+  displayName: Initialize Create Infra
+  environment: ${{ parameters.environmentName }}
+
+- job: CreateInfraJob
+  displayName: Create Infrastructure
+  variables:
+    - group: ${{ parameters.variableGroupName }}
+    - name: environmentNameLower
+      value: ${{ lower(parameters.environmentName) }}
+    - name: templateFile
+      value: '$(Pipeline.Workspace)/s/${{ parameters.templateFolderName }}/${{ parameters.templateFileName }}'
+
+    # use the environment value to determine which resource group we should deploy to
+    - ${{ if eq(variables.environmentNameLower, 'dev') }}:
+      - name: resourceGroupName
+        value: $(resourceGroupNameDev)
+    - ${{ if eq(variables.environmentNameLower, 'qa') }}:
+      - name: resourceGroupName
+        value: $(resourceGroupNameQA)
+    - ${{ if eq(variables.environmentNameLower, 'prod') }}:
+      - name: resourceGroupName
+        value: $(resourceGroupNameProd)
+
+  steps:
+  - bash: |
+      appSuffixEnv=$(echo "$(appSuffix)$(environmentNameLower)" | tr '[:upper:]' '[:lower:]')
+      echo "appSuffixEnv=$appSuffixEnv"
+      echo "##vso[task.setvariable variable=appSuffixEnv]$appSuffixEnv"
+      
+      backendServiceNameEnv=$(echo "$(backendServiceNamePrefix)-$(environmentNameLower)" | tr '[:upper:]' '[:lower:]')
+      echo "backendServiceNameEnv=$backendServiceNameEnv"
+      echo "##vso[task.setvariable variable=backendServiceNameEnv]$backendServiceNameEnv"
+      
+      runDateTimeZ=$(echo $(date '+%Y%m%dT%H%M%SZ'))
+      echo "##vso[task.setvariable variable=runDateTimeZ]$runDateTimeZ"
+      echo "runDateTimeZ=$runDateTimeZ"
+    displayName: 'Create Variables'
+    continueOnError: true
+
+  - bash: |
+      echo "subscriptionName=$(subscriptionName)"
+      echo "environmentNameLower=$(environmentNameLower)"
+      echo "resourceGroupName=$(resourceGroupName)"
+      echo "resourceGroupNameDev=$(resourceGroupNameDev)"
+      echo "resourceGroupNameQA=$(resourceGroupNameQA)"
+      echo "resourceGroupNameProd=$(resourceGroupNameProd)"
+      echo "serviceConnectionName=$(serviceConnectionName)"
+      echo "subscriptionId=$(subscriptionId)"
+      echo "location=$(location)"
+      echo "appSuffix=$(appSuffix)"
+      echo "appSuffixEnv=$(appSuffixEnv)"
+      echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
+      echo "backendServiceNameEnv=$(backendServiceNameEnv)"
+      echo "userPrincipalId=$(userPrincipalId)"
+      echo "deployOpenAIResources=$(deployOpenAIResources)"
+      echo "deployFormsRecognizerResources=$(deployFormsRecognizerResources)"
+      echo "runDateTimeZ=$(runDateTimeZ)"
+      echo "templateFile=$(templateFile)"
+      echo "Resource Group Command:"
+      echo "  az group create --name $(resourceGroupName) --location $(location) --tags LastDeployed=$(runDateTimeZ) Application=$(appSuffix) Environment=$(environmentNameLower)"
+      echo "Bicep Deploy Sample Command:"
+      echo "  az deployment group create -n main-deploy-$(runDateTimeZ) --resource-group $(resourceGroupName) --template-file 'main.bicep' --parameters environmentName $(environmentNameLower) location $(location)  principalId $(userPrincipalId) resourceGroupName $(resourceGroupName) appSuffix $(appSuffixEnv) backendServiceName $(backendServiceNameEnv)"
+      echo "System.DefaultWorkingDirectory=$(System.DefaultWorkingDirectory)"
+      tree $(Pipeline.Workspace)
+    displayName: 'Display Variables'
+    continueOnError: true
+    # echo "resourceToken=$(resourceToken)"
+    # echo "openAiServiceName=$(openAiServiceName)"
+    # echo "openAiResourceGroupName=$(openAiResourceGroupName)"
+    # echo "openAiSkuName=$(openAiSkuName)"
+    # echo "formRecognizerResourceGroupName=$(formRecognizerResourceGroupName)"
+    # echo "formRecognizerServiceName=$(formRecognizerServiceName)"
+    # echo "formRecognizerSkuName=$(formRecognizerSkuName)"
+    # echo "storageResourceGroupName="$(storageResourceGroupName)"
+    # echo "storageAccountName=$(storageAccountName)"
+
+  - task: AzureCLI@2
+    displayName: 'Create Resource Group'
+    inputs:
+      azureSubscription: $(subscriptionName)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: az group create --name $(resourceGroupName) --location $(location) --tags LastDeployed=$(runDateTimeZ) Application=$(appSuffix) Environment=$(environmentNameLower)
+
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: 'Publish Bicep Resources'
+    inputs:
+      csmFile: $(templateFile)
+      overrideParameters: >
+        -environmentName $(environmentNameLower)
+        -location $(location) 
+        -principalId $(userPrincipalId)
+        -resourceGroupName $(resourceGroupName)
+        -appSuffix $(appSuffixEnv)
+        -backendServiceName $(backendServiceNameEnv)
+        -deployOpenAIResources $(deployOpenAIResources)
+        -deployFormsRecognizerResources $(deployFormsRecognizerResources)
+      deploymentScope: 'Subscription'
+      location: '$(location)'
+      azureResourceManagerConnection: '$(subscriptionName)'
+      action: 'Create Or Update Resource Group'
+      templateLocation: 'Linked artifact'
+      deploymentMode: 'Incremental'
+      deploymentOutputs: armDeployment
+
+# -resourceToken "$(resourceToken)"
+# -openAiServiceName "$(openAiServiceName)"
+# -openAiResourceGroupName "$(openAiResourceGroupName)"
+# -openAiSkuName "$(openAiSkuName)"
+# -formRecognizerResourceGroupName "$(formRecognizerResourceGroupName)"
+# -formRecognizerServiceName "$(formRecognizerServiceName)"
+# -formRecognizerSkuName "$(formRecognizerSkuName)"
+# -storageResourceGroupName="$(storageResourceGroupName)"
+# -storageAccountName "$(storageAccountName)"

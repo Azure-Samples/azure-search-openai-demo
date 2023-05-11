@@ -1,0 +1,93 @@
+# ----------------------------------------------------------------------------------------------------
+# Template to update the search index in one environment
+# ----------------------------------------------------------------------------------------------------
+# If you want to use a custom Search Service and/or Forms Recognizer name, create the 
+# Variable Group variables for searchServiceName or formsRecognizerName
+# ----------------------------------------------------------------------------------------------------
+parameters: 
+- name: variableGroupName
+  default:  'myVariableGroup'
+- name: environmentName
+  default:  'DEMO'
+
+# ------------------------------------------------------------------------------------------------------------------------
+jobs:
+- deployment: Update${{ parameters.environmentName }}Search
+  displayName: Initialize ${{ parameters.environmentName }} Update Search
+  environment: ${{ parameters.environmentName }}
+
+- job: UpdateIndex${{ parameters.environmentName }}Search
+  displayName: Update ${{ parameters.environmentName }} Search
+  variables:
+    - group: ${{ parameters.variableGroupName }}
+    - name: environmentNameLower
+      value: ${{ lower(parameters.environmentName) }}
+    - name: STARTUP_COMMAND
+      value: '' 
+    - name: AZURE_STORAGE_CONTAINER
+      value: 'content'
+    - name: AZURE_SEARCH_INDEX
+      value: 'gptkbindex'
+    - name: AZURE_STORAGE_ACCOUNT
+      value: 'st$(resourceToken)$(environmentNameLower)'
+
+    - ${{ if eq(variables.searchServiceName, '') }}:
+      - name: AZURE_SEARCH_SERVICE
+        value: 'gptkb-$(resourceToken)$(environmentNameLower)'
+    - ${{ if ne(variables.searchServiceName, '') }}:
+      - name: AZURE_SEARCH_SERVICE
+        value: '$(searchServiceName)'
+
+    - ${{ if eq(variables.formsRecognizerName, '') }}:
+      - name: AZURE_FORMRECOGNIZER_SERVICE
+        value: 'cog-fr-$(resourceToken)$(environmentNameLower)'
+    - ${{ if ne(variables.formsRecognizerName, '') }}:
+      - name: AZURE_FORMRECOGNIZER_SERVICE
+        value: '$(formsRecognizerName)'
+      
+  steps:
+  - bash: |
+      echo "resourceToken=$(resourceToken)"
+      echo "AZURE_STORAGE_ACCOUNT=$(AZURE_STORAGE_ACCOUNT)"
+      echo "searchServiceName=$(searchServiceName)"
+      echo "AZURE_SEARCH_SERVICE=$(AZURE_SEARCH_SERVICE)"
+      echo "formsRecognizerName=$(formsRecognizerName)"
+      echo "AZURE_FORMRECOGNIZER_SERVICE=$(AZURE_FORMRECOGNIZER_SERVICE)"
+      echo "adTenantId=$(adTenantId)"
+      echo "adClientId=$(adClientId)"
+      echo "adClientSecret=$(adClientSecret)"
+      echo "Directory of pipeline workspace:"
+      tree $(Pipeline.Workspace)
+      echo "Directory of DefaultWorkingDirectory:"
+      tree $(System.DefaultWorkingDirectory)
+    displayName: 'List Variables and Files'
+    continueOnError: true
+
+  - task: UsePythonVersion@0
+    displayName: 'Set Python Version'
+    inputs:
+      versionSpec: 3.8
+
+  - bash: |
+      cd $(System.DefaultWorkingDirectory)
+      python -m venv scripts/.venv
+      source scripts/.venv/bin/activate
+      pip install -r ./scripts/requirements.txt
+    displayName: 'Install Dependencies'
+
+  # the prepdocs.sh script uses the azd command, so we need to install it, then log in
+  - bash: |
+      curl -fsSL https://aka.ms/install-azd.sh | bash 
+    displayName: 'Install AZD Utility'
+
+  - bash: |
+      azd auth login --tenant-id $(adTenantId) --client-id $(adClientId) --client-secret $(adClientSecret)
+    displayName: azd login
+
+  - bash: |
+      ./scripts/.venv/bin/python3 ./scripts/prepdocs.py './data/*' --storageaccount '$(AZURE_STORAGE_ACCOUNT)' --container '$(AZURE_STORAGE_CONTAINER)' --searchservice '$(AZURE_SEARCH_SERVICE)' --index '$(AZURE_SEARCH_INDEX)' --formrecognizerservice '$(AZURE_FORMRECOGNIZER_SERVICE)' --tenantid '$(adTenantId)' -v
+    displayName: Process Documents
+
+  - bash: |
+      azd auth logout
+    displayName: azd logout
