@@ -56,6 +56,10 @@ param appSuffix string = ''
 param deployOpenAIResources string = 'false'
 param deployFormsRecognizerResources string = 'false'
 
+// gives option to skip Security Role deploys because some organizations won't allow this
+param deployOpenAIUserRoles string = 'true'
+param deployOpenAIAppRoles string = 'true'
+
 var abbrs = loadJsonContent('abbreviations.json')
 // if appSuffix is supplied, use that instead of the resource token
 var resourceToken = !empty(appSuffix) ? appSuffix : toLower(uniqueString(subscription().id, environmentName, location))
@@ -67,6 +71,9 @@ var frontEndTags = union(tags, serviceTags)
 
 var deployOpenAIResource = empty(deployOpenAIResources) ? true : startsWith(toLower(deployOpenAIResources), 't')
 var openAIResourceName = !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+
+var deployUserRoles = empty(deployOpenAIUserRoles) ? true : startsWith(toLower(deployOpenAIUserRoles), 't')
+var deployAppRoles = empty(deployOpenAIAppRoles) ? true : startsWith(toLower(deployOpenAIAppRoles), 't')
 
 var deployFormsRecognizerResource = empty(deployFormsRecognizerResources) ? true : startsWith(toLower(deployFormsRecognizerResources), 't')
 var formRecognizerResourceName = !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
@@ -229,7 +236,7 @@ module storage 'core/storage/storage-account.bicep' = {
   }
 }
 
-module createUserPrincipalRoles 'core/security/createUserRoles.bicep' = {
+module createUserPrincipalRoles 'core/security/createUserRoles.bicep' = if (deployUserRoles) {
   name: 'principal-user-roles'
   dependsOn: [ storage, openAi, formRecognizer, searchService ]
   params: {
@@ -238,7 +245,7 @@ module createUserPrincipalRoles 'core/security/createUserRoles.bicep' = {
   }
 }
 
-module createSystemIdentityRoles 'core/security/createSystemRoles.bicep' = {
+module createSystemIdentityRoles 'core/security/createSystemRoles.bicep' = if (deployAppRoles) {
   name: 'system-identity-roles'
   dependsOn: [ storage, openAi, formRecognizer, searchService ]
   params: {

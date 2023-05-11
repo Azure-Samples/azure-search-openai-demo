@@ -20,12 +20,12 @@ on:
         default: './app/backend'
       listFilesAfterCheckout:
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
       listFilesBeforeDeploy:
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
       securityScan:
         required: false
         type: string
@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: List Files
-        if: inputs.listFilesAfterCheckout == true
+        if: inputs.listFilesAfterCheckout == 'true'
         run: 
           tree ${{ env.GITHUB_ACTION_PATH }}
         continue-on-error: true
@@ -106,7 +106,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: List Files
-        if: inputs.listFilesBeforeDeploy == true
+        if: inputs.listFilesBeforeDeploy == 'true'
         run: 
           tree ${{ env.GITHUB_ACTION_PATH }}
         continue-on-error: true

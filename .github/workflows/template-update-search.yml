@@ -14,8 +14,8 @@ on:
         type: string
       listFilesAfterCheckout:
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
   
 # ------------------------------------------------------------------------------------------------------------------------
 jobs:
@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: List Files
-        if: inputs.listFilesAfterCheckout == true
+        if: inputs.listFilesAfterCheckout == 'true'
         run: 
           tree ${{ env.GITHUB_ACTION_PATH }}
         continue-on-error: true
@@ -65,19 +65,12 @@ jobs:
         run: |
           azd auth login --tenant-id ${{ secrets.AZURE_TENANT_ID }} --client-id ${{ secrets.AZURE_CLIENT_ID }} --client-secret ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # From azd Post-Provision Hooks - ./scripts/prepdocs.sh
       # this hangs if you just run the .sh file...
       - name: Process Documents
         shell: bash
         run: |
           ./scripts/.venv/bin/python3 ./scripts/prepdocs.py './data/*' --storageaccount '${{ env.AZURE_STORAGE_ACCOUNT }}' --container '${{ env.AZURE_STORAGE_CONTAINER }}' --searchservice '${{ env.AZURE_SEARCH_SERVICE }}' --index '${{ env.AZURE_SEARCH_INDEX }}' --formrecognizerservice '${{ env.AZURE_FORMRECOGNIZER_SERVICE }}' --tenantid '${{ vars.AZURE_TENANT_ID }}' -v
 
-      # # From azd Post-Provision Hooks
-      # - name: Process Documents
-      #   shell: bash
-      #   run: |
-      #     ./scripts/prepdocs.sh
-      
       - name: AZD logout
         run: |
           azd auth logout

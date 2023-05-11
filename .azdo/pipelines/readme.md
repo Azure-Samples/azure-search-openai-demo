@@ -93,7 +93,12 @@ az pipelines variable-group create
       deployFormsRecognizerResources=false
       deployOpenAIResources=false
 
+      # if you want to SKIP the OpenAI role assignments because it's not allowed
+      deployUserRoles=false
+      deployApplicationRoles=false
+
 ## note: you will have to update create-template-infra.yml to pass the following optional variables in to main.bicep
+
 
       # if you have existing OpenAI resource specify it here
       openAiServiceName='<yourOpenAIServiceName>'

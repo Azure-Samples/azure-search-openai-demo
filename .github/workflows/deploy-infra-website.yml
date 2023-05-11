@@ -72,8 +72,8 @@ jobs:
     secrets: inherit
     with:
       envCode: 'dev'
-      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
-      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles }}
 
   update-search-dev:
     if: inputs.deployToDev == 'true'
@@ -102,8 +102,8 @@ jobs:
     secrets: inherit
     with:
       envCode: 'qa'
-      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
-      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles }}
 
   update-search-qa:
     if: inputs.deployToQA == 'true'
@@ -132,8 +132,8 @@ jobs:
     secrets: inherit
     with:
       envCode: 'prod'
-      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
-      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles }}
 
   update-search-prod:
     if: inputs.deployToProd == 'true'

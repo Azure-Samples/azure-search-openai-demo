@@ -110,6 +110,14 @@ gh variable set openAiResourceGroupName -b rg_services
 gh variable set AZURE_OPENAI_CHATGPT_DEPLOYMENT -b gpt35
 gh variable set AZURE_OPENAI_GPT_DEPLOYMENT -b text-davinici-003
 
+# if you want to SKIP the re-deploy of the OpenAI resources (which take a long time)
+gh variable set DEPLOY_FORMSRECOGNIZER_RESOURCES -b false
+gh variable set DEPLOY_OPENAI_RESOURCES -b false
+
+# if you want to SKIP the OpenAI role assignments because it's not allowed
+gh variable set DEPLOY_USER_ROLES -b false
+gh variable set DEPLOY_APPLICATION_ROLES -b false
+
 # if you want specific names for other services, specify them here
 # note: you will have to update template-infra.yml to pass these variables in to main.bicep
 gh variable set openAiSkuName -b S0

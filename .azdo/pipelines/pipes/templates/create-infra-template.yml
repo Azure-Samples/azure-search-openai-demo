@@ -70,6 +70,8 @@ jobs:
       echo "userPrincipalId=$(userPrincipalId)"
       echo "deployOpenAIResources=$(deployOpenAIResources)"
       echo "deployFormsRecognizerResources=$(deployFormsRecognizerResources)"
+      echo "deployUserRoles=$(deployUserRoles)"
+      echo "deployApplicationRoles=$(deployApplicationRoles)"
       echo "runDateTimeZ=$(runDateTimeZ)"
       echo "templateFile=$(templateFile)"
       echo "Resource Group Command:"
@@ -111,6 +113,8 @@ jobs:
         -backendServiceName $(backendServiceNameEnv)
         -deployOpenAIResources $(deployOpenAIResources)
         -deployFormsRecognizerResources $(deployFormsRecognizerResources)
+        -deployOpenAIUserRoles $(deployUserRoles)
+        -deployOpenAIAppRoles $(deployApplicationRoles)
       deploymentScope: 'Subscription'
       location: '$(location)'
       azureResourceManagerConnection: '$(subscriptionName)'

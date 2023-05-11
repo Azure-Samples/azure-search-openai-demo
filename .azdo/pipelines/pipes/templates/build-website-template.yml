@@ -51,14 +51,6 @@ jobs:
     inputs:
       versionSpec: 3.8
 
-  # - bash: |
-  #     cd $(System.DefaultWorkingDirectory)
-  #     python -m pip install --upgrade pip
-  #     python -m venv scripts/.venv
-  #     source scripts/.venv/bin/activate
-  #     pip install -r ./scripts/requirements.txt
-  #   displayName: 'Install Dependencies'
-
   - bash: |
       cd $(backendDirectory)
       python -m pip install --upgrade pip

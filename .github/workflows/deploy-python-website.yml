@@ -63,8 +63,8 @@ jobs:
     with:
       envCode: 'dev'
       securityScan: ${{ inputs.securityScan }}
-      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
-      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles }}
  
   update-search-dev:
     if: inputs.deployToDev == 'true'
@@ -84,8 +84,8 @@ jobs:
     with:
       envCode: 'qa'
       securityScan: ${{ inputs.securityScan }}
-      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
-      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles }}
 
   update-search-qa:
     if: inputs.deployToQA == 'true'
@@ -105,8 +105,8 @@ jobs:
     with:
       envCode: 'prod'
       securityScan: ${{ inputs.securityScan }}
-      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
-      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles }}
 
   update-search-prod:
     if: inputs.deployToProd == 'true'

@@ -35,13 +35,15 @@ jobs:
     - name: Display Variables
       run: |-
         echo "environmentName=${{ inputs.envCode }}"
-        echo "location=${{ vars.AZURE_LOCATION }}"
-        echo "resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }}"
-        echo "appSuffix=${{ vars.APP_SUFFIX }}"
+        echo "AZURE_LOCATION=${{ vars.AZURE_LOCATION }}"
+        echo "RESOURCE_GROUP_NAME=${{ vars.RESOURCE_GROUP_NAME }}"
+        echo "APP_SUFFIX=${{ vars.APP_SUFFIX }}"
         echo "BACKEND_SERVICE_NAME=${{ vars.BACKEND_SERVICE_NAME }}"
-        echo "principalId=${{ vars.USER_PRINCIPAL_ID }}"
-        echo "deployOpenAIResources=${{ vars.DEPLOY_OPENAI_RESOURCES }}"
-        echo "deployFormsRecognizerResources=${{ vars.DEPLOY_FORMSRECOGNIZER_RESOURCES }}"
+        echo "USER_PRINCIPAL_ID=${{ vars.USER_PRINCIPAL_ID }}"
+        echo "DEPLOY_OPENAI_RESOURCES=${{ vars.DEPLOY_OPENAI_RESOURCES }}"
+        echo "DEPLOY_FORMSRECOGNIZER_RESOURCES=${{ vars.DEPLOY_FORMSRECOGNIZER_RESOURCES }}"
+        echo "DEPLOY_USER_ROLES=${{ vars.DEPLOY_USER_ROLES }}"
+        echo "DEPLOY_APPLICATION_ROLES=${{ vars.DEPLOY_APPLICATION_ROLES }}"
         echo "Pipeline Workspace Directory Contents:"
         tree ${{ env.GITHUB_ACTION_PATH }}
       continue-on-error: true
@@ -81,7 +83,9 @@ jobs:
           principalId=${{ vars.USER_PRINCIPAL_ID }}
           deployOpenAIResources=${{ vars.DEPLOY_OPENAI_RESOURCES }}
           deployFormsRecognizerResources=${{ vars.DEPLOY_FORMSRECOGNIZER_RESOURCES }}
-  
+          deployOpenAIUserRoles=${{ vars.DEPLOY_USER_ROLES }}
+          deployOpenAIAppRoles=${{ vars.DEPLOY_APPLICATION_ROLES }}
+
     # openAiServiceName=${{ vars.AZURE_OPENAI_SERVICE }}
     # openAiResourceGroupName=${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
     # openAiSkuName=${{ vars.AZURE_OPENAI_SKU }}
