@@ -33,11 +33,13 @@
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 30px;
+    color: rgb(50, 50, 50);
 }
 
 .chatEmptyStateSubtitle {
     font-weight: 600;
     margin-bottom: 10px;
+    color: rgb(50, 50, 50);
 }
 
 @media only screen and (max-height: 780px) {

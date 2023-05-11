@@ -29,6 +29,7 @@
     font-size: 22px;
     width: 280px;
     height: 100px;
+    color: rgb(33, 33, 33);
 }
 
 @media only screen and (max-height: 780px) {
