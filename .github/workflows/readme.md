@@ -2,7 +2,9 @@
 
 ## Workflow Credentials
 
-The service principal that is running the workflows needs these rights granted at the subscription level in order to process the documents:
+To run the bicep deploy workflow, the service principal that is running the workflows needs Owner rights at the subscription level. If Owner cannot be granted, then at a minimum it needs Contributor and User Access Administrator roles.
+
+The service principal that is running the workflows will assign these rights at the subscription level in order to process the documents:
 
 - Forms Recognizer
   - Cognitive Services OpenAI user
@@ -56,7 +58,7 @@ gh secret set AZURE_TENANT_ID -b tenantid-from-azure-credentials
 These variables are used by the Bicep templates to configure the resource names that are deployed.  If used, make sure the APP_SUFFIX variable is unique to your deploy. It will be used as the basis for the website name and for all the other Azure resources, most of which must be globally unique.
 To create these additional variables, customize and run this command:
 
-Required Values:
+Required Repository Variables:
 
 ``` bash
 gh auth login
@@ -69,16 +71,26 @@ gh variable set USER_PRINCIPAL_ID -b youruserguid
 gh variable set DEPLOY_DEV -b true
 gh variable set DEPLOY_QA -b false
 gh variable set DEPLOY_PROD -b false
+```
 
+Required Environment Variables:
+
+``` bash
+# one for each environment you are deploying
 gh variable set RESOURCE_GROUP_Name --env dev -b rg_<yourPreferredName>_dev
 gh variable set RESOURCE_GROUP_Name --env qa -b rg_<yourPreferredName>_qa
 gh variable set RESOURCE_GROUP_Name --env prod -b rg_<yourPreferredName>_prod
 
 # if you use the random token, the deploy step needs it to be able to deploy to the proper resource
+# do your first build and find it, or create one yourself
 gh variable set RESOURCE_TOKEN --env dev -b <hashedkeydev>
 gh variable set RESOURCE_TOKEN --env qa -b <hashedkeyqa>
 gh variable set RESOURCE_TOKEN --env prod -b <hashedkeyprod>
+```
 
+Optional Values:
+
+``` bash
 # if you want to use a specific suffix for your resources instead of a random token, specify this value
 gh variable set APP_SUFFIX --env dev -b xxxoaidev
 gh variable set APP_SUFFIX --env qa -b xxxoaiqa
@@ -89,26 +101,25 @@ gh variable set BACKEND_SERVICE_NAME --env dev -b xxx-openai-search-dev
 gh variable set BACKEND_SERVICE_NAME --env qa -b xxx-openai-search-qa
 gh variable set BACKEND_SERVICE_NAME --env prod -b xxx-openai-search
 
-# optional - if you have existing OpenAI resource specify it here
+# if you have existing OpenAI resource specify it here
 # note: you will have to update template-infra.yml to pass these variables in to main.bicep
 gh variable set openAiServiceName -b youropenaiservice
 gh variable set openAiResourceGroupName -b rg_services
 
-# optional - if you have existing model deploys with different names
+# if you have existing model deploys with different names
 gh variable set AZURE_OPENAI_CHATGPT_DEPLOYMENT -b gpt35
 gh variable set AZURE_OPENAI_GPT_DEPLOYMENT -b text-davinici-003
 
-# optional - if you want specific names for other services, specify them here
+# if you want specific names for other services, specify them here
 # note: you will have to update template-infra.yml to pass these variables in to main.bicep
 gh variable set openAiSkuName -b S0
 gh variable set formRecognizerServiceName -b xxx
 gh variable set formRecognizerSkuName -b S0
 gh variable set searchServiceName -b xxx
 gh variable set storageAccountName -b xxx
-
 ```
 
-### Example of Secrets/Variables
+### Visual Example of Secrets/Variables
 
 ![Secrets/Variables Example](./Repo_Variables.png)
 

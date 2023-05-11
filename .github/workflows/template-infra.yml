@@ -40,6 +40,8 @@ jobs:
         echo "appSuffix=${{ vars.APP_SUFFIX }}"
         echo "BACKEND_SERVICE_NAME=${{ vars.BACKEND_SERVICE_NAME }}"
         echo "principalId=${{ vars.USER_PRINCIPAL_ID }}"
+        echo "deployOpenAIResources=${{ vars.DEPLOY_OPENAI_RESOURCES }}"
+        echo "deployFormsRecognizerResources=${{ vars.DEPLOY_FORMSRECOGNIZER_RESOURCES }}"
         echo "Pipeline Workspace Directory Contents:"
         tree ${{ env.GITHUB_ACTION_PATH }}
       continue-on-error: true
@@ -77,7 +79,9 @@ jobs:
           appSuffix=${{ vars.APP_SUFFIX }}
           backendServiceName=${{ vars.BACKEND_SERVICE_NAME }}
           principalId=${{ vars.USER_PRINCIPAL_ID }}
-
+          deployOpenAIResources=${{ vars.DEPLOY_OPENAI_RESOURCES }}
+          deployFormsRecognizerResources=${{ vars.DEPLOY_FORMSRECOGNIZER_RESOURCES }}
+  
     # openAiServiceName=${{ vars.AZURE_OPENAI_SERVICE }}
     # openAiResourceGroupName=${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
     # openAiSkuName=${{ vars.AZURE_OPENAI_SKU }}

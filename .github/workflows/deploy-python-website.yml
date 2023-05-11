@@ -29,6 +29,13 @@ on:
         options:
           - true
           - false
+      listDeployFiles:
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - true
+          - false
       securityScan:
         required: false
         default: 'false'
@@ -56,7 +63,9 @@ jobs:
     with:
       envCode: 'dev'
       securityScan: ${{ inputs.securityScan }}
-      
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+ 
   update-search-dev:
     if: inputs.deployToDev == 'true'
     needs: deploy-dev
@@ -75,7 +84,9 @@ jobs:
     with:
       envCode: 'qa'
       securityScan: ${{ inputs.securityScan }}
-      
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+
   update-search-qa:
     if: inputs.deployToQA == 'true'
     needs: deploy-qa
@@ -94,7 +105,9 @@ jobs:
     with:
       envCode: 'prod'
       securityScan: ${{ inputs.securityScan }}
-      
+      listFilesBeforeDeploy: ${{ inputs.listDeployFiles == 'true' }}
+      listFilesAfterCheckout: ${{ inputs.listDeployFiles == 'true' }}
+
   update-search-prod:
     if: inputs.deployToProd == 'true'
     needs: deploy-prod

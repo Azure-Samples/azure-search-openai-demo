@@ -52,6 +52,10 @@ param principalType string = 'User'
 @description('Supply a readable application name to use instead of randomly generated resource token')
 param appSuffix string = ''
 
+// gives option to skip deploys if resources already exist as it takes a long time
+param deployOpenAIResources string = 'false'
+param deployFormsRecognizerResources string = 'false'
+
 var abbrs = loadJsonContent('abbreviations.json')
 // if appSuffix is supplied, use that instead of the resource token
 var resourceToken = !empty(appSuffix) ? appSuffix : toLower(uniqueString(subscription().id, environmentName, location))
@@ -60,6 +64,12 @@ var resourceToken = !empty(appSuffix) ? appSuffix : toLower(uniqueString(subscri
 var tags = empty(appSuffix) ? { 'azd-env-name': environmentName } : { 'env-name': appSuffix } 
 var serviceTags = empty(appSuffix) ? { 'azd-service-name': 'backend' } : { 'service-name': appSuffix }
 var frontEndTags = union(tags, serviceTags)
+
+var deployOpenAIResource = empty(deployOpenAIResources) ? true : startsWith(toLower(deployOpenAIResources), 't')
+var openAIResourceName = !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+
+var deployFormsRecognizerResource = empty(deployFormsRecognizerResources) ? true : startsWith(toLower(deployFormsRecognizerResources), 't')
+var formRecognizerResourceName = !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -116,7 +126,7 @@ module backend 'core/host/appservice.bicep' = {
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
-      AZURE_OPENAI_SERVICE: openAi.outputs.name
+      AZURE_OPENAI_SERVICE: openAIResourceName
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
@@ -125,11 +135,11 @@ module backend 'core/host/appservice.bicep' = {
   }
 }
 
-module openAi 'core/ai/cognitiveservices.bicep' = {
+module openAi 'core/ai/cognitiveservices.bicep' = if (deployOpenAIResource) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
-    name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+    name: openAIResourceName
     location: openAiResourceGroupLocation
     tags: tags
     sku: {
@@ -162,11 +172,11 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
   }
 }
 
-module formRecognizer 'core/ai/cognitiveservices.bicep' = {
+module formRecognizer 'core/ai/cognitiveservices.bicep' = if (deployFormsRecognizerResource) {
   name: 'formrecognizer'
   scope: formRecognizerResourceGroup
   params: {
-    name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
+    name: formRecognizerResourceName
     kind: 'FormRecognizer'
     location: formRecognizerResourceGroupLocation
     tags: tags
@@ -242,12 +252,12 @@ output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
-output AZURE_OPENAI_SERVICE string = openAi.outputs.name
+output AZURE_OPENAI_SERVICE string = openAIResourceName
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
 output AZURE_OPENAI_GPT_DEPLOYMENT string = gptDeploymentName
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
 
-output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
+output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizerResourceName
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
