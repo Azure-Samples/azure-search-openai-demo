@@ -8,6 +8,14 @@ name: deploy.search.index.only
 on:
   workflow_dispatch:
     inputs:
+      dataFolder:
+        required: false
+        default: 'data'
+        type: string
+      dataFiles:
+        required: false
+        default: '*'
+        type: string
       deployToDev:
         required: false
         default: 'true'
@@ -48,6 +56,8 @@ jobs:
     secrets: inherit
     with:
       envCode: 'dev'
+      dataFolder: ${{ inputs.dataFolder }}
+      dataFiles: ${{ inputs.dataFiles }}
 
 # ------------------------------------------------------------------------------------------------------------------------
   update-search-qa:
@@ -57,6 +67,8 @@ jobs:
     secrets: inherit
     with:
       envCode: 'qa'
+      dataFolder: ${{ inputs.dataFolder }}
+      dataFiles: ${{ inputs.dataFiles }}
 
 # ------------------------------------------------------------------------------------------------------------------------
   update-search-prod:
@@ -66,4 +78,6 @@ jobs:
     secrets: inherit
     with:
       envCode: 'prod'
-    
+      dataFolder: ${{ inputs.dataFolder }}
+      dataFiles: ${{ inputs.dataFiles }}
+ 
