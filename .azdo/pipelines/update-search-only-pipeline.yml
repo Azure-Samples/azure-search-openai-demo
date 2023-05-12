@@ -25,8 +25,22 @@ trigger:
   #     - '**/*.md'
 
 # ----------------------------------------------------------------------------------------------------
+parameters:
+  - name: dataFolder
+    displayName: Data Folder
+    type: string
+    default: 'data'
+  - name: dataFiles
+    displayName: Files to Process
+    type: string
+    default: '*'
+
+
+# ----------------------------------------------------------------------------------------------------
 stages:
 - template: pipes/update-search-only-pipe.yml
   parameters:
     variableGroupName: 'OpenAISearch'
     environments: ['DEV'] # ['DEV','QA', 'PROD']
+    dataFolder: ${{ parameters.dataFolder }}
+    dataFiles: ${{ parameters.dataFiles }}

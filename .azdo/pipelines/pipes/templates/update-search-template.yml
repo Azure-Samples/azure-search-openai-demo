@@ -9,6 +9,10 @@ parameters:
   default:  'myVariableGroup'
 - name: environmentName
   default:  'DEMO'
+- name: dataFolder
+  default: 'data'
+- name: dataFiles
+  default: '*'
 
 # ------------------------------------------------------------------------------------------------------------------------
 jobs:
@@ -22,6 +26,14 @@ jobs:
     - group: ${{ parameters.variableGroupName }}
     - name: environmentNameLower
       value: ${{ lower(parameters.environmentName) }}
+
+    - name: dataFolder
+      value: ${{ parameters.dataFolder }}
+    - name: dataFiles
+      value: ${{ parameters.dataFiles }}
+    - name: dataFolderAndFiles
+      value: './${{ parameters.dataFolder }}/${{ parameters.dataFiles }}'
+
     - name: STARTUP_COMMAND
       value: '' 
     - name: AZURE_STORAGE_CONTAINER
@@ -56,6 +68,9 @@ jobs:
       echo "adTenantId=$(adTenantId)"
       echo "adClientId=$(adClientId)"
       echo "adClientSecret=$(adClientSecret)"
+      echo "dataFolder=$(dataFolder)"
+      echo "dataFiles=$(dataFiles)"
+      echo "dataFolderAndFiles=$(dataFolderAndFiles)"
       echo "Directory of pipeline workspace:"
       tree $(Pipeline.Workspace)
       echo "Directory of DefaultWorkingDirectory:"
@@ -85,7 +100,7 @@ jobs:
     displayName: azd login
 
   - bash: |
-      ./scripts/.venv/bin/python3 ./scripts/prepdocs.py './data/*' --storageaccount '$(AZURE_STORAGE_ACCOUNT)' --container '$(AZURE_STORAGE_CONTAINER)' --searchservice '$(AZURE_SEARCH_SERVICE)' --index '$(AZURE_SEARCH_INDEX)' --formrecognizerservice '$(AZURE_FORMRECOGNIZER_SERVICE)' --tenantid '$(adTenantId)' -v
+      ./scripts/.venv/bin/python3 ./scripts/prepdocs.py '$(dataFolderAndFiles)' --storageaccount '$(AZURE_STORAGE_ACCOUNT)' --container '$(AZURE_STORAGE_CONTAINER)' --searchservice '$(AZURE_SEARCH_SERVICE)' --index '$(AZURE_SEARCH_INDEX)' --formrecognizerservice '$(AZURE_FORMRECOGNIZER_SERVICE)' --tenantid '$(adTenantId)' -v
     displayName: Process Documents
 
   - bash: |
