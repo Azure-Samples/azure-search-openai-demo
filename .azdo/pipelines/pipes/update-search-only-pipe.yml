@@ -7,6 +7,10 @@ parameters:
   default: ['DEMO']
 - name: variableGroupName
   default: 'myVariableGroupName'
+- name: dataFolder
+  default: 'data'
+- name: dataFiles
+  default: '*'
 
 # ----------------------------------------------------------------------------------------------------
 stages:
@@ -18,3 +22,5 @@ stages:
       parameters:
         variableGroupName: ${{ parameters.variableGroupName }}
         environmentName: ${{ environmentName }}
+        dataFolder: ${{ parameters.dataFolder }}
+        dataFiles: ${{ parameters.dataFiles }}

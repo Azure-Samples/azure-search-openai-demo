@@ -16,7 +16,15 @@ on:
         required: false
         type: string
         default: 'false'
-  
+      dataFolder:
+        required: false
+        type: string
+        default: 'data'
+      dataFiles:
+        required: false
+        type: string
+        default: '*'
+      
 # ------------------------------------------------------------------------------------------------------------------------
 jobs:
   deploy:
@@ -32,6 +40,7 @@ jobs:
       AZURE_SEARCH_SERVICE: 'gptkb-${{ vars.RESOURCE_TOKEN }}'
       AZURE_SEARCH_INDEX: 'gptkbindex'
       AZURE_FORMRECOGNIZER_SERVICE: 'cog-fr-${{ vars.RESOURCE_TOKEN }}'
+      DATA_FOLDER_AND_FILES: './${{ inputs.dataFolder }}/${{ inputs.dataFiles }}'
 
     steps:
       - name: Checkout
@@ -69,7 +78,7 @@ jobs:
       - name: Process Documents
         shell: bash
         run: |
-          ./scripts/.venv/bin/python3 ./scripts/prepdocs.py './data/*' --storageaccount '${{ env.AZURE_STORAGE_ACCOUNT }}' --container '${{ env.AZURE_STORAGE_CONTAINER }}' --searchservice '${{ env.AZURE_SEARCH_SERVICE }}' --index '${{ env.AZURE_SEARCH_INDEX }}' --formrecognizerservice '${{ env.AZURE_FORMRECOGNIZER_SERVICE }}' --tenantid '${{ vars.AZURE_TENANT_ID }}' -v
+          ./scripts/.venv/bin/python3 ./scripts/prepdocs.py '${{ env.DATA_FOLDER_AND_FILES }}' --storageaccount '${{ env.AZURE_STORAGE_ACCOUNT }}' --container '${{ env.AZURE_STORAGE_CONTAINER }}' --searchservice '${{ env.AZURE_SEARCH_SERVICE }}' --index '${{ env.AZURE_SEARCH_INDEX }}' --formrecognizerservice '${{ env.AZURE_FORMRECOGNIZER_SERVICE }}' --tenantid '${{ vars.AZURE_TENANT_ID }}' -v
 
       - name: AZD logout
         run: |
