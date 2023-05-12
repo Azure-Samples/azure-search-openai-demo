@@ -9,11 +9,11 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
+        text: "What are low cases involves a knife ?",
+        value: "What are low cases involves a knife ?"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    { text: "Please find the cases realted to Urban development ?", value: "Please find the cases realted to Urban development ?" },
+    { text: "Any cases related to section 175 of the Criminal Procedure Code ?", value: "Any cases related to section 175 of the Criminal Procedure Code ?" }
 ];
 
 interface Props {

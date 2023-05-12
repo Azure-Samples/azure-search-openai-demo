@@ -18,6 +18,8 @@ MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
 
+DOCUMENT_YEAR = 2010
+
 parser = argparse.ArgumentParser(
     description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
     epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v"
@@ -116,6 +118,7 @@ def get_document_text(filename):
     offset = 0
     page_map = []
     if args.localpdfparser:
+        if args.verbose: print(f"Extracting text from '{filename}' using localpdfparser")
         reader = PdfReader(filename)
         pages = reader.pages
         for page_num, p in enumerate(pages):
@@ -227,7 +230,8 @@ def create_sections(filename, page_map):
             "content": section,
             "category": args.category,
             "sourcepage": blob_name_from_file_page(filename, pagenum),
-            "sourcefile": filename
+            "sourcefile": filename,
+            "documentyear":DOCUMENT_YEAR
         }
 
 def create_search_index():
@@ -242,7 +246,8 @@ def create_search_index():
                 SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
+                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="documentyear", type="Edm.Int32", filterable=True, facetable=True)
             ],
             semantic_settings=SemanticSettings(
                 configurations=[SemanticConfiguration(
