@@ -128,18 +128,17 @@ const OneShot = () => {
             text: "Read-Decompose-Ask"
         }
     ];
-
+    /*
+ <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+              
+*/
     return (
         <div className={styles.oneshotContainer}>
             <div className={styles.oneshotTopSection}>
-                <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-                <h1 className={styles.oneshotTitle}>Ask your data</h1>
+                <h1 className={styles.oneshotTitle}>Stel je vraag :</h1>
                 <div className={styles.oneshotQuestionInput}>
-                    <QuestionInput
-                        placeholder="Example: Does my plan cover annual eye exams?"
-                        disabled={isLoading}
-                        onSend={question => makeApiRequest(question)}
-                    />
+                    <QuestionInput placeholder="Stel je vraag!" disabled={isLoading} onSend={question => makeApiRequest(question)} />
+                    <div className={styles.ovsList}>OVS60032-V004, OVS69110-V002,OVS69133-1-V022, OVS69133-2-V018 </div>
                 </div>
             </div>
             <div className={styles.oneshotBottomSection}>

@@ -5,6 +5,10 @@
     align-items: center;
 }
 
+.ovsList {
+    padding-top: 20px;
+}
+
 .oneshotTopSection {
     display: flex;
     flex-direction: column;

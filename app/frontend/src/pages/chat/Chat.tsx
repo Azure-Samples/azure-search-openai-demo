@@ -124,19 +124,26 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    return (
-        <div className={styles.container}>
-            <div className={styles.commandsContainer}>
+    /*
+ <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
+*/
+
+    return (
+        <div className={styles.container}>
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
+                            <h1 className={styles.chatEmptyStateTitle}>Chat @ OVS </h1>
+                            <ul>
+                                <li>OVS60032-V004</li>
+                                <li>OVS69110-V002</li>
+                                <li>OVS69133-1-V022</li>
+                                <li>OVS69133-2-V018</li>
+                            </ul>
                             <ExampleList onExampleClicked={onExampleClicked} />
                         </div>
                     ) : (
@@ -179,12 +186,8 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <QuestionInput
-                            clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
-                            disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
-                        />
+                        <QuestionInput clearOnSend placeholder="Type een nieuwe vraag" disabled={isLoading} onSend={question => makeApiRequest(question)} />
+                        <div className={styles.ovsList}>OVS60032-V004, OVS69110-V002,OVS69133-1-V022, OVS69133-2-V018 </div>
                     </div>
                 </div>
 

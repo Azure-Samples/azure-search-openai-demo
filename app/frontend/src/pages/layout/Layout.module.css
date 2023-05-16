@@ -4,17 +4,24 @@
     height: 100%;
 }
 
+.logo {
+    position: absolute;
+    width: 128px;
+    float: left;
+    margin-left: 10px;
+    margin-top: 8px;
+}
+
 .header {
     background-color: #222222;
     color: #f2f2f2;
+    display: block;
 }
 
 .headerContainer {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
 }
 
 .headerTitleContainer {

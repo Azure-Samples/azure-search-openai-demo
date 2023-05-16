@@ -20,7 +20,7 @@ if ([string]::IsNullOrEmpty($env:AZURE_RESOURCE_GROUP)) {
     $env:AZURE_RESOURCE_GROUP = "rg-$env:AZURE_ENV_NAME"
     azd env set AZURE_RESOURCE_GROUP $env:AZURE_RESOURCE_GROUP
 }
-
+ 
 foreach ($role in $roles) {
     az role assignment create `
         --role $role `

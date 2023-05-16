@@ -4,6 +4,9 @@
     flex-direction: column;
     margin-top: 20px;
 }
+.ovsList {
+    padding-top: 20px;
+}
 
 .chatRoot {
     flex: 1;
