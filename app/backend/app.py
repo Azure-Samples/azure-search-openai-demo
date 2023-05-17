@@ -3,6 +3,7 @@ import mimetypes
 import time
 import logging
 import openai
+import json
 from flask import Flask, request, jsonify
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
@@ -12,6 +13,7 @@ from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatgptread import ChatGPTReadApproach
 from azure.storage.blob import BlobServiceClient
+from auth.auth_utils import get_authenticated_user_details
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -118,6 +120,7 @@ def chat():
 ## BDL: this is the new chatGPT function adding
 @app.route("/chatgpt", methods=["POST"])
 def chatgpt():
+    authenticated_user = get_authenticated_user_details(request)
     ensure_openai_token()
     approach = request.json["approach"]
     try:
