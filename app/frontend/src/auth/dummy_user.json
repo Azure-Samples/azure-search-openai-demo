@@ -1,0 +1,63 @@
+{
+    "id_token": "your_base_encoded_id_token",
+    "provider_name": "aad",
+    "user_claims": [
+        {
+            "typ": "aud",
+            "val": "your_app_service_principal_guid"
+        },
+        {
+            "typ": "iss",
+            "val": "https://login.microsoftonline.com/your_tenant_id/v2.0"
+        },
+        {
+            "typ": "iat",
+            "val": "1684338703"
+        },
+        {
+            "typ": "nbf",
+            "val": "1684338703"
+        },
+        {
+            "typ": "exp",
+            "val": "1684342603"
+        },
+        {
+            "typ": "aio",
+            "val": "ignore_me"
+        },
+        {
+            "typ": "cc",
+            "val": "just_another_token_of_some_kind"
+        },
+        {
+            "typ": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+            "val": "testusername@constoso.com"
+        },
+        {
+            "typ": "name",
+            "val": "Testy McTesterson"
+        },
+        {
+            "typ": "http://schemas.microsoft.com/identity/claims/objectidentifier",
+            "val": "00000000-0000-0000-0000-000000000000"
+        },
+        {
+            "typ": "preferred_username",
+            "val": "testusername@constoso.com"
+        },
+        {
+            "typ": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+            "val": "unique_identifier_for_this_particular_app_and_user"
+        },
+        {
+            "typ": "http://schemas.microsoft.com/identity/claims/tenantid",
+            "val": "your_tenant_id"
+        },
+        {
+            "typ": "ver",
+            "val": "2.0"
+        }
+    ],
+    "user_id": "testusername@constoso.com"
+}
