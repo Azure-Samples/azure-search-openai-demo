@@ -46,7 +46,7 @@ param chatGptModelName string = 'gpt-35-turbo'
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
-@description('Type of user or app to assign application roles to')
+@description('Type of user or app to assign application roles to (User or ServicePrincipal)')
 param principalType string = 'User'
 
 @description('Supply a readable application name to use instead of randomly generated resource token')

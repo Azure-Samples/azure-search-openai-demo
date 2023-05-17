@@ -4,7 +4,7 @@
 parameters:
 - name: environments
   type: object
-  default: ['DEMO']
+  default: ['DEV']
 - name: variableGroupName
   default: 'myVariableGroupName'
 - name: dataFolder
@@ -20,7 +20,7 @@ stages:
     jobs:
     - template: templates/update-search-template.yml
       parameters:
-        variableGroupName: ${{ parameters.variableGroupName }}
+        variableGroupName: ${{ parameters.variableGroupName }}${{ environmentName }}
         environmentName: ${{ environmentName }}
         dataFolder: ${{ parameters.dataFolder }}
         dataFiles: ${{ parameters.dataFiles }}

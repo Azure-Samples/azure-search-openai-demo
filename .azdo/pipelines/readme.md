@@ -55,7 +55,7 @@ In the four pipeline files shown in the previous section, specify the environmen
 
 ## 5. Variable Group Contents
 
-Create a variable group named 'OpenAISearch' with the values below, either manually or by customizing and running this command in the Azure Cloud Shell.
+Create a variable group named 'OpenAISearch-<env>', one for each environment that is being deployed, with the values below, either manually entering values or by customizing and running this command in the Azure Cloud Shell.
 
 `Note: After creation, make sure you mark the ClientSecret as a secret so it's not visible to others or in the pipeline logs.`
 
@@ -64,25 +64,26 @@ az login
 az pipelines variable-group create 
   --organization=https://dev.azure.com/<yourAzDOOrg>/ 
   --project='<yourAzDOProject>'
-  --name OpenAISearch 
+  --name OpenAISearch-Dev
   --variables 
       location='eastus'
-      resourceGroupDev='rg_openaisearch_dev'
-      resourceGroupQA='rg_openaisearch_qa'
-      resourceGroupProd='rg_openaisearch_prod'
-
+      resourceGroupName='rg_openaisearch_dev'
       serviceConnectionName='<yourServiceConnection>'
       subscriptionId='<yourSubscriptionId>'
       subscriptionName='<yourAzureSubscriptionName>'
-
       adTenantId='<yourTenantId>'
       adClientId='<yourClientId>'
       adClientSecret='<yourClientSecret>'
 
-      # SID for user that will be granted roles to the OpenAI resources
-      userPrincipalId='<youruserguid>'
+      # The SID for user that will be granted roles to update Search Indexes and use OpenAI resources.
+      # When using a pipeline, this should be the id of the service principal running the pipeline
+      # Note: this is NOT the objectId of the App Registration.  Look up the Enterprise Application
+      # associated with that App Registration and use the objectId of that Enterprise Application
+      # (AppReg.ObjectId should be the same as the EnterpriseApp.ApplicationId)
+      runnerPrincipalId='<userguid>'
+      runnerPrincipalType='ServicePrincipal'
 
-      # if you want to use a specific suffix for your resources instead of a random token, specify this value
+      # if you want to use a specific suffix for your resources instead of a randomly generated token, specify this value
       appSuffix='xxxoai'
       resourceToken='xxxoai'
 
@@ -98,7 +99,6 @@ az pipelines variable-group create
       deployApplicationRoles=false
 
 ## note: you will have to update create-template-infra.yml to pass the following optional variables in to main.bicep
-
 
       # if you have existing OpenAI resource specify it here
       openAiServiceName='<yourOpenAIServiceName>'

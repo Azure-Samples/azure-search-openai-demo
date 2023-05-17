@@ -5,7 +5,7 @@ parameters:
 - name: variableGroupName
   default: 'myVariableGroup'
 - name: environmentName
-  default: 'DEMO'
+  default: 'DEV'
 - name: templateFolderName
   default: 'infra'
 - name: templateFileName
@@ -23,19 +23,10 @@ jobs:
     - group: ${{ parameters.variableGroupName }}
     - name: environmentNameLower
       value: ${{ lower(parameters.environmentName) }}
+    - name: variableGroupName
+      value: ${{ parameters.variableGroupName }}
     - name: templateFile
       value: '$(Pipeline.Workspace)/s/${{ parameters.templateFolderName }}/${{ parameters.templateFileName }}'
-
-    # use the environment value to determine which resource group we should deploy to
-    - ${{ if eq(variables.environmentNameLower, 'dev') }}:
-      - name: resourceGroupName
-        value: $(resourceGroupNameDev)
-    - ${{ if eq(variables.environmentNameLower, 'qa') }}:
-      - name: resourceGroupName
-        value: $(resourceGroupNameQA)
-    - ${{ if eq(variables.environmentNameLower, 'prod') }}:
-      - name: resourceGroupName
-        value: $(resourceGroupNameProd)
 
   steps:
   - bash: |
@@ -54,20 +45,23 @@ jobs:
     continueOnError: true
 
   - bash: |
-      echo "subscriptionName=$(subscriptionName)"
-      echo "environmentNameLower=$(environmentNameLower)"
+      echo "variableGroupName=$(variableGroupName)"
+      echo "createResourceGroup=$(createResourceGroup)"
       echo "resourceGroupName=$(resourceGroupName)"
-      echo "resourceGroupNameDev=$(resourceGroupNameDev)"
-      echo "resourceGroupNameQA=$(resourceGroupNameQA)"
-      echo "resourceGroupNameProd=$(resourceGroupNameProd)"
-      echo "serviceConnectionName=$(serviceConnectionName)"
+      echo "subscriptionName=$(subscriptionName)"
       echo "subscriptionId=$(subscriptionId)"
+      echo "serviceConnectionName=$(serviceConnectionName)"
+      echo "adClientId= $(adClientId)"
+      echo "adClientSecret=********"
+      echo "adTenantId=$(adTenantId)"
+      echo "environmentNameLower=$(environmentNameLower)"
       echo "location=$(location)"
       echo "appSuffix=$(appSuffix)"
       echo "appSuffixEnv=$(appSuffixEnv)"
       echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
       echo "backendServiceNameEnv=$(backendServiceNameEnv)"
-      echo "userPrincipalId=$(userPrincipalId)"
+      echo "runnerPrincipalId=$(runnerPrincipalId)"
+      echo "runnerPrincipalType=$(runnerPrincipalType)"
       echo "deployOpenAIResources=$(deployOpenAIResources)"
       echo "deployFormsRecognizerResources=$(deployFormsRecognizerResources)"
       echo "deployUserRoles=$(deployUserRoles)"
@@ -77,7 +71,7 @@ jobs:
       echo "Resource Group Command:"
       echo "  az group create --name $(resourceGroupName) --location $(location) --tags LastDeployed=$(runDateTimeZ) Application=$(appSuffix) Environment=$(environmentNameLower)"
       echo "Bicep Deploy Sample Command:"
-      echo "  az deployment group create -n main-deploy-$(runDateTimeZ) --resource-group $(resourceGroupName) --template-file 'main.bicep' --parameters environmentName $(environmentNameLower) location $(location)  principalId $(userPrincipalId) resourceGroupName $(resourceGroupName) appSuffix $(appSuffixEnv) backendServiceName $(backendServiceNameEnv)"
+      echo "  az deployment sub create -n main-deploy-$(runDateTimeZ) --location $(location) --template-file '$(templateFile)' --parameters environmentName=$(environmentNameLower) location=$(location) principalId=$(runnerPrincipalId) principalType=$(runnerPrincipalType) resourceGroupName=$(resourceGroupName) appSuffix=$(appSuffixEnv) backendServiceName=$(backendServiceNameEnv) deployOpenAIResources=$(deployOpenAIResources) deployFormsRecognizerResources=$(deployFormsRecognizerResources) deployOpenAIUserRoles=$(deployUserRoles) deployOpenAIAppRoles=$(deployApplicationRoles)"
       echo "System.DefaultWorkingDirectory=$(System.DefaultWorkingDirectory)"
       tree $(Pipeline.Workspace)
     displayName: 'Display Variables'
@@ -92,36 +86,54 @@ jobs:
     # echo "storageResourceGroupName="$(storageResourceGroupName)"
     # echo "storageAccountName=$(storageAccountName)"
 
+  - ${{ if eq(variables.createResourceGroup, 'true') }}:
+    - task: AzureCLI@2
+      displayName: 'Create Resource Group'
+      inputs:
+        azureSubscription: $(serviceConnectionName)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: az group create --name $(resourceGroupName) --location $(location) --tags LastDeployed=$(runDateTimeZ) Application=$(appSuffix) Environment=$(environmentNameLower)
+
+  # ----------------------------------------------------------------------------------------------------
+  # When I use the nicely formatted deployment task (below), it keeps insisting on deploying everything 
+  # only to the FIRST (i.e. dev) Service Connection and ignoring the variable value in serviceConnectionName
+  # if I try to deploy to three different subscriptions, the resource groups end up in only one subscription
+  # this works fine if I use the "az deploy" command with a set subscription and the same parameters
+  # ----------------------------------------------------------------------------------------------------
   - task: AzureCLI@2
-    displayName: 'Create Resource Group'
+    displayName: 'Publish Bicep Resource Command'
     inputs:
-      azureSubscription: $(subscriptionName)
+      azureSubscription: $(serviceConnectionName)
       scriptType: bash
       scriptLocation: inlineScript
-      inlineScript: az group create --name $(resourceGroupName) --location $(location) --tags LastDeployed=$(runDateTimeZ) Application=$(appSuffix) Environment=$(environmentNameLower)
+      inlineScript: |
+        az account set --subscription $(subscriptionId)
+        az deployment sub create -n main-deploy-$(runDateTimeZ) --location $(location) --template-file '$(templateFile)' --parameters environmentName=$(environmentNameLower) location=$(location) principalId=$(runnerPrincipalId) principalType=$(runnerPrincipalType) resourceGroupName=$(resourceGroupName) appSuffix=$(appSuffixEnv) backendServiceName=$(backendServiceNameEnv) deployOpenAIResources=$(deployOpenAIResources) deployFormsRecognizerResources=$(deployFormsRecognizerResources) deployOpenAIUserRoles=$(deployUserRoles) deployOpenAIAppRoles=$(deployApplicationRoles)
 
-  - task: AzureResourceManagerTemplateDeployment@3
-    displayName: 'Publish Bicep Resources'
-    inputs:
-      csmFile: $(templateFile)
-      overrideParameters: >
-        -environmentName $(environmentNameLower)
-        -location $(location) 
-        -principalId $(userPrincipalId)
-        -resourceGroupName $(resourceGroupName)
-        -appSuffix $(appSuffixEnv)
-        -backendServiceName $(backendServiceNameEnv)
-        -deployOpenAIResources $(deployOpenAIResources)
-        -deployFormsRecognizerResources $(deployFormsRecognizerResources)
-        -deployOpenAIUserRoles $(deployUserRoles)
-        -deployOpenAIAppRoles $(deployApplicationRoles)
-      deploymentScope: 'Subscription'
-      location: '$(location)'
-      azureResourceManagerConnection: '$(subscriptionName)'
-      action: 'Create Or Update Resource Group'
-      templateLocation: 'Linked artifact'
-      deploymentMode: 'Incremental'
-      deploymentOutputs: armDeployment
+  # - task: AzureResourceManagerTemplateDeployment@3
+  #   displayName: 'Publish Bicep Resources'
+  #   inputs:
+  #     csmFile: $(templateFile)
+  #     overrideParameters: >
+  #       -environmentName $(environmentNameLower)
+  #       -location $(location) 
+  #       -principalId $(runnerPrincipalId)
+  #       -principalType=$(runnerPrincipalType)
+  #       -resourceGroupName $(resourceGroupName)
+  #       -appSuffix $(appSuffixEnv)
+  #       -backendServiceName $(backendServiceNameEnv)
+  #       -deployOpenAIResources $(deployOpenAIResources)
+  #       -deployFormsRecognizerResources $(deployFormsRecognizerResources)
+  #       -deployOpenAIUserRoles $(deployUserRoles)
+  #       -deployOpenAIAppRoles $(deployApplicationRoles)
+  #     deploymentScope: 'Subscription'
+  #     location: $(location)
+  #     azureResourceManagerConnection: $(serviceConnectionName)
+  #     action: 'Create Or Update Resource Group'
+  #     templateLocation: 'Linked artifact'
+  #     deploymentMode: 'Incremental'
+  #     deploymentOutputs: armDeployment
 
 # -resourceToken "$(resourceToken)"
 # -openAiServiceName "$(openAiServiceName)"

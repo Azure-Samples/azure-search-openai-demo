@@ -1,6 +1,7 @@
 # Azure az webapp deployment details
 .azure
 *_env
+.azdo-v1
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -145,3 +146,6 @@ cython_debug/
 npm-debug.log*
 node_modules
 static/
+__azurite_db_queue__.json
+.gitignore
+__azurite_db_queue_extent__.json

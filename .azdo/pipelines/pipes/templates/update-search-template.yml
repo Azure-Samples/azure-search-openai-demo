@@ -8,7 +8,7 @@ parameters:
 - name: variableGroupName
   default:  'myVariableGroup'
 - name: environmentName
-  default:  'DEMO'
+  default:  'DEV'
 - name: dataFolder
   default: 'data'
 - name: dataFiles

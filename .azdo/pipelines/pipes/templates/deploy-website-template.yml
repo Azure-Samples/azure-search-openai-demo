@@ -5,7 +5,7 @@ parameters:
 - name: variableGroupName
   default:  'myVariableGroup'
 - name: environmentName
-  default:  'DEMO'
+  default:  'DEV'
 - name: zipFileName
   default: 'App.zip'
 

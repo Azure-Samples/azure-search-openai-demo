@@ -4,7 +4,9 @@
 parameters:
 - name: environments
   type: object
-  default: ['DEMO']
+  default: ['DEV']
+- name: buildEnvironment
+  default: 'DEV'
 - name: variableGroupName
   default: 'myVariableGroupName'
 - name: appFolderName
@@ -22,7 +24,7 @@ stages:
     jobs:
     - template: templates/scan-code-template.yml
       parameters:
-        environmentName: 'DEMO'
+        environmentName: 'DEV'
         runDevSecOpsScan: ${{ parameters.runDevSecOpsScan }}
         runPsRuleScan: ${{ parameters.runPsRuleScan }}
 
@@ -32,8 +34,8 @@ stages:
   jobs:
   - template: templates/build-website-template.yml
     parameters:
-      variableGroupName: ${{ parameters.variableGroupName }}
-      environmentName: 'DEMO'
+      variableGroupName: ${{ parameters.variableGroupName }}${{ parameters.buildEnvironment }}
+      environmentName: 'DEV'
       appFolderName: ${{ parameters.appFolderName }}
 
 # ----------------------------------------------------------------------------------------------------
@@ -45,7 +47,7 @@ stages:
     jobs:
     - template: templates/create-infra-template.yml
       parameters:
-        variableGroupName: ${{ parameters.variableGroupName }}
+        variableGroupName: ${{ parameters.variableGroupName }}${{ environmentName }}
         environmentName: ${{ environmentName }}
 
   - stage: Deploy${{ environmentName }}App
@@ -55,7 +57,7 @@ stages:
     jobs:
     - template: templates/deploy-website-template.yml
       parameters:
-        variableGroupName: ${{ parameters.variableGroupName }}
+        variableGroupName: ${{ parameters.variableGroupName }}${{ environmentName }}
         environmentName: ${{ environmentName }}
 
   - stage: Update${{ environmentName }}Search
@@ -65,5 +67,5 @@ stages:
     jobs:
     - template: templates/update-search-template.yml
       parameters:
-        variableGroupName: ${{ parameters.variableGroupName }}
+        variableGroupName: ${{ parameters.variableGroupName }}${{ environmentName }}
         environmentName: ${{ environmentName }}

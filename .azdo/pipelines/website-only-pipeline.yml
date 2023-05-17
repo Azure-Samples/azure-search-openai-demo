@@ -28,6 +28,6 @@ trigger:
 stages:
 - template: pipes/website-only-pipe.yml
   parameters:
-    variableGroupName: 'OpenAISearch'
-    environments: ['DEV'] # ['DEV','QA', 'PROD']
+    variableGroupName: 'OpenAISearch-'
+    environments: ['DEV','QA', 'PROD']
     appFolderName: 'app'
