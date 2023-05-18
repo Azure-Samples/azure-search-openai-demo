@@ -2,8 +2,8 @@ param name string
 param location string = resourceGroup().location
 param tags object = {}
 
-param cosmos_database_name string = 'db_conversation_history'
-param cosmos_database_container_name string = 'chatgpt'
+param database_name string = 'db_conversation_history'
+param conversations_container_name string = 'conversations'
 
 // deploy a cosmos db instance
 resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2022-11-15' = {
@@ -46,24 +46,24 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2022-11-15' = {
 // deploy the cosmosdb database
 resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2022-11-15' = {
   parent: cosmosdb
-  name: cosmos_database_name
+  name: database_name
   properties: {
     resource: {
-      id: cosmos_database_name
+      id: database_name
     }
   }
 }
 
-// deploy the chatgpt history container
-resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-11-15' = {
+// deploy the chatgpt conversation container
+resource conversations_container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-11-15' = {
   parent: database
-  name: cosmos_database_container_name
+  name: conversations_container_name
   properties: {
     resource: {
-      id: cosmos_database_container_name
+      id: conversations_container_name
       partitionKey: {
         paths: [
-          '/userid'
+          '/conversationid'
         ]
         kind: 'Hash'
       }
@@ -71,8 +71,7 @@ resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/container
   }
 }
 
-
 output name string = cosmosdb.name
 output endpoint string = cosmosdb.properties.documentEndpoint
-output cosmosdb_database_name string = database.name
-output cosmoddb_database_container_name string = container.name
+output database_name string = database.name
+output conversations_container_name string = conversations_container.name

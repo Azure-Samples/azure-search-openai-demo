@@ -3,6 +3,7 @@ import mimetypes
 import time
 import logging
 import openai
+from history.cosmosdbservice import CosmosDbService
 from flask import Flask, request, jsonify
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
@@ -12,6 +13,7 @@ from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatgptread import ChatGPTReadApproach
 from azure.storage.blob import BlobServiceClient
+from azure.cosmos import CosmosClient, PartitionKey
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -21,6 +23,10 @@ AZURE_SEARCH_INDEX = os.environ.get("AZURE_SEARCH_INDEX") or "gptkbindex"
 AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
 AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT_DEPLOYMENT") or "davinci"
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
+AZURE_COSMOSDB_DATABASE = os.environ.get("AZURE_COSMOSDB_DATABASE") or "db_conversation_history"
+AZURE_COSMOSDB_ACCOUNT = os.environ.get("AZURE_COSMOSDB_ACCOUNT")
+AZURE_COSMOSDB_CONVERSATIONS_CONTAINER = os.environ.get("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER") or "conversations"
+AZURE_COSMOSDB_MESSAGES_CONTAINER = os.environ.get("AZURE_COSMOSDB_MESSAGES_CONTAINER") or "messages"
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -63,10 +69,19 @@ ask_approaches = {
 chat_approaches = {
     "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)  
 }
-## BDL: added anothera set of approaches for vanilla chatgpt
+## BDL: added another set of approaches for vanilla chatgpt
 chatgpt_approaches = {
     'chatgpt': ChatGPTReadApproach(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
 }
+
+# Initialize a CosmosDB client with AAD auth and containers
+cosmos_endpoint = f'https://{AZURE_COSMOSDB_ACCOUNT}.documents.azure.com:443/'
+cosmos_client = CosmosClient(AZURE_COSMOSDB_ENDPOINT, credential=azure_credential)
+database = cosmos_client.get_database_client(AZURE_COSMOSDB_DATABASE)
+conversations_container = database.get_container_client(AZURE_COSMOSDB_CONVERSATIONS_CONTAINER)
+messages_container = database.get_container_client(AZURE_COSMOSDB_MESSAGES_CONTAINER)
+## Initialize CosmosDbService object
+cosmos = CosmosDbService(cosmos_endpoint, conversations_container, messages_container)
 
 app = Flask(__name__)
 
@@ -100,7 +115,7 @@ def ask():
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
 
-## BDL: this is the orignal chat function
+## BDL: this is the original chat function
 @app.route("/chat", methods=["POST"])
 def chat():
     ensure_openai_token()
@@ -116,7 +131,16 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 ## BDL: this is the new chatGPT function adding
-@app.route("/chatgpt", methods=["POST"])
+## First is conversations - add new conversation when created
+@app.route("/conversations", methods=["POST"])
+def create_conversation():
+    user = request.json.get('user',[])
+    summary = "summary"     # TODO: get summary of conversation from openai
+    conversation = cosmos.create_conversations(user, summary)
+    return jsonify(conversation)
+
+# Then messages - add new messages when created (i.e. prompts/responses)
+@app.route("/messages", methods=["POST"])
 def chatgpt():
     ensure_openai_token()
     approach = request.json["approach"]
@@ -124,7 +148,22 @@ def chatgpt():
         impl = chatgpt_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
+        
+        conversation_id = request.json["conversationId"]
+        user = request.json.get('user',[])
+
+        message_prompt = request.json["history"][-1]["user"]
+        # Write to cosmos with new prompt
+        cosmos.create_message(conversation_id, user, message_prompt)
+
+        # Submit prompt to Chat Completions for response
         r = impl.run(request.json["history"], request.json.get("overrides") or {})
+
+        message_response = r["history"][-1]["bot"]
+        # Write to cosmos with new response
+        cosmos.create_message(conversation_id, user, message_response)
+        
+        # returns full convo back
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chatgpt")
