@@ -57,45 +57,47 @@ jobs:
     displayName: 'Display Variables and Tree'
     continueOnError: true
 
-
-
   # ------------------------------------------------------------------------------------------
-  # -- This works, now try just doing an az account set, followed by the AzureRMWebAPPDeployment@4 task...
+  # -- This deploys successfully
   # ------------------------------------------------------------------------------------------
-  # - task: AzureCLI@2
-  #   displayName: 'Deploy Web App'
-  #   inputs:
-  #     azureSubscription: $(subscriptionName)
-  #     resourceGroupName: $(resourceGroupName)
-  #     scriptType: bash
-  #     scriptLocation: inlineScript
-  #     addSpnToEnvironment: true
-  #     inlineScript: |
-  #       az account set --subscription $(subscriptionId)
-  #       az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
+  - task: AzureCLI@2
+    displayName: 'Deploy Web App'
+    inputs:
+      azureSubscription: $(subscriptionName)
+      resourceGroupName: $(resourceGroupName)
+      scriptType: bash
+      scriptLocation: inlineScript
+      addSpnToEnvironment: true
+      inlineScript: |
+        az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
+        az account set --subscription $(subscriptionId)
+        az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
 
   # ------------------------------------------------------------------------------------------
   # -- AzureRmWebAppDeployment works most of the time, but frequently does the "This resource does not exist"
   # -- error even though it really does exist as it's looking in the wrong subscription...
+  # - Doing this login step before did not resolve the issue...
   # ------------------------------------------------------------------------------------------
-  - task: CmdLine@2
-    inputs:
-      script: |
-        az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
-        az account set --subscription $(subscriptionId)
-
-  - task: AzureRmWebAppDeployment@4
-    displayName: 'Publish App to Azure'
-    inputs:
-      ConnectionType: AzureRM
-      azureSubscription: $(subscriptionName)
-      resourceGroupName: $(resourceGroupName)
-      appType: webAppLinux
-      WebAppName: $(backendServiceNameEnv)
-      packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-      deploymentMethod: zipDeployment
+  # - task: CmdLine@2
+  #   inputs:
+  #     script: |
+  #       az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
+  #       az account set --subscription $(subscriptionId)
+  # - task: AzureRmWebAppDeployment@4
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     ConnectionType: AzureRM
+  #     azureSubscription: $(subscriptionName)
+  #     resourceGroupName: $(resourceGroupName)
+  #     appType: webAppLinux
+  #     WebAppName: $(backendServiceNameEnv)
+  #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+  #     deploymentMethod: zipDeployment
      
+  # ------------------------------------------------------------------------------------------
+  # Other command formats I've tried...
+  # ------------------------------------------------------------------------------------------
   # - task: AzureWebApp@1
   #   displayName: 'Publish App to Azure'
   #   inputs:
@@ -105,7 +107,6 @@ jobs:
   #     package: $(Pipeline.Workspace)/$(zipFileName)
   #     deploymentMethod: zipDeployment
 
-  # ------------------------------------------------------------------------------------------
   # - task: AzureRmWebAppDeployment@4
   #   displayName: 'Publish App to Azure'
   #   inputs:
