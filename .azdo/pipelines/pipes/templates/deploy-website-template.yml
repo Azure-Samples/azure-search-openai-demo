@@ -62,7 +62,7 @@ jobs:
   # ------------------------------------------------------------------------------------------
   # -- This deploys successfully
   # ------------------------------------------------------------------------------------------
-  - ${{ if eq(variables.useCLIDeploy), true) }}:
+  - ${{ if eq(variables.useCLIDeploy, true) }}:
     - task: AzureCLI@2
       displayName: 'Deploy Web App'
       inputs:
@@ -76,7 +76,7 @@ jobs:
           az account set --subscription $(subscriptionId)
           az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
-  - ${{ if eq(variables.useCLIDeploy), false) }}:
+  - ${{ if eq(variables.useCLIDeploy, false) }}:
     - task: AzureRmWebAppDeployment@4
       displayName: 'Publish App to Azure'
       inputs:
