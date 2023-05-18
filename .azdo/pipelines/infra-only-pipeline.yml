@@ -25,4 +25,4 @@ stages:
 - template: pipes/infra-only-pipe.yml
   parameters:
     variableGroupName: 'OpenAISearch-'
-    environments: ['DEV','QA','PROD']
+    environments: ['DEV'] # ['DEV','QA','PROD']
