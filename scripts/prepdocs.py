@@ -5,6 +5,7 @@ import html
 import io
 import re
 import time
+import openai
 from pypdf import PdfReader, PdfWriter
 from azure.identity import AzureDeveloperCliCredential
 from azure.core.credentials import AzureKeyCredential
@@ -32,6 +33,9 @@ parser.add_argument("--tenantid", required=False, help="Optional. Use this to de
 parser.add_argument("--searchservice", help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
 parser.add_argument("--index", help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
 parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
+parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
+parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
+parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
 parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
 parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
 parser.add_argument("--localpdfparser", action="store_true", help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents")
@@ -52,6 +56,15 @@ if not args.localpdfparser:
         print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
         exit(1)
     formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
+
+if args.openaikey == None:
+    openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
+    openai.api_type = "azure_ad"
+else:
+    openai.api_type = "azure"
+    openai.api_key = args.openaikey
+openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
+openai.api_version = "2022-12-01"
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
@@ -225,6 +238,7 @@ def create_sections(filename, page_map):
         yield {
             "id": re.sub("[^0-9a-zA-Z_-]","_",f"{filename}-{i}"),
             "content": section,
+            "embedding": openai.Embedding.create(engine=args.openaideployment, input=section)["data"][0]["embedding"],
             "category": args.category,
             "sourcepage": blob_name_from_file_page(filename, pagenum),
             "sourcefile": filename
@@ -240,6 +254,9 @@ def create_search_index():
             fields=[
                 SimpleField(name="id", type="Edm.String", key=True),
                 SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), 
+                            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
+                            dimensions=1536, vector_search_configuration="default"),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
@@ -248,8 +265,17 @@ def create_search_index():
                 configurations=[SemanticConfiguration(
                     name='default',
                     prioritized_fields=PrioritizedFields(
-                        title_field=None, prioritized_content_fields=[SemanticField(field_name='content')]))])
-        )
+                        title_field=None, prioritized_content_fields=[SemanticField(field_name='content')]))]),
+                vector_search=VectorSearch(
+                    algorithm_configurations=[
+                        VectorSearchAlgorithmConfiguration(
+                            name="default",
+                            kind="hnsw",
+                            hnsw_parameters=HnswParameters(metric="cosine") 
+                        )
+                    ]
+                )        
+            )
         if args.verbose: print(f"Creating {args.index} search index")
         index_client.create_index(index)
     else:

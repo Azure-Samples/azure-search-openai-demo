@@ -1,7 +1,7 @@
 import openai
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
-from azure.search.documents.models import QueryType
+from azure.search.documents.models import QueryType, Vector
 from text import nonewlines
 
 # Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
@@ -39,9 +39,10 @@ Sources:
 Answer:
 """
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
+        self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
@@ -51,17 +52,27 @@ Answer:
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
+        # If retrieval mode includes vectors, compute an embedding for the query
+        if overrides.get("retrieval_mode") in ["vectors", "hybrid", None]:
+            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=q)["data"][0]["embedding"]
+        else:
+            query_vector = None
+
+        # Only keep the text query if the retrieval mode uses text, otherwise drop it
+        query_text = q if overrides.get("retrieval_mode") != "vectors" else None
+
         if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q, 
+            r = self.search_client.search(query_text, 
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
                                           query_speller="lexicon", 
                                           semantic_configuration_name="default", 
                                           top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
+                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                                          vector=Vector(value=query_vector, k=50, fields="embedding") if query_vector else None)
         else:
-            r = self.search_client.search(q, filter=filter, top=top)
+            r = self.search_client.search(query_text, filter=filter, top=top, vector=Vector(value=query_vector, k=50, fields="embedding") if query_vector else None)
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
@@ -77,4 +88,4 @@ Answer:
             n=1, 
             stop=["\n"])
 
-        return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
+        return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}

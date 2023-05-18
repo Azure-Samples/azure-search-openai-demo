@@ -41,6 +41,8 @@ param gptDeploymentName string = 'davinci'
 param gptModelName string = 'text-davinci-003'
 param chatGptDeploymentName string = 'chat'
 param chatGptModelName string = 'gpt-35-turbo'
+param embeddingDeploymentName string = 'embedding'
+param embeddingModelName string = 'text-embedding-ada-002'
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -109,6 +111,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
     }
   }
 }
@@ -141,6 +144,17 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           format: 'OpenAI'
           name: chatGptModelName
           version: '0301'
+        }
+        scaleSettings: {
+          scaleType: 'Standard'
+        }
+      }
+      {
+        name: embeddingDeploymentName
+        model: {
+          format: 'OpenAI'
+          name: embeddingModelName
+          version: '2'
         }
         scaleSettings: {
           scaleType: 'Standard'
@@ -307,6 +321,7 @@ output AZURE_OPENAI_SERVICE string = openAi.outputs.name
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
 output AZURE_OPENAI_GPT_DEPLOYMENT string = gptDeploymentName
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
+output AZURE_OPENAI_EMB_DEPLOYMENT string = embeddingDeploymentName
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
