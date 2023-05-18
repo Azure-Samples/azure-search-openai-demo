@@ -24,7 +24,7 @@ jobs:
     - name: zipFileName
       value: '${{ parameters.zipFileName }}'
     - name: useCLIDeploy
-      value: false
+      value: true
 
   steps:
   - task: DownloadPipelineArtifact@2
