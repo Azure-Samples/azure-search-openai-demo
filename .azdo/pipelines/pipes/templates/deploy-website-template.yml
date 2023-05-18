@@ -23,6 +23,8 @@ jobs:
       value: ${{ lower(parameters.environmentName) }}
     - name: zipFileName
       value: '${{ parameters.zipFileName }}'
+    - name: useCLIDeploy
+      value: false
 
   steps:
   - task: DownloadPipelineArtifact@2
@@ -60,19 +62,31 @@ jobs:
   # ------------------------------------------------------------------------------------------
   # -- This deploys successfully
   # ------------------------------------------------------------------------------------------
-  - task: AzureCLI@2
-    displayName: 'Deploy Web App'
-    inputs:
-      azureSubscription: $(subscriptionName)
-      resourceGroupName: $(resourceGroupName)
-      scriptType: bash
-      scriptLocation: inlineScript
-      addSpnToEnvironment: true
-      inlineScript: |
-        az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
-        az account set --subscription $(subscriptionId)
-        az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
+  - ${{ if eq(variables.useCLIDeploy), true) }}:
+    - task: AzureCLI@2
+      displayName: 'Deploy Web App'
+      inputs:
+        azureSubscription: $(subscriptionName)
+        resourceGroupName: $(resourceGroupName)
+        scriptType: bash
+        scriptLocation: inlineScript
+        addSpnToEnvironment: true
+        inlineScript: |
+          az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
+          az account set --subscription $(subscriptionId)
+          az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
+  - ${{ if eq(variables.useCLIDeploy), false) }}:
+    - task: AzureRmWebAppDeployment@4
+      displayName: 'Publish App to Azure'
+      inputs:
+        ConnectionType: AzureRM
+        azureSubscription: $(subscriptionName)
+        resourceGroupName: $(resourceGroupName)
+        appType: webAppLinux
+        WebAppName: $(backendServiceNameEnv)
+        packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+        deploymentMethod: zipDeployment
 
   # ------------------------------------------------------------------------------------------
   # -- AzureRmWebAppDeployment works most of the time, but frequently does the "This resource does not exist"
@@ -84,16 +98,6 @@ jobs:
   #     script: |
   #       az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
   #       az account set --subscription $(subscriptionId)
-  # - task: AzureRmWebAppDeployment@4
-  #   displayName: 'Publish App to Azure'
-  #   inputs:
-  #     ConnectionType: AzureRM
-  #     azureSubscription: $(subscriptionName)
-  #     resourceGroupName: $(resourceGroupName)
-  #     appType: webAppLinux
-  #     WebAppName: $(backendServiceNameEnv)
-  #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-  #     deploymentMethod: zipDeployment
      
   # ------------------------------------------------------------------------------------------
   # Other command formats I've tried...
