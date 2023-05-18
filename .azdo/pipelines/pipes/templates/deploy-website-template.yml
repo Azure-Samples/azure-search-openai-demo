@@ -30,12 +30,6 @@ jobs:
     inputs:
       artifact: drop
 
-  # - task: ExtractFiles@1
-  #   displayName: 'Extract Artifacts'
-  #   inputs:
-  #     archiveFilePatterns: $(Pipeline.Workspace)/$(zipFileName)
-  #     destinationFolder: $(Pipeline.Workspace)/publish
-
   - bash: |
       backendServiceNameEnv=$(echo "$(backendServiceNamePrefix)-$(environmentNameLower)" | tr '[:upper:]' '[:lower:]')
       echo "backendServiceNameEnv=$backendServiceNameEnv"
@@ -45,11 +39,17 @@ jobs:
   - task: CmdLine@2
     inputs:
       script: |
-        echo "serviceConnectionName=$(serviceConnectionName)"
+        echo "subscriptionId=$(subscriptionId)"
+        echo "subscriptionName=$(subscriptionName)"
+        echo "resourceGroupName=$(resourceGroupName)"
         echo "environmentNameLower=$(environmentNameLower)"
         echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
         echo "backendServiceNameEnv=$(backendServiceNameEnv)"
         echo "zipFileName=$(zipFileName)"
+        echo "Set Subscription Command:"
+        echo "  az account set --subscription $(subscriptionId)"
+        echo "Deploy Command:"
+        echo "  az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)"
         echo "Pipeline workspace: $(Pipeline.Workspace)"
         echo "DefaultWorkingDirectory: $(System.DefaultWorkingDirectory)"
         echo "Directory of pipeline workspace:"
@@ -57,69 +57,14 @@ jobs:
     displayName: 'Display Variables and Tree'
     continueOnError: true
 
-  - task: AzureRmWebAppDeployment@4
-    displayName: 'Publish App to Azure'
+  - task: AzureCLI@2
+    displayName: 'Deploy Web App'
     inputs:
-      ConnectionType: AzureRM
-      azureSubscription: $(serviceConnectionName)
-      appType: webAppLinux
-      WebAppName: $(backendServiceNameEnv)
-      packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-      deploymentMethod: zipDeployment
-
-  # - task: AzureRmWebAppDeployment@4
-  #   displayName: 'Publish App to Azure'
-  #   inputs:
-  #     ConnectionType: AzureRM
-  #     azureSubscription: $(serviceConnectionName)
-  #     appType: webAppLinux
-  #     WebAppName: $(backendServiceNameEnv)
-  #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-  #     deploymentMethod: zipDeployment
-
-  # - task: AzureWebApp@1
-  #   displayName: 'Publish App to Azure'
-  #   inputs:
-  #     azureSubscription: $(serviceConnectionName)
-  #     appName: $(backendServiceNameEnv)
-  #     package: $(Pipeline.Workspace)/publish
-  #     deploymentMethod: auto
-  # ----------------------------------------------------------------------------------------------------
-  # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-web-app-v1?view=azure-pipelines&viewFallbackFrom=azure-devops#deployment-methods  # --> deploys output.tar.gz
-  # ----------------------------------------------------------------------------------------------------
-
-  # - task: AzureWebApp@1
-  #   displayName: 'Publish App to Azure'
-  #   inputs:
-  #     azureSubscription: $(serviceConnectionName)
-  #     appName: $(backendServiceNameEnv)
-  #     package: $(Pipeline.Workspace)/$(zipFileName)
-  #     deploymentMethod: zipDeploy 
-
-
-  # ----------------------------------------------------------------------------------------------------
-  # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-rm-web-app-deployment-v4?view=azure-pipelines
-  # ----------------------------------------------------------------------------------------------------
-
-  # --> deploys output.tar.gz
-  # - task: AzureRmWebAppDeployment@4
-  #   displayName: 'Publish App to Azure'
-  #   inputs:
-  #     ConnectionType: AzureRM
-  #     azureSubscription: $(serviceConnectionName)
-  #     appType: webAppLinux
-  #     WebAppName: $(backendServiceNameEnv)
-  #     Package: $(Pipeline.Workspace)/$(zipFileName)
-  #     enableCustomDeployment: true
-  #     deploymentMethod: zipDeployment
-
-  # --> deploys output.tar.gz
-  # - task: AzureRmWebAppDeployment@4
-  #   displayName: 'Publish App to Azure'
-  #   inputs:
-  #     ConnectionType: AzureRM
-  #     azureSubscription: $(serviceConnectionName)
-  #     appType: webAppLinux
-  #     WebAppName: $(backendServiceNameEnv)
-  #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-  #     deploymentMethod: zipDeployment
+      azureSubscription: $(subscriptionName)
+      resourceGroupName: $(resourceGroupName)
+      scriptType: bash
+      scriptLocation: inlineScript
+      addSpnToEnvironment: true
+      inlineScript: |
+        az account set --subscription $(subscriptionId)
+        az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
