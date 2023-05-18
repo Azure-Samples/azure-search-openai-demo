@@ -56,15 +56,25 @@ jobs:
         tree $(Pipeline.Workspace)
     displayName: 'Display Variables and Tree'
     continueOnError: true
-
-  - task: AzureCLI@2
-    displayName: 'Deploy Web App'
+    
+  - task: AzureRmWebAppDeployment@4
+    displayName: 'Publish App to Azure'
     inputs:
-      azureSubscription: $(subscriptionName)
-      resourceGroupName: $(resourceGroupName)
-      scriptType: bash
-      scriptLocation: inlineScript
-      addSpnToEnvironment: true
-      inlineScript: |
-        az account set --subscription $(subscriptionId)
-        az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
+      ConnectionType: AzureRM
+      azureSubscription: $(serviceConnectionName)
+      appType: webAppLinux
+      WebAppName: $(backendServiceNameEnv)
+      packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+      deploymentMethod: zipDeployment
+
+  #- task: AzureCLI@2
+  #  displayName: 'Deploy Web App'
+  #  inputs:
+  #    azureSubscription: $(subscriptionName)
+  #    resourceGroupName: $(resourceGroupName)
+  #    scriptType: bash
+  #    scriptLocation: inlineScript
+  #    addSpnToEnvironment: true
+  #    inlineScript: |
+  #      az account set --subscription $(subscriptionId)
+  #      az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
