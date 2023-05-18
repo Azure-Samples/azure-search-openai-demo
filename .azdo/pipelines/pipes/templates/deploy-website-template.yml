@@ -52,15 +52,20 @@ jobs:
     displayName: 'Display Variables and Tree'
     continueOnError: true
 
-  - task: AzureWebApp@1
-    displayName: 'Publish App to Azure'
+  - task: AzureCLI@2
+    displayName: 'Deploy Web App'
     inputs:
       azureSubscription: $(subscriptionName)
       resourceGroupName: $(resourceGroupName)
-      appName: $(backendServiceNameEnv)
-      package: $(Pipeline.Workspace)/$(zipFileName)
-      deploymentMethod: zipDeployment
+      scriptType: bash
+      scriptLocation: inlineScript
+      addSpnToEnvironment: true
+      inlineScript: |
+        az account set --subscription $(subscriptionId)
+        az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
+  # ------------------------------------------------------------------------------------------
+  # -- Works most of the time, but frequently does the "This resource does not exist" error even though it really does exist
   # - task: AzureRmWebAppDeployment@4
   #   displayName: 'Publish App to Azure'
   #   inputs:
@@ -71,7 +76,16 @@ jobs:
   #     WebAppName: $(backendServiceNameEnv)
   #     packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
   #     deploymentMethod: zipDeployment
+  # - task: AzureWebApp@1
+  #   displayName: 'Publish App to Azure'
+  #   inputs:
+  #     azureSubscription: $(subscriptionName)
+  #     resourceGroupName: $(resourceGroupName)
+  #     appName: $(backendServiceNameEnv)
+  #     package: $(Pipeline.Workspace)/$(zipFileName)
+  #     deploymentMethod: zipDeployment
 
+  # ------------------------------------------------------------------------------------------
   # - task: AzureRmWebAppDeployment@4
   #   displayName: 'Publish App to Azure'
   #   inputs:
