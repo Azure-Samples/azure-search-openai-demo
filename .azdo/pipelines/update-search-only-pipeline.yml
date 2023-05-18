@@ -41,6 +41,6 @@ stages:
 - template: pipes/update-search-only-pipe.yml
   parameters:
     variableGroupName: 'OpenAISearch-'
-    environments: ['DEV','QA', 'PROD']
+    environments: ['DEV'] # ['DEV','QA','PROD']
     dataFolder: ${{ parameters.dataFolder }}
     dataFiles: ${{ parameters.dataFiles }}

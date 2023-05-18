@@ -27,6 +27,6 @@ stages:
 - template: pipes/infra-and-website-pipe.yml
   parameters:
     variableGroupName: 'OpenAISearch-'
-    environments: ['DEV','QA', 'PROD']
+    environments: ['DEV'] # ['DEV','QA','PROD']
     buildEnvironment: 'DEV'
     appFolderName: 'app'
