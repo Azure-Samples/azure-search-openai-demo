@@ -75,9 +75,14 @@ jobs:
   #       az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
 
+  # ------------------------------------------------------------------------------------------
+  # -- AzureRmWebAppDeployment works most of the time, but frequently does the "This resource does not exist"
+  # -- error even though it really does exist as it's looking in the wrong subscription...
+  # ------------------------------------------------------------------------------------------
   - task: CmdLine@2
     inputs:
       script: |
+        az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
         az account set --subscription $(subscriptionId)
 
   - task: AzureRmWebAppDeployment@4
@@ -90,7 +95,6 @@ jobs:
       WebAppName: $(backendServiceNameEnv)
       packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
       deploymentMethod: zipDeployment
-
      
   # - task: AzureWebApp@1
   #   displayName: 'Publish App to Azure'
