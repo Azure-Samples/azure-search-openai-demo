@@ -46,6 +46,7 @@ jobs:
     inputs:
       script: |
         echo "serviceConnectionName=$(serviceConnectionName)"
+        echo "resourceGroupName=$(resourceGroupName)"
         echo "environmentNameLower=$(environmentNameLower)"
         echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
         echo "backendServiceNameEnv=$(backendServiceNameEnv)"
@@ -62,6 +63,7 @@ jobs:
     inputs:
       ConnectionType: AzureRM
       azureSubscription: $(serviceConnectionName)
+      ResourceGroupName: $(resourceGroupName)
       appType: webAppLinux
       WebAppName: $(backendServiceNameEnv)
       packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
