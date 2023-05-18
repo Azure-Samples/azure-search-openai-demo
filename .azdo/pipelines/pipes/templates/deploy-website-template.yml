@@ -23,8 +23,8 @@ jobs:
       value: ${{ lower(parameters.environmentName) }}
     - name: zipFileName
       value: '${{ parameters.zipFileName }}'
-    # - name: useCLIDeploy
-    #   value: true
+    - name: performWebDeployUsingCLI
+      value: true
 
   steps:
   - task: DownloadPipelineArtifact@2
@@ -62,35 +62,36 @@ jobs:
   # ------------------------------------------------------------------------------------------
   # -- This deploys successfully
   # ------------------------------------------------------------------------------------------
-  # - ${{ if eq(variables.useCLIDeploy, true) }}:
-  - task: AzureCLI@2
-    displayName: 'Deploy Web App'
-    inputs:
-      azureSubscription: $(subscriptionName)
-      resourceGroupName: $(resourceGroupName)
-      scriptType: bash
-      scriptLocation: inlineScript
-      addSpnToEnvironment: true
-      inlineScript: |
-        az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
-        az account set --subscription $(subscriptionId)
-        az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
+  - ${{ if eq(variables.performWebDeployUsingCLI, true) }}:
+    - task: AzureCLI@2
+      displayName: 'Deploy Web App via CLI'
+      inputs:
+        azureSubscription: $(subscriptionName)
+        resourceGroupName: $(resourceGroupName)
+        scriptType: bash
+        scriptLocation: inlineScript
+        addSpnToEnvironment: true
+        inlineScript: |
+          az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
+          az account set --subscription $(subscriptionId)
+          az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
   # ------------------------------------------------------------------------------------------
-  # -- AzureRmWebAppDeployment works most of the time, but frequently does the "This resource does not exist"
-  # -- error even though it really does exist as it's looking in the wrong subscription...
+  # -- AzureRmWebAppDeployment works most of the time, but frequently gets "This resource does not exist"
+  # -- even though the app really does exist 
+  # -- maybe looking in the wrong subscription in multi-subscription scenario...?
   # ------------------------------------------------------------------------------------------
-  # - ${{ if eq(variables.useCLIDeploy, false) }}:
-  #   - task: AzureRmWebAppDeployment@4
-  #     displayName: 'Publish App to Azure'
-  #     inputs:
-  #       ConnectionType: AzureRM
-  #       azureSubscription: $(subscriptionName)
-  #       resourceGroupName: $(resourceGroupName)
-  #       appType: webAppLinux
-  #       WebAppName: $(backendServiceNameEnv)
-  #       packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-  #       deploymentMethod: zipDeployment
+  - ${{ if eq(variables.performWebDeployUsingCLI, false) }}:
+    - task: AzureRmWebAppDeployment@4
+      displayName: 'Publish Web App via Task'
+      inputs:
+        ConnectionType: AzureRM
+        azureSubscription: $(subscriptionName)
+        resourceGroupName: $(resourceGroupName)
+        appType: webAppLinux
+        WebAppName: $(backendServiceNameEnv)
+        packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+        deploymentMethod: zipDeployment
 
   # ------------------------------------------------------------------------------------------
   # - Doing this login step before the AzureRmWebAppDeployment@4 did not resolve the issue...
