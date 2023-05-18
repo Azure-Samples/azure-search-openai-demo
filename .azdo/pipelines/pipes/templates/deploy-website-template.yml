@@ -65,6 +65,7 @@ jobs:
   - ${{ if eq(variables.performWebDeployUsingCLI, true) }}:
     - task: AzureCLI@2
       displayName: 'Deploy Web App via CLI'
+      retryCountOnTaskFailure: 3
       inputs:
         azureSubscription: $(subscriptionName)
         resourceGroupName: $(resourceGroupName)
@@ -74,16 +75,19 @@ jobs:
         inlineScript: |
           az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
           az account set --subscription $(subscriptionId)
-          az webapp deployment source config-zip -g $(resourceGroupName) -n $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
+          az webapp deployment source config-zip --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
   # ------------------------------------------------------------------------------------------
-  # -- AzureRmWebAppDeployment works most of the time, but frequently gets "This resource does not exist"
-  # -- even though the app really does exist 
+  # -- AzureRmWebAppDeployment works most of the time, but frequently gets the error 
+  # -- "This resource does not exist" even though the app really does exist 
   # -- maybe looking in the wrong subscription in multi-subscription scenario...?
+  # Note: The deploy task checks the existence of the resource before deploying and fails
+  #       Deploying via the CLI command doesn't have that step...
   # ------------------------------------------------------------------------------------------
   - ${{ if eq(variables.performWebDeployUsingCLI, false) }}:
     - task: AzureRmWebAppDeployment@4
       displayName: 'Publish Web App via Task'
+      retryCountOnTaskFailure: 3
       inputs:
         ConnectionType: AzureRM
         azureSubscription: $(subscriptionName)
@@ -133,6 +137,7 @@ jobs:
   #     deploymentMethod: auto
 
   # ----------------------------------------------------------------------------------------------------
+  # https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
   # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-web-app-v1?view=azure-pipelines&viewFallbackFrom=azure-devops#deployment-methods  # --> deploys output.tar.gz
   # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-rm-web-app-deployment-v4?view=azure-pipelines
   # ----------------------------------------------------------------------------------------------------
