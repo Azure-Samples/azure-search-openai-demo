@@ -61,6 +61,7 @@ jobs:
 
   # ------------------------------------------------------------------------------------------
   # -- This deploys successfully
+  # https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
   # ------------------------------------------------------------------------------------------
   - ${{ if eq(variables.performWebDeployUsingCLI, true) }}:
     - task: AzureCLI@2
@@ -75,6 +76,7 @@ jobs:
         inlineScript: |
           az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
           az account set --subscription $(subscriptionId)
+          az webapp config appsettings set --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --settings WEBSITE_RUN_FROM_PACKAGE="1"
           az webapp deployment source config-zip --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
 
   # ------------------------------------------------------------------------------------------
@@ -137,7 +139,6 @@ jobs:
   #     deploymentMethod: auto
 
   # ----------------------------------------------------------------------------------------------------
-  # https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
   # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-web-app-v1?view=azure-pipelines&viewFallbackFrom=azure-devops#deployment-methods  # --> deploys output.tar.gz
   # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/azure-rm-web-app-deployment-v4?view=azure-pipelines
   # ----------------------------------------------------------------------------------------------------
