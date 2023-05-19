@@ -15,6 +15,7 @@ import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 
 const Chat = () => {
+    const [conversationId, setConversationId] = useState<string>("");
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -56,10 +57,12 @@ const Chat = () => {
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
-                }
+                },
+                conversation_id: conversationId
             };
             const result = await chatGPTApi(request);
             setAnswers([...answers, [question, result]]);
+            setConversationId(result.conversation_id);
         } catch (e) {
             setError(e);
         } finally {
@@ -73,6 +76,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
+        setConversationId("");
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
@@ -129,6 +133,7 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
+                <p>Conversation ID: {conversationId}</p> {/*BDL temporary for troubleshooting*/}
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
@@ -182,7 +187,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <QuestionInput clearOnSend placeholder="Type a message here." disabled={isLoading} onSend={question => makeApiRequest(question)} />
+                        <QuestionInput clearOnSend placeholder={"Type a message here."} disabled={isLoading} onSend={question => makeApiRequest(question)} />
                     </div>
                 </div>
 

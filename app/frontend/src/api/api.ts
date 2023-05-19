@@ -85,8 +85,8 @@ export async function chatGPTApi(options: ChatRequest): Promise<AskResponse> {
                 exclude_category: options.overrides?.excludeCategory,
                 suggest_followup_questions: options.overrides?.suggestFollowupQuestions
             },
-            user: "user", // TODO: add user ID parameter
-            conversation_id: "conversation ID" // TODO: add conversation ID
+            user: "user", // TODO: add user ID parameter ## BDL: I think we just depend on the backend to capture the authenticated user for now.
+            conversation_id: options.conversation_id // TODO: add conversation ID
         })
     });
 
