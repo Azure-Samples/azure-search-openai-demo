@@ -23,8 +23,47 @@ jobs:
       value: ${{ lower(parameters.environmentName) }}
     - name: zipFileName
       value: '${{ parameters.zipFileName }}'
-    - name: performWebDeployUsingCLI
-      value: false
+      
+    # - name: deployViaAzureRmWebDeployment4a
+    #   value: $[eq(variables['webDeployTaskName'], 'AzureRmWebAppDeployment4')]
+    # - name: deployViaAzureRmWebDeployment4b
+    #   value: $[eq(variables.webDeployTaskName, 'AzureRmWebAppDeployment4')]
+    # - name: deployViaAzureRmWebDeployment4c
+    #   value: ${{ variables.webDeployTaskName }}
+    # - name: deployViaAzureRmWebDeployment4d
+    #   value: ${{ eq(lower(variables.webDeployTaskName), 'azurermwebappdeployment4') }}
+    # - name: deployViaAzureRmWebDeployment4e
+    #   value: ${{ or(eq(lower(variables.webDeployTaskName), 'azurermwebappdeployment4'), eq(variables.webDeployTaskName, '')) }}
+
+    # - name: deployViaAzureRmWebDeployment3a
+    #   value: $[eq(variables['webDeployTaskName'], 'AzureRmWebAppDeployment3')]
+    # - name: deployViaAzureRmWebDeployment3b
+    #   value: $[eq(variables.webDeployTaskName, 'AzureRmWebAppDeployment3')]
+    # - name: deployViaAzureRmWebDeployment3c
+    #   value: ${{ variables.webDeployTaskName }}
+    # - name: deployViaAzureRmWebDeployment3d
+    #   value: ${{ eq(lower(variables.webDeployTaskName), 'azurermwebappdeployment3') }}
+    # - name: deployViaAzureRmWebDeployment3e
+    #   value: ${{ or(eq(lower(variables.webDeployTaskName), 'azurermwebappdeployment3'), eq(variables.webDeployTaskName, '')) }}
+
+    # - name: deployViaAzureRmWebDeployment4
+    #   value: '${{ variables.webDeployTaskName == 'AzureRmWebAppDeployment4' }}'
+    # - name: deployViaAzureRmWebDeployment3
+    #   value: '${{ variables.webDeployTaskName == 'AzureRmWebAppDeployment3' }}'
+    # - name: deployViaAzureWebApp
+    #   value: '${{ variables.webDeployTaskName == 'AzureWebApp' }}'
+    # - name: deployViaCLI
+    #   value: '${{ variables.webDeployTaskName == 'CLI' }}'
+    # - name: deployTaskName
+    #   value: '${{ variables.webDeployTaskName }}'
+    # - name: deployViaAzureRmWebDeployment4
+    #   value: $(deployTaskName == 'AzureRmWebAppDeployment4')
+    # - name: deployViaAzureRmWebDeployment3
+    #   value: $(deployTaskName == 'AzureRmWebAppDeployment3')
+    # - name: deployViaAzureWebApp
+    #   value: $(deployTaskName == 'AzureWebApp')
+    # - name: deployViaCLI
+    #   value: $(deployTaskName == 'CLI')
 
   steps:
   - task: DownloadPipelineArtifact@2
@@ -41,6 +80,7 @@ jobs:
   - task: CmdLine@2
     inputs:
       script: |
+        echo "variableGroupName=${{ parameters.variableGroupName }}"
         echo "subscriptionId=$(subscriptionId)"
         echo "subscriptionName=$(subscriptionName)"
         echo "serviceConnectionName=$(serviceConnectionName)"
@@ -48,6 +88,7 @@ jobs:
         echo "environmentNameLower=$(environmentNameLower)"
         echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
         echo "backendServiceNameEnv=$(backendServiceNameEnv)"
+        echo "webDeployTaskName=$(webDeployTaskName)"
         echo "zipFileName=$(zipFileName)"
         echo "Set Subscription Command:"
         echo "  az account set --subscription $(subscriptionId)"
@@ -61,44 +102,80 @@ jobs:
     continueOnError: true
 
   # ------------------------------------------------------------------------------------------
-  # -- This deploys successfully
-  # https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
-  # ------------------------------------------------------------------------------------------
-  - ${{ if eq(variables.performWebDeployUsingCLI, true) }}:
-    - task: AzureCLI@2
-      displayName: 'Deploy Web App via CLI'
-      retryCountOnTaskFailure: 3
-      inputs:
-        azureSubscription: $(serviceConnectionName)
-        resourceGroupName: $(resourceGroupName)
-        scriptType: bash
-        scriptLocation: inlineScript
-        addSpnToEnvironment: true
-        inlineScript: |
-          az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
-          az account set --subscription $(subscriptionId)
-          az webapp config appsettings set --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --settings WEBSITE_RUN_FROM_PACKAGE="1"
-          az webapp deployment source config-zip --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
-
-  # ------------------------------------------------------------------------------------------
   # -- AzureRmWebAppDeployment works most of the time, but frequently gets the error 
   # -- "This resource does not exist" even though the app really does exist 
   # -- maybe looking in the wrong subscription in multi-subscription scenario...?
-  # Note: The deploy task checks the existence of the resource before deploying and fails
+  # Note: The deploy task checks the existence of the resource before deploying and fails.
   #       Deploying via the CLI command doesn't have that step...
   # ------------------------------------------------------------------------------------------
-  - ${{ if eq(variables.performWebDeployUsingCLI, false) }}:
-    - task: AzureRmWebAppDeployment@4
-      displayName: 'Publish Web App via Task'
-      retryCountOnTaskFailure: 3
-      inputs:
-        ConnectionType: AzureRM
-        azureSubscription: $(serviceConnectionName)
-        resourceGroupName: $(resourceGroupName)
-        appType: webAppLinux
-        WebAppName: $(backendServiceNameEnv)
-        packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
-        deploymentMethod: zipDeployment
+
+  - task: AzureRmWebAppDeployment@4
+    displayName: 'Publish App to Azure'
+    inputs:
+      ConnectionType: AzureRM
+      azureSubscription: $(serviceConnectionName)
+      appType: webAppLinux
+      WebAppName: $(backendServiceNameEnv)
+      packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+      deploymentMethod: zipDeployment
+
+  # - ${{ if or(eq(lower(variables.webDeployTaskName), 'azurermwebappdeployment4'), eq(variables.webDeployTaskName, '')) }}:
+  #   - task: AzureRmWebAppDeployment@4
+  #     displayName: 'RMWebApp4 Publish Web'
+  #     retryCountOnTaskFailure: 3
+  #     inputs:
+  #       ConnectionType: AzureRM
+  #       azureSubscription: $(serviceConnectionName)
+  #       appType: webAppLinux
+  #       WebAppName: $(backendServiceNameEnv)
+  #       package: $(Pipeline.Workspace)/$(zipFileName)
+  #       enableCustomDeployment: true
+  #       deploymentMethod: zipDeployment
+
+
+  # - ${{ if eq(lower(variables.webDeployTaskName), 'azurermwebappdeployment3') }}:
+  #   - task: AzureRmWebAppDeployment@3
+  #     displayName: 'RMWebApp3 Publish Web'
+  #     retryCountOnTaskFailure: 3
+  #     inputs:
+  #       ConnectionType: AzureRM
+  #       azureSubscription: $(serviceConnectionName)
+  #       appType: webAppLinux
+  #       WebAppName: $(backendServiceNameEnv)
+  #       packageForLinux: $(Pipeline.Workspace)/$(zipFileName)
+  #       deploymentMethod: zipDeployment
+
+  # ------------------------------------------------------------------------------------------
+  # -- This says it deploys successfully but the website doesn't work...
+  # https://learn.microsoft.com/en-us/azure/app-service/deploy-run-package
+  # ------------------------------------------------------------------------------------------
+  # - ${{ if eq(variables.webDeployTaskName, 'CLI') }}:
+  #   - task: AzureCLI@2
+  #     displayName: 'Az Deploy WebApp via CLI'
+  #     retryCountOnTaskFailure: 3
+  #     inputs:
+  #       azureSubscription: $(serviceConnectionName)
+  #       resourceGroupName: $(resourceGroupName)
+  #       scriptType: bash
+  #       scriptLocation: inlineScript
+  #       addSpnToEnvironment: true
+  #       inlineScript: |
+  #         az login --service-principal -u $(adClientId) -p $(adClientSecret) --tenant $(adTenantId)
+  #         az account set --subscription $(subscriptionId)
+  #         az webapp config appsettings set --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+  #         az webapp config appsettings set --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --settings WEBSITE_RUN_FROM_PACKAGE="1"
+  #         az webapp deployment source config-zip --resource-group $(resourceGroupName) --name $(backendServiceNameEnv) --src $(Pipeline.Workspace)/$(zipFileName)
+
+  # ------------------------------------------------------------------------------------------
+  # - ${{ if eq(variables.webDeployTaskName, 'AzureWebApp') }}:
+  #   - task: AzureWebApp@1
+  #     displayName: 'Publish WebApp to Azure'
+  #     inputs:
+  #       azureSubscription: $(serviceConnectionName)
+  #       resourceGroupName: $(resourceGroupName)
+  #       appName: $(backendServiceNameEnv)
+  #       package: $(Pipeline.Workspace)/$(zipFileName)
+  #       deploymentMethod: zipDeployment
 
   # ------------------------------------------------------------------------------------------
   # - Doing this login step before the AzureRmWebAppDeployment@4 did not resolve the issue...
