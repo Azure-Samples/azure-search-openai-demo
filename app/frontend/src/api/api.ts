@@ -84,7 +84,9 @@ export async function chatGPTApi(options: ChatRequest): Promise<AskResponse> {
                 prompt_template_suffix: options.overrides?.promptTemplateSuffix,
                 exclude_category: options.overrides?.excludeCategory,
                 suggest_followup_questions: options.overrides?.suggestFollowupQuestions
-            }
+            },
+            user: "user", // TODO: add user ID parameter
+            conversation_id: "conversation ID" // TODO: add conversation ID
         })
     });
 
