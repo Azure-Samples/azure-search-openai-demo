@@ -79,7 +79,7 @@ chatgpt_approaches = {
 
 # Initialize a CosmosDB client with AAD auth and containers
 cosmos_endpoint = f'https://{AZURE_COSMOSDB_ACCOUNT}.documents.azure.com:443/'
-cosmos_client = CosmosClient(AZURE_COSMOSDB_ENDPOINT, credential=azure_credential)
+cosmos_client = CosmosClient(cosmos_endpoint, credential=azure_credential)
 database = cosmos_client.get_database_client(AZURE_COSMOSDB_DATABASE)
 conversations_container = database.get_container_client(AZURE_COSMOSDB_CONVERSATIONS_CONTAINER)
 messages_container = database.get_container_client(AZURE_COSMOSDB_MESSAGES_CONTAINER)
@@ -135,40 +135,62 @@ def chat():
 
 ## BDL: this is the new chatGPT function adding
 ## First is conversations - add new conversation when created
-@app.route("/conversations", methods=["POST"])
-def create_conversation():
-    user = request.json.get('user',[])
-    summary = "summary"     # TODO: get summary of conversation from openai
-    conversation = cosmos.create_conversations(user, summary)
-    return jsonify(conversation)
+## BDL Commenting this out the /conversations endpoint for now since we're handling this in the /chatgpt endpoint
+# @app.route("/conversations", methods=["POST"]) ## todo -- how will we retrieve conversations and how will we update them? Should we use a GET and a PATCH?
+# def create_conversation():
+#     user = request.json.get('user',[])
+#     summary = "summary"     # TODO: get summary of conversation from openai
+#     conversation = cosmos.create_conversations(user, summary)
+#     return jsonify(conversation)
 
 # Then messages - add new messages when created (i.e. prompts/responses)
-@app.route("/messages", methods=["POST"])
+@app.route("/chatgpt", methods=["POST"])
 def chatgpt():
-    authenticated_user = get_authenticated_user_details(request)
+    authenticated_user = get_authenticated_user_details(request_headers=request.headers)
+    user_id = authenticated_user['user_principal_id']
+
     ensure_openai_token()
     approach = request.json["approach"]
     try:
         impl = chatgpt_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        
-        conversation_id = request.json["conversationId"]
-        user = request.json.get('user',[])
-
+        ## BDL TODO: should all of this conversation history be moved to the parent "approach" class so it can be shared across all approaches?
+        # check for the conversation_id, if the conversation is not set, we will create a new one
+        conversation_id = request.json.get("conversation_id", None)
+        if not conversation_id:
+            logging.error("No conversation_id in request, creating new conversation")
+            conversation_obj = cosmos.create_conversations(user_id=user_id)
+            conversation_id = conversation_obj['id']
+        else:
+            logging.error(f'conversation_id: {conversation_id} found in request, using existing conversation')
+        ## Format the incoming message object in the "chat/completions" messages format
+        ## then write it to the conversation history in cosmos
         message_prompt = request.json["history"][-1]["user"]
-        # Write to cosmos with new prompt
-        cosmos.create_message(conversation_id, user, message_prompt)
+        msg = {"role": "user", "content": message_prompt}
+        resp = cosmos.create_message(
+            conversation_id=conversation_id,
+            user_id=user_id,
+            input_message=msg
+        )
 
         # Submit prompt to Chat Completions for response
         r = impl.run(request.json["history"], request.json.get("overrides") or {})
-
-        message_response = r["history"][-1]["bot"]
-        # Write to cosmos with new response
-        cosmos.create_message(conversation_id, user, message_response)
         
-        # returns full convo back
+        ## Format the incoming message object in the "chat/completions" messages format
+        ## then write it to the conversation history in cosmos
+        msg = {"role": "bot", "content": r['answer']}
+        resp = cosmos.create_message(
+            conversation_id=conversation_id,
+            user_id=user_id,
+            input_message=msg
+        )
+        
+        ## we need to return the conversation_id in the response so the client can keep track of it
+        r['conversation_id'] = conversation_id
+        # returns the response from the bot
         return jsonify(r)
+       
     except Exception as e:
         logging.exception("Exception in /chatgpt")
         return jsonify({"error": str(e)}), 500
