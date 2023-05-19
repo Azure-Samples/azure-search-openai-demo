@@ -63,7 +63,7 @@ resource conversations_container 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
       id: conversations_container_name
       partitionKey: {
         paths: [
-          '/conversationid'
+          '/userId'
         ]
         kind: 'Hash'
       }

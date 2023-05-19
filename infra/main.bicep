@@ -122,6 +122,7 @@ module backend 'core/host/appservice.bicep' = {
   }
 }
 
+
 module openAi 'core/ai/cognitiveservices.bicep' = {
   name: 'openai'
   scope: openAiResourceGroup
@@ -323,7 +324,7 @@ module cosmosDbRoleBackend 'core/security/role.bicep' = {
   name: 'cosmosdb-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // Contributor
+    roleDefinitionId:  'b24988ac-6180-42a0-ab88-20f7382dd24c' // Contributor BDL TODO: (should we use the cosmos db built-in role? '00000000-0000-0000-0000-000000000002')
     principalType: 'ServicePrincipal'
   }
 }
