@@ -24,7 +24,7 @@ jobs:
     - name: zipFileName
       value: '${{ parameters.zipFileName }}'
     - name: performWebDeployUsingCLI
-      value: true
+      value: false
 
   steps:
   - task: DownloadPipelineArtifact@2
@@ -43,6 +43,7 @@ jobs:
       script: |
         echo "subscriptionId=$(subscriptionId)"
         echo "subscriptionName=$(subscriptionName)"
+        echo "serviceConnectionName=$(serviceConnectionName)"
         echo "resourceGroupName=$(resourceGroupName)"
         echo "environmentNameLower=$(environmentNameLower)"
         echo "backendServiceNamePrefix=$(backendServiceNamePrefix)"
@@ -68,7 +69,7 @@ jobs:
       displayName: 'Deploy Web App via CLI'
       retryCountOnTaskFailure: 3
       inputs:
-        azureSubscription: $(subscriptionName)
+        azureSubscription: $(serviceConnectionName)
         resourceGroupName: $(resourceGroupName)
         scriptType: bash
         scriptLocation: inlineScript
@@ -92,7 +93,7 @@ jobs:
       retryCountOnTaskFailure: 3
       inputs:
         ConnectionType: AzureRM
-        azureSubscription: $(subscriptionName)
+        azureSubscription: $(serviceConnectionName)
         resourceGroupName: $(resourceGroupName)
         appType: webAppLinux
         WebAppName: $(backendServiceNameEnv)
