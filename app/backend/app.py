@@ -3,7 +3,11 @@ import mimetypes
 import time
 import logging
 import openai
+import json
 from history.cosmosdbservice import CosmosDbService
+from auth.auth_utils import get_authenticated_user_details
+from azure.cosmos import CosmosClient, PartitionKey
+
 from flask import Flask, request, jsonify
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
@@ -13,7 +17,6 @@ from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatgptread import ChatGPTReadApproach
 from azure.storage.blob import BlobServiceClient
-from azure.cosmos import CosmosClient, PartitionKey
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -142,6 +145,7 @@ def create_conversation():
 # Then messages - add new messages when created (i.e. prompts/responses)
 @app.route("/messages", methods=["POST"])
 def chatgpt():
+    authenticated_user = get_authenticated_user_details(request)
     ensure_openai_token()
     approach = request.json["approach"]
     try:
