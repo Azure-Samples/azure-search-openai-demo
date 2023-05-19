@@ -30,7 +30,7 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
-// BDL: this is the original chatApi that I'm copying with the chatGPTAPI
+// BDL: this is the original chatApi that I'm copying with the chatConversationAPI
 export async function chatApi(options: ChatRequest): Promise<AskResponse> {
     const response = await fetch("/chat", {
         method: "POST",
@@ -62,11 +62,11 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
-// BDL: this is the chatGPTAPI that I'm adding
-export async function chatGPTApi(options: ChatRequest): Promise<AskResponse> {
-    console.log("chatGPTApi: options.history: ", options.history);
+// BDL: this is the chatConversationAPI that I'm adding
+export async function chatConversationApi(options: ChatRequest): Promise<AskResponse> {
+    console.log("chatConversationApi: options.history: ", options.history);
 
-    const response = await fetch("/chatgpt", {
+    const response = await fetch("/conversation", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

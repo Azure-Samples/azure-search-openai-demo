@@ -15,7 +15,7 @@ from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.chatgptread import ChatGPTReadApproach
+from approaches.chatconversation import ChatConversationReadApproach
 from azure.storage.blob import BlobServiceClient
 
 # Replace these with your own values, either in environment variables or directly here
@@ -73,8 +73,8 @@ chat_approaches = {
     "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)  
 }
 ## BDL: added another set of approaches for vanilla chatgpt
-chatgpt_approaches = {
-    'chatgpt': ChatGPTReadApproach(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
+chatconversation_approaches = {
+    'chatconversation': ChatConversationReadApproach(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
 }
 
 # Initialize a CosmosDB client with AAD auth and containers
@@ -133,7 +133,7 @@ def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
-## BDL: this is the new chatGPT function adding
+## BDL: this is the new chatGPT or  function adding
 ## First is conversations - add new conversation when created
 ## BDL Commenting this out the /conversations endpoint for now since we're handling this in the /chatgpt endpoint
 # @app.route("/conversations", methods=["POST"]) ## todo -- how will we retrieve conversations and how will we update them? Should we use a GET and a PATCH?
@@ -144,15 +144,15 @@ def chat():
 #     return jsonify(conversation)
 
 # Then messages - add new messages when created (i.e. prompts/responses)
-@app.route("/chatgpt", methods=["POST"])
-def chatgpt():
+@app.route("/conversation", methods=["POST"])
+def conversation():
     authenticated_user = get_authenticated_user_details(request_headers=request.headers)
     user_id = authenticated_user['user_principal_id']
 
     ensure_openai_token()
     approach = request.json["approach"]
     try:
-        impl = chatgpt_approaches.get(approach)
+        impl = chatconversation_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         ## BDL TODO: should all of this conversation history be moved to the parent "approach" class so it can be shared across all approaches?
@@ -192,7 +192,7 @@ def chatgpt():
         return jsonify(r)
        
     except Exception as e:
-        logging.exception("Exception in /chatgpt")
+        logging.exception("Exception in /conversation")
         return jsonify({"error": str(e)}), 500
 
 def ensure_openai_token():

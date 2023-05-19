@@ -2,19 +2,19 @@ import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 
-import styles from "./Chat.module.css";
+import styles from "./ChatConversation.module.css";
 
-import { chatGPTApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import { chatConversationApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
-import { ChatGPTExampleList } from "../../components/ChatGPTExample";
+import { ChatConversationExampleList } from "../../components/ChatConversationExample";
 import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 
-const Chat = () => {
+const ChatConversation = () => {
     const [conversationId, setConversationId] = useState<string>("");
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
@@ -49,7 +49,7 @@ const Chat = () => {
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 // Change the approach here to route to GPT model
-                approach: Approaches.AskChatGPT,
+                approach: Approaches.ChatConversation,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -60,7 +60,7 @@ const Chat = () => {
                 },
                 conversation_id: conversationId
             };
-            const result = await chatGPTApi(request);
+            const result = await chatConversationApi(request);
             setAnswers([...answers, [question, result]]);
             setConversationId(result.conversation_id);
         } catch (e) {
@@ -145,7 +145,7 @@ const Chat = () => {
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} /> */}
-                            <ChatGPTExampleList onExampleClicked={onExampleClicked} />
+                            <ChatConversationExampleList onExampleClicked={onExampleClicked} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -254,4 +254,4 @@ const Chat = () => {
     );
 };
 
-export default Chat;
+export default ChatConversation;

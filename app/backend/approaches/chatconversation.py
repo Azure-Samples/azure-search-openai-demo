@@ -2,7 +2,7 @@ import openai
 from approaches.approach import Approach
 
 # Simple ChatGPT experience that calls the Azure OpenAI APIs directly. The input history is converted to the chat/completions "messages" format and submitted to the model.
-class ChatGPTReadApproach(Approach):
+class ChatConversationReadApproach(Approach):
 
     def __init__(self, chatgpt_deployment: str): ## BDL: removed search_client, gpt_deployment, sourcepage_field, content_field as they're not needed for vanilla chatgptread
         self.chatgpt_deployment = chatgpt_deployment

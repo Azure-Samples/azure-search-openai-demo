@@ -2,7 +2,7 @@ export const enum Approaches {
     RetrieveThenRead = "rtr",
     ReadRetrieveRead = "rrr",
     ReadDecomposeAsk = "rda",
-    AskChatGPT = "chatgpt"
+    ChatConversation = "chatconversation"
 }
 
 export type AskRequestOverrides = {
