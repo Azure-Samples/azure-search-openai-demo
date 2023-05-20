@@ -1,4 +1,4 @@
-import { AskRequest, AskResponse, ChatRequest } from "./models";
+import { AskRequest, AskResponse, ChatRequest, ConversationRequest, ConversationResponse, ConversationListResponse } from "./models";
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
     const response = await fetch("/ask", {
@@ -66,7 +66,7 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
 export async function chatConversationApi(options: ChatRequest): Promise<AskResponse> {
     console.log("chatConversationApi: options.history: ", options.history);
 
-    const response = await fetch("/conversation", {
+    const response = await fetch("/conversation/add", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -91,6 +91,46 @@ export async function chatConversationApi(options: ChatRequest): Promise<AskResp
     });
 
     const parsedResponse: AskResponse = await response.json();
+    if (response.status > 299 || !response.ok) {
+        throw Error(parsedResponse.error || "Unknown error");
+    }
+
+    return parsedResponse;
+}
+//BDL proposed updated conversationApi...
+// TODO: need to figure out how to better return types as an enum or switch statement or something.
+export async function conversationApi(options: any): Promise<any> {
+    console.log("conversationApi: options", options);
+    // parse the route depending on the task
+
+    let route: string;
+    let body;
+
+    switch (options.route) {
+        case "/add":
+            route = `${options.baseroute}/add`;
+            break;
+        case "/read":
+            route = `${options.baseroute}/read`;
+            break;
+        case "/list":
+            route = `${options.baseroute}/list`;
+            body = JSON.stringify({});
+            break;
+        default:
+            throw Error("Invalid route");
+    }
+
+    const response = await fetch(route, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: body
+    });
+
+    const parsedResponse: any = await response.json();
+
     if (response.status > 299 || !response.ok) {
         throw Error(parsedResponse.error || "Unknown error");
     }
