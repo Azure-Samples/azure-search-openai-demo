@@ -85,6 +85,36 @@ const ChatConversation = () => {
             setIsLoading(false);
         }
     }
+
+    async function callDeleteConversationAPI(conversation_id: string) {
+        try {
+            const request: ConversationRequest = {
+                conversation_id: conversation_id,
+                baseroute: "/conversation",
+                route: "/delete"
+            };
+            const result = await conversationApi(request);
+            return result;
+        } catch (e) {
+            setError(e);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const deleteConversation = (conversation_id: string) => {
+        callDeleteConversationAPI(conversation_id)
+            .then(result => {
+                let conv_id = result.conversation_id;
+                console.log(`Conversation ${conv_id} deleted successfully`);
+            })
+            .then(() => {
+                // refresh the conversation list
+                listConversations().then(result => {
+                    setConversationList(result || null);
+                });
+            });
+    };
+
     const loadConversation = (conversation_id: string) => {
         // set the current conversation id to the new conversation id
         setCurrentConversationId(conversation_id);
@@ -242,7 +272,8 @@ const ChatConversation = () => {
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
                 <ConversationListButton className={styles.commandButtonLeft} onClick={handleConversationListButtonClick} />
-                <ClearChatButton className={styles.commandButtonRight} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                {/* <ClearChatButton className={styles.commandButtonRight} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} /> */}
+                <ClearChatButton className={styles.commandButtonRight} onClick={clearChat} disabled={false} />
                 <SettingsButton className={styles.commandButtonRight} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
@@ -370,7 +401,7 @@ const ChatConversation = () => {
                     isFooterAtBottom={true}
                 >
                     <ConversationListRefreshButton className={styles.commandButton} onClick={refreshConversationList} />
-                    <ConversationList listOfConversations={conversationList} onConversationClicked={loadConversation} />
+                    <ConversationList listOfConversations={conversationList} onConversationClicked={loadConversation} onDeleteClick={deleteConversation} />
                 </Panel>
             </div>
         </div>

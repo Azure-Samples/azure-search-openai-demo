@@ -11,8 +11,8 @@ interface Props {
 
 export const Conversation = ({ conversation_id, conversation_title, createdAt, updatedAt, userId, onClick }: Props) => {
     //check if the conversation title is undefined
-    if (conversation_title === undefined) {
-        conversation_title = "Untitled Conversation";
+    if (conversation_title === "") {
+        conversation_title = "New Conversation";
     }
 
     const createdDate = new Date(Date.parse(updatedAt));

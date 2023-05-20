@@ -118,6 +118,11 @@ export async function conversationApi(options: any): Promise<any> {
             route = `${options.baseroute}/list`;
             body = JSON.stringify({});
             break;
+        case "/delete":
+            route = `${options.baseroute}/delete`;
+            body = JSON.stringify({ conversation_id: options.conversation_id });
+            break;
+
         default:
             throw Error("Invalid route");
     }

@@ -35,6 +35,28 @@ class CosmosDbService():
         else:
             return False
 
+    def delete_conversation(self, user_id, conversation_id):
+        conversation = self.cosmosdb_conversations_container.read_item(item=conversation_id, partition_key=user_id)        
+        if conversation:
+            print("Item exists")
+            resp = self.cosmosdb_conversations_container.delete_item(item=conversation_id, partition_key=user_id)
+            return resp
+        else:
+            print("Item doesn't exist")
+            return True
+
+        
+    def delete_messages(self, conversation_id, user_id):
+        ## get a list of all the messages in the conversation
+        messages = self.get_messages(user_id, conversation_id)
+        response_list = []
+        if messages:
+            for message in messages:
+                resp = self.cosmosdb_conversations_container.delete_item(item=message['id'], partition_key=user_id)
+                response_list.append(resp)
+            return response_list
+
+
     def get_conversations(self, user_id, sort_order = 'DESC'):
         query = f"SELECT * FROM c where c.userId = '{user_id}' and c.type='conversation' order by c.updatedAt {sort_order}"
         conversations = list(self.cosmosdb_conversations_container.query_items(query=query,
@@ -77,6 +99,8 @@ class CosmosDbService():
         else:
             return False
     
+
+
     def get_messages(self, user_id, conversation_id):
         query = f"SELECT * FROM c WHERE c.conversationId = '{conversation_id}' AND c.type='message' AND c.userId = '{user_id}' ORDER BY c.timestamp ASC"
         messages = list(self.cosmosdb_conversations_container.query_items(query=query,
@@ -85,5 +109,5 @@ class CosmosDbService():
         if len(messages) == 0:
             return None
         else:
-            return messages 
+            return messages
 

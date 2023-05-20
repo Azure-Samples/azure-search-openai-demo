@@ -196,10 +196,24 @@ def add_conversation():
 
 ## Conversation routes needed read, delete, update
 @app.route("/conversation/delete", methods=["POST"])
-def delete_conversation(conversation_id: None):
+def delete_conversation():
+    ## get the user id from the request headers
+    authenticated_user = get_authenticated_user_details(request_headers=request.headers)
+    user_id = authenticated_user['user_principal_id']
+    
     ## check request for conversation_id
     conversation_id = request.json.get("conversation_id", None)
-    return jsonify({"error": "not implemented"}), 501
+    if not conversation_id:
+        return jsonify({"error": "conversation_id is required"}), 400
+    
+    ## delete the conversation messages from cosmos first
+    deleted_messages = cosmos.delete_messages(conversation_id, user_id)
+
+    ## Now delete the conversation 
+    deleted_conversation = cosmos.delete_conversation(user_id, conversation_id)
+
+    #BDL TODO: add some error handling here
+    return jsonify({"message": "Successfully deleted conversation and messages", "conversation_id": conversation_id}), 200
 
 @app.route("/conversation/update", methods=["POST"])
 def update_conversation():
