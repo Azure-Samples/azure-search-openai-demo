@@ -109,7 +109,11 @@
     align-self: flex-end;
 }
 
-.commandButton {
+.commandButtonRight {
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+.commandButtonLeft {
     margin-right: 20px;
     margin-bottom: 20px;
 }
