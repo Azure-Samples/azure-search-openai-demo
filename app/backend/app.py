@@ -202,7 +202,7 @@ def delete_conversation(conversation_id: None):
     return jsonify({"error": "not implemented"}), 501
 
 @app.route("/conversation/update", methods=["POST"])
-def update_conversation(conversation_id: None):
+def update_conversation():
     ## check request for conversation_id
     conversation_id = request.json.get("conversation_id", None)
     return jsonify({"error": "not implemented"}), 501
@@ -250,7 +250,7 @@ def get_conversation():
 
 ## add a route to generate a title for a conversation
 @app.route("/conversation/gen_title", methods=["POST"])
-def gen_title(conversation_id: None, overwrite_existing_title=False):
+def gen_title():
     ## lookup the conversation in cosmos
     authenticated_user = get_authenticated_user_details(request_headers=request.headers)
     user_id = authenticated_user['user_principal_id']
@@ -265,9 +265,10 @@ def gen_title(conversation_id: None, overwrite_existing_title=False):
 
     ## check if the conversation already has a title
     conversation_title = conversation_dict.get('title', None)
-
+    
+    overwrite_existing_title = request.json.get("overwrite_existing_title", False)
     if not overwrite_existing_title and conversation_title:
-        return jsonify({"error": f"Conversation {conversation_id} already has a title"}), 400
+        return jsonify({"warning": f"Conversation {conversation_id} already has a title"}), 200
 
     ## otherwise go for it and create the title! 
     ## get the messages for the conversation from cosmos

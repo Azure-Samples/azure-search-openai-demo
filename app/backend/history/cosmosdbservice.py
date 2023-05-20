@@ -1,7 +1,7 @@
 import os
 import uuid
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from azure.identity import DefaultAzureCredential  
 from azure.cosmos import CosmosClient, PartitionKey  
   
@@ -35,8 +35,8 @@ class CosmosDbService():
         else:
             return False
 
-    def get_conversations(self, user_id):
-        query = f"SELECT * FROM c where c.userId = '{user_id}' and c.type='conversation' order by c.timestamp ASC"
+    def get_conversations(self, user_id, sort_order = 'DESC'):
+        query = f"SELECT * FROM c where c.userId = '{user_id}' and c.type='conversation' order by c.updatedAt {sort_order}"
         conversations = list(self.cosmosdb_conversations_container.query_items(query=query,
                                                                                enable_cross_partition_query =True))
         ## if no conversations are found, return None
@@ -46,7 +46,7 @@ class CosmosDbService():
             return conversations
 
     def get_conversation(self, user_id, conversation_id):
-        query = f"SELECT * FROM c where c.id = '{conversation_id}' and c.type='conversation' and c.userId = '{user_id}' order by c.timestamp ASC"
+        query = f"SELECT * FROM c where c.id = '{conversation_id}' and c.type='conversation' and c.userId = '{user_id}'"
         conversation = list(self.cosmosdb_conversations_container.query_items(query=query,
                                                                                enable_cross_partition_query =True))
         ## if no conversations are found, return None
@@ -69,6 +69,10 @@ class CosmosDbService():
         
         resp = self.cosmosdb_conversations_container.upsert_item(message)  
         if resp:
+            ## update the parent conversations's updatedAt field with the current message's createdAt datetime value
+            conversation = self.get_conversation(user_id, conversation_id)
+            conversation['updatedAt'] = message['createdAt']
+            self.upsert_conversation(conversation)
             return resp
         else:
             return False
