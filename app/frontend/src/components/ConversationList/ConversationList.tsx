@@ -4,22 +4,27 @@ import styles from "./Conversation.module.css";
 
 interface Props {
     listOfConversations: ConversationListResponse | null;
+    onConversationClicked: (value: string) => void;
 }
 
-export const ConversationList = ({ listOfConversations }: Props) => {
-    console.log("Check out my sexy listOfConversations:", listOfConversations); // Add this line to log the value
-
+export const ConversationList = ({ listOfConversations, onConversationClicked }: Props) => {
     if (!listOfConversations) {
         return null;
     } else {
         return (
-            <ul className={styles.examplesNavList}>
-                {listOfConversations.map(({ id, title, createdAt, userId }, index) => (
-                    <li key={index}>
-                        {id}|{title}|{createdAt}|{userId}
-                    </li>
+            <div className={styles.conversationNavList}>
+                {listOfConversations.map(({ id, title, updatedAt, createdAt, userId }, index) => (
+                    <Conversation
+                        key={index}
+                        conversation_id={id}
+                        conversation_title={title}
+                        userId={userId}
+                        updatedAt={updatedAt}
+                        createdAt={createdAt}
+                        onClick={onConversationClicked}
+                    />
                 ))}
-            </ul>
+            </div>
         );
     }
 };

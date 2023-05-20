@@ -48,7 +48,6 @@ const ChatConversation = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
-    const [loadConversation, setLoadConveration] = useState<boolean>(false);
     const [currentConversationId, setCurrentConversationId] = useState<string>("");
     const [conversationList, setConversationList] = useState<ConversationListResponse | null>(null);
     const [conversationListFetched, setConversationListFetched] = useState(false);
@@ -86,6 +85,29 @@ const ChatConversation = () => {
             setIsLoading(false);
         }
     }
+    const loadConversation = (conversation_id: string) => {
+        // set the current conversation id to the new conversation id
+        setCurrentConversationId(conversation_id);
+
+        // load the conversation messages from the api
+        getConversationMessages(conversation_id).then(result => {
+            // if the result object has a "messages" property
+            // format the messages array so it can be rendered in the chat window
+            if (result?.messages) {
+                let messages = result.messages;
+                const formattedAnswers = renderConverationMessageHistory(messages);
+                console.log("messages", messages);
+                console.log("fomattedMessages", formattedAnswers);
+                setAnswers(formattedAnswers);
+                lastQuestionRef.current = formattedAnswers[formattedAnswers.length - 1][0];
+            } else {
+                //log an error
+                console.error("There were no messages returned for this conversation: ", conversation_id);
+            }
+        });
+
+        // trigger a refresh of the chat window with the new conversation
+    };
 
     // list all the conversations for the user
     async function listConversations() {
@@ -136,21 +158,6 @@ const ChatConversation = () => {
         }
     };
 
-    // BDL TODO: WIP need to get the conversation and render it in the chat.
-    const renderConversation = () => {
-        setCurrentConversationId("acea80d8-a374-415b-80ff-30cd6a3722db");
-        getConversationMessages(currentConversationId).then(result => {
-            if (result?.messages) {
-                let messages = result.messages;
-                const formattedAnswers = renderConverationMessageHistory(messages);
-                setAnswers(formattedAnswers);
-            } else {
-                console.log("There were no messages");
-                //todo throw an error of some kind here
-            }
-        });
-        lastQuestionRef.current = answers[answers.length - 1][0];
-    };
     const clearChat = () => {
         lastQuestionRef.current = "";
         error && setError(undefined);
@@ -363,8 +370,7 @@ const ChatConversation = () => {
                     isFooterAtBottom={true}
                 >
                     <ConversationListRefreshButton className={styles.commandButton} onClick={refreshConversationList} />
-                    <p>Conversation List goes here </p>
-                    <ConversationList listOfConversations={conversationList} />
+                    <ConversationList listOfConversations={conversationList} onConversationClicked={loadConversation} />
                 </Panel>
             </div>
         </div>

@@ -112,6 +112,7 @@ export async function conversationApi(options: any): Promise<any> {
             break;
         case "/read":
             route = `${options.baseroute}/read`;
+            body = JSON.stringify({ conversation_id: options.conversation_id });
             break;
         case "/list":
             route = `${options.baseroute}/list`;

@@ -3,20 +3,23 @@
     padding-left: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 2px;
     flex: 1;
     justify-content: center;
+    padding-top: 10px;
 }
 
 .conversation {
     word-break: break-word;
     background: #dbdbdb;
-    border-radius: 8px;
+    border-radius: 1px;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    margin-bottom: 5px;
+    padding: 2px;
+    margin-bottom: 1px;
     cursor: pointer;
+    width: 300px;
+    height: 60px;
 }
 
 .conversation:hover {
@@ -26,14 +29,16 @@
 
 .conversationText {
     margin: 0;
-    font-size: 22px;
-    width: 280px;
-    height: 100px;
+    font-size: 12px;
+}
+.conversationHeader {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 @media only screen and (max-height: 780px) {
     .conversationText {
-        font-size: 20px;
-        height: 80px;
+        font-size: 12px;
     }
 }
