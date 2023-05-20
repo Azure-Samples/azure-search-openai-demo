@@ -317,22 +317,32 @@ def create_conversation_title(conversation_messages):
 def format_messages(messages, input_format='cosmos', output_format='chatcompletions'):
 
     if input_format == 'cosmos': 
-        ## Convert to the chat/completions format
+        ## Convert to the chat/completions format from cosmos
         if output_format == 'chatcompletions':
             chat_messages = [{'role': msg['role'], 'content': msg['content']} for msg in messages]
             return chat_messages
-        ## Convert to the bot frontend format
+        ## Convert to the bot frontend format from cosmos
         elif output_format == 'botfrontend':
             ## the botfrontend format is pairs of {"user": inputtext, "bot": outputtext}
             ## the cosmos format is a list of messages with a role and content.
             ## form pairs of user and bot messages from the cosmos messages list 
-
+            
             botfrontend_messages = []
-            for message in messages:
+            last_role = None
+            for i, message in enumerate(messages):
+                if last_role is None:
+                    last_role = message['role']
+                elif last_role == message['role']:
+                    # we have a situation where there are two messages in a row from the same role
+                    # this will cause issues with the frontend due to their chosen format
+                    # for now, we will just skip the second message
+                    last_role = message['role']
+                    continue
                 if message['role'] == 'user':
                     botfrontend_messages.append({"user": message['content']})
                 elif message['role'] == 'assistant':
                     botfrontend_messages[-1]["bot"] = message['content']
+                last_role = message['role']            
 
             return botfrontend_messages
 
