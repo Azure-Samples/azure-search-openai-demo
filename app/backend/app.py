@@ -4,6 +4,7 @@ import time
 import logging
 import openai
 import json
+from datetime import datetime
 from history.cosmosdbservice import CosmosDbService
 from auth.auth_utils import get_authenticated_user_details
 from azure.cosmos import CosmosClient, PartitionKey
@@ -18,6 +19,10 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatconversation import ChatConversationReadApproach
 from azure.storage.blob import BlobServiceClient
 
+## Logging level for development, set to logging.INFO or logging.DEBUG for more verbose logging
+logger = logging.getLogger ('werkzeug') # grabs underlying WSGI logger
+logger.setLevel (logging.INFO) # set log level to INFO
+
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
 AZURE_STORAGE_CONTAINER = os.environ.get("AZURE_STORAGE_CONTAINER") or "content"
@@ -26,6 +31,7 @@ AZURE_SEARCH_INDEX = os.environ.get("AZURE_SEARCH_INDEX") or "gptkbindex"
 AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
 AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT_DEPLOYMENT") or "davinci"
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
+AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION") or "2023-05-15"
 AZURE_COSMOSDB_DATABASE = os.environ.get("AZURE_COSMOSDB_DATABASE") or "db_conversation_history"
 AZURE_COSMOSDB_ACCOUNT = os.environ.get("AZURE_COSMOSDB_ACCOUNT")
 AZURE_COSMOSDB_CONVERSATIONS_CONTAINER = os.environ.get("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER") or "conversations"
@@ -44,7 +50,7 @@ azure_credential = DefaultAzureCredential()
 # Used by the OpenAI SDK
 openai.api_type = "azure"
 openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-openai.api_version = "2022-12-01"
+openai.api_version = AZURE_OPENAI_API_VERSION
 
 # Comment these two lines out if using keys, set your API key in the OPENAI_API_KEY environment variable instead
 openai.api_type = "azure_ad"
@@ -133,37 +139,30 @@ def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
-## BDL: this is the new chatGPT or  function adding
-## First is conversations - add new conversation when created
-## BDL Commenting this out the /conversations endpoint for now since we're handling this in the /chatgpt endpoint
-# @app.route("/conversations", methods=["POST"]) ## todo -- how will we retrieve conversations and how will we update them? Should we use a GET and a PATCH?
-# def create_conversation():
-#     user = request.json.get('user',[])
-#     summary = "summary"     # TODO: get summary of conversation from openai
-#     conversation = cosmos.create_conversations(user, summary)
-#     return jsonify(conversation)
 
-# Then messages - add new messages when created (i.e. prompts/responses)
-@app.route("/conversation", methods=["POST"])
-def conversation():
+## BDL: method for creating conversations and storing history messages in cosmos
+@app.route("/conversation/add", methods=["POST"])
+def add_conversation():
     authenticated_user = get_authenticated_user_details(request_headers=request.headers)
     user_id = authenticated_user['user_principal_id']
 
     ensure_openai_token()
+    
     approach = request.json["approach"]
+    
+    ## check request for conversation_id
+    conversation_id = request.json.get("conversation_id", None)
+
     try:
         impl = chatconversation_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         ## BDL TODO: should all of this conversation history be moved to the parent "approach" class so it can be shared across all approaches?
         # check for the conversation_id, if the conversation is not set, we will create a new one
-        conversation_id = request.json.get("conversation_id", None)
         if not conversation_id:
-            logging.error("No conversation_id in request, creating new conversation")
-            conversation_obj = cosmos.create_conversations(user_id=user_id)
-            conversation_id = conversation_obj['id']
-        else:
-            logging.error(f'conversation_id: {conversation_id} found in request, using existing conversation')
+            conversation_dict = cosmos.create_conversation(user_id=user_id)
+            conversation_id = conversation_dict['id']
+            
         ## Format the incoming message object in the "chat/completions" messages format
         ## then write it to the conversation history in cosmos
         message_prompt = request.json["history"][-1]["user"]
@@ -179,7 +178,7 @@ def conversation():
         
         ## Format the incoming message object in the "chat/completions" messages format
         ## then write it to the conversation history in cosmos
-        msg = {"role": "bot", "content": r['answer']}
+        msg = {"role": "assistant", "content": r['answer']}
         resp = cosmos.create_message(
             conversation_id=conversation_id,
             user_id=user_id,
@@ -194,6 +193,147 @@ def conversation():
     except Exception as e:
         logging.exception("Exception in /conversation")
         return jsonify({"error": str(e)}), 500
+
+## Conversation routes needed read, delete, update
+@app.route("/conversation/delete", methods=["POST"])
+def delete_conversation(conversation_id: None):
+    ## check request for conversation_id
+    conversation_id = request.json.get("conversation_id", None)
+    return jsonify({"error": "not implemented"}), 501
+
+@app.route("/conversation/update", methods=["POST"])
+def update_conversation(conversation_id: None):
+    ## check request for conversation_id
+    conversation_id = request.json.get("conversation_id", None)
+    return jsonify({"error": "not implemented"}), 501
+
+@app.route("/conversation/list", methods=["POST"])
+def list_conversations():
+    authenticated_user = get_authenticated_user_details(request_headers=request.headers)
+    user_id = authenticated_user['user_principal_id']
+
+    ## get the conversations from cosmos
+    conversations = cosmos.get_conversations(user_id)
+    if not conversations:
+        return jsonify({"error": f"No conversations for {user_id} were found"}), 404
+
+    ## return the conversation ids
+
+    return jsonify(conversations), 200
+
+@app.route("/conversation/read", methods=["POST"])
+def get_conversation():
+    authenticated_user = get_authenticated_user_details(request_headers=request.headers)
+    user_id = authenticated_user['user_principal_id']
+
+    ## check request for conversation_id
+    conversation_id = request.json.get("conversation_id", None)
+    
+    if not conversation_id:
+        return jsonify({"error": "conversation_id is required"}), 400
+
+    ## get the conversation object and the related messages from cosmos
+    conversation = cosmos.get_conversation(user_id, conversation_id)
+    ## return the conversation id and the messages in the bot frontend format
+    if not conversation:
+        return jsonify({"error": f"Conversation {conversation_id} was not found. It either does not exist or the logged in user does not have access to it."}), 404
+    
+    # get the messages for the conversation from cosmos
+    conversation_messages = cosmos.get_messages(user_id, conversation_id)
+    if not conversation_messages:
+        return jsonify({"error": f"No messages for {conversation_id} were found"}), 404
+
+    ## format the messages in the bot frontend format
+    messages = format_messages(conversation_messages, input_format='cosmos', output_format='botfrontend')
+
+    return jsonify({"conversation_id": conversation_id, "messages": messages}), 200
+
+## add a route to generate a title for a conversation
+@app.route("/conversation/gen_title", methods=["POST"])
+def gen_title(conversation_id: None, overwrite_existing_title=False):
+    ## lookup the conversation in cosmos
+    authenticated_user = get_authenticated_user_details(request_headers=request.headers)
+    user_id = authenticated_user['user_principal_id']
+
+    ## check request for conversation_id
+    conversation_id = request.json.get("conversation_id", None)
+
+    ## get the conversation from cosmos
+    conversation_dict = cosmos.get_conversation(user_id, conversation_id)
+    if not conversation_dict:
+        return jsonify({"error": f"Conversation {conversation_id} not found"}), 404
+
+    ## check if the conversation already has a title
+    conversation_title = conversation_dict.get('title', None)
+
+    if not overwrite_existing_title and conversation_title:
+        return jsonify({"error": f"Conversation {conversation_id} already has a title"}), 400
+
+    ## otherwise go for it and create the title! 
+    ## get the messages for the conversation from cosmos
+    conversation_messages = cosmos.get_messages(user_id, conversation_id)
+    if not conversation_messages:
+        return jsonify({"error": f"No messages for {conversation_id} were found"}), 404
+
+    ## generate a title for the conversation
+    title = create_conversation_title(conversation_messages)
+    conversation_dict['title'] = title
+    conversation_dict['updatedAt'] = datetime.utcnow().isoformat()
+
+    ## update the conversation in cosmos
+    resp = cosmos.upsert_conversation(conversation_dict)
+
+    if resp:
+        return jsonify(conversation_dict)
+    else:
+        return jsonify({"error": f"Error updating conversation {conversation_id}: {conversation_dict}"}), 500
+
+
+def create_conversation_title(conversation_messages):
+    ## make sure the messages are sorted by _ts descending
+    messages = format_messages(conversation_messages, input_format='cosmos' ,output_format='chatcompletions')
+
+    title_prompt = 'Summarize the conversation so far into a 4-word or less title. Do not use any quotation marks or punctuation. Respond with a json object in the format {{"title": string}}. Do not include any other commentary or description.'
+
+    messages.append({'role': 'user', 'content': title_prompt})
+
+    ensure_openai_token()
+
+    try:
+        ## Submit prompt to Chat Completions for response
+        completion = openai.ChatCompletion.create(    
+            engine=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            messages=messages,
+            temperature=1,
+            max_tokens=64 
+        )
+        title = json.loads(completion['choices'][0]['message']['content'])['title']
+
+        return title
+    except Exception as e:
+        return jsonify({"error": f"Error generating title for the conversation: {e}"}), 500
+
+def format_messages(messages, input_format='cosmos', output_format='chatcompletions'):
+
+    if input_format == 'cosmos': 
+        ## Convert to the chat/completions format
+        if output_format == 'chatcompletions':
+            chat_messages = [{'role': msg['role'], 'content': msg['content']} for msg in messages]
+            return chat_messages
+        ## Convert to the bot frontend format
+        elif output_format == 'botfrontend':
+            ## the botfrontend format is pairs of {"user": inputtext, "bot": outputtext}
+            ## the cosmos format is a list of messages with a role and content.
+            ## form pairs of user and bot messages from the cosmos messages list 
+
+            botfrontend_messages = []
+            for message in messages:
+                if message['role'] == 'user':
+                    botfrontend_messages.append({"user": message['content']})
+                elif message['role'] == 'assistant':
+                    botfrontend_messages[-1]["bot"] = message['content']
+
+            return botfrontend_messages
 
 def ensure_openai_token():
     global openai_token
