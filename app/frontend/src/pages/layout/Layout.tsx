@@ -24,6 +24,7 @@ const Layout = () => {
                                     Ask a question
                                 </NavLink>
                             </li>
+                            <li> &nbsp; </li>
                             <li>
                                 <NavLink to="/chatgpt" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
                                     ChatGPT
