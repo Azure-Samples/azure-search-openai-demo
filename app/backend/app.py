@@ -145,7 +145,7 @@ def chat():
 def add_conversation():
     authenticated_user = get_authenticated_user_details(request_headers=request.headers)
     user_id = authenticated_user['user_principal_id']
-
+    generate_title = False
     ensure_openai_token()
     
     approach = request.json["approach"]
