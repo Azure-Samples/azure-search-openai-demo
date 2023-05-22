@@ -6,7 +6,6 @@ echo ""
 
 while IFS='=' read -r key value; do
     value=$(echo "$value" | sed 's/^"//' | sed 's/"$//')
-    echo "$value"
     export "$key=$value"
 done <<EOF
 $(azd env get-values)
@@ -31,34 +30,12 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-echo ""
-echo "Restoring frontend npm packages"
-echo ""
-
-cd ../frontend
-#npm install
-#if [ $? -ne 0 ]; then
-#    echo "Failed to restore frontend npm packages"
-#    exit $?
-#fi
-
-echo ""
-echo "Building frontend"
-echo ""
-
-#npm run build
-#if [ $? -ne 0 ]; then
-#    echo "Failed to build frontend"
-#    exit $?
-#fi
 
 echo ""
 echo "Starting backend"
 echo ""
 
 cd ../backend
-#xdg-open http://127.0.0.1:5000
-#./backend_env/bin/python ./app.py
 ./backend_env/bin/python -m flask --app ./app.py --debug run
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
