@@ -1,6 +1,6 @@
-import { Example } from "./ChatGPTExample";
+import { Example } from "./ChatConversationExample";
 
-import styles from "./ChatGPTExample.module.css";
+import styles from "./ChatConversationExample.module.css";
 
 export type ExampleModel = {
     text: string;
@@ -26,7 +26,7 @@ interface Props {
     onExampleClicked: (value: string) => void;
 }
 
-export const ChatGPTExampleList = ({ onExampleClicked }: Props) => {
+export const ChatConversationExampleList = ({ onExampleClicked }: Props) => {
     return (
         <ul className={styles.examplesNavList}>
             {EXAMPLES.map((x, i) => (

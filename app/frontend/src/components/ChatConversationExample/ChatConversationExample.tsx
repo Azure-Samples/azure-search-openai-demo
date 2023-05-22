@@ -1,4 +1,4 @@
-import styles from "./ChatGPTExample.module.css";
+import styles from "./ChatConversationExample.module.css";
 
 interface Props {
     text: string;

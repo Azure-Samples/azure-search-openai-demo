@@ -1,21 +1,34 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, PanelType } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 
-import styles from "./Chat.module.css";
+import styles from "./ChatConversation.module.css";
 
-import { chatGPTApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import {
+    chatConversationApi,
+    conversationApi,
+    Approaches,
+    AskResponse,
+    ChatRequest,
+    ChatTurn,
+    ConversationRequest,
+    ConversationResponse,
+    BotFrontendFormat,
+    ConversationListResponse
+} from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
-import { ExampleList } from "../../components/Example";
-import { ChatGPTExampleList } from "../../components/ChatGPTExample";
+import { ChatConversationExampleList } from "../../components/ChatConversationExample";
 import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
+import { ConversationListButton, ConversationListRefreshButton, ConversationList } from "../../components/ConversationList";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { string } from "prop-types";
 
-const Chat = () => {
+const ChatConversation = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    const [isConversationListPanelOpen, setIsConversationListPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -35,6 +48,112 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
+    const [currentConversationId, setCurrentConversationId] = useState<string>("");
+    const [conversationList, setConversationList] = useState<ConversationListResponse | null>(null);
+    const [conversationListFetched, setConversationListFetched] = useState(false);
+
+    //Maps the response from conversations and messages to be rendered in the chat window
+    const renderConverationMessageHistory = (mylist: BotFrontendFormat) => {
+        return mylist.map(
+            ({ user, bot }, index) =>
+                [
+                    user,
+                    {
+                        answer: bot,
+                        thoughts: null,
+                        data_points: [],
+                        conversation_id: ""
+                    }
+                ] as [string, AskResponse]
+        );
+    };
+
+    async function getConversationMessages(conversation_id: string) {
+        setIsLoading(true);
+        try {
+            const request: ConversationRequest = {
+                conversation_id: conversation_id,
+                baseroute: "/conversation",
+                route: "/read",
+                approach: Approaches.ChatConversation
+            };
+            const result = await conversationApi(request);
+            return result;
+        } catch (e) {
+            setError(e);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function callDeleteConversationAPI(conversation_id: string) {
+        try {
+            const request: ConversationRequest = {
+                conversation_id: conversation_id,
+                baseroute: "/conversation",
+                route: "/delete"
+            };
+            const result = await conversationApi(request);
+            return result;
+        } catch (e) {
+            setError(e);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const deleteConversation = (conversation_id: string) => {
+        callDeleteConversationAPI(conversation_id)
+            .then(result => {
+                let conv_id = result.conversation_id;
+                console.log(`Conversation ${conv_id} deleted successfully`);
+            })
+            .then(() => {
+                // refresh the conversation list
+                listConversations().then(result => {
+                    setConversationList(result || null);
+                });
+            });
+    };
+
+    const loadConversation = (conversation_id: string) => {
+        // set the current conversation id to the new conversation id
+        setCurrentConversationId(conversation_id);
+
+        // load the conversation messages from the api
+        getConversationMessages(conversation_id).then(result => {
+            // if the result object has a "messages" property
+            // format the messages array so it can be rendered in the chat window
+            if (result?.messages) {
+                let messages = result.messages;
+                const formattedAnswers = renderConverationMessageHistory(messages);
+                console.log("messages", messages);
+                console.log("fomattedMessages", formattedAnswers);
+                setAnswers(formattedAnswers);
+                lastQuestionRef.current = formattedAnswers[formattedAnswers.length - 1][0];
+            } else {
+                //log an error
+                console.error("There were no messages returned for this conversation: ", conversation_id);
+            }
+        });
+
+        // trigger a refresh of the chat window with the new conversation
+    };
+
+    // list all the conversations for the user
+    async function listConversations() {
+        try {
+            const request: ConversationRequest = {
+                baseroute: "/conversation",
+                route: "/list"
+            };
+            const result: ConversationListResponse = await conversationApi(request);
+            return result;
+        } catch (e) {
+            setError(e);
+        } finally {
+        }
+    }
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -48,7 +167,7 @@ const Chat = () => {
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 // Change the approach here to route to GPT model
-                approach: Approaches.AskChatGPT,
+                approach: Approaches.ChatConversation,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -56,10 +175,12 @@ const Chat = () => {
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
-                }
+                },
+                conversation_id: currentConversationId
             };
-            const result = await chatGPTApi(request);
+            const result = await chatConversationApi(request);
             setAnswers([...answers, [question, result]]);
+            setCurrentConversationId(result.conversation_id);
         } catch (e) {
             setError(e);
         } finally {
@@ -73,6 +194,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
+        setCurrentConversationId("");
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
@@ -126,11 +248,33 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const refreshConversationList = () => {
+        listConversations().then(result => {
+            setConversationList(result || null);
+        });
+    };
+
+    const handleConversationListButtonClick = () => {
+        setIsConversationListPanelOpen(!isConversationListPanelOpen);
+        listConversations().then(result => {
+            setConversationList(result || null);
+            setConversationListFetched(true); // Set this state to trigger the useEffect
+        });
+    };
+
+    useEffect(() => {
+        if (conversationListFetched) {
+            console.log("Here's your list of conversations", conversationList);
+        }
+    }, [conversationListFetched]); // Run the effect when conversationListFetched changes
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                <ConversationListButton className={styles.commandButtonLeft} onClick={handleConversationListButtonClick} />
+                {/* <ClearChatButton className={styles.commandButtonRight} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} /> */}
+                <ClearChatButton className={styles.commandButtonRight} onClick={clearChat} disabled={false} />
+                <SettingsButton className={styles.commandButtonRight} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
@@ -140,7 +284,7 @@ const Chat = () => {
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} /> */}
-                            <ChatGPTExampleList onExampleClicked={onExampleClicked} />
+                            <ChatConversationExampleList onExampleClicked={onExampleClicked} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -182,7 +326,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <QuestionInput clearOnSend placeholder="Type a message here." disabled={isLoading} onSend={question => makeApiRequest(question)} />
+                        <QuestionInput clearOnSend placeholder={"Type a message here."} disabled={isLoading} onSend={question => makeApiRequest(question)} />
                     </div>
                 </div>
 
@@ -244,9 +388,24 @@ const Chat = () => {
                         onChange={onUseSuggestFollowupQuestionsChange}
                     />
                 </Panel>
+                <Panel
+                    headerText="Conversation List"
+                    isOpen={isConversationListPanelOpen}
+                    type={PanelType.customNear}
+                    customWidth="340px"
+                    isBlocking={false}
+                    //onOpen={() => listConversations().then(result => setConversationList(result || null))}
+                    onDismiss={() => setIsConversationListPanelOpen(false)}
+                    closeButtonAriaLabel="Close"
+                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConversationListPanelOpen(false)}>Close</DefaultButton>}
+                    isFooterAtBottom={true}
+                >
+                    <ConversationListRefreshButton className={styles.commandButton} onClick={refreshConversationList} />
+                    <ConversationList listOfConversations={conversationList} onConversationClicked={loadConversation} onDeleteClick={deleteConversation} />
+                </Panel>
             </div>
         </div>
     );
 };
 
-export default Chat;
+export default ChatConversation;

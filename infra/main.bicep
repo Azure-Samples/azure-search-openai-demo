@@ -45,7 +45,6 @@ param chatGptModelName string = 'gpt-35-turbo'
 param cosmosdbAccountName string = ''
 param cosmosdbResourceGroupName string = ''
 param cosmosdbResourceGroupLocation string = location
-// param cosmosdbContainerName string = 'content'
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -118,9 +117,11 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      AZURE_COSMOSDB_ENDPOINT: cosmosdb.outputs.endpoint
     }
   }
 }
+
 
 module openAi 'core/ai/cognitiveservices.bicep' = {
   name: 'openai'
@@ -303,7 +304,7 @@ module storageRoleBackend 'core/security/role.bicep' = {
   name: 'storage-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: 'ServicePrincipal'
   }
 }
@@ -313,10 +314,21 @@ module searchRoleBackend 'core/security/role.bicep' = {
   name: 'search-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f' // Search Index Data Reader
     principalType: 'ServicePrincipal'
   }
 }
+
+module cosmosDbRoleBackend 'core/security/role.bicep' = {
+  scope: cosmosdbResourceGroup
+  name: 'cosmosdb-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId:  '00000000-0000-0000-0000-000000000002' // Contributor BDL TODO: (should we use the cosmos db built-in role? '00000000-0000-0000-0000-000000000002')
+    principalType: 'ServicePrincipal'
+  }
+}
+
 
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
@@ -339,5 +351,8 @@ output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output AZURE_COSMOSDB_ACCOUNT string = cosmosdb.outputs.name
+output AZURE_COSMOSDB_ENDPOINT string = cosmosdb.outputs.endpoint
+output AZURE_COSMOSDB_DATABASE string = cosmosdb.outputs.database_name
+output AZURE_COSMOSDB_CONVERSATIONS_CONTAINER string = cosmosdb.outputs.conversations_container_name
 
 output BACKEND_URI string = backend.outputs.uri
