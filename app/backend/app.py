@@ -160,6 +160,7 @@ def add_conversation():
         ## BDL TODO: should all of this conversation history be moved to the parent "approach" class so it can be shared across all approaches?
         # check for the conversation_id, if the conversation is not set, we will create a new one
         if not conversation_id:
+            generate_title = True ## if this is a new conversation, we will generate a title
             conversation_dict = cosmos.create_conversation(user_id=user_id)
             conversation_id = conversation_dict['id']
             
@@ -185,6 +186,10 @@ def add_conversation():
             input_message=msg
         )
         
+        if generate_title:
+            ## Generate a title for the conversation
+            generate_conversation_title(user_id=user_id, conversation_id=conversation_id, overwrite_title=True)
+
         ## we need to return the conversation_id in the response so the client can keep track of it
         r['conversation_id'] = conversation_id
         # returns the response from the bot
@@ -272,23 +277,34 @@ def gen_title():
     ## check request for conversation_id
     conversation_id = request.json.get("conversation_id", None)
 
+    overwrite_existing_title = request.json.get("overwrite_existing_title", False)
+
+    try:
+        conversation_title_response_dict = generate_conversation_title(user_id, conversation_id, overwrite_title=overwrite_existing_title)
+    except Exception as e:
+        return jsonify({"error": f"Error generating title for conversation {conversation_id}: {str(e)}"}), 500
+    finally:
+        return jsonify(conversation_title_response_dict)
+
+
+def generate_conversation_title(user_id, conversation_id, overwrite_title=False):
     ## get the conversation from cosmos
     conversation_dict = cosmos.get_conversation(user_id, conversation_id)
     if not conversation_dict:
-        return jsonify({"error": f"Conversation {conversation_id} not found"}), 404
+        ## raise an error
+        raise Exception(f"Conversation {conversation_id} was not found. It either does not exist or the logged in user does not have access to it.")
 
     ## check if the conversation already has a title
     conversation_title = conversation_dict.get('title', None)
     
-    overwrite_existing_title = request.json.get("overwrite_existing_title", False)
-    if not overwrite_existing_title and conversation_title:
-        return jsonify({"warning": f"Conversation {conversation_id} already has a title"}), 200
+    if not overwrite_title and conversation_title:
+        raise Exception(f"Conversation {conversation_id} already has a title and overwrite_title flag was set to False.")
 
     ## otherwise go for it and create the title! 
     ## get the messages for the conversation from cosmos
     conversation_messages = cosmos.get_messages(user_id, conversation_id)
     if not conversation_messages:
-        return jsonify({"error": f"No messages for {conversation_id} were found"}), 404
+        raise Exception(f"No messages for {conversation_id} were found")
 
     ## generate a title for the conversation
     title = create_conversation_title(conversation_messages)
@@ -298,10 +314,7 @@ def gen_title():
     ## update the conversation in cosmos
     resp = cosmos.upsert_conversation(conversation_dict)
 
-    if resp:
-        return jsonify(conversation_dict)
-    else:
-        return jsonify({"error": f"Error updating conversation {conversation_id}: {conversation_dict}"}), 500
+    return resp
 
 
 def create_conversation_title(conversation_messages):
