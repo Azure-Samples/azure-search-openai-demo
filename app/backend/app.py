@@ -153,6 +153,9 @@ def add_conversation():
     ## check request for conversation_id
     conversation_id = request.json.get("conversation_id", None)
 
+    ## check to see if a conversation title should be generated
+    generate_title = request.json.get("generate_title", False)
+
     try:
         impl = chatconversation_approaches.get(approach)
         if not impl:
