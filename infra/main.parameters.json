@@ -11,11 +11,17 @@
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
+    "resourceGroupName": {
+      "value": "${RESOURCE_GROUP_NAME}"
+    },
     "openAiServiceName": {
       "value": "${AZURE_OPENAI_SERVICE}"
     },
     "openAiResourceGroupName": {
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
+    },
+    "openAiResourceGroupLocation": {
+      "value": "${AZURE_OPENAI_RESOURCE_GROUP_LOCATION}"
     },
     "openAiSkuName": {
       "value": "S0"

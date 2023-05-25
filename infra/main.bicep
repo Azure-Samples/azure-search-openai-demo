@@ -27,7 +27,7 @@ param storageContainerName string = 'content'
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
-param openAiResourceGroupLocation string = location
+param openAiResourceGroupLocation string
 
 param openAiSkuName string = 'S0'
 
