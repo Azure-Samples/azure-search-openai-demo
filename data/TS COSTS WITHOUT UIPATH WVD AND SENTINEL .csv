@@ -1,0 +1,551 @@
+﻿AccountName,SubscriptionName,ResourceGroup,MeterCategory,Sum of Cost
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise,default-storage-eastus,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise,default-storage-eastus,Storage,$0.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise,powerbicanada,Azure App Service,$2.44
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise,realsuite,Azure App Service,$1.47
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise,realsuite,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise,realsuite,Storage,$0.07
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,Default-RecoveryServices-ResourceGroup-eastus,Backup,$145.63
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,default-storage-eastus,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,default-storage-eastus,Storage,$897.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,idigazeley,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,idigazeley,Storage,$198.97
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,idigazeley,Virtual Machines,$801.11
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,idigazeley,Virtual Network,$2.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,Microsoft.Default,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,Microsoft Azure Enterprise - North America,Microsoft.Default,VPN Gateway,$29.16
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,"",Advanced Threat Protection,$220.04
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,"",Security Center,$304.41
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,"",Unassigned,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,"",Virtual Machines,$2036.13
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AD-ASSESSMENT,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AD-ASSESSMENT,Log Analytics,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AD-ASSESSMENT,Storage,$0.28
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AD-ASSESSMENT,Virtual Machines,$1.29
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,automation-stg-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,automation-stg-rg,Automation,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,automation-stg-rg,Storage,$0.38
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AZAUSPREPRODKEYVAULT-STG-RG,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AZSEAPREPRODKEYVAULT-STG-RG,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtofb-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtofb-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtpblu05d-rg,Advanced Threat Protection,$8.37
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtpblu05d-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtpblu05d-rg,Storage,$51.45
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtpblu05d-rg,Virtual Machines,$407.70
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtpblu05d-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtwebteamsited-stg-rg,Advanced Threat Protection,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtwebteamsited-stg-rg,Azure App Service,$222.60
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtwebteamsited-stg-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuebtwebteamsited-stg-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuepreprodkeyvault-stg-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,azuepreprodkeyvault-stg-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,AZUKSPREPRODKEYVAULT-STG-RG,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BACKUP-STG-RG,Backup,$1073.56
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BACKUP-STG-RG,Log Analytics,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-STG-RG,Advanced Threat Protection,$14.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-STG-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-STG-RG,Storage,$463.67
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-STG-RG,Virtual Machines,$404.53
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-STG-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-USEAST-RAAAzureSQL-DEV-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BAM-USEAST-RAAAzureSQL-DEV-RG,SQL Database,$81.53
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BCO_GRP_1,VPN Gateway,$29.16
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BPG-USEAST-ARGUS-TEST-RG,Storage,$1.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BPG-USEAST-MVP-DEV-RG,Storage,$8.64
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BPG-USEAST-MVP-DEV-RG,Virtual Machines,$67.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BPG-USEAST-REALESTATERS-DEV-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BPG-USEAST-REALESTATERS-DEV-RG,SQL Database,$32.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,bpo-us-argus-dev-rg,Advanced Threat Protection,$7.11
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,bpo-us-argus-dev-rg,Bandwidth,$0.29
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,bpo-us-argus-dev-rg,Storage,$443.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,bpo-us-argus-dev-rg,Virtual Machines,$0.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,bpo-us-argus-dev-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BRG-USEAST-RPTAzureSQL-DEV-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,BRG-USEAST-RPTAzureSQL-DEV-RG,SQL Database,$81.53
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,brookfieldcontractsstaging,Cloud Services,$64.68
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,cloud-shell-storage-eastus,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,cloud-shell-storage-eastus,Storage,$0.33
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxftp-stg-rg,Advanced Threat Protection,$11.10
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxftp-stg-rg,Bandwidth,$1.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxftp-stg-rg,Storage,$26.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxftp-stg-rg,Virtual Machines,$1.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Advanced Threat Protection,$7.85
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Load Balancer,$20.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Storage,$19.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,daxib-stg-rg,Virtual Network,$4.05
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,dc-stg-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,dc-stg-rg,Storage,$12.17
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,defaultresourcegroup-eus,Advanced Data Security,$48.83
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,defaultresourcegroup-eus,Insight and Analytics,$114.24
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,defaultresourcegroup-eus,Security Center,$189.70
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,default-storage-eastus,Storage,$15.10
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,default-web-eastus,Azure App Service,$80.95
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,default-web-eastus,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,mim-stg-rg,Advanced Threat Protection,$45.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,mim-stg-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,mim-stg-rg,Storage,$191.11
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,mim-stg-rg,Virtual Machines,$584.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,mim-stg-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,NetworkWatcherRG,Network Watcher,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,ofb-stg-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,ofb-stg-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pblu-stg-rg,Advanced Threat Protection,$12.85
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pblu-stg-rg,Bandwidth,$0.29
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pblu-stg-rg,Storage,$21.85
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pblu-stg-rg,Virtual Machines,$204.59
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pfg-useast-tableau-dev-rg,Advanced Threat Protection,$6.28
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pfg-useast-tableau-dev-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pfg-useast-tableau-dev-rg,Storage,$25.49
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pfg-useast-tableau-dev-rg,Virtual Machines,$155.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,pfg-useast-tableau-dev-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,ror-stg-rg,Advanced Threat Protection,$6.80
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,ror-stg-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,ror-stg-rg,Storage,$32.60
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,ror-stg-rg,Virtual Machines,$5.86
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,securitydata,Advanced Threat Protection,$2.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,securitydata,Bandwidth,$0.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,securitydata,Storage,$1.94
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-UKSOUTH-iManage-TEST-RG,Advanced Threat Protection,$0.33
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-UKSOUTH-iManage-TEST-RG,Storage,$6.73
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-ALFRESCOBACKUPTESTRESTORE-PREPROD-RG,Storage,$86.03
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-BusinessObjects-PreProd-RG,Advanced Threat Protection,$7.82
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-BusinessObjects-PreProd-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-BusinessObjects-PreProd-RG,Storage,$86.64
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-BusinessObjects-PreProd-RG,Virtual Machines,$155.04
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-BusinessObjects-PreProd-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-BUSINESSOBJECTSSQL-PREPROD-RG,Storage,$152.07
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DAAAzureSQL-TEST-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DAAAzureSQL-TEST-RG,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DAAAzureSQL-TEST-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DAAAzureSQL-TEST-RG,SQL Database,$16.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DAAAzureSQL-TEST-RG,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DataAnalyticsAutomation-DEV-RG,Advanced Threat Protection,$8.63
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DataAnalyticsAutomation-DEV-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DataAnalyticsAutomation-DEV-RG,Storage,$8.39
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DataAnalyticsAutomation-DEV-RG,Virtual Machines,$0.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-DataAnalyticsAutomation-DEV-RG,Virtual Machines Licenses,$219.18
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-useast-econtracts-stg-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-useast-econtracts-stg-rg,Azure App Service,$60.71
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-useast-econtracts-stg-rg,Bandwidth,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-useast-econtracts-stg-rg,Storage,$0.51
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-EXECUTIVECOMPENSATIONDATABASE-STG-RG,Advanced Threat Protection,$7.71
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-EXECUTIVECOMPENSATIONDATABASE-STG-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-EXECUTIVECOMPENSATIONDATABASE-STG-RG,Storage,$20.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-EXECUTIVECOMPENSATIONDATABASE-STG-RG,Virtual Machines,$156.23
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-EXECUTIVECOMPENSATIONDATABASE-STG-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-FinancialReportingServices-DEV-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-FinancialReportingServices-DEV-RG,SQL Database,$32.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFM-PREPROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFM-PREPROD-RG,Storage,$29.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFM-PREPROD-RG,Virtual Machines,$815.89
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFMSQL-PREPROD-RG,Storage,$72.81
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFMSQL-PREPROD-RG,Virtual Machines,$269.31
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFMSQL-PREPROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFMWEB-PREPROD-RG,Storage,$28.95
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HFMWEB-PREPROD-RG,Virtual Machines,$134.34
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HRSReporting-DEV-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-HRSReporting-DEV-RG,SQL Database,$32.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-IMANAGE-TEST-RG,Storage,$6.40
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InfrastructureAutomation-Preproduction-RG,Automation,$0.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,Advanced Threat Protection,$1.45
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,Azure App Service,$141.66
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,Key Vault,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,SQL Database,$32.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-InvestorApps-DEV-RG,Storage,$0.03
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-DEV-RG,Advanced Threat Protection,$5.89
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-DEV-RG,Bandwidth,$0.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-DEV-RG,Storage,$5.47
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-DEV-RG,Virtual Machines,$76.33
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-STG-RG,Advanced Threat Protection,$5.44
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-STG-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-STG-RG,Storage,$5.96
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-SERVICENOW-STG-RG,Virtual Machines,$118.77
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-TreasurySystems-Dev-RG,Advanced Data Security,$16.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-TreasurySystems-Dev-RG,Advanced Threat Protection,$0.45
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-TreasurySystems-Dev-RG,Azure App Service,$60.71
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-TreasurySystems-Dev-RG,Bandwidth,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-TreasurySystems-Dev-RG,SQL Database,$873.83
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEast-TreasurySystems-Dev-RG,Storage,$0.34
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-useast-wealthmanagementmigration-staging-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-useast-wealthmanagementmigration-staging-rg,Storage,$7.26
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoLogging-Staging-RG,Advanced Threat Protection,$0.18
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoLogging-Staging-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoLogging-Staging-RG,Storage,$3.70
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoOPA-DEV-RG,Advanced Threat Protection,$6.88
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoOPA-DEV-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoOPA-DEV-RG,Storage,$9.20
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,TSG-USEAST-WorkatoOPA-DEV-RG,Virtual Machines,$67.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-us-uce911web-test-rg,Azure App Service,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,tsg-us-uce911web-test-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,VNET-STG-RG,ExpressRoute,$461.35
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Pre Production,WATSERV-AZUREMIGRATE,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,"",Azure DevOps,$292.56
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,"",Unassigned,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,"",Virtual Machines,$11769.54
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,$system,Service Bus,$1.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,ads-PROD-RG,Bandwidth,$8.64
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,ads-PROD-RG,Cloud Services,$110.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,ads-PROD-RG,Storage,$1.17
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,APP-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,APP-PROD-RG,Storage,$0.66
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,APP-PROD-RG,Virtual Network,$0.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azuebtofb-prod-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azuebtwebteamsite-prod-rg,Azure App Service,$202.37
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azuebtwebteamsite-prod-rg,Bandwidth,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azuebtwebteamsite-prod-rg,Log Analytics,$8.80
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azuebtwebteamsite-prod-rg,Storage,$0.10
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azueprodkeyvault-prod-rg,Key Vault,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azueprodkeyvault-prod-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azureautomation-prod-rg,Automation,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azureautomation-prod-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,azureautomation-prod-rg,Storage,$4.16
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BACKUP-DR-RG,Automation,$0.12
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BACKUP-DR-RG,Azure Site Recovery,$976.70
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BACKUP-DR-RG,Backup,$493.24
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BACKUP-DR-RG,Bandwidth,$184.96
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BACKUP-DR-RG,Storage,$1703.07
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BACKUP-DR-RG,Virtual Network,$16.22
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,backup-prod-rg,Automation,$0.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,backup-prod-rg,Azure Site Recovery,$108.80
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,backup-prod-rg,Backup,$25484.57
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,backup-prod-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,backup-prod-rg,Storage,$0.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAMAU-AUEAST-PSTArchive-Prod-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAMAU-AUEAST-PSTArchive-Prod-RG,Storage,$377.79
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-PROD-RG,Storage,$361.92
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-BasTax-EstateMaster-VisualRisk-Laserfiche-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-Cougar-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-Cougar-PROD-RG,Storage,$574.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-Cougar-PROD-RG,Virtual Machines,$10.61
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-Cougar-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-COUGAR-RECOVERY-RG,Storage,$51.51
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEast-COUGAR-RECOVERY-RG,Virtual Network,$2.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEAST-THAKRALMENZIES-PROD-RG,Storage,$634.82
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-AUEAST-THAKRALMENZIES-PROD-RG,Virtual Machines,$258.15
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bam-ia-analyticsservices-prod-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bam-ia-analyticsservices-prod-rg,Storage,$398.63
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bam-ia-analyticsservices-prod-rg,Virtual Machines,$204.79
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bam-ia-analyticsservices-prod-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEAST-RiskAnalyticsReporting-PROD-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEAST-RiskAnalyticsReporting-PROD-RG,Storage,$10.78
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEAST-RiskAnalyticsReporting-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEAST-RiskAnalyticsReporting-PROD-RG-asr,Bandwidth,$3.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEAST-RiskAnalyticsReporting-PROD-RG-asr,Storage,$8.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEast-SecuritiesWatchList-Prod-RG,Azure App Service,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEast-SecuritiesWatchList-Prod-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEast-SecuritiesWatchList-Prod-RG,Functions,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEast-SecuritiesWatchList-Prod-RG,Logic Apps,$0.64
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BAM-USEast-SecuritiesWatchList-Prod-RG,Storage,$0.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bfin-stg-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bfin-stg-rg,Storage,$0.06
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-us-argus-prod-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-us-argus-prod-rg,Storage,$224.10
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-us-argus-prod-rg,Virtual Machines,$1.57
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-us-argus-prod-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-ARGUS-TEST-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-ARGUS-TEST-RG,Storage,$125.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-ARGUS-TEST-RG,Virtual Machines,$1.47
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-ARGUS-TEST-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-MVP-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-MVP-PROD-RG,Storage,$21.58
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-MVP-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-USEAST-MVP-PROD-RG,Virtual Network,$2.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-useast-realestaters-prod-rg,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-useast-realestaters-prod-rg,SQL Database,$16.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-useast-realestaters-prod-rg,Storage,$11.17
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpg-useast-realestaters-prod-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-US-PowerBI-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-US-PowerBI-PROD-RG,Storage,$7.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPG-US-PowerBI-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-UKSOUTH-WINDREAM-PROD-RG,Bandwidth,$0.57
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-UKSOUTH-WINDREAM-PROD-RG,Storage,$14.82
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-UKSOUTH-WINDREAM-PROD-RG,Virtual Machines,$326.94
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-UKSOUTH-WINDREAM-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpo-us-argus-prod-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpo-us-argus-prod-rg,Storage,$220.03
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,bpo-us-argus-prod-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-BrazeCDN-PROD-RG,Azure Front Door Service,$23.59
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-BrazeCDN-PROD-RG,Key Vault,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-Multipurpose-PROD-RG,Bandwidth,$0.96
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-Multipurpose-PROD-RG,Storage,$9.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-Multipurpose-PROD-RG,Virtual Machines,$0.42
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-Multipurpose-PROD-RG-asr,Bandwidth,$0.03
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-USEAST-Multipurpose-PROD-RG-asr,Storage,$4.44
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-MPS-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-MPS-PROD-RG,Storage,$12.62
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-MPS-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-PWRBI-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-PWRBI-PROD-RG,Storage,$133.08
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-PWRBI-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPO-US-PWRBI-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPY-USEAST-TRCS-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPY-USEAST-TRCS-PROD-RG,Storage,$50.56
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,BPY-USEAST-TRCS-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,brookfieldcontracts,Cloud Services,$64.72
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,brookfieldcontractsprod-Migrated,Storage,$0.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,cloud-shell-storage-centralindia,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,cloud-shell-storage-centralindia,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,cloud-shell-storage-eastus,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,cloud-shell-storage-eastus,Storage,$1.38
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,cloud-shell-storage-southcentralus,Storage,$0.33
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,cloud-shell-storage-westeurope,Storage,$0.33
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxftp-prod-rg,Backup,$129.87
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxftp-prod-rg,Bandwidth,$0.42
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxftp-prod-rg,Storage,$33.44
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxftp-prod-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxib-prod-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxib-prod-rg,Load Balancer,$20.24
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxib-prod-rg,Storage,$18.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxib-prod-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxib-prod-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,daxib-prod-rg,Virtual Network,$4.05
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,dc-prod-bfcorp-us-rg,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,dc-prod-bfcorp-us-rg,Storage,$15.39
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,dc-prod-bfcorp-us-rg,Virtual Machines,$0.84
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-BFCORP-US-RG-ASR,Storage,$15.12
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-RG,Storage,$25.75
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-RG-asr,Bandwidth,$14.85
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-RG-asr,Storage,$17.19
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-SEA-RG,Storage,$17.20
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-SEA-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-UKS-RG,Bandwidth,$0.15
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-UKS-RG,Storage,$17.24
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-PROD-UKS-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,DC-TBD-SEA-RG,Storage,$0.50
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,default-storage-eastus,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,default-web-eastus,Azure App Service,$80.95
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,default-web-eastus,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,mim-prod-rg,Bandwidth,$4.77
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,mim-prod-rg,Storage,$363.37
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,mim-prod-rg,Virtual Machines,$440.17
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,mim-prod-rg,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,NetworkWatcherRG,Network Watcher,$7.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,OFB-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,OFB-PROD-RG,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,PHCTOAZMIGRATE-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,PHCTOAZMIGRATE-RG,Key Vault,$0.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,PHCTOAZMIGRATE-RG,Service Bus,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,PHCTOAZMIGRATE-RG,Storage,$0.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,ror-prod-rg,Bandwidth,$0.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,ror-prod-rg,Storage,$42.15
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,ror-prod-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-AustraliaFileMigration-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-AustraliaFileMigration-RG,Storage,$101.07
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-DirectoryServices-Prod-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-DirectoryServices-Prod-RG,Storage,$12.46
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-DirectoryServices-Prod-RG,Virtual Machines,$202.08
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-DirectoryServices-Prod-RG,Virtual Machines Licenses,$114.36
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-EquitracPrintServices-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-EquitracPrintServices-PROD-RG,Storage,$9.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-EquitracPrintServices-PROD-RG,Virtual Machines,$320.91
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-FileServices-PROD-RG,Storage,$4028.45
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEast-FileServices-PROD-RG,Virtual Machines,$394.28
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-SERVICENOW-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-SERVICENOW-PROD-RG,Storage,$15.86
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-SERVICENOW-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-SOFTCHOICESCCM-PROD-RG,Storage,$9.27
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-SOFTCHOICESCCM-PROD-RG,Virtual Machines,$89.86
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-TREESIZE-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-TREESIZE-PROD-RG,Storage,$10.66
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-TREESIZE-PROD-RG,Virtual Machines,$45.06
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-AUEAST-TREESIZE-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-KMS-RG,Storage,$9.44
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-KMS-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-KMS-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSouth-EquitracPrintServices-PROD-RG,Bandwidth,$0.56
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSouth-EquitracPrintServices-PROD-RG,Storage,$10.40
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSouth-EquitracPrintServices-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSouth-EquitracPrintServices-PROD-RG,Virtual Machines Licenses,$114.36
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-FileServices-PROD-RG,Bandwidth,$0.11
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-FileServices-PROD-RG,Storage,$1399.34
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-FileServices-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-FILESERVICES-RESTORE-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-FILESERVICES-RESTORE-RG,Storage,$1103.02
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-SERVICENOW-PROD-RG,Bandwidth,$0.07
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-SERVICENOW-PROD-RG,Storage,$5.51
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-UKSOUTH-SERVICENOW-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-unifiedcomm-prod-rg,Azure App Service,$182.87
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-unifiedcomm-prod-rg,Bandwidth,$0.24
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-unifiedcomm-prod-rg,Traffic Manager,$0.78
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AIDENCONTENTSYNC-PROD-RG,Bandwidth,$11.46
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AIDENCONTENTSYNC-PROD-RG,Storage,$12.99
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AIDENCONTENTSYNC-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AIDENCONTENTSYNC-PROD-RG-asr,Storage,$11.78
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-ALFRESCOBACKUP-PROD-RG,Storage,$86.04
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AVANADEMPBFCORP-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AVANADEMPBFCORP-PROD-RG,Storage,$14.59
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AVANADEMPBFCORP-PROD-RG,Virtual Machines,$0.28
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AvanadeMP-PROD-RG,Bandwidth,$0.96
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AvanadeMP-PROD-RG,Load Balancer,$20.42
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AvanadeMP-PROD-RG,Storage,$7.39
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AvanadeMP-PROD-RG,Virtual Machines,$0.37
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-AvanadeMP-PROD-RG,Virtual Network,$4.05
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-CitrixFiles-Prod,Storage,$2.84
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-DAT-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-DAT-PROD-RG,Storage,$7.28
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-DAT-PROD-RG,Virtual Machines,$194.23
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-dirsync-prod-rg,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-dirsync-prod-rg,Storage,$13.35
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-dirsync-prod-rg,Virtual Machines,$0.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-DIRSYNC-PROD-RG-asr,Bandwidth,$3.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-DIRSYNC-PROD-RG-asr,Storage,$1.98
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-ECONTRACTS-PROD-RG,Azure App Service,$80.95
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-ECONTRACTS-PROD-RG,Bandwidth,$0.16
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-ECONTRACTS-PROD-RG,Storage,$3.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-ENTCA-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-ENTCA-PROD-RG,Key Vault,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-ENTCA-PROD-RG,Storage,$58.64
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-ENTCA-PROD-RG,Virtual Machines,$310.97
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-EquitracNA-PROD-RG,Bandwidth,$2.32
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-EquitracNA-PROD-RG,Storage,$41.64
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-EquitracNA-PROD-RG,Virtual Machines,$135.75
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-EquitracNA-PROD-RG,Virtual Machines Licenses,$228.73
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-EquitracNA-PROD-RG-asr,Bandwidth,$21.22
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-EquitracNA-PROD-RG-asr,Storage,$18.45
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-BFCORP-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-BFCORP-PROD-RG,Storage,$2667.85
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-BFCORP-PROD-RG,Virtual Machines,$136.70
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-BFCORP-PROD-RG-ASR,Storage,$3109.26
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-PROD-RG,Storage,$3308.93
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-FILESERVICES-PROD-RG-ASR,Storage,$3413.89
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-HRSReporting-PROD-RG,SQL Database,$32.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-HybridExchange-PROD-RG,Bandwidth,$0.10
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-HybridExchange-PROD-RG,Load Balancer,$1.98
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-HybridExchange-PROD-RG,Storage,$0.25
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-HybridExchange-PROD-RG,Virtual Machines,$41.24
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-HYPERION-PROD-RG,Storage,$13.47
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-IFSINTEGRATIONTOOL-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-IFSINTEGRATIONTOOL-PROD-RG,Storage,$172.45
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-IFSINTEGRATIONTOOL-PROD-RG,Virtual Machines,$407.57
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-IFSINTEGRATIONTOOL-PROD-RG,Virtual Machines Licenses,$227.60
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-IFSINTEGRATIONTOOL-PROD-RG-ASR,Storage,$78.46
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-iManage-PROD-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-iManage-PROD-RG,Storage,$8.61
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-iManage-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-InvestorApps-PROD-RG,Azure App Service,$323.78
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-InvestorApps-PROD-RG,Bandwidth,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-InvestorApps-PROD-RG,Key Vault,$0.25
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-InvestorApps-PROD-RG,Log Analytics,$3.49
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-InvestorApps-PROD-RG,SQL Database,$65.10
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-InvestorApps-PROD-RG,Storage,$0.03
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-LegacyArchiveData-Prod-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-LegacyArchiveData-Prod-RG,Storage,$186.88
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-LICENSINGSERVER-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-LICENSINGSERVER-PROD-RG,Storage,$16.99
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-LICENSINGSERVER-PROD-RG,Virtual Machines,$73.65
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-LICENSINGSERVER-PROD-RG-ASR,Storage,$7.62
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-NDES-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-NDES-PROD-RG,Storage,$14.85
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-NDES-PROD-RG,Virtual Machines,$156.12
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-PATRINA-PROD-RG,Storage,$3.26
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-PHCFileMigration-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-PHCFileMigration-RG,Storage,$34.42
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-PRINTQSERVICES-PROD-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-PRINTQSERVICES-PROD-RG,Storage,$6.51
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-PRINTQSERVICES-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-PRINTQSERVICES-PROD-RG-asr,Bandwidth,$4.22
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-PRINTQSERVICES-PROD-RG-asr,Storage,$2.94
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-RBAT-TEST-RG,Storage,$14.08
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-RBAT-TEST-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-RDSLICENSE-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-RDSLICENSE-PROD-RG,Storage,$9.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-RDSLICENSE-PROD-RG,Virtual Machines,$47.71
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SalesForceBackup-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SalesForceBackup-PROD-RG,Storage,$136.37
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SCCM-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SCCM-PROD-RG,Storage,$302.94
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SCCM-PROD-RG,Virtual Machines,$0.83
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SCCM-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SCCM-PROD-RG-ASR,Storage,$147.94
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SCOM-PROD-RG,Storage,$67.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SERVICENOW-PROD-RG,Storage,$17.17
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SERVICENOW-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SFTP-PROD-RG,Bandwidth,$0.08
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SFTP-PROD-RG,Storage,$33.79
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SFTP-PROD-RG,Virtual Machines,$0.22
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SFTP-PROD-RG,Virtual Machines Licenses,$12.94
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SFTP-PROD-RG,Virtual Network,$2.77
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SOFTCHOICESCCM-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SOFTCHOICESCCM-PROD-RG,Storage,$31.36
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SOFTCHOICESCCM-PROD-RG,Virtual Machines,$0.42
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-SOFTCHOICESCCM-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-SOLARWINDSIPAM-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-SOLARWINDSIPAM-PROD-RG,Storage,$18.06
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-SOLARWINDSIPAM-PROD-RG,Virtual Machines,$274.22
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-SOLARWINDSIPAM-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TachyonServiceNow-PROD-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TachyonServiceNow-PROD-RG,Storage,$2.62
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TachyonServiceNow-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-treasurysystems-prod-rg,Azure App Service,$80.95
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-treasurysystems-prod-rg,Bandwidth,$0.49
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-treasurysystems-prod-rg,SQL Database,$32.55
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-treasurysystems-prod-rg,Storage,$7.09
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-treasurysystems-prod-rg,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-treasurysystems-prod-rg,Virtual Machines Licenses,$9.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-TreasurySystems-PROD-RG-asr,Bandwidth,$1.41
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-TreasurySystems-PROD-RG-asr,Storage,$3.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TREESIZE-PROD-RG,Bandwidth,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TREESIZE-PROD-RG,Storage,$19.33
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TREESIZE-PROD-RG,Virtual Machines,$1077.49
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-TREESIZE-PROD-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-VEEAMBACKUPPROXY-PROD-RG,Virtual Network,$2.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-VEEAMBACKUPREPOSITORY-PROD-RG,Bandwidth,$1.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-VEEAMBACKUPREPOSITORY-PROD-RG,Storage,$3139.57
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEast-VEEAMBACKUPREPOSITORY-PROD-RG,Virtual Machines,$0.42
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,tsg-useast-winanalytics-prod-rg,Log Analytics,$1.15
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-WorkatoLogging-PROD-RG,Bandwidth,$0.01
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-WorkatoLogging-PROD-RG,Storage,$5.30
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-WorkatoOPA-PROD-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-WorkatoOPA-PROD-RG,Storage,$9.18
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-WorkatoOPA-PROD-RG,Virtual Machines,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-XEROXDEVICEMANAGER-PROD-RG,Bandwidth,$0.48
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-XEROXDEVICEMANAGER-PROD-RG,Storage,$9.40
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-XEROXDEVICEMANAGER-PROD-RG,Virtual Machines,$0.14
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,TSG-USEAST-XEROXDEVICEMANAGER-PROD-RG,Virtual Machines Licenses,$56.90
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-DR-RG,Azure DNS,$0.54
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-DR-RG,ExpressRoute,$153.78
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-DR-RG,Storage,$706.65
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-DR-RG,Virtual Machines,$2280.80
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-DR-RG,Virtual Machines Licenses,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-DR-RG,Virtual Network,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-PROD-RG,Azure DNS,$0.54
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-PROD-RG,ExpressRoute,$4138.13
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-PROD-RG,Storage,$14.21
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-PROD-RG,VPN Gateway,$29.16
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-Veeam-PROD-RG,Bandwidth,$2.97
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG Production,VNET-Veeam-PROD-RG,VPN Gateway,$153.78
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG UnManaged,azuebtofb-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG UnManaged,azuebtofb-rg,Storage,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG UnManaged,ofb-stg-rg,Advanced Threat Protection,$0.00
+svc_tsgazure_admin TSG Production and TSG Pre Production,TSG UnManaged,ofb-stg-rg,Storage,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,"",Unassigned,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,azurefiles-test-joe-rg,Bandwidth,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,azurefiles-test-joe-rg,Storage,$0.35
+TSG Production and Pre-Production,TSG Dev/Test,AZUREMONITORTEST-JOE-RG,Storage,$17.13
+TSG Production and Pre-Production,TSG Dev/Test,Backup-Recovery,Backup,$23.96
+TSG Production and Pre-Production,TSG Dev/Test,Backup-Recovery,Log Analytics,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,Backup-Recovery,Storage,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,cloud-shell-storage-eastus,Storage,$0.64
+TSG Production and Pre-Production,TSG Dev/Test,Joe-StartupShutdown-RG,Automation,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,microsoft-network-eastus,Storage,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,microsoft-network-westus,Storage,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,PKI-PoC-Joe-RG,Storage,$6.40
+TSG Production and Pre-Production,TSG Dev/Test,PKI-PoC-Joe-RG,Virtual Network,$2.90
+TSG Production and Pre-Production,TSG Dev/Test,servicehealth-joe-rg,Azure Monitor,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,SQL-Joe-RG,SQL Database,$32.55
+TSG Production and Pre-Production,TSG Dev/Test,vmscaleset-joe-rg,Bandwidth,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,vmscaleset-joe-rg,Storage,$1.70
+TSG Production and Pre-Production,TSG Dev/Test,vmscaleset-joe-rg,Virtual Machines,$8.40
+TSG Production and Pre-Production,TSG Dev/Test,workato-logmonitoring-StorageAccount-test-joe-rg,Bandwidth,$0.00
+TSG Production and Pre-Production,TSG Dev/Test,workato-logmonitoring-StorageAccount-test-joe-rg,Storage,$1.37
