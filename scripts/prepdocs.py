@@ -21,7 +21,7 @@ SECTION_OVERLAP = 100
 parser = argparse.ArgumentParser(
     description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
     epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v"
-    )
+)
 parser.add_argument("files", help="Files to be processed")
 parser.add_argument("--category", help="Value for the category field in the search index for all sections indexed in this run")
 parser.add_argument("--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage")
@@ -40,18 +40,35 @@ parser.add_argument("--formrecognizerkey", required=False, help="Optional. Use t
 parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 args = parser.parse_args()
 
-# Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
-default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
-search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
-if not args.skipblobs:
-    storage_creds = default_creds if args.storagekey == None else args.storagekey
-if not args.localpdfparser:
-    # check if Azure Form Recognizer credentials are provided
-    if args.formrecognizerservice == None:
-        print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
-        exit(1)
-    formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
+# Input validation for required arguments
+if not args.files:
+    raise ValueError("Files to be processed must be provided")
+if not args.storageaccount:
+    raise ValueError("Azure Blob Storage account name must be provided")
+if not args.container:
+    raise ValueError("Azure Blob Storage container name must be provided")
+if not args.searchservice:
+    raise ValueError("Name of the Azure Cognitive Search service must be provided")
+if not args.index:
+    raise ValueError("Name of the Azure Cognitive Search index must be provided")
+
+
+try:
+    # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
+    azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
+    default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
+    search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
+    if not args.skipblobs:
+        storage_creds = default_creds if args.storagekey == None else args.storagekey
+    if not args.localpdfparser:
+        # check if Azure Form Recognizer credentials are provided
+        if args.formrecognizerservice == None:
+            print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
+            exit(1)
+        formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
+except Exception as e:
+    print(f"An error occurred: {str(e)}")
+    exit(1)
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
