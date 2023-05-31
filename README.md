@@ -126,7 +126,7 @@ If you see this error while running `azd deploy`: `read /tmp/azd1992237260/backe
 If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run 'azd deploy'. 
 
 The most common reasons this sample fails are:
-1. The subscription (SubID) doesn't have access to the Azure OpenAI service. Please ensure the subID used in the access request proces, is the one you're coding with aka.ms/oai/access
-2. You're attempting to create resources in regions not suported by Azure OpenAI (most commonly East US 2, instead of East US), or where the model you'retrying to use isn't enabled. See this matrix for what models are available in what regions aka.ms/oai/models
-3. You've exceeded a quota, most often number of resources per region. See this link for quota nad limits aka.ms/oai/quotas
-4. You've run the sample multipe times, and tried to delete the resources you've been creating, but are forgetting to purge them (Azure keeps resources for 48 hours unless you purge from soft delete). See this article: [https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal](https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource)
+1. The subscription (SubID) doesn't have access to the Azure OpenAI service. Please ensure the subID used in the access request process, is the one you're coding with aka.ms/oai/access
+2. You're attempting to create resources in regions not enabled for Azure OpenAI (e.g. East US 2, instead of East US), or where the model you're trying to use isn't enabled. See this matrix for what models are available in what regions aka.ms/oai/models
+3. You've exceeded a quota, most often number of resources per region. See this link for quotas and limits aka.ms/oai/quotas
+4. You've run the sample multiple times, and deleted the resources you've been creating each time, but are forgetting to purge them (Azure keeps resources for 48 hours unless you purge from soft delete). So you're getting same resource name not allowed conflicts. See this article: [https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal](https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource)
