@@ -44,12 +44,12 @@ class HtmlCallbackHandler (BaseCallbackHandler):
     def on_tool_start(
         self,
         serialized: Dict[str, Any],
-        action: AgentAction,
+        input_str: str,
         color: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Print out the log in specified color."""
-        self.html += f"<span style='color:{color}'>{ch(action.log)}</span><br>"
+        pass
 
     def on_tool_end(
         self,
@@ -69,11 +69,17 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         self,
         text: str,
         color: Optional[str] = None,
-        end: str = "",
         **kwargs: Optional[str],
     ) -> None:
         """Run when agent ends."""
         self.html += f"<span style='color:{color}'>{ch(text)}</span><br>"
+
+    def on_agent_action(
+        self, 
+        action: AgentAction, 
+        color: Optional[str] = None,
+        **kwargs: Any) -> Any:
+        self.html += f"<span style='color:{color}'>{ch(action.log)}</span><br>"
 
     def on_agent_finish(
         self, finish: AgentFinish, color: Optional[str] = None, **kwargs: Any
