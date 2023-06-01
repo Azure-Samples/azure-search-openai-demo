@@ -36,9 +36,17 @@
     font-size: 14px;
     font-weight: bold;
 }
+.conversationWrapper {
+    padding-left: 10px;
+    padding-top: 10px;
+}
 
 @media only screen and (max-height: 780px) {
     .conversationText {
         font-size: 12px;
     }
+}
+.deleteButton {
+    padding-top: 10px;
+    margin-right: 7px;
 }
