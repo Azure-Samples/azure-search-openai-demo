@@ -1,10 +1,11 @@
 import openai
+import re
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
 from langchain.prompts import PromptTemplate, BasePromptTemplate
-from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.manager import CallbackManager
 from langchain.agents import Tool, AgentExecutor
 from langchain.agents.react.base import ReActDocstoreAgent
 from langchainadapters import HtmlCallbackHandler
@@ -69,8 +70,8 @@ class ReadDecomposeAsk(Approach):
 
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         tools = [
-            Tool(name="Search", func=lambda q: self.search(q, overrides)),
-            Tool(name="Lookup", func=self.lookup)
+            Tool(name="Search", func=lambda q: self.search(q, overrides), description="useful for when you need to ask with search", callbacks=cb_manager),
+            Tool(name="Lookup", func=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)
         ]
 
         # Like results above, not great to keep this as a global, will interfere with interleaving
@@ -83,8 +84,9 @@ class ReadDecomposeAsk(Approach):
         chain = AgentExecutor.from_agent_and_tools(agent, tools, verbose=True, callback_manager=cb_manager)
         result = chain.run(q)
 
-        # Fix up references to they look like what the frontend expects ([] instead of ()), need a better citation format since parentheses are so common
-        result = result.replace("(", "[").replace(")", "]")
+        # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid 
+        # generalizing too much and disrupt HTML snippets if present
+        result = re.sub(r"<([a-zA-Z0-9_ \-\.]+)>", r"[\1]", result)
 
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
     
@@ -97,111 +99,112 @@ class ReAct(ReActDocstoreAgent):
 EXAMPLES = [
     """Question: What is the elevation range for the area that the eastern sector of the
 Colorado orogeny extends into?
-Thought 1: I need to search Colorado orogeny, find the area that the eastern sector
+Thought: I need to search Colorado orogeny, find the area that the eastern sector
 of the Colorado orogeny extends into, then find the elevation range of the
 area.
-Action 1: Search[Colorado orogeny]
-Observation 1: [info1.pdf] The Colorado orogeny was an episode of mountain building (an orogeny) in
+Action: Search[Colorado orogeny]
+Observation: <info1.pdf> The Colorado orogeny was an episode of mountain building (an orogeny) in
 Colorado and surrounding areas.
-Thought 2: It does not mention the eastern sector. So I need to look up eastern
+Thought: It does not mention the eastern sector. So I need to look up eastern
 sector.
-Action 2: Lookup[eastern sector]
-Observation 2: [info2.txt] (Result 1 / 1) The eastern sector extends into the High Plains and is called
+Action: Lookup[eastern sector]
+Observation: <info2.txt> (Result 1 / 1) The eastern sector extends into the High Plains and is called
 the Central Plains orogeny.
-Thought 3: The eastern sector of Colorado orogeny extends into the High Plains. So I
+Thought: The eastern sector of Colorado orogeny extends into the High Plains. So I
 need to search High Plains and find its elevation range.
-Action 3: Search[High Plains]
-Observation 3: [some_file.pdf] High Plains refers to one of two distinct land regions
-Thought 4: I need to instead search High Plains (United States).
-Action 4: Search[High Plains (United States)]
-Observation 4: [filea.pdf] The High Plains are a subregion of the Great Plains. [another-ref.docx] From east to west, the
+Action: Search[High Plains]
+Observation: <some_file.pdf> High Plains refers to one of two distinct land regions
+Thought: I need to instead search High Plains (United States).
+Action: Search[High Plains (United States)]
+Observation: <filea.pdf> The High Plains are a subregion of the Great Plains. <another-ref.docx> From east to west, the
 High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130
 m).
-Thought 5: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer
+Thought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer
 is 1,800 to 7,000 ft.
-Action 5: Finish[1,800 to 7,000 ft (filea.pdf) ]""",
+Action: Finish[1,800 to 7,000 ft <filea.pdf>]""",
     """Question: Musician and satirist Allie Goertz wrote a song about the "The Simpsons"
 character Milhouse, who Matt Groening named after who?
-Thought 1: The question simplifies to "The Simpsons" character Milhouse is named after
+Thought: The question simplifies to "The Simpsons" character Milhouse is named after
 who. I only need to search Milhouse and find who it is named after.
-Action 1: Search[Milhouse]
-Observation 1: [info7.pdf] Milhouse Mussolini Van Houten is a recurring character in the Fox animated
+Action: Search[Milhouse]
+Observation: <info7.pdf> Milhouse Mussolini Van Houten is a recurring character in the Fox animated
 television series The Simpsons voiced by Pamela Hayden and created by Matt
 Groening.
-Thought 2: The paragraph does not tell who Milhouse is named after, maybe I can look up
+Thought: The paragraph does not tell who Milhouse is named after, maybe I can look up
 "named after".
-Action 2: Lookup[named after]
-Observation 2: [historyref2.txt] (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose
+Action: Lookup[named after]
+Observation: <historyref2.txt> (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose
 middle name was Milhous.
-Thought 3: Milhouse was named after U.S. president Richard Nixon, so the answer is
+Thought: Milhouse was named after U.S. president Richard Nixon, so the answer is
 Richard Nixon.
-Action 3: Finish[Richard Nixon (historyref2.txt) ]""",
+Action: Finish[Richard Nixon <historyref2.txt>]""",
     """Question: Which documentary is about Finnish rock groups, Adam Clayton Powell or The
 Saimaa Gesture?
-Thought 1: I need to search Adam Clayton Powell and The Saimaa Gesture, and find which
+Thought: I need to search Adam Clayton Powell and The Saimaa Gesture, and find which
 documentary is about Finnish rock groups.
-Action 1: Search[Adam Clayton Powell]
-Observation 1: [info9.pdf] Could not find [Adam Clayton Powell]. Similar: ['Adam Clayton Powell
+Action: Search[Adam Clayton Powell]
+Observation: <info9.pdf> Could not find [Adam Clayton Powell]. Similar: ['Adam Clayton Powell
 III', 'Seventh Avenue (Manhattan)', 'Adam Clayton Powell Jr. State Office
 Building', 'Isabel Washington Powell', 'Adam Powell', vAdam Clayton Powell
 (film)', 'Giancarlo Esposito'].
-Thought 2: To find the documentary, I can search Adam Clayton Powell (film).
-Action 2: Search[Adam Clayton Powell (film)]
-Observation 2: [data123.txt] Adam Clayton Powell is a 1989 American documentary film directed by
+Thought: To find the documentary, I can search Adam Clayton Powell (film).
+Action: Search[Adam Clayton Powell (film)]
+Observation: <data123.txt> Adam Clayton Powell is a 1989 American documentary film directed by
 Richard Kilberg. The film is about the rise and fall of influential
 African-American politician Adam Clayton Powell Jr.[3][4] It was later aired
 as part of the PBS series The American Experience.
-Thought 3: Adam Clayton Powell (film) is a documentary about an African-American
+Thought: Adam Clayton Powell (film) is a documentary about an African-American
 politician, not Finnish rock groups. So the documentary about Finnish rock
 groups must instead be The Saimaa Gesture.
-Action 3: Finish[The Saimaa Gesture (data123.txt) ]""",
+Action: Finish[The Saimaa Gesture <data123.txt>]""",
     """Question: What profession does Nicholas Ray and Elia Kazan have in common?
-Thought 1: I need to search Nicholas Ray and Elia Kazan, find their professions, then
+Thought: I need to search Nicholas Ray and Elia Kazan, find their professions, then
 find the profession they have in common.
-Action 1: Search[Nicholas Ray]
-Observation 1: [files-987.png] Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16,
+Action: Search[Nicholas Ray]
+Observation: <files-987.png> Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16,
 1979) was an American film director, screenwriter, and actor best known for
 the 1955 film Rebel Without a Cause.
-Thought 2: Professions of Nicholas Ray are director, screenwriter, and actor. I need
+Thought: Professions of Nicholas Ray are director, screenwriter, and actor. I need
 to search Elia Kazan next and find his professions.
-Action 2: Search[Elia Kazan]
-Observation 2: [files-654.txt] Elia Kazan was an American film and theatre director, producer, screenwriter
+Action: Search[Elia Kazan]
+Observation: <files-654.txt> Elia Kazan was an American film and theatre director, producer, screenwriter
 and actor.
-Thought 3: Professions of Elia Kazan are director, producer, screenwriter, and actor.
+Thought: Professions of Elia Kazan are director, producer, screenwriter, and actor.
 So profession Nicholas Ray and Elia Kazan have in common is director,
 screenwriter, and actor.
-Action 3: Finish[director, screenwriter, actor (files-987.png)(files-654.txt) ]""",
+Action: Finish[director, screenwriter, actor <files-987.png><files-654.txt>]""",
     """Question: Which magazine was started first Arthur's Magazine or First for Women?
-Thought 1: I need to search Arthur's Magazine and First for Women, and find which was
+Thought: I need to search Arthur's Magazine and First for Women, and find which was
 started first.
-Action 1: Search[Arthur's Magazine]
-Observation 1: [magazines-1850.pdf] Arthur's Magazine (1844-1846) was an American literary periodical published
+Action: Search[Arthur's Magazine]
+Observation: <magazines-1850.pdf> Arthur's Magazine (1844-1846) was an American literary periodical published
 in Philadelphia in the 19th century.
-Thought 2: Arthur's Magazine was started in 1844. I need to search First for Women
+Thought: Arthur's Magazine was started in 1844. I need to search First for Women
 next.
-Action 2: Search[First for Women]
-Observation 2: [magazines-1900.pdf] First for Women is a woman's magazine published by Bauer Media Group in the
+Action: Search[First for Women]
+Observation: <magazines-1900.pdf> First for Women is a woman's magazine published by Bauer Media Group in the
 USA.[1] The magazine was started in 1989.
-Thought 3: First for Women was started in 1989. 1844 (Arthur's Magazine) < 1989 (First
+Thought: First for Women was started in 1989. 1844 (Arthur's Magazine) < 1989 (First
 for Women), so Arthur's Magazine was started first.
-Action 3: Finish[Arthur's Magazine (magazines-1850.pdf)(magazines-1900.pdf) ]""",
+Action: Finish[Arthur's Magazine <magazines-1850.pdf><magazines-1900.pdf>]""",
     """Question: Were Pavel Urysohn and Leonid Levin known for the same type of work?
-Thought 1: I need to search Pavel Urysohn and Leonid Levin, find their types of work,
+Thought: I need to search Pavel Urysohn and Leonid Levin, find their types of work,
 then find if they are the same.
-Action 1: Search[Pavel Urysohn]
-Observation 1: [info4444.pdf] Pavel Samuilovich Urysohn (February 3, 1898 - August 17, 1924) was a Soviet
+Action: Search[Pavel Urysohn]
+Observation: <info4444.pdf> Pavel Samuilovich Urysohn (February 3, 1898 - August 17, 1924) was a Soviet
 mathematician who is best known for his contributions in dimension theory.
-Thought 2: Pavel Urysohn is a mathematician. I need to search Leonid Levin next and
+Thought: Pavel Urysohn is a mathematician. I need to search Leonid Levin next and
 find its type of work.
-Action 2: Search[Leonid Levin]
-Observation 2: [datapoints_aaa.txt] Leonid Anatolievich Levin is a Soviet-American mathematician and computer
+Action: Search[Leonid Levin]
+Observation: <datapoints_aaa.txt> Leonid Anatolievich Levin is a Soviet-American mathematician and computer
 scientist.
-Thought 3: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn
+Thought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn
 and Leonid Levin have the same type of work.
-Action 3: Finish[yes (info4444.pdf)(datapoints_aaa.txt) ]""",
+Action: Finish[yes <info4444.pdf><datapoints_aaa.txt>]""",
 ]
 SUFFIX = """\nQuestion: {input}
 {agent_scratchpad}"""
 PREFIX = "Answer questions as shown in the following examples, by splitting the question into individual search or lookup actions to find facts until you can answer the question. " \
-"Observations are prefixed by their source name in square brackets, source names MUST be included with the actions in the answers." \
-"Only answer the questions using the information from observations, do not speculate."
+"Observations are prefixed by their source name in angled brackets, source names MUST be included with the actions in the answers." \
+"All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. "
+"Answer questions as truthfully as possible, and ONLY answer the questions using the information from observations, do not speculate or your own knowledge."
