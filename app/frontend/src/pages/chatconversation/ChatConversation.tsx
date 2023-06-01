@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton, PanelType } from "@fluentui/react";
+import { Checkbox, Panel, TextField, SpinButton, PanelType, Dialog, PrimaryButton, DefaultButton } from "@fluentui/react";
+import { Stack, IStackTokens } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
-
 import styles from "./ChatConversation.module.css";
 
 import {
@@ -51,8 +51,54 @@ const ChatConversation = () => {
     const [currentConversationId, setCurrentConversationId] = useState<string>("");
     const [conversationList, setConversationList] = useState<ConversationListResponse | null>(null);
     const [conversationListFetched, setConversationListFetched] = useState(false);
+    const [conversationDeleteModalClosed, setConversationDeleteModalClosed] = useState(true);
+    const [conversationToDeleteId, setConversationToDeleteId] = useState<string>("");
 
     //Maps the response from conversations and messages to be rendered in the chat window
+    const handleConversationDeleteButtonClicked = (conversation_id: string) => {
+        setConversationDeleteModalClosed(false);
+        setConversationToDeleteId(conversation_id);
+    };
+
+    const handleConversationDeleteModalClose = () => {
+        setConversationDeleteModalClosed(true);
+        setConversationToDeleteId("");
+    };
+
+    const stackTokens = { childrenGap: 10 };
+
+    async function callDeleteConversationAPI(conversation_id: string) {
+        try {
+            const request: ConversationRequest = {
+                conversation_id: conversation_id,
+                baseroute: "/conversation",
+                route: "/delete"
+            };
+            const result = await conversationApi(request);
+            return result;
+        } catch (e) {
+            setError(e);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    const deleteConversation = (conversation_id: string) => {
+        callDeleteConversationAPI(conversation_id)
+            .then(result => {
+                let conv_id = result.conversation_id;
+                console.log(`Conversation ${conv_id} deleted successfully`);
+            })
+            .then(() => {
+                handleConversationDeleteModalClose();
+            })
+            .then(() => {
+                // refresh the conversation list
+                listConversations().then(result => {
+                    setConversationList(result || null);
+                });
+            });
+    };
+
     const renderConverationMessageHistory = (mylist: BotFrontendFormat) => {
         return mylist.map(
             ({ user, bot }, index) =>
@@ -85,35 +131,6 @@ const ChatConversation = () => {
             setIsLoading(false);
         }
     }
-
-    async function callDeleteConversationAPI(conversation_id: string) {
-        try {
-            const request: ConversationRequest = {
-                conversation_id: conversation_id,
-                baseroute: "/conversation",
-                route: "/delete"
-            };
-            const result = await conversationApi(request);
-            return result;
-        } catch (e) {
-            setError(e);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-    const deleteConversation = (conversation_id: string) => {
-        callDeleteConversationAPI(conversation_id)
-            .then(result => {
-                let conv_id = result.conversation_id;
-                console.log(`Conversation ${conv_id} deleted successfully`);
-            })
-            .then(() => {
-                // refresh the conversation list
-                listConversations().then(result => {
-                    setConversationList(result || null);
-                });
-            });
-    };
 
     const loadConversation = (conversation_id: string) => {
         // set the current conversation id to the new conversation id
@@ -388,20 +405,39 @@ const ChatConversation = () => {
                         onChange={onUseSuggestFollowupQuestionsChange}
                     />
                 </Panel>
+                <Dialog hidden={conversationDeleteModalClosed} onDismiss={handleConversationDeleteModalClose}>
+                    <div>
+                        <h3>Are you sure you want to delete this conversation?</h3>
+                        <Stack horizontal tokens={{ childrenGap: 20 }}>
+                            <PrimaryButton
+                                onClick={() => {
+                                    deleteConversation(conversationToDeleteId);
+                                }}
+                            >
+                                Delete Conversation
+                            </PrimaryButton>
+                            <DefaultButton onClick={handleConversationDeleteModalClose}>Cancel</DefaultButton>
+                            {/* <button onClick={()=>}>Delete</button> */}
+                        </Stack>
+                    </div>
+                </Dialog>
                 <Panel
                     headerText="Conversation List"
                     isOpen={isConversationListPanelOpen}
                     type={PanelType.customNear}
                     customWidth="340px"
                     isBlocking={false}
-                    //onOpen={() => listConversations().then(result => setConversationList(result || null))}
                     onDismiss={() => setIsConversationListPanelOpen(false)}
                     closeButtonAriaLabel="Close"
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConversationListPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
                     <ConversationListRefreshButton className={styles.commandButton} onClick={refreshConversationList} />
-                    <ConversationList listOfConversations={conversationList} onConversationClicked={loadConversation} onDeleteClick={deleteConversation} />
+                    <ConversationList
+                        listOfConversations={conversationList}
+                        onConversationClicked={loadConversation}
+                        onDeleteClick={handleConversationDeleteButtonClicked}
+                    />
                 </Panel>
             </div>
         </div>

@@ -77,6 +77,30 @@ It will look like the following:
 
 > NOTE: You can also use existing Search and Storage Accounts.  See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
 
+#### For local development
+If you are modifying this app locally, you can greatly speed up the time to change and test the app by allowing the app to "hot reload". To do this open two separate terminal sessions. 
+
+**Start the backend flask app with hot reload**
+Run `debug.ps1` or `debug.sh`
+```
+cd ./app
+pwsh ./debug.ps1
+```
+or in bash
+```
+cd ./app
+bash ./debug.sh
+```
+
+**Start the frontend app with hot reload**
+Run the following command to enable hot reload on the frontend
+```
+cd ./app/frontend
+npm run dev
+```
+This will create a VITE server instance that will reload when code changes. You can access the frontend app locally (i.e. http://localhost:5173/). The VITE server is set to proxy API calls to the flask application using the settings in `frontend/vite.config.ts` (i.e. https://localhost:5000). 
+
+
 #### Deploying or re-deploying a local clone of the repo:
 * Simply run `azd up`
 

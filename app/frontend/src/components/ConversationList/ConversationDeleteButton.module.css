@@ -1,3 +1,7 @@
+.button_icon {
+    padding-right: 5px;
+}
+
 .container {
     display: flex;
     align-items: center;
