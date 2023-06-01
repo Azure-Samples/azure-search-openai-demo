@@ -90,6 +90,7 @@ const ChatConversation = () => {
             })
             .then(() => {
                 handleConversationDeleteModalClose();
+                clearChat();
             })
             .then(() => {
                 // refresh the conversation list
