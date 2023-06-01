@@ -1,4 +1,4 @@
-# ChatGPT + Enterprise data with Azure OpenAI... Now with "Vanilla" Chat experience and Conversation History (powered by CosmosDB)
+# ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
@@ -76,6 +76,30 @@ It will look like the following:
 1. Run `azd up`
 
 > NOTE: You can also use existing Search and Storage Accounts.  See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+
+#### For local development
+If you are modifying this app locally, you can greatly speed up the time to change and test the app by allowing the app to "hot reload". To do this open two separate terminal sessions. 
+
+**Start the backend flask app with hot reload**
+Run `debug.ps1` or `debug.sh`
+```
+cd ./app
+pwsh ./debug.ps1
+```
+or in bash
+```
+cd ./app
+bash ./debug.sh
+```
+
+**Start the frontend app with hot reload**
+Run the following command to enable hot reload on the frontend
+```
+cd ./app/frontend
+npm run dev
+```
+This will create a VITE server instance that will reload when code changes. You can access the frontend app locally (i.e. http://localhost:5173/). The VITE server is set to proxy API calls to the flask application using the settings in `frontend/vite.config.ts` (i.e. https://localhost:5000). 
+
 
 #### Deploying or re-deploying a local clone of the repo:
 * Simply run `azd up`
