@@ -70,7 +70,8 @@ resource conversations_container 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
     }
   }
 }
-
+output cosmosdb object = cosmosdb
+output id string = cosmosdb.id
 output name string = cosmosdb.name
 output endpoint string = cosmosdb.properties.documentEndpoint
 output database_name string = database.name

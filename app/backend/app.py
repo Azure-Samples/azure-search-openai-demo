@@ -35,7 +35,7 @@ AZURE_COSMOSDB_DATABASE = os.environ.get("AZURE_COSMOSDB_DATABASE") or "db_conve
 AZURE_COSMOSDB_ACCOUNT = os.environ.get("AZURE_COSMOSDB_ACCOUNT")
 AZURE_COSMOSDB_CONVERSATIONS_CONTAINER = os.environ.get("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER") or "conversations"
 AZURE_COSMOSDB_MESSAGES_CONTAINER = os.environ.get("AZURE_COSMOSDB_MESSAGES_CONTAINER") or "messages"
-AZURE_COSMOSDB_ACCOUNT_KEY = os.environ.get("AZURE_COSMOSDB_ACCOUNT_KEY")
+AZURE_COSMOSDB_ACCOUNT_KEY = os.environ.get("AZURE_COSMOSDB_ACCOUNT_KEY") or None
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -86,7 +86,12 @@ chatconversation_approaches = {
 # Initialize a CosmosDB client with AAD auth and containers
 cosmos_endpoint = f'https://{AZURE_COSMOSDB_ACCOUNT}.documents.azure.com:443/'
 # credential = azure_credential
-credential = AZURE_COSMOSDB_ACCOUNT_KEY
+
+if not AZURE_COSMOSDB_ACCOUNT_KEY:
+    credential = azure_credential
+else:
+    credential = AZURE_COSMOSDB_ACCOUNT_KEY
+
 cosmos_conversation_client = CosmosConversationClient(
     cosmosdb_endpoint=cosmos_endpoint, 
     credential=credential, 

@@ -294,7 +294,7 @@ module openAiRoleBackend 'core/security/role.bicep' = {
   name: 'openai-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd' // Cognitive Services OpenAI User
     principalType: 'ServicePrincipal'
   }
 }
@@ -319,16 +319,25 @@ module searchRoleBackend 'core/security/role.bicep' = {
   }
 }
 
-module cosmosDbRoleBackend 'core/security/role.bicep' = {
+module cosmosDbRole2 'core/security/role.bicep' = {
   scope: cosmosdbResourceGroup
-  name: 'cosmosdb-role-backend'
+  name: 'cosmosdb-role-2'
   params: {
     principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId:  '00000000-0000-0000-0000-000000000002' // Contributor BDL TODO: (should we use the cosmos db built-in role? '00000000-0000-0000-0000-000000000002')
+    roleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // Contributor
     principalType: 'ServicePrincipal'
   }
 }
 
+module cosmosDbRoleBackend 'core/security/cosmosdb_role.bicep' = {
+  scope: cosmosdbResourceGroup
+  name: 'cosmosdb-role-backend'
+  params: {
+    cosmosDbAccountName: cosmosdb.outputs.name
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId:  '00000000-0000-0000-0000-000000000002' // Cosmos DB Built-in Data Contributor (Note: this is a SQL role assignment in Cosmos, not an RBAC role)
+  }
+}
 
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
