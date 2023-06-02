@@ -116,7 +116,14 @@ class ChatReadRetrieveReadApproach(Approach):
     def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, approx_max_tokens: int=1000) -> str:
         history_text = ""
         for h in reversed(history if include_last_turn else history[:-1]):
-            history_text = """<|im_start|>user""" + "\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot", "") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
-            if len(history_text) > approx_max_tokens*4:
-                break    
+            history_text = f"""\
+<|im_start|>user
+{h["user"]}
+<|im_end|>
+<|im_start|>assistant
+{h.get("bot", "") + "<|im_end|>" if h.get("bot") else ""}
+{history_text}"""
+
+            if len(history_text) > approx_max_tokens * 4:
+                break
         return history_text
