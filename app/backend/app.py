@@ -5,9 +5,8 @@ import logging
 import openai
 import json
 from datetime import datetime
-from history.cosmosdbservice import CosmosDbService
+from history.cosmosdbservice import CosmosConversationClient
 from auth.auth_utils import get_authenticated_user_details
-from azure.cosmos import CosmosClient, PartitionKey
 
 from flask import Flask, request, jsonify
 from azure.identity import DefaultAzureCredential
@@ -36,6 +35,7 @@ AZURE_COSMOSDB_DATABASE = os.environ.get("AZURE_COSMOSDB_DATABASE") or "db_conve
 AZURE_COSMOSDB_ACCOUNT = os.environ.get("AZURE_COSMOSDB_ACCOUNT")
 AZURE_COSMOSDB_CONVERSATIONS_CONTAINER = os.environ.get("AZURE_COSMOSDB_CONVERSATIONS_CONTAINER") or "conversations"
 AZURE_COSMOSDB_MESSAGES_CONTAINER = os.environ.get("AZURE_COSMOSDB_MESSAGES_CONTAINER") or "messages"
+AZURE_COSMOSDB_ACCOUNT_KEY = os.environ.get("AZURE_COSMOSDB_ACCOUNT_KEY")
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -85,12 +85,14 @@ chatconversation_approaches = {
 
 # Initialize a CosmosDB client with AAD auth and containers
 cosmos_endpoint = f'https://{AZURE_COSMOSDB_ACCOUNT}.documents.azure.com:443/'
-cosmos_client = CosmosClient(cosmos_endpoint, credential=azure_credential)
-database = cosmos_client.get_database_client(AZURE_COSMOSDB_DATABASE)
-conversations_container = database.get_container_client(AZURE_COSMOSDB_CONVERSATIONS_CONTAINER)
-messages_container = database.get_container_client(AZURE_COSMOSDB_MESSAGES_CONTAINER)
-## Initialize CosmosDbService object
-cosmos = CosmosDbService(cosmos_endpoint, conversations_container, messages_container)
+# credential = azure_credential
+credential = AZURE_COSMOSDB_ACCOUNT_KEY
+cosmos_conversation_client = CosmosConversationClient(
+    cosmosdb_endpoint=cosmos_endpoint, 
+    credential=credential, 
+    database_name=AZURE_COSMOSDB_DATABASE,
+    container_name=AZURE_COSMOSDB_CONVERSATIONS_CONTAINER
+)
 
 app = Flask(__name__)
 
@@ -164,14 +166,14 @@ def add_conversation():
         # check for the conversation_id, if the conversation is not set, we will create a new one
         if not conversation_id:
             generate_title = True ## if this is a new conversation, we will generate a title
-            conversation_dict = cosmos.create_conversation(user_id=user_id)
+            conversation_dict = cosmos_conversation_client.create_conversation(user_id=user_id)
             conversation_id = conversation_dict['id']
             
         ## Format the incoming message object in the "chat/completions" messages format
         ## then write it to the conversation history in cosmos
         message_prompt = request.json["history"][-1]["user"]
         msg = {"role": "user", "content": message_prompt}
-        resp = cosmos.create_message(
+        resp = cosmos_conversation_client.create_message(
             conversation_id=conversation_id,
             user_id=user_id,
             input_message=msg
@@ -183,7 +185,7 @@ def add_conversation():
         ## Format the incoming message object in the "chat/completions" messages format
         ## then write it to the conversation history in cosmos
         msg = {"role": "assistant", "content": r['answer']}
-        resp = cosmos.create_message(
+        resp = cosmos_conversation_client.create_message(
             conversation_id=conversation_id,
             user_id=user_id,
             input_message=msg
@@ -215,10 +217,10 @@ def delete_conversation():
         return jsonify({"error": "conversation_id is required"}), 400
     
     ## delete the conversation messages from cosmos first
-    deleted_messages = cosmos.delete_messages(conversation_id, user_id)
+    deleted_messages = cosmos_conversation_client.delete_messages(conversation_id, user_id)
 
     ## Now delete the conversation 
-    deleted_conversation = cosmos.delete_conversation(user_id, conversation_id)
+    deleted_conversation = cosmos_conversation_client.delete_conversation(user_id, conversation_id)
 
     #BDL TODO: add some error handling here
     return jsonify({"message": "Successfully deleted conversation and messages", "conversation_id": conversation_id}), 200
@@ -235,7 +237,7 @@ def list_conversations():
     user_id = authenticated_user['user_principal_id']
 
     ## get the conversations from cosmos
-    conversations = cosmos.get_conversations(user_id)
+    conversations = cosmos_conversation_client.get_conversations(user_id)
     if not conversations:
         return jsonify({"error": f"No conversations for {user_id} were found"}), 404
 
@@ -255,13 +257,13 @@ def get_conversation():
         return jsonify({"error": "conversation_id is required"}), 400
 
     ## get the conversation object and the related messages from cosmos
-    conversation = cosmos.get_conversation(user_id, conversation_id)
+    conversation = cosmos_conversation_client.get_conversation(user_id, conversation_id)
     ## return the conversation id and the messages in the bot frontend format
     if not conversation:
         return jsonify({"error": f"Conversation {conversation_id} was not found. It either does not exist or the logged in user does not have access to it."}), 404
     
     # get the messages for the conversation from cosmos
-    conversation_messages = cosmos.get_messages(user_id, conversation_id)
+    conversation_messages = cosmos_conversation_client.get_messages(user_id, conversation_id)
     if not conversation_messages:
         return jsonify({"error": f"No messages for {conversation_id} were found"}), 404
 
@@ -292,7 +294,7 @@ def gen_title():
 
 def generate_conversation_title(user_id, conversation_id, overwrite_title=False):
     ## get the conversation from cosmos
-    conversation_dict = cosmos.get_conversation(user_id, conversation_id)
+    conversation_dict = cosmos_conversation_client.get_conversation(user_id, conversation_id)
     if not conversation_dict:
         ## raise an error
         raise Exception(f"Conversation {conversation_id} was not found. It either does not exist or the logged in user does not have access to it.")
@@ -305,7 +307,7 @@ def generate_conversation_title(user_id, conversation_id, overwrite_title=False)
 
     ## otherwise go for it and create the title! 
     ## get the messages for the conversation from cosmos
-    conversation_messages = cosmos.get_messages(user_id, conversation_id)
+    conversation_messages = cosmos_conversation_client.get_messages(user_id, conversation_id)
     if not conversation_messages:
         raise Exception(f"No messages for {conversation_id} were found")
 
@@ -315,7 +317,7 @@ def generate_conversation_title(user_id, conversation_id, overwrite_title=False)
     conversation_dict['updatedAt'] = datetime.utcnow().isoformat()
 
     ## update the conversation in cosmos
-    resp = cosmos.upsert_conversation(conversation_dict)
+    resp = cosmos_conversation_client.upsert_conversation(conversation_dict)
 
     return resp
 
