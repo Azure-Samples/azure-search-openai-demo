@@ -120,7 +120,7 @@ def chat():
 @app.before_request
 def ensure_openai_token():
     global openai_token
-    if openai_token.expires_on < int(time.time()) - 60:
+    if openai_token.expires_on < time.time() + 60:
         openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
         openai.api_key = openai_token.token
     
