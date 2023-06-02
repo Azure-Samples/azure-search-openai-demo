@@ -89,7 +89,6 @@ def content_file(path):
     
 @app.route("/ask", methods=["POST"])
 def ask():
-    ensure_openai_token()
     if not request.json:
         return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
@@ -105,7 +104,6 @@ def ask():
     
 @app.route("/chat", methods=["POST"])
 def chat():
-    ensure_openai_token()
     if not request.json:
         return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
@@ -119,6 +117,7 @@ def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
+@app.before_request
 def ensure_openai_token():
     global openai_token
     if openai_token.expires_on < int(time.time()) - 60:
