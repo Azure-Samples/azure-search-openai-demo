@@ -3,10 +3,10 @@ from typing import Any, Sequence
 import openai
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
-from approaches.approach import Approach
+from approaches.approach import ChatApproach
 from text import nonewlines
 
-class ChatReadRetrieveReadApproach(Approach):
+class ChatReadRetrieveReadApproach(ChatApproach):
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion

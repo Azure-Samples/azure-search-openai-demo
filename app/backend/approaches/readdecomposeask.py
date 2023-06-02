@@ -1,6 +1,6 @@
 import openai
 import re
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
@@ -12,7 +12,7 @@ from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 from typing import Any, List, Optional
 
-class ReadDecomposeAsk(Approach):
+class ReadDecomposeAsk(AskApproach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment

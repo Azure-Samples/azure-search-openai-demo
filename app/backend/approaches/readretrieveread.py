@@ -1,8 +1,7 @@
 import openai
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
-from langchain.llms.openai import AzureOpenAI
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
@@ -11,7 +10,7 @@ from text import nonewlines
 from lookuptool import CsvLookupTool
 from typing import Any
 
-class ReadRetrieveReadApproach(Approach):
+class ReadRetrieveReadApproach(AskApproach):
     """
     Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
     is present then formulate an answer. Each iteration consists of two parts:
