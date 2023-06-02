@@ -11,6 +11,33 @@ from text import nonewlines
 from lookuptool import CsvLookupTool
 from typing import Any
 
+
+TEMPLATE_PREFIX = (
+    "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+    "Answer the question using only the data provided in the information sources below. "
+    "For tabular information return it as an html table. Do not return markdown format. "
+    "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. "
+    "For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" "
+    "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). "
+    "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". "
+    "Never quote tool names as sources."
+    "If you cannot answer using the sources below, say that you don't know. "
+    "\n\n"
+    "You can access to the following tools:"
+)
+
+TEMPLATE_SUFFIX = """
+Begin!
+
+Question: {input}
+
+Thought: {agent_scratchpad}"""
+
+COGNITIVE_SEARCH_TOOL_DESCRIPTION = (
+    "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
+)
+
+
 class ReadRetrieveReadApproach(Approach):
     """
     Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
@@ -22,27 +49,6 @@ class ReadRetrieveReadApproach(Approach):
 
     [1] E. Karpas, et al. arXiv:2205.00445
     """
-
-    template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-"Answer the question using only the data provided in the information sources below. " \
-"For tabular information return it as an html table. Do not return markdown format. " \
-"Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-"For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-"It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-"If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-"Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
-"\n\nYou can access to the following tools:"
-    
-    template_suffix = """
-Begin!
-
-Question: {input}
-
-Thought: {agent_scratchpad}"""    
-
-    CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
 
     def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
@@ -84,15 +90,15 @@ Thought: {agent_scratchpad}"""
         
         acs_tool = Tool(name="CognitiveSearch", 
                         func=lambda q: self.retrieve(q, overrides), 
-                        description=self.CognitiveSearchToolDescription,
+                        description=COGNITIVE_SEARCH_TOOL_DESCRIPTION,
                         callbacks=cb_manager)
         employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
         tools = [acs_tool, employee_tool]
 
         prompt = ZeroShotAgent.create_prompt(
             tools=tools,
-            prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
-            suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
+            prefix=overrides.get("prompt_template_prefix") or TEMPLATE_PREFIX,
+            suffix=overrides.get("prompt_template_suffix") or TEMPLATE_SUFFIX,
             input_variables = ["input", "agent_scratchpad"])
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         chain = LLMChain(llm = llm, prompt = prompt)
