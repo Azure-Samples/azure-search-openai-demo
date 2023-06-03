@@ -12,7 +12,7 @@ const EXAMPLES: ExampleModel[] = [
         text: "What is difference between Standard Change and Non-Standard Change?",
         value: "What is difference between Standard Change and Non-Standard Change?"
     },
-    { text: "What are the benefits of CMDB?", value: "What are the benefits of CMDB?" },
+    { text: "what is main purpose of cmdb?", value: "what is main purpose of cmdb?" },
     { text: "What are main activites of Service Delivery Manager?", value: "What are main activites of Service Delivery Manager?" }
 ];
 
