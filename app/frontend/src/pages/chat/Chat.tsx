@@ -181,7 +181,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (or a follow-up question for more details) ..."
+                            placeholder="Type a new question about OneCloud Manuals (or try example) ..."
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                         />
