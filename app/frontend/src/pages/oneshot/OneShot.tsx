@@ -136,7 +136,7 @@ const OneShot = () => {
                 <h1 className={styles.oneshotTitle}>Ask your data</h1>
                 <div className={styles.oneshotQuestionInput}>
                     <QuestionInput
-                        placeholder="Example: Does my plan cover annual eye exams?"
+                        placeholder="Ask anything about our Eviden-/OneCloud Manuals ..."
                         disabled={isLoading}
                         onSend={question => makeApiRequest(question)}
                     />
