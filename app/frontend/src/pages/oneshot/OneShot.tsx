@@ -133,10 +133,10 @@ const OneShot = () => {
         <div className={styles.oneshotContainer}>
             <div className={styles.oneshotTopSection}>
                 <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-                <h1 className={styles.oneshotTitle}>Ask your data</h1>
+                <h1 className={styles.oneshotTitle}>Ask our Eviden-/OneCloud Manuals</h1>
                 <div className={styles.oneshotQuestionInput}>
                     <QuestionInput
-                        placeholder="Ask anything about our Eviden-/OneCloud Manuals ..."
+                        placeholder="Ask any question about our Eviden-/OneCloud Manuals ..."
                         disabled={isLoading}
                         onSend={question => makeApiRequest(question)}
                     />
