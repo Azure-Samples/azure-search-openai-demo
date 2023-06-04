@@ -3,11 +3,12 @@
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
+
 ## Modified with Eviden-/OneCloud Manuals content -- for demo only!
 
 This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure Cognitive Search for data indexing and retrieval.
 
-The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
+The repo includes sample data so it's ready to try end to end. In this Demo Application we use several Eviden/OneCloud internal Manuals (like DevSecOps Manual and other) to growned ChatGPT like Bot on.
 
 ![RAG Architecture](docs/appcomponents.png)
 
@@ -18,7 +19,15 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (Cognitive Search)
 * Settings directly in the UX to tweak the behavior and experiment with options
 
-![Chat screen](docs/chatscreen.png)
+## Eviden specific Knowhow base
+* Based on Eviden-OneCloud Manuals
+    * DevSecOps Manual
+    * Atos Management System Manual
+    * Rainbow Process Description
+    + Security and Data Protection Policies
+* Based on general ISO documents
+    * ISO 27001 and ISO 20000 general documentation
+
 
 ## Getting Started
 
