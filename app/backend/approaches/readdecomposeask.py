@@ -53,7 +53,16 @@ class ReadDecomposeAsk(Approach):
         '''
         to find specific information based on a query.
         This method is used to perform a specific query to retrieve a particular piece of information. 
-        It is typically used when the answer to the question cannot be found directly from the search results and requires looking up specific details.'''
+        It is typically used when the answer to the question cannot be found directly from the search results and requires looking up specific details.
+        
+        Purpose:
+            Performs a specific query to retrieve a particular piece of information.
+            Often used when the answer to the question cannot be found directly from the search results and requires looking up specific details.
+            Executes a search query similar to the search method but with additional parameters specific to the lookup task.
+            Retrieves the results of the lookup query.
+            If the lookup query returns any answers, it returns the first answer.
+            If there are documents in the search results, it returns the content of those documents.
+            If no answers or documents are found, it returns None.'''
         r = self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
@@ -90,9 +99,11 @@ class ReadDecomposeAsk(Approach):
         # Like results above, not great to keep this as a global, will interfere with interleaving
         global prompt
         prompt_prefix = overrides.get("prompt_template")
+        #prompt is generated using EXAMPLES
         prompt = PromptTemplate.from_examples(
             EXAMPLES, SUFFIX, ["input", "agent_scratchpad"], prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX)
 
+        # Prompt template agent from langchain
         agent = ReAct.from_llm_and_tools(llm, tools)
         chain = AgentExecutor.from_agent_and_tools(agent, tools, verbose=True, callback_manager=cb_manager)
         result = chain.run(q)

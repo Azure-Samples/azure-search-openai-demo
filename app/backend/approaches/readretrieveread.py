@@ -19,7 +19,7 @@ from lookuptool import CsvLookupTool
 class ReadRetrieveReadApproach(Approach):
 
     template_prefix = \
-"You are an intelligent assistant helping interested customers of LIC with the policy documents. " \
+"You are a virtual assistant of Virtusa. Virtusa Consulting Services Pvt Ltd is an global information technology services company that provides digital engineering and technology services and solutions for companies in the financial services, healthcare, communications, media, entertainment, travel, manufacturing, and technology industries worldwide.  " \
 "Answer the question using only the data provided in the information sources below. " \
 "For tabular information return it as an html table. Do not return markdown format. " \
 "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
@@ -77,7 +77,9 @@ Thought: {agent_scratchpad}"""
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
         
-        acs_tool = Tool(name = "CognitiveSearch", func = lambda q: self.retrieve(q, overrides), description = self.CognitiveSearchToolDescription)
+        acs_tool = Tool(name = "CognitiveSearch", 
+                        func = lambda q: self.retrieve(q, overrides), 
+                        description = self.CognitiveSearchToolDescription)
         employee_tool = EmployeeInfoTool("Employee1")
         tools = [acs_tool, employee_tool]
 
@@ -86,10 +88,14 @@ Thought: {agent_scratchpad}"""
             prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
             input_variables = ["input", "agent_scratchpad"])
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
-        chain = LLMChain(llm = llm, prompt = prompt)
+        llm = AzureOpenAI(deployment_name=self.openai_deployment, 
+                          temperature=overrides.get("temperature") or 0.3, 
+                          openai_api_key=openai.api_key)
+        chain = LLMChain(llm = llm, 
+                         prompt = prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
-            agent = ZeroShotAgent(llm_chain = chain, tools = tools),
+            agent = ZeroShotAgent(llm_chain = chain, 
+                                  tools = tools),
             tools = tools, 
             verbose = True, 
             callback_manager = cb_manager)

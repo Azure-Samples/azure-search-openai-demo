@@ -7,10 +7,11 @@ from text import nonewlines
 # Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
 # top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
 # (answer) with that prompt.
+#without use of langchain
 class RetrieveThenReadApproach(Approach):
 
     template = \
-"You are an intelligent assistant helping interested customers of LIC with the policy documents.  " + \
+"You are a virtual assistant of Virtusa. Virtusa Consulting Services Pvt Ltd is an global information technology services company that provides digital engineering and technology services and solutions for companies in the financial services, healthcare, communications, media, entertainment, travel, manufacturing, and technology industries worldwide.  " + \
 "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
 "Answer the following question using only the data provided in the sources below. " + \
 "For tabular information return it as an html table. Do not return markdown format. "  + \
