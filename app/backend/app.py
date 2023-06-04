@@ -92,7 +92,7 @@ def ask():
         r = impl.run(request.json["question"], request.json.get("overrides") or {})
         return jsonify(r)
     except Exception as e:
-        logging.exception("Exception in /ask")
+        logging.exception("Exception iask_approachesn /ask")
         return jsonify({"error": str(e)}), 500
     
 @app.route("/chat", methods=["POST"])

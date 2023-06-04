@@ -19,6 +19,14 @@ class ReadDecomposeAsk(Approach):
         self.content_field = content_field
 
     def search(self, q: str, overrides: dict) -> str:
+        '''
+        responsible for searching documents based on a query.
+        This method is responsible for performing a search query to retrieve documents that are relevant to the given query.
+        Purpose:
+            Performs a general search query to retrieve relevant documents based on the given query string.
+            Can apply additional search parameters, such as the number of results to return (top), whether to use a semantic ranker, and filtering criteria.
+            Formats the search results into a string representation, including relevant metadata like source page and content.
+            Returns the formatted search results as a string.'''
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
@@ -42,6 +50,10 @@ class ReadDecomposeAsk(Approach):
         return "\n".join(self.results)
 
     def lookup(self, q: str) -> str:
+        '''
+        to find specific information based on a query.
+        This method is used to perform a specific query to retrieve a particular piece of information. 
+        It is typically used when the answer to the question cannot be found directly from the search results and requires looking up specific details.'''
         r = self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
@@ -67,7 +79,9 @@ class ReadDecomposeAsk(Approach):
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        llm = AzureOpenAI(deployment_name=self.openai_deployment, # using langchain AzureOpenAI
+                          temperature=overrides.get("temperature") or 0.3, 
+                          openai_api_key=openai.api_key)
         tools = [
             Tool(name="Search", func=lambda q: self.search(q, overrides)),
             Tool(name="Lookup", func=self.lookup)
@@ -89,6 +103,9 @@ class ReadDecomposeAsk(Approach):
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
     
 class ReAct(ReActDocstoreAgent):
+    ''' This is a subclass of ReActDocstoreAgent from the langchain library. 
+    It is used to create a prompt template that guides the agent's behavior during the question-answering process. 
+    The create_prompt method is overridden to return a predefined PromptTemplate object.'''
     @classmethod
     def create_prompt(cls, tools: List[Tool]) -> BasePromptTemplate:
         return prompt
