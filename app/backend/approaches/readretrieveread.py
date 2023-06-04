@@ -19,7 +19,7 @@ from lookuptool import CsvLookupTool
 class ReadRetrieveReadApproach(Approach):
 
     template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
+"You are a virtual assistant of Virtusa. Virtusa Consulting Services Pvt Ltd is an global information technology services company that provides digital engineering and technology services and solutions for companies in the financial services, healthcare, communications, media, entertainment, travel, manufacturing, and technology industries worldwide. " \
 "Answer the question using only the data provided in the information sources below. " \
 "For tabular information return it as an html table. Do not return markdown format. " \
 "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
@@ -37,7 +37,7 @@ Question: {input}
 
 Thought: {agent_scratchpad}"""    
 
-    CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
+    CognitiveSearchToolDescription = "useful for searching the Virtusa case studies list from diverse domains and different customers."
 
     def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
