@@ -9,8 +9,8 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What's the business model of Apex Tool?",
-        value: "What's the business model of Apex Tool?"
+        text: "Give me a detailed executive summary of APEX. Give it to me in a way that a credit analyst at hedge fund would want to know. Provide sources.",
+        value: "Give me a detailed executive summary of APEX. Give it to me in a way that a credit analyst at hedge fund would want to know. Provide sources."
     },
     { text: "What are the positive and negative trends about Apex Tool?", value: "What are the positive and negative trends about Apex Tool?" },
     { text: "What's the latest data available for Apex Tool?", value: "What's the latest data available for Apex Tool?" }
