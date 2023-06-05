@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start App",
+            "type": "dotenv",
+            "targetTasks": [
+                "Start App (Script)"
+            ],
+            "file": "${input:dotEnvFilePath}"
+        },
+        {
+            "label": "Start App (Script)",
+            "type": "shell",
+            "command": "${workspaceFolder}/app/start.sh",
+            "windows": {
+                "command": "pwsh ${workspaceFolder}/app/start.ps1"
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/app"
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "dotEnvFilePath",
+            "type": "command",
+            "command": "azure-dev.commands.getDotEnvFilePath"
+        }
+    ]
+}

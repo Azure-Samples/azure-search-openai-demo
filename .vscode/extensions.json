@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "esbenp.prettier-vscode",
+        "ms-azuretools.azure-dev"
+    ]
+}
