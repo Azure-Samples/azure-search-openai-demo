@@ -1,9 +1,10 @@
 import os
+import io
 import mimetypes
 import time
 import logging
 import openai
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from approaches.retrievethenread import RetrieveThenReadApproach
@@ -65,6 +66,8 @@ chat_approaches = {
 
 app = Flask(__name__)
 
+logging.basicConfig(level=logging.DEBUG)
+
 @app.route("/", defaults={"path": "index.html"})
 @app.route("/<path:path>")
 def static_file(path):
@@ -79,7 +82,10 @@ def content_file(path):
     mime_type = blob.properties["content_settings"]["content_type"]
     if mime_type == "application/octet-stream":
         mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
-    return blob.readall(), 200, {"Content-Type": mime_type, "Content-Disposition": f"inline; filename={path}"}
+    blob_file = io.BytesIO()
+    blob.readinto(blob_file)
+    blob_file.seek(0)
+    return send_file(blob_file, mimetype=mime_type, as_attachment=False, download_name=path)
     
 @app.route("/ask", methods=["POST"])
 def ask():
