@@ -66,8 +66,6 @@ chat_approaches = {
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.DEBUG)
-
 @app.route("/", defaults={"path": "index.html"})
 @app.route("/<path:path>")
 def static_file(path):
