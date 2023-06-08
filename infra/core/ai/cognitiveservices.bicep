@@ -18,6 +18,9 @@ resource account 'Microsoft.CognitiveServices/accounts@2022-10-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
   }
   sku: sku
 }
