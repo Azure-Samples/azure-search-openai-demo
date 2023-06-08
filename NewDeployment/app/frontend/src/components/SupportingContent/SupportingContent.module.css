@@ -1,0 +1,28 @@
+.supportingContentNavList {
+    list-style: none;
+    padding-left: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.supportingContentItem {
+    word-break: break-word;
+    background: rgb(249, 249, 249);
+    border-radius: 8px;
+    box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px, rgb(0 0 0 / 10%) 0px 2px 3px 0px;
+    outline: transparent solid 1px;
+
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.supportingContentItemHeader {
+    margin: 0;
+}
+
+.supportingContentItemText {
+    margin-bottom: 0;
+    font-weight: 300;
+}
