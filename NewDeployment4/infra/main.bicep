@@ -13,8 +13,8 @@ param appServicePlanName string = ''
 param backendServiceName string = ''
 param resourceGroupName string = ''
 
-param searchServiceName string = ''
-param searchServiceResourceGroupName string = ''
+param searchServiceName string = 'searchserviceforagencyportal'
+param searchServiceResourceGroupName string = 'AgencyProtalShowCase'
 param searchServiceResourceGroupLocation string = location
 
 param searchServiceSkuName string = 'standard'

@@ -31,6 +31,8 @@ Sources:
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
     Do not include any text inside [] or <<>> in the search query terms.
     If the question is not in English, translate the question to English before generating the search query.
+    Any specific brand name of an insurance company must not be shown and should be called the insurance company instead.
+    Answer the question in the language that the question is asked.
 
 Chat History:
 {chat_history}
