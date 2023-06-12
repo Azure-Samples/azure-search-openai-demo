@@ -18,25 +18,26 @@ from lookuptool import CsvLookupTool
 # [1] E. Karpas, et al. arXiv:2205.00445
 class ReadRetrieveReadApproach(Approach):
 
-    template_prefix = \
-#"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-"You are an intelligent assistant helping users with thier questions about holiday and trip. " \
-"Answer the question using only the data provided in the information sources below. " \
-"For tabular information return it as an html table. Do not return markdown format. " \
-"Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-"For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-"It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-"If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-"Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
-"\n\nYou can access to the following tools:"
-    
+    #"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions.  
+    template_prefix = """
+    You are an intelligent assistant helping users with thier questions about holiday and trip.
+    Answer the question using only the data provided in the information sources below.
+    For tabular information return it as an html table. Do not return markdown format.
+    Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response.
+    For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\"
+    It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\").
+    If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\".
+    Never quote tool names as sources.
+    If you cannot answer using the sources below, say that you don't know.
+    \n\nYou can access to the following tools:
+    """
+        
     template_suffix = """
-Begin!
+    Begin!
 
-Question: {input}
+    Question: {input}
 
-Thought: {agent_scratchpad}"""    
+    Thought: {agent_scratchpad}"""    
                                     # "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
     CognitiveSearchToolDescription = "useful for planning your holiday and spare time based on your interest"
 
