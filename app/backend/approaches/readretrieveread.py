@@ -17,9 +17,8 @@ from lookuptool import CsvLookupTool
 # This is inspired by the MKRL paper[1] and applied here using the implementation in Langchain.
 # [1] E. Karpas, et al. arXiv:2205.00445
 class ReadRetrieveReadApproach(Approach):
-
     template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
+"You are an intelligent assistant helping people from Accenture and Innovation Advisory Consulting employees with their Industrial Relations, Motor Vehicles and Transportation questions questions. " \
 "Answer the question using only the data provided in the information sources below. " \
 "For tabular information return it as an html table. Do not return markdown format. " \
 "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
@@ -27,9 +26,8 @@ class ReadRetrieveReadApproach(Approach):
 "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
 "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
 "Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
+"If you cannot answer using the sources below, request additional information " \
 "\n\nYou can access to the following tools:"
-    
     template_suffix = """
 Begin!
 

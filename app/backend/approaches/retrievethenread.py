@@ -10,25 +10,23 @@ from text import nonewlines
 class RetrieveThenReadApproach(Approach):
 
     template = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
+"You are part of a team of customer service representatives helping the State of California employees with their State personnel board audit findings" + \
 "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
 "Answer the following question using only the data provided in the sources below. " + \
 "For tabular information return it as an html table. Do not return markdown format. "  + \
 "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. " + \
-"If you cannot answer using the sources below, say you don't know. " + \
+"If you cannot answer using the sources below, request additional information " + \
 """
 
 ###
-Question: 'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
-
+Question: 'Is there any evidence of discrimination complaints filed within the organization?'
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+info1.pdf: The Caltrans provided evidence that 15 discrimination complaints related to a disability, medical condition, or denial of reasonable accommodation were filed during the compliance review period, November 1, 2017, through April 30, 2018.
+info2.pdf: The department confirmed that 15 complaint investigations exceeded 90 days and the Caltrans failed to provide written communication to the complainants in a timely manner regarding the status of the complaint
 
 Answer:
-In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].
+"There is evidence that 15 discrimination complaints were filed related to several topics.[info1.pdf] [info2.pdf]. I hope my answer helped you. Is there anything else  my team can help you with."
+
 
 ###
 Question: '{q}'?

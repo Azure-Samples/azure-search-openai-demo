@@ -136,12 +136,13 @@ const OneShot = () => {
                 <h1 className={styles.oneshotTitle}>Ask your data</h1>
                 <div className={styles.oneshotQuestionInput}>
                     <QuestionInput
-                        placeholder="Example: Does my plan cover annual eye exams?"
+                        placeholder="Example: What specific documentation did the CRU examine during the review?"
                         disabled={isLoading}
                         onSend={question => makeApiRequest(question)}
                     />
                 </div>
             </div>
+           
             <div className={styles.oneshotBottomSection}>
                 {isLoading && <Spinner label="Generating answer" />}
                 {!lastQuestionRef.current && <ExampleList onExampleClicked={onExampleClicked} />}
@@ -171,7 +172,7 @@ const OneShot = () => {
                     />
                 )}
             </div>
-
+            
             <Panel
                 headerText="Configure answer generation"
                 isOpen={isConfigPanelOpen}

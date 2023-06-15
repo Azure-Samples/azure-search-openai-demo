@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
+import { useEffect, useState } from "react";
 
 import styles from "./Answer.module.css";
 
@@ -30,8 +31,37 @@ export const Answer = ({
     const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
+    const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+
+    useEffect(() => {
+        // Ocultar el mensaje de bienvenida después de 3 segundos
+        const timer = setTimeout(() => {
+            setShowWelcomeMessage(false);
+        }, 3000);
+
+        return () => {
+            // Limpiar el temporizador al desmontar el componente
+            clearTimeout(timer);
+        };
+    }, []);
+
+
 
     return (
+        <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
+            {showWelcomeMessage && (
+                <Stack.Item>
+                    <div className={styles.welcomeMessage}>Welcome</div>
+                </Stack.Item>
+            )}
+
+            
+            
+    return (
+        
+
+
+
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
@@ -55,7 +85,9 @@ export const Answer = ({
                         />
                     </div>
                 </Stack>
+                
             </Stack.Item>
+            </Stack>
 
             <Stack.Item grow>
                 <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}></div>
@@ -94,3 +126,4 @@ export const Answer = ({
         </Stack>
     );
 };
+

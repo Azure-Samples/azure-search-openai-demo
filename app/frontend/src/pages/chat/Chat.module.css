@@ -4,6 +4,9 @@
     flex-direction: column;
     margin-top: 20px;
 }
+.userChatMessage:first-child {
+    display: none;
+}
 
 .chatRoot {
     flex: 1;
@@ -84,7 +87,7 @@
     padding-left: 24px;
     padding-right: 24px;
     width: 100%;
-    max-width: 1028px;
+    max-width: 1100px;
     background: #f2f2f2;
 }
 
