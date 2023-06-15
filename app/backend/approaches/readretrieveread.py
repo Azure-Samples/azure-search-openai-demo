@@ -3,7 +3,7 @@ from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
-from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
 from langchain.llms.openai import AzureOpenAI
@@ -77,8 +77,11 @@ Thought: {agent_scratchpad}"""
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
         
-        acs_tool = Tool(name = "CognitiveSearch", func = lambda q: self.retrieve(q, overrides), description = self.CognitiveSearchToolDescription)
-        employee_tool = EmployeeInfoTool("Employee1")
+        acs_tool = Tool(name="CognitiveSearch", 
+                        func=lambda q: self.retrieve(q, overrides), 
+                        description=self.CognitiveSearchToolDescription,
+                        callbacks=cb_manager)
+        employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
         tools = [acs_tool, employee_tool]
 
         prompt = ZeroShotAgent.create_prompt(
@@ -103,8 +106,12 @@ Thought: {agent_scratchpad}"""
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
 
-    def __init__(self, employee_name: str):
-        super().__init__(filename = "data/employeeinfo.csv", key_field = "name", name = "Employee", description = "useful for answering questions about the employee, their benefits and other personal information")
+    def __init__(self, employee_name: str, callbacks: Callbacks = None):
+        super().__init__(filename="data/employeeinfo.csv", 
+                         key_field="name", 
+                         name="Employee", 
+                         description="useful for answering questions about the employee, their benefits and other personal information",
+                         callbacks=callbacks)
         self.func = self.employee_info
         self.employee_name = employee_name
 
