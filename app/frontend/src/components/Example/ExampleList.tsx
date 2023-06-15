@@ -9,11 +9,14 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
+        text: "What are the responsibilities of the layoff department in managing the SROA program?",
+        value: "What are the responsibilities of the layoff department in managing the SROA program?"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    {
+        text: "Why might certification lists have more candidates and SROA candidates?",
+        value: "Why might certification lists have more candidates and SROA candidates?"
+    },
+    { text: "How long does surplus status last for an employee?", value: "How long does surplus status last for an employee?" }
 ];
 
 interface Props {

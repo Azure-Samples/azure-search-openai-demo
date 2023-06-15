@@ -9,9 +9,19 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
-                    <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
-                    </Link>
+                    <li className={styles.headerNavLeftMargin}>
+                        <a href="https://innadvisory.com/index.html" target={"_blank"} title="Innadvisort link">
+                            <img
+                                src="https://innadvisory.com/uploads/3/4/7/5/34758765/logo.png"
+                                alt="Innadvisory logo"
+                                aria-label="Link to Innadvisory home page"
+                                width="240px"
+                                height="60px"
+                                className={styles.innadvisorylogo}
+                            />
+                        </a>
+                    </li>
+                    <Link to="/" className={styles.headerTitleContainer}></Link>
                     <nav>
                         <ul className={styles.headerNavList}>
                             <li>
@@ -38,7 +48,7 @@ const Layout = () => {
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + Cognitive Search</h4>
+                    <h4 className={styles.headerRightText}>Azure OpenAI + created by Inn</h4>
                 </div>
             </header>
 

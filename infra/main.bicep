@@ -278,6 +278,15 @@ module openAiRoleBackend 'core/security/role.bicep' = {
     principalType: 'ServicePrincipal'
   }
 }
+module searchSvcContribRoleUser 'core/security/role.bicep' = {
+  scope: searchServiceResourceGroup
+  name: 'search-svccontrib-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
+    principalType: 'User'
+  }
+}
 
 module storageRoleBackend 'core/security/role.bicep' = {
   scope: storageResourceGroup
@@ -288,6 +297,7 @@ module storageRoleBackend 'core/security/role.bicep' = {
     principalType: 'ServicePrincipal'
   }
 }
+
 
 module searchRoleBackend 'core/security/role.bicep' = {
   scope: searchServiceResourceGroup

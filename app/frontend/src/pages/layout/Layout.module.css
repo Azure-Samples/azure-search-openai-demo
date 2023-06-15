@@ -5,16 +5,15 @@
 }
 
 .header {
-    background-color: #222222;
-    color: #f2f2f2;
+    background-color: #ffffff;
+    color: black;
+    margin: 0px;
 }
 
 .headerContainer {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
 }
 
 .headerTitleContainer {
@@ -38,10 +37,11 @@
     display: flex;
     list-style: none;
     padding-left: 0;
+    align-items: center;
 }
 
 .headerNavPageLink {
-    color: #f2f2f2;
+    color: rgb(35, 35, 35);
     text-decoration: none;
     opacity: 0.75;
 
@@ -55,12 +55,13 @@
 }
 
 .headerNavPageLinkActive {
-    color: #f2f2f2;
+    color: rgb(35, 35, 35);
     text-decoration: none;
 }
 
 .headerNavLeftMargin {
     margin-left: 20px;
+    list-style-type: none;
 }
 
 .headerRightText {
@@ -75,4 +76,10 @@
 
 .githubLogo {
     height: 20px;
+}
+
+.innadvisorylogo {
+    height: 40px;
+}
+@media only screen and (max-height: 780px) {
 }
