@@ -44,6 +44,7 @@ param chatGptDeploymentName string = 'chat'
 param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = 'gpt-35-turbo'
 param embeddingDeploymentName string = 'embedding'
+param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
 @description('Id of the user or app to assign application roles')
@@ -154,9 +155,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           name: embeddingModelName
           version: '2'
         }
-        scaleSettings: {
-          scaleType: 'Standard'
-        }
+        capacity: embeddingDeploymentCapacity
       }
     ]
   }
