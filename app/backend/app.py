@@ -75,12 +75,16 @@ def static_file(path):
 # can access all the files. This is also slow and memory hungry.
 @app.route("/content/<path>")
 def content_file(path):
-    blob = blob_container.get_blob_client(path).download_blob()
-    mime_type = blob.properties["content_settings"]["content_type"]
-    if mime_type == "application/octet-stream":
-        mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
-    return blob.readall(), 200, {"Content-Type": mime_type, "Content-Disposition": f"inline; filename={path}"}
-    
+    try:
+        blob = blob_container.get_blob_client(path).download_blob()
+        mime_type = blob.properties["content_settings"]["content_type"]
+        if mime_type == "application/octet-stream":
+            mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
+        return blob.readall(), 200, {"Content-Type": mime_type, "Content-Disposition": f"inline; filename={path}"}
+    except Exception as e:
+        logging.exception("Exception in /ask")
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/ask", methods=["POST"])
 def ask():
     ensure_openai_token()
