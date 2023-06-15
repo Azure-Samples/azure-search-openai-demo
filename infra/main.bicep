@@ -38,8 +38,10 @@ param formRecognizerResourceGroupLocation string = location
 param formRecognizerSkuName string = 'S0'
 
 param gptDeploymentName string = 'davinci'
+param gptDeploymentCapacity int = 30
 param gptModelName string = 'text-davinci-003'
 param chatGptDeploymentName string = 'chat'
+param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = 'gpt-35-turbo'
 param embeddingDeploymentName string = 'embedding'
 param embeddingModelName string = 'text-embedding-ada-002'
@@ -134,9 +136,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           name: gptModelName
           version: '1'
         }
-        scaleSettings: {
-          scaleType: 'Standard'
-        }
+        capacity: gptDeploymentCapacity
       }
       {
         name: chatGptDeploymentName
@@ -145,9 +145,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           name: chatGptModelName
           version: '0301'
         }
-        scaleSettings: {
-          scaleType: 'Standard'
-        }
+        capacity: chatGptDeploymentCapacity
       }
       {
         name: embeddingDeploymentName
