@@ -41,12 +41,13 @@ Question:
 Search query:
 """
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, openai_type: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
         self.gpt_deployment = gpt_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.openai_type = openai_type
 
     def run(self, history: list[dict], overrides: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -95,14 +96,24 @@ Search query:
             prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        completion = openai.Completion.create(
-            engine=self.chatgpt_deployment, 
-            prompt=prompt, 
-            temperature=overrides.get("temperature") or 0.7, 
-            max_tokens=1024, 
-            n=1, 
-            stop=["<|im_end|>", "<|im_start|>"])
-
+        if(self.openai_type == "azure"):
+            completion = openai.Completion.create(
+                engine=self.chatgpt_deployment, 
+                prompt=prompt, 
+                temperature=overrides.get("temperature") or 0.7, 
+                max_tokens=1024, 
+                n=1, 
+                stop=["<|im_end|>", "<|im_start|>"])
+            
+        else:
+            completion = openai.Completion.create(
+                model=self.chatgpt_deployment, 
+                prompt=prompt, 
+                temperature=overrides.get("temperature") or 0.7, 
+                max_tokens=1024, 
+                n=1, 
+                stop=["<|im_end|>", "<|im_start|>"])
+            
         return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
     
     def get_chat_history_as_text(self, history, include_last_turn=True, approx_max_tokens=1000) -> str:

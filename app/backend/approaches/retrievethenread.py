@@ -39,11 +39,12 @@ Sources:
 Answer:
 """
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, openai_type:str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.openai_type = openai_type
 
     def run(self, q: str, overrides: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -69,12 +70,22 @@ Answer:
         content = "\n".join(results)
 
         prompt = (overrides.get("prompt_template") or self.template).format(q=q, retrieved=content)
-        completion = openai.Completion.create(
-            engine=self.openai_deployment, 
-            prompt=prompt, 
-            temperature=overrides.get("temperature") or 0.3, 
-            max_tokens=1024, 
-            n=1, 
-            stop=["\n"])
+
+        if(self.openai_type == "azure"):
+            completion = openai.Completion.create(
+                engine=self.openai_deployment, 
+                prompt=prompt, 
+                temperature=overrides.get("temperature") or 0.3, 
+                max_tokens=1024, 
+                n=1, 
+                stop=["\n"])
+        else:
+            completion = openai.Completion.create(
+                model=self.openai_deployment, 
+                prompt=prompt, 
+                temperature=overrides.get("temperature") or 0.3, 
+                max_tokens=1024, 
+                n=1, 
+                stop=["\n"])
 
         return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}

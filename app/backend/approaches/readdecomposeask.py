@@ -4,6 +4,7 @@ from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
+from langchain.llms.openai import OpenAI
 from langchain.prompts import PromptTemplate, BasePromptTemplate
 from langchain.callbacks.manager import CallbackManager
 from langchain.agents import Tool, AgentExecutor
@@ -13,11 +14,12 @@ from text import nonewlines
 from typing import List
 
 class ReadDecomposeAsk(Approach):
-    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, openai_type: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.openai_type = openai_type
 
     def search(self, q: str, overrides: dict) -> str:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -68,7 +70,11 @@ class ReadDecomposeAsk(Approach):
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        if(self.openai_type == "azure"):
+            llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        else:
+            llm = OpenAI(model_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        
         tools = [
             Tool(name="Search", func=lambda q: self.search(q, overrides), description="useful for when you need to ask with search", callbacks=cb_manager),
             Tool(name="Lookup", func=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)
