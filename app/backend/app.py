@@ -24,7 +24,7 @@ OPENAI_API_TYPE = os.environ.get("OPENAI_API_TYPE") or "azure"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 OPENAI_API_ORGANIZATION = os.environ.get("OPENAI_API_ORGANIZATION")
 OPENAI_GPT_MODEL = os.environ.get("OPENAI_GPT_MODEL") or "text-davinci-003"
-OPENAI_CHATGPT_MODEL = os.environ.get("OPENAI_CHATGPT_MODEL") or "gpt-35-turbo"
+OPENAI_CHATGPT_MODEL = os.environ.get("OPENAI_CHATGPT_MODEL") or "gpt-3.5-turbo"
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
