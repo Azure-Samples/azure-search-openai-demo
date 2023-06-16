@@ -1,6 +1,7 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
+import softchoice from "../../assets/softchoice.png";
 
 import styles from "./Layout.module.css";
 
@@ -10,27 +11,27 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Proof of Concept</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
-                            <li>
+                            {/* <li>
                                 <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
                                     Chat
                                 </NavLink>
-                            </li>
-                            <li className={styles.headerNavLeftMargin}>
+                            </li> */}
+                            {/* <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
                                     Ask a question
                                 </NavLink>
-                            </li>
-                            <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
+                            </li> */}
+                            <li className={styles.headerLogo}>
+                                <a href="https://www.softchoice.com" target={"_blank"} title="Softchoice">
                                     <img
-                                        src={github}
-                                        alt="Github logo"
-                                        aria-label="Link to github repository"
-                                        width="20px"
+                                        src={softchoice}
+                                        alt="Softchoice logo"
+                                        aria-label="Link to Softchoice"
+                                        width="96px"
                                         height="20px"
                                         className={styles.githubLogo}
                                     />
