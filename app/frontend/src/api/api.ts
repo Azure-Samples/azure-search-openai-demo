@@ -1,4 +1,4 @@
-import { AskRequest, AskResponse, ChatRequest } from "./models";
+import { AskRequest, AskResponse, ChatRequest, AccessToken } from "./models";
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
     const response = await fetch("/ask", {
@@ -63,4 +63,23 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
 
 export function getCitationFilePath(citation: string): string {
     return `/content/${citation}`;
+}
+
+export async function getAccessToken(): Promise<AccessToken[]> {
+    try {
+        const result = await fetch("/.auth/me");
+        const response: AccessToken[] = await result.json();
+        return response;
+    } catch (e) {
+        return [];
+    }
+}
+
+export async function refreshToken(): Promise<void> {
+    try {
+        const result = await fetch("/.auth/refresh");
+        console.log(`/.auth/refresh: ${result}`);
+    } catch (e) {
+        console.log(e);
+    }
 }
