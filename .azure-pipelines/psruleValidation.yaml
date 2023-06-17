@@ -1,0 +1,17 @@
+jobs:
+- job: "psruleValidation"
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    # https://azure.github.io/PSRule.Rules.Azure/install-instructions/
+    # https://marketplace.visualstudio.com/items?itemName=bewhite.ps-rule
+    # vscode https://marketplace.visualstudio.com/items?itemName=bewhite.psrule-vscode-preview
+    - script: |
+        set -x
+        for f in `find . -iname '*.bicep'`; do az bicep build -f $f; done
+      displayName: 'Convert bicep to arm template'
+    - task: ps-rule-assert@2
+      displayName: Analyze Azure template files
+      inputs:
+        modules: 'PSRule.Rules.Azure'
+      continueOnError: true

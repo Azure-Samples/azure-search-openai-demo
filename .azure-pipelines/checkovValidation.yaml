@@ -1,0 +1,17 @@
+jobs:
+- job: "checkovValidation"
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - script: |
+        pip3 install checkov
+      displayName: 'Install requirements'
+    - script: |
+        set -x
+        for f in `find . -iname '*.bicep'`; do az bicep build -f $f; done
+      displayName: 'Convert bicep to arm template'
+    - script: |
+        checkov -d . --framework arm bicep
+        exit $RET
+      displayName: 'Checkov scan'
+      continueOnError: true

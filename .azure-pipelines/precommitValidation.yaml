@@ -1,0 +1,32 @@
+jobs:
+- job: "precommitValidation"
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - script: |
+        pip3 install pre-commit
+      displayName: 'Install requirements'
+    - script: |
+        # Update the list of packages
+        sudo apt-get update
+        # Install pre-requisite packages.
+        sudo apt-get install -y wget apt-transport-https software-properties-common
+        # Download the Microsoft repository GPG keys
+        wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+        # Register the Microsoft repository GPG keys
+        sudo dpkg -i packages-microsoft-prod.deb
+        # Update the list of packages after we added packages.microsoft.com
+        sudo apt-get update
+        # Install PowerShell
+        sudo apt-get install -y powershell
+        # Check
+        which pwsh
+        sudo ln -s /usr/bin/pwsh /usr/local/bin/pwsh
+      displayName: 'Install Powershell'
+    - script: |
+        pwsh -c 'Install-Module -Name PSScriptAnalyzer -Repository PSGallery -Force -AllowClobber -Scope CurrentUser'
+      displayName: 'Install powershell module PSScriptAnalyzer'
+    - script: |
+        pre-commit run --all-files --show-diff-on-failure
+        exit $RET
+      displayName: 'Pre-commit check - server side'

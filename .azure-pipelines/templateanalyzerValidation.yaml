@@ -1,0 +1,29 @@
+jobs:
+- job: "templateanalyzerValidation"
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    # https://github.com/Azure/template-analyzer/discussions/301
+    # https://github.com/microsoft/security-devops-action/wiki#how-to-configure-tools-in-azure-devops
+    # - with: MicrosoftSecurityDevOps@1
+
+    - script: |
+        set -x
+        curl -OL https://github.com/Azure/template-analyzer/releases/download/v0.5.1/TemplateAnalyzer-linux-x64.zip
+        unzip TemplateAnalyzer-linux-x64.zip
+        pwd
+        ls -l
+        chmod 755 TemplateAnalyzer
+      displayName: 'Install requirements'
+    - script: |
+        set -x
+        for f in `find . -iname '*.bicep'`; do az bicep build -f $f; done
+      displayName: 'Convert bicep to arm template'
+    - script: |
+        set -x
+        pwd
+        ls -l
+        ./TemplateAnalyzer analyze-directory . -v
+        exit $RET
+      displayName: 'template-analyzer scan'
+      continueOnError: true

@@ -1,0 +1,18 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+name: "Validations"
+
+trigger:
+  - main
+  - devel*
+
+stages:
+- stage: validations
+  jobs:
+  - template: .azure-pipelines/precommitValidation.yaml
+  - template: .azure-pipelines/psruleValidation.yaml
+  - template: .azure-pipelines/checkovValidation.yaml
+  - template: .azure-pipelines/templateanalyzerValidation.yaml
