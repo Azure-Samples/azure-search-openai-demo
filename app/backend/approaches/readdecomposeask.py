@@ -28,10 +28,10 @@ class ReadDecomposeAsk(Approach):
         if overrides.get("semantic_ranker"):
             r = self.search_client.search(q,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
+                                          query_type=QueryType.SEMANTIC,
+                                          query_language="en-us",
+                                          query_speller="lexicon",
+                                          semantic_configuration_name="default",
                                           top = top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
         else:
@@ -46,19 +46,19 @@ class ReadDecomposeAsk(Approach):
         r = self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
-                                      query_type=QueryType.SEMANTIC, 
-                                      query_language="en-us", 
-                                      query_speller="lexicon", 
+                                      query_type=QueryType.SEMANTIC,
+                                      query_language="en-us",
+                                      query_speller="lexicon",
                                       semantic_configuration_name="default",
                                       query_answer="extractive|count-1",
                                       query_caption="extractive|highlight-false")
-        
+
         answers = r.get_answers()
         if answers and len(answers) > 0:
             return answers[0].text
         if r.get_count() > 0:
             return "\n".join(d['content'] for d in r)
-        return None        
+        return None
 
     def run(self, q: str, overrides: dict) -> any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
@@ -84,17 +84,17 @@ class ReadDecomposeAsk(Approach):
         chain = AgentExecutor.from_agent_and_tools(agent, tools, verbose=True, callback_manager=cb_manager)
         result = chain.run(q)
 
-        # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid 
+        # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid
         # generalizing too much and disrupt HTML snippets if present
         result = re.sub(r"<([a-zA-Z0-9_ \-\.]+)>", r"[\1]", result)
 
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
-    
+
 class ReAct(ReActDocstoreAgent):
     @classmethod
     def create_prompt(cls, tools: List[Tool]) -> BasePromptTemplate:
         return prompt
-    
+
 # Modified version of langchain's ReAct prompt that includes instructions and examples for how to cite information sources
 EXAMPLES = [
     """Question: What is the elevation range for the area that the eastern sector of the

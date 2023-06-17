@@ -5,7 +5,7 @@ from azure.search.documents.models import QueryType
 from text import nonewlines
 
 # Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
-# top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
+# top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
 # (answer) with that prompt.
 class RetrieveThenReadApproach(Approach):
 
@@ -52,13 +52,13 @@ Answer:
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
         if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q, 
+            r = self.search_client.search(q,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
+                                          query_type=QueryType.SEMANTIC,
+                                          query_language="en-us",
+                                          query_speller="lexicon",
+                                          semantic_configuration_name="default",
+                                          top=top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
         else:
             r = self.search_client.search(q, filter=filter, top=top)
@@ -70,11 +70,11 @@ Answer:
 
         prompt = (overrides.get("prompt_template") or self.template).format(q=q, retrieved=content)
         completion = openai.Completion.create(
-            engine=self.openai_deployment, 
-            prompt=prompt, 
-            temperature=overrides.get("temperature") or 0.3, 
-            max_tokens=1024, 
-            n=1, 
+            engine=self.openai_deployment,
+            prompt=prompt,
+            temperature=overrides.get("temperature") or 0.3,
+            max_tokens=1024,
+            n=1,
             stop=["\n"])
 
         return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}

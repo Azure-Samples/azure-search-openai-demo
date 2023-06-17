@@ -13,7 +13,7 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         result = self.html
         self.html = ""
         return result
-    
+
     def on_llm_start(
         self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> None:
@@ -75,8 +75,8 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         self.html += f"<span style='color:{color}'>{ch(text)}</span><br>"
 
     def on_agent_action(
-        self, 
-        action: AgentAction, 
+        self,
+        action: AgentAction,
         color: Optional[str] = None,
         **kwargs: Any) -> Any:
         self.html += f"<span style='color:{color}'>{ch(action.log)}</span><br>"
