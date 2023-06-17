@@ -1,0 +1,70 @@
+---
+name: validations
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: ${{ env.ANSIBLE_ROLE }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          pip3 install pre-commit checkov
+      - name: Install Powershell
+        run: |
+          sudo apt-get update
+          # Install pre-requisite packages.
+          sudo apt-get install -y wget apt-transport-https software-properties-common
+          # Download the Microsoft repository GPG keys
+          wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+          # Register the Microsoft repository GPG keys
+          sudo dpkg -i packages-microsoft-prod.deb
+          # Update the list of packages after we added packages.microsoft.com
+          sudo apt-get update
+          # Install PowerShell
+          sudo apt-get install -y powershell
+          # Check
+          which pwsh
+          sudo ln -s /usr/bin/pwsh /usr/local/bin/pwsh
+      - name: Install powershell module PSScriptAnalyzer
+        run: |
+          pwsh -c 'Install-Module -Name PSScriptAnalyzer -Repository PSGallery -Force -AllowClobber -Scope CurrentUser'
+      - name: Pre-commit check
+        run: |
+          pre-commit run --all-files --show-diff-on-failure
+          exit $RET
+        if: ${{ always() }}
+      - name: Convert bicep to arm template - better checkov results
+        run: |
+          set -x
+          for f in `find . -iname '*.bicep'`; do az bicep build -f $f; done
+        if: ${{ always() }}
+      - name: Checkov scan
+        run: |
+          checkov -d . --framework arm bicep
+          exit $RET
+        if: ${{ always() }}
+      - name: Run PSRule analysis
+        uses: microsoft/ps-rule@main
+        if: ${{ always() }}
+      - name: Run Microsoft Security DevOps
+        uses: microsoft/security-devops-action@v1
+        id: msdo
+        if: ${{ always() }}
