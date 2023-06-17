@@ -1,0 +1,47 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+    - id: check-yaml
+      exclude: invalidFile.yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: check-added-large-files
+      args: ['--maxkb=2000']
+    - id: check-json
+      types: [text]
+      files: \.(json|config)$
+      exclude: '(.vscode/launch.json)$'
+    - id: pretty-format-json
+      args:
+          - "--autofix"
+          - "--indent=4"
+          - "--no-sort-keys"
+      types: [text]
+      files: \.(json|config)$
+      exclude: '(.vscode/launch.json)$'
+    - id: detect-private-key
+    - id: check-case-conflict
+    - id: requirements-txt-fixer
+    - id: check-ast
+    - id: check-shebang-scripts-are-executable
+    - id: check-merge-conflict
+    - id: check-symlinks
+    - id: check-toml
+    - id: check-xml
+    - id: check-docstring-first
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.2.4
+  hooks:
+    - id: codespell
+      args: [-I, .codespellignore, --ignore-regex, '\\[fnrstv]']
+# - repo: https://github.com/Yelp/detect-secrets
+#   rev: v1.4.0
+#   hooks:
+#     - id: detect-secrets
+#       args: ['--baseline', '.secrets.baseline']
+#       # exclude: .*/tests/.*
+- repo: https://github.com/Azure4DevOps/check-azure-bicep
+  rev: v0.4.1
+  hooks:
+    - id: check-azure-bicep

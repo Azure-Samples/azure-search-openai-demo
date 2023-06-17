@@ -1,0 +1,36 @@
+execution:
+  invariantCultureWarning: false
+input:
+  pathIgnore:
+    - '*.bicep'
+    - '*.css'
+    - '*.csv'
+    - '*.html'
+    - '*.ico'
+    - '*.ipynb'
+    - '*.jpg'
+    - '*.md'
+    - '*.png'
+    - '*.pdf'
+    - '*.ps1'
+    - '*.psd1'
+    - '*.py'
+    - '*.sh'
+    - '*.svg'
+    - '*.ts'
+    - '*.tsx'
+    - '*.txt'
+    - '*.yaml'
+    - '*.zip'
+    - .codespellignore
+    - .devcontainer
+    - .gitignore
+    - .secrets.baseline
+    - .pre-commit-config.yaml
+    - azure-pipelines.yml
+    - ps-rule.yaml
+    - 'app/frontend/.prettierrc.json'
+    - 'app/frontend/package.json'
+    - 'app/frontend/package-lock.json'
+    - 'app/frontend/tsconfig.json'
+    - 'infra/abbreviations.json'
