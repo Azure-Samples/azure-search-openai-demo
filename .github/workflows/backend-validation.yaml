@@ -31,7 +31,3 @@ jobs:
     - name: Run pytest
       working-directory: app/backend
       run: python -m pytest
-      env:
-        AZURE_CLIENT_ID: 00000000-0000-0000-0000-000000000000
-        AZURE_CLIENT_SECRET: Not-The-Client-Secret
-        AZURE_TENANT_ID: 00000000-0000-0000-0000-000000000000

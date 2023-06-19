@@ -1,8 +1,8 @@
 import pytest
-import app as backend_app
+from unittest import mock
 from approaches.approach import Approach
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-
+import app as backend_app
 
 class MockedAskApproach(Approach):
     def run(self, question, overrides):
@@ -21,16 +21,30 @@ class MockedChatApproach(Approach):
         return {"answer": "Paris"}
 
 
+class MockAzureCredential:
+    def get_token(self):
+        breakpoint()
+        return "mocked_token"
+
+
 @pytest.fixture()
 def app():
-    backend_app.app.config.update(
+    # mock the DefaultAzureCredential
+    with mock.patch(
+        "app.DefaultAzureCredential"
+    ) as mock_default_azure_credential:
+        mock_default_azure_credential.return_value = MockAzureCredential()
+
+    app = backend_app.create_app()
+    app.config.update(
         {
             "TESTING": True,
+            backend_app.CONFIG_ASK_APPROACHES: {"mock": MockedAskApproach()},
+            backend_app.CONFIG_CHAT_APPROACHES: {"mock": MockedChatApproach()},
         }
     )
-    backend_app.ask_approaches["mock"] = MockedAskApproach()
-    backend_app.chat_approaches["mock"] = MockedChatApproach()
-    yield backend_app.app
+
+    yield app
 
 
 @pytest.fixture()
