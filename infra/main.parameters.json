@@ -29,12 +29,6 @@
     "formRecognizerSkuName": {
       "value": "S0"
     },
-    "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
-    },
-    "gptDeploymentName": {
-      "value": "${AZURE_OPENAI_GPT_DEPLOYMENT}"
-    },
     "searchServiceName": {
       "value": "${AZURE_SEARCH_SERVICE}"
     },
