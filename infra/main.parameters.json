@@ -52,6 +52,9 @@
     },
     "appServiceAuthSettingsClientSecret": {
       "value": "${APP_SERVICE_AUTH_SETTINGS_CLIENT_SECRET}"
+    },
+    "backendServiceName": {
+      "value": "${APP_SERVICVE_NAME}"
     }
   }
 }
