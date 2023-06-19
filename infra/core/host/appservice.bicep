@@ -68,6 +68,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       {
         SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
         ENABLE_ORYX_BUILD: string(enableOryxBuild)
+        AZURE_AD_AUTHENTICATION_CLIENT_SECRET: string(appServiceAuthSettingsClientSecret)   // For Azure AD authentication
       },
       !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
       !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
@@ -98,3 +99,44 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
 output identityPrincipalId string = managedIdentity ? appService.identity.principalId : ''
 output name string = appService.name
 output uri string = 'https://${appService.properties.defaultHostName}'
+
+
+// Enable Azure AD authentication
+param appServiceAuthEnabled bool
+param appServiceAuthSettingsClientId string
+@secure()
+param appServiceAuthSettingsClientSecret string
+
+resource authSettings 'Microsoft.Web/sites/config@2022-03-01' = if (appServiceAuthEnabled) {
+  name: 'authsettingsV2'
+  kind: 'string'
+  parent: appService
+  properties: {
+    globalValidation: {
+      excludedPaths: []
+      redirectToProvider: 'azureActiveDirectory'
+      requireAuthentication: true
+      unauthenticatedClientAction: 'RedirectToLoginPage'
+    }
+    httpSettings: {
+      forwardProxy: {
+        convention: 'NoProxy'
+      }
+      requireHttps: true
+    }
+    identityProviders: {
+      azureActiveDirectory: {
+        enabled: true
+        login: {
+          disableWWWAuthenticate: false
+          loginParameters: []
+        }
+        registration: {
+          clientId: appServiceAuthSettingsClientId
+          clientSecretSettingName: 'AZURE_AD_AUTHENTICATION_CLIENT_SECRET'
+          openIdIssuer: 'https://sts.windows.net/${subscription().tenantId}/v2.0'
+        }
+      }
+    }
+  }
+}

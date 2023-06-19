@@ -9,7 +9,14 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
+param appServicePlanCapacity int = 1
 param appServicePlanName string = ''
+param appServicePlanSKU string = 'P1v3'
+param appServiceAuthEnabled bool = false
+param appServiceAuthSettingsClientId string
+@secure()
+param appServiceAuthSettingsClientSecret string
+
 param backendServiceName string = ''
 param resourceGroupName string = ''
 
@@ -83,8 +90,8 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
     location: location
     tags: tags
     sku: {
-      name: 'B1'
-      capacity: 1
+      name: appServicePlanSKU
+      capacity: appServicePlanCapacity
     }
     kind: 'linux'
   }
@@ -98,6 +105,9 @@ module backend 'core/host/appservice.bicep' = {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
     tags: union(tags, { 'azd-service-name': 'backend' })
+    appServiceAuthEnabled: appServiceAuthEnabled
+    appServiceAuthSettingsClientId: appServiceAuthSettingsClientId
+    appServiceAuthSettingsClientSecret: appServiceAuthSettingsClientSecret
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
     runtimeVersion: '3.10'
