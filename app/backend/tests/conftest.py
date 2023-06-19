@@ -1,3 +1,4 @@
+from collections import namedtuple
 import pytest
 from unittest import mock
 from approaches.approach import Approach
@@ -21,10 +22,12 @@ class MockedChatApproach(Approach):
         return {"answer": "Paris"}
 
 
+MockToken = namedtuple("MockToken", ["token", "expires_on"])
+
+
 class MockAzureCredential:
-    def get_token(self):
-        breakpoint()
-        return "mocked_token"
+    def get_token(self, uri):
+        return MockToken("mock_token", 9999999999)
 
 
 @pytest.fixture()
@@ -35,7 +38,7 @@ def app():
     ) as mock_default_azure_credential:
         mock_default_azure_credential.return_value = MockAzureCredential()
 
-    app = backend_app.create_app()
+        app = backend_app.create_app()
     app.config.update(
         {
             "TESTING": True,
