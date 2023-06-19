@@ -33,13 +33,13 @@ azure_credential = DefaultAzureCredential()
 
 # Used by the OpenAI SDK
 openai.api_type = "azure"
-openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-openai.api_version = "2022-12-01"
+openai.api_base = os.environ.get("AZURE_OPENAI_API_BASE") or f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
+openai.api_version = "2023-05-15"
 
 # Comment these two lines out if using keys, set your API key in the OPENAI_API_KEY environment variable instead
-openai.api_type = "azure_ad"
-openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-openai.api_key = openai_token.token
+# openai.api_type = "azure_ad"
+# openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
+openai.api_key = "placeholder"
 
 # Set up clients for Cognitive Search and Storage
 search_client = SearchClient(
@@ -110,10 +110,11 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 def ensure_openai_token():
-    global openai_token
-    if openai_token.expires_on < int(time.time()) - 60:
-        openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_key = openai_token.token
+    pass
+    # global openai_token
+    # if openai_token.expires_on < int(time.time()) - 60:
+    #     openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
+    #     openai.api_key = openai_token.token
     
 if __name__ == "__main__":
     app.run()

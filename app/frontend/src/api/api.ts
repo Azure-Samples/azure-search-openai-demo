@@ -35,7 +35,7 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${options.accessToken}`,
+            "Authorization": `${options.accessToken}`,
         },
         body: JSON.stringify({
             history: options.history,

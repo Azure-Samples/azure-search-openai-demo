@@ -20,6 +20,9 @@
     "openAiSkuName": {
       "value": "S0"
     },
+    "openAiApiBase": {
+      "value": "${AZURE_OPENAI_API_BASE}"
+    },
     "formRecognizerServiceName": {
       "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
     },
