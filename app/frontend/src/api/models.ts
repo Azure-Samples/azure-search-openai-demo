@@ -38,4 +38,19 @@ export type ChatRequest = {
     history: ChatTurn[];
     approach: Approaches;
     overrides?: AskRequestOverrides;
+    accessToken?: string;
+};
+
+export type Claim = {
+    typ: string;
+    val: string;
+};
+
+export type AccessToken = {
+    access_token: string;
+    expires_on: string;
+    id_token: string;
+    provider_name: string;
+    user_claims: Claim[];
+    user_id: string;
 };
