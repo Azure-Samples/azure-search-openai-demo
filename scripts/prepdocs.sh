@@ -12,7 +12,15 @@ $(azd env get-values)
 EOF
 
 echo 'Creating python virtual environment "scripts/.venv"'
-python -m venv scripts/.venv
+# python3 -m venv scripts/.venv
+
+if which python >/dev/null; then
+  python -m venv scripts/.venv
+elif which python3 >/dev/null; then
+  python3 -m venv scripts/.venv
+else
+    echo "python doesn't exist."
+fi
 
 echo 'Installing dependencies from "requirements.txt" into virtual environment'
 ./scripts/.venv/bin/python -m pip install -r scripts/requirements.txt
