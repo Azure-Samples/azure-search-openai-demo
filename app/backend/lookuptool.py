@@ -16,5 +16,5 @@ class CsvLookupTool(Tool):
             for row in reader:
                 self.data[row[key_field]] =  "\n".join([f"{i}:{row[i]}" for i in row])
 
-    def lookup(self, key: str) -> Optional[str]:
+    def lookup(self, key: str) -> str:
         return self.data.get(key, "")
