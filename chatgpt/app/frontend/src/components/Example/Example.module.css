@@ -1,0 +1,39 @@
+.examplesNavList {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 1;
+    justify-content: center;
+}
+
+.example {
+    word-break: break-word;
+    background: #dbdbdb;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.example:hover {
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: 2px solid rgba(115, 118, 225, 1);
+}
+
+.exampleText {
+    margin: 0;
+    font-size: 22px;
+    width: 280px;
+    height: 100px;
+}
+
+@media only screen and (max-height: 780px) {
+    .exampleText {
+        font-size: 20px;
+        height: 80px;
+    }
+}
