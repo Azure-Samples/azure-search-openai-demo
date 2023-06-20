@@ -2,5 +2,5 @@ from typing import Any
 
 
 class Approach:
-    def run(self, q: str, use_summaries: bool) -> Any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         raise NotImplementedError
