@@ -84,6 +84,8 @@ def content_file(path):
 @app.route("/ask", methods=["POST"])
 def ask():
     ensure_openai_token()
+    if not request.json:
+        return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
     try:
         impl = ask_approaches.get(approach)
@@ -98,6 +100,8 @@ def ask():
 @app.route("/chat", methods=["POST"])
 def chat():
     ensure_openai_token()
+    if not request.json:
+        return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
     try:
         impl = chat_approaches.get(approach)
