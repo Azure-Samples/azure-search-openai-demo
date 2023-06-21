@@ -31,7 +31,7 @@
 .chatEmptyStateTitle {
     font-size: 4rem;
     font-weight: 600;
-    margin-top: 0;
+    margin-top: 50px;
     margin-bottom: 30px;
 }
 
@@ -85,7 +85,7 @@
     padding-right: 24px;
     width: 100%;
     max-width: 1028px;
-    background: #f2f2f2;
+    background: #f2f5f7;
 }
 
 .chatAnalysisPanel {

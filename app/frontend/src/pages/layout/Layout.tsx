@@ -1,6 +1,6 @@
-import { Outlet, NavLink, Link } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 
-import github from "../../assets/github.svg";
+import logo from "../../assets/logo.svg";
 
 import styles from "./Layout.module.css";
 
@@ -10,26 +10,10 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>Bupa AI</h3>
+                        <img src={logo} alt="Bupa logo" aria-label="Link to bupa" height="20px" className={styles.githubLogo} />
                     </Link>
-                    <nav>
-                        <ul className={styles.headerNavList}>
-                            <li>
-                                <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Chat
-                                </NavLink>
-                            </li>
-                            <li className={styles.headerNavLeftMargin}>
-                                <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Ask a question
-                                </NavLink>
-                            </li>
-                        </ul>
-                    </nav>
-                    <h4 className={styles.headerRightText}>Powered by Microsoft Azure Open AI</h4>
                 </div>
             </header>
-
             <Outlet />
         </div>
     );
