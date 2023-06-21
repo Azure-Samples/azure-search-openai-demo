@@ -9,11 +9,13 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
+        text: "What is the total number of employees in all industries?",
+        value: "What is the total number of employees in all industries?"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    { text: "What is the total number of individuals with work activity during the reference year?", 
+      value: "What is the total number of individuals with work activity during the reference year?" },
+    { text: "How does employment income vary across different sectors of the North American Industry Classification System (NAICS)?",
+      value: "How does employment income vary across different sectors of the North American Industry Classification System (NAICS)?" }
 ];
 
 interface Props {
