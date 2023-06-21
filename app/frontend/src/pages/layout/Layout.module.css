@@ -5,14 +5,13 @@
 }
 
 .header {
-    background-color: #0079c7;
+    background-color: white;
     color: #f2f2f2;
 }
 
 .headerContainer {
     display: flex;
-    align-items: center;
-    justify-content: space-around;
+    align-items: flex-start;
     margin-right: 12px;
     margin-left: 12px;
 }
@@ -74,5 +73,6 @@
 }
 
 .githubLogo {
-    height: 20px;
+    height: 38px;
+    margin: 8px;
 }
