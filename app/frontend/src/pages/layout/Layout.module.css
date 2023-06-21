@@ -5,8 +5,8 @@
 }
 
 .header {
-    background-color: #ffffff;
-    color: #be0d0d;
+    background-color: #be0d0d;
+    color: #ffffff;
 }
 
 .headerContainer {
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     margin-right: 40px;
-    color: #ffffff;
+    color: #be0d0d;
     text-decoration: none;
 }
 
