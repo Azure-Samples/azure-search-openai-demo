@@ -37,10 +37,10 @@ param formRecognizerResourceGroupLocation string = location
 
 param formRecognizerSkuName string = 'S0'
 
-param gptDeploymentName string = '' // See main.parameters.json for default
+param gptDeploymentName string // Set in main.parameters.json
 param gptDeploymentCapacity int = 30
 param gptModelName string = 'text-davinci-003'
-param chatGptDeploymentName string = '' // See main.parameters.json for default
+param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = 'gpt-35-turbo'
 
