@@ -128,6 +128,8 @@ def create_app():
     @app.route("/ask", methods=["POST"])
     def ask():
         ensure_openai_token()
+        if not request.json:
+            return jsonify({"error": "request must be json"}), 400
         approach = request.json["approach"]
         try:
             impl = app.config[CONFIG_ASK_APPROACHES].get(approach)
@@ -138,10 +140,12 @@ def create_app():
         except Exception as e:
             logging.exception("Exception in /ask")
             return jsonify({"error": str(e)}), 500
-
+        
     @app.route("/chat", methods=["POST"])
     def chat():
         ensure_openai_token()
+        if not request.json:
+            return jsonify({"error": "request must be json"}), 400
         approach = request.json["approach"]
         try:
             impl = app.config[CONFIG_CHAT_APPROACHES].get(approach)

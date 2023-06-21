@@ -1,8 +1,8 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.schema import AgentAction, AgentFinish, LLMResult
 
-def ch(text: str) -> str:
+def ch(text: Union[str, object]) -> str:
     s = text if isinstance(text, str) else str(text)
     return s.replace("<", "&lt;").replace(">", "&gt;").replace("\r", "").replace("\n", "<br>")
 

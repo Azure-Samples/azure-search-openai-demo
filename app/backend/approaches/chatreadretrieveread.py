@@ -1,3 +1,5 @@
+from typing import Any, Sequence
+
 import openai
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
@@ -48,7 +50,7 @@ Search query:
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, history: list[dict], overrides: dict) -> any:
+    def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
@@ -105,10 +107,10 @@ Search query:
 
         return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
     
-    def get_chat_history_as_text(self, history, include_last_turn=True, approx_max_tokens=1000) -> str:
+    def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, approx_max_tokens: int=1000) -> str:
         history_text = ""
         for h in reversed(history if include_last_turn else history[:-1]):
-            history_text = """<|im_start|>user""" +"\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
+            history_text = """<|im_start|>user""" + "\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot", "") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
             if len(history_text) > approx_max_tokens*4:
-                break    
+                break
         return history_text
