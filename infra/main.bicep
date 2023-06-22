@@ -9,6 +9,12 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
+@allowed([
+  'azure'
+  'openai']
+)
+param openAiType string = 'azure'
+
 param appServicePlanName string = ''
 param backendServiceName string = ''
 param resourceGroupName string = ''
@@ -41,6 +47,10 @@ param gptDeploymentName string = 'davinci'
 param gptModelName string = 'text-davinci-003'
 param chatGptDeploymentName string = 'chat'
 param chatGptModelName string = 'gpt-35-turbo'
+
+param openAiGptModelName string = 'text-davinci-003'
+param openAiChatGptModelName string = 'gpt-3.5-turbo'
+
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -101,7 +111,7 @@ module backend 'core/host/appservice.bicep' = {
     runtimeVersion: '3.10'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    appSettings: {
+    appSettings: (openAiType == 'azure') ? {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_OPENAI_SERVICE: openAi.outputs.name
@@ -109,11 +119,20 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      OPENAI_API_TYPE: openAiType
+    }:{
+      AZURE_STORAGE_ACCOUNT: storage.outputs.name
+      AZURE_STORAGE_CONTAINER: storageContainerName
+      AZURE_SEARCH_INDEX: searchIndexName
+      AZURE_SEARCH_SERVICE: searchService.outputs.name
+      OPENAI_API_TYPE: openAiType
+      OPENAI_GPT_MODEL: openAiGptModelName
+      OPENAI_CHATGPT_MODEL: openAiChatGptModelName
     }
-  }
+    }
 }
 
-module openAi 'core/ai/cognitiveservices.bicep' = {
+module openAi 'core/ai/cognitiveservices.bicep' = if (openAiType == 'azure') {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -208,7 +227,7 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
-module openAiRoleUser 'core/security/role.bicep' = {
+module openAiRoleUser 'core/security/role.bicep' = if (openAiType == 'azure') {
   scope: openAiResourceGroup
   name: 'openai-role-user'
   params: {
@@ -313,10 +332,10 @@ output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
-output AZURE_OPENAI_SERVICE string = openAi.outputs.name
+output AZURE_OPENAI_SERVICE string = (openAiType == 'azure') ? openAi.outputs.name : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
-output AZURE_OPENAI_GPT_DEPLOYMENT string = gptDeploymentName
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
+output AZURE_OPENAI_GPT_DEPLOYMENT string = (openAiType == 'azure') ? gptDeploymentName : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiType == 'azure') ? chatGptDeploymentName : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
