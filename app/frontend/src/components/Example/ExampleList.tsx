@@ -22,12 +22,10 @@ interface Props {
 
 export const ExampleList = ({ onExampleClicked }: Props) => {
     return (
-        <ul className={styles.examplesNavList}>
+        <div className={styles.examplesContainer}>
             {EXAMPLES.map((x, i) => (
-                <li key={i}>
-                    <Example text={x.text} value={x.value} onClick={onExampleClicked} />
-                </li>
+                <Example key={i} text={x.text} value={x.value} onClick={onExampleClicked} />
             ))}
-        </ul>
+        </div>
     );
 };

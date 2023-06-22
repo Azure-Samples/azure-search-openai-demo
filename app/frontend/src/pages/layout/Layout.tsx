@@ -1,44 +1,57 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
-import github from "../../assets/github.svg";
+import logoEncamina from "../../assets/logo-encamina.svg";
+import avatar from "../../assets/avatar.jpg";
+import chevron from "../../assets/chevron.svg";
 
 import styles from "./Layout.module.css";
 
 const Layout = () => {
     return (
-        <div className={styles.layout}>
-            <header className={styles.header} role={"banner"}>
-                <div className={styles.headerContainer}>
-                    <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
-                    </Link>
-                    <nav>
-                        <ul className={styles.headerNavList}>
-                            <li>
-                                <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Chat
-                                </NavLink>
-                            </li>
-                            <li className={styles.headerNavLeftMargin}>
-                                <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Ask a question
-                                </NavLink>
-                            </li>
-                            <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
-                                    <img
-                                        src={github}
-                                        alt="Github logo"
-                                        aria-label="Link to github repository"
-                                        width="20px"
-                                        height="20px"
-                                        className={styles.githubLogo}
-                                    />
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + Cognitive Search</h4>
+        <div>
+            <header role={"banner"}>
+                <div className={styles.logoMenu}>
+                    <div>
+                        <img src={logoEncamina} alt="Encamina logo" />
+                    </div>
+                    <span className={styles.divider}></span>
+                    <Link to="/">GPT + GADA-i enterprise data</Link>
+                </div>
+                <nav>
+                    <ul className={styles.headerNav}>
+                        <li>
+                            <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavLinkActive : styles.headerNavLink)}>
+                                <span className={styles.navIcon}>
+                                    <svg width="17" height="16" viewBox="0 0 17 16" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.5 0C12.9183 0 16.5 3.58172 16.5 8C16.5 12.4183 12.9183 16 8.5 16C7.22679 16 5.99591 15.7018 4.88669 15.1393L4.766 15.075L1.12109 15.9851C0.811269 16.0625 0.526224 15.8369 0.50131 15.5438L0.501141 15.4624L0.514933 15.3787L1.425 11.735L1.36169 11.6153C0.906602 10.7186 0.624331 9.74223 0.532747 8.72826L0.507376 8.34634L0.5 8C0.5 3.58172 4.08172 0 8.5 0ZM8.5 1C4.63401 1 1.5 4.13401 1.5 8C1.5 9.21704 1.81054 10.3878 2.39352 11.4249C2.44046 11.5084 2.4621 11.603 2.45692 11.6973L2.44274 11.7912L1.687 14.812L4.71104 14.0583C4.77294 14.0429 4.83662 14.0396 4.89873 14.0479L4.9903 14.0691L5.07701 14.1075C6.11362 14.6898 7.2837 15 8.5 15C12.366 15 15.5 11.866 15.5 8C15.5 4.13401 12.366 1 8.5 1ZM9 9C9.27614 9 9.5 9.22386 9.5 9.5C9.5 9.74546 9.32312 9.94961 9.08988 9.99194L9 10H6C5.72386 10 5.5 9.77614 5.5 9.5C5.5 9.25454 5.67688 9.05039 5.91012 9.00806L6 9H9ZM11 6C11.2761 6 11.5 6.22386 11.5 6.5C11.5 6.74546 11.3231 6.94961 11.0899 6.99194L11 7H6C5.72386 7 5.5 6.77614 5.5 6.5C5.5 6.25454 5.67688 6.05039 5.91012 6.00806L6 6H11Z" />
+                                    </svg>
+                                </span>
+                                <span>Chat</span>
+                            </NavLink>
+                        </li>
+                        <li className={styles.headerNavLeftMargin}>
+                            <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavLinkActive : styles.headerNavLink)}>
+                                <span className={styles.navIcon}>
+                                    <svg width="17" height="16" viewBox="0 0 17 16" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.75028 5.30723C7.58872 5.49072 7.50001 5.74463 7.50001 6C7.50001 6.27614 7.27615 6.5 7.00001 6.5C6.72387 6.5 6.50001 6.27614 6.50001 6C6.50001 5.52689 6.6613 5.0308 6.99974 4.64641C7.34684 4.25219 7.8597 4 8.50001 4C9.14033 4 9.65318 4.25219 10.0003 4.64641C10.3387 5.0308 10.5 5.52689 10.5 6C10.5 6.48947 10.3839 6.86964 10.1976 7.18921C10.0347 7.46855 9.82252 7.68963 9.65279 7.86652L9.61154 7.90956C9.42473 8.1051 9.28214 8.26391 9.17734 8.46406C9.07734 8.65505 9.00001 8.90847 9.00001 9.29292C9.00001 9.56906 8.77615 9.79292 8.50001 9.79292C8.22387 9.79292 8.00001 9.56906 8.00001 9.29292C8.00001 8.76109 8.11018 8.3464 8.29143 8.00022C8.46788 7.66319 8.70029 7.41576 8.88848 7.21878L8.91064 7.19559C9.09847 6.99908 9.23276 6.85858 9.33371 6.68547C9.42861 6.52273 9.50001 6.31707 9.50001 6C9.50001 5.74463 9.4113 5.49072 9.24974 5.30723C9.09684 5.13358 8.8597 5 8.50001 5C8.14033 5 7.90318 5.13358 7.75028 5.30723ZM8.49991 12.2122C8.88628 12.2122 9.19951 11.899 9.19951 11.5126C9.19951 11.1262 8.88628 10.813 8.49991 10.813C8.11353 10.813 7.8003 11.1262 7.8003 11.5126C7.8003 11.899 8.11353 12.2122 8.49991 12.2122ZM0.500011 8C0.500011 3.58172 4.08173 0 8.50001 0C12.9183 0 16.5 3.58172 16.5 8C16.5 12.4183 12.9183 16 8.50001 16C7.15078 16 5.87829 15.6656 4.76225 15.0748L1.12128 15.9851C0.950891 16.0277 0.770647 15.9777 0.646457 15.8536C0.522267 15.7294 0.472342 15.5491 0.514939 15.3787L1.42518 11.7378C0.834417 10.6217 0.500011 9.34923 0.500011 8ZM8.50001 1C4.63402 1 1.50001 4.13401 1.50001 8C1.50001 9.24504 1.82462 10.4128 2.39345 11.4247C2.45602 11.536 2.47363 11.6671 2.44266 11.791L1.68719 14.8128L4.70904 14.0574C4.83294 14.0264 4.96399 14.044 5.07531 14.1066C6.08726 14.6754 7.25497 15 8.50001 15C12.366 15 15.5 11.866 15.5 8C15.5 4.13401 12.366 1 8.50001 1Z" />
+                                    </svg>
+                                </span>
+                                <span>Ask a question</span>
+                            </NavLink>
+                        </li>
+                    </ul>
+                </nav>
+                <div className={styles.userMenu}>
+                    <div className={styles.userAvatar}>
+                        <img width={40} height={40} src={avatar} alt="user-avatar" />
+                    </div>
+                    <div className={styles.userName}>
+                        <p>Jorge García Cano</p>
+                        <p>jgcano@encamina.com</p>
+                    </div>
+                    <div>
+                        <img src={chevron} alt="chevron-icon" />
+                    </div>
                 </div>
             </header>
 

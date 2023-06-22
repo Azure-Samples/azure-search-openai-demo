@@ -1,78 +1,91 @@
-.layout {
+header {
+    background-color: #ffffff;
+    height: 88px;
+    padding: 16px 40px;
     display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.header {
-    background-color: #222222;
-    color: #f2f2f2;
-}
-
-.headerContainer {
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
+    font-size: 14px;
 }
 
-.headerTitleContainer {
+.logoMenu {
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin-right: 40px;
-    color: #f2f2f2;
-    text-decoration: none;
-}
-
-.headerLogo {
     height: 40px;
 }
 
-.headerTitle {
-    margin-left: 12px;
-    font-weight: 600;
+.logoMenu div:first-child {
+    width: 134px;
+    height: 40px;
 }
 
-.headerNavList {
-    display: flex;
+.divider {
+    height: 40px;
+    width: 1px;
+    margin: 0 16px;
+    background-color: #cdcdcd;
+}
+
+.logoMenu a {
+    text-decoration: none;
+    color: #333333;
+}
+
+.headerNav {
+    padding: 0;
     list-style: none;
-    padding-left: 0;
 }
 
-.headerNavPageLink {
-    color: #f2f2f2;
+.headerNav li {
+    display: inline;
+}
+
+.headerNav li:first-child {
+    margin-right: 18px;
+}
+
+.headerNavLinkActive {
     text-decoration: none;
-    opacity: 0.75;
-
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    transition-duration: 500ms;
-    transition-property: opacity;
+    color: #0078d7;
 }
 
-.headerNavPageLink:hover {
-    opacity: 1;
+.headerNavLinkActive svg{
+    fill: #0078D7;
 }
 
-.headerNavPageLinkActive {
-    color: #f2f2f2;
+.headerNavLink {
     text-decoration: none;
+    color: #333333;
 }
 
-.headerNavLeftMargin {
-    margin-left: 20px;
+.navIcon {
+    margin-right: 6px;
 }
 
-.headerRightText {
-    font-weight: normal;
-    margin-left: 40px;
+.userMenu {
+    width: 224px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.microsoftLogo {
-    height: 23px;
-    font-weight: 600;
+.userAvatar {
+    height: 40px;
+    width: 40px;
 }
 
-.githubLogo {
-    height: 20px;
+.userName {
+    color: #707070;
+    margin: 0 12px 0 16px;
+}
+
+.userName p:first-child{
+    margin: 0;
+}
+
+.userName p:last-child{
+    margin: 0;
+    font-size: 12px;
 }

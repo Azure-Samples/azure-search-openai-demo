@@ -1,66 +1,24 @@
-.oneshotContainer {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
+.container {
+    margin: 0 auto;
+    padding: 80px 112px;
+    min-height: calc(100vh - 136px);
 }
 
-.oneshotTopSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+h1 {
+    font-size: 32px;
+    font-weight: 500;
+    margin: 36px 0 24px;
 }
 
-.oneshotBottomSection {
+h2 {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.dFlexColumn {
     display: flex;
-    flex: 1;
-    flex-wrap: wrap;
     justify-content: center;
-    align-content: flex-start;
-    width: 100%;
-    margin-top: 20px;
-}
-
-.oneshotTitle {
-    font-size: 4rem;
-    font-weight: 600;
-    margin-top: 130px;
-}
-
-@media only screen and (max-width: 800px) {
-    .oneshotTitle {
-        font-size: 3rem;
-        font-weight: 600;
-        margin-top: 0;
-    }
-}
-
-.oneshotQuestionInput {
-    max-width: 800px;
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.oneshotAnswerContainer {
-    max-width: 800px;
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.oneshotAnalysisPanel {
-    width: 600px;
-    margin-left: 20px;
-}
-
-.oneshotSettingsSeparator {
-    margin-top: 15px;
-}
-
-.settingsButton {
-    align-self: flex-end;
-    margin-right: 20px;
-    margin-top: 20px;
+    align-items: center;
+    flex-direction: column;
 }

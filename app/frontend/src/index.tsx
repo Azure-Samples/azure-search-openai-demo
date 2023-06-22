@@ -6,6 +6,7 @@ import { initializeIcons } from "@fluentui/react";
 import "./index.css";
 
 import Layout from "./pages/layout/Layout";
+import Footer from "./pages/footer/Footer";
 import NoPage from "./pages/NoPage";
 import OneShot from "./pages/oneshot/OneShot";
 import Chat from "./pages/chat/Chat";
@@ -29,5 +30,6 @@ export default function App() {
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
         <App />
+        <Footer />
     </React.StrictMode>
 );

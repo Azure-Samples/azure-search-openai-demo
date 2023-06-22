@@ -1,0 +1,32 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    height: 48px;
+    background-color: #00B7C3;
+    padding: 16px 40px;
+}
+
+footer p, footer li {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+    color: #ffffff;
+    display: inline;
+}
+
+footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+footer li:last-of-type:before {
+   content: "|";
+   padding: 0 5px;
+}
+
+footer li:first-of-type:after {
+    content: "|";
+    padding: 0 5px;
+ }
+

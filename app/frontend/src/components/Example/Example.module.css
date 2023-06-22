@@ -1,22 +1,19 @@
-.examplesNavList {
-    list-style: none;
-    padding-left: 0;
+.examplesContainer {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    flex: 1;
-    justify-content: center;
+    justify-content: space-between;
+    margin: 40px 0;
 }
 
 .example {
-    word-break: break-word;
-    background: #dbdbdb;
-    border-radius: 8px;
+    border: 1px solid #cdcdcd;
+    background-color: #ffffff;
+    border-radius: 30px;
+    height: 128px;
+    flex: 0 0 calc(33.3% - 16px);
+    padding: 40px;
     display: flex;
-    flex-direction: column;
-    padding: 20px;
-    margin-bottom: 5px;
-    cursor: pointer;
+    justify-content: center;
+    align-items: center;
 }
 
 .example:hover {
@@ -25,15 +22,7 @@
 }
 
 .exampleText {
-    margin: 0;
-    font-size: 22px;
-    width: 280px;
-    height: 100px;
+    font-weight: 500;
+    font-size: 16px;
 }
 
-@media only screen and (max-height: 780px) {
-    .exampleText {
-        font-size: 20px;
-        height: 80px;
-    }
-}
