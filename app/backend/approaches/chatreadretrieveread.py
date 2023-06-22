@@ -104,17 +104,19 @@ Search query:
                 max_tokens=1024, 
                 n=1, 
                 stop=["<|im_end|>", "<|im_start|>"])
+            answer = completion.choices[0].text
             
         else:
-            completion = openai.Completion.create(
+            completion = openai.ChatCompletion.create(
                 model=self.chatgpt_deployment, 
-                prompt=prompt, 
+                messages= self.prompt_to_messages_array(prompt), 
                 temperature=overrides.get("temperature") or 0.7, 
                 max_tokens=1024, 
-                n=1, 
+                n=1,
                 stop=["<|im_end|>", "<|im_start|>"])
+            answer = completion.choices[0].message.content
             
-        return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
+        return {"data_points": results, "answer": answer, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
     
     def get_chat_history_as_text(self, history, include_last_turn=True, approx_max_tokens=1000) -> str:
         history_text = ""
@@ -123,3 +125,19 @@ Search query:
             if len(history_text) > approx_max_tokens*4:
                 break    
         return history_text
+    
+    def prompt_to_messages_array(self, prompt) -> any:
+        # converting prompt into an array of str messages
+        # as required by OpenAI Chat API
+
+        messages = []
+        for line in prompt.splitlines():
+            if line.startswith("<|im_start|>"):
+                index = "<|im_start|>".__len__()
+                role = line[index:]
+            elif line.startswith("<|im_end|>"):
+                continue
+            else:
+                messages.append({"role": role, "content": line})
+        return messages
+    
