@@ -103,9 +103,15 @@ If you want to use an existing OpenAI instance, before running `azd up` to creat
 1. Navigate to the [main.bicep](./infra/main.bicep) file in the infra folder
 2. Look for the `openAiType` parameter at line 16
 3. Change its value to `openai` (instead of `azure`)
-4. Run `azd env set OPENAI_API_ORGANIZATION {Your OpenAI organization}`
-5. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
-6. Run `azd up`
+4. Configure the following app settings at line 131-132:
+    * `OPENAI_API_ORGANIZATION={Your OpenAI organization}`
+    * `OPENAI_API_KEY={Your OpenAI API key}`
+5. Run `azd up`
+
+To configure the local environment to use an existing OpenAI instance, follow these steps:
+1. Run `azd env set OPENAI_API_TYPE openai`
+2. Run `azd env set OPENAI_API_ORGANIZATION {Your OpenAI organization}`
+3. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
 
 You can retrieve your OpenAI key by checking [your user page](https://platform.openai.com/account/api-keys) and your organization by navigating to [your organization page](https://platform.openai.com/account/org-settings).
 Learn more about creating an OpenAI free trial at [this link](https://openai.com/pricing).
