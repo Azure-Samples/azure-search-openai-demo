@@ -55,12 +55,14 @@ You can run this repo virtually by using GitHub Codespaces or VS Code Remote Con
 1. Run `azd auth login`
 1. Run `azd init -t azure-search-openai-demo`
     * For the target location, the regions that currently support the models used in this sample are **East US** or **South Central US**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
+    * note that this command will initialize a git repository and you do not need to clone this repository
 
 #### Starting from scratch:
 
 Execute the following command, if you don't have any pre-existing Azure services and want to start from a fresh deployment.
 
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
+    * For the target location, the regions that currently support the models used in this sample are **East US** or **South Central US**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.  
 
 It will look like the following:
@@ -80,9 +82,11 @@ It will look like the following:
 > NOTE: You can also use existing Search and Storage Accounts.  See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
 
 #### Deploying or re-deploying a local clone of the repo:
-* Simply run `azd up`
+
+* Run `azd up`
 
 #### Running locally:
+
 1. Run `azd login`
 2. Change dir to `app`
 3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
@@ -119,12 +123,22 @@ Learn more about creating an OpenAI free trial at [this link](https://openai.com
 ### Quickstart
 
 * In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.
-* Running locally: navigate to 127.0.0.1:5000
+* Running locally: navigate to [127.0.0.1:5000](http://127.0.0.1:5000)
 
 Once in the web app:
 * Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
 * Explore citations and sources
 * Click on "settings" to try different options, tweak prompts, etc.
+
+## Clean up
+
+To clean up all the resources created by this sample:
+
+1. Run `azd down`
+2. When asked if you are sure you want to continue, enter `y`
+3. When asked if you want to permanently delete the resources, enter `y`
+
+The resource group, and all the resources will be deleted.
 
 ## Resources
 
@@ -133,16 +147,17 @@ Once in the web app:
 * [Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
 * [Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/en-gb/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
 
-### Note
+## Note
+
 >Note: The PDF documents used in this demo contain information generated using a language model (Azure OpenAI Service). The information contained in these documents is only for demonstration purposes and does not reflect the opinions or beliefs of Microsoft. Microsoft makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the information contained in this document. All rights reserved to Microsoft.
 
-### FAQ
+## FAQ
 
 ***Question***: Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?
 
 ***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
-### Troubleshooting
+## Troubleshooting
 
 If you see this error while running `azd deploy`: `read /tmp/azd1992237260/backend_env/lib64: is a directory`, then delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.  This issue is being tracked here: https://github.com/Azure/azure-dev/issues/1237
 

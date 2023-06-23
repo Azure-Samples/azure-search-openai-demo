@@ -43,9 +43,11 @@ param formRecognizerResourceGroupLocation string = location
 
 param formRecognizerSkuName string = 'S0'
 
-param gptDeploymentName string = 'davinci'
+param gptDeploymentName string = ''
+param gptDeploymentCapacity int = 30
 param gptModelName string = 'text-davinci-003'
-param chatGptDeploymentName string = 'chat'
+param chatGptDeploymentName string = ''
+param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = 'gpt-35-turbo'
 
 param openAiGptModelName string = 'text-davinci-003'
@@ -58,6 +60,8 @@ param principalId string = ''
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
+var gptDeployment = empty(gptDeploymentName) ? 'davinci' : gptDeploymentName
+var chatGptDeployment = empty(chatGptDeploymentName) ? 'chat' : chatGptDeploymentName
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -117,8 +121,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_SERVICE: openAi.outputs.name
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
-      AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      AZURE_OPENAI_GPT_DEPLOYMENT: gptDeployment
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeployment
       OPENAI_API_TYPE: openAiType
     }:{
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
@@ -146,26 +150,22 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiType == 'azure') {
     }
     deployments: [
       {
-        name: gptDeploymentName
+        name: gptDeployment
         model: {
           format: 'OpenAI'
           name: gptModelName
           version: '1'
         }
-        scaleSettings: {
-          scaleType: 'Standard'
-        }
+        capacity: gptDeploymentCapacity
       }
       {
-        name: chatGptDeploymentName
+        name: chatGptDeployment
         model: {
           format: 'OpenAI'
           name: chatGptModelName
           version: '0301'
         }
-        scaleSettings: {
-          scaleType: 'Standard'
-        }
+        capacity: chatGptDeploymentCapacity
       }
     ]
   }
@@ -336,8 +336,8 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
 output AZURE_OPENAI_SERVICE string = (openAiType == 'azure') ? openAi.outputs.name : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
-output AZURE_OPENAI_GPT_DEPLOYMENT string = (openAiType == 'azure') ? gptDeploymentName : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiType == 'azure') ? chatGptDeploymentName : ''
+output AZURE_OPENAI_GPT_DEPLOYMENT string = (openAiType == 'azure') ? gptDeployment : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiType == 'azure') ? chatGptDeployment : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name

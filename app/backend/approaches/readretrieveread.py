@@ -10,6 +10,7 @@ from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 from lookuptool import CsvLookupTool
+from typing import Any
 
 # Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
 # is present then formulate an answer. Each iteration consists of two parts: first use GPT to see if we need more information, 
@@ -46,7 +47,7 @@ Thought: {agent_scratchpad}"""
         self.content_field = content_field
         self.openai_type = openai_type
 
-    def retrieve(self, q: str, overrides: dict) -> any:
+    def retrieve(self, q: str, overrides: dict[str, Any]) -> Any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
@@ -70,7 +71,7 @@ Thought: {agent_scratchpad}"""
         content = "\n".join(self.results)
         return content
         
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
         self.results = None
 
@@ -121,5 +122,5 @@ class EmployeeInfoTool(CsvLookupTool):
         self.func = self.employee_info
         self.employee_name = employee_name
 
-    def employee_info(self, unused: str) -> str:
-        return self.lookup(self.employee_name)
+    def employee_info(self, name: str) -> str:
+        return self.lookup(name)
