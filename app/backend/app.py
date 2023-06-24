@@ -1,9 +1,10 @@
 import os
+import io
 import mimetypes
 import time
 import logging
 import openai
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file, abort
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from approaches.retrievethenread import RetrieveThenReadApproach
@@ -76,14 +77,21 @@ def static_file(path):
 @app.route("/content/<path>")
 def content_file(path):
     blob = blob_container.get_blob_client(path).download_blob()
+    if not blob.properties or "content_settings" not in blob.properties:
+        abort(404)
     mime_type = blob.properties["content_settings"]["content_type"]
     if mime_type == "application/octet-stream":
         mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
-    return blob.readall(), 200, {"Content-Type": mime_type, "Content-Disposition": f"inline; filename={path}"}
+    blob_file = io.BytesIO()
+    blob.readinto(blob_file)
+    blob_file.seek(0)
+    return send_file(blob_file, mimetype=mime_type, as_attachment=False, download_name=path)
     
 @app.route("/ask", methods=["POST"])
 def ask():
     ensure_openai_token()
+    if not request.json:
+        return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
     try:
         impl = ask_approaches.get(approach)
@@ -98,6 +106,8 @@ def ask():
 @app.route("/chat", methods=["POST"])
 def chat():
     ensure_openai_token()
+    if not request.json:
+        return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
     try:
         impl = chat_approaches.get(approach)
