@@ -1,5 +1,5 @@
 azure-identity==1.13.0b3
-Flask==2.2.2
+Flask==2.2.5
 langchain==0.0.187
 openai==0.26.4
 azure-search-documents==11.4.0b3

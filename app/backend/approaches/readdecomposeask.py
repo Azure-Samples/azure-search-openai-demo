@@ -10,7 +10,7 @@ from langchain.agents import Tool, AgentExecutor
 from langchain.agents.react.base import ReActDocstoreAgent
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
-from typing import List
+from typing import Any, List, Optional
 
 class ReadDecomposeAsk(Approach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
@@ -19,7 +19,7 @@ class ReadDecomposeAsk(Approach):
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def search(self, q: str, overrides: dict) -> str:
+    def search(self, q: str, overrides: dict[str, Any]) -> str:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
@@ -42,7 +42,7 @@ class ReadDecomposeAsk(Approach):
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) for doc in r]
         return "\n".join(self.results)
 
-    def lookup(self, q: str) -> str:
+    def lookup(self, q: str) -> Optional[str]:
         r = self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
@@ -58,9 +58,9 @@ class ReadDecomposeAsk(Approach):
             return answers[0].text
         if r.get_count() > 0:
             return "\n".join(d['content'] for d in r)
-        return None        
+        return None
 
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
         self.results = None
 
