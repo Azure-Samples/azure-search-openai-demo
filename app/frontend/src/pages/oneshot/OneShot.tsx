@@ -133,8 +133,8 @@ const OneShot = () => {
 
     return (
         <div className={styles.container}>
+            <SettingsButton onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             <div className={styles.dFlexColumn}>
-                {/*<SettingsButton onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />*/}
                 <div>
                     <img src={logoGada} alt="" />
                 </div>

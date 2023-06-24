@@ -1,5 +1,5 @@
 import { Text } from "@fluentui/react";
-import { Settings24Regular } from "@fluentui/react-icons";
+import { Settings28Filled } from "@fluentui/react-icons";
 
 import styles from "./SettingsButton.module.css";
 
@@ -10,9 +10,8 @@ interface Props {
 
 export const SettingsButton = ({ className, onClick }: Props) => {
     return (
-        <div className={`${styles.container} ${className ?? ""}`} onClick={onClick}>
-            <Settings24Regular />
-            <Text>{"Developer settings"}</Text>
+        <div className={`${styles.settingsButton} ${className ?? ""}`} onClick={onClick}>
+            <Settings28Filled primaryFill="#707070" />
         </div>
     );
 };

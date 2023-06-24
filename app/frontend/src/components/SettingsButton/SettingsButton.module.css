@@ -1,6 +1,13 @@
-.container {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+
+.settingsButton {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    background-color: #fff;
+    padding: 10px 0 10px 5px;
     cursor: pointer;
+    border: 1px solid #707070;
+    border-right: none;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
