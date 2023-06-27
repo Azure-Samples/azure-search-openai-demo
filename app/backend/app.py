@@ -38,7 +38,7 @@ KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
 azure_credential = DefaultAzureCredential()
 
 # Used by the OpenAI SDK
-if(OPENAI_API_TYPE == "azure"):
+if OPENAI_API_TYPE == "azure":
     openai.api_type = "azure"
     openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
     openai.api_version = "2022-12-01"
