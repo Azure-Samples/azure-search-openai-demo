@@ -98,11 +98,11 @@ Search query:
             prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        if(self.openai_type == "azure"):
+        if self.openai_type == "azure":
             completion = openai.Completion.create(
                 engine=self.chatgpt_deployment, 
                 prompt=prompt, 
-                temperature=overrides.get("temperature") or 0.7, 
+                temperature=overrides.get("temperature", 0.7), 
                 max_tokens=1024, 
                 n=1, 
                 stop=["<|im_end|>", "<|im_start|>"])
@@ -112,7 +112,7 @@ Search query:
             completion = openai.ChatCompletion.create(
                 model=self.chatgpt_deployment, 
                 messages= self.prompt_to_messages_array(prompt), 
-                temperature=overrides.get("temperature") or 0.7, 
+                temperature=overrides.get("temperature", 0.7), 
                 max_tokens=1024, 
                 n=1,
                 stop=["<|im_end|>", "<|im_start|>"])

@@ -61,7 +61,7 @@ blob_client = BlobServiceClient(
     credential=azure_credential)
 blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
-if(OPENAI_API_TYPE == "azure"):
+if OPENAI_API_TYPE == "azure":
     gpt_deployment = AZURE_OPENAI_GPT_DEPLOYMENT
     chatgpt_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT
 
@@ -106,7 +106,7 @@ def content_file(path):
     
 @app.route("/ask", methods=["POST"])
 def ask():
-    if(OPENAI_API_TYPE == "azure"):
+    if OPENAI_API_TYPE == "azure":
         ensure_openai_token()
 
     if not request.json:
@@ -124,7 +124,7 @@ def ask():
     
 @app.route("/chat", methods=["POST"])
 def chat():
-    if(OPENAI_API_TYPE == "azure"):
+    if OPENAI_API_TYPE == "azure":
         ensure_openai_token()
     if not request.json:
         return jsonify({"error": "request must be json"}), 400

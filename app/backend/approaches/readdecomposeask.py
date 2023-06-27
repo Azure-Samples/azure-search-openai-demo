@@ -70,10 +70,10 @@ class ReadDecomposeAsk(Approach):
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        if(self.openai_type == "azure"):
-            llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        if self.openai_type == "azure":
+            llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature", 0.3), openai_api_key=openai.api_key)
         else:
-            llm = OpenAI(model_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+            llm = OpenAI(model_name=self.openai_deployment, temperature=overrides.get("temperature", 0.3), openai_api_key=openai.api_key)
         
         tools = [
             Tool(name="Search", func=lambda q: self.search(q, overrides), description="useful for when you need to ask with search", callbacks=cb_manager),

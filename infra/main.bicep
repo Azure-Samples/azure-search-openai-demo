@@ -14,6 +14,8 @@ param location string
   'openai']
 )
 param openAiType string = 'azure'
+param openAiApiKey string = ''
+param openAiApiOrganization string = ''
 
 param appServicePlanName string = ''
 param backendServiceName string = ''
@@ -132,10 +134,10 @@ module backend 'core/host/appservice.bicep' = {
       OPENAI_API_TYPE: openAiType
       OPENAI_GPT_MODEL: openAiGptModelName
       OPENAI_CHATGPT_MODEL: openAiChatGptModelName
-      /*OPENAI_API_KEY: {your OpenAI key}
-      OPENAI_API_ORGANIZATION: {your OpenAI organization}*/
+      OPENAI_API_KEY: openAiApiKey
+      OPENAI_API_ORGANIZATION: openAiApiOrganization
     }
-    }
+  }
 }
 
 module openAi 'core/ai/cognitiveservices.bicep' = if (openAiType == 'azure') {

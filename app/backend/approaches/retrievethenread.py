@@ -72,21 +72,12 @@ Answer:
 
         prompt = (overrides.get("prompt_template") or self.template).format(q=q, retrieved=content)
 
-        if(self.openai_type == "azure"):
-            completion = openai.Completion.create(
-                engine=self.openai_deployment, 
-                prompt=prompt, 
-                temperature=overrides.get("temperature") or 0.3, 
-                max_tokens=1024, 
-                n=1, 
-                stop=["\n"])
-        else:
-            completion = openai.Completion.create(
-                model=self.openai_deployment, 
-                prompt=prompt, 
-                temperature=overrides.get("temperature") or 0.3, 
-                max_tokens=1024, 
-                n=1, 
-                stop=["\n"])
+        completion = openai.Completion.create(
+            engine=self.openai_deployment, 
+            prompt=prompt, 
+            temperature=overrides.get("temperature", 0.3), 
+            max_tokens=1024, 
+            n=1, 
+            stop=["\n"])
 
         return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
