@@ -3,13 +3,14 @@ from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
-from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
 from langchain.llms.openai import AzureOpenAI
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 from lookuptool import CsvLookupTool
+from typing import Any
 
 # Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
 # is present then formulate an answer. Each iteration consists of two parts: first use GPT to see if we need more information, 
@@ -45,7 +46,7 @@ Thought: {agent_scratchpad}"""
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def retrieve(self, q: str, overrides: dict) -> any:
+    def retrieve(self, q: str, overrides: dict[str, Any]) -> Any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
@@ -69,7 +70,7 @@ Thought: {agent_scratchpad}"""
         content = "\n".join(self.results)
         return content
         
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
         self.results = None
 
@@ -77,8 +78,11 @@ Thought: {agent_scratchpad}"""
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
         
-        acs_tool = Tool(name = "CognitiveSearch", func = lambda q: self.retrieve(q, overrides), description = self.CognitiveSearchToolDescription)
-        employee_tool = EmployeeInfoTool("Employee1")
+        acs_tool = Tool(name="CognitiveSearch", 
+                        func=lambda q: self.retrieve(q, overrides), 
+                        description=self.CognitiveSearchToolDescription,
+                        callbacks=cb_manager)
+        employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
         tools = [acs_tool, employee_tool]
 
         prompt = ZeroShotAgent.create_prompt(
@@ -103,10 +107,14 @@ Thought: {agent_scratchpad}"""
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
 
-    def __init__(self, employee_name: str):
-        super().__init__(filename = "data/employeeinfo.csv", key_field = "name", name = "Employee", description = "useful for answering questions about the employee, their benefits and other personal information")
+    def __init__(self, employee_name: str, callbacks: Callbacks = None):
+        super().__init__(filename="data/employeeinfo.csv", 
+                         key_field="name", 
+                         name="Employee", 
+                         description="useful for answering questions about the employee, their benefits and other personal information",
+                         callbacks=callbacks)
         self.func = self.employee_info
         self.employee_name = employee_name
 
-    def employee_info(self, unused: str) -> str:
-        return self.lookup(self.employee_name)
+    def employee_info(self, name: str) -> str:
+        return self.lookup(name)
