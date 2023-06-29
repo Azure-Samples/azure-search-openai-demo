@@ -1,4 +1,4 @@
-azure-identity==1.13.0b3
+azure-identity==1.13.0
 Flask==2.2.5
 langchain==0.0.187
 openai==0.26.4
