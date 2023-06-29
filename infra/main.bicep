@@ -135,7 +135,10 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           name: gptModelName
           version: '1'
         }
-        capacity: gptDeploymentCapacity
+        sku: {
+          name: 'Standard'
+          capacity: gptDeploymentCapacity
+        }
       }
       {
         name: chatGptDeployment
@@ -144,7 +147,10 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           name: chatGptModelName
           version: '0301'
         }
-        capacity: chatGptDeploymentCapacity
+        sku: {
+          name: 'Standard'
+          capacity: chatGptDeploymentCapacity
+        }
       }
     ]
   }
