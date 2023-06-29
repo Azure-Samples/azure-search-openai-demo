@@ -120,10 +120,17 @@ Once in the web app:
 ***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
 ### Troubleshooting
+
 The most common reasons this sample fails are:
-1. The subscription (AZURE_SUBSCRIPTION_ID) doesn't have access to the Azure OpenAI service. Please ensure the AZURE_SUBSCRIPTION_ID used in the access request process, is the one you're coding with aka.ms/oai/access
-2. You're attempting to create resources in regions not enabled for Azure OpenAI (e.g. East US 2, instead of East US), or where the model you're trying to use isn't enabled. See this matrix for what models are available in what regions [https://aka.ms/oai/models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability)
-3. You've exceeded a quota, most often number of resources per region. See this link for quotas and limits [https:/aka.ms/oai/quotas](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/quotas-limits)
-4. You've run the sample multiple times, and deleted the resources you've been creating each time, but are forgetting to purge them (Azure keeps resources for 48 hours unless you purge from soft delete). So you're getting same resource name not allowed conflicts. See this article: [https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal](https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource)
+
+1. The subscription (`AZURE_SUBSCRIPTION_ID`) doesn't have access to the Azure OpenAI service. Please ensure the `AZURE_SUBSCRIPTION_ID` used in the access request process, is the one you're coding with aka.ms/oai/access
+
+1. You're attempting to create resources in regions not enabled for Azure OpenAI (e.g. East US 2, instead of East US), or where the model you're trying to use isn't enabled. See this matrix for what models are available in what regions [https://aka.ms/oai/models](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability)
+
+1. You've exceeded a quota, most often number of resources per region. See this link for quotas and limits [https:/aka.ms/oai/quotas](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/quotas-limits)
+
+1. You've run the sample multiple times, and deleted the resources you've been creating each time, but are forgetting to purge them (Azure keeps resources for 48 hours unless you purge from soft delete). So you're getting same resource name not allowed conflicts. See this article: [https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal](https://learn.microsoft.com/en-us/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource)
+
 1. If you see this error while running `azd deploy`: `read /tmp/azd1992237260/backend_env/lib64: is a directory`, then delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.  This issue is being tracked here: https://github.com/Azure/azure-dev/issues/1237
-1. If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run 'azd deploy'. 
+
+1. If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run 'azd deploy'.
