@@ -53,7 +53,6 @@ You can run this repo virtually by using GitHub Codespaces or VS Code Remote Con
 1. Create a new folder and switch to it in the terminal
 1. Run `azd auth login`
 1. Run `azd init -t azure-search-openai-demo`
-    * For the target location, the regions that currently support the models used in this sample are **East US** or **South Central US**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
     * note that this command will initialize a git repository and you do not need to clone this repository
 
 #### Starting from scratch
@@ -61,6 +60,7 @@ You can run this repo virtually by using GitHub Codespaces or VS Code Remote Con
 Execute the following command, if you don't have any pre-existing Azure services and want to start from a fresh deployment.
 
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
+    * For the target location, the regions that currently support the models used in this sample are **East US**, **France Central**, **South Central US**, **UK South**, and **West Europe**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/models)
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.  
 
 It will look like the following:
@@ -129,4 +129,4 @@ Once in the web app:
 
 If you see this error while running `azd deploy`: `read /tmp/azd1992237260/backend_env/lib64: is a directory`, then delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.  This issue is being tracked here: <https://github.com/Azure/azure-dev/issues/1237>
 
-If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run 'azd deploy'.
+If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run `azd deploy`.
