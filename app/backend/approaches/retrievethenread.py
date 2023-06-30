@@ -5,10 +5,13 @@ from azure.search.documents.models import QueryType
 from text import nonewlines
 from typing import Any
 
-# Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
-# top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
-# (answer) with that prompt.
+
 class RetrieveThenReadApproach(Approach):
+    """
+    Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
+    top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
+    (answer) with that prompt.
+    """
 
     template = \
 "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
