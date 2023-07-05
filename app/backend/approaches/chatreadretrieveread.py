@@ -99,16 +99,26 @@ Search query:
         else:
             prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
 
+        print("history: \n")
+        print(history)
+        print("prompt: \n")
+        print(prompt)
+
+        messages = self.get_messages_from_prompt(prompt)
+
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        completion = openai.Completion.create(
-            engine=self.chatgpt_deployment, 
-            prompt=prompt, 
+        chatCompletion = openai.ChatCompletion.create(
+            deployment_id=self.chatgpt_deployment,
+            model="gpt-3.5-turbo",
+            messages=messages, 
             temperature=overrides.get("temperature") or 0.7, 
             max_tokens=1024, 
             n=1, 
             stop=["<|im_end|>", "<|im_start|>"])
+        
+        chatContent = chatCompletion.choices[0].message.content
 
-        return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
+        return {"data_points": results, "answer": chatContent, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
     
     def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, approx_max_tokens: int=1000) -> str:
         history_text = ""
@@ -117,3 +127,15 @@ Search query:
             if len(history_text) > approx_max_tokens*4:
                 break    
         return history_text
+    
+    def get_messages_from_prompt(self, prompt: str) -> []:
+        messages = []
+        for line in prompt.splitlines():
+            if line.startswith("<|im_start|>"):
+                index = "<|im_start|>".__len__()
+                role = line[index:]
+            elif line.startswith("<|im_end|>"):
+                continue
+            else:
+                messages.append({"role": role, "content": line})
+        return messages
