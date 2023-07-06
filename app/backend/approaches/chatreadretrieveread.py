@@ -99,11 +99,6 @@ Search query:
         else:
             prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
 
-        print("history: \n")
-        print(history)
-        print("prompt: \n")
-        print(prompt)
-
         messages = self.get_messages_from_prompt(prompt)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
@@ -128,6 +123,7 @@ Search query:
                 break    
         return history_text
     
+    # Generate messages needed for chat Completion api
     def get_messages_from_prompt(self, prompt: str) -> []:
         messages = []
         for line in prompt.splitlines():
