@@ -10,12 +10,14 @@ param environmentName string
 param location string
 
 param appServicePlanName string = ''
+param appServicePlanLocation string = location
 param backendServiceName string = ''
 param resourceGroupName string = ''
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
 param searchServiceResourceGroupLocation string = location
+param searchServiceLocation string = location
 
 param searchServiceSkuName string = 'standard'
 param searchIndexName string = 'gptkbindex'
@@ -23,18 +25,20 @@ param searchIndexName string = 'gptkbindex'
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
+param storageAccountLocation string = location
 param storageContainerName string = 'content'
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 param openAiResourceGroupLocation string = location
+param openAiLocation string = location
 
 param openAiSkuName string = 'S0'
 
 param formRecognizerServiceName string = ''
 param formRecognizerResourceGroupName string = ''
 param formRecognizerResourceGroupLocation string = location
-
+param formRecognizerLocation string = location
 param formRecognizerSkuName string = 'S0'
 
 param gptDeploymentName string = 'davinci'
@@ -78,7 +82,7 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
   scope: resourceGroup
   params: {
     name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
-    location: location
+    location: !empty(appServicePlanLocation) ? appServicePlanLocation : location
     tags: tags
     sku: {
       name: 'B1'
@@ -94,7 +98,7 @@ module backend 'core/host/appservice.bicep' = {
   scope: resourceGroup
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
-    location: location
+    location: appServicePlan.outputs.location
     tags: union(tags, { 'azd-service-name': 'backend' })
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
@@ -118,7 +122,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
   scope: openAiResourceGroup
   params: {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
-    location: openAiResourceGroupLocation
+    location: !empty(openAiLocation)? openAiLocation : openAiResourceGroupLocation
     tags: tags
     sku: {
       name: openAiSkuName
@@ -156,7 +160,7 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
   params: {
     name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
     kind: 'FormRecognizer'
-    location: formRecognizerResourceGroupLocation
+    location: !empty(formRecognizerLocation) ? formRecognizerLocation : formRecognizerResourceGroupLocation
     tags: tags
     sku: {
       name: formRecognizerSkuName
@@ -169,7 +173,7 @@ module searchService 'core/search/search-services.bicep' = {
   scope: searchServiceResourceGroup
   params: {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
-    location: searchServiceResourceGroupLocation
+    location: !empty(searchServiceLocation) ? searchServiceLocation : searchServiceResourceGroupLocation
     tags: tags
     authOptions: {
       aadOrApiKey: {
@@ -188,7 +192,7 @@ module storage 'core/storage/storage-account.bicep' = {
   scope: storageResourceGroup
   params: {
     name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
-    location: storageResourceGroupLocation
+    location: !empty(storageAccountLocation) ? storageAccountLocation : storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: 'Enabled'
     sku: {
