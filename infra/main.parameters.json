@@ -45,10 +45,10 @@
       "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
     },
     "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
     "gptDeploymentName": {
-      "value": "${AZURE_OPENAI_GPT_DEPLOYMENT}"
+      "value": "${AZURE_OPENAI_GPT_DEPLOYMENT=davinci}"
     }
   }
 }

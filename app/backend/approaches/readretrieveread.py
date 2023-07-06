@@ -6,18 +6,22 @@ from langchain.llms.openai import AzureOpenAI
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
-from langchain.llms.openai import AzureOpenAI
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 from lookuptool import CsvLookupTool
 from typing import Any
 
-# Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
-# is present then formulate an answer. Each iteration consists of two parts: first use GPT to see if we need more information, 
-# second if more data is needed use the requested "tool" to retrieve it. The last call to GPT answers the actual question.
-# This is inspired by the MKRL paper[1] and applied here using the implementation in Langchain.
-# [1] E. Karpas, et al. arXiv:2205.00445
 class ReadRetrieveReadApproach(Approach):
+    """
+    Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
+    is present then formulate an answer. Each iteration consists of two parts:
+     1. use GPT to see if we need more information
+     2. if more data is needed, use the requested "tool" to retrieve it.
+    The last call to GPT answers the actual question.
+    This is inspired by the MKRL paper[1] and applied here using the implementation in Langchain.
+
+    [1] E. Karpas, et al. arXiv:2205.00445
+    """
 
     template_prefix = \
 "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
