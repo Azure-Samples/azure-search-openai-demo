@@ -3,11 +3,15 @@ from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from text import nonewlines
+from typing import Any
 
-# Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
-# top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
-# (answer) with that prompt.
+
 class RetrieveThenReadApproach(Approach):
+    """
+    Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
+    top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
+    (answer) with that prompt.
+    """
 
     template = \
 "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
@@ -45,7 +49,7 @@ Answer:
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
