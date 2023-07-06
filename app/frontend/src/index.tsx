@@ -9,7 +9,8 @@ import Layout from "./pages/layout/Layout";
 import NoPage from "./pages/NoPage";
 import OneShot from "./pages/oneshot/OneShot";
 import Chat from "./pages/chat/Chat";
-
+import KnowledgeBase from "./pages/knowledgeBase/KnowledgeBase";
+import Upload from "./pages/upload/Upload";
 initializeIcons();
 
 export default function App() {
@@ -19,6 +20,8 @@ export default function App() {
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Chat />} />
                     <Route path="qa" element={<OneShot />} />
+                    <Route path="knowledge-base" element={<KnowledgeBase />} />
+                    <Route path="upload" element={<Upload />} />
                     <Route path="*" element={<NoPage />} />
                 </Route>
             </Routes>

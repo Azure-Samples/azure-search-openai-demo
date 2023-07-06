@@ -1,78 +1,51 @@
-.layout {
+.container {
     display: flex;
-    flex-direction: column;
     height: 100%;
 }
 
-.header {
-    background-color: #222222;
-    color: #f2f2f2;
-}
-
-.headerContainer {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
-}
-
-.headerTitleContainer {
-    display: flex;
-    align-items: center;
-    margin-right: 40px;
-    color: #f2f2f2;
-    text-decoration: none;
-}
-
-.headerLogo {
-    height: 40px;
+.sidebar {
+    width: 500px;
+    background-color: #f0f0f0;
+    padding: 20px;
 }
 
 .headerTitle {
-    margin-left: 12px;
-    font-weight: 600;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.headerNavList {
-    display: flex;
-    list-style: none;
-    padding-left: 0;
+.navList {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
 }
 
-.headerNavPageLink {
-    color: #f2f2f2;
-    text-decoration: none;
-    opacity: 0.75;
-
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    transition-duration: 500ms;
-    transition-property: opacity;
-}
-
-.headerNavPageLink:hover {
-    opacity: 1;
-}
-
-.headerNavPageLinkActive {
-    color: #f2f2f2;
+.navLink {
+    display: block;
+    padding: 10px;
+    color: #000;
     text-decoration: none;
 }
 
-.headerNavLeftMargin {
-    margin-left: 20px;
+.navLink:hover,
+.navLink:focus {
+    background-color: #ccc;
 }
 
-.headerRightText {
-    font-weight: normal;
-    margin-left: 40px;
+.activeNavLink {
+    background-color: #ccc;
+    font-weight: bold;
 }
 
-.microsoftLogo {
-    height: 23px;
-    font-weight: 600;
+.footerText {
+    margin: 0;
+    font-size: 14px;
+    color: #777;
 }
 
-.githubLogo {
-    height: 20px;
+.outlet {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
 }

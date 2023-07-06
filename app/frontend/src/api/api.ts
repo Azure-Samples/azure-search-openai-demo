@@ -1,4 +1,4 @@
-import { AskRequest, AskResponse, ChatRequest } from "./models";
+import { AskRequest, AskResponse, BlobDocument, ChatRequest } from "./models";
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
     const response = await fetch("/ask", {
@@ -59,6 +59,41 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
     }
 
     return parsedResponse;
+}
+
+export async function getDocumentNames() {
+    const response = await fetch("/get_documents", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    if (response.status > 299 || !response.ok) {
+        const errorResponse = await response.json();
+        throw Error(errorResponse.error || "Unknown error");
+    }
+
+    const parsedResponse: BlobDocument[] = await response.json();
+    return parsedResponse;
+}
+
+export async function deleteDocument(blobName: string) {
+    const response = await fetch("/delete_document", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: blobName
+        })
+    });
+
+    if (response.status > 299 || !response.ok) {
+        const errorResponse = await response.json();
+        throw Error(errorResponse.error || "Unknown error");
+    }
+
+    return await response.text();
 }
 
 export function getCitationFilePath(citation: string): string {

@@ -1,6 +1,3 @@
-from typing import Any
-
-
 class Approach:
-    def run(self, q: str, overrides: dict[str, Any]) -> Any:
+    def run(self, q: str, use_summaries: bool) -> any:
         raise NotImplementedError
