@@ -39,7 +39,7 @@ param formRecognizerSkuName string = 'S0'
 
 param gptDeploymentName string // Set in main.parameters.json
 param gptDeploymentCapacity int = 30
-param gptModelName string = 'text-davinci-003'
+param gptModelName string = 'gpt-35-turbo'
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = 'gpt-35-turbo'
@@ -131,7 +131,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: gptModelName
-          version: '1'
+          version: '0301'
         }
         sku: {
           name: 'Standard'
