@@ -35,10 +35,11 @@ const Layout = () => {
                                         className={styles.githubLogo}
                                     />
                                 </a>
+                            
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + Cognitive Search</h4>
+                    <h4 className={styles.headerRightText}>Automation Library</h4>
                 </div>
             </header>
 
