@@ -132,7 +132,7 @@ Search query:
         #latest conversation
         userContent = history[-1]["user"] + " \nSources:" + sources
         messages.append({"role": self.USER, "content": userContent})
-        token_count = token_count + self.num_tokens_from_messages(messages, self.chatgpt_model)
+        token_count += self.num_tokens_from_messages(messages, self.chatgpt_model)
 
         '''
         Enqueue in reverse order
