@@ -46,10 +46,10 @@ param formRecognizerSkuName string = 'S0'
 
 param gptDeploymentName string // Set in main.parameters.json
 param gptDeploymentCapacity int = 30
-param gptModelName string = 'gpt-35-turbo'
+param gptModelName string = 'gpt-4-32k'
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
-param chatGptModelName string = 'gpt-35-turbo'
+param chatGptModelName string = 'gpt-4-32k'
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -138,7 +138,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: gptModelName
-          version: '0301'
+          version: '0314'
         }
         sku: {
           name: 'Standard'
@@ -150,7 +150,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: chatGptModelName
-          version: '0301'
+          version: '0314'
         }
         sku: {
           name: 'Standard'
