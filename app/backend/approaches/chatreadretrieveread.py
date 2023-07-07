@@ -94,8 +94,6 @@ Search query:
         prompt_override = overrides.get("prompt_template")
         messages = self.get_messages_from_history(prompt_override=prompt_override, follow_up_questions_prompt=follow_up_questions_prompt,history=history, sources=content)
 
-        print(messages)
-
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         chatCompletion = openai.ChatCompletion.create(
             deployment_id=self.chatgpt_deployment,
