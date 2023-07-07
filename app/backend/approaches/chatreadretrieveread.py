@@ -58,7 +58,7 @@ class ChatReadRetrieveReadApproach(Approach):
             engine=self.chatgpt_deployment, 
             messages=prompt, 
             temperature=0.0, 
-            max_tokens=32, 
+            max_tokens=1000, 
             n=1)
         q = completion.choices[0].message.content
 
@@ -96,7 +96,7 @@ class ChatReadRetrieveReadApproach(Approach):
             engine=self.chatgpt_deployment, 
             messages=prompt, 
             temperature=overrides.get("temperature") or 0.5, 
-            max_tokens=2048, 
+            max_tokens=5000, 
             n=1)
 
         return {"data_points": results, "answer": completion.choices[0].message.content, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt[0]["content"].replace('\n', '<br>')}
