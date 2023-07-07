@@ -127,7 +127,7 @@ Search query:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
         messages.append({"role":self.SYSTEM, "content": system_message})
-        token_count = token_count + self.num_tokens_from_messages(messages, self.chatgpt_model)
+        token_count += self.num_tokens_from_messages(messages, self.chatgpt_model)
         
         #latest conversation
         userContent = history[-1]["user"] + " \nSources:" + sources
