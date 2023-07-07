@@ -27,7 +27,14 @@ param storageContainerName string = 'content'
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
-param openAiResourceGroupLocation string = location
+@description('Location for the OpenAI resource group')
+@allowed(['eastus', 'francecentral', 'southcentralus', 'uksouth', 'westeurope'])
+@metadata({
+  azd: {
+    type: 'location'
+  }
+})
+param openAiResourceGroupLocation string
 
 param openAiSkuName string = 'S0'
 
