@@ -77,6 +77,26 @@ export async function getDocumentNames() {
     return parsedResponse;
 }
 
+export async function getSearch() {
+    try {
+        const response = await fetch("/get_search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 export async function deleteDocument(blobName: string) {
     const response = await fetch("/delete_document", {
         method: "POST",
@@ -86,6 +106,22 @@ export async function deleteDocument(blobName: string) {
         body: JSON.stringify({
             name: blobName
         })
+    });
+
+    if (response.status > 299 || !response.ok) {
+        const errorResponse = await response.json();
+        throw Error(errorResponse.error || "Unknown error");
+    }
+
+    return await response.text();
+}
+
+export async function deleteAllDocuments() {
+    const response = await fetch("/delete_all_documents", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
     });
 
     if (response.status > 299 || !response.ok) {

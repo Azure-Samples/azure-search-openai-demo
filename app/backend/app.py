@@ -140,6 +140,36 @@ def get_document_names():
     return list(blob_data.items())  # Convert to list of tuples
 
 
+@app.route("/get_search", methods=["POST"])
+def get_search():
+    documents = []
+    results = search_client.search(search_text="")
+
+    for result in results:
+        documents.append(result)
+
+    return jsonify(documents)
+
+
+@app.route("/delete_all_documents", methods=["POST"])
+def delete_all_documents():
+    print(f"Removing all documents from search index")
+
+    while True:
+        r = search_client.search("*", top=1000, include_total_count=True)
+
+        if r.get_count() == 0:
+            break
+
+        r = search_client.delete_documents(
+            documents=[{"id": d["id"]} for d in r])
+        print(f"\tRemoved something from index")
+
+        # It can take a few seconds for search results to reflect changes, so wait a bit
+        time.sleep(2)
+    return "Deleted all documents"
+
+
 @app.route("/delete_document", methods=["POST"])
 def delete_document():
     data = request.get_json()
@@ -162,34 +192,27 @@ def delete_document():
                 print(f"Failed to delete blob: {blob.name}. Error: {e}")
 
     # Create filter for search
-    next_char = chr(ord(blob_name_to_delete[-1]) + 1)
-    upper_bound_filename = blob_name_to_delete[:-1] + next_char
-    filter = f"id ge '{blob_name_to_delete}-0' and id lt '{upper_bound_filename}-0'"
+    print(blob_name_to_delete)
+    filter = f"sourcefile eq '{blob_name_to_delete}.pdf'"
 
     while True:
+        print("got inside the while loop")
         # Search for documents to delete
         r = search_client.search(
-            search_text="", filter=filter, top=1000, include_total_count=True)
-        if r.get_count() == 0:
+            search_text="*", filter=filter, top=1000, include_total_count=True)
+        results = list(r)
+        print(f"Count of results: {len(results)}")
+        for result in results:
+            print(f"Results: {result}")
+        if len(results) == 0:
             break
-
-        # Delete documents from search index
-        for doc in r.get_results():
-            search_client.delete_documents(documents=[{"id": doc["id"]}])
+        r = search_client.delete_documents(
+            documents=[{"id": d["id"]} for d in results])
+        print(f"\tRemoved {len(r)} sections from index")
+        # It can take a few seconds for search results to reflect changes, so wait a bit
+        time.sleep(2)
 
     return "200"
-
-# @app.route("/get_documents", methods=["POST"])
-# def get_document_names():
-#     blob_names = set()
-#     for blob in blob_container.list_blobs():
-#         date_modified = blob.last_modified
-#         full_blob_name = blob.name
-#         last_hyphen_index = full_blob_name.rfind("-")
-#         base_name = full_blob_name[:last_hyphen_index].strip()
-#         blob_names.add((base_name, date_modified, blob.etag))  # Convert to tuple
-
-#     return list(blob_names)
 
 
 def ensure_openai_token():
