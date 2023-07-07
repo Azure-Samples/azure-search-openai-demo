@@ -92,13 +92,6 @@ Search query:
         
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         prompt_override = overrides.get("prompt_template")
-        if prompt_override is None:
-            prompt = self.prompt_prefix.format(injected_prompt="", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-        elif prompt_override.startswith(">>>"):
-            prompt = self.prompt_prefix.format(injected_prompt=prompt_override[3:] + "\n", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-        else:
-            prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-
         messages = self.get_messages_from_history(prompt_override=prompt_override, follow_up_questions_prompt=follow_up_questions_prompt,history=history, sources=content)
 
         print(messages)
@@ -159,7 +152,7 @@ Search query:
         return messages
     
     def num_tokens_from_messages(self, messages, model: str):
-        encoding = tiktoken.encoding_for_model(model)
+        encoding = tiktoken.encoding_for_model(self.get_oai_chatmodel_tiktok(model))
         num_tokens = 0
         for message in messages:
             num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
@@ -169,3 +162,9 @@ Search query:
                     num_tokens += -1  # role is always required and always 1 token
         num_tokens += 2  # every reply is primed with <im_start>assistant
         return num_tokens
+
+    def get_oai_chatmodel_tiktok(self, aoaimodel: str):
+        if aoaimodel == "" or aoaimodel is None:
+            raise Exception("Expected AOAI chatGPT model name")
+        
+        return "gpt-3.5-turbo" if aoaimodel == "gpt-35-turbo" else aoaimodel
