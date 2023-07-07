@@ -131,7 +131,7 @@ Search query:
         
         #latest conversation
         userContent = history[-1]["user"] + " \nSources:" + sources
-        messages.append({"role": self.USER, "content": userContent})
+        messages.append({"role": self.USER, "content": user_content})
         token_count += self.num_tokens_from_messages(messages, self.chatgpt_model)
 
         '''
