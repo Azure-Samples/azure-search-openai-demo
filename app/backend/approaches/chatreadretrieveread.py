@@ -95,7 +95,7 @@ Search query:
         messages = self.get_messages_from_history(prompt_override=prompt_override, follow_up_questions_prompt=follow_up_questions_prompt,history=history, sources=content)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        chatCompletion = openai.ChatCompletion.create(
+        chat_completion = openai.ChatCompletion.create(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
             messages=messages, 
@@ -103,7 +103,7 @@ Search query:
             max_tokens=1024, 
             n=1)
         
-        chatContent = chatCompletion.choices[0].message.content
+        chat_content = chat_completion.choices[0].message.content
 
         return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
     
@@ -127,37 +127,53 @@ Search query:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
         messages.append({"role":self.SYSTEM, "content": system_message})
-        token_count += self.num_tokens_from_messages(messages, self.chatgpt_model)
+        token_count += self.num_tokens_from_messages(messages[-1], self.chatgpt_model)
         
         #latest conversation
-        userContent = history[-1]["user"] + " \nSources:" + sources
+        user_content = history[-1]["user"] + " \nSources:" + sources
         messages.append({"role": self.USER, "content": user_content})
-        token_count += self.num_tokens_from_messages(messages, self.chatgpt_model)
+        token_count += token_count + self.num_tokens_from_messages(messages[-1], self.chatgpt_model)
 
         '''
         Enqueue in reverse order
         if limit exceeds truncate old messages 
         leaving system message behind
+        Keep track of token count for each conversation
+        If token count exceeds limit, break
         '''
         for h in reversed(history[:-1]):
             if h.get("bot"):
                 messages.insert(1, {"role": self.ASSISTANT, "content" : h.get("bot")})
+                token_count += self.num_tokens_from_messages(messages[1], self.chatgpt_model)
             messages.insert(1, {"role": self.USER, "content" : h.get("user")})
-            token_count = token_count + self.num_tokens_from_messages(messages, self.chatgpt_model)
+            token_count += self.num_tokens_from_messages(messages[1], self.chatgpt_model)
             if token_count > approx_max_tokens*4:
                 break
-
         return messages
     
-    def num_tokens_from_messages(self, messages, model: str):
+    '''
+    Source: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
+    Adapted: https://learn.microsoft.com/en-us/azure/cognitive-services/openai/how-to/chatgpt?pivots=programming-language-chat-completions#managing-conversations
+
+    Method takes in a single conversation and calculate prompt tokens
+    for chat api 
+
+    Keys role and content are accounted seperately.
+
+    Values of content are encoded by model type and calculated the length.
+    
+    This gives close proximity of token length measurement used in gpt models
+
+    message = {"role":"assistant", "content":"how can I assist you?"}
+    '''
+    def num_tokens_from_messages(self, message: any, model: str):
         encoding = tiktoken.encoding_for_model(self.get_oai_chatmodel_tiktok(model))
         num_tokens = 0
-        for message in messages:
-            num_tokens += 2  # every message follows {role/name}\n{content}\n
-            for key, value in message.items():
-                num_tokens += len(encoding.encode(value))
-                if key == "name":  # if there's a name, the role is omitted
-                    num_tokens += -1  # role is always required and always 1 token
+        num_tokens += 2  # every message follows {role/name}\n{content}\n
+        for key, value in message.items():
+            num_tokens += len(encoding.encode(value))
+            if key == "name":  # if there's a name, the role is omitted
+                num_tokens += -1  # role is always required and always 1 token
         return num_tokens
 
     def get_oai_chatmodel_tiktok(self, aoaimodel: str):
