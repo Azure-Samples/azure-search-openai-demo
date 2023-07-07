@@ -18,18 +18,6 @@ class ChatReadRetrieveReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-    prompt_prefix = """<|im_start|>system
-Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
-Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-For tabular information return it as an html table. Do not return markdown format.
-Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, e.g. [info1.txt]. Don't combine sources, list each source separately, e.g. [info1.txt][info2.pdf].
-{follow_up_questions_prompt}
-{injected_prompt}
-Sources:
-{sources}
-<|im_end|>
-{chat_history}
-"""
     system_message_chat_conversation = """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
 Answer ONLY with the facts listed in the list of Sources:. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
 For tabular information return it as an html table. Do not return markdown format.
@@ -57,9 +45,10 @@ Question:
 Search query:
 """
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, gpt_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
+        self.chatgpt_model = chatgpt_model
         self.gpt_deployment = gpt_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
@@ -117,7 +106,7 @@ Search query:
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         chatCompletion = openai.ChatCompletion.create(
             deployment_id=self.chatgpt_deployment,
-            model="gpt-3.5-turbo",
+            model=self.chatgpt_model,
             messages=messages, 
             temperature=overrides.get("temperature") or 0.7, 
             max_tokens=1024, 
@@ -147,12 +136,12 @@ Search query:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
         messages.append({"role":self.SYSTEM, "content": system_message})
-        token_count = token_count + self.num_tokens_from_messages(messages, "gpt-3.5-turbo")
+        token_count = token_count + self.num_tokens_from_messages(messages, self.chatgpt_model)
         
         #latest conversation
         userContent = history[-1]["user"] + "\nSources:" + sources
         messages.append({"role": self.USER, "content": userContent})
-        token_count = token_count + self.num_tokens_from_messages(messages, "gpt-3.5-turbo")
+        token_count = token_count + self.num_tokens_from_messages(messages, self.chatgpt_model)
 
         '''
         Enqueue in reverse order
@@ -163,7 +152,7 @@ Search query:
             if h.get("bot"):
                 messages.insert(1, {"role": self.ASSISTANT, "content" : h.get("bot")})
             messages.insert(1, {"role": self.USER, "content" : h.get("user")})
-            token_count = token_count + self.num_tokens_from_messages(messages, "gpt-3.5-turbo")
+            token_count = token_count + self.num_tokens_from_messages(messages, self.chatgpt_model)
             if token_count > approx_max_tokens*4:
                 break
 
