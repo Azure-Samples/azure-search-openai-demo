@@ -10,7 +10,7 @@ import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 
-const OneShot = () => {
+export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [approach, setApproach] = useState<Approaches>(Approaches.RetrieveThenRead);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
@@ -246,6 +246,6 @@ const OneShot = () => {
             </Panel>
         </div>
     );
-};
+}
 
-export default OneShot;
+Component.displayName = "OneShot";
