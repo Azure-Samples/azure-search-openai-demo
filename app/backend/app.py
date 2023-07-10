@@ -21,6 +21,7 @@ AZURE_SEARCH_INDEX = os.environ.get("AZURE_SEARCH_INDEX") or "gptkbindex"
 AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
 AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT_DEPLOYMENT") or "davinci"
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
+AZURE_OPENAI_CHATGPT_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_MODEL") or "gpt-35-turbo"
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -35,7 +36,7 @@ azure_credential = DefaultAzureCredential()
 # Used by the OpenAI SDK
 openai.api_type = "azure"
 openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-openai.api_version = "2022-12-01"
+openai.api_version = "2023-05-15"
 
 # Comment these two lines out if using keys, set your API key in the OPENAI_API_KEY environment variable instead
 openai.api_type = "azure_ad"
@@ -61,7 +62,7 @@ ask_approaches = {
 }
 
 chat_approaches = {
-    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
 }
 
 app = Flask(__name__)
