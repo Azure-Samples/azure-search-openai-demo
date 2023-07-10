@@ -167,7 +167,7 @@ Search query:
         """
         encoding = tiktoken.encoding_for_model(self.get_oai_chatmodel_tiktok(model))
         num_tokens = 0
-        num_tokens += 2  # every message follows {role/name}\n{content}\n
+        num_tokens += 2  # For "role" and "content" keys
         for key, value in message.items():
             num_tokens += len(encoding.encode(value))
         return num_tokens
