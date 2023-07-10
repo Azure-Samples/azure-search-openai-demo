@@ -151,7 +151,7 @@ Search query:
                 break
         return messages
     
-    def num_tokens_from_messages(self, message: dict[str,str], model: str):
+    def num_tokens_from_messages(self, message: dict[str,str], model: str) -> int:
         """
         Calculate the number of tokens required to encode a message.
         Args:
