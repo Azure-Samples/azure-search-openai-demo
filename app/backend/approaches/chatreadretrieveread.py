@@ -155,7 +155,7 @@ Search query:
         """
         Calculate the number of tokens required to encode a message.
         Args:
-            message (any): The message to encode, represented as a dictionary.
+            message (dict): The message to encode, represented as a dictionary.
             model (str): The name of the model to use for encoding.
         Returns:
             int: The total number of tokens required to encode the message.
