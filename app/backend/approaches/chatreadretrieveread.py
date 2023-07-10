@@ -8,7 +8,7 @@ from approaches.approach import Approach
 from text import nonewlines
 
 class ChatReadRetrieveReadApproach(Approach):
-    #Chat roles
+    # Chat roles
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
