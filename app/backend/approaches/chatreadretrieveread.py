@@ -115,8 +115,10 @@ Search query:
                 break    
         return history_text
     
-    # Generate messages needed for chat Completion api
     def get_messages_from_history(self, prompt_override, follow_up_questions_prompt, history: Sequence[dict[str, str]], sources: str, approx_max_tokens: int = 1000) -> []:
+        '''
+        Generate messages needed for chat Completion api
+        '''
         messages = []
         token_count = 0
         if prompt_override is None:
@@ -160,7 +162,7 @@ Search query:
         Returns:
             int: The total number of tokens required to encode the message.
         Example:
-            message = {'role': 'user', 'name': 'John', 'content': 'Hello, how are you?'}
+            message = {'role': 'user', 'content': 'Hello, how are you?'}
             model = 'gpt-3.5-turbo'
             num_tokens_from_messages(message, model)
             output: 11
