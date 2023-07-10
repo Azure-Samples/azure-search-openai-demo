@@ -151,29 +151,25 @@ Search query:
                 break
         return messages
     
-    '''
-    Source: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
-    Adapted: https://learn.microsoft.com/en-us/azure/cognitive-services/openai/how-to/chatgpt?pivots=programming-language-chat-completions#managing-conversations
-
-    Method takes in a single conversation and calculate prompt tokens
-    for chat api 
-
-    Keys role and content are accounted seperately.
-
-    Values of content are encoded by model type and calculated the length.
-    
-    This gives close proximity of token length measurement used in gpt models
-
-    message = {"role":"assistant", "content":"how can I assist you?"}
-    '''
-    def num_tokens_from_messages(self, message: any, model: str):
+    def num_tokens_from_messages(self, message: dict[str,str], model: str):
+        """
+        Calculate the number of tokens required to encode a message.
+        Args:
+            message (any): The message to encode, represented as a dictionary.
+            model (str): The name of the model to use for encoding.
+        Returns:
+            int: The total number of tokens required to encode the message.
+        Example:
+            message = {'role': 'user', 'name': 'John', 'content': 'Hello, how are you?'}
+            model = 'gpt-3.5-turbo'
+            num_tokens_from_messages(message, model)
+            output: 11
+        """
         encoding = tiktoken.encoding_for_model(self.get_oai_chatmodel_tiktok(model))
         num_tokens = 0
         num_tokens += 2  # every message follows {role/name}\n{content}\n
         for key, value in message.items():
             num_tokens += len(encoding.encode(value))
-            if key == "name":  # if there's a name, the role is omitted
-                num_tokens += -1  # role is always required and always 1 token
         return num_tokens
 
     def get_oai_chatmodel_tiktok(self, aoaimodel: str):
