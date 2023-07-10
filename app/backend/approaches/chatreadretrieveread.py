@@ -129,7 +129,7 @@ Search query:
         messages.append({"role":self.SYSTEM, "content": system_message})
         token_count += self.num_tokens_from_messages(messages[-1], self.chatgpt_model)
         
-        #latest conversation
+        # latest conversation
         user_content = history[-1]["user"] + " \nSources:" + sources
         messages.append({"role": self.USER, "content": user_content})
         token_count += token_count + self.num_tokens_from_messages(messages[-1], self.chatgpt_model)
