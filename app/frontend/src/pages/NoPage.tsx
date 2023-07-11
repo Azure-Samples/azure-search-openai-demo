@@ -1,5 +1,5 @@
-const NoPage = () => {
+export function Component(): JSX.Element {
     return <h1>404</h1>;
-};
+}
 
-export default NoPage;
+Component.displayName = "NoPage";

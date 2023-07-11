@@ -1,7 +1,8 @@
-azure-identity==1.13.0b3
-Flask==2.2.2
+azure-identity==1.13.0
+Flask==2.2.5
 langchain==0.0.187
-openai[datalib]==0.26.4
+openai[datalib]==0.27.8
+tiktoken==0.3.0
 --extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
 azure-search-documents==11.4.0a20230509004
 azure-storage-blob==12.14.1
