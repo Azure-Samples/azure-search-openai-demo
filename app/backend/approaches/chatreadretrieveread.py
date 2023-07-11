@@ -105,7 +105,9 @@ Search query:
         
         chat_content = chat_completion.choices[0].message.content
 
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
+        msg_to_display = '\n\n'.join([str(message) for message in messages])
+
+        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{q}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
     
     def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, approx_max_tokens: int=1000) -> str:
         history_text = ""
