@@ -9,8 +9,8 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "Is there any information regarding Grupo Bimbo ethics policies",
-        value: "Is there any information regarding Grupo Bimbo ethics policies"
+        text: "Is there any information regarding Grupo Bimbo ethics policies?",
+        value: "Is there any information regarding Grupo Bimbo ethics policies?"
     },
     { text: "Can you speak other languages?", value: "Can you speak other languages?" },
     { text: "Are you smarter than me?", value: "Are you smarter than me?" }
