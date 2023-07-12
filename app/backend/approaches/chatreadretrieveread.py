@@ -32,16 +32,15 @@ Each source has a name followed by colon and the actual information, always incl
     Try not to repeat questions that have already been asked.
     Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
-    query_prompt_template = """Assistant is an intelligent chatbot designed to generate a search query. Given Knowledge base is a healthcare plan and employee handbook.
-    Instructions:
-    - Do not answer the users question. Based on the summary of previous conversation generate ONLY the SEARCH QUERY.
-    - If conversation is empty, generate a simple search query.
-    - Do not include cited source filenames and document names e.g [info.txt] or [doc.pdf] in the search query terms.
-    - Do not include any text inside [] in the search query terms. 
-    - Do not include special characters like '+' '-' ':' etc in the search query
-    - If the question is not in English, translate the question to English before generating the search query.
+    query_prompt_template = """Assistant is intelligent bot that helps to generate a search query.
+    Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
+    Generate a SEARCH QUERY based on the previous chat history and the new question. 
+    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
+    Do not include any text inside [] or <<>> in the search query terms.
+    Do not include special characters like '+' extra
+    If the question is not in English, translate the question to English before generating the search query.
 
-Search query:
+Search Query:
 """
     query_prompt_few_shots = [
         {'role' : USER, 'content' : 'What is included in my Northwind Health Plus plan that is not in standard?' },
@@ -62,18 +61,18 @@ Search query:
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
+        user_q = 'Generate search query for: ' + history[-1]["user"] + ' Chat History:\n{chat_history}'.format(chat_history=self.get_chat_history_as_text(history, False, self.chatgpt_proxy.get_token_limit() - len(history[-1]["user"])))
+
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
             self.query_prompt_template,
             self.chatgpt_proxy.get_model_name(),
             history,
-            'Question: ' + history[-1]["user"],
-            #self.query_prompt_few_shots
+            user_q,
+            self.query_prompt_few_shots
             )
 
-        q = self.chatgpt_proxy.chat_completion(messages, 0.7, max_tokens=32, n=1)
-        print("Search Query {q}".format(q=q))
-        print(messages)
+        q = self.chatgpt_proxy.chat_completion(messages, 0.0, max_tokens=32, n=1)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
         if overrides.get("semantic_ranker"):
@@ -121,8 +120,16 @@ Search query:
 
         return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{q}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
     
+    def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, max_tokens: int = 4000) -> str:
+        history_text = ""
+        for h in reversed(history if include_last_turn else history[:-1]):
+            history_text = """<|im_start|>user""" + "\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot", "") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
+            if len(history_text) > max_tokens:
+                break    
+        return history_text
+
     def get_messages_from_history(self, system_prompt: str, modelid: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = []) -> []:
-        message_builder = MessageBuilder(system_prompt,modelid)
+        message_builder = MessageBuilder(system_prompt, modelid)
 
         #add shots
         print(few_shots)
