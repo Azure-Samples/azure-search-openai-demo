@@ -131,12 +131,11 @@ Once in the web app:
 
 ***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
-***Question***: How can we uplpad additional PDFs without redeploying everything?
+***Question***: How can we upload additional PDFs without redeploying everything?
 
 ***Answer***: To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
 
 ### Troubleshooting
 
-If you see this error while running `azd deploy`: `read /tmp/azd1992237260/backend_env/lib64: is a directory`, then delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.  This issue is being tracked here: <https://github.com/Azure/azure-dev/issues/1237>
-
-If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run `azd deploy`.
+If the web app fails to deploy and you receive a '404 Not Found' message in your browser, run `azd deploy`. If you still encounter errors with the deployed app, consult these [tips for debugging Flask app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html)
+and file an issue if the error logs don't help you resolve the issue.
