@@ -1,4 +1,3 @@
-import openai
 from approaches.approach import Approach
 from core.ichatgptproxy import IChatGptProxy
 from core.messagebuilder import MessageBuilder

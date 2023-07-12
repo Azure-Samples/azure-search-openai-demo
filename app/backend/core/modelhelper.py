@@ -41,6 +41,6 @@ def num_tokens_from_messages(message: dict[str,str], model: str) -> int:
 
 def get_oai_chatmodel_tiktok(aoaimodel: str) -> str:
     if aoaimodel == "" or aoaimodel is None:
-        raise Exception("Expected AOAI chatGPT model name")
+        raise ValueError("Expected AOAI chatGPT model name")
     
     return AOAI_2_OAI.get(aoaimodel)

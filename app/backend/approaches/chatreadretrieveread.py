@@ -1,7 +1,5 @@
 from typing import Any, Sequence
 
-import openai
-import tiktoken
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from approaches.approach import Approach
@@ -132,11 +130,8 @@ Search Query:
         message_builder = MessageBuilder(system_prompt, modelid)
 
         #add shots
-        print(few_shots)
-        if len(few_shots) > 0:
-            for shot in few_shots:
-                print(shot)
-                message_builder.append_message(shot.get('role'), shot.get('content'))
+        for shot in few_shots:
+            message_builder.append_message(shot.get('role'), shot.get('content'))
 
         user_content = user_conv
         append_index = len(few_shots) + 1
