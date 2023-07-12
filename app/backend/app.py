@@ -12,6 +12,7 @@ from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
+from core.chatgptproxy import ChatGptProxy
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -43,6 +44,9 @@ openai.api_type = "azure_ad"
 openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
 openai.api_key = openai_token.token
 
+# Create chatGptProxy
+chatgpt_proxy = ChatGptProxy(openai, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_GPT_DEPLOYMENT)
+
 # Set up clients for Cognitive Search and Storage
 search_client = SearchClient(
     endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
@@ -56,13 +60,13 @@ blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
 # or some derivative, here we include several for exploration purposes
 ask_approaches = {
-    "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
+    "rtr": RetrieveThenReadApproach(search_client, chatgpt_proxy, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
     "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
     "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
 }
 
 chat_approaches = {
-    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rrr": ChatReadRetrieveReadApproach(search_client, chatgpt_proxy, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
 }
 
 app = Flask(__name__)

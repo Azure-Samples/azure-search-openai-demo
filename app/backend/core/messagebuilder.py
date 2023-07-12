@@ -1,14 +1,15 @@
-from modelhelper import num_tokens_from_messages
+from core.modelhelper import num_tokens_from_messages
 
 class MessageBuilder:
 
-  def __init__(self, system_message:dict[str,str]):
-    self.messsage = [{'role' : system_message['role'], 'content': system_message['content']}]
-    self.token_count = num_tokens_from_messages(self.message[-1])
+  def __init__(self, system_content: str, chatgpt_model: str):
+    self.message = [{'role' : 'system', 'content': system_content}]
+    self.model = chatgpt_model
+    self.token_count = num_tokens_from_messages(self.message[-1], self.model)
 
-  def append_message(self, conversation: dict[str, str]):
-    self.message.insert(1, {'role' : conversation['role'], 'content': conversation['content']})
-    self.token_count += num_tokens_from_messages(self.message[1])
+  def append_message(self, role:str, content: str, index: int = 1):
+    self.message.insert(index, {'role' : role, 'content': content})
+    self.token_count += num_tokens_from_messages(self.message[index], self.model)
     return
 
   def token_length(self) -> int:
