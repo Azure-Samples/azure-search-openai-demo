@@ -127,13 +127,17 @@ Once in the web app:
 
 ### FAQ
 
-***Question***: Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?
+<details>
+<summary>Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?</summary>
 
-***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
+Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
+</details>
 
-***Question***: How can we upload additional PDFs without redeploying everything?
+<details>
+<summary>How can we upload additional PDFs without redeploying everything?</summary>
 
-***Answer***: To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
+To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
+</details>
 
 ### Troubleshooting
 
