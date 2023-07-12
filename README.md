@@ -69,7 +69,7 @@ It will look like the following:
 
 > NOTE: It may take a minute for the application to be fully deployed. If you see a "Python Developer" welcome screen, then wait a minute and refresh the page.
 
-#### Use existing resources
+#### Using existing resources
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
@@ -79,9 +79,15 @@ It will look like the following:
 
 > NOTE: You can also use existing Search and Storage Accounts.  See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
 
-#### Deploying or re-deploying a local clone of the repo
+#### Deploying again
 
-* Simply run `azd up`
+If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
+
+```azd deploy```
+
+If you've changed the infrastructure files (`infra` folder or `azure.yaml`), then you'll need to re-provision the Azure resources. You can do that by running:
+
+```azd up```
 
 #### Running locally
 
@@ -124,6 +130,10 @@ Once in the web app:
 ***Question***: Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?
 
 ***Answer***: Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
+
+***Question***: How can we uplpad additional PDFs without redeploying everything?
+
+***Answer***: To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
 
 ### Troubleshooting
 
