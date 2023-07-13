@@ -1,0 +1,3 @@
+-r app/backend/requirements.txt
+-r scripts/requirements.txt
+pytest
