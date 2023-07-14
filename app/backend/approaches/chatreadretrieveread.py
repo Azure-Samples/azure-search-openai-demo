@@ -1,11 +1,14 @@
 from typing import Any, Sequence
 
+import openai
+import tiktoken
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from approaches.approach import Approach
-from core.ichatgptproxy import IChatGptProxy
-from core.messagebuilder import MessageBuilder
 from text import nonewlines
+
+from core.messagebuilder import MessageBuilder
+from core.modelhelper import get_token_limit
 
 class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
@@ -30,28 +33,29 @@ Each source has a name followed by colon and the actual information, always incl
     Try not to repeat questions that have already been asked.
     Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
-    query_prompt_template = """Assistant is intelligent bot that helps to generate a search query.
-    Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
-    Generate a SEARCH QUERY based on the previous chat history and the new question. 
+    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
+    Generate a search query based on the conversation and the new question. 
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
     Do not include any text inside [] or <<>> in the search query terms.
-    Do not include special characters like '+' extra
+    Do not include any special characters like '+'.
     If the question is not in English, translate the question to English before generating the search query.
 
 Search Query:
 """
     query_prompt_few_shots = [
-        {'role' : USER, 'content' : 'What is included in my Northwind Health Plus plan that is not in standard?' },
-        {'role' : ASSISTANT, 'content' : 'Northwind Health Plus plan benefits comparison standard' },
-        {'role' : USER, 'content' : 'does my plan cover eye exam' },
-        {'role' : ASSISTANT, 'content' : 'Northwind Health Plus eye exam coverage' }
+        {'role' : USER, 'content' : 'What are my health plans?' },
+        {'role' : ASSISTANT, 'content' : 'Show available health plans' },
+        {'role' : USER, 'content' : 'does my plan cover cardio?' },
+        {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
     ]
 
-    def __init__(self, search_client: SearchClient, chatgpt_proxy: IChatGptProxy, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
-        self.chatgpt_proxy = chatgpt_proxy
+        self.chatgpt_deployment = chatgpt_deployment
+        self.chatgpt_model = chatgpt_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -59,18 +63,27 @@ Search Query:
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        user_q = 'Generate search query for: ' + history[-1]["user"] + ' Chat History:\n{chat_history}'.format(chat_history=self.get_chat_history_as_text(history, False, self.chatgpt_proxy.get_token_limit() - len(history[-1]["user"])))
+        user_q = 'Generate search query for: ' + history[-1]["user"]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
             self.query_prompt_template,
-            self.chatgpt_proxy.get_model_name(),
+            self.chatgpt_model,
             history,
             user_q,
-            self.query_prompt_few_shots
+            self.query_prompt_few_shots,
+            self.chatgpt_token_limit - len(user_q)
             )
 
-        q = self.chatgpt_proxy.chat_completion(messages, 0.0, max_tokens=32, n=1)
+        chat_completion = openai.ChatCompletion.create(
+            deployment_id=self.chatgpt_deployment,
+            model=self.chatgpt_model,
+            messages=messages, 
+            temperature=0.0, 
+            max_tokens=32, 
+            n=1)
+        
+        q = chat_completion.choices[0].message.content
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
         if overrides.get("semantic_ranker"):
@@ -107,29 +120,30 @@ Search Query:
         user_content = history[-1]["user"] + " \nSources:" + content
 
         messages = self.get_messages_from_history(
-        system_message,
-        self.chatgpt_proxy.get_model_name(),
-        history,
-        user_content)
+            system_message,
+            self.chatgpt_model,
+            history,
+            user_content,
+            max_tokens=self.chatgpt_token_limit)
 
-        chat_content = self.chatgpt_proxy.chat_completion(messages, overrides.get("temperature") or 0.7, max_tokens=1024, n=1)
+        chat_completion = openai.ChatCompletion.create(
+            deployment_id=self.chatgpt_deployment,
+            model=self.chatgpt_model,
+            messages=messages, 
+            temperature=overrides.get("temperature") or 0.7, 
+            max_tokens=1024, 
+            n=1)
+
+        chat_content = chat_completion.choices[0].message.content
 
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 
         return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{q}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
     
-    def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, max_tokens: int = 4000) -> str:
-        history_text = ""
-        for h in reversed(history if include_last_turn else history[:-1]):
-            history_text = """<|im_start|>user""" + "\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot", "") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
-            if len(history_text) > max_tokens:
-                break    
-        return history_text
+    def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
+        message_builder = MessageBuilder(system_prompt, model_id)
 
-    def get_messages_from_history(self, system_prompt: str, modelid: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = []) -> []:
-        message_builder = MessageBuilder(system_prompt, modelid)
-
-        #add shots
+        # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
         for shot in few_shots:
             message_builder.append_message(shot.get('role'), shot.get('content'))
 
@@ -142,7 +156,7 @@ Search Query:
             if h.get("bot"):
                 message_builder.append_message(self.ASSISTANT, h.get('bot'), index=append_index)
             message_builder.append_message(self.USER, h.get('user'), index=append_index)
-            if message_builder.token_length() > self.chatgpt_proxy.get_token_limit():
+            if message_builder.token_length() > max_tokens:
                 break
         
         messages = message_builder.to_messages()
