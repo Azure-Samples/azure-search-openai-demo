@@ -253,9 +253,9 @@ export function Component(): JSX.Element {
                     className={styles.oneshotSettingsSeparator}
                     label="Retrieval mode"
                     options={[
-                        { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: true, data: RetrievalMode.Hybrid },
-                        { key: "vectors", text: "Vectors", data: RetrievalMode.Vectors },
-                        { key: "text", text: "Text", data: RetrievalMode.Text }
+                        { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                        { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                        { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
                     ]}
                     required
                     onChange={onRetrievalModeChange}
