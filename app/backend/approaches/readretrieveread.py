@@ -1,7 +1,7 @@
 import openai
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
-from azure.search.documents.models import QueryType, Vector
+from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
@@ -76,9 +76,16 @@ Thought: {agent_scratchpad}"""
                                           semantic_configuration_name="default", 
                                           top = top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=Vector(value=query_vector, k=50, fields="embedding") if query_vector else None)
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text, filter=filter, top=top, vector=Vector(value=query_vector, k=50, fields="embedding") if query_vector else None)
+            r = self.search_client.search(query_text, 
+                                          filter=filter, 
+                                          top=top, 
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
