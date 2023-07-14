@@ -1,11 +1,12 @@
+import openai
+
 from approaches.approach import Approach
-from core.ichatgptproxy import IChatGptProxy
-from core.messagebuilder import MessageBuilder
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from text import nonewlines
 from typing import Any
 
+from core.messagebuilder import MessageBuilder
 
 class RetrieveThenReadApproach(Approach):
     """
@@ -34,9 +35,10 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 """
     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
-    def __init__(self, search_client: SearchClient, chatgpt_proxy: IChatGptProxy, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
-        self.chatgpt_proxy = chatgpt_proxy
+        self.openai_deployment = openai_deployment
+        self.chatgpt_model = chatgpt_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
@@ -63,16 +65,23 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
         content = "\n".join(results)
 
-        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_proxy.get_model_name());
+        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model);
 
         # add user question
         user_content = q + "\n" + "Sources:\n {content}".format(content=content)
         message_builder.append_message('user', user_content)
-        # Add shots/samples
+
+        # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
         message_builder.append_message('assistant', self.answer)
         message_builder.append_message('user', self.question)
         
-        messages = message_builder.to_messages()
-        chat_completion_text = self.chatgpt_proxy.chat_completion(messages, overrides.get("temperature") or 0.3)
+        messages = message_builder.messages
+        chat_completion = openai.ChatCompletion.create(
+            deployment_id=self.openai_deployment,
+            model=self.chatgpt_model,
+            messages=messages, 
+            temperature=overrides.get("temperature") or 0.3, 
+            max_tokens=1024, 
+            n=1)
         
-        return {"data_points": results, "answer": chat_completion_text, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}
+        return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}

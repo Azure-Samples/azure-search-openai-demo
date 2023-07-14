@@ -156,8 +156,8 @@ Search Query:
             if h.get("bot"):
                 message_builder.append_message(self.ASSISTANT, h.get('bot'), index=append_index)
             message_builder.append_message(self.USER, h.get('user'), index=append_index)
-            if message_builder.token_length() > max_tokens:
+            if message_builder.token_length > max_tokens:
                 break
         
-        messages = message_builder.to_messages()
+        messages = message_builder.messages
         return messages
