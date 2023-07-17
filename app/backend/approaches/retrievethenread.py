@@ -51,21 +51,24 @@ Answer:
         self.content_field = content_field
 
     def run(self, q: str, overrides: dict[str, Any]) -> Any:
-        use_semantic_captions = True if overrides.get("semantic_captions") else False
+        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
         # If retrieval mode includes vectors, compute an embedding for the query
-        if overrides.get("retrieval_mode") in ["vectors", "hybrid", None]:
+        if has_vector:
             query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=q)["data"][0]["embedding"]
         else:
             query_vector = None
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        query_text = q if overrides.get("retrieval_mode") != "vectors" else None
+        query_text = q if has_text else None
 
-        if overrides.get("semantic_ranker"):
+        # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
+        if overrides.get("semantic_ranker") and has_text:
             r = self.search_client.search(query_text, 
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 

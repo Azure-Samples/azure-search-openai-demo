@@ -55,7 +55,9 @@ Search query:
         self.content_field = content_field
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
-        use_semantic_captions = True if overrides.get("semantic_captions") else False
+        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
@@ -74,16 +76,17 @@ Search query:
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         # If retrieval mode includes vectors, compute an embedding for the query
-        if overrides.get("retrieval_mode") in ["vectors", "hybrid", None]:
+        if has_vector:
             query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
         else:
             query_vector = None
 
-        # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        if overrides.get("retrieval_mode") == "vectors":
+         # Only keep the text query if the retrieval mode uses text, otherwise drop it
+        if not has_text:
             query_text = None
 
-        if overrides.get("semantic_ranker"):
+        # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
+        if overrides.get("semantic_ranker") and has_text:
             r = self.search_client.search(query_text, 
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
@@ -137,7 +140,7 @@ Search query:
                 break    
         return history_text
     
-    def get_messages_from_history(self, prompt_override, follow_up_questions_prompt, history: Sequence[dict[str, str]], sources: str, approx_max_tokens: int = 1000) -> []:
+    def get_messages_from_history(self, prompt_override, follow_up_questions_prompt, history: Sequence[dict[str, str]], sources: str, approx_max_tokens: int = 1000) -> list:
         '''
         Generate messages needed for chat Completion api
         '''
