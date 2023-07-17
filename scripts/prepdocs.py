@@ -193,17 +193,19 @@ def filename_to_id(filename):
     filename_hash = base64.b16encode(filename.encode('utf-8')).decode('ascii')
     return f"file-{filename_ascii}-{filename_hash}"
 
-def create_sections(filename, page_map):
+def create_sections(filename, page_map, use_vectors):
     file_id = filename_to_id(filename)
-    for i, (section, pagenum) in enumerate(split_text(page_map)):
-        yield {
+    for i, (content, pagenum) in enumerate(split_text(page_map)):
+        section = {
             "id": f"{file_id}-page-{i}",
-            "content": section,
-            "embedding": openai.Embedding.create(engine=args.openaideployment, input=section)["data"][0]["embedding"],
+            "content": content,
             "category": args.category,
             "sourcepage": blob_name_from_file_page(filename, pagenum),
             "sourcefile": filename
         }
+        if use_vectors:
+            section["embedding"] = openai.Embedding.create(engine=args.openaideployment, input=content)["data"][0]["embedding"]
+        yield section            
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -297,6 +299,7 @@ if __name__ == "__main__":
     parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
+    parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
     parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
@@ -310,6 +313,8 @@ if __name__ == "__main__":
     azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
     search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
+    use_vectors = not args.novectors
+
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey == None else args.storagekey
     if not args.localpdfparser:
@@ -319,15 +324,16 @@ if __name__ == "__main__":
             exit(1)
         formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
 
-    if args.openaikey == None:
-        openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
-        openai.api_type = "azure_ad"
-    else:
-        openai.api_type = "azure"
-        openai.api_key = args.openaikey
+    if use_vectors:
+        if args.openaikey == None:
+            openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
+            openai.api_type = "azure_ad"
+        else:
+            openai.api_type = "azure"
+            openai.api_key = args.openaikey
 
-    openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
-    openai.api_version = "2022-12-01"
+        openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
+        openai.api_version = "2022-12-01"
 
     if args.removeall:
         remove_blobs(None)
@@ -349,5 +355,5 @@ if __name__ == "__main__":
                 if not args.skipblobs:
                     upload_blobs(filename)
                 page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
                 index_sections(os.path.basename(filename), sections)
