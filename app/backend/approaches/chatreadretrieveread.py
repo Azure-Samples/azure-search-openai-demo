@@ -20,27 +20,28 @@ class ChatReadRetrieveReadApproach(Approach):
     """
     system_message_chat_conversation = """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-For tabular information return it as an html table. Do not return markdown format.
+For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, e.g. [info1.txt]. Don't combine sources, list each source separately, e.g. [info1.txt][info2.pdf].
 {follow_up_questions_prompt}
 {injected_prompt}
 """
     follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook. 
-    Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
-    Try not to repeat questions that have already been asked.
-    Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
+Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
+Try not to repeat questions that have already been asked.
+Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
-    Generate a search query based on the conversation and the new question. 
-    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
-    Do not include any text inside [] or <<>> in the search query terms.
-    If the question is not in English, translate the question to English before generating the search query.
-
-Chat History:
+    query_prompt_template = """Chat History:
 {chat_history}
 
 Question:
 {question}
+
+Given the above chat history and user question generate a search query that will return the best answer from the knowledge base.
+Try and generate a grammatical sentence for the search query.
+Do NOT use quotes and avoid other search operators.
+Do not include cited source filenames and document names such as info.txt or doc.pdf in the search query terms.
+Do not include any text inside [] or <<>> in the search query terms.
+Generate the search query in English even if the questions are not in English.
 
 Search query:
 """
@@ -135,7 +136,7 @@ Search query:
     def get_chat_history_as_text(self, history: Sequence[dict[str, str]], include_last_turn: bool=True, approx_max_tokens: int=1000) -> str:
         history_text = ""
         for h in reversed(history if include_last_turn else history[:-1]):
-            history_text = """<|im_start|>user""" + "\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot", "") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
+            history_text = """user:""" + "\n" + h["user"] + "\n\n" + ("""assistant:""" + "\n" + h.get("bot", "") if h.get("bot") else "") + "\n" + history_text
             if len(history_text) > approx_max_tokens*4:
                 break    
         return history_text
