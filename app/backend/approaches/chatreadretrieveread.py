@@ -34,13 +34,12 @@ Try not to repeat questions that have already been asked.
 Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
-    Generate a search query based on the conversation and the new question. 
-    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
-    Do not include any text inside [] or <<>> in the search query terms.
-    Do not include any special characters like '+'.
-    If the question is not in English, translate the question to English before generating the search query.
-
-Search Query:
+Generate a search query based on the conversation and the new question. 
+Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
+Do not include any text inside [] or <<>> in the search query terms.
+Do not include any special characters like '+'.
+If the question is not in English, translate the question to English before generating the search query.
+If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
         {'role' : USER, 'content' : 'What are my health plans?' },
@@ -87,6 +86,8 @@ Search Query:
             n=1)
         
         query_text = chat_completion.choices[0].message.content
+        if query_text.strip() == "0":
+            query_text = history[-1]["user"] # Use the last user input if we failed to generate a better query
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -139,14 +140,11 @@ Search Query:
         else:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
         
-        # latest conversation
-        user_content = history[-1]["user"] + " \nSources:" + content
-
         messages = self.get_messages_from_history(
-            system_message,
+            system_message + "\n\nSources:\n" + content,
             self.chatgpt_model,
             history,
-            user_content,
+            history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
 
         chat_completion = openai.ChatCompletion.create(
