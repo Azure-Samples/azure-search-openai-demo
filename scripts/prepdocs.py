@@ -6,8 +6,8 @@ import io
 import os
 import re
 import time
-import openai
 
+import openai
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import AzureDeveloperCliCredential
