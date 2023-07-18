@@ -16,6 +16,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
+ - [Running Tests](#tests)
+
 
 ## <a name="coc"></a> Code of Conduct
 Help us keep this project open and inclusive. Please read and follow our [Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
@@ -58,24 +60,14 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 
 * Search the repository (https://github.com/[organization-name]/[repository-name]/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
-
-* Make your changes in a new git fork:
-
+* Make your changes in a new git fork
+* [Run the tests](#tests) (and write new ones, if needed)
 * Commit your changes using a descriptive commit message
-* Push your fork to GitHub:
-* In GitHub, create a pull request
-* If we suggest changes then:
-  * Make the required updates.
-  * Rebase your fork and force push to your GitHub repository (this will update your Pull Request):
+* Push your fork to GitHub
+* In GitHub, create a pull request to the `main` branch of the repository
+* Ask a maintainer to review your PR and address any comments they might have
 
-    ```shell
-    git rebase master -i
-    git push -f
-    ```
-
-That's it! Thank you for your contribution!
-
-## Running tests
+## <a name="tests"></a> Running tests
 
 Install the development dependencies:
 
