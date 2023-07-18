@@ -61,6 +61,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 * Search the repository (https://github.com/[organization-name]/[repository-name]/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
 * Make your changes in a new git fork
+* Follow [Code style conventions](#style)
 * [Run the tests](#tests) (and write new ones, if needed)
 * Commit your changes using a descriptive commit message
 * Push your fork to GitHub
@@ -79,4 +80,29 @@ Run the tests:
 
 ```
 python3 -m pytest
+```
+
+## <a name="style"></a> Code Style
+
+This codebase includes several languages: TypeScript, Python, Bicep, Powershell, and Bash.
+Code should follow the standard conventions of each language.
+
+For Python, you can enforce the conventions using `ruff` and `black`.
+
+Install the development dependencies:
+
+```
+python3 -m pip install -r requirements-dev.txt
+```
+
+Run `ruff` to lint a file:
+
+```
+python3 -m ruff <path-to-file>
+```
+
+Run `black` to format a file:
+
+```
+python3 -m black <path-to-file>
 ```
