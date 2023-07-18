@@ -35,30 +35,51 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 """
     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.chatgpt_model = chatgpt_model
+        self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
     def run(self, q: str, overrides: dict[str, Any]) -> Any:
-        use_semantic_captions = True if overrides.get("semantic_captions") else False
+        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q, 
+        # If retrieval mode includes vectors, compute an embedding for the query
+        if has_vector:
+            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=q)["data"][0]["embedding"]
+        else:
+            query_vector = None
+
+        # Only keep the text query if the retrieval mode uses text, otherwise drop it
+        query_text = q if has_text else None
+
+        # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
+        if overrides.get("semantic_ranker") and has_text:
+            r = self.search_client.search(query_text, 
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
                                           query_speller="lexicon", 
                                           semantic_configuration_name="default", 
                                           top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
+                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(q, filter=filter, top=top)
+            r = self.search_client.search(query_text, 
+                                          filter=filter, 
+                                          top=top, 
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
@@ -84,4 +105,4 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             max_tokens=1024, 
             n=1)
         
-        return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}
+        return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}
