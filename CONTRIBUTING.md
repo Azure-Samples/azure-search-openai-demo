@@ -17,7 +17,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
  - [Running Tests](#tests)
-
+ - [Code Style](#style)
 
 ## <a name="coc"></a> Code of Conduct
 Help us keep this project open and inclusive. Please read and follow our [Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
