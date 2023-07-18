@@ -3,6 +3,9 @@ target-version = "py310"
 select = ["E", "F", "I", "UP"]
 ignore = ["E501"] # line too long
 
+[tool.black]
+line-length = 300
+
 [tool.pytest.ini_options]
 addopts = "-ra --cov"
 
