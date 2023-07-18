@@ -16,6 +16,7 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import *
 from azure.storage.blob import BlobServiceClient
 from pypdf import PdfReader, PdfWriter
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -204,8 +205,15 @@ def create_sections(filename, page_map, use_vectors):
             "sourcefile": filename
         }
         if use_vectors:
-            section["embedding"] = openai.Embedding.create(engine=args.openaideployment, input=content)["data"][0]["embedding"]
-        yield section            
+            section["embedding"] = compute_embedding(content)
+        yield section
+
+def before_retry_sleep(retry_state):
+    if args.verbose: print(f"Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding(text):
+    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
