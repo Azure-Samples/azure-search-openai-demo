@@ -17,7 +17,7 @@ AOAI_2_OAI = {
 
 def get_token_limit(model_id: str) -> int:
     if model_id not in MODELS_2_TOKEN_LIMITS:
-        raise ValueError("Expected Model Gpt-35-turbo and above")
+        raise ValueError("Expected model gpt-35-turbo and above")
     return MODELS_2_TOKEN_LIMITS.get(model_id)
 
 
@@ -43,7 +43,9 @@ def num_tokens_from_messages(message: dict[str, str], model: str) -> int:
 
 
 def get_oai_chatmodel_tiktok(aoaimodel: str) -> str:
+    message = "Expected Azure OpenAI ChatGPT model name"
     if aoaimodel == "" or aoaimodel is None:
-        raise ValueError("Expected AOAI chatGPT model name")
-
-    return AOAI_2_OAI.get(aoaimodel)
+        raise ValueError(message)
+    if aoaimodel not in AOAI_2_OAI and aoaimodel not in MODELS_2_TOKEN_LIMITS:
+        raise ValueError(message)
+    return AOAI_2_OAI.get(aoaimodel) or aoaimodel

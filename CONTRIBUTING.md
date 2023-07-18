@@ -1,4 +1,4 @@
-# Contributing to [project-title]
+# Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
@@ -74,3 +74,17 @@ Before you submit your Pull Request (PR) consider the following guidelines:
     ```
 
 That's it! Thank you for your contribution!
+
+## Running tests
+
+Install the development dependencies:
+
+```
+python3 -m pip install -r requirements-dev.txt
+```
+
+Run the tests:
+
+```
+python3 -m pytest
+```
