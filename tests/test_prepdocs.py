@@ -1,4 +1,5 @@
-from prepdocs import filename_to_id
+from scripts.prepdocs import filename_to_id
+
 
 def test_filename_to_id():
     # test ascii filename

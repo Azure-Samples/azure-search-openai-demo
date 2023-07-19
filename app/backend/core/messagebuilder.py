@@ -1,4 +1,4 @@
-from core.modelhelper import num_tokens_from_messages
+from .modelhelper import num_tokens_from_messages
 
 
 class MessageBuilder:
