@@ -238,7 +238,7 @@ const Chat = () => {
 
     const onSend = question => {
         console.log("🤖 send: ", removeEmptyAttributes(filterSettings));
-        // makeApiRequest(question);
+        makeApiRequest(question);
     };
 
     return (
