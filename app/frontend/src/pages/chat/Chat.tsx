@@ -212,7 +212,6 @@ const Chat = () => {
         if (notes) {
             string += ` and has the following notes: ${notes}`;
         }
-        console.log(string);
         setCustomerProfileString(string);
     };
 
@@ -237,7 +236,6 @@ const Chat = () => {
     };
 
     const onSend = question => {
-        console.log("🤖 send: ", removeEmptyAttributes(filterSettings));
         makeApiRequest(question);
     };
 
