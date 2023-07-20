@@ -48,12 +48,12 @@ Search query:
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, history: list[dict], overrides: dict) -> any:
+    def run(self, history: list[dict], overrides: dict, filters: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
-
+        print('😇 filters: ', filters);
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         prompt = self.query_prompt_template.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=False), question=history[-1]["user"])
         completion = openai.Completion.create(

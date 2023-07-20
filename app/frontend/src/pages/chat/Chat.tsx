@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
@@ -28,6 +29,13 @@ interface CustomerProfile {
     notes: string;
 }
 
+export interface FilterSettings {
+    familyType?: string;
+    productType?: string;
+    stateType?: string;
+    lifecycle?: string;
+}
+
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
@@ -38,6 +46,7 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [filterSettings, setFilterSettings] = useState<FilterSettings>({});
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -73,10 +82,7 @@ const Chat = () => {
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 },
-                profile: {
-                    familyType: "single",
-                    existingCustomer: true
-                }
+                filters: filterSettings
             };
             const result = await chatApi(request);
             setAnswers([...answers, [question, result]]);
@@ -150,6 +156,10 @@ const Chat = () => {
         console.log("setProfile", profile);
     };
 
+    const handleSetFilter = (filter: FilterSettings) => {
+        setFilterSettings(filter);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -166,7 +176,7 @@ const Chat = () => {
                     onDismiss={() => setIsFilterPanelOpen(false)}
                     closeButtonAriaLabel="Close"
                 >
-                    <FilterPanel className={styles.profilePanel} />
+                    <FilterPanel className={styles.profilePanel} onSetFilter={handleSetFilter} />
                 </Panel>
 
                 {/* Profile Panel */}

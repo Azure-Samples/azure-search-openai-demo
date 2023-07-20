@@ -103,7 +103,7 @@ def chat():
         impl = chat_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = impl.run(request.json["history"], request.json.get("overrides") or {})
+        r = impl.run(request.json["history"], request.json.get("overrides") or {}, request.json.get("filters") or {})
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")

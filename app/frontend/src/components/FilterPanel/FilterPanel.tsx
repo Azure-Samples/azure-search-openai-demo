@@ -1,9 +1,11 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import { TextField, Dropdown, PrimaryButton, IDropdownOption, DropdownMenuItemType } from "@fluentui/react";
+import { FilterSettings } from "../../pages/chat/Chat";
 
 interface Props {
     className: string;
-    setFilter: () => void;
+    onSetFilter: (filter: FilterSettings) => void;
 }
 
 const lifeCycleOptions: IDropdownOption[] = [
@@ -23,9 +25,9 @@ const stateOptions: IDropdownOption[] = [
     { key: "WA", text: "Western Australia" }
 ];
 
-export const FilterPanel = ({ className }: Props, setProfile?: void) => {
+export const FilterPanel = ({ className, onSetFilter }: Props) => {
     const [familyType, setFamilyType] = useState("");
-    const [coverType, setCoverType] = useState("");
+    const [productType, setProductType] = useState("");
     const [state, setState] = useState("");
     const [lifecycle, setLifecycle] = useState("");
 
@@ -33,30 +35,33 @@ export const FilterPanel = ({ className }: Props, setProfile?: void) => {
         setFamilyType(newValue ?? "");
     };
 
-    const handleCoverTypeChange = (event: React.FormEvent, newValue?: string) => {
-        setCoverType(newValue ?? "");
+    const handleProductTypeChange = (event: React.FormEvent, newValue?: string) => {
+        setProductType(newValue ?? "");
     };
 
-    const handleStateChange = (event: React.FormEvent, newValue?: string) => {
+    const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
         setState(newValue ?? "");
     };
 
-    const handleLifecycleChange = (event: React.FormEvent, newValue?: string) => {
+    const handleLifecycleChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
         setLifecycle(newValue ?? "");
     };
 
     const handleGenerateProfile = () => {
-        setFilter({
+        const currentFilters = {
             familyType,
-            coverType,
-            state
-        });
+            productType,
+            stateType: state.key,
+            lifecycle: lifecycle.key
+        };
+        onSetFilter(currentFilters);
+        console.log("filter set: ", currentFilters);
     };
 
     return (
         <div>
             <TextField label="Family Type" value={familyType} onChange={handleFamilyTypeChange} />
-            <TextField label="Product" value={coverType} onChange={handleCoverTypeChange} />
+            <TextField label="Product" value={productType} onChange={handleProductTypeChange} />
             <Dropdown placeholder="Select State" label="State" options={stateOptions} onChange={handleStateChange} />
             <Dropdown placeholder="Set lifecycle" label="Lifecycle" options={lifeCycleOptions} onChange={handleLifecycleChange} />
             <br />

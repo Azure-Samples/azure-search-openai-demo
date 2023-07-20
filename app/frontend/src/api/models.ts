@@ -39,9 +39,17 @@ export type Profile = {
     existingCustomer?: boolean;
 };
 
+export type FilterSettings = {
+    familyType?: string;
+    productType?: string;
+    stateType?: string;
+    lifecycle?: string;
+};
+
 export type ChatRequest = {
     history: ChatTurn[];
     approach: Approaches;
     overrides?: AskRequestOverrides;
     profile?: Profile;
+    filters?: FilterSettings;
 };

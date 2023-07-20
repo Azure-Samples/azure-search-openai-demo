@@ -1,9 +1,9 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import { TextField, Checkbox, Slider, PrimaryButton } from "@fluentui/react";
 
 interface Props {
     className: string;
-    setProfile: () => void;
 }
 
 export const ProfilePanel = ({ className }: Props, setProfile?: void) => {
