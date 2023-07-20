@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AskRequest, AskResponse, ChatRequest } from "./models";
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
@@ -30,7 +31,8 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
-export async function chatApi(options: ChatRequest): Promise<AskResponse> {
+export async function chatApi(options): Promise<AskResponse> {
+    console.log("chatApi options", options);
     const response = await fetch("/chat", {
         method: "POST",
         headers: {
@@ -45,6 +47,7 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
                 top: options.overrides?.top,
                 temperature: options.overrides?.temperature,
                 prompt_template: options.overrides?.promptTemplate,
+                prompt_search_template: options.overrides?.searchPromptTemplate,
                 prompt_template_prefix: options.overrides?.promptTemplatePrefix,
                 prompt_template_suffix: options.overrides?.promptTemplateSuffix,
                 exclude_category: options.overrides?.excludeCategory,

@@ -19,6 +19,8 @@ import { FilterPanel } from "../../components/FilterPanel";
 import { CustomerProfileButton } from "../../components/CustomerProfileButton";
 import { SearchFilterButton } from "../../components/SearchFilterButton";
 
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_QUERY_PROMPT } from "../../constants";
+
 interface CustomerProfile {
     existingCustomer: boolean;
     name: string;
@@ -40,7 +42,8 @@ const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-    const [promptTemplate, setPromptTemplate] = useState<string>("");
+    const [promptTemplate, setPromptTemplate] = useState<string>(DEFAULT_SYSTEM_PROMPT);
+    const [searchPromptTemplate, setSearchPromptTemplate] = useState<string>(DEFAULT_QUERY_PROMPT);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
@@ -76,6 +79,7 @@ const Chat = () => {
                 approach: Approaches.ReadRetrieveRead,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
+                    searchPromptTemplate: searchPromptTemplate.length === 0 ? undefined : searchPromptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
                     top: retrieveCount,
                     semanticRanker: useSemanticRanker,
@@ -160,6 +164,10 @@ const Chat = () => {
         setFilterSettings(filter);
     };
 
+    const handleSearchPromptTemplateChange = (e, newValue) => {
+        setSearchPromptTemplate(newValue);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -176,7 +184,12 @@ const Chat = () => {
                     onDismiss={() => setIsFilterPanelOpen(false)}
                     closeButtonAriaLabel="Close"
                 >
-                    <FilterPanel className={styles.profilePanel} onSetFilter={handleSetFilter} />
+                    <FilterPanel
+                        className={styles.profilePanel}
+                        onSetFilter={handleSetFilter}
+                        defaultQuery={searchPromptTemplate}
+                        onQueryPromptChange={handleSearchPromptTemplateChange}
+                    />
                 </Panel>
 
                 {/* Profile Panel */}
@@ -260,7 +273,7 @@ const Chat = () => {
                 )}
 
                 <Panel
-                    headerText="Configure answer generation"
+                    headerText="Chat Settings"
                     isOpen={isConfigPanelOpen}
                     isBlocking={false}
                     onDismiss={() => setIsConfigPanelOpen(false)}
@@ -271,8 +284,9 @@ const Chat = () => {
                     <TextField
                         className={styles.chatSettingsSeparator}
                         defaultValue={promptTemplate}
-                        label="Override prompt template"
+                        label="Chat prompt"
                         multiline
+                        rows={20}
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
                     />
