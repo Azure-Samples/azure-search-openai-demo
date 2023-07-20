@@ -159,7 +159,7 @@ const Chat = () => {
     };
 
     const setProfile = profile => {
-        const { existingCustomer, state, category, levelOfCover, scale, budget, geography, notes } = profile;
+        const { existingCustomer, state, category, levelOfCover, scale, budget, frequency, geography, notes } = profile;
         let string = "The customer is";
 
         if (existingCustomer !== undefined) {
@@ -183,7 +183,7 @@ const Chat = () => {
         }
 
         if (budget) {
-            string += ` with a budget range of ${budget}`;
+            string += ` with a ${frequency} budget of ${budget}`;
         }
 
         if (geography) {
