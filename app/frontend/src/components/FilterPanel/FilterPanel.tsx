@@ -9,6 +9,7 @@ interface Props {
 }
 
 const lifeCycleOptions: IDropdownOption[] = [
+    { key: "", text: "None" },
     { key: "OnSale", text: "OnSale" },
     { key: "OffSale", text: "OffSale" }
 ];
@@ -47,7 +48,7 @@ export const FilterPanel = ({
             stateType: state.key,
             lifecycle: lifecycle.key
         };
-        onSetFilter({ ...currentFilters, field });
+        onSetFilter({ ...currentFilters, ...field });
     };
 
     const handleFamilyTypeChange = (event: React.FormEvent, newValue?: string) => {
@@ -62,12 +63,12 @@ export const FilterPanel = ({
 
     const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
         setState(newValue ?? "");
-        handleProfileChange({ stateType: newValue });
+        handleProfileChange({ stateType: newValue.key });
     };
 
     const handleLifecycleChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
         setLifecycle(newValue ?? "");
-        handleProfileChange({ lifecycle: newValue });
+        handleProfileChange({ lifecycle: newValue.key });
     };
 
     return (
