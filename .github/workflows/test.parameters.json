@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "environmentName": {
+        "value": "azd-openai"
+      },
+      "location": {
+        "value": "eastus"
+      },
+      "openAiResourceGroupLocation": {
+        "value": "eastus"
+      },
+      "principalId": {
+        "value": "${AZURE_PRINCIPAL_ID}"
+      },
+      "openAiServiceName": {
+        "value": "${AZURE_OPENAI_SERVICE}"
+      },
+      "openAiResourceGroupName": {
+        "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
+      },
+      "openAiSkuName": {
+        "value": "S0"
+      },
+      "formRecognizerServiceName": {
+        "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
+      },
+      "formRecognizerResourceGroupName": {
+        "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
+      },
+      "formRecognizerSkuName": {
+        "value": "S0"
+      },
+      "searchServiceName": {
+        "value": "${AZURE_SEARCH_SERVICE}"
+      },
+      "searchServiceResourceGroupName": {
+        "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
+      },
+      "searchServiceSkuName": {
+        "value": "standard"
+      },
+      "storageAccountName": {
+        "value": "${AZURE_STORAGE_ACCOUNT}"
+      },
+      "storageResourceGroupName": {
+        "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
+      },
+      "chatGptDeploymentName": {
+        "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+      },
+      "gptDeploymentName": {
+        "value": "${AZURE_OPENAI_GPT_DEPLOYMENT=davinci}"
+      }
+    }
+  }
