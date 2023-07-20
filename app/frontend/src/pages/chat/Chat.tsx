@@ -19,6 +19,8 @@ import { FilterPanel } from "../../components/FilterPanel";
 import { CustomerProfileButton } from "../../components/CustomerProfileButton";
 import { SearchFilterButton } from "../../components/SearchFilterButton";
 
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_QUERY_PROMPT } from "../../constants";
+
 interface CustomerProfile {
     existingCustomer: boolean;
     name: string;
@@ -40,13 +42,18 @@ const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-    const [promptTemplate, setPromptTemplate] = useState<string>("");
+    const [promptTemplate, setPromptTemplate] = useState<string>(DEFAULT_SYSTEM_PROMPT);
+    const [searchPromptTemplate, setSearchPromptTemplate] = useState<string>(DEFAULT_QUERY_PROMPT);
+    const [customerProfileString, setCustomerProfileString] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
     const [filterSettings, setFilterSettings] = useState<FilterSettings>({});
+    const [temprature, setTemprature] = useState<string>("0.7");
+    const [searchTemprature, setSearchTemprature] = useState<string>("0.0");
+    const [searchTokens, setSearchTokens] = useState<string>("32");
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -61,7 +68,6 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
     const makeApiRequest = async (question: string) => {
-        console.log("makeApiRequest", question);
         lastQuestionRef.current = question;
 
         error && setError(undefined);
@@ -75,13 +81,19 @@ const Chat = () => {
                 history: [...history, { user: question, bot: undefined }],
                 approach: Approaches.ReadRetrieveRead,
                 overrides: {
+                    temperature: parseFloat(temprature),
+                    searchTemperature: parseFloat(searchTemprature),
+                    searchMaxTokens: parseInt(searchTokens),
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
+                    searchPromptTemplate: searchPromptTemplate.length === 0 ? undefined : searchPromptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
                     top: retrieveCount,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 },
+                profile:
+                    customerProfileString.length === 0 ? "Actually, no customer has been given. Please inform me if i ask about it." : customerProfileString,
                 filters: filterSettings
             };
             const result = await chatApi(request);
@@ -152,21 +164,77 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const setProfile = (profile: CustomerProfile) => {
-        console.log("setProfile", profile);
+    const setProfile = profile => {
+        const { existingCustomer, state, category, levelOfCover, scale, budget, frequency, geography, notes } = profile;
+        let string = "The customer is";
+
+        if (existingCustomer !== undefined) {
+            string += ` an ${existingCustomer ? "existing" : "new"} customer`;
+        }
+
+        if (scale) {
+            string += ` and is a ${scale}`;
+        }
+
+        if (state) {
+            string += ` from ${state}`;
+        }
+
+        if (category) {
+            string += ` in the ${category} category`;
+        }
+
+        if (levelOfCover) {
+            string += ` with a level of cover: ${levelOfCover}`;
+        }
+
+        if (budget) {
+            string += ` with a ${frequency} budget of ${budget}`;
+        }
+
+        if (geography) {
+            string += ` in the ${geography} geography`;
+        }
+
+        if (notes) {
+            string += ` and has the following notes: ${notes}`;
+        }
+        console.log(string);
+        setCustomerProfileString(string);
     };
 
     const handleSetFilter = (filter: FilterSettings) => {
         setFilterSettings(filter);
     };
 
+    const handleSearchPromptTemplateChange = (e, newValue) => {
+        setSearchPromptTemplate(newValue);
+    };
+
+    const onTempratureChange = (_ev, newValue) => {
+        setTemprature(newValue);
+    };
+
+    const onSearchTempratureChange = (_ev, newValue) => {
+        setSearchTemprature(newValue);
+    };
+
+    const onSearchTokensChange = (_ev, newValue) => {
+        setSearchTokens(newValue);
+    };
+
+    const onSend = question => {
+        console.log({ searchTemprature: parseFloat(searchTemprature), searchTokens: parseInt(searchTokens), temprature: parseFloat(temprature) });
+        makeApiRequest(question);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
-                <SearchFilterButton className={styles.commandButton} onClick={() => setIsFilterPanelOpen(!isProfilePanelOpen)} />
+                <SearchFilterButton className={styles.commandButton} onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)} />
                 <CustomerProfileButton className={styles.commandButton} onClick={() => setIsProfilePanelOpen(!isProfilePanelOpen)} />
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
             </div>
             <div className={styles.chatRoot}>
                 <Panel
@@ -176,7 +244,16 @@ const Chat = () => {
                     onDismiss={() => setIsFilterPanelOpen(false)}
                     closeButtonAriaLabel="Close"
                 >
-                    <FilterPanel className={styles.profilePanel} onSetFilter={handleSetFilter} />
+                    <FilterPanel
+                        className={styles.profilePanel}
+                        onSetFilter={handleSetFilter}
+                        defaultQuery={searchPromptTemplate}
+                        searchTemperature={searchTemprature}
+                        onQueryPromptChange={handleSearchPromptTemplateChange}
+                        onSearchTempratureChange={onSearchTempratureChange}
+                        searchTokens={searchTokens}
+                        onSearchTokensChange={onSearchTokensChange}
+                    />
                 </Panel>
 
                 {/* Profile Panel */}
@@ -188,7 +265,7 @@ const Chat = () => {
                     onDismiss={() => setIsProfilePanelOpen(false)}
                     closeButtonAriaLabel="Close"
                 >
-                    <ProfilePanel className={styles.profilePanel} />
+                    <ProfilePanel className={styles.profilePanel} setProfile={setProfile} />
                 </Panel>
 
                 <div className={styles.chatContainer}>
@@ -243,7 +320,7 @@ const Chat = () => {
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
+                            onSend={onSend}
                         />
                     </div>
                 </div>
@@ -260,7 +337,7 @@ const Chat = () => {
                 )}
 
                 <Panel
-                    headerText="Configure answer generation"
+                    headerText="Chat Settings"
                     isOpen={isConfigPanelOpen}
                     isBlocking={false}
                     onDismiss={() => setIsConfigPanelOpen(false)}
@@ -271,8 +348,9 @@ const Chat = () => {
                     <TextField
                         className={styles.chatSettingsSeparator}
                         defaultValue={promptTemplate}
-                        label="Override prompt template"
+                        label="Chat prompt"
                         multiline
+                        rows={20}
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
                     />
@@ -285,6 +363,7 @@ const Chat = () => {
                         defaultValue={retrieveCount.toString()}
                         onChange={onRetrieveCountChange}
                     />
+                    <TextField className={styles.chatSettingsSeparator} label="Temprature" value={temprature} onChange={onTempratureChange} />
                     <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
                     <Checkbox
                         className={styles.chatSettingsSeparator}

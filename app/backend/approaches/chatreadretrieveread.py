@@ -32,14 +32,14 @@ Sources:
     Do not include any text inside [] or <<>> in the search query terms.
     If the question is not in English, translate the question to English before generating the search query.
 
-Chat History:
-{chat_history}
+    Chat History:
+    {chat_history}
 
-Question:
-{question}
+    Question:
+    {question}
 
-Search query:
-"""
+    Search query:
+    """
 
     def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
@@ -48,19 +48,30 @@ Search query:
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, history: list[dict], overrides: dict, filters: dict) -> any:
+    def run(self, history: list[dict], overrides: dict, filters: dict, profile: str) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
-        print('😇 filters: ', filters);
+        print('😇 filters: ', filters)
+        print('🏃‍♂️ search_temperature: ', overrides.get("search_temperature"))
+        print('🏃‍♂️ search_max_tokens: ', overrides.get("search_max_tokens"))
+        print('🏃‍♂️ temperature: ', overrides.get("temperature"))
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        prompt = self.query_prompt_template.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=False), question=history[-1]["user"])
+        
+        # Allow client to override the prompt used to generate the search query
+        prompt_search_override = overrides.get("prompt_search_template")
+
+        if prompt_search_override is None:
+            prompt = self.query_prompt_template.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=False), profile=profile, question=history[-1]["user"])
+        else:
+            prompt = prompt_search_override.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=False), profile=profile, question=history[-1]["user"])
+
         completion = openai.Completion.create(
             engine=self.gpt_deployment, 
             prompt=prompt, 
-            temperature=0.0, 
-            max_tokens=32, 
+            temperature=overrides.get("search_temperature") or 0.7, 
+            max_tokens=overrides.get("search_max_tokens") or 32, 
             n=1, 
             stop=["\n"])
         q = completion.choices[0].text
@@ -88,11 +99,11 @@ Search query:
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         prompt_override = overrides.get("prompt_template")
         if prompt_override is None:
-            prompt = self.prompt_prefix.format(injected_prompt="", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
+            prompt = self.prompt_prefix.format(injected_prompt="", sources=content, chat_history=self.get_chat_history_as_text(history), profile=profile,follow_up_questions_prompt=follow_up_questions_prompt)
         elif prompt_override.startswith(">>>"):
-            prompt = self.prompt_prefix.format(injected_prompt=prompt_override[3:] + "\n", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
+            prompt = self.prompt_prefix.format(injected_prompt=prompt_override[3:] + "\n", sources=content, chat_history=self.get_chat_history_as_text(history), profile=profile, follow_up_questions_prompt=follow_up_questions_prompt)
         else:
-            prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
+            prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), profile=profile, follow_up_questions_prompt=follow_up_questions_prompt)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         completion = openai.Completion.create(
