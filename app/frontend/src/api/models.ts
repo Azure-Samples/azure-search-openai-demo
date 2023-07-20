@@ -34,8 +34,14 @@ export type ChatTurn = {
     bot?: string;
 };
 
+export type Profile = {
+    familyType?: string;
+    existingCustomer?: boolean;
+};
+
 export type ChatRequest = {
     history: ChatTurn[];
     approach: Approaches;
     overrides?: AskRequestOverrides;
+    profile?: Profile;
 };

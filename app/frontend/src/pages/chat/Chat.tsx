@@ -13,9 +13,25 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { ProfilePanel } from "../../components/ProfilePanel";
+import { FilterPanel } from "../../components/FilterPanel";
+import { CustomerProfileButton } from "../../components/CustomerProfileButton";
+import { SearchFilterButton } from "../../components/SearchFilterButton";
+
+interface CustomerProfile {
+    existingCustomer: boolean;
+    name: string;
+    familyType: string;
+    coverType: string;
+    ages: string;
+    budget: string;
+    notes: string;
+}
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false);
+    const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -36,6 +52,7 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
     const makeApiRequest = async (question: string) => {
+        console.log("makeApiRequest", question);
         lastQuestionRef.current = question;
 
         error && setError(undefined);
@@ -55,6 +72,10 @@ const Chat = () => {
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
+                },
+                profile: {
+                    familyType: "single",
+                    existingCustomer: true
                 }
             };
             const result = await chatApi(request);
@@ -125,13 +146,41 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const setProfile = (profile: CustomerProfile) => {
+        console.log("setProfile", profile);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
+                <SearchFilterButton className={styles.commandButton} onClick={() => setIsFilterPanelOpen(!isProfilePanelOpen)} />
+                <CustomerProfileButton className={styles.commandButton} onClick={() => setIsProfilePanelOpen(!isProfilePanelOpen)} />
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
+                <Panel
+                    headerText="Filter database search"
+                    isOpen={isFilterPanelOpen}
+                    isBlocking={false}
+                    onDismiss={() => setIsFilterPanelOpen(false)}
+                    closeButtonAriaLabel="Close"
+                >
+                    <FilterPanel className={styles.profilePanel} />
+                </Panel>
+
+                {/* Profile Panel */}
+
+                <Panel
+                    headerText="Configure customer profile"
+                    isOpen={isProfilePanelOpen}
+                    isBlocking={false}
+                    onDismiss={() => setIsProfilePanelOpen(false)}
+                    closeButtonAriaLabel="Close"
+                >
+                    <ProfilePanel className={styles.profilePanel} />
+                </Panel>
+
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
