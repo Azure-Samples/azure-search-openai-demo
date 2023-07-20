@@ -25,7 +25,16 @@ const stateOptions: IDropdownOption[] = [
     { key: "WA", text: "Western Australia" }
 ];
 
-export const FilterPanel = ({ className, onSetFilter, onQueryPromptChange, defaultQuery }: Props) => {
+export const FilterPanel = ({
+    className,
+    onSetFilter,
+    onQueryPromptChange,
+    defaultQuery,
+    onSearchTempratureChange,
+    searchTemperature,
+    searchTokens,
+    onSearchTokensChange
+}: Props) => {
     const [familyType, setFamilyType] = useState("");
     const [productType, setProductType] = useState("");
     const [state, setState] = useState("");
@@ -68,6 +77,8 @@ export const FilterPanel = ({ className, onSetFilter, onQueryPromptChange, defau
             <Dropdown placeholder="Select State" label="State" options={stateOptions} onChange={handleStateChange} />
             <Dropdown placeholder="Set lifecycle" label="Lifecycle" options={lifeCycleOptions} onChange={handleLifecycleChange} />
             <br />
+            <TextField label="Search Max Tokens" value={searchTokens} onChange={onSearchTokensChange} />
+            <TextField label="Search Temprature" value={searchTemperature} onChange={onSearchTempratureChange} />
             <TextField defaultValue={defaultQuery} label="Query prompt" multiline rows={20} autoAdjustHeight onChange={onQueryPromptChange} />
         </div>
     );

@@ -51,6 +51,9 @@ const Chat = () => {
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
     const [filterSettings, setFilterSettings] = useState<FilterSettings>({});
+    const [temprature, setTemprature] = useState<string>("0.7");
+    const [searchTemprature, setSearchTemprature] = useState<string>("0.0");
+    const [searchTokens, setSearchTokens] = useState<string>("32");
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -65,7 +68,6 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
     const makeApiRequest = async (question: string) => {
-        console.log("makeApiRequest", question);
         lastQuestionRef.current = question;
 
         error && setError(undefined);
@@ -79,6 +81,9 @@ const Chat = () => {
                 history: [...history, { user: question, bot: undefined }],
                 approach: Approaches.ReadRetrieveRead,
                 overrides: {
+                    temperature: parseFloat(temprature),
+                    searchTemperature: parseFloat(searchTemprature),
+                    searchMaxTokens: parseInt(searchTokens),
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     searchPromptTemplate: searchPromptTemplate.length === 0 ? undefined : searchPromptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -87,7 +92,8 @@ const Chat = () => {
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 },
-                profile: customerProfileString.length === 0 ? undefined : customerProfileString,
+                profile:
+                    customerProfileString.length === 0 ? "Actually, no customer has been given. Please inform me if i ask about it." : customerProfileString,
                 filters: filterSettings
             };
             const result = await chatApi(request);
@@ -205,6 +211,23 @@ const Chat = () => {
         setSearchPromptTemplate(newValue);
     };
 
+    const onTempratureChange = (_ev, newValue) => {
+        setTemprature(newValue);
+    };
+
+    const onSearchTempratureChange = (_ev, newValue) => {
+        setSearchTemprature(newValue);
+    };
+
+    const onSearchTokensChange = (_ev, newValue) => {
+        setSearchTokens(newValue);
+    };
+
+    const onSend = question => {
+        console.log({ searchTemprature: parseFloat(searchTemprature), searchTokens: parseInt(searchTokens), temprature: parseFloat(temprature) });
+        makeApiRequest(question);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -225,7 +248,11 @@ const Chat = () => {
                         className={styles.profilePanel}
                         onSetFilter={handleSetFilter}
                         defaultQuery={searchPromptTemplate}
+                        searchTemperature={searchTemprature}
                         onQueryPromptChange={handleSearchPromptTemplateChange}
+                        onSearchTempratureChange={onSearchTempratureChange}
+                        searchTokens={searchTokens}
+                        onSearchTokensChange={onSearchTokensChange}
                     />
                 </Panel>
 
@@ -293,7 +320,7 @@ const Chat = () => {
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
+                            onSend={onSend}
                         />
                     </div>
                 </div>
@@ -336,6 +363,7 @@ const Chat = () => {
                         defaultValue={retrieveCount.toString()}
                         onChange={onRetrieveCountChange}
                     />
+                    <TextField className={styles.chatSettingsSeparator} label="Temprature" value={temprature} onChange={onTempratureChange} />
                     <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
                     <Checkbox
                         className={styles.chatSettingsSeparator}

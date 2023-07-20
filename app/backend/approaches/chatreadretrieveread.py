@@ -54,7 +54,9 @@ Sources:
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
         print('😇 filters: ', filters)
-        print('😇 profile: ', profile)
+        print('🏃‍♂️ search_temperature: ', overrides.get("search_temperature"))
+        print('🏃‍♂️ search_max_tokens: ', overrides.get("search_max_tokens"))
+        print('🏃‍♂️ temperature: ', overrides.get("temperature"))
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         
         # Allow client to override the prompt used to generate the search query
@@ -68,13 +70,11 @@ Sources:
         completion = openai.Completion.create(
             engine=self.gpt_deployment, 
             prompt=prompt, 
-            temperature=0.0, 
-            max_tokens=32, 
+            temperature=overrides.get("search_temperature") or 0.7, 
+            max_tokens=overrides.get("search_max_tokens") or 32, 
             n=1, 
             stop=["\n"])
         q = completion.choices[0].text
-
-        print('🥵 search query: ', q)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
         if overrides.get("semantic_ranker"):

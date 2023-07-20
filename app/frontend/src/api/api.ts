@@ -46,6 +46,8 @@ export async function chatApi(options): Promise<AskResponse> {
                 semantic_captions: options.overrides?.semanticCaptions,
                 top: options.overrides?.top,
                 temperature: options.overrides?.temperature,
+                search_temperature: options.overrides?.searchTemperature,
+                search_max_tokens: options.overrides?.searchMaxTokens,
                 prompt_template: options.overrides?.promptTemplate,
                 prompt_search_template: options.overrides?.searchPromptTemplate,
                 prompt_template_prefix: options.overrides?.promptTemplatePrefix,

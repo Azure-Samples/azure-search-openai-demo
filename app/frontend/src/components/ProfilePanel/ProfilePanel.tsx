@@ -83,7 +83,7 @@ export const ProfilePanel = ({ className, setProfile }: Props) => {
             <TextField label="Geography" value={geography} placeholder="Enter geography (e.g., international, retail, etc.)" onChange={handleGeographyChange} />
             <TextField label="Category" value={category} onChange={handleCategoryChange} placeholder="Hospital, Hospital Extras" />
             <br />
-            <Slider ranged label="Budget" min={0} max={300} defaultValue={300} defaultLowerValue={10} onChange={handleBudgetChange} />
+            <Slider ranged label="Budget $" min={0} max={2000} defaultValue={900} defaultLowerValue={10} onChange={handleBudgetChange} />
             <TextField label="Frequency" value={frequency} onChange={handleFrequencyChange} placeholder="Monthly, Fortnightly, Weekly" />
             <TextField label="Notes" multiline rows={5} value={notes} onChange={handleNotesChange} placeholder="Medical history, or upcoming operations " />
         </div>
