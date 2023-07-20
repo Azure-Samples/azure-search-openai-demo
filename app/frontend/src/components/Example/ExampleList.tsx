@@ -9,11 +9,11 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Bupa Plus plan that is not in standard?",
-        value: "What is included in my Bupa Plus plan that is not in standard?"
+        text: "What plans can you recommend based on the customer profile?",
+        value: "What plans can you recommend based on the customer profile?"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    { text: "What plans do you have available?", value: "What plans do you have available?" },
+    { text: "How can you help me?", value: "How can you help me?" }
 ];
 
 interface Props {

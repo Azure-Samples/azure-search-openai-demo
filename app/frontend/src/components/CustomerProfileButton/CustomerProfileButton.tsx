@@ -1,4 +1,4 @@
-import { Text } from "@fluentui/react";
+import { Text, DefaultButton } from "@fluentui/react";
 
 import styles from "./CustomerProfileButton.module.css";
 
@@ -10,9 +10,9 @@ interface Props {
 
 export const CustomerProfileButton = ({ className, disabled, onClick }: Props) => {
     return (
-        <div className={`${styles.container} ${className ?? ""} ${disabled && styles.disabled}`} onClick={onClick}>
+        <DefaultButton className={`${styles.container} ${className ?? ""} ${disabled && styles.disabled}`} onClick={onClick}>
             🙋‍♂️
-            <Text>{"Customer Profile"}</Text>
-        </div>
+            <Text>{" Customer Profile"}</Text>
+        </DefaultButton>
     );
 };

@@ -44,6 +44,7 @@ const Chat = () => {
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>(DEFAULT_SYSTEM_PROMPT);
     const [searchPromptTemplate, setSearchPromptTemplate] = useState<string>(DEFAULT_QUERY_PROMPT);
+    const [customerProfileString, setCustomerProfileString] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
@@ -86,6 +87,7 @@ const Chat = () => {
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 },
+                profile: customerProfileString.length === 0 ? undefined : customerProfileString,
                 filters: filterSettings
             };
             const result = await chatApi(request);
@@ -156,8 +158,43 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const setProfile = (profile: CustomerProfile) => {
-        console.log("setProfile", profile);
+    const setProfile = profile => {
+        const { existingCustomer, state, category, levelOfCover, scale, budget, geography, notes } = profile;
+        let string = "The customer is";
+
+        if (existingCustomer !== undefined) {
+            string += ` an ${existingCustomer ? "existing" : "new"} customer`;
+        }
+
+        if (scale) {
+            string += ` and is a ${scale}`;
+        }
+
+        if (state) {
+            string += ` from ${state}`;
+        }
+
+        if (category) {
+            string += ` in the ${category} category`;
+        }
+
+        if (levelOfCover) {
+            string += ` with a level of cover: ${levelOfCover}`;
+        }
+
+        if (budget) {
+            string += ` with a budget range of ${budget}`;
+        }
+
+        if (geography) {
+            string += ` in the ${geography} geography`;
+        }
+
+        if (notes) {
+            string += ` and has the following notes: ${notes}`;
+        }
+        console.log(string);
+        setCustomerProfileString(string);
     };
 
     const handleSetFilter = (filter: FilterSettings) => {
@@ -171,10 +208,10 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
-                <SearchFilterButton className={styles.commandButton} onClick={() => setIsFilterPanelOpen(!isProfilePanelOpen)} />
+                <SearchFilterButton className={styles.commandButton} onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)} />
                 <CustomerProfileButton className={styles.commandButton} onClick={() => setIsProfilePanelOpen(!isProfilePanelOpen)} />
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
             </div>
             <div className={styles.chatRoot}>
                 <Panel
@@ -201,7 +238,7 @@ const Chat = () => {
                     onDismiss={() => setIsProfilePanelOpen(false)}
                     closeButtonAriaLabel="Close"
                 >
-                    <ProfilePanel className={styles.profilePanel} />
+                    <ProfilePanel className={styles.profilePanel} setProfile={setProfile} />
                 </Panel>
 
                 <div className={styles.chatContainer}>

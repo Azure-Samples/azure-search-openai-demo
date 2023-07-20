@@ -1,5 +1,4 @@
-import { Text } from "@fluentui/react";
-
+import { Text, DefaultButton } from "@fluentui/react";
 import styles from "./SearchFilterButton.module.css";
 
 interface Props {
@@ -10,9 +9,9 @@ interface Props {
 
 export const SearchFilterButton = ({ className, disabled, onClick }: Props) => {
     return (
-        <div className={`${styles.container} ${className ?? ""} ${disabled && styles.disabled}`} onClick={onClick}>
+        <DefaultButton className={`${styles.container} ${className ?? ""} ${disabled && styles.disabled}`} onClick={onClick}>
             🔎
-            <Text>{"Search Filters"}</Text>
-        </div>
+            <Text>{" Search Filters"}</Text>
+        </DefaultButton>
     );
 };

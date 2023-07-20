@@ -58,7 +58,8 @@ export async function chatApi(options): Promise<AskResponse> {
                 product_type: options.filters?.productType,
                 state_type: options.filters?.stateType,
                 lifecycle: options.filters?.lifecycle
-            }
+            },
+            profile: options.profile
         })
     });
 
