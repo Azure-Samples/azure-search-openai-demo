@@ -49,6 +49,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       appCommandLine: appCommandLine
       numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
       minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
+      minTlsVersion: '1.2'
       use32BitWorkerProcess: use32BitWorkerProcess
       functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
       healthCheckPath: healthCheckPath
