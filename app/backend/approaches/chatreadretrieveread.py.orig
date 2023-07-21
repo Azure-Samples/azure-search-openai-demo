@@ -100,7 +100,7 @@ Sources:
                                           semantic_configuration_name="default", 
                                           top=top, 
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
-        elif overrides.get("product_filters"):
+        elif overrides.get("product_filter_only"):
             # Pass last question as the query on the document
             q = history[-1]["user"]
             print("rigid query", q)

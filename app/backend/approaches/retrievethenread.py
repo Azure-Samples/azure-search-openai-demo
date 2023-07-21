@@ -3,6 +3,7 @@ from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from text import nonewlines
+from helpers.filters import Filter
 
 # Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
 # top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
@@ -39,20 +40,31 @@ Sources:
 Answer:
 """
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str,
+                 sourcefile_field: str, productname_field: str, familytype_field: str,
+                 state_field: str, lifecycle_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.sourcepage_field = sourcepage_field
+        self.sourcefile_field = sourcefile_field
+        self.productname_field = productname_field
+        self.familytype_field = familytype_field
+        self.state_field = state_field
+        self.lifecycle_field = lifecycle_field
         self.content_field = content_field
 
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict, filters: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+
+        filtering_helper = Filter(self.productname_field, self.familytype_field, self.state_field, self.lifecycle_field)
+        filter = filtering_helper.create_filter_string(filters, exclude_category)
+        print("search filter", filter)
 
         if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q, 
+            r = self.search_client.search(search_text=q,
+                                          search_mode="any",
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
