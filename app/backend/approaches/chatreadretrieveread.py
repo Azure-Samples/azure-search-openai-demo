@@ -102,7 +102,7 @@ Sources:
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
         elif overrides.get("product_filters"):
             # Pass last question as the query on the document
-            q = history[-1]["user"]
+            q = "" #TODO: this query needs to be more contextual 
             print("rigid query", q)
             print("rigid search filter", filter)
             r = self.search_client.search(search_text= q, search_mode="all", filter=filter, top=top)
@@ -116,7 +116,7 @@ Sources:
         else:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
         content = "\n".join(results)
-
+        print("Results", results)
         follow_up_questions_prompt = self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
         
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
