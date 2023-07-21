@@ -6,6 +6,7 @@ export const enum Approaches {
 
 export type AskRequestOverrides = {
     semanticRanker?: boolean;
+    productFilters?: boolean;
     semanticCaptions?: boolean;
     excludeCategory?: string;
     top?: number;

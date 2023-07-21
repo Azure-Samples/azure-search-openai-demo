@@ -23,7 +23,12 @@ AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMEN
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
+KB_FIELDS_PRODUCTNAME = os.environ.get("KB_FIELDS_PRODUCTNAME") or "productname"
+KB_FIELDS_SOURCEFILE = os.environ.get("KB_FIELDS_SOURCEFILE") or "sourcefile"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
+KB_FIELDS_FAMILYTYPE = os.environ.get("KB_FIELDS_FAMILYTYPE") or "familytype"
+KB_FIELDS_STATE = os.environ.get("KB_FIELDS_STATE") or "state"
+KB_FIELDS_LIFECYCLE = os.environ.get("KB_FIELDS_LIFECYCLE") or "lifecycle"
 
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
@@ -54,13 +59,21 @@ blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
 # or some derivative, here we include several for exploration purposes
 ask_approaches = {
-    "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_SOURCEFILE,
+                                    KB_FIELDS_PRODUCTNAME, KB_FIELDS_FAMILYTYPE, KB_FIELDS_STATE, KB_FIELDS_LIFECYCLE,
+                                    KB_FIELDS_CONTENT),
+    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_SOURCEFILE,
+                                    KB_FIELDS_PRODUCTNAME, KB_FIELDS_FAMILYTYPE, KB_FIELDS_STATE, KB_FIELDS_LIFECYCLE,
+                                    KB_FIELDS_CONTENT),
+    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_SOURCEFILE,
+                            KB_FIELDS_PRODUCTNAME, KB_FIELDS_FAMILYTYPE, KB_FIELDS_STATE, KB_FIELDS_LIFECYCLE,
+                            KB_FIELDS_CONTENT)
 }
 
 chat_approaches = {
-    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rrr": ChatReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT_DEPLOYMENT,
+                                        KB_FIELDS_SOURCEPAGE, KB_FIELDS_SOURCEFILE, KB_FIELDS_PRODUCTNAME, KB_FIELDS_FAMILYTYPE,
+                                        KB_FIELDS_STATE, KB_FIELDS_LIFECYCLE, KB_FIELDS_CONTENT)
 }
 
 app = Flask(__name__)

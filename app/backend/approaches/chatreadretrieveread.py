@@ -3,6 +3,7 @@ from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from approaches.approach import Approach
 from text import nonewlines
+from helpers.filters import Filter
 
 # Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
 # top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
@@ -41,19 +42,28 @@ Question:
 Search query:
 """
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, sourcepage_field: str,
+                 sourcefile_field: str, productname_field: str, familytype_field: str,
+                 state_field: str, lifecycle_field: str, content_field: str):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
         self.gpt_deployment = gpt_deployment
         self.sourcepage_field = sourcepage_field
+        self.sourcefile_field = sourcefile_field
+        self.productname_field = productname_field
+        self.familytype_field = familytype_field
+        self.state_field = state_field
+        self.lifecycle_field = lifecycle_field
         self.content_field = content_field
-
+    
     def run(self, history: list[dict], overrides: dict, filters: dict) -> any:
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
-        print('😇 filters: ', filters);
+        
+        filtering_helper = Filter(self.productname_field, self.familytype_field, self.state_field, self.lifecycle_field)
+        filter = filtering_helper.create_filter_string(filters, exclude_category)
+
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         prompt = self.query_prompt_template.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=False), question=history[-1]["user"])
         completion = openai.Completion.create(
@@ -64,10 +74,13 @@ Search query:
             n=1, 
             stop=["\n"])
         q = completion.choices[0].text
-
+        
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
         if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q, 
+            print("semantic query", q)
+            print("semantic search filter", filter)
+            r = self.search_client.search(search_text=q,
+                                          search_mode="any",
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
@@ -75,8 +88,17 @@ Search query:
                                           semantic_configuration_name="default", 
                                           top=top, 
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
+        elif overrides.get("product_filter_only"):
+            # Pass last question as the query on the document
+            q = history[-1]["user"]
+            print("rigid query", q)
+            print("rigid search filter", filter)
+            r = self.search_client.search(search_text= q, search_mode="all", filter=filter, top=top)
         else:
-            r = self.search_client.search(q, filter=filter, top=top)
+            print("default query", q)
+            print("default search filter", filter)
+            r = self.search_client.search(search_text=q, search_mode="any", filter=filter, top=top)
+
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:

@@ -43,6 +43,7 @@ const Chat = () => {
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
+    const [useProductFilterOnly, setUseProductFilterOnly] = useState<boolean>(false);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
@@ -79,6 +80,7 @@ const Chat = () => {
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
                     top: retrieveCount,
                     semanticRanker: useSemanticRanker,
+                    productFilters: useProductFilterOnly,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 },
@@ -113,6 +115,10 @@ const Chat = () => {
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSemanticRanker(!!checked);
+    };
+
+    const onUseProductFilterOnlyChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseProductFilterOnly(!!checked);
     };
 
     const onUseSemanticCaptionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
@@ -291,6 +297,14 @@ const Chat = () => {
                         checked={useSemanticRanker}
                         label="Use semantic ranker for retrieval"
                         onChange={onUseSemanticRankerChange}
+                        disabled={useProductFilterOnly}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useProductFilterOnly}
+                        label="Use product filter only for retrieval (turn off semantic ranker above)"
+                        onChange={onUseProductFilterOnlyChange}
+                        disabled={useSemanticRanker}
                     />
                     <Checkbox
                         className={styles.chatSettingsSeparator}

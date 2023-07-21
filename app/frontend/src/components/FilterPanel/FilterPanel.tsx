@@ -15,14 +15,14 @@ const lifeCycleOptions: IDropdownOption[] = [
 
 const stateOptions: IDropdownOption[] = [
     { key: "", text: "None" },
-    { key: "ACT", text: "Australian Capital Territory" },
-    { key: "NSW", text: "New South Wales" },
-    { key: "NT", text: "Northern Territory" },
-    { key: "QLD", text: "Queensland" },
-    { key: "SA", text: "South Australia" },
-    { key: "TAS", text: "Tasmania" },
-    { key: "VIC", text: "Victoria" },
-    { key: "WA", text: "Western Australia" }
+    { key: "Act", text: "Australian Capital Territory" },
+    { key: "Nsw", text: "New South Wales" },
+    { key: "Nt", text: "Northern Territory" },
+    { key: "Qld", text: "Queensland" },
+    { key: "Sa", text: "South Australia" },
+    { key: "Tas", text: "Tasmania" },
+    { key: "Vic", text: "Victoria" },
+    { key: "Wa", text: "Western Australia" }
 ];
 
 export const FilterPanel = ({ className, onSetFilter }: Props) => {
