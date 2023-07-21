@@ -21,6 +21,19 @@ import { SearchFilterButton } from "../../components/SearchFilterButton";
 
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_QUERY_PROMPT } from "../../constants";
 
+function removeEmptyAttributes(obj) {
+    const result = {};
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+            if (value !== "" && value !== undefined && value !== null) {
+                result[key] = value;
+            }
+        }
+    }
+    return result;
+}
+
 interface CustomerProfile {
     existingCustomer: boolean;
     name: string;
@@ -94,7 +107,7 @@ const Chat = () => {
                 },
                 profile:
                     customerProfileString.length === 0 ? "Actually, no customer has been given. Please inform me if i ask about it." : customerProfileString,
-                filters: filterSettings
+                filters: removeEmptyAttributes(filterSettings)
             };
             const result = await chatApi(request);
             setAnswers([...answers, [question, result]]);
@@ -199,7 +212,6 @@ const Chat = () => {
         if (notes) {
             string += ` and has the following notes: ${notes}`;
         }
-        console.log(string);
         setCustomerProfileString(string);
     };
 
@@ -224,7 +236,6 @@ const Chat = () => {
     };
 
     const onSend = question => {
-        console.log({ searchTemprature: parseFloat(searchTemprature), searchTokens: parseInt(searchTokens), temprature: parseFloat(temprature) });
         makeApiRequest(question);
     };
 

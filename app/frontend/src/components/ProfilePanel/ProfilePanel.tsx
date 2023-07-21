@@ -61,7 +61,7 @@ export const ProfilePanel = ({ className, setProfile }: Props) => {
     const handleProfileChange = field => {
         const currentProfile = {
             existingCustomer,
-            budget,
+            budget: `$${budget[0]} - $${budget[1]}`,
             notes,
             levelOfCover,
             scale,
