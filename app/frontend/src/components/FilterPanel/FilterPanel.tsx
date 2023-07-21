@@ -9,6 +9,7 @@ interface Props {
 }
 
 const lifeCycleOptions: IDropdownOption[] = [
+    { key: "", text: "None" },
     { key: "OnSale", text: "OnSale" },
     { key: "OffSale", text: "OffSale" }
 ];
@@ -25,37 +26,49 @@ const stateOptions: IDropdownOption[] = [
     { key: "Wa", text: "Western Australia" }
 ];
 
-export const FilterPanel = ({ className, onSetFilter }: Props) => {
+export const FilterPanel = ({
+    className,
+    onSetFilter,
+    onQueryPromptChange,
+    defaultQuery,
+    onSearchTempratureChange,
+    searchTemperature,
+    searchTokens,
+    onSearchTokensChange
+}: Props) => {
     const [familyType, setFamilyType] = useState("");
     const [productType, setProductType] = useState("");
     const [state, setState] = useState("");
     const [lifecycle, setLifecycle] = useState("");
 
-    const handleFamilyTypeChange = (event: React.FormEvent, newValue?: string) => {
-        setFamilyType(newValue ?? "");
-    };
-
-    const handleProductTypeChange = (event: React.FormEvent, newValue?: string) => {
-        setProductType(newValue ?? "");
-    };
-
-    const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
-        setState(newValue ?? "");
-    };
-
-    const handleLifecycleChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
-        setLifecycle(newValue ?? "");
-    };
-
-    const handleGenerateProfile = () => {
+    const handleProfileChange = field => {
         const currentFilters = {
             familyType,
             productType,
             stateType: state.key,
             lifecycle: lifecycle.key
         };
-        onSetFilter(currentFilters);
-        console.log("filter set: ", currentFilters);
+        onSetFilter({ ...currentFilters, ...field });
+    };
+
+    const handleFamilyTypeChange = (event: React.FormEvent, newValue?: string) => {
+        setFamilyType(newValue ?? "");
+        handleProfileChange({ familyType: newValue });
+    };
+
+    const handleProductTypeChange = (event: React.FormEvent, newValue?: string) => {
+        setProductType(newValue ?? "");
+        handleProfileChange({ productType: newValue });
+    };
+
+    const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
+        setState(newValue ?? "");
+        handleProfileChange({ stateType: newValue.key });
+    };
+
+    const handleLifecycleChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
+        setLifecycle(newValue ?? "");
+        handleProfileChange({ lifecycle: newValue.key });
     };
 
     return (
@@ -65,7 +78,9 @@ export const FilterPanel = ({ className, onSetFilter }: Props) => {
             <Dropdown placeholder="Select State" label="State" options={stateOptions} onChange={handleStateChange} />
             <Dropdown placeholder="Set lifecycle" label="Lifecycle" options={lifeCycleOptions} onChange={handleLifecycleChange} />
             <br />
-            <PrimaryButton text="Set Filter" onClick={handleGenerateProfile} allowDisabledFocus />
+            <TextField label="Search Max Tokens" value={searchTokens} onChange={onSearchTokensChange} />
+            <TextField label="Search Temprature" value={searchTemperature} onChange={onSearchTempratureChange} />
+            <TextField defaultValue={defaultQuery} label="Query prompt" multiline rows={20} autoAdjustHeight onChange={onQueryPromptChange} />
         </div>
     );
 };

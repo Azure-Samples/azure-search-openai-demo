@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AskRequest, AskResponse, ChatRequest } from "./models";
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
@@ -31,7 +32,8 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
-export async function chatApi(options: ChatRequest): Promise<AskResponse> {
+export async function chatApi(options): Promise<AskResponse> {
+    console.log("chatApi options", options);
     const response = await fetch("/chat", {
         method: "POST",
         headers: {
@@ -46,7 +48,10 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
                 product_filters: options.overrides?.productFilters,
                 top: options.overrides?.top,
                 temperature: options.overrides?.temperature,
+                search_temperature: options.overrides?.searchTemperature,
+                search_max_tokens: options.overrides?.searchMaxTokens,
                 prompt_template: options.overrides?.promptTemplate,
+                prompt_search_template: options.overrides?.searchPromptTemplate,
                 prompt_template_prefix: options.overrides?.promptTemplatePrefix,
                 prompt_template_suffix: options.overrides?.promptTemplateSuffix,
                 exclude_category: options.overrides?.excludeCategory,
@@ -57,7 +62,8 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
                 product_type: options.filters?.productType,
                 state_type: options.filters?.stateType,
                 lifecycle: options.filters?.lifecycle
-            }
+            },
+            profile: options.profile
         })
     });
 
