@@ -1,0 +1,19 @@
+name: Validate AZD template
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build Bicep for linting
+        uses: azure/CLI@v1
+        with:
+          inlineScript: az config set bicep.use_binary_from_path=false && az bicep build -f infra/main.bicep --stdout

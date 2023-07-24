@@ -3,20 +3,25 @@ from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.llms.openai import AzureOpenAI
-from langchain.callbacks.base import CallbackManager
+from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
-from langchain.llms.openai import AzureOpenAI
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 from lookuptool import CsvLookupTool
+from typing import Any
 
-# Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
-# is present then formulate an answer. Each iteration consists of two parts: first use GPT to see if we need more information, 
-# second if more data is needed use the requested "tool" to retrieve it. The last call to GPT answers the actual question.
-# This is inspired by the MKRL paper[1] and applied here using the implementation in Langchain.
-# [1] E. Karpas, et al. arXiv:2205.00445
 class ReadRetrieveReadApproach(Approach):
+    """
+    Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
+    is present then formulate an answer. Each iteration consists of two parts:
+     1. use GPT to see if we need more information
+     2. if more data is needed, use the requested "tool" to retrieve it.
+    The last call to GPT answers the actual question.
+    This is inspired by the MKRL paper[1] and applied here using the implementation in Langchain.
+
+    [1] E. Karpas, et al. arXiv:2205.00445
+    """
 
     template_prefix = \
 "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
@@ -39,29 +44,51 @@ Thought: {agent_scratchpad}"""
 
     CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
+        self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def retrieve(self, q: str, overrides: dict) -> any:
-        use_semantic_captions = True if overrides.get("semantic_captions") else False
+    def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
+        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q,
+        # If retrieval mode includes vectors, compute an embedding for the query
+        if has_vector:
+            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+        else:
+            query_vector = None
+
+        # Only keep the text query if the retrieval mode uses text, otherwise drop it
+        if not has_text:
+            query_text = None
+
+        # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
+        if overrides.get("semantic_ranker") and has_text:
+            r = self.search_client.search(query_text,
                                           filter=filter, 
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
                                           query_speller="lexicon", 
                                           semantic_configuration_name="default", 
                                           top = top,
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
+                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(q, filter=filter, top=top)
+            r = self.search_client.search(query_text, 
+                                          filter=filter, 
+                                          top=top, 
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
@@ -69,7 +96,7 @@ Thought: {agent_scratchpad}"""
         content = "\n".join(self.results)
         return content
         
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
         self.results = None
 
@@ -77,8 +104,11 @@ Thought: {agent_scratchpad}"""
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
         
-        acs_tool = Tool(name = "CognitiveSearch", func = lambda q: self.retrieve(q, overrides), description = self.CognitiveSearchToolDescription)
-        employee_tool = EmployeeInfoTool("Employee1")
+        acs_tool = Tool(name="CognitiveSearch", 
+                        func=lambda q: self.retrieve(q, overrides), 
+                        description=self.CognitiveSearchToolDescription,
+                        callbacks=cb_manager)
+        employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
         tools = [acs_tool, employee_tool]
 
         prompt = ZeroShotAgent.create_prompt(
@@ -103,10 +133,14 @@ Thought: {agent_scratchpad}"""
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
 
-    def __init__(self, employee_name: str):
-        super().__init__(filename = "data/employeeinfo.csv", key_field = "name", name = "Employee", description = "useful for answering questions about the employee, their benefits and other personal information")
+    def __init__(self, employee_name: str, callbacks: Callbacks = None):
+        super().__init__(filename="data/employeeinfo.csv", 
+                         key_field="name", 
+                         name="Employee", 
+                         description="useful for answering questions about the employee, their benefits and other personal information",
+                         callbacks=callbacks)
         self.func = self.employee_info
         self.employee_name = employee_name
 
-    def employee_info(self, unused: str) -> str:
-        return self.lookup(self.employee_name)
+    def employee_info(self, name: str) -> str:
+        return self.lookup(name)
