@@ -76,5 +76,10 @@ export async function chatApi(options): Promise<AskResponse> {
 }
 
 export function getCitationFilePath(citation: string): string {
-    return `/content/${citation}`;
+    return `${citation}`;
+}
+
+export function getCitationFileName(url: string): string {
+    const parts = url.split("/");
+    return parts[parts.length - 1];
 }

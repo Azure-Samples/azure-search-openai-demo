@@ -58,7 +58,7 @@ const Chat = () => {
     const [promptTemplate, setPromptTemplate] = useState<string>(DEFAULT_SYSTEM_PROMPT);
     const [searchPromptTemplate, setSearchPromptTemplate] = useState<string>(DEFAULT_QUERY_PROMPT);
     const [customerProfileString, setCustomerProfileString] = useState<string>("");
-    const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [retrieveCount, setRetrieveCount] = useState<number>(6);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useProductFilterOnly, setUseProductFilterOnly] = useState<boolean>(false);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);

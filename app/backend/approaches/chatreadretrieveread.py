@@ -102,7 +102,7 @@ Sources:
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None)
         elif overrides.get("product_filters"):
             # Pass last question as the query on the document
-            q = "" #TODO: this query needs to be more contextual 
+            q = "*" #TODO: this query needs to be more contextual 
             print("rigid query", q)
             print("rigid search filter", filter)
             r = self.search_client.search(search_text= q, search_mode="all", filter=filter, top=top)
@@ -112,9 +112,9 @@ Sources:
             r = self.search_client.search(search_text=q, search_mode="any", filter=filter, top=top)
 
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            results = [doc[self.sourcefile_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
+            results = [doc[self.sourcefile_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
         content = "\n".join(results)
         print("Results", results)
         follow_up_questions_prompt = self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""

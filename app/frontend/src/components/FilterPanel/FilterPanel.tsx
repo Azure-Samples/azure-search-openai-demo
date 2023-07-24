@@ -73,8 +73,8 @@ export const FilterPanel = ({
 
     return (
         <div>
-            <TextField label="Family Type" value={familyType} onChange={handleFamilyTypeChange} />
-            <TextField label="Product" value={productType} onChange={handleProductTypeChange} />
+            <TextField label="Family Type" value={familyType} onChange={handleFamilyTypeChange} placeholder="e.g. Couple, Family, SingleParentPlus" />
+            <TextField label="Product" value={productType} onChange={handleProductTypeChange} placeholder="e.g. Start 'n' Save - Gold" />
             <Dropdown placeholder="Select State" label="State" options={stateOptions} onChange={handleStateChange} />
             <Dropdown placeholder="Set lifecycle" label="Lifecycle" options={lifeCycleOptions} onChange={handleLifecycleChange} />
             <br />
