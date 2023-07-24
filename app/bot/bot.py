@@ -4,27 +4,46 @@ import aiohttp
 from typing import List  
 from botbuilder.core import ActivityHandler, TurnContext  
 from botbuilder.schema import ChannelAccount, Activity, ActivityTypes  
-from langchain.memory import ConversationBufferWindowMemory  
-from langchain.agents import ConversationalChatAgent, AgentExecutor, Tool  
-from langchain.llms import OpenAI  
-from langchain.chat_models import ChatOpenAI  
-from langchain.schema import BaseOutputParser, OutputParserException  
-from langchain.chains import LLMChain  
-from langchain.prompts import PromptTemplate  
   
-API_ENDPOINT = os.environ.get("API_ENDPOINT", "")  #backend api endpoint "app-backend.azurewebsites.net/chat"
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")  # OAI API KEY
-OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "")  
-OPENAI_API_VERSION = os.environ.get("OPENAI_API_VERSION", "2023-05-15")  
+API_ENDPOINT = os.environ.get("API_ENDPOINT", "https://app=backend-azurewebsites.net/chat")  
   
 class ChatGptRequest:  
     def __init__(self, history: List, approach: str = "rrr", overrides=None):  
         self.history = history  
         self.approach = approach  
-        self.overrides = overrides if overrides else {}  
+        self.overrides = overrides if overrides else OverRides()  
   
     def to_json(self):  
         return json.dumps(self, default=lambda o: o.__dict__)  
+  
+class OverRides:  
+    def __init__(  
+        self,  
+        retrieval_mode: str = "hybrid",  
+        semantic_ranker: bool = True,  
+        semantic_captions: bool = True,  
+        top: int = 5,  
+        suggest_followup_questions: bool = True,  
+    ):  
+        self.retrieval_mode = retrieval_mode  
+        self.semantic_ranker = semantic_ranker  
+        self.semantic_captions = semantic_captions  
+        self.top = top  
+        self.suggest_followup_questions = suggest_followup_questions  
+  
+class ChatGptResponse:  
+    def __init__(self, answer: str = "", **kwargs):  
+        self.answer = answer  
+  
+    @classmethod  
+    def from_json(cls, json_str: str):  
+        if not json_str:  
+            return cls(answer="No response from the API.")  
+        try:  
+            json_dict = json.loads(json_str)  
+            return cls(**json_dict)  
+        except json.JSONDecodeError:  
+            return cls(answer="Invalid response format from the API.")  
   
 async def chat_gpt_request(user_message: str) -> str:  
     history = [{"user": user_message}]  
@@ -38,29 +57,15 @@ async def chat_gpt_request(user_message: str) -> str:
     async with aiohttp.ClientSession() as session:  
         async with session.post(API_ENDPOINT, data=payload, headers=headers) as response:  
             response_text = await response.text()  
-            return response_text  
+            api_response = ChatGptResponse.from_json(response_text)  
   
-llm = OpenAI(api_key=OPENAI_API_KEY, verbose=False)  
-tools = [  
-    Tool(  
-        name="@chat",  
-        func=chat_gpt_request,  
-        description="useful when the questions include the term: @chat.\n",  
-        return_direct=True,  
-    ),  
-]  
-agent = ConversationalChatAgent.from_llm_and_tools(llm=llm, tools=tools)  
-memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=10)  
-agent_chain = AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True, memory=memory)  
+    return api_response.answer  
   
 class MyBot(ActivityHandler):  
     async def on_message_activity(self, turn_context: TurnContext):  
         user_message = turn_context.activity.text  
         if user_message is not None:  
-            if "@chat" in user_message:  
-                response = await chat_gpt_request(user_message)  
-            else:  
-                response = await agent_chain.run(user_message)  
+            response = await chat_gpt_request(user_message)  
             await turn_context.send_activity(response)  
   
     async def on_members_added_activity(self, members_added: List[ChannelAccount], turn_context: TurnContext):  
