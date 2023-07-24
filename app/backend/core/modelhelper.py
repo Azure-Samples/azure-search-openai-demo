@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import tiktoken
 
 MODELS_2_TOKEN_LIMITS = {
