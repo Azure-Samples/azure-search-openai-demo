@@ -101,7 +101,7 @@ If you cannot generate a search query, return just the number 0.
                 )
         else:
             messages = self.get_messages_from_history(
-                self.query_prompt_template,
+                prompt_search_override,
                 self.chatgpt_model,
                 history,
                 user_q,
@@ -137,7 +137,8 @@ If you cannot generate a search query, return just the number 0.
         if overrides.get("semantic_ranker") and has_text:
             print("semantic query", query_text)
             print("semantic search filter", filter)
-            r = self.search_client.search(search_text= query_text, 
+            r = self.search_client.search(search_text= query_text,
+                                          search_mode="all",
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
@@ -148,21 +149,11 @@ If you cannot generate a search query, return just the number 0.
                                           vector=query_vector, 
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
-        elif overrides.get("product_filters"):
-            query_text = "*" #TODO: this query needs to be more contextual 
-            print("rigid query", query_text)
-            print("rigid search filter", filter)
-            r = self.search_client.search(search_text= query_text,
-                                          search_mode="all",
-                                          filter=filter, 
-                                          top=top, 
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
-                                          vector_fields="embedding" if query_vector else None)
         else:
             print("default query", query_text)
             print("default search filter", filter)
-            r = self.search_client.search(search_text= query_text, 
+            r = self.search_client.search(search_text= query_text,
+                                          search_mode="all", 
                                           filter=filter, 
                                           top=top, 
                                           vector=query_vector, 

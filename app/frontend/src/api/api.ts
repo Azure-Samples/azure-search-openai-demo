@@ -14,7 +14,6 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
                 retrieval_mode: options.overrides?.retrievalMode,
                 semantic_ranker: options.overrides?.semanticRanker,
                 semantic_captions: options.overrides?.semanticCaptions,
-                product_filters: options.overrides?.productFilters,
                 top: options.overrides?.top,
                 temperature: options.overrides?.temperature,
                 prompt_template: options.overrides?.promptTemplate,

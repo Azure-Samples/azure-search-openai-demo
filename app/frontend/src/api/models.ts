@@ -13,7 +13,6 @@ export const enum RetrievalMode {
 export type AskRequestOverrides = {
     retrievalMode?: RetrievalMode;
     semanticRanker?: boolean;
-    productFilters?: boolean;
     semanticCaptions?: boolean;
     excludeCategory?: string;
     top?: number;

@@ -19,7 +19,6 @@ export function Component(): JSX.Element {
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
-    const [useProductFilterOnly, setUseProductFilterOnly] = useState<boolean>(false);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
 
@@ -52,7 +51,6 @@ export function Component(): JSX.Element {
                     top: retrieveCount,
                     retrievalMode: retrievalMode,
                     semanticRanker: useSemanticRanker,
-                    productFilters: useProductFilterOnly,
                     semanticCaptions: useSemanticCaptions
                 }
             };
@@ -91,10 +89,6 @@ export function Component(): JSX.Element {
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSemanticRanker(!!checked);
-    };
-
-    const onUseProductFilterOnlyChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseProductFilterOnly(!!checked);
     };
 
     const onUseSemanticCaptionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
@@ -247,13 +241,6 @@ export function Component(): JSX.Element {
                     checked={useSemanticRanker}
                     label="Use semantic ranker for retrieval"
                     onChange={onUseSemanticRankerChange}
-                />
-                <Checkbox
-                    className={styles.oneshotSettingsSeparator}
-                    checked={useProductFilterOnly}
-                    label="Use product filter only for retrieval (turn off semantic ranker above)"
-                    onChange={onUseProductFilterOnlyChange}
-                    disabled={useSemanticRanker}
                 />
                 <Checkbox
                     className={styles.oneshotSettingsSeparator}
