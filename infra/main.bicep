@@ -122,7 +122,6 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
-      PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'
     }
   }
 }
