@@ -4,9 +4,15 @@ export const enum Approaches {
     ReadDecomposeAsk = "rda"
 }
 
+export const enum RetrievalMode {
+    Hybrid = "hybrid",
+    Vectors = "vectors",
+    Text = "text"
+}
+
 export type AskRequestOverrides = {
+    retrievalMode?: RetrievalMode;
     semanticRanker?: boolean;
-    productFilters?: boolean;
     semanticCaptions?: boolean;
     excludeCategory?: string;
     top?: number;

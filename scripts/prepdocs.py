@@ -1,57 +1,26 @@
-import os
 import argparse
+import base64
 import glob
 import html
 import io
+import os
 import re
 import time
-from pypdf import PdfReader, PdfWriter
-from azure.identity import AzureDeveloperCliCredential
+
+import openai
+from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
-from azure.storage.blob import BlobServiceClient
+from azure.identity import AzureDeveloperCliCredential
+from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import *
-from azure.search.documents import SearchClient
-from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.storage.blob import BlobServiceClient
+from pypdf import PdfReader, PdfWriter
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
-
-parser = argparse.ArgumentParser(
-    description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
-    epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v"
-    )
-parser.add_argument("files", help="Files to be processed")
-parser.add_argument("--category", help="Value for the category field in the search index for all sections indexed in this run")
-parser.add_argument("--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage")
-parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
-parser.add_argument("--container", help="Azure Blob Storage container name")
-parser.add_argument("--storagekey", required=False, help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)")
-parser.add_argument("--tenantid", required=False, help="Optional. Use this to define the Azure directory where to authenticate)")
-parser.add_argument("--searchservice", help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
-parser.add_argument("--index", help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
-parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
-parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
-parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
-parser.add_argument("--localpdfparser", action="store_true", help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents")
-parser.add_argument("--formrecognizerservice", required=False, help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)")
-parser.add_argument("--formrecognizerkey", required=False, help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)")
-parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
-args = parser.parse_args()
-
-# Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
-default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
-search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
-if not args.skipblobs:
-    storage_creds = default_creds if args.storagekey == None else args.storagekey
-if not args.localpdfparser:
-    # check if Azure Form Recognizer credentials are provided
-    if args.formrecognizerservice == None:
-        print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
-        exit(1)
-    formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
@@ -220,15 +189,31 @@ def split_text(page_map):
     if start + SECTION_OVERLAP < end:
         yield (all_text[start:end], find_page(start))
 
-def create_sections(filename, page_map):
-    for i, (section, pagenum) in enumerate(split_text(page_map)):
-        yield {
-            "id": re.sub("[^0-9a-zA-Z_-]","_",f"{filename}-{i}"),
-            "content": section,
+def filename_to_id(filename):
+    filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", filename)
+    filename_hash = base64.b16encode(filename.encode('utf-8')).decode('ascii')
+    return f"file-{filename_ascii}-{filename_hash}"
+
+def create_sections(filename, page_map, use_vectors):
+    file_id = filename_to_id(filename)
+    for i, (content, pagenum) in enumerate(split_text(page_map)):
+        section = {
+            "id": f"{file_id}-page-{i}",
+            "content": content,
             "category": args.category,
             "sourcepage": blob_name_from_file_page(filename, pagenum),
             "sourcefile": filename
         }
+        if use_vectors:
+            section["embedding"] = compute_embedding(content)
+        yield section
+
+def before_retry_sleep(retry_state):
+    if args.verbose: print(f"Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding(text):
+    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -240,6 +225,9 @@ def create_search_index():
             fields=[
                 SimpleField(name="id", type="Edm.String", key=True),
                 SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), 
+                            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
+                            vector_search_dimensions=1536, vector_search_configuration="default"),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
@@ -248,8 +236,17 @@ def create_search_index():
                 configurations=[SemanticConfiguration(
                     name='default',
                     prioritized_fields=PrioritizedFields(
-                        title_field=None, prioritized_content_fields=[SemanticField(field_name='content')]))])
-        )
+                        title_field=None, prioritized_content_fields=[SemanticField(field_name='content')]))]),
+                vector_search=VectorSearch(
+                    algorithm_configurations=[
+                        VectorSearchAlgorithmConfiguration(
+                            name="default",
+                            kind="hnsw",
+                            hnsw_parameters=HnswParameters(metric="cosine") 
+                        )
+                    ]
+                )        
+            )
         if args.verbose: print(f"Creating {args.index} search index")
         index_client.create_index(index)
     else:
@@ -291,25 +288,80 @@ def remove_from_index(filename):
         # It can take a few seconds for search results to reflect changes, so wait a bit
         time.sleep(2)
 
-if args.removeall:
-    remove_blobs(None)
-    remove_from_index(None)
-else:
-    if not args.remove:
-        create_search_index()
-    
-    print(f"Processing files...")
-    for filename in glob.glob(args.files):
-        if args.verbose: print(f"Processing '{filename}'")
-        if args.remove:
-            remove_blobs(filename)
-            remove_from_index(filename)
-        elif args.removeall:
-            remove_blobs(None)
-            remove_from_index(None)
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
+        epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v"
+        )
+    parser.add_argument("files", help="Files to be processed")
+    parser.add_argument("--category", help="Value for the category field in the search index for all sections indexed in this run")
+    parser.add_argument("--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage")
+    parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
+    parser.add_argument("--container", help="Azure Blob Storage container name")
+    parser.add_argument("--storagekey", required=False, help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)")
+    parser.add_argument("--tenantid", required=False, help="Optional. Use this to define the Azure directory where to authenticate)")
+    parser.add_argument("--searchservice", help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
+    parser.add_argument("--index", help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
+    parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
+    parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
+    parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
+    parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
+    parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
+    parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
+    parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
+    parser.add_argument("--localpdfparser", action="store_true", help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents")
+    parser.add_argument("--formrecognizerservice", required=False, help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)")
+    parser.add_argument("--formrecognizerkey", required=False, help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    args = parser.parse_args()
+
+    # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
+    azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
+    default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
+    search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
+    use_vectors = not args.novectors
+
+    if not args.skipblobs:
+        storage_creds = default_creds if args.storagekey == None else args.storagekey
+    if not args.localpdfparser:
+        # check if Azure Form Recognizer credentials are provided
+        if args.formrecognizerservice == None:
+            print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
+            exit(1)
+        formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
+
+    if use_vectors:
+        if args.openaikey == None:
+            openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
+            openai.api_type = "azure_ad"
         else:
-            if not args.skipblobs:
-                upload_blobs(filename)
-            page_map = get_document_text(filename)
-            sections = create_sections(os.path.basename(filename), page_map)
-            index_sections(os.path.basename(filename), sections)
+            openai.api_type = "azure"
+            openai.api_key = args.openaikey
+
+        openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
+        openai.api_version = "2022-12-01"
+
+    if args.removeall:
+        remove_blobs(None)
+        remove_from_index(None)
+    else:
+        if not args.remove:
+            create_search_index()
+        
+        print(f"Processing files...")
+        for filename in glob.glob(args.files):
+            if args.verbose: print(f"Processing '{filename}'")
+            if args.remove:
+                remove_blobs(filename)
+                remove_from_index(filename)
+            elif args.removeall:
+                remove_blobs(None)
+                remove_from_index(None)
+            else:
+                if not args.skipblobs:
+                    upload_blobs(filename)
+                page_map = get_document_text(filename)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                index_sections(os.path.basename(filename), sections)

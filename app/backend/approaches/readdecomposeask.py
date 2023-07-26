@@ -10,15 +10,16 @@ from langchain.agents import Tool, AgentExecutor
 from langchain.agents.react.base import ReActDocstoreAgent
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
-from typing import List
+from typing import Any, List, Optional
 from helpers.filters import Filter
 
 class ReadDecomposeAsk(Approach):
-    def __init__(self, search_client: SearchClient, openai_deployment: str, sourcepage_field: str,
-                 sourcefile_field: str, productname_field: str, familytype_field: str,
+    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str,
+                 sourcepage_field: str,sourcefile_field: str, productname_field: str, familytype_field: str,
                  state_field: str, lifecycle_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
+        self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.sourcefile_field = sourcefile_field
         self.productname_field = productname_field
@@ -27,8 +28,10 @@ class ReadDecomposeAsk(Approach):
         self.lifecycle_field = lifecycle_field
         self.content_field = content_field
 
-    def search(self, q: str, overrides: dict, filters: dict) -> str:
-        use_semantic_captions = True if overrides.get("semantic_captions") else False
+    def search(self, q: str, overrides: dict[str, Any], filters: dict) -> str:
+        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
 
@@ -36,25 +39,42 @@ class ReadDecomposeAsk(Approach):
         filter = filtering_helper.create_filter_string(filters, exclude_category)
         print("search filter", filter)
 
-        if overrides.get("semantic_ranker"):
-            r = self.search_client.search(search_text=q,
-                                          search_mode="any",
+        # If retrieval mode includes vectors, compute an embedding for the query
+        if has_vector:
+            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+        else:
+            query_vector = None
+
+        # Only keep the text query if the retrieval mode uses text, otherwise drop it
+        if not has_text:
+            query_text = None
+
+        if overrides.get("semantic_ranker") and has_text:
+            r = self.search_client.search(query_text,
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC, 
                                           query_language="en-us", 
                                           query_speller="lexicon", 
                                           semantic_configuration_name="default", 
-                                          top = top,
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
+                                          top=top,
+                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(q, filter=filter, top=top)
+            r = self.search_client.search(query_text, 
+                                          filter=filter, 
+                                          top=top, 
+                                          vector=query_vector, 
+                                          top_k=50 if query_vector else None, 
+                                          vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc['@search.captions'] ])) for doc in r]
         else:
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) for doc in r]
         return "\n".join(self.results)
 
-    def lookup(self, q: str) -> str:
+    def lookup(self, q: str) -> Optional[str]:
         r = self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
@@ -70,9 +90,9 @@ class ReadDecomposeAsk(Approach):
             return answers[0].text
         if r.get_count() > 0:
             return "\n".join(d['content'] for d in r)
-        return None        
+        return None
 
-    def run(self, q: str, overrides: dict) -> any:
+    def run(self, q: str, overrides: dict[str, Any]) -> Any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
         self.results = None
 

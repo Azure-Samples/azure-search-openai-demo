@@ -11,9 +11,9 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
             question: options.question,
             approach: options.approach,
             overrides: {
+                retrieval_mode: options.overrides?.retrievalMode,
                 semantic_ranker: options.overrides?.semanticRanker,
                 semantic_captions: options.overrides?.semanticCaptions,
-                product_filters: options.overrides?.productFilters,
                 top: options.overrides?.top,
                 temperature: options.overrides?.temperature,
                 prompt_template: options.overrides?.promptTemplate,
@@ -43,6 +43,7 @@ export async function chatApi(options): Promise<AskResponse> {
             history: options.history,
             approach: options.approach,
             overrides: {
+                retrieval_mode: options.overrides?.retrievalMode,
                 semantic_ranker: options.overrides?.semanticRanker,
                 semantic_captions: options.overrides?.semanticCaptions,
                 product_filters: options.overrides?.productFilters,
