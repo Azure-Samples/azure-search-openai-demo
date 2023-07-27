@@ -132,6 +132,23 @@ export async function deleteAllDocuments() {
     return await response.text();
 }
 
+export async function uploadDocument(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/upload_document", {
+        method: "POST",
+        body: formData
+    });
+
+    if (response.status > 299 || !response.ok) {
+        const errorResponse = await response.json();
+        throw Error(errorResponse.error || "Unknown error");
+    }
+
+    return await response.text();
+}
+
 export function getCitationFilePath(citation: string): string {
     return `/content/${citation}`;
 }

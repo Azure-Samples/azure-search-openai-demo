@@ -1,8 +1,15 @@
+from cgi import FieldStorage
+from io import BytesIO
+import io
 import os
+import re
 import mimetypes
+import tempfile
 import time
 import logging
+import html
 import openai
+from pypdf import PdfReader, PdfWriter
 from flask import Flask, request, jsonify
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
@@ -11,6 +18,11 @@ from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
+from azure.ai.formrecognizer import DocumentAnalysisClient
+
+MAX_SECTION_LENGTH = 1000
+SENTENCE_SEARCH_LIMIT = 100
+SECTION_OVERLAP = 100
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get(
@@ -20,6 +32,8 @@ AZURE_STORAGE_CONTAINER = os.environ.get(
 AZURE_SEARCH_SERVICE = os.environ.get("AZURE_SEARCH_SERVICE") or "gptkb"
 AZURE_SEARCH_INDEX = os.environ.get("AZURE_SEARCH_INDEX") or "gptkbindex"
 AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
+AZURE_FORMRECOGNIZER_SERVICE = os.environ.get(
+    "AZURE_FORMRECOGNIZER_SERVICE") or "myformrecognizerservice"
 AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get(
     "AZURE_OPENAI_GPT_DEPLOYMENT") or "davinci"
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get(
@@ -221,6 +235,262 @@ def ensure_openai_token():
         openai_token = azure_credential.get_token(
             "https://cognitiveservices.azure.com/.default")
         openai.api_key = openai_token.token
+
+
+def table_to_html(table):
+    table_html = "<table>"
+    rows = [sorted([cell for cell in table.cells if cell.row_index == i],
+                   key=lambda cell: cell.column_index) for i in range(table.row_count)]
+    for row_cells in rows:
+        table_html += "<tr>"
+        for cell in row_cells:
+            tag = "th" if (
+                cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
+            cell_spans = ""
+            if cell.column_span > 1:
+                cell_spans += f" colSpan={cell.column_span}"
+            if cell.row_span > 1:
+                cell_spans += f" rowSpan={cell.row_span}"
+            table_html += f"<{tag}{cell_spans}>{html.escape(cell.content)}</{tag}>"
+        table_html += "</tr>"
+    table_html += "</table>"
+    return table_html
+
+
+def split_text(filename, page_map):
+    SENTENCE_ENDINGS = [".", "!", "?"]
+    WORDS_BREAKS = [",", ";", ":", " ",
+                    "(", ")", "[", "]", "{", "}", "\t", "\n"]
+    print(f"Splitting '{filename}' into sections")
+
+    def find_page(offset):
+        l = len(page_map)
+        for i in range(l - 1):
+            if offset >= page_map[i][1] and offset < page_map[i + 1][1]:
+                return i
+        return l - 1
+
+    all_text = "".join(p[2] for p in page_map)
+    length = len(all_text)
+    start = 0
+    end = length
+    while start + SECTION_OVERLAP < length:
+        last_word = -1
+        end = start + MAX_SECTION_LENGTH
+
+        if end > length:
+            end = length
+        else:
+            # Try to find the end of the sentence
+            while end < length and (end - start - MAX_SECTION_LENGTH) < SENTENCE_SEARCH_LIMIT and all_text[end] not in SENTENCE_ENDINGS:
+                if all_text[end] in WORDS_BREAKS:
+                    last_word = end
+                end += 1
+            if end < length and all_text[end] not in SENTENCE_ENDINGS and last_word > 0:
+                end = last_word  # Fall back to at least keeping a whole word
+        if end < length:
+            end += 1
+
+        # Try to find the start of the sentence or at least a whole word boundary
+        last_word = -1
+        while start > 0 and start > end - MAX_SECTION_LENGTH - 2 * SENTENCE_SEARCH_LIMIT and all_text[start] not in SENTENCE_ENDINGS:
+            if all_text[start] in WORDS_BREAKS:
+                last_word = start
+            start -= 1
+        if all_text[start] not in SENTENCE_ENDINGS and last_word > 0:
+            start = last_word
+        if start > 0:
+            start += 1
+
+        section_text = all_text[start:end]
+        yield (section_text, find_page(start))
+
+        last_table_start = section_text.rfind("<table")
+        if (last_table_start > 2 * SENTENCE_SEARCH_LIMIT and last_table_start > section_text.rfind("</table")):
+            # If the section ends with an unclosed table, we need to start the next section with the table.
+            # If table starts inside SENTENCE_SEARCH_LIMIT, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
+            # If last table starts inside SECTION_OVERLAP, keep overlapping
+            print(
+                f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}")
+            start = min(end - SECTION_OVERLAP, start + last_table_start)
+        else:
+            start = end - SECTION_OVERLAP
+
+    if start + SECTION_OVERLAP < end:
+        yield (all_text[start:end], find_page(start))
+
+
+def get_document_text(file):
+    print("in document text")
+    offset = 0
+    page_map = []
+
+    file.seek(0)
+    # Create a temporary file
+    temp = tempfile.NamedTemporaryFile(delete=False)
+
+    # Write the contents of the uploaded file to this temporary file
+    file_content = file.read()
+    temp.write(file_content)
+    temp.close()
+
+    # Ensure we're not dealing with an empty file
+    if not file_content:
+        raise ValueError("The uploaded file is empty.")
+
+    print("got in document text")
+    reader = PdfReader(temp.name)
+    pages = reader.pages
+    for page_num, p in enumerate(pages):
+        print("reading pages")
+        page_text = p.extract_text()
+        print("extracting text")
+        page_map.append((page_num, offset, page_text))
+        print("appending")
+        offset += len(page_text)
+        print("offset")
+    print(
+        f"Extracting text from '{file.filename}' using Azure Form Recognizer")
+    form_recognizer_client = DocumentAnalysisClient(
+        endpoint=f"https://{AZURE_FORMRECOGNIZER_SERVICE}.cognitiveservices.azure.com/", credential=azure_credential, headers={"x-ms-useragent": "azure-search-chat-demo/1.0.0"})
+    with open(temp.name, "rb") as f:
+        poller = form_recognizer_client.begin_analyze_document(
+            "prebuilt-layout", document=f)
+    form_recognizer_results = poller.result()
+
+    for page_num, page in enumerate(form_recognizer_results.pages):
+        tables_on_page = [
+            table for table in form_recognizer_results.tables if table.bounding_regions[0].page_number == page_num + 1]
+
+        # mark all positions of the table spans in the page
+        page_offset = page.spans[0].offset
+        page_length = page.spans[0].length
+        table_chars = [-1]*page_length
+        for table_id, table in enumerate(tables_on_page):
+            for span in table.spans:
+                # replace all table spans with "table_id" in table_chars array
+                for i in range(span.length):
+                    idx = span.offset - page_offset + i
+                    if idx >= 0 and idx < page_length:
+                        table_chars[idx] = table_id
+
+        # build page text by replacing charcters in table spans with table html
+        page_text = ""
+        added_tables = set()
+        for idx, table_id in enumerate(table_chars):
+            if table_id == -1:
+                page_text += form_recognizer_results.content[page_offset + idx]
+            elif not table_id in added_tables:
+                page_text += table_to_html(tables_on_page[table_id])
+                added_tables.add(table_id)
+
+        page_text += " "
+        page_map.append((page_num, offset, page_text))
+        offset += len(page_text)
+
+    # Remove temporary file after use
+    os.remove(temp.name)
+
+    return page_map
+
+# Uploading Documents
+
+
+def blob_name_from_file_page(filename, page=0):
+    name, ext = os.path.splitext(filename)
+    if ext.lower() == ".pdf":
+        return f"{name}-{page}.pdf"
+    else:
+        return filename
+
+
+def upload_blobs(file: FieldStorage):
+    print("in upload blob file")
+
+    if not blob_container.exists():
+        print("created container")
+        blob_container.create_container()
+
+    # if file is PDF split into pages and upload each page as a separate blob
+    if file.filename.lower().endswith(".pdf"):
+        reader = PdfReader(BytesIO(file.read()))
+        print("opened reader")
+        pages = reader.pages
+        print("opened pages")
+        print("pages length ", len(pages))
+        for i in range(len(pages)):
+            blob_name = blob_name_from_file_page(file.filename, i)
+            print(f"\tUploading blob for page {i} -> {blob_name}")
+            f = io.BytesIO()
+            writer = PdfWriter()
+            writer.add_page(pages[i])
+            writer.write(f)
+            f.seek(0)
+            blob_container.upload_blob(blob_name, f, overwrite=True)
+    else:
+        blob_name = blob_name_from_file_page(file.filename)
+        # Important to reset the file pointer back to the start of the file
+        file.seek(0)
+        blob_container.upload_blob(blob_name, file, overwrite=True)
+
+
+def create_sections(file, page_map):
+    filename = file.filename  # We retrieve the filename from the uploaded file object
+
+    for i, (section, pagenum) in enumerate(split_text(filename, page_map)):
+        yield {
+            "id": re.sub("[^0-9a-zA-Z_-]", "_", f"{filename}-{i}"),
+            "content": section,
+            "category": "category",
+            "sourcepage": blob_name_from_file_page(filename, pagenum),
+            "sourcefile": filename
+        }
+
+
+def index_sections(file, sections):
+    filename = file.filename  # We retrieve the filename from the uploaded file object
+
+    print(
+        f"Indexing sections from '{filename}' into search index")
+    i = 0
+    batch = []
+    for s in sections:
+        batch.append(s)
+        i += 1
+        if i % 1000 == 0:
+            results = search_client.upload_documents(documents=batch)
+            succeeded = sum([1 for r in results if r.succeeded])
+            print(
+                f"\tIndexed {len(results)} sections, {succeeded} succeeded")
+            batch = []
+
+    if len(batch) > 0:
+        results = search_client.upload_documents(documents=batch)
+        succeeded = sum([1 for r in results if r.succeeded])
+        print(f"\tIndexed {len(results)} sections, {succeeded} succeeded")
+
+
+@app.route("/upload_document", methods=["POST"])
+def upload_document():
+    if 'file' not in request.files:
+        return 'No file part in the request', 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return 'No selected file', 400
+
+    print(f"Uploading file")
+    upload_blobs(file)
+    page_map = get_document_text(file)
+    sections = create_sections(file, page_map)
+    index_sections(file, sections)
+    # for get_document_text, create_sections, and index_sections, you might need to adjust those functions
+    # or save the file temporarily if they also need to read the file content
+
+    return 'File successfully uploaded', 200
+
+############
 
 
 if __name__ == "__main__":
