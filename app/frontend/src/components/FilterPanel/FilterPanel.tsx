@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState } from "react";
-import { TextField, Dropdown, PrimaryButton, IDropdownOption, DropdownMenuItemType } from "@fluentui/react";
+import { TextField, Dropdown, IDropdownOption } from "@fluentui/react";
 import { FilterSettings } from "../../pages/chat/Chat";
 
 interface Props {
@@ -9,13 +9,13 @@ interface Props {
 }
 
 const lifeCycleOptions: IDropdownOption[] = [
-    { key: "", text: "None" },
+    { key: "", text: "Any" },
     { key: "OnSale", text: "OnSale" },
     { key: "OffSale", text: "OffSale" }
 ];
 
 const stateOptions: IDropdownOption[] = [
-    { key: "", text: "None" },
+    { key: "", text: "Any" },
     { key: "Act", text: "Australian Capital Territory" },
     { key: "Nsw", text: "New South Wales" },
     { key: "Nt", text: "Northern Territory" },
@@ -24,6 +24,32 @@ const stateOptions: IDropdownOption[] = [
     { key: "Tas", text: "Tasmania" },
     { key: "Vic", text: "Victoria" },
     { key: "Wa", text: "Western Australia" }
+];
+
+const productNameOptions: IDropdownOption[] = [
+    { key: "", text: "Any" },
+    { key: "Corporate Benefit 80", text: "Corporate Benefit 80" },
+    { key: "Corporate Bronze Plus Hospital $250 Excess", text: "Corporate Bronze Plus Hospital $250 Excess" },
+    { key: "Corporate Bronze Plus Hospital $500 Excess", text: "Corporate Bronze Plus Hospital $500 Excess" },
+    { key: "Corporate Bronze Plus Hospital $750 Excess", text: "Corporate Bronze Plus Hospital $750 Excess" },
+    { key: "Essential 50 Visitors Hospital Cover", text: "Essential 50 Visitors Hospital Cover" },
+    { key: "Essential Extras", text: "Essential Extras" },
+    { key: "FLEXtras 4 Standard 60", text: "FLEXtras 4 Standard 60" },
+    { key: "Gold Ultimate Health Hospital Cover", text: "Gold Ultimate Health Hospital Cover" },
+    { key: "Premium Ambulance", text: "Premium Ambulance" },
+    { key: "Premium Visitors Cover with Excess", text: "Premium Visitors Cover with Excess" },
+    { key: "Simple Start Hospital - Basic Plus", text: "Simple Start Hospital - Basic Plus" },
+    { key: "Start 'n' Save - Gold", text: "Start 'n' Save - Gold" }
+];
+
+const familyTypeOptions: IDropdownOption[] = [
+    { key: "", text: "Any" },
+    { key: "Single", text: "Single" },
+    { key: "Couple", text: "Couple" },
+    { key: "Family", text: "Family" },
+    { key: "SingleParent", text: "Single Parent" },
+    { key: "SingleParentPlus", text: "Single Parent Plus" },
+    { key: "FamilyPlus", text: "Family Plus" }
 ];
 
 export const FilterPanel = ({
@@ -37,28 +63,18 @@ export const FilterPanel = ({
     onSearchTokensChange
 }: Props) => {
     const [familyType, setFamilyType] = useState("");
-    const [productType, setProductType] = useState("");
+    const [productName, setProductName] = useState("");
     const [state, setState] = useState("");
     const [lifecycle, setLifecycle] = useState("");
 
     const handleProfileChange = field => {
         const currentFilters = {
-            familyType,
-            productType,
+            familyType: familyType.key,
+            productName: productName.key,
             stateType: state.key,
             lifecycle: lifecycle.key
         };
         onSetFilter({ ...currentFilters, ...field });
-    };
-
-    const handleFamilyTypeChange = (event: React.FormEvent, newValue?: string) => {
-        setFamilyType(newValue ?? "");
-        handleProfileChange({ familyType: newValue });
-    };
-
-    const handleProductTypeChange = (event: React.FormEvent, newValue?: string) => {
-        setProductType(newValue ?? "");
-        handleProfileChange({ productType: newValue });
     };
 
     const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
@@ -71,10 +87,20 @@ export const FilterPanel = ({
         handleProfileChange({ lifecycle: newValue.key });
     };
 
+    const handleFamilyChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
+        setFamilyType(newValue ?? "");
+        handleProfileChange({ familyType: newValue.key });
+    };
+
+    const handleProductChange = (event: React.ChangeEvent<HTMLSelectElement>, newValue?: string) => {
+        setProductName(newValue ?? "");
+        handleProfileChange({ productName: newValue.key });
+    };
+
     return (
         <div>
-            <TextField label="Family Type" value={familyType} onChange={handleFamilyTypeChange} placeholder="e.g. Couple, Family, SingleParentPlus" />
-            <TextField label="Product" value={productType} onChange={handleProductTypeChange} placeholder="e.g. Start 'n' Save - Gold" />
+            <Dropdown placeholder="Select Family Type" label="Family Type" options={familyTypeOptions} onChange={handleFamilyChange} />
+            <Dropdown placeholder="Select Product Name" label="Product" options={productNameOptions} onChange={handleProductChange} />
             <Dropdown placeholder="Select State" label="State" options={stateOptions} onChange={handleStateChange} />
             <Dropdown placeholder="Set lifecycle" label="Lifecycle" options={lifeCycleOptions} onChange={handleLifecycleChange} />
             <br />

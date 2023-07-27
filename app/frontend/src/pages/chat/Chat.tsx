@@ -46,7 +46,7 @@ interface CustomerProfile {
 
 export interface FilterSettings {
     familyType?: string;
-    productType?: string;
+    productName?: string;
     stateType?: string;
     lifecycle?: string;
 }

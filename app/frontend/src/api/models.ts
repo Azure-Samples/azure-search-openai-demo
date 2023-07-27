@@ -48,7 +48,7 @@ export type Profile = {
 
 export type FilterSettings = {
     familyType?: string;
-    productType?: string;
+    productName?: string;
     stateType?: string;
     lifecycle?: string;
 };
