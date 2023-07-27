@@ -60,7 +60,7 @@ export async function chatApi(options): Promise<AskResponse> {
             },
             filters: {
                 family_type: options.filters?.familyType,
-                product_type: options.filters?.productType,
+                product_name: options.filters?.productName,
                 state_type: options.filters?.stateType,
                 lifecycle: options.filters?.lifecycle
             },

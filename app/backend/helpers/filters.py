@@ -19,7 +19,7 @@ class Filter:
     def create_filter_string(self, filters, exclude_category):
         filter_list = []
         filter_list.append(self.get_filter_statement("category", "ne", exclude_category) if not exclude_category is None else "")
-        filter_list.append(self.get_filter_statement(self.productname_field, "eq", clean_string(filters["product_type"])) if "product_type" in filters and not self.is_null_or_empty(filters["product_type"]) else "")
+        filter_list.append(self.get_filter_statement(self.productname_field, "eq", clean_string(filters["product_name"])) if "product_name" in filters and not self.is_null_or_empty(filters["product_name"]) else "")
         filter_list.append(self.get_filter_statement(self.familytype_field, "eq", clean_string(filters["family_type"])) if "family_type" in filters and not self.is_null_or_empty(filters["family_type"]) else "")
         filter_list.append(self.get_filter_statement(self.state_field, "eq", clean_string(filters["state_type"])) if "state_type" in filters and not self.is_null_or_empty(filters["state_type"]) else "")
         filter_list.append(self.get_filter_statement(self.lifecycle_field, "eq", filters["lifecycle"]) if "lifecycle" in filters and not self.is_null_or_empty(filters["lifecycle"]) else "")
