@@ -12,6 +12,8 @@ from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
+from werkzeug.utils import secure_filename
+from uploadDocs import allowed_file, upload_files, get_document_text, create_sections, index_sections
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -73,6 +75,10 @@ chat_approaches = {
 
 app = Flask(__name__)
 
+# define Folder path for upload temp files
+UPLOAD_FOLDER = 'data'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 @app.route("/", defaults={"path": "index.html"})
 @app.route("/<path:path>")
 def static_file(path):
@@ -126,6 +132,75 @@ def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
+# Define the route for file upload (accepts POST and GET requests)
+@app.route('/upload', methods=['POST', "GET"])
+def fileUpload():
+    if 'files' not in request.files:
+        # If no files were included in the request, return an error response
+        resp = jsonify({
+            "message": 'No file part in the request',
+            "status": 'failed'
+        })
+        resp.status_code = 400
+        return resp
+
+    # Get the list of files from the request's FormData
+    files = request.files.getlist('files')
+    errors = {}
+    success = False   
+
+    for file in files:
+        # Check if the file is allowed for upload based on its extension
+        if file and allowed_file(file.filename):
+            # Securely generate a filename to prevent path traversal attacks
+            filename = secure_filename(file.filename)
+            # Create the full file path with the UPLOAD_FOLDER path
+            filePathName = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            # Save the file to the server's temp UPLOAD_FOLDER directory
+            file.save(filePathName)
+
+            # Upload the file to a cloud storage blob
+            upload_files(filename, filePathName, blob_container)
+
+            # Extract text from the pdf document (Using PDF extraction)
+            page_map = get_document_text(filename, filePathName)
+
+            # Create sections from the extracted text
+            sections = create_sections(os.path.basename(filename), page_map)
+
+            # Index the sections for search
+            index_sections(os.path.basename(filename), sections, search_client)
+
+            # Remove the uploaded file from the UPLOAD_FOLDER directory
+            os.remove(filePathName)
+             # Set the success flag to True since at least one file was successfully processed
+            success = True
+        else:
+            # If the file is not allowed, add an error entry to the errors dictionary
+            errors[file.filename] = 'Invalid file type'
+
+    # Respond with appropriate status based on the upload results
+    if success and errors:
+        # If there were successful uploads but also some errors, return a partial failure response
+        errors['message'] = 'File(s) upload partially failed'
+        errors['status'] = 'partial'
+        resp = jsonify(errors)
+        resp.status_code = 500
+        return resp
+    elif success:
+        # If all files were successfully uploaded, return a success response
+        resp = jsonify({
+            "message": 'Files successfully uploaded',
+            "status": 'success'
+        })
+        resp.status_code = 201
+        return resp
+    else:
+        # If all files failed to upload, return an error response
+        resp = jsonify(errors)
+        resp.status_code = 500
+        return resp
+ 
 def ensure_openai_token():
     global openai_token
     if openai_token.expires_on < int(time.time()) - 60:

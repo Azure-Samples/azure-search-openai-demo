@@ -46,3 +46,11 @@ export type ChatRequest = {
     approach: Approaches;
     overrides?: AskRequestOverrides;
 };
+export type IUploadFormData = {
+    formData: FormData;
+};
+
+export type IUploadResponse = {
+    success: boolean;
+    message?: string;
+};
