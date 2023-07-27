@@ -18,7 +18,7 @@ param searchServiceResourceGroupName string = ''
 param searchServiceResourceGroupLocation string = location
 
 param searchServiceSkuName string = 'standard'
-param searchIndexName string = 'gptkbindex'
+param searchIndexName string = ''
 
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
@@ -117,7 +117,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_OPENAI_SERVICE: openAi.outputs.name
-      AZURE_SEARCH_INDEX: searchIndexName
+      AZURE_SEARCH_INDEX: !empty(searchIndexName) ? searchIndexName : '${abbrs.searchIndexName}'
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName

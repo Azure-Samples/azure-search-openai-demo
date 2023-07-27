@@ -131,5 +131,6 @@
   "webSitesAppService": "app-",
   "webSitesAppServiceEnvironment": "ase-",
   "webSitesFunctions": "func-",
-  "webStaticSites": "stapp-"
+  "webStaticSites": "stapp-",
+  "searchIndexName":"gptkbindex"
 }
