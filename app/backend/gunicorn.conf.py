@@ -5,6 +5,7 @@ max_requests_jitter = 50
 log_file = "-"
 bind = "0.0.0.0"
 
-workers = (multiprocessing.cpu_count() * 2) + 1
-threads = workers
+num_cpus = multiprocessing.cpu_count()
+workers = (num_cpus * 2) + 1
+threads = 1 if num_cpus == 1 else 2
 timeout = 600
