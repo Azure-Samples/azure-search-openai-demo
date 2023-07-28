@@ -3,6 +3,7 @@ import io
 import mimetypes
 import time
 import logging
+from logging.handlers import RotatingFileHandler
 import openai
 from flask import Flask, request, jsonify, send_file, abort
 from azure.identity import DefaultAzureCredential
@@ -12,6 +13,12 @@ from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
+from opentelemetry import trace  
+from opentelemetry.sdk.trace import TracerProvider  
+from opentelemetry.sdk.trace.export import BatchSpanProcessor  
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter  
+from opentelemetry.instrumentation.flask import FlaskInstrumentor  
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -23,6 +30,7 @@ AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT_DEPLOYMENT") or "
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
 AZURE_OPENAI_CHATGPT_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_MODEL") or "gpt-35-turbo"
 AZURE_OPENAI_EMB_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMB_DEPLOYMENT") or "embedding"
+AZURE_MONITOR_CONNECTION_STRING = os.environ.get("AZURE_MONITOR_CONNECTION_STRING") or ""
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -71,6 +79,25 @@ chat_approaches = {
                                         KB_FIELDS_CONTENT)
 }
 
+# Set up OpenTelemetry tracing  
+trace.set_tracer_provider(TracerProvider())  
+tracer = trace.get_tracer(__name__)  
+  
+# Set up Azure Monitor Trace Exporter  
+azure_exporter = AzureMonitorTraceExporter.from_connection_string(AZURE_MONITOR_CONNECTION_STRING)  
+span_processor = BatchSpanProcessor(azure_exporter)  
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+# Set up logging
+logging.basicConfig(level=logging.ERROR,
+                    format="%(asctime)s [%(levelname)s] %(message)s",
+                    handlers=[  
+                        RotatingFileHandler("app.log", maxBytes=100000, backupCount=10),
+                        logging.StreamHandler()
+                    ])
+logger = logging.getLogger(__name__)
+
+
 app = Flask(__name__)
 
 @app.route("/", defaults={"path": "index.html"})
@@ -96,36 +123,36 @@ def content_file(path):
     
 @app.route("/ask", methods=["POST"])
 def ask():
-    ensure_openai_token()
-    if not request.json:
-        return jsonify({"error": "request must be json"}), 400
-    approach = request.json["approach"]
-    try:
-        impl = ask_approaches.get(approach)
-        if not impl:
-            return jsonify({"error": "unknown approach"}), 400
-        r = impl.run(request.json["question"], request.json.get("overrides") or {})
-        return jsonify(r)
-    except Exception as e:
-        logging.exception("Exception in /ask")
-        return jsonify({"error": str(e)}), 500
-    
+    with tracer.start_as_current_span("ask"):
+        ensure_openai_token()
+        approach = request.json["approach"]
+        try:
+            impl = ask_approaches.get(approach)
+            if not impl:
+                app.logger.error("Unknown approach")
+                return jsonify({"error": "unknown approach"}), 400
+            r = impl.run(request.json["question"], request.json.get("overrides") or {})
+            return jsonify(r)
+        except Exception as e:
+            app.logger.error("Exception in /ask", exc_info=True)
+            return jsonify({"error": str(e)}), 500
+      
 @app.route("/chat", methods=["POST"])
 def chat():
-    ensure_openai_token()
-    if not request.json:
-        return jsonify({"error": "request must be json"}), 400
-    approach = request.json["approach"]
-    try:
-        impl = chat_approaches.get(approach)
-        if not impl:
-            return jsonify({"error": "unknown approach"}), 400
-        r = impl.run(request.json["history"], request.json.get("overrides") or {})
-        return jsonify(r)
-    except Exception as e:
-        logging.exception("Exception in /chat")
-        return jsonify({"error": str(e)}), 500
-
+    with tracer.start_as_current_span("chat"):
+        ensure_openai_token()
+        approach = request.json["approach"]
+        try:
+            impl = chat_approaches.get(approach)
+            if not impl:
+                app.logger.error("Unknown approach")
+                return jsonify({"error": "unknown approach"}), 400
+            r = impl.run(request.json["history"], request.json.get("overrides") or {})
+            return jsonify(r)
+        except Exception as e:
+            app.logger.error("Exception in /chat", exc_info=True)
+            return jsonify({"error": str(e)}), 500
+  
 def ensure_openai_token():
     global openai_token
     if openai_token.expires_on < int(time.time()) - 60:
@@ -133,4 +160,5 @@ def ensure_openai_token():
         openai.api_key = openai_token.token
     
 if __name__ == "__main__":
+    app.logger.setLevel(logging.INFO)
     app.run()
