@@ -18,7 +18,7 @@ param searchServiceResourceGroupName string = ''
 param searchServiceResourceGroupLocation string = location
 
 param searchServiceSkuName string = 'standard'
-param searchIndexName string = 'gptkbindex'
+param searchIndexName string // Set in main.parameters.json
 
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
@@ -28,7 +28,7 @@ param storageContainerName string = 'content'
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['eastus', 'francecentral', 'southcentralus', 'uksouth', 'westeurope'])
+@allowed(['eastus', 'southcentralus', 'westeurope'])
 @metadata({
   azd: {
     type: 'location'
@@ -111,6 +111,7 @@ module backend 'core/host/appservice.bicep' = {
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
     runtimeVersion: '3.10'
+    appCommandLine: 'start_appservice.sh'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     appSettings: {
