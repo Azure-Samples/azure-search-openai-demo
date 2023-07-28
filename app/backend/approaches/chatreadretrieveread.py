@@ -1,14 +1,48 @@
 from typing import Any, Sequence
-
+import os
+import logging
+from logging.handlers import RotatingFileHandler
 import openai
 import tiktoken
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from approaches.approach import Approach
 from text import nonewlines
+from opentelemetry import trace  
+from opentelemetry.sdk.trace import TracerProvider  
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleExportSpanProcessor  
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
+
+AZURE_MONITOR_CONNECTION_STRING = os.environ.get("AZURE_MONITOR_CONNECTION_STRING") or ""
+
+# Set up Azure Monitor Trace Exporter
+azure_exporter = AzureMonitorTraceExporter(  
+    connection_string=AZURE_MONITOR_CONNECTION_STRING  
+)
+  
+# Set the tracer_provider to the SDK's TracerProvider
+trace.set_tracer_provider(TracerProvider())
+  
+# Configure the tracer_provider with the Azure exporter
+trace.get_tracer_provider().add_span_processor(
+    SimpleExportSpanProcessor(azure_exporter)
+)
+# Get the tracer  
+tracer = trace.get_tracer(__name__)
+
+# Now you can use `tracer.start_as_current_span` to create spans  
+  
+# Set up logging
+logging.basicConfig(level=logging.ERROR,
+                    format="%(asctime)s [%(levelname)s] %(message)s",
+                    handlers=[
+                        RotatingFileHandler("app.log", maxBytes=100000, backupCount=10),
+                        logging.StreamHandler()
+                    ])
+logger = logging.getLogger(__name__)
 
 class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
@@ -58,14 +92,15 @@ If you cannot generate a search query, return just the number 0.
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
-        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        with tracer.start_as_current_span("ChatReadRetrieveReadApproach.run"):
+            has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+            has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+            use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
+            top = overrides.get("top") or 3
+            exclude_category = overrides.get("exclude_category") or None
+            filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        user_q = 'Generate search query for: ' + history[-1]["user"]
+            user_q = 'Generate search query for: ' + history[-1]["user"]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
