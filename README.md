@@ -60,7 +60,7 @@ You can run this repo virtually by using GitHub Codespaces or VS Code Remote Con
 Execute the following command, if you don't have any pre-existing Azure services and want to start from a fresh deployment.
 
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
-    * For the target location, the regions that currently support the models used in this sample are **East US**, **France Central**, **South Central US**, **UK South**, and **West Europe**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability).
+    * For the target location, the regions that currently support the models used in this sample are **East US**, **South Central US**, and **West Europe**. For an up-to-date list of regions and models, check [here](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability).
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.  
 
 It will look like the following:
@@ -155,5 +155,7 @@ Here are the most common failure scenarios and solutions:
 
 1. You're getting "same resource name not allowed" conflicts. That's likely because you've run the sample multiple times and deleted the resources you've been creating each time, but are forgetting to purge them. Azure keeps resources for 48 hours unless you purge from soft delete. See [this article on purging resources](https://learn.microsoft.com/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource).
 
-1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. First, try running `azd deploy`. If you still encounter errors with the deployed app, consult these [tips for debugging Flask app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html)
+1. You see `CERTIFICATE_VERIFY_FAILED` when the `prepdocs.py` script runs. That's typically due to incorrect SSL certificates setup on your machine. Try the suggestions in this [StackOverflow answer](https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394).
+
+1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging Flask app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html)
 and file an issue if the error logs don't help you resolve the issue.
