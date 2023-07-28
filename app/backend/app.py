@@ -1,10 +1,11 @@
 import os
 import io
+import json
 import mimetypes
 import time
 import logging
 import openai
-from flask import Flask, request, jsonify, send_file, abort
+from flask import Flask, request, jsonify, send_file, abort, Response
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from approaches.retrievethenread import RetrieveThenReadApproach
@@ -109,7 +110,11 @@ def ask():
     except Exception as e:
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
-    
+
+def format_as_ndjson(r):
+    for data in r:
+        yield json.dumps(data).replace("\n", "\\n") + "\n"
+
 @app.route("/chat", methods=["POST"])
 def chat():
     ensure_openai_token()
@@ -121,7 +126,7 @@ def chat():
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         r = impl.run(request.json["history"], request.json.get("overrides") or {})
-        return jsonify(r)
+        return Response(format_as_ndjson(r), mimetype='text/event-stream')
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500

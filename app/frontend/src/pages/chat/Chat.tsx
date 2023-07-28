@@ -58,12 +58,39 @@ const Chat = () => {
                     suggestFollowupQuestions: useSuggestFollowupQuestions
                 }
             };
-            const result = await chatApi(request);
-            setAnswers([...answers, [question, result]]);
+            let result: any = {};
+            let answer: string = '';
+            let askResponse: AskResponse = {} as AskResponse;
+            const response = await chatApi(request);
+            if (response?.body) {
+                const reader = response.body.getReader();
+                let runningText = "";
+                while (true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+
+                    var text = new TextDecoder("utf-8").decode(value);
+                    const objects = text.split("\n");
+                    objects.forEach((obj) => {
+                        try {
+                            runningText += obj;
+                            result = JSON.parse(runningText);
+                            if (result["data_points"]) {
+                                askResponse = result;
+                            } else if (result["choices"] && result["choices"][0]["delta"]["content"]) {
+                                answer += result["choices"][0]["delta"]["content"];
+                                let latestResponse: AskResponse = {...askResponse, answer: answer};
+                                setIsLoading(false);
+                                setAnswers([...answers, [question, latestResponse]]);
+                            }
+                            runningText = "";
+                        }
+                        catch { }
+                    });
+                }
+            }
         } catch (e) {
             setError(e);
-        } finally {
-            setIsLoading(false);
         }
     };
 

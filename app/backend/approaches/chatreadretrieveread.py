@@ -147,20 +147,19 @@ If you cannot generate a search query, return just the number 0.
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
 
-        chat_completion = openai.ChatCompletion.create(
+        msg_to_display = '\n\n'.join([str(message) for message in messages])
+
+        yield {"answer": "", "data_points": results, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+    
+        yield from openai.ChatCompletion.create(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
             messages=messages, 
             temperature=overrides.get("temperature") or 0.7, 
             max_tokens=1024, 
-            n=1)
+            n=1,
+            stream=True)
 
-        chat_content = chat_completion.choices[0].message.content
-
-        msg_to_display = '\n\n'.join([str(message) for message in messages])
-
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
-    
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
         message_builder = MessageBuilder(system_prompt, model_id)
 

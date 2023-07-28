@@ -31,8 +31,8 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
     return parsedResponse;
 }
 
-export async function chatApi(options: ChatRequest): Promise<AskResponse> {
-    const response = await fetch("/chat", {
+export async function chatApi(options: ChatRequest): Promise<Response> {
+    return await fetch("/chat", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -54,13 +54,6 @@ export async function chatApi(options: ChatRequest): Promise<AskResponse> {
             }
         })
     });
-
-    const parsedResponse: AskResponse = await response.json();
-    if (response.status > 299 || !response.ok) {
-        throw Error(parsedResponse.error || "Unknown error");
-    }
-
-    return parsedResponse;
 }
 
 export function getCitationFilePath(citation: string): string {
