@@ -170,7 +170,7 @@ const KnowledgeBase = () => {
     useEffect(() => {
         getTableData();
         search();
-        // deleteAllDocuments();
+        deleteAllDocuments();
         document.addEventListener("mousedown", handleOutsideClick);
         return () => {
             document.removeEventListener("mousedown", handleOutsideClick);

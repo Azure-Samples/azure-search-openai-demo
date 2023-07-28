@@ -19,6 +19,11 @@ from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
 from azure.ai.formrecognizer import DocumentAnalysisClient
+import mimetypes
+from azure.cognitiveservices.speech import SpeechConfig, SpeechRecognizer, AudioConfig
+from azure.cognitiveservices.speech.audio import AudioInputStream, AudioConfig, AudioStreamFormat
+from reportlab.pdfgen import canvas
+
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -38,6 +43,11 @@ AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get(
     "AZURE_OPENAI_GPT_DEPLOYMENT") or "davinci"
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get(
     "AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
+AZURE_SPEECH_SERVICE_KEY = os.environ.get(
+    "AZURE_SPEECH_SERVICE_KEY") or "YourSpeechServiceKey"
+AZURE_SPEECH_SERVICE_REGION = os.environ.get(
+    "AZURE_SPEECH_SERVICE_REGION") or "YourSpeechServiceRegion"
+
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -331,6 +341,8 @@ def get_document_text(file):
 
     # Write the contents of the uploaded file to this temporary file
     file_content = file.read()
+    print("file_content")
+    print(file_content)
     temp.write(file_content)
     temp.close()
 
@@ -339,6 +351,8 @@ def get_document_text(file):
         raise ValueError("The uploaded file is empty.")
 
     print("got in document text")
+    print("temp.name")
+    print(temp.name)
     reader = PdfReader(temp.name)
     pages = reader.pages
     for page_num, p in enumerate(pages):
@@ -480,15 +494,121 @@ def upload_document():
     if file.filename == '':
         return 'No selected file', 400
 
-    print(f"Uploading file")
-    upload_blobs(file)
-    page_map = get_document_text(file)
-    sections = create_sections(file, page_map)
-    index_sections(file, sections)
-    # for get_document_text, create_sections, and index_sections, you might need to adjust those functions
-    # or save the file temporarily if they also need to read the file content
+    # detect whether the file is an audio file
+    mimetype = mimetypes.guess_type(file.filename)[0]
+    if mimetype and mimetype.startswith('audio'):
+        print(f"Processing audio file")
+        # Save the audio file temporarily
+        audio_path = os.path.join(
+            tempfile.gettempdir(), file.filename)
+        file.save(audio_path)
+
+        # Transcribe the audio to text
+        transcript = transcribe_audio(audio_path)
+        os.remove(audio_path)
+
+        # Save transcript to PDF
+        pdf_tmp_filepath = os.path.join(
+            tempfile.gettempdir(), f'{os.path.splitext(file.filename)[0]}.pdf')
+        generate_pdf(transcript, pdf_tmp_filepath)
+
+        # Read PDF into BytesIO object
+        with open(pdf_tmp_filepath, 'rb') as f:
+            pdf_bytes = f.read()
+        pdf_file = BytesIO(pdf_bytes)
+        pdf_file.filename = f'{os.path.splitext(file.filename)[0]}.pdf'
+
+        # Remove temporary PDF file
+        os.remove(pdf_tmp_filepath)
+        print(f"Generated PDF")
+        # Upload the generated PDF
+        upload_blobs(pdf_file)
+        page_map = get_document_text(pdf_file)
+        sections = create_sections(pdf_file, page_map)
+        index_sections(pdf_file, sections)
+    else:
+        print(f"Uploading file")
+        upload_blobs(file)
+        page_map = get_document_text(file)
+        sections = create_sections(file, page_map)
+        index_sections(file, sections)
+        # for get_document_text, create_sections, and index_sections, you might need to adjust those functions
+        # or save the file temporarily if they also need to read the file content
 
     return 'File successfully uploaded', 200
+
+
+def transcribe_audio(file_name):
+    print("inside the transcribe function")
+
+    # Setup SpeechConfig
+    speech_config = SpeechConfig(
+        subscription="4cee7ff91f544cd8973977a2668bf540", region="eastus")
+    speech_config.speech_recognition_language = "en-US"
+
+    # Setup AudioConfig
+    audio_config = AudioConfig(filename=file_name)
+
+    # Create a speech recognizer
+    speech_recognizer = SpeechRecognizer(
+        speech_config=speech_config, audio_config=audio_config)
+
+    # Define a dict for storing status
+    done_dict = {'done': False}
+
+    # Define a list for storing recognized text
+    recognized_text = []
+
+    def stop_cb(evt):
+        """callback that signals to stop continuous recognition upon receiving an event `evt`"""
+        print('CLOSING on {}'.format(evt))
+        speech_recognizer.stop_continuous_recognition()
+        done_dict['done'] = True
+
+    def recognized_cb(evt):
+        """callback that appends recognized text to recognized_text list"""
+        print('RECOGNIZED: {}'.format(evt))
+        recognized_text.append(evt.result.text)
+
+    speech_recognizer.recognized.connect(recognized_cb)
+    speech_recognizer.session_stopped.connect(stop_cb)
+    speech_recognizer.canceled.connect(stop_cb)
+
+    # This will start the recognition process.
+    speech_recognizer.start_continuous_recognition()
+
+    while not done_dict['done']:
+        time.sleep(.5)
+
+    # Join the recognized text into one string
+    full_text = ' '.join(recognized_text)
+    print("\nFull text: ", full_text)
+    return full_text
+
+    # # Start transcribing the audio file
+    # result = speech_recognizer.recognize_once_async()
+    # final_result = result.get()
+    # print("about to get the text")
+    # print(final_result.text)
+    # # Return the transcribed text
+    # return final_result.text
+
+
+def generate_pdf(transcript, output_path):
+    print("given transcript")
+    print(transcript)
+    print(output_path)
+    c = canvas.Canvas(output_path)
+    c.setFont("Helvetica", 10)
+    textobject = c.beginText(40, 40)
+    try:
+        for line in transcript.split('\n'):
+            textobject.textLine(line)
+        c.drawText(textobject)
+        c.showPage()
+    finally:
+        c.save()
+    return output_path
 
 ############
 
