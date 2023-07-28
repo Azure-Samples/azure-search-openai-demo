@@ -5,3 +5,8 @@ openai[datalib]==0.27.8
 tiktoken==0.4.0
 azure-search-documents==11.4.0b6
 azure-storage-blob==12.14.1
+azure-monitor-opentelemetry --pre
+azure-monitor-opentelemetry==1.0.0b13
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-flask
+opentelemetry-instrumentation-wsgi
