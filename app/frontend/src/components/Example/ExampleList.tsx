@@ -9,10 +9,13 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What plans can you recommend based on the customer profile?",
-        value: "What plans can you recommend based on the customer profile?"
+        text: "What are the waiting periods for our corporate hospital covers?",
+        value: "What are the waiting periods for our corporate hospital covers?"
     },
-    { text: "What plans do you have available?", value: "What plans do you have available?" },
+    {
+        text: "How many months do I have to wait before I can avail the services included in Gold Ultimate Health cover?",
+        value: "How many months do I have to wait before I can avail the services included in Gold Ultimate Health cover?"
+    },
     { text: "How can you help me?", value: "How can you help me?" }
 ];
 
