@@ -217,16 +217,17 @@ def create_sections(filename, page_map, use_vectors):
             "sourcepage": blob_name_from_file_page(filename, pagenum),
             "sourcefile": filename
         }
-        if use_vectors:
-            section["embedding"] = compute_embedding(content)
+        #if use_vectors:
+        #    section["embedding"] = compute_embedding(content)
         yield section
 
 def before_retry_sleep(retry_state):
     if args.verbose: print(f"Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
-def compute_embedding(text):
-    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
+#REMOVED EMBEDDING FUNCTION
+#@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+#def compute_embedding(text):
+#    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -238,9 +239,9 @@ def create_search_index():
             fields=[
                 SimpleField(name="id", type="Edm.String", key=True),
                 SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
-                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), 
-                            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
-                            vector_search_dimensions=1536, vector_search_configuration="default"),
+                #SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), 
+                #            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
+                #            vector_search_dimensions=1536, vector_search_configuration="default"),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
@@ -334,7 +335,7 @@ if __name__ == "__main__":
     azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
     search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
-    use_vectors = not args.novectors
+    use_vectors = False
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey == None else args.storagekey

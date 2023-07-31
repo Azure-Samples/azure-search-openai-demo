@@ -21,8 +21,8 @@ class ReadDecomposeAsk(Approach):
         self.content_field = content_field
 
     def search(self, query_text: str, overrides: dict[str, Any]) -> str:
-        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        has_text = "text"
+        has_vector = None
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None

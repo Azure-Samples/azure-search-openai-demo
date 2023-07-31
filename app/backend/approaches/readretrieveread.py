@@ -24,7 +24,7 @@ class ReadRetrieveReadApproach(Approach):
     """
 
     template_prefix = \
-"You are an AI assistant that helps people find informatio. " \
+"You are an AI assistant that helps people find information. " \
 "Answer the question using only the data provided in the information sources below. " \
 "For tabular information return it as an html table. Do not return markdown format. " \
 "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
@@ -52,8 +52,8 @@ Thought: {agent_scratchpad}"""
         self.content_field = content_field
 
     def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
-        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        has_text = "text"
+        has_vector = None
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
@@ -108,8 +108,7 @@ Thought: {agent_scratchpad}"""
                         func=lambda q: self.retrieve(q, overrides), 
                         description=self.CognitiveSearchToolDescription,
                         callbacks=cb_manager)
-        employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
-        tools = [acs_tool, employee_tool]
+        tools = [acs_tool]
 
         prompt = ZeroShotAgent.create_prompt(
             tools=tools,
@@ -130,17 +129,3 @@ Thought: {agent_scratchpad}"""
 
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
 
-class EmployeeInfoTool(CsvLookupTool):
-    employee_name: str = ""
-
-    def __init__(self, employee_name: str, callbacks: Callbacks = None):
-        super().__init__(filename="data/employeeinfo.csv", 
-                         key_field="name", 
-                         name="Employee", 
-                         description="useful for answering questions about the employee, their benefits and other personal information",
-                         callbacks=callbacks)
-        self.func = self.employee_info
-        self.employee_name = employee_name
-
-    def employee_info(self, name: str) -> str:
-        return self.lookup(name)
