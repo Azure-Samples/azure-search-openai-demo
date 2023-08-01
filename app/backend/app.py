@@ -11,6 +11,7 @@ from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.chatreadretrieveread_langchain import ChatReadRetrieveReadApproach_LC
 from azure.storage.blob import BlobServiceClient
 
 # Replace these with your own values, either in environment variables or directly here
@@ -68,6 +69,12 @@ chat_approaches = {
                                         AZURE_OPENAI_CHATGPT_MODEL, 
                                         AZURE_OPENAI_EMB_DEPLOYMENT,
                                         KB_FIELDS_SOURCEPAGE, 
+                                        KB_FIELDS_CONTENT),
+    "rrr_lc": ChatReadRetrieveReadApproach_LC(search_client, 
+                                        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+                                        AZURE_OPENAI_CHATGPT_MODEL, 
+                                        AZURE_OPENAI_EMB_DEPLOYMENT,
+                                        KB_FIELDS_SOURCEPAGE, 
                                         KB_FIELDS_CONTENT)
 }
 
@@ -102,6 +109,7 @@ def ask():
     approach = request.json["approach"]
     try:
         impl = ask_approaches.get(approach)
+        print(impl)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         r = impl.run(request.json["question"], request.json.get("overrides") or {})
@@ -118,6 +126,7 @@ def chat():
     approach = request.json["approach"]
     try:
         impl = chat_approaches.get(approach)
+        print(impl)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         r = impl.run(request.json["history"], request.json.get("overrides") or {})

@@ -16,7 +16,7 @@ from langchainadapters import HtmlCallbackHandler
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 
-class ChatReadRetrieveReadApproach(Approach):
+class ChatReadRetrieveReadApproach_LC(Approach):
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -60,90 +60,9 @@ If you cannot generate a search query, return just the number 0.
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
-        has_text = "text"
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
-        user_q = 'Generate search query for: ' + history[-1]["user"]
+       
 
-
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        messages = self.get_messages_from_history(
-            self.query_prompt_template,
-            self.chatgpt_model,
-            history,
-            user_q,
-            self.query_prompt_few_shots,
-            self.chatgpt_token_limit - len(user_q)
-            )
-
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages, 
-            temperature=0.0, 
-            max_tokens=32, 
-            n=1)
-        
-        query_text = chat_completion.choices[0].message.content
-        if query_text.strip() == "0":
-            query_text = history[-1]["user"] # Use the last user input if we failed to generate a better query
-
-        # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
-
-        # If retrieval mode includes vectors, compute an embedding for the query
-
-        # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
-        if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text, 
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,)
-        else:
-            r = self.search_client.search(query_text, 
-                                          filter=filter, 
-                                          top=top, )
-        if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
-        else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
-        content = "\n".join(results)
-
-        
-        # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-
-        # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        system_message = self.system_message_chat_conversation
-        prompt_override = overrides.get("prompt_override")
-        if prompt_override is not None:
-            system_message = self.system_message_chat_conversation.format(injected_prompt=prompt_override[3:] + "\n")
-            
-        
-        messages = self.get_messages_from_history(
-            system_message + "\n\nSources:\n" + content,
-            self.chatgpt_model,
-            history,
-            history[-1]["user"],
-            max_tokens=self.chatgpt_token_limit)
-
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages, 
-            temperature=overrides.get("temperature") or 0.7, 
-            max_tokens=1024, 
-            n=1)
-
-        chat_content = chat_completion.choices[0].message.content
-
-        msg_to_display = '\n\n'.join([str(message) for message in messages])
-
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+        return {"data_points": 'In testing', "answer": "This is still in development", "thoughts": "None"}
     
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
         message_builder = MessageBuilder(system_prompt, model_id)

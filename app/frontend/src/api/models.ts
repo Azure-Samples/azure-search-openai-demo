@@ -4,6 +4,11 @@ export const enum Approaches {
     ReadDecomposeAsk = "rda"
 }
 
+export const enum ChatApproaches {
+    ReadRetrieveRead = "rrr",
+    ReadRetrieveRead_LC = "rrr_lc"
+}
+
 export const enum RetrievalMode {
     Hybrid = "hybrid",
     Vectors = "vectors",
@@ -43,6 +48,6 @@ export type ChatTurn = {
 
 export type ChatRequest = {
     history: ChatTurn[];
-    approach: Approaches;
+    approach: ChatApproaches;
     overrides?: AskRequestOverrides;
 };
