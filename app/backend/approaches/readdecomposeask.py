@@ -1,16 +1,18 @@
-import openai
 import re
+from typing import Any, List, Optional
+
+import openai
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
-from langchain.llms.openai import AzureOpenAI
-from langchain.prompts import PromptTemplate, BasePromptTemplate
-from langchain.callbacks.manager import CallbackManager
-from langchain.agents import Tool, AgentExecutor
+from langchain.agents import AgentExecutor, Tool
 from langchain.agents.react.base import ReActDocstoreAgent
+from langchain.callbacks.manager import CallbackManager
+from langchain.llms.openai import AzureOpenAI
+from langchain.prompts import BasePromptTemplate, PromptTemplate
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
-from typing import Any, List, Optional
+
 
 class ReadDecomposeAsk(Approach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
@@ -41,21 +43,21 @@ class ReadDecomposeAsk(Approach):
         if overrides.get("semantic_ranker") and has_text:
             r = self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
+                                          query_type=QueryType.SEMANTIC,
+                                          query_language="en-us",
+                                          query_speller="lexicon",
+                                          semantic_configuration_name="default",
                                           top=top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
+                                          vector=query_vector,
+                                          top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text, 
-                                          filter=filter, 
-                                          top=top, 
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
+            r = self.search_client.search(query_text,
+                                          filter=filter,
+                                          top=top,
+                                          vector=query_vector,
+                                          top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc['@search.captions'] ])) for doc in r]
@@ -67,13 +69,13 @@ class ReadDecomposeAsk(Approach):
         r = self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
-                                      query_type=QueryType.SEMANTIC, 
-                                      query_language="en-us", 
-                                      query_speller="lexicon", 
+                                      query_type=QueryType.SEMANTIC,
+                                      query_language="en-us",
+                                      query_speller="lexicon",
                                       semantic_configuration_name="default",
                                       query_answer="extractive|count-1",
                                       query_caption="extractive|highlight-false")
-        
+
         answers = r.get_answers()
         if answers and len(answers) > 0:
             return answers[0].text
@@ -105,17 +107,17 @@ class ReadDecomposeAsk(Approach):
         chain = AgentExecutor.from_agent_and_tools(agent, tools, verbose=True, callback_manager=cb_manager)
         result = chain.run(q)
 
-        # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid 
+        # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid
         # generalizing too much and disrupt HTML snippets if present
         result = re.sub(r"<([a-zA-Z0-9_ \-\.]+)>", r"[\1]", result)
 
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
-    
+
 class ReAct(ReActDocstoreAgent):
     @classmethod
     def create_prompt(cls, tools: List[Tool]) -> BasePromptTemplate:
         return prompt
-    
+
 # Modified version of langchain's ReAct prompt that includes instructions and examples for how to cite information sources
 EXAMPLES = [
     """Question: What is the elevation range for the area that the eastern sector of the

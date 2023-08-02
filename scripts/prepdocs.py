@@ -70,7 +70,7 @@ def remove_blobs(filename):
     blob_service = BlobServiceClient(account_url=f"https://{args.storageaccount}.blob.core.windows.net", credential=storage_creds)
     blob_container = blob_service.get_container_client(args.container)
     if blob_container.exists():
-        if filename == None:
+        if filename is None:
             blobs = blob_container.list_blob_names()
         else:
             prefix = os.path.splitext(os.path.basename(filename))[0]
@@ -132,7 +132,7 @@ def get_document_text(filename):
             for idx, table_id in enumerate(table_chars):
                 if table_id == -1:
                     page_text += form_recognizer_results.content[page_offset + idx]
-                elif not table_id in added_tables:
+                elif table_id not in added_tables:
                     page_text += table_to_html(tables_on_page[table_id])
                     added_tables.add(table_id)
 
@@ -148,11 +148,11 @@ def split_text(page_map):
     if args.verbose: print(f"Splitting '{filename}' into sections")
 
     def find_page(offset):
-        l = len(page_map)
-        for i in range(l - 1):
+        num_pages = len(page_map)
+        for i in range(num_pages - 1):
             if offset >= page_map[i][1] and offset < page_map[i + 1][1]:
                 return i
-        return l - 1
+        return num_pages - 1
 
     all_text = "".join(p[2] for p in page_map)
     length = len(all_text)
@@ -198,7 +198,7 @@ def split_text(page_map):
             start = min(end - SECTION_OVERLAP, start + last_table_start)
         else:
             start = end - SECTION_OVERLAP
-        
+
     if start + SECTION_OVERLAP < end:
         yield (all_text[start:end], find_page(start))
 
@@ -222,7 +222,7 @@ def create_sections(filename, page_map, use_vectors):
         yield section
 
 def before_retry_sleep(retry_state):
-    if args.verbose: print(f"Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+    if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
 def compute_embedding(text):
@@ -238,7 +238,7 @@ def create_search_index():
             fields=[
                 SimpleField(name="id", type="Edm.String", key=True),
                 SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
-                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), 
+                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
                             vector_search_dimensions=1536, vector_search_configuration="default"),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
@@ -255,10 +255,10 @@ def create_search_index():
                         VectorSearchAlgorithmConfiguration(
                             name="default",
                             kind="hnsw",
-                            hnsw_parameters=HnswParameters(metric="cosine") 
+                            hnsw_parameters=HnswParameters(metric="cosine")
                         )
                     ]
-                )        
+                )
             )
         if args.verbose: print(f"Creating {args.index} search index")
         index_client.create_index(index)
@@ -292,7 +292,7 @@ def remove_from_index(filename):
                                     index_name=args.index,
                                     credential=search_creds)
     while True:
-        filter = None if filename == None else f"sourcefile eq '{os.path.basename(filename)}'"
+        filter = None if filename is None else f"sourcefile eq '{os.path.basename(filename)}'"
         r = search_client.search("", filter=filter, top=1000, include_total_count=True)
         if r.get_count() == 0:
             break
@@ -331,22 +331,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-    azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
-    default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
-    search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
+    azd_credential = AzureDeveloperCliCredential() if args.tenantid is None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
+    default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
+    search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
 
     if not args.skipblobs:
-        storage_creds = default_creds if args.storagekey == None else args.storagekey
+        storage_creds = default_creds if args.storagekey is None else args.storagekey
     if not args.localpdfparser:
         # check if Azure Form Recognizer credentials are provided
-        if args.formrecognizerservice == None:
+        if args.formrecognizerservice is None:
             print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
             exit(1)
-        formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
+        formrecognizer_creds = default_creds if args.formrecognizerkey is None else AzureKeyCredential(args.formrecognizerkey)
 
     if use_vectors:
-        if args.openaikey == None:
+        if args.openaikey is None:
             openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
             openai.api_type = "azure_ad"
         else:
@@ -362,8 +362,8 @@ if __name__ == "__main__":
     else:
         if not args.remove:
             create_search_index()
-        
-        print(f"Processing files...")
+
+        print("Processing files...")
         for filename in glob.glob(args.files):
             if args.verbose: print(f"Processing '{filename}'")
             if args.remove:
