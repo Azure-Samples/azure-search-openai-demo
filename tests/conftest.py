@@ -2,10 +2,10 @@ from collections import namedtuple
 from unittest import mock
 
 import pytest
-from approaches.approach import Approach
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 
 import app as backend_app
+from approaches.approach import Approach
+from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 
 
 class MockedAskApproach(Approach):

@@ -1,13 +1,14 @@
 from typing import Any
 
 import openai
-from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.llms.openai import AzureOpenAI
+
+from approaches.approach import Approach
 from langchainadapters import HtmlCallbackHandler
 from lookuptool import CsvLookupTool
 from text import nonewlines

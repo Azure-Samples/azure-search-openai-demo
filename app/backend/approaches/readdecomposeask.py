@@ -2,7 +2,6 @@ import re
 from typing import Any, List, Optional
 
 import openai
-from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool
@@ -10,6 +9,8 @@ from langchain.agents.react.base import ReActDocstoreAgent
 from langchain.callbacks.manager import CallbackManager
 from langchain.llms.openai import AzureOpenAI
 from langchain.prompts import BasePromptTemplate, PromptTemplate
+
+from approaches.approach import Approach
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 

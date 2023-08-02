@@ -5,10 +5,6 @@ import os
 import time
 
 import openai
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.readdecomposeask import ReadDecomposeAsk
-from approaches.readretrieveread import ReadRetrieveReadApproach
-from approaches.retrievethenread import RetrieveThenReadApproach
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.storage.blob import BlobServiceClient
@@ -22,6 +18,11 @@ from flask import (
     send_file,
     send_from_directory,
 )
+
+from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.readdecomposeask import ReadDecomposeAsk
+from approaches.readretrieveread import ReadRetrieveReadApproach
+from approaches.retrievethenread import RetrieveThenReadApproach
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT", "mystorageaccount")
