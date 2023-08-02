@@ -42,7 +42,7 @@
       "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
     },
     "searchServiceSkuName": {
-      "value": "basic"
+      "value": "standard"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"

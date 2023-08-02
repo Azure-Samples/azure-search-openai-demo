@@ -263,12 +263,6 @@ const Chat = () => {
                         onChange={onUseSemanticCaptionsChange}
                         disabled={!useSemanticRanker}
                     />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSuggestFollowupQuestions}
-                        label="Suggest follow-up questions"
-                        onChange={onUseSuggestFollowupQuestionsChange}
-                    />
                     <Dropdown
                         className={styles.chatSettingsSeparator}
                         label="Retrieval mode"

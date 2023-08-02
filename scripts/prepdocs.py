@@ -6,7 +6,7 @@ import io
 import os
 import re
 import time
-
+import word_to_pdf
 import openai
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -35,6 +35,8 @@ MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
 
+ignore_file_ext = [".docx"]
+
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
         return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
@@ -47,8 +49,9 @@ def upload_blobs(filename):
     if not blob_container.exists():
         blob_container.create_container()
 
+    ext = os.path.splitext(filename)[1].lower()
     # if file is PDF split into pages and upload each page as a separate blob
-    if os.path.splitext(filename)[1].lower() == ".pdf":
+    if  ext == ".pdf":
         reader = PdfReader(filename)
         pages = reader.pages
         for i in range(len(pages)):
@@ -61,9 +64,10 @@ def upload_blobs(filename):
             f.seek(0)
             blob_container.upload_blob(blob_name, f, overwrite=True)
     else:
-        blob_name = blob_name_from_file_page(filename)
-        with open(filename,"rb") as data:
-            blob_container.upload_blob(blob_name, data, overwrite=True)
+        if ext not in ignore_file_ext:
+            blob_name = blob_name_from_file_page(filename)
+            with open(filename,"rb") as data:
+                blob_container.upload_blob(blob_name, data, overwrite=True)
 
 def remove_blobs(filename):
     if args.verbose: print(f"Removing blobs for '{filename or '<all>'}'")
@@ -365,6 +369,10 @@ if __name__ == "__main__":
             create_search_index()
         
         print(f"Processing files...")
+        #convert word to doc
+        for filename in glob.glob(args.files):
+            word_to_pdf.wordToPDF(filename)
+        
         for filename in glob.glob(args.files):
             if args.verbose: print(f"Processing '{filename}'")
             if args.remove:
@@ -374,8 +382,10 @@ if __name__ == "__main__":
                 remove_blobs(None)
                 remove_from_index(None)
             else:
-                if not args.skipblobs:
-                    upload_blobs(filename)
-                page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
-                index_sections(os.path.basename(filename), sections)
+                ext = os.path.splitext(filename)[1].lower()
+                if ext not in ignore_file_ext:
+                    if not args.skipblobs:
+                        upload_blobs(filename)
+                    page_map = get_document_text(filename)
+                    sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                    index_sections(os.path.basename(filename), sections)

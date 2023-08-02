@@ -13,6 +13,10 @@ from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
 from langchainadapters import HtmlCallbackHandler
 
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+from langchain.prompts.prompt import PromptTemplate
+
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 
@@ -60,28 +64,31 @@ If you cannot generate a search query, return just the number 0.
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
-       
+        has_text = "text"
+        has_vector = None
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
+        top = overrides.get("top") or 3
+        exclude_category = overrides.get("exclude_category") or None
+        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        query_vector = None
 
-        return {"data_points": 'In testing', "answer": "This is still in development", "thoughts": "None"}
-    
-    def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
-        message_builder = MessageBuilder(system_prompt, model_id)
-
-        # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
-        for shot in few_shots:
-            message_builder.append_message(shot.get('role'), shot.get('content'))
-
-        user_content = user_conv
-        append_index = len(few_shots) + 1
-
-        message_builder.append_message(self.USER, user_content, index=append_index)
-
-        for h in reversed(history[:-1]):
-            if h.get("bot"):
-                message_builder.append_message(self.ASSISTANT, h.get('bot'), index=append_index)
-            message_builder.append_message(self.USER, h.get('user'), index=append_index)
-            if message_builder.token_length > max_tokens:
-                break
+        # Only keep the text query if the retrieval mode uses text, otherwise drop it
         
-        messages = message_builder.messages
-        return messages
+        llm = AzureOpenAI(deployment_name=self.chatgpt_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        conversation = ConversationChain(
+                llm=llm, verbose=True, memory=ConversationBufferMemory()
+            )
+        
+        template = self.query_prompt_template
+        '''PROMPT = PromptTemplate(input_variables=["history", "input"], template=template)
+        conversation = ConversationChain(
+            prompt=PROMPT,
+            llm=llm,
+            verbose=True,
+            memory=ConversationBufferMemory(ai_prefix="AI Assistant"),
+        )'''
+        
+            
+        result = "Not implemented"
+        return {"data_points": "None" or [], "answer": result, "thoughts": "None" }# cb_handler.get_and_reset_log()}
+    
