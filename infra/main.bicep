@@ -111,7 +111,7 @@ module backend 'core/host/appservice.bicep' = {
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
     runtimeVersion: '3.10'
-    appCommandLine: 'start_appservice.sh'
+    appCommandLine: 'python3 -m gunicorn "app:create_app()" -c gunicorn.conf.py'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     appSettings: {
@@ -138,18 +138,6 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
       name: openAiSkuName
     }
     deployments: [
-      {
-        name: gptDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: gptModelName
-          version: '0301'
-        }
-        sku: {
-          name: 'Standard'
-          capacity: gptDeploymentCapacity
-        }
-      }
       {
         name: chatGptDeploymentName
         model: {
