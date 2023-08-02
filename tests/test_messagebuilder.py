@@ -1,4 +1,4 @@
-from app.backend.core.messagebuilder import MessageBuilder
+from core.messagebuilder import MessageBuilder
 
 
 def test_messagebuilder():
