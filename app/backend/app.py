@@ -1,17 +1,18 @@
-import os
 import io
-import mimetypes
-import time
 import logging
+import mimetypes
+import os
+import time
+
 import openai
-from flask import Flask, request, jsonify, send_file, abort
+from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.readdecomposeask import ReadDecomposeAsk
+from approaches.readretrieveread import ReadRetrieveReadApproach
+from approaches.retrievethenread import RetrieveThenReadApproach
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
-from approaches.retrievethenread import RetrieveThenReadApproach
-from approaches.readretrieveread import ReadRetrieveReadApproach
-from approaches.readdecomposeask import ReadDecomposeAsk
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from azure.storage.blob import BlobServiceClient
+from flask import Flask, abort, jsonify, request, send_file
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -28,8 +29,8 @@ KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
 
-# Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
-# just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
+# Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
+# just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
 # keys for each service
 # If you encounter a blocking error during a DefaultAzureCredntial resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
 azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
@@ -50,7 +51,7 @@ search_client = SearchClient(
     index_name=AZURE_SEARCH_INDEX,
     credential=azure_credential)
 blob_client = BlobServiceClient(
-    account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", 
+    account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net",
     credential=azure_credential)
 blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
@@ -63,11 +64,11 @@ ask_approaches = {
 }
 
 chat_approaches = {
-    "rrr": ChatReadRetrieveReadApproach(search_client, 
+    "rrr": ChatReadRetrieveReadApproach(search_client,
                                         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-                                        AZURE_OPENAI_CHATGPT_MODEL, 
+                                        AZURE_OPENAI_CHATGPT_MODEL,
                                         AZURE_OPENAI_EMB_DEPLOYMENT,
-                                        KB_FIELDS_SOURCEPAGE, 
+                                        KB_FIELDS_SOURCEPAGE,
                                         KB_FIELDS_CONTENT)
 }
 
@@ -78,7 +79,7 @@ app = Flask(__name__)
 def static_file(path):
     return app.send_static_file(path)
 
-# Serve content files from blob storage from within the app to keep the example self-contained. 
+# Serve content files from blob storage from within the app to keep the example self-contained.
 # *** NOTE *** this assumes that the content files are public, or at least that all users of the app
 # can access all the files. This is also slow and memory hungry.
 @app.route("/content/<path>")
@@ -93,7 +94,7 @@ def content_file(path):
     blob.readinto(blob_file)
     blob_file.seek(0)
     return send_file(blob_file, mimetype=mime_type, as_attachment=False, download_name=path)
-    
+
 @app.route("/ask", methods=["POST"])
 def ask():
     if not request.json:
@@ -108,7 +109,7 @@ def ask():
     except Exception as e:
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route("/chat", methods=["POST"])
 def chat():
     if not request.json:
@@ -130,6 +131,6 @@ def ensure_openai_token():
     if openai_token.expires_on < time.time() + 60:
         openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
         openai.api_key = openai_token.token
-    
+
 if __name__ == "__main__":
     app.run()

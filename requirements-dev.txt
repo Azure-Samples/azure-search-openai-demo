@@ -5,3 +5,4 @@ black
 pytest
 coverage
 pytest-cov
+pre-commit

@@ -1,14 +1,13 @@
 from typing import Any, Sequence
 
 import openai
-import tiktoken
+from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
-from approaches.approach import Approach
-from text import nonewlines
-
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
+from text import nonewlines
+
 
 class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
@@ -28,13 +27,13 @@ Each source has a name followed by colon and the actual information, always incl
 {follow_up_questions_prompt}
 {injected_prompt}
 """
-    follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook. 
+    follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook.
 Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
 Try not to repeat questions that have already been asked.
 Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
-Generate a search query based on the conversation and the new question. 
+Generate a search query based on the conversation and the new question.
 Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
 Do not include any text inside [] or <<>> in the search query terms.
 Do not include any special characters like '+'.
@@ -80,11 +79,11 @@ If you cannot generate a search query, return just the number 0.
         chat_completion = openai.ChatCompletion.create(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
-            messages=messages, 
-            temperature=0.0, 
-            max_tokens=32, 
+            messages=messages,
+            temperature=0.0,
+            max_tokens=32,
             n=1)
-        
+
         query_text = chat_completion.choices[0].message.content
         if query_text.strip() == "0":
             query_text = history[-1]["user"] # Use the last user input if we failed to generate a better query
@@ -103,23 +102,23 @@ If you cannot generate a search query, return just the number 0.
 
         # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text, 
+            r = self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
+                                          query_type=QueryType.SEMANTIC,
+                                          query_language="en-us",
+                                          query_speller="lexicon",
+                                          semantic_configuration_name="default",
+                                          top=top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector, 
+                                          vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text, 
-                                          filter=filter, 
-                                          top=top, 
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
+            r = self.search_client.search(query_text,
+                                          filter=filter,
+                                          top=top,
+                                          vector=query_vector,
+                                          top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
@@ -128,7 +127,7 @@ If you cannot generate a search query, return just the number 0.
         content = "\n".join(results)
 
         follow_up_questions_prompt = self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
-        
+
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
@@ -139,7 +138,7 @@ If you cannot generate a search query, return just the number 0.
             system_message = self.system_message_chat_conversation.format(injected_prompt=prompt_override[3:] + "\n", follow_up_questions_prompt=follow_up_questions_prompt)
         else:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
-        
+
         messages = self.get_messages_from_history(
             system_message + "\n\nSources:\n" + content,
             self.chatgpt_model,
@@ -150,9 +149,9 @@ If you cannot generate a search query, return just the number 0.
         chat_completion = openai.ChatCompletion.create(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
-            messages=messages, 
-            temperature=overrides.get("temperature") or 0.7, 
-            max_tokens=1024, 
+            messages=messages,
+            temperature=overrides.get("temperature") or 0.7,
+            max_tokens=1024,
             n=1)
 
         chat_content = chat_completion.choices[0].message.content
@@ -160,7 +159,7 @@ If you cannot generate a search query, return just the number 0.
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 
         return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
-    
+
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
         message_builder = MessageBuilder(system_prompt, model_id)
 
@@ -179,6 +178,6 @@ If you cannot generate a search query, return just the number 0.
             message_builder.append_message(self.USER, h.get('user'), index=append_index)
             if message_builder.token_length > max_tokens:
                 break
-        
+
         messages = message_builder.messages
         return messages
