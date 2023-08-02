@@ -12,22 +12,22 @@ from approaches.retrievethenread import RetrieveThenReadApproach
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.storage.blob import BlobServiceClient
-from flask import Flask, abort, jsonify, request, send_file
+from flask import Blueprint, Flask, abort, jsonify, request, send_file
 
 # Replace these with your own values, either in environment variables or directly here
-AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
-AZURE_STORAGE_CONTAINER = os.environ.get("AZURE_STORAGE_CONTAINER") or "content"
-AZURE_SEARCH_SERVICE = os.environ.get("AZURE_SEARCH_SERVICE") or "gptkb"
-AZURE_SEARCH_INDEX = os.environ.get("AZURE_SEARCH_INDEX") or "gptkbindex"
-AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
-AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT_DEPLOYMENT") or "davinci"
-AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
-AZURE_OPENAI_CHATGPT_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_MODEL") or "gpt-35-turbo"
-AZURE_OPENAI_EMB_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMB_DEPLOYMENT") or "embedding"
+AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT", "mystorageaccount")
+AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER", "content")
+AZURE_SEARCH_SERVICE = os.getenv("AZURE_SEARCH_SERVICE", "gptkb")
+AZURE_SEARCH_INDEX = os.getenv("AZURE_SEARCH_INDEX", "gptkbindex")
+AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE", "myopenai")
+AZURE_OPENAI_GPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_GPT_DEPLOYMENT", "davinci")
+AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "chat")
+AZURE_OPENAI_CHATGPT_MODEL = os.getenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT", "embedding")
 
-KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
-KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
-KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
+KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
+KB_FIELDS_CATEGORY = os.getenv("KB_FIELDS_CATEGORY", "category")
+KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -72,17 +72,17 @@ chat_approaches = {
                                         KB_FIELDS_CONTENT)
 }
 
-app = Flask(__name__)
+bp = Blueprint("routes", __name__)
 
-@app.route("/", defaults={"path": "index.html"})
-@app.route("/<path:path>")
+@bp.route("/", defaults={"path": "index.html"})
+@bp.route("/<path:path>")
 def static_file(path):
-    return app.send_static_file(path)
+    return bp.send_static_file(path)
 
 # Serve content files from blob storage from within the app to keep the example self-contained.
 # *** NOTE *** this assumes that the content files are public, or at least that all users of the app
 # can access all the files. This is also slow and memory hungry.
-@app.route("/content/<path>")
+@bp.route("/content/<path>")
 def content_file(path):
     blob = blob_container.get_blob_client(path).download_blob()
     if not blob.properties or not blob.properties.has_key("content_settings"):
@@ -95,7 +95,7 @@ def content_file(path):
     blob_file.seek(0)
     return send_file(blob_file, mimetype=mime_type, as_attachment=False, download_name=path)
 
-@app.route("/ask", methods=["POST"])
+@bp.route("/ask", methods=["POST"])
 def ask():
     ensure_openai_token()
     if not request.json:
@@ -111,7 +111,7 @@ def ask():
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
 
-@app.route("/chat", methods=["POST"])
+@bp.route("/chat", methods=["POST"])
 def chat():
     ensure_openai_token()
     if not request.json:
@@ -133,5 +133,13 @@ def ensure_openai_token():
         openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
         openai.api_key = openai_token.token
 
+def create_app():
+    app = Flask(__name__)
+
+    app.register_blueprint(bp)
+
+    return app
+
 if __name__ == "__main__":
+    app = create_app()
     app.run()
