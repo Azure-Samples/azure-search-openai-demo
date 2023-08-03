@@ -70,12 +70,12 @@ chat_approaches = {
                                         AZURE_OPENAI_EMB_DEPLOYMENT,
                                         KB_FIELDS_SOURCEPAGE, 
                                         KB_FIELDS_CONTENT),
-    "rrr_lc": ChatReadRetrieveReadApproach_LC(search_client, 
-                                        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-                                        AZURE_OPENAI_CHATGPT_MODEL, 
-                                        AZURE_OPENAI_EMB_DEPLOYMENT,
-                                        KB_FIELDS_SOURCEPAGE, 
-                                        KB_FIELDS_CONTENT)
+    "rrr_lc": ChatReadRetrieveReadApproach_LC(search_client,
+                                            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+                                            AZURE_OPENAI_CHATGPT_MODEL, 
+                                            AZURE_OPENAI_EMB_DEPLOYMENT,
+                                            KB_FIELDS_SOURCEPAGE, 
+                                            KB_FIELDS_CONTENT)
 }
 
 app = Flask(__name__)

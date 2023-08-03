@@ -18,5 +18,6 @@
     "search.exclude": {
         "**/node_modules": true,
         "static": true
-    }
+    },
+    "python.linting.enabled": true
 }

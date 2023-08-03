@@ -32,7 +32,7 @@ class ReadRetrieveReadApproach(Approach):
 "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
 "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
 "Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
+"If you cannot answer using the sources below, say that you don't know. Do not include information that is unrelated to the query.  " \
 "\n\nYou can access to the following tools:"
     
     template_suffix = """
@@ -42,7 +42,7 @@ Question: {input}
 
 Thought: {agent_scratchpad}"""    
 
-    CognitiveSearchToolDescription = "useful for searching the YTL Corporation documents"
+    CognitiveSearchToolDescription = "Useful for searching the documents in the Cognitive Search knowledge base. If your queries retrieves the same documents, reword your query."
 
     def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client

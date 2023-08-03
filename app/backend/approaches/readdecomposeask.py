@@ -118,82 +118,6 @@ class ReAct(ReActDocstoreAgent):
     
 # Modified version of langchain's ReAct prompt that includes instructions and examples for how to cite information sources
 EXAMPLES = [
-    """Question: What is the elevation range for the area that the eastern sector of the
-Colorado orogeny extends into?
-Thought: I need to search Colorado orogeny, find the area that the eastern sector
-of the Colorado orogeny extends into, then find the elevation range of the
-area.
-Action: Search[Colorado orogeny]
-Observation: <info1.pdf> The Colorado orogeny was an episode of mountain building (an orogeny) in
-Colorado and surrounding areas.
-Thought: It does not mention the eastern sector. So I need to look up eastern
-sector.
-Action: Lookup[eastern sector]
-Observation: <info2.txt> (Result 1 / 1) The eastern sector extends into the High Plains and is called
-the Central Plains orogeny.
-Thought: The eastern sector of Colorado orogeny extends into the High Plains. So I
-need to search High Plains and find its elevation range.
-Action: Search[High Plains]
-Observation: <some_file.pdf> High Plains refers to one of two distinct land regions
-Thought: I need to instead search High Plains (United States).
-Action: Search[High Plains (United States)]
-Observation: <filea.pdf> The High Plains are a subregion of the Great Plains. <another-ref.docx> From east to west, the
-High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130
-m).
-Thought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer
-is 1,800 to 7,000 ft.
-Action: Finish[1,800 to 7,000 ft <filea.pdf>]""",
-    """Question: Musician and satirist Allie Goertz wrote a song about the "The Simpsons"
-character Milhouse, who Matt Groening named after who?
-Thought: The question simplifies to "The Simpsons" character Milhouse is named after
-who. I only need to search Milhouse and find who it is named after.
-Action: Search[Milhouse]
-Observation: <info7.pdf> Milhouse Mussolini Van Houten is a recurring character in the Fox animated
-television series The Simpsons voiced by Pamela Hayden and created by Matt
-Groening.
-Thought: The paragraph does not tell who Milhouse is named after, maybe I can look up
-"named after".
-Action: Lookup[named after]
-Observation: <historyref2.txt> (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose
-middle name was Milhous.
-Thought: Milhouse was named after U.S. president Richard Nixon, so the answer is
-Richard Nixon.
-Action: Finish[Richard Nixon <historyref2.txt>]""",
-    """Question: Which documentary is about Finnish rock groups, Adam Clayton Powell or The
-Saimaa Gesture?
-Thought: I need to search Adam Clayton Powell and The Saimaa Gesture, and find which
-documentary is about Finnish rock groups.
-Action: Search[Adam Clayton Powell]
-Observation: <info9.pdf> Could not find [Adam Clayton Powell]. Similar: ['Adam Clayton Powell
-III', 'Seventh Avenue (Manhattan)', 'Adam Clayton Powell Jr. State Office
-Building', 'Isabel Washington Powell', 'Adam Powell', vAdam Clayton Powell
-(film)', 'Giancarlo Esposito'].
-Thought: To find the documentary, I can search Adam Clayton Powell (film).
-Action: Search[Adam Clayton Powell (film)]
-Observation: <data123.txt> Adam Clayton Powell is a 1989 American documentary film directed by
-Richard Kilberg. The film is about the rise and fall of influential
-African-American politician Adam Clayton Powell Jr.[3][4] It was later aired
-as part of the PBS series The American Experience.
-Thought: Adam Clayton Powell (film) is a documentary about an African-American
-politician, not Finnish rock groups. So the documentary about Finnish rock
-groups must instead be The Saimaa Gesture.
-Action: Finish[The Saimaa Gesture <data123.txt>]""",
-    """Question: What profession does Nicholas Ray and Elia Kazan have in common?
-Thought: I need to search Nicholas Ray and Elia Kazan, find their professions, then
-find the profession they have in common.
-Action: Search[Nicholas Ray]
-Observation: <files-987.png> Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16,
-1979) was an American film director, screenwriter, and actor best known for
-the 1955 film Rebel Without a Cause.
-Thought: Professions of Nicholas Ray are director, screenwriter, and actor. I need
-to search Elia Kazan next and find his professions.
-Action: Search[Elia Kazan]
-Observation: <files-654.txt> Elia Kazan was an American film and theatre director, producer, screenwriter
-and actor.
-Thought: Professions of Elia Kazan are director, producer, screenwriter, and actor.
-So profession Nicholas Ray and Elia Kazan have in common is director,
-screenwriter, and actor.
-Action: Finish[director, screenwriter, actor <files-987.png><files-654.txt>]""",
     """Question: Which magazine was started first Arthur's Magazine or First for Women?
 Thought: I need to search Arthur's Magazine and First for Women, and find which was
 started first.
@@ -227,5 +151,5 @@ SUFFIX = """\nQuestion: {input}
 {agent_scratchpad}"""
 PREFIX = "Answer questions as shown in the following examples, by splitting the question into individual search or lookup actions to find facts until you can answer the question. " \
 "Observations are prefixed by their source name in angled brackets, source names MUST be included with the actions in the answers." \
-"All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. "
+"All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. " \
 "Answer questions as truthfully as possible, and ONLY answer the questions using the information from observations, do not speculate or your own knowledge."

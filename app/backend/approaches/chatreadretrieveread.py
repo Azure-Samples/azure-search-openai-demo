@@ -103,11 +103,12 @@ If you cannot generate a search query, return just the number 0.
                                           query_speller="lexicon", 
                                           semantic_configuration_name="default", 
                                           top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,)
+                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
         else:
             r = self.search_client.search(query_text, 
                                           filter=filter, 
-                                          top=top, )
+                                          top=top)
+            
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
