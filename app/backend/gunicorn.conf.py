@@ -9,3 +9,4 @@ num_cpus = multiprocessing.cpu_count()
 workers = (num_cpus * 2) + 1
 threads = 1 if num_cpus == 1 else 2
 timeout = 600
+worker_class = "gthread"
