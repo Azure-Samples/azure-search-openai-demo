@@ -1,9 +1,10 @@
 from typing import Any
 
 import openai
-from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
+
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 

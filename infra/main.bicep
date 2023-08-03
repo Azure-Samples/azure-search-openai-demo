@@ -111,7 +111,7 @@ module backend 'core/host/appservice.bicep' = {
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
     runtimeVersion: '3.10'
-    appCommandLine: 'start_appservice.sh'
+    appCommandLine: 'python3 -m gunicorn "app:create_app()"'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     appSettings: {
