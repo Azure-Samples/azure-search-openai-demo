@@ -1,12 +1,12 @@
-import openai
+from typing import Any
 
+import openai
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
-from text import nonewlines
-from typing import Any
-
 from core.messagebuilder import MessageBuilder
+from text import nonewlines
+
 
 class RetrieveThenReadApproach(Approach):
     """
@@ -25,7 +25,7 @@ class RetrieveThenReadApproach(Approach):
 
     #shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?' 
+'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
 
 Sources:
 info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
@@ -62,23 +62,23 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text, 
+            r = self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
+                                          query_type=QueryType.SEMANTIC,
+                                          query_language="en-us",
+                                          query_speller="lexicon",
+                                          semantic_configuration_name="default",
+                                          top=top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
+                                          vector=query_vector,
+                                          top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text, 
-                                          filter=filter, 
-                                          top=top, 
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
+            r = self.search_client.search(query_text,
+                                          filter=filter,
+                                          top=top,
+                                          vector=query_vector,
+                                          top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
@@ -86,23 +86,23 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
         content = "\n".join(results)
 
-        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model);
+        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model)
 
         # add user question
-        user_content = q + "\n" + "Sources:\n {content}".format(content=content)
+        user_content = q + "\n" + f"Sources:\n {content}"
         message_builder.append_message('user', user_content)
 
         # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
         message_builder.append_message('assistant', self.answer)
         message_builder.append_message('user', self.question)
-        
+
         messages = message_builder.messages
         chat_completion = openai.ChatCompletion.create(
             deployment_id=self.openai_deployment,
             model=self.chatgpt_model,
-            messages=messages, 
-            temperature=overrides.get("temperature") or 0.3, 
-            max_tokens=1024, 
+            messages=messages,
+            temperature=overrides.get("temperature") or 0.3,
+            max_tokens=1024,
             n=1)
-        
+
         return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}
