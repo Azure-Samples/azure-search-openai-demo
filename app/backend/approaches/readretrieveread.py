@@ -1,7 +1,7 @@
 from typing import Any
 
 import openai
-from azure.search.documents import SearchClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
@@ -54,7 +54,7 @@ Thought: {agent_scratchpad}"""
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
+    async def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -64,7 +64,7 @@ Thought: {agent_scratchpad}"""
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.create(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -74,9 +74,9 @@ Thought: {agent_scratchpad}"""
 
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC,
+                                          query_type=QueryType.SIMPLE,
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
@@ -86,20 +86,20 @@ Thought: {agent_scratchpad}"""
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           top=top,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) async for doc in r]
         content = "\n".join(self.results)
         return content
 
-    def run(self, q: str, overrides: dict[str, Any]) -> Any:
+    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
         # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
         self.results = None
 

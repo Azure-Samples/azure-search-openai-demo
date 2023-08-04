@@ -1,7 +1,7 @@
 from typing import Any, Sequence
 
 import openai
-from azure.search.documents import SearchClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import Approach
@@ -57,7 +57,7 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
+    async def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -77,7 +77,7 @@ If you cannot generate a search query, return just the number 0.
             self.chatgpt_token_limit - len(user_q)
             )
 
-        chat_completion = openai.ChatCompletion.create(
+        chat_completion = await openai.ChatCompletion.acreate(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
             messages=messages,
@@ -93,7 +93,7 @@ If you cannot generate a search query, return just the number 0.
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -103,9 +103,9 @@ If you cannot generate a search query, return just the number 0.
 
         # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC,
+                                          query_type=QueryType.SIMPLE,
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
@@ -115,16 +115,16 @@ If you cannot generate a search query, return just the number 0.
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           top=top,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
+            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
         content = "\n".join(results)
 
         follow_up_questions_prompt = self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
@@ -147,7 +147,7 @@ If you cannot generate a search query, return just the number 0.
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
 
-        chat_completion = openai.ChatCompletion.create(
+        chat_completion = await openai.ChatCompletion.acreate(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
             messages=messages,
