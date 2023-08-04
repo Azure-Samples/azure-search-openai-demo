@@ -163,8 +163,8 @@ If you cannot generate a search query, return just the number 0.
                 deployment_id=self.chatgpt_deployment,  
                 model=self.chatgpt_model,  
                 messages=messages,  
-                temperature=overrides.get("temperature") or 0.2,  
-                max_tokens=7000,  
+                temperature=overrides.get("temperature") or 0.7,
+                max_tokens=1024,  
                 n=1)  
         except openai.error.RateLimitError as e:  
             self.logger.error(f"Rate limit error: {e}")  
