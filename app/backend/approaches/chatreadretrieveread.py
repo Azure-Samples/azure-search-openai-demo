@@ -50,11 +50,10 @@ If you cannot generate a search query, return just the number 0.
         {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
     ]
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str,  sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
-        self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
@@ -95,6 +94,8 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
 
         # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
+        refs = []
+        results = []
         if overrides.get("semantic_ranker") and has_text:
             r = self.search_client.search(query_text, 
                                           filter=filter,
@@ -109,12 +110,16 @@ If you cannot generate a search query, return just the number 0.
                                           filter=filter, 
                                           top=top)
             
-        if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
-        else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
+        
+        for doc in r:
+            if use_semantic_captions:
+                doc_ref = doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']]))
+            else:
+                doc_ref = doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) 
+            results.append(doc_ref)
+            refs.append(doc[self.sourcepage_field])
         content = "\n".join(results)
-
+        print(refs)
         
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
@@ -141,9 +146,10 @@ If you cannot generate a search query, return just the number 0.
             n=1)
 
         chat_content = chat_completion.choices[0].message.content
-
+        for ref in refs:
+            chat_content += '[{ref}]'.format(ref=ref)
+        print(chat_content)
         msg_to_display = '\n\n'.join([str(message) for message in messages])
-
         return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
     
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:

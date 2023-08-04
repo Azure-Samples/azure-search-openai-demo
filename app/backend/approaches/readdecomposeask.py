@@ -1,4 +1,5 @@
 import openai
+import os
 import re
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
@@ -13,12 +14,18 @@ from text import nonewlines
 from typing import Any, List, Optional
 
 class ReadDecomposeAsk(Approach):
-    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, openai_api_key: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
-        self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        openai.api_key = openai_api_key
+        AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
+
+        # Used by the OpenAI SDK
+        openai.api_type = "azure"
+        openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
+        openai.api_version = "2023-05-15"
 
     def search(self, query_text: str, overrides: dict[str, Any]) -> str:
         has_text = "text"
@@ -89,7 +96,11 @@ class ReadDecomposeAsk(Approach):
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        llm = AzureOpenAI(deployment_name=self.openai_deployment, 
+                          temperature=overrides.get("temperature") or 0.7, 
+                          openai_api_base=openai.api_base, 
+                          openai_api_key=self.open_api_key,
+                          openai_api_version=openai.api_version)
         tools = [
             Tool(name="Search", func=lambda q: self.search(q, overrides), description="useful for when you need to ask with search", callbacks=cb_manager),
             Tool(name="Lookup", func=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)

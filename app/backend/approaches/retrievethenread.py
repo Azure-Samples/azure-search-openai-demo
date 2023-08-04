@@ -1,13 +1,24 @@
 import openai
+import os
 
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from text import nonewlines
 from typing import Any
+from langchain.llms import AzureOpenAI
+from langchain.chains import LLMChain
 
 from core.messagebuilder import MessageBuilder
-
+from langchain.prompts.prompt import PromptTemplate
+from langchain.prompts.few_shot import FewShotPromptTemplate
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 class RetrieveThenReadApproach(Approach):
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
@@ -20,8 +31,9 @@ class RetrieveThenReadApproach(Approach):
 "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
 "Answer the following question using only the data provided in the sources below. " + \
 "For tabular information return it as an html table. Do not return markdown format. "  + \
+"Simply complete the text withot coming up with a follow up example." + \
 "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. " + \
-"If you cannot answer using the sources below, say you don't know. Use below example to answer"
+"If you cannot answer using the sources below, say you don't know. Below is an example.\n\n###"
 
     #shots/sample conversation
     question = """
@@ -33,13 +45,13 @@ info2.pdf: Overlake is in-network for the employee plan.
 info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
 info4.pdf: In-network institutions include Overlake, Swedish and others in the region
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].\n###"
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, openai_api_key: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.chatgpt_model = chatgpt_model
-        self.embedding_deployment = embedding_deployment
+        openai.api_key = openai_api_key
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
@@ -76,23 +88,27 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
         content = "\n".join(results)
 
-        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model);
+        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model)
 
         # add user question
-        user_content = q + "\n" + "Sources:\n {content}".format(content=content)
-        message_builder.append_message('user', user_content)
+        user_content = q + "\n" + f"Sources:\n {content}"
+        message_builder.append_message('user', "Question:\n" + user_content+"\n\nAnswer:\n")
 
         # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
-        message_builder.append_message('assistant', self.answer)
-        message_builder.append_message('user', self.question)
-        
+        message_builder.append_message('assistant', "Answer:\n"+self.answer)
+        message_builder.append_message('user', "Question:\n"+self.question)
+
         messages = message_builder.messages
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.openai_deployment,
-            model=self.chatgpt_model,
-            messages=messages, 
-            temperature=overrides.get("temperature") or 0.3, 
-            max_tokens=1024, 
-            n=1)
+        prompt = ChatPromptTemplate.from_messages(messages=messages)
+        print(messages)
+        llm = AzureOpenAI(deployment_name=self.openai_deployment, 
+                          temperature=overrides.get("temperature") or 0.7, 
+                          openai_api_base=openai.api_base, 
+                          openai_api_key=openai.api_key,
+                          openai_api_version=openai.api_version)
+
         
-        return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}
+        chain = LLMChain(prompt=prompt, llm=llm)
+        answer=chain.run({})
+       
+        return {"data_points": results, "answer": answer, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + prompt.format()}

@@ -1,5 +1,5 @@
 from .modelhelper import num_tokens_from_messages
-
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 class MessageBuilder:
     """
@@ -14,12 +14,18 @@ class MessageBuilder:
       """
 
     def __init__(self, system_content: str, chatgpt_model: str):
-        self.messages = [{'role': 'system', 'content': system_content}]
+        self.messages = [SystemMessage(content=system_content)]
         self.model = chatgpt_model
-        self.token_length = num_tokens_from_messages(
-            self.messages[-1], self.model)
 
-    def append_message(self, role: str, content: str, index: int = 1):
+
+    """def append_message(self, role: str, content: str, index: int = 1):
         self.messages.insert(index, {'role': role, 'content': content})
         self.token_length += num_tokens_from_messages(
-            self.messages[index], self.model)
+            self.messages[index], self.model)"""
+            
+    def append_message(self, role: str, content: str, index: int = 1):
+        if role == "user":
+            self.messages.insert(index, HumanMessage(content = content))
+        elif role == "assistant":
+            self.messages.insert(index, AIMessage(content = content))
+

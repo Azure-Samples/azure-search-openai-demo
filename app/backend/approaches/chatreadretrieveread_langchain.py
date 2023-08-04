@@ -39,6 +39,7 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
 )
 
+
 class ChatReadRetrieveReadApproach_LC(Approach):
     # Chat roles
     SYSTEM = "system"
@@ -76,11 +77,11 @@ If you cannot generate a search query, return just the number 0.
         {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
     ]
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, open_api_key: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
-        self.embedding_deployment = embedding_deployment
+        self.open_api_key = open_api_key
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
@@ -88,27 +89,19 @@ If you cannot generate a search query, return just the number 0.
         self.tools = [ ]
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
         AZURE_OPENAI_SERVICE = os.environ.get("AZURE_OPENAI_SERVICE") or "myopenai"
-        azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
 
         # Used by the OpenAI SDK
         openai.api_type = "azure"
         openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
         openai.api_version = "2023-05-15"
-
-        # Comment these two lines out if using keys, set your API key in the OPENAI_API_KEY environment variable instead
-        openai.api_type = "azure_ad"
-        openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_key = openai_token.token
     
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
-       
-
-        
+    
         llm = AzureOpenAI(deployment_name=self.chatgpt_deployment, 
                           temperature=overrides.get("temperature") or 0.7, 
                           openai_api_base=openai.api_base, 
-                          openai_api_key=openai.api_key, 
+                          openai_api_key=self.open_api_key,
                           openai_api_version=openai.api_version)
         prompt = ChatPromptTemplate(
             messages=[

@@ -28,6 +28,7 @@ AZURE_OPENAI_EMB_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMB_DEPLOYMENT") or "
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
+OPENAI_API_KEY = os.environ.get("OEPNAI_API_KEY") or None
 
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
@@ -59,21 +60,21 @@ blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 # or some derivative, here we include several for exploration purposes
 ask_approaches = {
     "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_API_KEY, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
+    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_API_KEY, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
 }
 
 chat_approaches = {
     "rrr": ChatReadRetrieveReadApproach(search_client, 
                                         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
                                         AZURE_OPENAI_CHATGPT_MODEL, 
-                                        AZURE_OPENAI_EMB_DEPLOYMENT,
+
                                         KB_FIELDS_SOURCEPAGE, 
                                         KB_FIELDS_CONTENT),
     "rrr_lc": ChatReadRetrieveReadApproach_LC(search_client,
                                             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
                                             AZURE_OPENAI_CHATGPT_MODEL, 
-                                            AZURE_OPENAI_EMB_DEPLOYMENT,
+                                            OPENAI_API_KEY,
                                             KB_FIELDS_SOURCEPAGE, 
                                             KB_FIELDS_CONTENT)
 }

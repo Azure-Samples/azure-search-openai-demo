@@ -1,4 +1,5 @@
 import openai
+import os
 from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
@@ -44,10 +45,10 @@ Thought: {agent_scratchpad}"""
 
     CognitiveSearchToolDescription = "Useful for searching the documents in the Cognitive Search knowledge base. If your queries retrieves the same documents, reword your query."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_deployment: str, openai_api_key: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
-        self.embedding_deployment = embedding_deployment
+        openai.api_key = openai_api_key
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
@@ -115,7 +116,11 @@ Thought: {agent_scratchpad}"""
             prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
             input_variables = ["input", "agent_scratchpad"])
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        llm = AzureOpenAI(deployment_name=self.openai_deployment, 
+                          temperature=overrides.get("temperature") or 0.7, 
+                          openai_api_base=openai.api_base, 
+                          openai_api_key=openai.api_key,
+                          openai_api_version=openai.api_version)
         chain = LLMChain(llm = llm, prompt = prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
             agent = ZeroShotAgent(llm_chain = chain, tools = tools),
