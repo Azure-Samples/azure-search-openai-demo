@@ -3,8 +3,19 @@ import logging
 import mimetypes
 import os
 import time
+from azure_monitor import AzureMonitorSpanExporter
 
 import openai
+from opentelemetry import trace
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.aiohttp_client import (
+    AioHttpClientInstrumentor
+)
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
+
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.storage.blob import BlobServiceClient
@@ -119,10 +130,22 @@ def ensure_openai_token():
 def create_app():
     app = Flask(__name__)
 
+    provider = TracerProvider()
+    trace.set_tracer_provider(provider)
+    aiexporter = AzureMonitorSpanExporter(
+        connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    )
+    provider.add_span_processor(BatchSpanProcessor(aiexporter))
+    # provider.add_span_processor(BatchExportSpanProcessor(RichConsoleSpanExporter()))
+    
+    FlaskInstrumentor().instrument_app(app, tracer_provider=provider)
+    RequestsInstrumentor().instrument(tracer_provider=provider)
+    AioHttpClientInstrumentor().instrument(tracer_provider=provider)
+
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
-    # If you encounter a blocking error during a DefaultAzureCredntial resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
+    # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
 
     # Set up clients for Cognitive Search and Storage
