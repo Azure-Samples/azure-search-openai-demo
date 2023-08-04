@@ -64,7 +64,7 @@ Thought: {agent_scratchpad}"""
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = (await openai.Embedding.create(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -93,22 +93,27 @@ Thought: {agent_scratchpad}"""
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) async for doc in r]
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) async for doc in r]
-        content = "\n".join(self.results)
-        return content
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) async for doc in r]
+        content = "\n".join(results)
+        return results, content
 
     async def run(self, q: str, overrides: dict[str, Any]) -> Any:
-        # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
-        self.results = None
+
+        retrieve_results = None
+        async def retrieve_and_store(q: str) -> Any:
+            nonlocal retrieve_results
+            retrieve_results, content = await self.retrieve(q, overrides)
+            return content
 
         # Use to capture thought process during iterations
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
         acs_tool = Tool(name="CognitiveSearch",
-                        func=lambda q: self.retrieve(q, overrides),
+                        func=lambda _: 'Not implemented',
+                        coroutine=retrieve_and_store,
                         description=self.CognitiveSearchToolDescription,
                         callbacks=cb_manager)
         employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
@@ -126,12 +131,12 @@ Thought: {agent_scratchpad}"""
             tools = tools,
             verbose = True,
             callback_manager = cb_manager)
-        result = agent_exec.run(q)
+        result = await agent_exec.arun(q)
 
         # Remove references to tool names that might be confused with a citation
         result = result.replace("[CognitiveSearch]", "").replace("[Employee]", "")
 
-        return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
+        return {"data_points": retrieve_results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
 
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
@@ -142,8 +147,9 @@ class EmployeeInfoTool(CsvLookupTool):
                          name="Employee",
                          description="useful for answering questions about the employee, their benefits and other personal information",
                          callbacks=callbacks)
-        self.func = self.employee_info
+        self.func = lambda _: 'Not implemented'
+        self.coroutine = self.employee_info
         self.employee_name = employee_name
 
-    def employee_info(self, name: str) -> str:
+    async def employee_info(self, name: str) -> str:
         return self.lookup(name)

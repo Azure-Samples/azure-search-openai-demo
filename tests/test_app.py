@@ -1,38 +1,51 @@
-def test_index(client):
-    response = client.get("/")
+import pytest
+
+
+@pytest.mark.asyncio
+async def test_index(client):
+    response = await client.get("/")
     assert response.status_code == 200
 
 
-def test_ask_request_must_be_json(client):
-    response = client.post("/ask")
+@pytest.mark.asyncio
+async def test_ask_request_must_be_json(client):
+    response = await client.post("/ask")
     assert response.status_code == 415
-    assert response.json["error"] == "request must be json"
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
 
 
-def test_ask_with_unknown_approach(client):
-    response = client.post("/ask", json={"approach": "test"})
+@pytest.mark.asyncio
+async def test_ask_with_unknown_approach(client):
+    response = await client.post("/ask", json={"approach": "test"})
     assert response.status_code == 400
 
 
-def test_ask_mock_approach(client):
-    response = client.post("/ask", json={"approach": "mock", "question": "What is the capital of France?"})
+@pytest.mark.asyncio
+async def test_ask_mock_approach(client):
+    response = await client.post("/ask", json={"approach": "mock", "question": "What is the capital of France?"})
     assert response.status_code == 200
-    assert response.json["answer"] == "Paris"
+    result = await response.get_json()
+    assert result["answer"] == "Paris"
 
 
-def test_chat_request_must_be_json(client):
-    response = client.post("/chat")
+@pytest.mark.asyncio
+async def test_chat_request_must_be_json(client):
+    response = await client.post("/chat")
     assert response.status_code == 415
-    assert response.json["error"] == "request must be json"
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
 
 
-def test_chat_with_unknown_approach(client):
-    response = client.post("/chat", json={"approach": "test"})
+@pytest.mark.asyncio
+async def test_chat_with_unknown_approach(client):
+    response = await client.post("/chat", json={"approach": "test"})
     assert response.status_code == 400
 
 
-def test_chat_mock_approach(client):
-    response = client.post(
+@pytest.mark.asyncio
+async def test_chat_mock_approach(client):
+    response = await client.post(
         "/chat",
         json={
             "approach": "mock",
@@ -40,4 +53,5 @@ def test_chat_mock_approach(client):
         },
     )
     assert response.status_code == 200
-    assert response.json["answer"] == "Paris"
+    result = await response.get_json()
+    assert result["answer"] == "Paris"
