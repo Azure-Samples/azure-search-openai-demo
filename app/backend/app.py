@@ -3,7 +3,7 @@ import logging
 import mimetypes
 import os
 import time
-from azure_monitor import AzureMonitorSpanExporter
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 import openai
 from opentelemetry import trace
@@ -132,7 +132,7 @@ def create_app():
 
     provider = TracerProvider()
     trace.set_tracer_provider(provider)
-    aiexporter = AzureMonitorSpanExporter(
+    aiexporter = AzureMonitorTraceExporter(
         connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )
     provider.add_span_processor(BatchSpanProcessor(aiexporter))
