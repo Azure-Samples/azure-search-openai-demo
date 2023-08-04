@@ -5,14 +5,8 @@ openai[datalib]==0.27.8
 tiktoken==0.4.0
 azure-search-documents==11.4.0b6
 azure-storage-blob==12.14.1
-opentelemetry-api==1.19.0
-opentelemetry-azure-monitor==0.4b0
-# opentelemetry-exporter-richconsole==0.40b0
-opentelemetry-instrumentation==0.40b0
-opentelemetry-instrumentation-flask==0.40b0
-opentelemetry-instrumentation-requests==0.40b0
-opentelemetry-instrumentation-aiohttp-client==0.40b0
-opentelemetry-instrumentation-wsgi==0.40b0
-opentelemetry-sdk==1.19.0
-opentelemetry-semantic-conventions==0.40b0
-opentelemetry-util-http==0.40b0
+opentelemetry-azure-monitor
+# opentelemetry-exporter-richconsole
+opentelemetry-instrumentation-flask
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-aiohttp-client
