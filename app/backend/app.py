@@ -13,7 +13,7 @@ from opentelemetry.instrumentation.aiohttp_client import (
     AioHttpClientInstrumentor
 )
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
+# from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 
 from azure.identity import DefaultAzureCredential
@@ -136,7 +136,7 @@ def create_app():
         connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )
     provider.add_span_processor(BatchSpanProcessor(aiexporter))
-    # provider.add_span_processor(BatchExportSpanProcessor(RichConsoleSpanExporter()))
+    # provider.add_span_processor(BatchSpanProcessor(RichConsoleSpanExporter()))
     
     FlaskInstrumentor().instrument_app(app, tracer_provider=provider)
     RequestsInstrumentor().instrument(tracer_provider=provider)
