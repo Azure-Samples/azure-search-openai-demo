@@ -8,6 +8,7 @@ from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 
 class ChatReadRetrieveReadApproach(Approach):
@@ -56,7 +57,8 @@ If you cannot generate a search query, return just the number 0.
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
-
+        
+    @retry(wait=wait_random_exponential(multiplier=1, min=4, max=10), stop=stop_after_attempt(3))  
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -154,7 +156,19 @@ If you cannot generate a search query, return just the number 0.
             temperature=overrides.get("temperature") or 0.7,
             max_tokens=1024,
             n=1)
-
+        
+        # Retry on RateLimitError  
+        try:  
+         chat_completion = openai.ChatCompletion.create( 
+                deployment_id=self.chatgpt_deployment,  
+                model=self.chatgpt_model,  
+                messages=messages,  
+                temperature=overrides.get("temperature") or 0.2,  
+                max_tokens=7000,  
+                n=1)  
+        except openai.error.RateLimitError as e:  
+            self.logger.error(f"Rate limit error: {e}")  
+            raise 
         chat_content = chat_completion.choices[0].message.content
 
         msg_to_display = '\n\n'.join([str(message) for message in messages])
