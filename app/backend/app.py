@@ -117,9 +117,8 @@ async def ensure_openai_token():
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
         openai.api_key = openai_token.token
 
-
-async def create_app():
-    app = Quart(__name__)
+@bp.before_app_serving
+async def setup_clients():
 
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -146,12 +145,12 @@ async def create_app():
     openai.api_key = openai_token.token
 
     # Store on app.config for later use inside requests
-    app.config[CONFIG_OPENAI_TOKEN] = openai_token
-    app.config[CONFIG_CREDENTIAL] = azure_credential
-    app.config[CONFIG_BLOB_CLIENT] = blob_client
+    current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
+    current_app.config[CONFIG_CREDENTIAL] = azure_credential
+    current_app.config[CONFIG_BLOB_CLIENT] = blob_client
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
-    app.config[CONFIG_ASK_APPROACHES] = {
+    current_app.config[CONFIG_ASK_APPROACHES] = {
         "rtr": RetrieveThenReadApproach(
             search_client,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -174,7 +173,7 @@ async def create_app():
             KB_FIELDS_CONTENT
         )
     }
-    app.config[CONFIG_CHAT_APPROACHES] = {
+    current_app.config[CONFIG_CHAT_APPROACHES] = {
         "rrr": ChatReadRetrieveReadApproach(
             search_client,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -185,6 +184,8 @@ async def create_app():
         )
     }
 
-    app.register_blueprint(bp)
 
+def create_app():
+    app = Quart(__name__)
+    app.register_blueprint(bp)
     return app
