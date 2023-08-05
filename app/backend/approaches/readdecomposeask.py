@@ -44,7 +44,7 @@ class ReadDecomposeAsk(Approach):
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SIMPLE,
+                                          query_type=QueryType.SEMANTIC,
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
@@ -70,7 +70,7 @@ class ReadDecomposeAsk(Approach):
         r = await self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
-                                      query_type=QueryType.SIMPLE,
+                                      query_type=QueryType.SEMANTIC,
                                       query_language="en-us",
                                       query_speller="lexicon",
                                       semantic_configuration_name="default",
