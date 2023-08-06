@@ -7,7 +7,6 @@ azure-search-documents==11.4.0b6
 azure-storage-blob==12.14.1
 
 azure-monitor-opentelemetry --pre
-# opentelemetry-exporter-richconsole
 opentelemetry-instrumentation-flask
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client

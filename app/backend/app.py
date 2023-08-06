@@ -13,7 +13,6 @@ from opentelemetry.instrumentation.aiohttp_client import (
     AioHttpClientInstrumentor
 )
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-# from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 
 from azure.identity import DefaultAzureCredential
@@ -135,12 +134,16 @@ def create_app():
     aiexporter = AzureMonitorTraceExporter(
         connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )
-    provider.add_span_processor(BatchSpanProcessor(aiexporter))
-    # provider.add_span_processor(BatchSpanProcessor(RichConsoleSpanExporter()))
-    
+
     FlaskInstrumentor().instrument_app(app, tracer_provider=provider)
     RequestsInstrumentor().instrument(tracer_provider=provider)
     AioHttpClientInstrumentor().instrument(tracer_provider=provider)
+
+    provider.add_span_processor(BatchSpanProcessor(aiexporter))
+
+    # For local debugging, requires opentelemetry-exporter-richconsole package
+    # from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
+    # provider.add_span_processor(BatchSpanProcessor(RichConsoleSpanExporter()))
 
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
