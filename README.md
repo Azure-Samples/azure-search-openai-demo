@@ -115,7 +115,7 @@ either you or they can follow these steps:
 If you want to use an existing OpenAI instance, before running `azd up` to create your Azure resources and deploy the app on Azure, follow these steps:
 
 1. Run `azd env set OPENAI_API_TYPE openai`
-2. Run `azd env set OPENAI_API_ORGANIZATION {Your OpenAI organization}`
+2. Run `azd env set OPENAI_ORGANIZATION {Your OpenAI organization}`
 3. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
 4. Run `azd up`
 

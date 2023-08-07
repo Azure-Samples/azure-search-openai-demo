@@ -63,7 +63,7 @@
       "value": "${OPENAI_API_KEY}"
     },
     "openAiApiOrganization": {
-      "value": "${OPENAI_API_ORGANIZATION}"
+      "value": "${OPENAI_ORGANIZATION}"
     }
   }
 }

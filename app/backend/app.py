@@ -25,11 +25,11 @@ AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMEN
 AZURE_OPENAI_CHATGPT_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_MODEL") or "gpt-35-turbo"
 AZURE_OPENAI_EMB_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMB_DEPLOYMENT") or "embedding"
 OPENAI_API_TYPE = os.environ.get("OPENAI_API_TYPE") or "azure"
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY") 
-OPENAI_API_ORGANIZATION = os.environ.get("OPENAI_API_ORGANIZATION") 
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+OPENAI_ORGANIZATION = os.environ.get("OPENAI_ORGANIZATION")
 OPENAI_GPT_MODEL = os.environ.get("OPENAI_GPT_MODEL") or "text-davinci-003"
 OPENAI_CHATGPT_MODEL = os.environ.get("OPENAI_CHATGPT_MODEL") or "gpt-3.5-turbo"
-OPENAI_EMB_MODEL = os.environ.get("AZURE_OPENAI_EMB_MODEL") or "text-embedding-ada-002"
+OPENAI_EMB_MODEL = os.environ.get("OPENAI_EMB_MODEL") or "text-embedding-ada-002"
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -56,7 +56,7 @@ if openai.api_type == "azure":
 
 else:
     openai.api_key = OPENAI_API_KEY
-    openai.organization = OPENAI_API_ORGANIZATION
+    openai.organization = OPENAI_ORGANIZATION
     chatgpt_model = OPENAI_CHATGPT_MODEL
 
 # Set up clients for Cognitive Search and Storage

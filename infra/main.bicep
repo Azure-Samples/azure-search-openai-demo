@@ -143,7 +143,8 @@ module backend 'core/host/appservice.bicep' = {
       OPENAI_GPT_MODEL: openAiGptModelName
       OPENAI_CHATGPT_MODEL: openAiChatGptModelName
       OPENAI_API_KEY: openAiApiKey
-      OPENAI_API_ORGANIZATION: openAiApiOrganization
+      OPENAI_ORGANIZATION: openAiApiOrganization
+      OPENAI_EMB_MODEL: embeddingModelName
     }
   }
 }
