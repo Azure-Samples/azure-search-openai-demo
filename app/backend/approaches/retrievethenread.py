@@ -65,7 +65,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SIMPLE,
+                                          query_type=QueryType.SEMANTIC,
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
