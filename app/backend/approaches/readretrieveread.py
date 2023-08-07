@@ -8,6 +8,7 @@ from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.llms.openai import AzureOpenAI
+from langchain.llms.openai import OpenAI
 from langchainadapters import HtmlCallbackHandler
 from lookuptool import CsvLookupTool
 from text import nonewlines
@@ -46,12 +47,15 @@ Thought: {agent_scratchpad}"""
 
     CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_type: str, openai_deployment: str, openai_model: str, embedding_deployment: str, embedding_model: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
+        self.openai_model = openai_model
         self.embedding_deployment = embedding_deployment
+        self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.openai_type = openai_type
 
     def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
@@ -63,7 +67,10 @@ Thought: {agent_scratchpad}"""
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            if self.openai_type == "azure":
+                query_vector = openai.Embedding.create(engine=self.embedding_deployment, model = self.embedding_model, input=query_text)["data"][0]["embedding"]
+            else:
+                query_vector = openai.Embedding.create(model = self.embedding_model, input=query_text)["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -118,7 +125,10 @@ Thought: {agent_scratchpad}"""
             prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
             input_variables = ["input", "agent_scratchpad"])
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        if self.openai_type == "azure":
+            llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        else:
+            llm = OpenAI(model_name=self.openai_model, temperature=overrides.get("temperature", 0.3), openai_api_key=openai.api_key)
         chain = LLMChain(llm = llm, prompt = prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
             agent = ZeroShotAgent(llm_chain = chain, tools = tools),

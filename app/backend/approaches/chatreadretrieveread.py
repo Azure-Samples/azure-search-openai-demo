@@ -47,11 +47,13 @@ If you cannot generate a search query, return just the number 0.
         {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
     ]
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_type: str, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, embedding_model: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
+        self.openai_type = openai_type
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_deployment = embedding_deployment
+        self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
@@ -76,13 +78,22 @@ If you cannot generate a search query, return just the number 0.
             self.chatgpt_token_limit - len(user_q)
             )
 
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages,
-            temperature=0.0,
-            max_tokens=32,
-            n=1)
+        if(self.openai_type) == "azure":
+            chat_completion = openai.ChatCompletion.create(
+                deployment_id=self.chatgpt_deployment,
+                model=self.chatgpt_model,
+                messages=messages,
+                temperature=0.0,
+                max_tokens=32,
+                n=1)
+            
+        else:
+            chat_completion = openai.ChatCompletion.create(
+                model=self.chatgpt_model,
+                messages=messages,
+                temperature=0.0,
+                max_tokens=32,
+                n=1)
 
         query_text = chat_completion.choices[0].message.content
         if query_text.strip() == "0":
@@ -92,7 +103,11 @@ If you cannot generate a search query, return just the number 0.
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            if self.openai_type == "azure":
+                query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+
+            else:
+                query_vector = openai.Embedding.create(model = self.embedding_model, input=query_text)["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -145,14 +160,23 @@ If you cannot generate a search query, return just the number 0.
             history,
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
-
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages,
-            temperature=overrides.get("temperature") or 0.7,
-            max_tokens=1024,
-            n=1)
+        
+        if(self.openai_type) == "azure":
+            chat_completion = openai.ChatCompletion.create(
+                deployment_id=self.chatgpt_deployment,
+                model=self.chatgpt_model,
+                messages=messages,
+                temperature=overrides.get("temperature") or 0.7,
+                max_tokens=1024,
+                n=1)
+            
+        else:
+            chat_completion = openai.ChatCompletion.create(
+                model=self.chatgpt_model,
+                messages=messages,
+                temperature=overrides.get("temperature") or 0.7,
+                max_tokens=1024,
+                n=1)
 
         chat_content = chat_completion.choices[0].message.content
 

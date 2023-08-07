@@ -24,6 +24,12 @@ AZURE_OPENAI_GPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT_DEPLOYMENT") or "
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ.get("AZURE_OPENAI_CHATGPT_DEPLOYMENT") or "chat"
 AZURE_OPENAI_CHATGPT_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_MODEL") or "gpt-35-turbo"
 AZURE_OPENAI_EMB_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMB_DEPLOYMENT") or "embedding"
+OPENAI_API_TYPE = os.environ.get("OPENAI_API_TYPE") or "azure"
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY") 
+OPENAI_API_ORGANIZATION = os.environ.get("OPENAI_API_ORGANIZATION") 
+OPENAI_GPT_MODEL = os.environ.get("OPENAI_GPT_MODEL") or "text-davinci-003"
+OPENAI_CHATGPT_MODEL = os.environ.get("OPENAI_CHATGPT_MODEL") or "gpt-3.5-turbo"
+OPENAI_EMB_MODEL = os.environ.get("AZURE_OPENAI_EMB_MODEL") or "text-embedding-ada-002"
 
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
@@ -36,14 +42,22 @@ KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
 azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
 
 # Used by the OpenAI SDK
-openai.api_type = "azure"
-openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-openai.api_version = "2023-05-15"
+openai.api_type = OPENAI_API_TYPE
 
-# Comment these two lines out if using keys, set your API key in the OPENAI_API_KEY environment variable instead
-openai.api_type = "azure_ad"
-openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-openai.api_key = openai_token.token
+if openai.api_type == "azure":
+    openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
+    openai.api_version = "2023-05-15"
+
+    # Comment these two lines out if using keys, set your API key in the OPENAI_API_KEY environment variable instead
+    openai.api_type = "azure_ad"
+    openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
+    openai.api_key = openai_token.token
+    chatgpt_model = AZURE_OPENAI_CHATGPT_MODEL
+
+else:
+    openai.api_key = OPENAI_API_KEY
+    openai.organization = OPENAI_API_ORGANIZATION
+    chatgpt_model = OPENAI_CHATGPT_MODEL
 
 # Set up clients for Cognitive Search and Storage
 search_client = SearchClient(
@@ -58,16 +72,18 @@ blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
 # or some derivative, here we include several for exploration purposes
 ask_approaches = {
-    "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rtr": RetrieveThenReadApproach(search_client, OPENAI_API_TYPE, AZURE_OPENAI_CHATGPT_DEPLOYMENT, chatgpt_model, AZURE_OPENAI_EMB_DEPLOYMENT, OPENAI_EMB_MODEL, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
+    "rrr": ReadRetrieveReadApproach(search_client, OPENAI_API_TYPE, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_GPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, OPENAI_EMB_MODEL, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
+    "rda": ReadDecomposeAsk(search_client, OPENAI_API_TYPE, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_GPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, OPENAI_EMB_MODEL, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
 }
 
 chat_approaches = {
     "rrr": ChatReadRetrieveReadApproach(search_client,
+                                        OPENAI_API_TYPE,
                                         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-                                        AZURE_OPENAI_CHATGPT_MODEL,
+                                        chatgpt_model,
                                         AZURE_OPENAI_EMB_DEPLOYMENT,
+                                        OPENAI_EMB_MODEL,
                                         KB_FIELDS_SOURCEPAGE,
                                         KB_FIELDS_CONTENT)
 }
@@ -128,9 +144,10 @@ def chat():
 @app.before_request
 def ensure_openai_token():
     global openai_token
-    if openai_token.expires_on < time.time() + 60:
-        openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_key = openai_token.token
+    if OPENAI_API_TYPE == "azure":
+        if openai_token.expires_on < time.time() + 60:
+            openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
+            openai.api_key = openai_token.token
 
 if __name__ == "__main__":
     app.run()
