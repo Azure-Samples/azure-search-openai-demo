@@ -25,6 +25,11 @@ param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 
+@allowed([
+  'azure'
+  'openai']
+)
+param openAiType string = 'azure'
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
@@ -37,6 +42,9 @@ param openAiResourceGroupName string = ''
 param openAiResourceGroupLocation string
 
 param openAiSkuName string = 'S0'
+
+param openAiApiKey string = ''
+param openAiApiOrganization string = ''
 
 param formRecognizerServiceName string = ''
 param formRecognizerResourceGroupName string = ''
@@ -53,6 +61,8 @@ param chatGptModelName string = 'gpt-35-turbo'
 param embeddingDeploymentName string = 'embedding'
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
+param openAiGptModelName string = 'text-davinci-003'
+param openAiChatGptModelName string = 'gpt-3.5-turbo'
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -114,7 +124,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'start_appservice.sh'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    appSettings: {
+    appSettings: (openAiType == 'azure') ? {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_OPENAI_SERVICE: openAi.outputs.name
@@ -123,11 +133,22 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_GPT_DEPLOYMENT: gptDeploymentName
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
+      OPENAI_API_TYPE: openAiType
+    }:{
+      AZURE_STORAGE_ACCOUNT: storage.outputs.name
+      AZURE_STORAGE_CONTAINER: storageContainerName
+      AZURE_SEARCH_INDEX: searchIndexName
+      AZURE_SEARCH_SERVICE: searchService.outputs.name
+      OPENAI_API_TYPE: openAiType
+      OPENAI_GPT_MODEL: openAiGptModelName
+      OPENAI_CHATGPT_MODEL: openAiChatGptModelName
+      OPENAI_API_KEY: openAiApiKey
+      OPENAI_API_ORGANIZATION: openAiApiOrganization
     }
   }
 }
 
-module openAi 'core/ai/cognitiveservices.bicep' = {
+module openAi 'core/ai/cognitiveservices.bicep' = if (openAiType == 'azure') {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -233,7 +254,7 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
-module openAiRoleUser 'core/security/role.bicep' = {
+module openAiRoleUser 'core/security/role.bicep' = if (openAiType == 'azure') {
   scope: openAiResourceGroup
   name: 'openai-role-user'
   params: {
@@ -338,11 +359,11 @@ output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
-output AZURE_OPENAI_SERVICE string = openAi.outputs.name
+output AZURE_OPENAI_SERVICE string = (openAiType == 'azure') ? openAi.outputs.name : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
-output AZURE_OPENAI_GPT_DEPLOYMENT string = gptDeploymentName
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
-output AZURE_OPENAI_EMB_DEPLOYMENT string = embeddingDeploymentName
+output AZURE_OPENAI_GPT_DEPLOYMENT string = (openAiType == 'azure') ? gptDeploymentName : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiType == 'azure') ? chatGptDeploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiType == 'azure') ? embeddingDeploymentName : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name

@@ -55,6 +55,15 @@
     },
     "gptDeploymentName": {
       "value": "${AZURE_OPENAI_GPT_DEPLOYMENT=davinci}"
+    },
+    "openAiType":{
+      "value": "${OPENAI_API_TYPE}"
+    },
+    "openAiApiKey": {
+      "value": "${OPENAI_API_KEY}"
+    },
+    "openAiApiOrganization": {
+      "value": "${OPENAI_API_ORGANIZATION}"
     }
   }
 }
