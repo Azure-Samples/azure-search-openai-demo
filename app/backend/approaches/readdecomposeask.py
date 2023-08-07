@@ -1,5 +1,5 @@
 import re
-from typing import Any, List, Optional
+from typing import Any, Optional, Sequence
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -9,13 +9,14 @@ from langchain.agents.react.base import ReActDocstoreAgent
 from langchain.callbacks.manager import CallbackManager
 from langchain.llms.openai import AzureOpenAI
 from langchain.prompts import BasePromptTemplate, PromptTemplate
+from langchain.tools.base import BaseTool
 
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 
 
-class ReadDecomposeAsk(Approach):
+class ReadDecomposeAsk(AskApproach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
@@ -23,7 +24,7 @@ class ReadDecomposeAsk(Approach):
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    async def search(self, query_text: str, overrides: dict[str, Any]) -> str:
+    async def search(self, query_text: str, overrides: dict[str, Any]) -> tuple[list[str], str]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -39,7 +40,7 @@ class ReadDecomposeAsk(Approach):
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         if not has_text:
-            query_text = None
+            query_text = ""
 
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(query_text,
@@ -80,8 +81,8 @@ class ReadDecomposeAsk(Approach):
         answers = await r.get_answers()
         if answers and len(answers) > 0:
             return answers[0].text
-        if r.get_count() > 0:
-            return "\n".join(d['content'] for d in r)
+        if await r.get_count() > 0:
+            return "\n".join([d['content'] async for d in r])
         return None
 
     async def run(self, q: str, overrides: dict[str, Any]) -> Any:
@@ -108,7 +109,7 @@ class ReadDecomposeAsk(Approach):
 
         class ReAct(ReActDocstoreAgent):
             @classmethod
-            def create_prompt(cls, tools: List[Tool]) -> BasePromptTemplate:
+            def create_prompt(cls, tools: Sequence[BaseTool]) -> BasePromptTemplate:
                 return prompt
 
         agent = ReAct.from_llm_and_tools(llm, tools)

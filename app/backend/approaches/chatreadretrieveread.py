@@ -1,16 +1,16 @@
-from typing import Any, Sequence
+from typing import Any
 
 import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from approaches.approach import Approach
+from approaches.approach import ChatApproach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
 
 
-class ChatReadRetrieveReadApproach(Approach):
+class ChatReadRetrieveReadApproach(ChatApproach):
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -57,7 +57,7 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    async def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
+    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -161,7 +161,7 @@ If you cannot generate a search query, return just the number 0.
 
         return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
 
-    def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
+    def get_messages_from_history(self, system_prompt: str, model_id: str, history: list[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
@@ -174,9 +174,10 @@ If you cannot generate a search query, return just the number 0.
         message_builder.append_message(self.USER, user_content, index=append_index)
 
         for h in reversed(history[:-1]):
-            if h.get("bot"):
-                message_builder.append_message(self.ASSISTANT, h.get('bot'), index=append_index)
-            message_builder.append_message(self.USER, h.get('user'), index=append_index)
+            if bot_msg := h.get("bot"):
+                message_builder.append_message(self.ASSISTANT, bot_msg, index=append_index)
+            if user_msg := h.get("user"):
+                message_builder.append_message(self.USER, user_msg, index=append_index)
             if message_builder.token_length > max_tokens:
                 break
 

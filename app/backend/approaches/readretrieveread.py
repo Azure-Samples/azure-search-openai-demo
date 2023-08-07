@@ -8,13 +8,13 @@ from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.llms.openai import AzureOpenAI
 
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
 from lookuptool import CsvLookupTool
 from text import nonewlines
 
 
-class ReadRetrieveReadApproach(Approach):
+class ReadRetrieveReadApproach(AskApproach):
     """
     Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
     is present then formulate an answer. Each iteration consists of two parts:
@@ -70,7 +70,7 @@ Thought: {agent_scratchpad}"""
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         if not has_text:
-            query_text = None
+            query_text = ""
 
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
@@ -127,7 +127,7 @@ Thought: {agent_scratchpad}"""
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         chain = LLMChain(llm = llm, prompt = prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
-            agent = ZeroShotAgent(llm_chain = chain, tools = tools),
+            agent = ZeroShotAgent(llm_chain = chain),
             tools = tools,
             verbose = True,
             callback_manager = cb_manager)

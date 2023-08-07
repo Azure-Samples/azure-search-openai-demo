@@ -4,11 +4,11 @@ from unittest import mock
 import pytest_asyncio
 
 import app
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 
 
-class MockedAskApproach(Approach):
+class MockedAskApproach(AskApproach):
     async def run(self, question, overrides):
         assert question == "What is the capital of France?"
         return {"answer": "Paris"}
