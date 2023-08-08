@@ -4,12 +4,12 @@ import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { AskResponse, getCitationFilePath } from "../../api";
+import { ChatResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
-    answer: AskResponse;
+    answer: ChatResponse;
     isSelected?: boolean;
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;

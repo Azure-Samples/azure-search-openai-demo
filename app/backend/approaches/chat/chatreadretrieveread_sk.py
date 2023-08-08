@@ -14,6 +14,7 @@ import semantic_kernel as sk
 from semantic_kernel.core_skills.text_skill import TextSkill
 
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
+from core.append_citations import append_citations
 
 
 
@@ -108,6 +109,7 @@ AI:
         if query_text.strip() == "0":
             query_text = history[-1]["user"] 
 
+        print("Querying text...")
         if overrides.get("semantic_ranker") and has_text:
             r = self.search_client.search(query_text,
                                           filter=filter,
@@ -120,7 +122,8 @@ AI:
             r = self.search_client.search(query_text,
                                           filter=filter,
                                           top=top)
-
+        
+        
         results = []
         refs = []
         for doc in r:
@@ -147,14 +150,11 @@ AI:
         grounding_result = self.reference_check(extraction_result.result, context=self.grounding_context)
         self.grounding_context["ungrounded_entities"] = grounding_result.result
         chat_content = self.entity_excision(chat_content, context=self.grounding_context).result
- 
+        chat_content = append_citations(chat_content, refs)
         
-        self.context["history"] += "\n{chat_content}"
-        
-        for ref in refs:
-            chat_content += '[{ref}]'.format(ref=ref)
+        self.context["history"] += "\n" + chat_content
         
         msg_to_display = self.context["history"]
-        
+        print("Sending content...")
         
         return {"data_points": results, "answer": chat_content, "citations":refs, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}

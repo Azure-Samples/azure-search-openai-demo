@@ -1,4 +1,5 @@
 import os
+import json
 import io
 import mimetypes
 import time
@@ -11,6 +12,7 @@ from approaches.chat.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chat.chatreadretrieveread_langchain import ChatReadRetrieveReadApproach_LC
 from approaches.chat.chatreadretrieveread_sk import ChatReadRetrieveRead_SemanticKernel
 from azure.storage.blob import BlobServiceClient
+import requests
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT") or "mystorageaccount"
@@ -58,7 +60,6 @@ blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
 # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
 # or some derivative, here we include several for exploration purposes
-
 chat_approaches = {
     "rrr": ChatReadRetrieveReadApproach(search_client, 
                                         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -88,24 +89,7 @@ app = Flask(__name__)
 def static_file(path):
     return app.send_static_file(path)
 
-@app.before_request
-def logging_before():
-    # Store the start time for the request
-    app_ctx.start_time = time.perf_counter()
 
-
-@app.after_request
-def logging_after(response):
-    # Get total time in milliseconds
-    total_time = time.perf_counter() - app_ctx.start_time
-    time_in_ms = int(total_time * 1000)
-    # Log the time taken for the endpoint 
-    app.logger.info('%s ms %s %s %s', time_in_ms, request.method, request.path, dict(request.args))
-    return response
-
-# Serve content files from blob storage from within the app to keep the example self-contained. 
-# *** NOTE *** this assumes that the content files are public, or at least that all users of the app
-# can access all the files. This is also slow and memory hungry.
 @app.route("/content/<path>")
 def content_file(path):
     blob = blob_container.get_blob_client(path).download_blob()
@@ -120,25 +104,69 @@ def content_file(path):
     return send_file(blob_file, mimetype=mime_type, as_attachment=False, download_name=path)
     
     
-@app.route("/chat", methods=["POST"])
+SHOULD_STREAM = True 
+
+def stream_with_data(body, headers, endpoint):
+    s = requests.Session()
+    response = {
+        "id": "",
+        "model": "",
+        "created": 0,
+        "object": "",
+        "choices": [{
+            "messages": []
+        }]
+    }
+    try:
+        with s.post(endpoint, json=body, headers=headers, stream=True) as r:
+            for line in r.iter_lines(chunk_size=10):
+                if line:
+                    lineJson = json.loads(line.lstrip(b'data:').decode('utf-8'))
+                    if 'error' in lineJson:
+                        yield json.dumps(lineJson).replace("\n", "\\n") + "\n"
+                    response["id"] = lineJson["id"]
+                    response["model"] = lineJson["model"]
+                    response["created"] = lineJson["created"]
+                    response["object"] = lineJson["object"]
+
+                    role = lineJson["choices"][0]["messages"][0]["delta"].get("role")
+                    if role == "tool":
+                        response["choices"][0]["messages"].append(lineJson["choices"][0]["messages"][0]["delta"])
+                    elif role == "assistant": 
+                        response["choices"][0]["messages"].append({
+                            "role": "assistant",
+                            "content": ""
+                        })
+                    else:
+                        deltaText = lineJson["choices"][0]["messages"][0]["delta"]["content"]
+                        if deltaText != "[DONE]":
+                            response["choices"][0]["messages"][1]["content"] += deltaText
+
+                    yield json.dumps(response).replace("\n", "\\n") + "\n"
+    except Exception as e:
+        yield json.dumps({"error": str(e)}).replace("\n", "\\n") + "\n"
+            
+@app.route("/chat", methods=["GET","POST"])
 def chat():
     ensure_openai_token()
     if not request.json:
         return jsonify({"error": "request must be json"}), 400
     approach = request.json["approach"]
+    
     try:
         impl = chat_approaches.get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
+        
         r = impl.run(request.json["history"], request.json.get("overrides") or {})
-        return jsonify(r)
+        if not SHOULD_STREAM:
+            return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
-@app.route("/conversation", methods=["GET","POST"])
-def conversation():
-    pass
+
+        
     
 def ensure_openai_token():
     global openai_token

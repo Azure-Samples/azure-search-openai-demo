@@ -7,6 +7,7 @@ from azure.search.documents.models import QueryType
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
+from core.append_citations import append_citations
 from text import nonewlines
 
 
@@ -152,6 +153,8 @@ If you cannot generate a search query, return just the number 0.
 
         chat_content = chat_completion.choices[0].message.content
         msg_to_display = '\n\n'.join([str(message) for message in messages])
+        chat_content = append_citations(chat_content, refs)
+
 
         return {"data_points": results, "answer": chat_content,"citations":refs, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
 

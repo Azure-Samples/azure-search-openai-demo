@@ -1,9 +1,3 @@
-export const enum Approaches {
-    RetrieveThenRead = "rtr",
-    ReadRetrieveRead = "rrr",
-    ReadDecomposeAsk = "rda"
-}
-
 export const enum ChatApproaches {
     ReadRetrieveRead = "rrr",
     ReadRetrieveRead_LC = "rrr_lc",
@@ -11,8 +5,6 @@ export const enum ChatApproaches {
 }
 
 export const enum RetrievalMode {
-    Hybrid = "hybrid",
-    Vectors = "vectors",
     Text = "text"
 }
 
@@ -29,13 +21,7 @@ export type AskRequestOverrides = {
     suggestFollowupQuestions?: boolean;
 };
 
-export type AskRequest = {
-    question: string;
-    approach: Approaches;
-    overrides?: AskRequestOverrides;
-};
-
-export type AskResponse = {
+export type ChatResponse = {
     answer: string;
     citations: string[];
     thoughts: string | null;
