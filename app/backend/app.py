@@ -3,18 +3,9 @@ import logging
 import mimetypes
 import os
 import time
-from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
 import openai
-from opentelemetry import trace
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from opentelemetry.instrumentation.aiohttp_client import (
-    AioHttpClientInstrumentor
-)
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.sdk.trace import TracerProvider
-
+from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.storage.blob import BlobServiceClient
@@ -28,6 +19,7 @@ from flask import (
     send_file,
     send_from_directory,
 )
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
@@ -54,7 +46,6 @@ CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CLIENT = "blob_client"
-
 
 bp = Blueprint("routes", __name__, static_folder='static')
 
@@ -127,19 +118,10 @@ def ensure_openai_token():
 
 
 def create_app():
+    configure_azure_monitor()
+
     app = Flask(__name__)
-
-    provider = TracerProvider()
-    trace.set_tracer_provider(provider)
-    aiexporter = AzureMonitorTraceExporter(
-        connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
-
-    FlaskInstrumentor().instrument_app(app, tracer_provider=provider)
-    RequestsInstrumentor().instrument(tracer_provider=provider)
-    AioHttpClientInstrumentor().instrument(tracer_provider=provider)
-
-    provider.add_span_processor(BatchSpanProcessor(aiexporter))
+    FlaskInstrumentor().instrument_app(app)
 
     # For local debugging, requires opentelemetry-exporter-richconsole package
     # from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
