@@ -28,14 +28,11 @@ class ReadDecomposeAsk(Approach):
 
     def search(self, query_text: str, overrides: dict[str, Any]) -> str:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in [
-            "vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get(
-            "semantic_captions") and has_text else False
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(
-            exclude_category.replace("'", "''")) if exclude_category else None
+        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
@@ -72,16 +69,14 @@ class ReadDecomposeAsk(Approach):
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(
-                " . ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" +
-                            nonewlines(doc[self.content_field][:500]) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) for doc in r]
         return "\n".join(self.results)
 
     def lookup(self, q: str) -> Optional[str]:
         r = self.search_client.search(q,
-                                      top=1,
+                                      top = 1,
                                       include_total_count=True,
                                       query_type=QueryType.SEMANTIC,
                                       query_language="en-us",
@@ -112,10 +107,8 @@ class ReadDecomposeAsk(Approach):
             llm = OpenAI(model_name=self.openai_model, temperature=overrides.get(
                 "temperature", 0.3), openai_api_key=openai.api_key)
         tools = [
-            Tool(name="Search", func=lambda q: self.search(q, overrides),
-                 description="useful for when you need to ask with search", callbacks=cb_manager),
-            Tool(name="Lookup", func=self.lookup,
-                 description="useful for when you need to ask with lookup", callbacks=cb_manager)
+            Tool(name="Search", func=lambda q: self.search(q, overrides), description="useful for when you need to ask with search", callbacks=cb_manager),
+            Tool(name="Lookup", func=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)
         ]
 
         # Like results above, not great to keep this as a global, will interfere with interleaving
@@ -125,8 +118,7 @@ class ReadDecomposeAsk(Approach):
             EXAMPLES, SUFFIX, ["input", "agent_scratchpad"], prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX)
 
         agent = ReAct.from_llm_and_tools(llm, tools)
-        chain = AgentExecutor.from_agent_and_tools(
-            agent, tools, verbose=True, callback_manager=cb_manager)
+        chain = AgentExecutor.from_agent_and_tools(agent, tools, verbose=True, callback_manager=cb_manager)
         result = chain.run(q)
 
         # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid
@@ -135,12 +127,10 @@ class ReadDecomposeAsk(Approach):
 
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
 
-
 class ReAct(ReActDocstoreAgent):
     @classmethod
     def create_prompt(cls, tools: List[Tool]) -> BasePromptTemplate:
         return prompt
-
 
 # Modified version of langchain's ReAct prompt that includes instructions and examples for how to cite information sources
 EXAMPLES = [
@@ -252,6 +242,6 @@ Action: Finish[yes <info4444.pdf><datapoints_aaa.txt>]""",
 SUFFIX = """\nQuestion: {input}
 {agent_scratchpad}"""
 PREFIX = "Answer questions as shown in the following examples, by splitting the question into individual search or lookup actions to find facts until you can answer the question. " \
-    "Observations are prefixed by their source name in angled brackets, source names MUST be included with the actions in the answers." \
-    "All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. "
+"Observations are prefixed by their source name in angled brackets, source names MUST be included with the actions in the answers." \
+"All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. "
 "Answer questions as truthfully as possible, and ONLY answer the questions using the information from observations, do not speculate or your own knowledge."

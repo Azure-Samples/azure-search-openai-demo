@@ -27,16 +27,16 @@ class ReadRetrieveReadApproach(Approach):
     """
 
     template_prefix = \
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-        "Answer the question using only the data provided in the information sources below. " \
-        "For tabular information return it as an html table. Do not return markdown format. " \
-        "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-        "For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-        "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-        "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-        "Never quote tool names as sources." \
-        "If you cannot answer using the sources below, say that you don't know. " \
-        "\n\nYou can access to the following tools:"
+    "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
+    "Answer the question using only the data provided in the information sources below. " \
+    "For tabular information return it as an html table. Do not return markdown format. " \
+    "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
+    "For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
+    "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
+    "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
+    "Never quote tool names as sources." \
+    "If you cannot answer using the sources below, say that you don't know. " \
+    "\n\nYou can access to the following tools:"
 
     template_suffix = """
 Begin!
@@ -91,7 +91,7 @@ Thought: {agent_scratchpad}"""
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
-                                          top=top,
+                                          top = top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
@@ -104,11 +104,9 @@ Thought: {agent_scratchpad}"""
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(
-                " -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" +
-                            nonewlines(doc[self.content_field][:250]) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) for doc in r]
         content = "\n".join(self.results)
         return content
 

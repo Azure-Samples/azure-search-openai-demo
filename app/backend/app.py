@@ -167,12 +167,34 @@ def create_app():
     # or some derivative, here we include several for exploration purposes
     app.config[CONFIG_ASK_APPROACHES] = {
         "rtr": RetrieveThenReadApproach(
-            search_client, OPENAI_API_TYPE, AZURE_OPENAI_CHATGPT_DEPLOYMENT, chatgpt_model, AZURE_OPENAI_EMB_DEPLOYMENT, OPENAI_EMB_MODEL, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT
+            search_client,
+            OPENAI_API_TYPE,
+            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            chatgpt_model,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT
         ),
         "rrr": ReadRetrieveReadApproach(
-            search_client, OPENAI_API_TYPE, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_GPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, OPENAI_EMB_MODEL, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT
+            search_client,
+            OPENAI_API_TYPE,
+            AZURE_OPENAI_GPT_DEPLOYMENT,
+            OPENAI_GPT_MODEL,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT
         ),
-        "rda": ReadDecomposeAsk(search_client, OPENAI_API_TYPE, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_GPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, OPENAI_EMB_MODEL, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT
+        "rda": ReadDecomposeAsk(
+            search_client,
+            OPENAI_API_TYPE,
+            AZURE_OPENAI_GPT_DEPLOYMENT,
+            OPENAI_GPT_MODEL,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT
         )
     }
     app.config[CONFIG_CHAT_APPROACHES] = {
