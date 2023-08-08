@@ -13,12 +13,8 @@ from core.messagebuilder import MessageBuilder
 from langchain.prompts.prompt import PromptTemplate
 from langchain.prompts.few_shot import FewShotPromptTemplate
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    AIMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain.prompts.chat import ChatPromptTemplate
+
 class RetrieveThenReadApproach(Approach):
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
@@ -54,6 +50,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         openai.api_key = openai_api_key
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        
 
     def run(self, q: str, overrides: dict[str, Any]) -> Any:
         has_text = "text"

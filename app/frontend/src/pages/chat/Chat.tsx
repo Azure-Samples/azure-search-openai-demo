@@ -143,6 +143,10 @@ const Chat = () => {
         {
             key: ChatApproaches.ReadRetrieveRead_LC,
             text: "Read-Retrieve-Read LangChain"
+        },
+        {
+            key: ChatApproaches.ReadRetrieveRead_SK,
+            text: "Read-Retrieve-Read Semnatic Kernel"
         }
     ];
 

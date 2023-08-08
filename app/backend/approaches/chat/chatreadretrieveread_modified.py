@@ -1,5 +1,6 @@
 from typing import Any, Sequence
 
+
 import openai
 import tiktoken
 from azure.search.documents import SearchClient
@@ -15,7 +16,19 @@ from langchainadapters import HtmlCallbackHandler
 
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
-
+from langchain.prompts import (
+    FewShotChatMessagePromptTemplate,
+    ChatPromptTemplate,
+)
+from langchain.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+    FewShotPromptTemplate,
+    PromptTemplate
+)
+from langchain.memory import ConversationBufferMemory
 class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
     SYSTEM = "system"
@@ -42,50 +55,69 @@ Do not include any text inside [] or <<>> in the search query terms.
 Do not include any special characters like '+'.
 If the question is not in English, translate the question to English before generating the search query.
 If you cannot generate a search query, return just the number 0.
+Only respond with a single sentence and nothing else. 
 """
-    query_prompt_few_shots = [
-        {'role' : USER, 'content' : 'What are my health plans?' },
-        {'role' : ASSISTANT, 'content' : 'Show available health plans' },
-        {'role' : USER, 'content' : 'does my plan cover cardio?' },
-        {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
-    ]
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str,  sourcepage_field: str, content_field: str):
+    examples = [ {"input" : 'What are my health plans?',
+                 "output" : 'Show available health plans'},
+                 {"input": 'does my plan cover cardio?',
+                 "output": 'Health plan cardio coverage'}]
+    example_prompt = ChatPromptTemplate.from_messages(
+        [('human', 'Generate search query for: {input}'), 
+        ('ai', '{output}')]
+        )
+    example_prompt = FewShotChatMessagePromptTemplate(
+        examples = examples,
+        example_prompt = example_prompt,
+        input_variables=['input', "output"]
+    )
+    
+    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, openai_api_key : str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        openai.api_key = openai_api_key
+
+        # Prepare OpenAI service using credentials stored in the `.env` file
+        #api_key, org_id = sk.openai_settings_from_dot_env()
 
     def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
+        print(history)
         has_text = "text"
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
-        user_q = 'Generate search query for: ' + history[-1]["user"]
 
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        messages = self.get_messages_from_history(
-            self.query_prompt_template,
-            self.chatgpt_model,
-            history,
-            user_q,
-            self.query_prompt_few_shots,
-            self.chatgpt_token_limit - len(user_q)
-            )
+        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        query_prompt = ChatPromptTemplate.from_messages([
+               # self.example_prompt.format(),
+                ("system", self.query_prompt_template) ,
+                ("human", "Generate search query for: {user_query}")]
+                )
+    
+        llm = AzureOpenAI(deployment_name=self.chatgpt_deployment, 
+                          temperature=overrides.get("temperature") or 0.7, 
+                          openai_api_base=openai.api_base, 
+                          openai_api_key=openai.api_key,
+                          openai_api_version=openai.api_version,
+                          max_tokens=1024, 
+                          n=1)
 
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages, 
-            temperature=0.0, 
-            max_tokens=32, 
-            n=1)
+        read_chain = LLMChain(
+            llm=llm,
+            prompt=query_prompt,
+            verbose=True,
+            memory=memory
+        )
         
-        query_text = chat_completion.choices[0].message.content
+        query_text = read_chain.run({"user_query": history[-1]["user"]})
+        print(query_text)
         if query_text.strip() == "0":
             query_text = history[-1]["user"] # Use the last user input if we failed to generate a better query
 
@@ -125,11 +157,12 @@ If you cannot generate a search query, return just the number 0.
 
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         system_message = self.system_message_chat_conversation
-        prompt_override = overrides.get("prompt_override")
-        if prompt_override is not None:
-            system_message = self.system_message_chat_conversation.format(injected_prompt=prompt_override[3:] + "\n")
+      
             
-        
+        message_prompt = ChatPromptTemplate.from_messages([
+                ("system", self.system_message_chat_conversation + "\n\nSources:\n" + content) ,
+                ("human", "{user_query}")]
+                )
         messages = self.get_messages_from_history(
             system_message + "\n\nSources:\n" + content,
             self.chatgpt_model,
@@ -137,15 +170,17 @@ If you cannot generate a search query, return just the number 0.
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
 
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages, 
-            temperature=overrides.get("temperature") or 0.7, 
-            max_tokens=1024, 
-            n=1)
-
-        chat_content = chat_completion.choices[0].message.content
+        
+        prompt = ChatPromptTemplate.from_messages(messages=messages)
+        conversation_chain = LLMChain(
+            llm=llm,
+            prompt=message_prompt,
+            verbose=True,
+        )
+        
+        prompt_override =  overrides.get("prompt_override")
+        if prompt_override is None: prompt_override = ""
+        chat_content = conversation_chain.run({'user_query':history[-1]["user"], "injected_prompt":prompt_override})
         for ref in refs:
             chat_content += '[{ref}]'.format(ref=ref)
         print(chat_content)

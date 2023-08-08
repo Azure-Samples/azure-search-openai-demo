@@ -7,7 +7,7 @@ type HtmlParsedAnswer = {
     followupQuestions: string[];
 };
 
-export function parseAnswerToHtml(answer: string, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
+export function parseAnswerToHtml(answer: string, citationsInput: string[], onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
     const citations: string[] = [];
     const followupQuestions: string[] = [];
 
@@ -22,6 +22,7 @@ export function parseAnswerToHtml(answer: string, onCitationClicked: (citationFi
 
     const parts = parsedAnswer.split(/\[([^\]]+)\]/g);
 
+    //const parts = citationsInput;
     const fragments: string[] = parts.map((part, index) => {
         if (index % 2 === 0) {
             return part;

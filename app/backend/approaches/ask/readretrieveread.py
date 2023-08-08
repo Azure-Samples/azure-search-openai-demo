@@ -9,7 +9,6 @@ from langchain.chains import LLMChain
 from langchain.agents import Tool, ZeroShotAgent, AgentExecutor
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
-from lookuptool import CsvLookupTool
 from typing import Any
 
 class ReadRetrieveReadApproach(Approach):

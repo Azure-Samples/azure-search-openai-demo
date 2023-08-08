@@ -6,7 +6,8 @@ export const enum Approaches {
 
 export const enum ChatApproaches {
     ReadRetrieveRead = "rrr",
-    ReadRetrieveRead_LC = "rrr_lc"
+    ReadRetrieveRead_LC = "rrr_lc",
+    ReadRetrieveRead_SK = "rrr_sk"
 }
 
 export const enum RetrievalMode {
@@ -36,6 +37,7 @@ export type AskRequest = {
 
 export type AskResponse = {
     answer: string;
+    citations: string[];
     thoughts: string | null;
     data_points: string[];
     error?: string;

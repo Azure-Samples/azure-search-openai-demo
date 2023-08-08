@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "type": "completion",
+  "description": "Verify that all the citations are associated with the proper fact.",
+  "completion": {
+    "max_tokens": 1024,
+    "temperature": 0.1,
+    "top_p": 0.1,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0
+  },
+  "input": {
+    "parameters": [
+      {
+        "name": "input",
+        "description": "The answer which contains citations in square brackets.",
+        "defaultValue": ""
+      },
+      {
+        "name": "sources",
+        "description": "The list of sources with their citation name.",
+        "defaultValue": ""
+      }
+    ]
+  }
+}

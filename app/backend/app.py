@@ -7,11 +7,12 @@ import openai
 from flask import Flask, request, jsonify, send_file, abort
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
-from approaches.retrievethenread import RetrieveThenReadApproach
-from approaches.readretrieveread import ReadRetrieveReadApproach
-from approaches.readdecomposeask import ReadDecomposeAsk
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.chatreadretrieveread_langchain import ChatReadRetrieveReadApproach_LC
+from approaches.ask.retrievethenread import RetrieveThenReadApproach
+from approaches.ask.readretrieveread import ReadRetrieveReadApproach
+from approaches.ask.readdecomposeask import ReadDecomposeAsk
+from approaches.chat.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.chat.chatreadretrieveread_langchain import ChatReadRetrieveReadApproach_LC
+from approaches.chat.chatreadretrieveread_sk import ChatReadRetrieveRead_SemanticKernel
 from azure.storage.blob import BlobServiceClient
 
 # Replace these with your own values, either in environment variables or directly here
@@ -28,8 +29,10 @@ AZURE_OPENAI_EMB_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMB_DEPLOYMENT") or "
 KB_FIELDS_CONTENT = os.environ.get("KB_FIELDS_CONTENT") or "content"
 KB_FIELDS_CATEGORY = os.environ.get("KB_FIELDS_CATEGORY") or "category"
 KB_FIELDS_SOURCEPAGE = os.environ.get("KB_FIELDS_SOURCEPAGE") or "sourcepage"
-OPENAI_API_KEY = os.environ.get("OEPNAI_API_KEY") or None
+AZURE_OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY") or None
 
+AZURE_OPENAI_ENDPOINT=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
+AZURE_OPENAI_DEPLOYMENT_NAME=AZURE_OPENAI_CHATGPT_DEPLOYMENT
 # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed, 
 # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the 
 # keys for each service
@@ -60,21 +63,28 @@ blob_container = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 # or some derivative, here we include several for exploration purposes
 ask_approaches = {
     "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_API_KEY, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, OPENAI_API_KEY, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
+    "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, AZURE_OPENAI_API_KEY, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
+    "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_GPT_DEPLOYMENT, AZURE_OPENAI_API_KEY, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT)
 }
 
 chat_approaches = {
     "rrr": ChatReadRetrieveReadApproach(search_client, 
                                         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
                                         AZURE_OPENAI_CHATGPT_MODEL, 
-
+                                        AZURE_OPENAI_API_KEY,
                                         KB_FIELDS_SOURCEPAGE, 
                                         KB_FIELDS_CONTENT),
     "rrr_lc": ChatReadRetrieveReadApproach_LC(search_client,
                                             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
                                             AZURE_OPENAI_CHATGPT_MODEL, 
-                                            OPENAI_API_KEY,
+                                            AZURE_OPENAI_API_KEY,
+                                            KB_FIELDS_SOURCEPAGE, 
+                                            KB_FIELDS_CONTENT),
+    "rrr_sk": ChatReadRetrieveRead_SemanticKernel(search_client,
+                                            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+                                            AZURE_OPENAI_CHATGPT_MODEL, 
+                                            AZURE_OPENAI_API_KEY,
+                                            AZURE_OPENAI_ENDPOINT,
                                             KB_FIELDS_SOURCEPAGE, 
                                             KB_FIELDS_CONTENT)
 }
@@ -110,7 +120,6 @@ def ask():
     approach = request.json["approach"]
     try:
         impl = ask_approaches.get(approach)
-        print(impl)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         r = impl.run(request.json["question"], request.json.get("overrides") or {})
@@ -127,7 +136,6 @@ def chat():
     approach = request.json["approach"]
     try:
         impl = chat_approaches.get(approach)
-        print(impl)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
         r = impl.run(request.json["history"], request.json.get("overrides") or {})

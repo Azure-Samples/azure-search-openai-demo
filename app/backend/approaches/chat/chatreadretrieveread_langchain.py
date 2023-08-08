@@ -102,13 +102,15 @@ If you cannot generate a search query, return just the number 0.
                           temperature=overrides.get("temperature") or 0.7, 
                           openai_api_base=openai.api_base, 
                           openai_api_key=self.open_api_key,
-                          openai_api_version=openai.api_version)
+                          openai_api_version=openai.api_version,
+                          max_tokens=1024, 
+                          n=1)
+        
         prompt = ChatPromptTemplate(
             messages=[
                 SystemMessagePromptTemplate.from_template(
                     self.system_message_chat_conversation
                 ),
-                # The `variable_name` here is what must align with memory
                 MessagesPlaceholder(variable_name="chat_history"),
                 HumanMessagePromptTemplate.from_template("The question: {question}")
             ],
