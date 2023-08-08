@@ -17,12 +17,12 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = \
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
-        "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
-        "Answer the following question using only the data provided in the sources below. " + \
-        "For tabular information return it as an html table. Do not return markdown format. " + \
-        "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. " + \
-        "If you cannot answer using the sources below, say you don't know. Use below example to answer"
+"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
+"Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
+"Answer the following question using only the data provided in the sources below. " + \
+"For tabular information return it as an html table. Do not return markdown format. " + \
+"Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. " + \
+"If you cannot answer using the sources below, say you don't know. Use below example to answer"
 
     # shots/sample conversation
     question = """
@@ -76,7 +76,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
-                                          top = top,
+                                          top=top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
@@ -84,7 +84,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         else:
             r = self.search_client.search(query_text,
                                           filter=filter,
-                                          top = top,
+                                          top=top,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
