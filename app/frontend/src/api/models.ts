@@ -74,7 +74,6 @@ export type AskRequestOverrides = {
     promptTemplate?: string;
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
-    suggestFollowupQuestions?: boolean;
 };
 
 export type ChatResponse = {

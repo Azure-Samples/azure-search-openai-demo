@@ -17,8 +17,7 @@ export async function chatApi(options: ChatRequest): Promise<ChatResponse> {
                 prompt_template: options.overrides?.promptTemplate,
                 prompt_template_prefix: options.overrides?.promptTemplatePrefix,
                 prompt_template_suffix: options.overrides?.promptTemplateSuffix,
-                exclude_category: options.overrides?.excludeCategory,
-                suggest_followup_questions: options.overrides?.suggestFollowupQuestions
+                exclude_category: options.overrides?.excludeCategory
             }
         })
     });

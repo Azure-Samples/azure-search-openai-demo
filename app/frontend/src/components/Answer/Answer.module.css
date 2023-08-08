@@ -2,7 +2,9 @@
     padding: 20px;
     background: rgb(249, 249, 249);
     border-radius: 8px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    box-shadow:
+        0px 2px 4px rgba(0, 0, 0, 0.14),
+        0px 0px 2px rgba(0, 0, 0, 0.12);
     outline: transparent solid 1px;
 }
 
@@ -53,29 +55,6 @@
 
 .citation:hover {
     text-decoration: underline;
-}
-
-.followupQuestionsList {
-    margin-top: 10px;
-}
-
-.followupQuestionLearnMore {
-    margin-right: 5px;
-    font-weight: 600;
-    line-height: 24px;
-}
-
-.followupQuestion {
-    font-weight: 600;
-    line-height: 24px;
-    text-align: center;
-    border-radius: 4px;
-    padding: 0px 8px;
-    background: #e8ebfa;
-    color: black;
-    font-style: italic;
-    text-decoration: none;
-    cursor: pointer;
 }
 
 .supContainer {
