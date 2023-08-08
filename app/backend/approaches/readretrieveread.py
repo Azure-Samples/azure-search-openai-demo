@@ -1,14 +1,14 @@
 from typing import Any
 
 import openai
-from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
-from langchain.llms.openai import AzureOpenAI
-from langchain.llms.openai import OpenAI
+from langchain.llms.openai import AzureOpenAI, OpenAI
+
+from approaches.approach import Approach
 from langchainadapters import HtmlCallbackHandler
 from lookuptool import CsvLookupTool
 from text import nonewlines
@@ -27,16 +27,16 @@ class ReadRetrieveReadApproach(Approach):
     """
 
     template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-"Answer the question using only the data provided in the information sources below. " \
-"For tabular information return it as an html table. Do not return markdown format. " \
-"Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-"For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-"It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-"If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-"Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
-"\n\nYou can access to the following tools:"
+        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
+        "Answer the question using only the data provided in the information sources below. " \
+        "For tabular information return it as an html table. Do not return markdown format. " \
+        "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
+        "For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
+        "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
+        "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
+        "Never quote tool names as sources." \
+        "If you cannot answer using the sources below, say that you don't know. " \
+        "\n\nYou can access to the following tools:"
 
     template_suffix = """
 Begin!
@@ -59,18 +59,23 @@ Thought: {agent_scratchpad}"""
 
     def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
+        has_vector = overrides.get("retrieval_mode") in [
+            "vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get(
+            "semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        filter = "category ne '{}'".format(
+            exclude_category.replace("'", "''")) if exclude_category else None
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
             if self.openai_type == "azure":
-                query_vector = openai.Embedding.create(engine=self.embedding_deployment, model = self.embedding_model, input=query_text)["data"][0]["embedding"]
+                query_vector = openai.Embedding.create(
+                    engine=self.embedding_deployment, model=self.embedding_model, input=query_text)["data"][0]["embedding"]
             else:
-                query_vector = openai.Embedding.create(model = self.embedding_model, input=query_text)["data"][0]["embedding"]
+                query_vector = openai.Embedding.create(
+                    model=self.embedding_model, input=query_text)["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -86,7 +91,7 @@ Thought: {agent_scratchpad}"""
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
-                                          top = top,
+                                          top=top,
                                           query_caption="extractive|highlight-false" if use_semantic_captions else None,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
@@ -99,9 +104,11 @@ Thought: {agent_scratchpad}"""
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(
+                " -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) for doc in r]
+            self.results = [doc[self.sourcepage_field] + ":" +
+                            nonewlines(doc[self.content_field][:250]) for doc in r]
         content = "\n".join(self.results)
         return content
 
@@ -122,25 +129,31 @@ Thought: {agent_scratchpad}"""
 
         prompt = ZeroShotAgent.create_prompt(
             tools=tools,
-            prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
-            suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
-            input_variables = ["input", "agent_scratchpad"])
+            prefix=overrides.get(
+                "prompt_template_prefix") or self.template_prefix,
+            suffix=overrides.get(
+                "prompt_template_suffix") or self.template_suffix,
+            input_variables=["input", "agent_scratchpad"])
         if self.openai_type == "azure":
-            llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+            llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get(
+                "temperature") or 0.3, openai_api_key=openai.api_key)
         else:
-            llm = OpenAI(model_name=self.openai_model, temperature=overrides.get("temperature", 0.3), openai_api_key=openai.api_key)
-        chain = LLMChain(llm = llm, prompt = prompt)
+            llm = OpenAI(model_name=self.openai_model, temperature=overrides.get(
+                "temperature", 0.3), openai_api_key=openai.api_key)
+        chain = LLMChain(llm=llm, prompt=prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
-            agent = ZeroShotAgent(llm_chain = chain, tools = tools),
-            tools = tools,
-            verbose = True,
-            callback_manager = cb_manager)
+            agent=ZeroShotAgent(llm_chain=chain, tools=tools),
+            tools=tools,
+            verbose=True,
+            callback_manager=cb_manager)
         result = agent_exec.run(q)
 
         # Remove references to tool names that might be confused with a citation
-        result = result.replace("[CognitiveSearch]", "").replace("[Employee]", "")
+        result = result.replace("[CognitiveSearch]",
+                                "").replace("[Employee]", "")
 
         return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
+
 
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""

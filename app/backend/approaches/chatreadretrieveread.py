@@ -1,9 +1,10 @@
 from typing import Any, Sequence
 
 import openai
-from approaches.approach import Approach
 from azure.search.documents import SearchClient
 from azure.search.documents.models import QueryType
+
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
@@ -86,7 +87,7 @@ If you cannot generate a search query, return just the number 0.
                 temperature=0.0,
                 max_tokens=32,
                 n=1)
-            
+
         else:
             chat_completion = openai.ChatCompletion.create(
                 model=self.chatgpt_model,
@@ -160,7 +161,7 @@ If you cannot generate a search query, return just the number 0.
             history,
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
-        
+
         if(self.openai_type) == "azure":
             chat_completion = openai.ChatCompletion.create(
                 deployment_id=self.chatgpt_deployment,
@@ -169,7 +170,7 @@ If you cannot generate a search query, return just the number 0.
                 temperature=overrides.get("temperature") or 0.7,
                 max_tokens=1024,
                 n=1)
-            
+
         else:
             chat_completion = openai.ChatCompletion.create(
                 model=self.chatgpt_model,
