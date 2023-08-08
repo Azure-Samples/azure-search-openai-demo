@@ -79,7 +79,7 @@ If you cannot generate a search query, return just the number 0.
             self.chatgpt_token_limit - len(user_q)
             )
 
-        if(self.openai_type) == "azure":
+        if self.openai_type == "azure":
             chat_completion = openai.ChatCompletion.create(
                 deployment_id=self.chatgpt_deployment,
                 model=self.chatgpt_model,
@@ -162,7 +162,7 @@ If you cannot generate a search query, return just the number 0.
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
 
-        if(self.openai_type) == "azure":
+        if self.openai_type == "azure":
             chat_completion = openai.ChatCompletion.create(
                 deployment_id=self.chatgpt_deployment,
                 model=self.chatgpt_model,
