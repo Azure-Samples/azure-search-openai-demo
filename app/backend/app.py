@@ -8,10 +8,7 @@ import openai
 from azure.identity.aio import DefaultAzureCredential
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
-from azure.identity import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.search.documents import SearchClient
-from azure.storage.blob import BlobServiceClient
 from quart import (
     Blueprint,
     Quart,
