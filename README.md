@@ -144,17 +144,17 @@ To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh
 </details>
 
 <details>
-<summary>How does this repo compare to other Chat with Your Data repos?</summary>
+<summary>How does this sample compare to other Chat with Your Data samples?</summary>
 
-Another popular repo for this use case is here:
+Another popular repository for this use case is here:
 https://github.com/Microsoft/sample-app-aoai-chatGPT/
 
-That repo is designed for use by customers using Azure OpenAI studio and Azure Portal for setup. It also includes `azd` support for folks who want to deploy it completely from scratch.
+That repository is designed for use by customers using Azure OpenAI studio and Azure Portal for setup. It also includes `azd` support for folks who want to deploy it completely from scratch.
 
 The primary differences:
 
-* This repo includes multiple RAG (retrieval-augmented generation) approaches that chain the results of multiple API calls (to Azure OpenAI and ACS) together in different ways. The other repo uses only the built-in data sources option for the ChatCompletions API, which uses a RAG approach on the specified ACS index. That should work for most uses, but if you needed more flexibility, this repo may be a better option.
-* This repo is also a bit more experimental in other ways, since it's not tied to the Azure OpenAI Studio like the other repo.
+* This repository includes multiple RAG (retrieval-augmented generation) approaches that chain the results of multiple API calls (to Azure OpenAI and ACS) together in different ways. The other repository uses only the built-in data sources option for the ChatCompletions API, which uses a RAG approach on the specified ACS index. That should work for most uses, but if you needed more flexibility, this sample may be a better option.
+* This repository is also a bit more experimental in other ways, since it's not tied to the Azure OpenAI Studio like the other repo.
 
 </details>
 
