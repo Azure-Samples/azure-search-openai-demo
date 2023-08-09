@@ -7,3 +7,4 @@ pytest-asyncio
 coverage
 pytest-cov
 pre-commit
+locust
