@@ -143,6 +143,21 @@ Chunking allows us to limit the amount of information we send to OpenAI due to t
 To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
 </details>
 
+<details>
+<summary>How does this sample compare to other Chat with Your Data samples?</summary>
+
+Another popular repository for this use case is here:
+https://github.com/Microsoft/sample-app-aoai-chatGPT/
+
+That repository is designed for use by customers using Azure OpenAI studio and Azure Portal for setup. It also includes `azd` support for folks who want to deploy it completely from scratch.
+
+The primary differences:
+
+* This repository includes multiple RAG (retrieval-augmented generation) approaches that chain the results of multiple API calls (to Azure OpenAI and ACS) together in different ways. The other repository uses only the built-in data sources option for the ChatCompletions API, which uses a RAG approach on the specified ACS index. That should work for most uses, but if you needed more flexibility, this sample may be a better option.
+* This repository is also a bit more experimental in other ways, since it's not tied to the Azure OpenAI Studio like the other repository.
+
+</details>
+
 ### Troubleshooting
 
 Here are the most common failure scenarios and solutions:
