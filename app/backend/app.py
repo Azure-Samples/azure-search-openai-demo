@@ -5,8 +5,8 @@ import os
 import time
 
 import openai
-from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.identity import DefaultAzureCredential
+from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents import SearchClient
 from azure.storage.blob import BlobServiceClient
 from flask import (
