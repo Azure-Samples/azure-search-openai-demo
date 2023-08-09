@@ -1,6 +1,8 @@
 from typing import Any, Dict, List, Optional, Union
+
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.schema import AgentAction, AgentFinish, LLMResult
+
 
 def ch(text: Union[str, object]) -> str:
     s = text if isinstance(text, str) else str(text)
@@ -13,12 +15,12 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         result = self.html
         self.html = ""
         return result
-    
+
     def on_llm_start(
         self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> None:
         """Print out the prompts."""
-        self.html += f"LLM prompts:<br>" + "<br>".join(ch(prompts)) + "<br>";
+        self.html += "LLM prompts:<br>" + "<br>".join(ch(prompts)) + "<br>"
 
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Do nothing."""
@@ -36,7 +38,7 @@ class HtmlCallbackHandler (BaseCallbackHandler):
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
         """Print out that we finished a chain."""
-        self.html += f"Finished chain<br>"
+        self.html += "Finished chain<br>"
 
     def on_chain_error(self, error: Exception, **kwargs: Any) -> None:
         self.html += f"<span style='color:red'>Chain error: {ch(error)}</span><br>"
@@ -75,8 +77,8 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         self.html += f"<span style='color:{color}'>{ch(text)}</span><br>"
 
     def on_agent_action(
-        self, 
-        action: AgentAction, 
+        self,
+        action: AgentAction,
         color: Optional[str] = None,
         **kwargs: Any) -> Any:
         self.html += f"<span style='color:{color}'>{ch(action.log)}</span><br>"
