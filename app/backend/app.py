@@ -47,6 +47,8 @@ CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CLIENT = "blob_client"
 
+APPLICATIONINSIGHTS_CONNECTION_STRING = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+
 bp = Blueprint("routes", __name__, static_folder='static')
 
 @bp.route("/")
@@ -118,7 +120,8 @@ def ensure_openai_token():
 
 
 def create_app():
-    configure_azure_monitor()
+    if APPLICATIONINSIGHTS_CONNECTION_STRING:
+        configure_azure_monitor()
 
     app = Flask(__name__)
     FlaskInstrumentor().instrument_app(app)
