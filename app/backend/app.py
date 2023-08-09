@@ -197,6 +197,4 @@ async def setup_clients():
 def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
-    # setup basic logging
-    logging.basicConfig(level=logging.DEBUG)
     return app
