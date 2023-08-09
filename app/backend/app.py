@@ -116,7 +116,6 @@ async def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
-
 @bp.before_request
 async def ensure_openai_token():
     openai_token = current_app.config[CONFIG_OPENAI_TOKEN]
@@ -124,7 +123,6 @@ async def ensure_openai_token():
         openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token("https://cognitiveservices.azure.com/.default")
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
         openai.api_key = openai_token.token
-
 
 @bp.before_app_serving
 async def setup_clients():
