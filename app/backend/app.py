@@ -4,6 +4,7 @@ import mimetypes
 import os
 import time
 
+import ndjson
 import openai
 from azure.identity.aio import DefaultAzureCredential
 from azure.search.documents.aio import SearchClient
@@ -77,6 +78,14 @@ async def content_file(path):
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
+
+async def format_as_ndjson(r):
+    print(r)
+    async for data in r:
+        print(data)
+        yield ndjson.dumps(data)
+
+
 @bp.route("/ask", methods=["POST"])
 async def ask():
     if not request.is_json:
@@ -103,8 +112,8 @@ async def chat():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = await impl.run(request_json["history"], request_json.get("overrides") or {})
-        return jsonify(r)
+        response_generator = impl.run(request_json["history"], request_json.get("overrides") or {})
+        return format_as_ndjson(response_generator)
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500

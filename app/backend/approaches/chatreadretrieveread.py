@@ -63,6 +63,7 @@ If you cannot generate a search query, return just the number 0.
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
+        should_stream = overrides.get("should_stream") or False
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
         user_q = 'Generate search query for: ' + history[-1]["user"]
@@ -105,7 +106,7 @@ If you cannot generate a search query, return just the number 0.
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(query_text,
                                           filter=filter,
-                                          query_type=QueryType.SEMANTIC,
+                                          query_type=QueryType.SIMPLE,
                                           query_language="en-us",
                                           query_speller="lexicon",
                                           semantic_configuration_name="default",
@@ -146,20 +147,26 @@ If you cannot generate a search query, return just the number 0.
             history,
             history[-1]["user"],
             max_tokens=self.chatgpt_token_limit)
-
-        chat_completion = await openai.ChatCompletion.acreate(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages,
-            temperature=overrides.get("temperature") or 0.7,
-            max_tokens=1024,
-            n=1)
-
-        chat_content = chat_completion.choices[0].message.content
-
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+        extra_info = {"data_points": results, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+        chat_coroutine = openai.ChatCompletion.acreate(
+                deployment_id=self.chatgpt_deployment,
+                model=self.chatgpt_model,
+                messages=messages,
+                temperature=overrides.get("temperature") or 0.7,
+                max_tokens=1024,
+                n=1,
+                stream=should_stream)
+
+        if should_stream:
+            #yield extra_info
+            await chat_coroutine
+        else:
+            chat_content = (await chat_coroutine).choices[0].message.content
+            extra_info["answer"] = chat_content
+            yield extra_info
+
 
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: list[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)

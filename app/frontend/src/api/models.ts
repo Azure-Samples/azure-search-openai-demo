@@ -20,6 +20,7 @@ export type AskRequestOverrides = {
     promptTemplate?: string;
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
+    shouldStream?: boolean;
     suggestFollowupQuestions?: boolean;
 };
 
