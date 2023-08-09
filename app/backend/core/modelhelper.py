@@ -20,7 +20,7 @@ AOAI_2_OAI = {
 def get_token_limit(model_id: str) -> int:
     if model_id not in MODELS_2_TOKEN_LIMITS:
         raise ValueError("Expected model gpt-35-turbo and above")
-    return MODELS_2_TOKEN_LIMITS.get(model_id)
+    return MODELS_2_TOKEN_LIMITS[model_id]
 
 
 def num_tokens_from_messages(message: dict[str, str], model: str) -> int:

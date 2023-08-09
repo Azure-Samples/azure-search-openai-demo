@@ -1,15 +1,15 @@
 from typing import Any
 
 import openai
-from azure.search.documents import SearchClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 
 
-class RetrieveThenReadApproach(Approach):
+class RetrieveThenReadApproach(AskApproach):
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
@@ -44,7 +44,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def run(self, q: str, overrides: dict[str, Any]) -> Any:
+    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -54,16 +54,16 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=q)["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=q))["data"][0]["embedding"]
         else:
             query_vector = None
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        query_text = q if has_text else None
+        query_text = q if has_text else ""
 
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC,
                                           query_language="en-us",
@@ -75,16 +75,16 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           top=top,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
+            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
         content = "\n".join(results)
 
         message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model)
@@ -98,7 +98,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.append_message('user', self.question)
 
         messages = message_builder.messages
-        chat_completion = openai.ChatCompletion.create(
+        chat_completion = await openai.ChatCompletion.acreate(
             deployment_id=self.openai_deployment,
             model=self.chatgpt_model,
             messages=messages,

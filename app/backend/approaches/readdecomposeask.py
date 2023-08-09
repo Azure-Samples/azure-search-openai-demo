@@ -1,21 +1,22 @@
 import re
-from typing import Any, List, Optional
+from typing import Any, Optional, Sequence
 
 import openai
-from azure.search.documents import SearchClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool
 from langchain.agents.react.base import ReActDocstoreAgent
 from langchain.callbacks.manager import CallbackManager
 from langchain.llms.openai import AzureOpenAI
 from langchain.prompts import BasePromptTemplate, PromptTemplate
+from langchain.tools.base import BaseTool
 
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
 
 
-class ReadDecomposeAsk(Approach):
+class ReadDecomposeAsk(AskApproach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
@@ -23,7 +24,7 @@ class ReadDecomposeAsk(Approach):
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def search(self, query_text: str, overrides: dict[str, Any]) -> str:
+    async def search(self, query_text: str, overrides: dict[str, Any]) -> tuple[list[str], str]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -33,16 +34,16 @@ class ReadDecomposeAsk(Approach):
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
         else:
             query_vector = None
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         if not has_text:
-            query_text = None
+            query_text = ""
 
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC,
                                           query_language="en-us",
@@ -54,20 +55,20 @@ class ReadDecomposeAsk(Approach):
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           top=top,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc['@search.captions'] ])) for doc in r]
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc['@search.captions'] ])) async for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) for doc in r]
-        return "\n".join(self.results)
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) async for doc in r]
+        return results, "\n".join(results)
 
-    def lookup(self, q: str) -> Optional[str]:
-        r = self.search_client.search(q,
+    async def lookup(self, q: str) -> Optional[str]:
+        r = await self.search_client.search(q,
                                       top = 1,
                                       include_total_count=True,
                                       query_type=QueryType.SEMANTIC,
@@ -77,16 +78,20 @@ class ReadDecomposeAsk(Approach):
                                       query_answer="extractive|count-1",
                                       query_caption="extractive|highlight-false")
 
-        answers = r.get_answers()
+        answers = await r.get_answers()
         if answers and len(answers) > 0:
             return answers[0].text
-        if r.get_count() > 0:
-            return "\n".join(d['content'] for d in r)
+        if await r.get_count() > 0:
+            return "\n".join([d['content'] async for d in r])
         return None
 
-    def run(self, q: str, overrides: dict[str, Any]) -> Any:
-        # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
-        self.results = None
+    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
+
+        search_results = None
+        async def search_and_store(q: str) -> Any:
+            nonlocal search_results
+            search_results, content = await self.search(q, overrides)
+            return content
 
         # Use to capture thought process during iterations
         cb_handler = HtmlCallbackHandler()
@@ -94,30 +99,30 @@ class ReadDecomposeAsk(Approach):
 
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         tools = [
-            Tool(name="Search", func=lambda q: self.search(q, overrides), description="useful for when you need to ask with search", callbacks=cb_manager),
-            Tool(name="Lookup", func=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)
+            Tool(name="Search", func=lambda _: 'Not implemented', coroutine=search_and_store, description="useful for when you need to ask with search", callbacks=cb_manager),
+            Tool(name="Lookup", func=lambda _: 'Not implemented', coroutine=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)
         ]
 
-        # Like results above, not great to keep this as a global, will interfere with interleaving
-        global prompt
         prompt_prefix = overrides.get("prompt_template")
         prompt = PromptTemplate.from_examples(
             EXAMPLES, SUFFIX, ["input", "agent_scratchpad"], prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX)
 
+        class ReAct(ReActDocstoreAgent):
+            @classmethod
+            def create_prompt(cls, tools: Sequence[BaseTool]) -> BasePromptTemplate:
+                return prompt
+
         agent = ReAct.from_llm_and_tools(llm, tools)
         chain = AgentExecutor.from_agent_and_tools(agent, tools, verbose=True, callback_manager=cb_manager)
-        result = chain.run(q)
+        result = await chain.arun(q)
 
         # Replace substrings of the form <file.ext> with [file.ext] so that the frontend can render them as links, match them with a regex to avoid
         # generalizing too much and disrupt HTML snippets if present
         result = re.sub(r"<([a-zA-Z0-9_ \-\.]+)>", r"[\1]", result)
 
-        return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
+        return {"data_points": search_results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
 
-class ReAct(ReActDocstoreAgent):
-    @classmethod
-    def create_prompt(cls, tools: List[Tool]) -> BasePromptTemplate:
-        return prompt
+
 
 # Modified version of langchain's ReAct prompt that includes instructions and examples for how to cite information sources
 EXAMPLES = [

@@ -1,20 +1,20 @@
 from typing import Any
 
 import openai
-from azure.search.documents import SearchClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
 from langchain.llms.openai import AzureOpenAI
 
-from approaches.approach import Approach
+from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
 from lookuptool import CsvLookupTool
 from text import nonewlines
 
 
-class ReadRetrieveReadApproach(Approach):
+class ReadRetrieveReadApproach(AskApproach):
     """
     Attempt to answer questions by iteratively evaluating the question to see what information is missing, and once all information
     is present then formulate an answer. Each iteration consists of two parts:
@@ -54,7 +54,7 @@ Thought: {agent_scratchpad}"""
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
+    async def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -64,17 +64,17 @@ Thought: {agent_scratchpad}"""
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
         else:
             query_vector = None
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         if not has_text:
-            query_text = None
+            query_text = ""
 
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           query_type=QueryType.SEMANTIC,
                                           query_language="en-us",
@@ -86,29 +86,34 @@ Thought: {agent_scratchpad}"""
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         else:
-            r = self.search_client.search(query_text,
+            r = await self.search_client.search(query_text,
                                           filter=filter,
                                           top=top,
                                           vector=query_vector,
                                           top_k=50 if query_vector else None,
                                           vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
-            self.results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) for doc in r]
-        content = "\n".join(self.results)
-        return content
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) async for doc in r]
+        content = "\n".join(results)
+        return results, content
 
-    def run(self, q: str, overrides: dict[str, Any]) -> Any:
-        # Not great to keep this as instance state, won't work with interleaving (e.g. if using async), but keeps the example simple
-        self.results = None
+    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
+
+        retrieve_results = None
+        async def retrieve_and_store(q: str) -> Any:
+            nonlocal retrieve_results
+            retrieve_results, content = await self.retrieve(q, overrides)
+            return content
 
         # Use to capture thought process during iterations
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
         acs_tool = Tool(name="CognitiveSearch",
-                        func=lambda q: self.retrieve(q, overrides),
+                        func=lambda _: 'Not implemented',
+                        coroutine=retrieve_and_store,
                         description=self.CognitiveSearchToolDescription,
                         callbacks=cb_manager)
         employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
@@ -122,16 +127,16 @@ Thought: {agent_scratchpad}"""
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         chain = LLMChain(llm = llm, prompt = prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
-            agent = ZeroShotAgent(llm_chain = chain, tools = tools),
+            agent = ZeroShotAgent(llm_chain = chain),
             tools = tools,
             verbose = True,
             callback_manager = cb_manager)
-        result = agent_exec.run(q)
+        result = await agent_exec.arun(q)
 
         # Remove references to tool names that might be confused with a citation
         result = result.replace("[CognitiveSearch]", "").replace("[Employee]", "")
 
-        return {"data_points": self.results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
+        return {"data_points": retrieve_results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
 
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
@@ -142,8 +147,9 @@ class EmployeeInfoTool(CsvLookupTool):
                          name="Employee",
                          description="useful for answering questions about the employee, their benefits and other personal information",
                          callbacks=callbacks)
-        self.func = self.employee_info
+        self.func = lambda _: 'Not implemented'
+        self.coroutine = self.employee_info
         self.employee_name = employee_name
 
-    def employee_info(self, name: str) -> str:
+    async def employee_info(self, name: str) -> str:
         return self.lookup(name)

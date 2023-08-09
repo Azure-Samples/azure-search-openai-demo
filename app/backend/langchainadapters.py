@@ -26,7 +26,7 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         """Do nothing."""
         pass
 
-    def on_llm_error(self, error: Exception, **kwargs: Any) -> None:
+    def on_llm_error(self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any) -> None:
         self.html += f"<span style='color:red'>LLM error: {ch(error)}</span><br>"
 
     def on_chain_start(
@@ -40,7 +40,7 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         """Print out that we finished a chain."""
         self.html += "Finished chain<br>"
 
-    def on_chain_error(self, error: Exception, **kwargs: Any) -> None:
+    def on_chain_error(self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any) -> None:
         self.html += f"<span style='color:red'>Chain error: {ch(error)}</span><br>"
 
     def on_tool_start(
@@ -64,7 +64,7 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         """If not the final action, print out observation."""
         self.html += f"{ch(observation_prefix)}<br><span style='color:{color}'>{ch(output)}</span><br>{ch(llm_prefix)}<br>"
 
-    def on_tool_error(self, error: Exception, **kwargs: Any) -> None:
+    def on_tool_error(self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any) -> None:
         self.html += f"<span style='color:red'>Tool error: {ch(error)}</span><br>"
 
     def on_text(

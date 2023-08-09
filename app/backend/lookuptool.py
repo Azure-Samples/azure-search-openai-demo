@@ -1,6 +1,6 @@
 import csv
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 from langchain.agents import Tool
 from langchain.callbacks.manager import Callbacks
@@ -18,5 +18,5 @@ class CsvLookupTool(Tool):
             for row in reader:
                 self.data[row[key_field]] =  "\n".join([f"{i}:{row[i]}" for i in row])
 
-    def lookup(self, key: str) -> Optional[str]:
+    def lookup(self, key: str) -> str:
         return self.data.get(key, "")
