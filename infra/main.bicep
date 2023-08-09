@@ -28,7 +28,7 @@ param storageContainerName string = 'content'
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['australiaeast', 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'japaneast', 'northcentralus', 'uksouth'])
+@allowed(['canadaeast', 'eastus', 'francecentral', 'japaneast', 'northcentralus'])
 @metadata({
   azd: {
     type: 'location'
@@ -47,9 +47,11 @@ param formRecognizerSkuName string = 'S0'
 param gptDeploymentName string // Set in main.parameters.json
 param gptDeploymentCapacity int = 30
 param gptModelName string = 'gpt-35-turbo'
+param gptModelVersion string = '0613'
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = 'gpt-35-turbo'
+param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string = 'embedding'
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
@@ -111,7 +113,7 @@ module backend 'core/host/appservice.bicep' = {
     appServicePlanId: appServicePlan.outputs.id
     runtimeName: 'python'
     runtimeVersion: '3.10'
-    appCommandLine: 'python3 -m gunicorn "app:create_app()"'
+    appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     appSettings: {
@@ -143,7 +145,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: gptModelName
-          version: '0301'
+          version: gptModelVersion
         }
         sku: {
           name: 'Standard'
@@ -155,7 +157,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         model: {
           format: 'OpenAI'
           name: chatGptModelName
-          version: '0301'
+          version: gptModelVersion
         }
         sku: {
           name: 'Standard'
