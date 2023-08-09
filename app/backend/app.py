@@ -4,6 +4,7 @@ import mimetypes
 import os
 import time
 
+import aiohttp
 import openai
 from azure.identity.aio import DefaultAzureCredential
 from azure.search.documents.aio import SearchClient
@@ -87,7 +88,10 @@ async def ask():
         impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = await impl.run(request_json["question"], request_json.get("overrides") or {})
+        # Workaround for: https://github.com/openai/openai-python/issues/371
+        async with aiohttp.ClientSession() as s:
+            openai.aiosession.set(s)
+            r = await impl.run(request_json["question"], request_json.get("overrides") or {})
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /ask")
@@ -103,11 +107,15 @@ async def chat():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = await impl.run(request_json["history"], request_json.get("overrides") or {})
+        # Workaround for: https://github.com/openai/openai-python/issues/371
+        async with aiohttp.ClientSession() as s:
+            openai.aiosession.set(s)
+            r = await impl.run(request_json["history"], request_json.get("overrides") or {})
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
+
 
 @bp.before_request
 async def ensure_openai_token():
@@ -116,6 +124,7 @@ async def ensure_openai_token():
         openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token("https://cognitiveservices.azure.com/.default")
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
         openai.api_key = openai_token.token
+
 
 @bp.before_app_serving
 async def setup_clients():
@@ -188,4 +197,6 @@ async def setup_clients():
 def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
+    # setup basic logging
+    logging.basicConfig(level=logging.DEBUG)
     return app
