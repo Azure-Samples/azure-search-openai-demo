@@ -6,7 +6,7 @@ import io
 import os
 import re
 import time
-import word_to_pdf
+
 import openai
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -35,8 +35,6 @@ MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
 
-ignore_file_ext = [".docx"]
-
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
         return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
@@ -49,9 +47,8 @@ def upload_blobs(filename):
     if not blob_container.exists():
         blob_container.create_container()
 
-    ext = os.path.splitext(filename)[1].lower()
     # if file is PDF split into pages and upload each page as a separate blob
-    if  ext == ".pdf":
+    if os.path.splitext(filename)[1].lower() == ".pdf":
         reader = PdfReader(filename)
         pages = reader.pages
         for i in range(len(pages)):
@@ -64,17 +61,16 @@ def upload_blobs(filename):
             f.seek(0)
             blob_container.upload_blob(blob_name, f, overwrite=True)
     else:
-        if ext not in ignore_file_ext:
-            blob_name = blob_name_from_file_page(filename)
-            with open(filename,"rb") as data:
-                blob_container.upload_blob(blob_name, data, overwrite=True)
+        blob_name = blob_name_from_file_page(filename)
+        with open(filename,"rb") as data:
+            blob_container.upload_blob(blob_name, data, overwrite=True)
 
 def remove_blobs(filename):
     if args.verbose: print(f"Removing blobs for '{filename or '<all>'}'")
     blob_service = BlobServiceClient(account_url=f"https://{args.storageaccount}.blob.core.windows.net", credential=storage_creds)
     blob_container = blob_service.get_container_client(args.container)
     if blob_container.exists():
-        if filename == None:
+        if filename is None:
             blobs = blob_container.list_blob_names()
         else:
             prefix = os.path.splitext(os.path.basename(filename))[0]
@@ -136,7 +132,7 @@ def get_document_text(filename):
             for idx, table_id in enumerate(table_chars):
                 if table_id == -1:
                     page_text += form_recognizer_results.content[page_offset + idx]
-                elif not table_id in added_tables:
+                elif table_id not in added_tables:
                     page_text += table_to_html(tables_on_page[table_id])
                     added_tables.add(table_id)
 
@@ -152,11 +148,11 @@ def split_text(page_map):
     if args.verbose: print(f"Splitting '{filename}' into sections")
 
     def find_page(offset):
-        l = len(page_map)
-        for i in range(l - 1):
+        num_pages = len(page_map)
+        for i in range(num_pages - 1):
             if offset >= page_map[i][1] and offset < page_map[i + 1][1]:
                 return i
-        return l - 1
+        return num_pages - 1
 
     all_text = "".join(p[2] for p in page_map)
     length = len(all_text)
@@ -202,7 +198,7 @@ def split_text(page_map):
             start = min(end - SECTION_OVERLAP, start + last_table_start)
         else:
             start = end - SECTION_OVERLAP
-        
+
     if start + SECTION_OVERLAP < end:
         yield (all_text[start:end], find_page(start))
 
@@ -221,17 +217,16 @@ def create_sections(filename, page_map, use_vectors):
             "sourcepage": blob_name_from_file_page(filename, pagenum),
             "sourcefile": filename
         }
-        #if use_vectors:
-        #    section["embedding"] = compute_embedding(content)
+        if use_vectors:
+            section["embedding"] = compute_embedding(content)
         yield section
 
 def before_retry_sleep(retry_state):
-    if args.verbose: print(f"Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+    if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-#REMOVED EMBEDDING FUNCTION
-#@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
-#def compute_embedding(text):
-#    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding(text):
+    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -243,9 +238,9 @@ def create_search_index():
             fields=[
                 SimpleField(name="id", type="Edm.String", key=True),
                 SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
-                #SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single), 
-                #            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
-                #            vector_search_dimensions=1536, vector_search_configuration="default"),
+                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
+                            vector_search_dimensions=1536, vector_search_configuration="default"),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
@@ -260,10 +255,10 @@ def create_search_index():
                         VectorSearchAlgorithmConfiguration(
                             name="default",
                             kind="hnsw",
-                            hnsw_parameters=HnswParameters(metric="cosine") 
+                            hnsw_parameters=HnswParameters(metric="cosine")
                         )
                     ]
-                )        
+                )
             )
         if args.verbose: print(f"Creating {args.index} search index")
         index_client.create_index(index)
@@ -297,7 +292,7 @@ def remove_from_index(filename):
                                     index_name=args.index,
                                     credential=search_creds)
     while True:
-        filter = None if filename == None else f"sourcefile eq '{os.path.basename(filename)}'"
+        filter = None if filename is None else f"sourcefile eq '{os.path.basename(filename)}'"
         r = search_client.search("", filter=filter, top=1000, include_total_count=True)
         if r.get_count() == 0:
             break
@@ -336,22 +331,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-    azd_credential = AzureDeveloperCliCredential() if args.tenantid == None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
-    default_creds = azd_credential if args.searchkey == None or args.storagekey == None else None
-    search_creds = default_creds if args.searchkey == None else AzureKeyCredential(args.searchkey)
-    use_vectors = False
+    azd_credential = AzureDeveloperCliCredential() if args.tenantid is None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
+    default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
+    search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
+    use_vectors = not args.novectors
 
     if not args.skipblobs:
-        storage_creds = default_creds if args.storagekey == None else args.storagekey
+        storage_creds = default_creds if args.storagekey is None else args.storagekey
     if not args.localpdfparser:
         # check if Azure Form Recognizer credentials are provided
-        if args.formrecognizerservice == None:
+        if args.formrecognizerservice is None:
             print("Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser.")
             exit(1)
-        formrecognizer_creds = default_creds if args.formrecognizerkey == None else AzureKeyCredential(args.formrecognizerkey)
+        formrecognizer_creds = default_creds if args.formrecognizerkey is None else AzureKeyCredential(args.formrecognizerkey)
 
     if use_vectors:
-        if args.openaikey == None:
+        if args.openaikey is None:
             openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
             openai.api_type = "azure_ad"
         else:
@@ -367,12 +362,8 @@ if __name__ == "__main__":
     else:
         if not args.remove:
             create_search_index()
-        
-        print(f"Processing files...")
-        #convert word to doc
-        for filename in glob.glob(args.files):
-            word_to_pdf.wordToPDF(filename)
-        
+
+        print("Processing files...")
         for filename in glob.glob(args.files):
             if args.verbose: print(f"Processing '{filename}'")
             if args.remove:
@@ -382,10 +373,8 @@ if __name__ == "__main__":
                 remove_blobs(None)
                 remove_from_index(None)
             else:
-                ext = os.path.splitext(filename)[1].lower()
-                if ext not in ignore_file_ext:
-                    if not args.skipblobs:
-                        upload_blobs(filename)
-                    page_map = get_document_text(filename)
-                    sections = create_sections(os.path.basename(filename), page_map, use_vectors)
-                    index_sections(os.path.basename(filename), sections)
+                if not args.skipblobs:
+                    upload_blobs(filename)
+                page_map = get_document_text(filename)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                index_sections(os.path.basename(filename), sections)
