@@ -111,7 +111,7 @@ either you or they can follow these steps:
 ### Quickstart
 
 * In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.
-* Running locally: navigate to 127.0.0.1:5000
+* Running locally: navigate to 127.0.0.1:50505
 
 Once in the web app:
 
