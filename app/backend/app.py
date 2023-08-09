@@ -126,7 +126,7 @@ def create_app():
     app = Flask(__name__)
     FlaskInstrumentor().instrument_app(app)
 
-    # For local debugging, requires opentelemetry-exporter-richconsole package
+    # For local debugging, add opentelemetry-exporter-richconsole to requirements.txt and un-comment:
     # from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
     # provider.add_span_processor(BatchSpanProcessor(RichConsoleSpanExporter()))
 
