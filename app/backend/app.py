@@ -6,9 +6,10 @@ import time
 
 import openai
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
-from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from quart import (
     Blueprint,
     Quart,
@@ -19,7 +20,6 @@ from quart import (
     send_file,
     send_from_directory,
 )
-from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
