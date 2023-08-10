@@ -6,3 +6,8 @@ tiktoken==0.4.0
 azure-search-documents==11.4.0b6
 azure-storage-blob==12.14.1
 uvicorn[standard]==0.23.2
+
+azure-monitor-opentelemetry --pre
+opentelemetry-instrumentation-asgi
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-aiohttp-client
