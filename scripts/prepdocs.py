@@ -307,6 +307,7 @@ def remove_from_index(filename):
         # It can take a few seconds for search results to reflect changes, so wait a bit
         time.sleep(2)
 
+# refresh open ai token every 5 minutes
 def refresh_openai_token():
     if OPEN_AI_TOKEN_CACHE[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and OPEN_AI_TOKEN_CACHE[CACHE_KEY_CREATED_TIME] + 300 < time.time():
         token_cred = OPEN_AI_TOKEN_CACHE[CACHE_KEY_TOKEN_CRED]
@@ -392,8 +393,3 @@ if __name__ == "__main__":
                 page_map = get_document_text(filename)
                 sections = create_sections(os.path.basename(filename), page_map, use_vectors)
                 index_sections(os.path.basename(filename), sections)
-
-# refresh open ai token every 5 minutes
-
-        
-
