@@ -79,7 +79,6 @@ async def content_file(path):
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
-
 @bp.route("/ask", methods=["POST"])
 async def ask():
     if not request.is_json:
