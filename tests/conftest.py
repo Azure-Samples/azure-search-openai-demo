@@ -18,12 +18,16 @@ class MockedChatApproach(ChatReadRetrieveReadApproach):
     def __init__(self):
         pass
 
-    async def run(self, history, overrides):
+    async def run(self, history, overrides, should_stream:bool):
         messages = ChatReadRetrieveReadApproach.get_messages_from_history(self, ChatReadRetrieveReadApproach.query_prompt_template, "gpt-3.5-turbo", history, "Generate search query")
         assert messages[0]["role"] == "system"
         assert messages[1]["content"] == "Generate search query"
         assert messages[1]["role"] == "user"
-        return {"answer": "Paris", "data_points": [], "thoughts": ""}
+        if should_stream:
+            yield {"answer": "", "data_points": [], "thoughts": ""}
+            yield {"choices": [{"delta": {"content": "Paris"}}]}
+        else:
+            yield {"answer": "Paris", "data_points": [], "thoughts": ""}
 
 
 MockToken = namedtuple("MockToken", ["token", "expires_on"])

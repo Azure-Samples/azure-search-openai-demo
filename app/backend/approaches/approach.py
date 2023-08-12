@@ -4,7 +4,7 @@ from typing import Any
 
 class ChatApproach(ABC):
     @abstractmethod
-    async def run(self, history: list[dict], overrides: dict[str, Any]) -> Any:
+    async def run(self, history: list[dict], overrides: dict[str, Any], should_stream: bool) -> Any:
         ...
 
 

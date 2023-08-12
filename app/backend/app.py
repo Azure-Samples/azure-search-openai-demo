@@ -1,10 +1,10 @@
 import io
+import json
 import logging
 import mimetypes
 import os
 import time
 
-import ndjson
 import openai
 from azure.identity.aio import DefaultAzureCredential
 from azure.search.documents.aio import SearchClient
@@ -15,6 +15,7 @@ from quart import (
     abort,
     current_app,
     jsonify,
+    make_response,
     request,
     send_file,
     send_from_directory,
@@ -79,13 +80,6 @@ async def content_file(path):
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
 
-async def format_as_ndjson(r):
-    print(r)
-    async for data in r:
-        print(data)
-        yield ndjson.dumps(data)
-
-
 @bp.route("/ask", methods=["POST"])
 async def ask():
     if not request.is_json:
@@ -102,6 +96,12 @@ async def ask():
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
 
+
+async def format_as_ndjson(r):
+    async for event in r:
+        yield json.dumps(event).replace("\n", "\\n") + "\n"
+
+
 @bp.route("/chat", methods=["POST"])
 async def chat():
     if not request.is_json:
@@ -112,8 +112,14 @@ async def chat():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        response_generator = impl.run(request_json["history"], request_json.get("overrides") or {})
-        return format_as_ndjson(response_generator)
+        should_stream = request_json.get("should_stream", False)
+        response_generator = impl.run(request_json["history"], request_json.get("overrides", {}), should_stream)
+        if should_stream:
+            response = await make_response(format_as_ndjson(response_generator))
+            response.timeout = None
+            return response
+        else:
+            return jsonify(await anext(response_generator))
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500

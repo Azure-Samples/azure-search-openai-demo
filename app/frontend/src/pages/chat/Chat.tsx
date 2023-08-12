@@ -47,10 +47,10 @@ const Chat = () => {
 
         try {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
-            debugger;
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 approach: Approaches.ReadRetrieveRead,
+                shouldStream: shouldStream,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -59,21 +59,19 @@ const Chat = () => {
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions,
-                    shouldStream: shouldStream
                 }
             };
 
-            let result: any = {};
-            let answer: string = '';
-            let askResponse: AskResponse = {} as AskResponse;
             const response = await chatApi(request);
             if (!response.body) {
                 throw Error("No response body");
             }
             if (shouldStream) {
+                let answer: string = '';
+                let askResponse: AskResponse = {} as AskResponse;
                 for await (const event of readNDJSONStream(response.body)) {
                     if (event["data_points"]) {
-                        askResponse = result;
+                        askResponse = event;
                     } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                         answer += event["choices"][0]["delta"]["content"];
                         let latestResponse: AskResponse = {...askResponse, answer: answer};
@@ -88,8 +86,6 @@ const Chat = () => {
                 }
                 setAnswers([...answers, [question, parsedResponse]]);
             }
-
-            setAnswers([...answers, [question, result]]);
         } catch (e) {
             setError(e);
         } finally {

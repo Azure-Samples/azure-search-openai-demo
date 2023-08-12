@@ -57,13 +57,12 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> Any:
+    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream=False) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        should_stream = overrides.get("should_stream") or False
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
         user_q = 'Generate search query for: ' + history[-1]["user"]
@@ -160,8 +159,9 @@ If you cannot generate a search query, return just the number 0.
                 stream=should_stream)
 
         if should_stream:
-            #yield extra_info
-            await chat_coroutine
+            yield extra_info
+            async for event in await chat_coroutine:
+                yield event
         else:
             chat_content = (await chat_coroutine).choices[0].message.content
             extra_info["answer"] = chat_content

@@ -20,7 +20,6 @@ export type AskRequestOverrides = {
     promptTemplate?: string;
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
-    shouldStream?: boolean;
     suggestFollowupQuestions?: boolean;
 };
 
@@ -46,4 +45,5 @@ export type ChatRequest = {
     history: ChatTurn[];
     approach: Approaches;
     overrides?: AskRequestOverrides;
+    shouldStream?: boolean;
 };

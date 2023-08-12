@@ -50,8 +50,24 @@ async def test_chat_mock_approach(client):
         json={
             "approach": "mock",
             "history": [{"user": "What is the capital of France?"}],
+            "should_stream": False,
         },
     )
     assert response.status_code == 200
     result = await response.get_json()
     assert result["answer"] == "Paris"
+
+
+@pytest.mark.asyncio
+async def test_chat_mock_approach_stream(client):
+    response = await client.post(
+        "/chat",
+        json={
+            "approach": "mock",
+            "history": [{"user": "What is the capital of France?"}],
+            "should_stream": True,
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    assert result == b'{"answer": "", "data_points": [], "thoughts": ""}\n{"choices": [{"delta": {"content": "Paris"}}]}\n'
