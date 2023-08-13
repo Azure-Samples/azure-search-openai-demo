@@ -118,7 +118,8 @@ async def chat():
             response.timeout = None
             return response
         else:
-            return jsonify(await anext(response_generator))
+            # anext() is nicer but only available in Python 3.10
+            return jsonify(await response_generator.__anext__())
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
