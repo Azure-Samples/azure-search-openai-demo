@@ -6,8 +6,11 @@ import time
 
 import openai
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
+from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
+from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from quart import (
     Blueprint,
     Quart,
@@ -45,6 +48,7 @@ CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CLIENT = "blob_client"
 
+APPLICATIONINSIGHTS_CONNECTION_STRING = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
 
 bp = Blueprint("routes", __name__, static_folder='static')
 
@@ -123,7 +127,7 @@ async def setup_clients():
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
-    # If you encounter a blocking error during a DefaultAzureCredntial resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
+    # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
 
     # Set up clients for Cognitive Search and Storage
@@ -186,6 +190,11 @@ async def setup_clients():
 
 
 def create_app():
+    if APPLICATIONINSIGHTS_CONNECTION_STRING:
+        configure_azure_monitor()
+        AioHttpClientInstrumentor().instrument()
     app = Quart(__name__)
     app.register_blueprint(bp)
+    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
+
     return app
