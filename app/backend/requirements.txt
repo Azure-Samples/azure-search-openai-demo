@@ -7,3 +7,7 @@ azure-search-documents==11.4.0b6
 azure-storage-blob==12.14.1
 uvicorn[standard]==0.23.2
 aiohttp==3.8.5
+azure-monitor-opentelemetry==1.0.0b15
+opentelemetry-instrumentation-asgi==0.40b0
+opentelemetry-instrumentation-requests==0.40b0
+opentelemetry-instrumentation-aiohttp-client==0.40b0

@@ -55,6 +55,9 @@
     },
     "gptDeploymentName": {
       "value": "${AZURE_OPENAI_GPT_DEPLOYMENT=davinci}"
+    },
+    "useApplicationInsights": {
+      "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
     }
   }
 }
