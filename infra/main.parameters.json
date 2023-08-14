@@ -55,6 +55,15 @@
     },
     "gptDeploymentName": {
       "value": "${AZURE_OPENAI_GPT_DEPLOYMENT=davinci}"
+    },
+    "useAuthentication": {
+      "value": "${AZURE_USE_AUTHENTICATION=false}"
+    },
+    "authClientId": {
+      "value": "${AZURE_AUTH_CLIENT_ID}"
+    },
+    "authClientSecret": {
+      "value": "${AZURE_AUTH_CLIENT_SECRET}"
     }
   }
 }
