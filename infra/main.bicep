@@ -56,6 +56,12 @@ param embeddingDeploymentName string = 'embedding'
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
+// Used for the Azure AD application
+param useAuthentication bool = false
+param authClientId string = ''
+@secure()
+param authClientSecret string = ''
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -130,6 +136,9 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
+    authClientId: useAuthentication ? authClientId : ''
+    authClientSecret: useAuthentication ? authClientSecret : ''
+    authIssuerUri: useAuthentication ? '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0' : ''
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -371,5 +380,7 @@ output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.n
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_USE_AUTHENTICATION bool = useAuthentication
 
 output BACKEND_URI string = backend.outputs.uri

@@ -147,6 +147,23 @@ Once in the web app:
 ### FAQ
 
 <details>
+<summary>How do I enable Azure authentication for the App Service app?</summary>
+
+Before running `azd up`, run this command:
+
+```azd env set AZURE_USE_AUTHENTICATION true```
+
+When that is true, `azd up` will enable Azure authentication for the App Service app by:
+
+* Using a preprovision hook to call `auth_init.py` to create an App Registration. That script sets the `AZURE_AUTH_APP_ID`, `AZURE_AUTH_CLIENT_ID`, and `AZURE_AUTH_CLIENT_SECRET` environment variables.
+* During provisioning, using configuration in `appservice.bicep` to set the registered app as the authentication provider for the App Service app.
+* Using a postprovision hook to call `auth_update.py` to set the redirect URI to the URL of the deployed App Service app
+
+The web app code does not currently contain any login/logout links, as the App Service app is configured to redirect logged out users automatically. You may add those links to the web app code if you want to.
+
+</details>
+
+<details>
 <summary>Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?</summary>
 
 Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
