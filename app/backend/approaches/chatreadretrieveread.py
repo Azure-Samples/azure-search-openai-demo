@@ -1,16 +1,15 @@
-from typing import Any
+from typing import Any, AsyncGenerator
 
 import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from approaches.approach import ChatApproach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
 
 
-class ChatReadRetrieveReadApproach(ChatApproach):
+class ChatReadRetrieveReadApproach:
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -57,7 +56,7 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream=False) -> Any:
+    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream: bool=False) -> AsyncGenerator[dict, None]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False

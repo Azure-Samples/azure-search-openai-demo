@@ -4,6 +4,7 @@ import logging
 import mimetypes
 import os
 import time
+from typing import AsyncGenerator
 
 import openai
 from azure.identity.aio import DefaultAzureCredential
@@ -96,7 +97,7 @@ async def ask():
         return jsonify({"error": str(e)}), 500
 
 
-async def format_as_ndjson(r):
+async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
     async for event in r:
         yield json.dumps(event, ensure_ascii=False) + "\n"
 
