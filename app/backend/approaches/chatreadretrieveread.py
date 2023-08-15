@@ -144,7 +144,7 @@ If you cannot generate a search query, return just the number 0.
             system_message,
             self.chatgpt_model,
             history,
-            history[-1]["user"]+ "\n\nSources:\n" + content,
+            history[-1]["user"]+ "\n\nSources:\n" + content, # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             max_tokens=self.chatgpt_token_limit)
 
         chat_completion = await openai.ChatCompletion.acreate(

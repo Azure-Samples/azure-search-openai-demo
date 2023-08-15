@@ -35,7 +35,7 @@ MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
 
-OPEN_AI_TOKEN_CACHE = {}
+open_ai_token_cache = {}
 CACHE_KEY_TOKEN_CRED = 'openai_token_cred'
 CACHE_KEY_CREATED_TIME = 'created_time'
 CACHE_KEY_TOKEN_TYPE = 'token_type'
@@ -309,10 +309,10 @@ def remove_from_index(filename):
 
 # refresh open ai token every 5 minutes
 def refresh_openai_token():
-    if OPEN_AI_TOKEN_CACHE[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and OPEN_AI_TOKEN_CACHE[CACHE_KEY_CREATED_TIME] + 300 < time.time():
-        token_cred = OPEN_AI_TOKEN_CACHE[CACHE_KEY_TOKEN_CRED]
+    if open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and open_ai_token_cache[CACHE_KEY_CREATED_TIME] + 300 < time.time():
+        token_cred = open_ai_token_cache[CACHE_KEY_TOKEN_CRED]
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
-        OPEN_AI_TOKEN_CACHE[CACHE_KEY_CREATED_TIME] = time.time()
+        open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
 if __name__ == "__main__":
 
@@ -361,9 +361,9 @@ if __name__ == "__main__":
         if args.openaikey is None:
             openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
             openai.api_type = "azure_ad"
-            OPEN_AI_TOKEN_CACHE[CACHE_KEY_CREATED_TIME] = time.time()
-            OPEN_AI_TOKEN_CACHE[CACHE_KEY_TOKEN_CRED] = azd_credential
-            OPEN_AI_TOKEN_CACHE[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
+            open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+            open_ai_token_cache[CACHE_KEY_TOKEN_CRED] = azd_credential
+            open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
         else:
             openai.api_type = "azure"
             openai.api_key = args.openaikey
