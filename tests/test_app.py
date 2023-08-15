@@ -1,5 +1,7 @@
 import pytest
 
+from app import format_as_ndjson
+
 
 @pytest.mark.asyncio
 async def test_index(client):
@@ -71,3 +73,13 @@ async def test_chat_mock_approach_stream(client):
     assert response.status_code == 200
     result = await response.get_data()
     assert result == b'{"answer": "", "data_points": [], "thoughts": ""}\n{"choices": [{"delta": {"content": "Paris"}}]}\n'
+
+
+@pytest.mark.asyncio
+async def test_format_as_ndjson():
+    async def gen():
+        yield {"a": "I ❤️ 🐍"}
+        yield {"b": "Newlines inside \n strings are fine"}
+
+    result = [line async for line in format_as_ndjson(gen())]
+    assert result == ['{"a": "I ❤️ 🐍"}\n', '{"b": "Newlines inside \\n strings are fine"}\n']

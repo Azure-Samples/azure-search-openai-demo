@@ -98,7 +98,7 @@ async def ask():
 
 async def format_as_ndjson(r):
     async for event in r:
-        yield json.dumps(event).replace("\n", "\\n") + "\n"
+        yield json.dumps(event, ensure_ascii=False) + "\n"
 
 
 @bp.route("/chat", methods=["POST"])
