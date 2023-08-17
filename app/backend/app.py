@@ -4,6 +4,7 @@ import mimetypes
 import os
 import time
 
+import aiohttp
 import openai
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -91,7 +92,10 @@ async def ask():
         impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = await impl.run(request_json["question"], request_json.get("overrides") or {})
+        # Workaround for: https://github.com/openai/openai-python/issues/371
+        async with aiohttp.ClientSession() as s:
+            openai.aiosession.set(s)
+            r = await impl.run(request_json["question"], request_json.get("overrides") or {})
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /ask")
@@ -107,7 +111,10 @@ async def chat():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        r = await impl.run(request_json["history"], request_json.get("overrides") or {})
+        # Workaround for: https://github.com/openai/openai-python/issues/371
+        async with aiohttp.ClientSession() as s:
+            openai.aiosession.set(s)
+            r = await impl.run(request_json["history"], request_json.get("overrides") or {})
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
