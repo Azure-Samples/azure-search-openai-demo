@@ -53,9 +53,6 @@
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
-    "gptDeploymentName": {
-      "value": "${AZURE_OPENAI_GPT_DEPLOYMENT=davinci}"
-    },
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
     }
