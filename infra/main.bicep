@@ -365,6 +365,7 @@ output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
 output AZURE_OPENAI_GPT_DEPLOYMENT string = (openAiType == 'azure') ? gptDeploymentName : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiType == 'azure') ? chatGptDeploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiType == 'azure') ? embeddingDeploymentName : ''
+output OPENAI_EMB_MODEL string = (openAiType == 'openai') ? embeddingModelName : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
