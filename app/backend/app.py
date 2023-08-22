@@ -134,7 +134,6 @@ async def setup_clients():
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
 
     # Set up clients for Cognitive Search and Storage
-    print("AZURE_SEARCH_INDEX", AZURE_SEARCH_INDEX)
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,
