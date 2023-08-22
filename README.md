@@ -1,5 +1,28 @@
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Azure Deployment Costs](#azure-deployment-costs)
+  - [Prerequisites](#prerequisites)
+    - [To Run Locally](#to-run-locally)
+    - [To Run in GitHub Codespaces or VS Code Remote Containers](#to-run-in-github-codespaces-or-vs-code-remote-containers)
+  - [Installation](#installation)
+    - [Project Initialization](#project-initialization)
+    - [Starting from scratch](#starting-from-scratch)
+    - [Using existing resources](#using-existing-resources)
+    - [Deploying again](#deploying-again)
+    - [Running locally](#running-locally)
+    - [Sharing Environments](#sharing-environments)
+    - [Enabling Application Insights](#enabling-application-insights)
+  - [Quickstart](#quickstart)
+  - [Enabling authentication](#enabling-authentication)
+- [Resources](#resources)
+  - [Note](#note)
+  - [FAQ](#faq)
+  - [Troubleshooting](#troubleshooting)
+
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
