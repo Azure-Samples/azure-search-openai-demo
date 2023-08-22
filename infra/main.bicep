@@ -344,6 +344,7 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 output AZURE_OPENAI_SERVICE string = openAi.outputs.name
 output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
+output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
 output AZURE_OPENAI_EMB_DEPLOYMENT string = embeddingDeploymentName
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
