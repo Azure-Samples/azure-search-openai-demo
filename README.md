@@ -192,6 +192,13 @@ The primary differences:
 
 </details>
 
+<details>
+<summary>How do you use GPT-4 with this sample?</summary>
+
+In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'. You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
+</details>
+
+
 ### Troubleshooting
 
 Here are the most common failure scenarios and solutions:
