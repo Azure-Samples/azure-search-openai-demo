@@ -7,8 +7,8 @@ import os
 import re
 import time
 
-import tiktoken
 import openai
+import tiktoken
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import AzureDeveloperCliCredential
