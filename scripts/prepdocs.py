@@ -47,10 +47,8 @@ MAX_EMB_TOKEN_LIMIT = 8100
 MAX_BATCH_SIZE = 16
 
 def calculate_tokens_emb_aoai(input: str):
-    num_tokens = 0
     encoding = tiktoken.encoding_for_model(AOAI_EMBEDDING_MODEL)
-    num_tokens += len(encoding.encode(input))
-    return num_tokens
+    return len(encoding.encode(input))
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
@@ -293,21 +291,25 @@ def update_embeddings_in_batch(sections):
     batch_queue = []
     copy_s = []
     batch_response = {}
+    token_count = 0
     for s in sections:
-        if calculate_tokens_emb_aoai(s["content"]) <= MAX_EMB_TOKEN_LIMIT and len(batch_queue) < MAX_BATCH_SIZE:
+        token_count += calculate_tokens_emb_aoai(s["content"])
+        if token_count <= MAX_EMB_TOKEN_LIMIT and len(batch_queue) < MAX_BATCH_SIZE:
             batch_queue.append(s)
             copy_s.append(s)
         else:
             emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
-            if args.verbose: print(f"Batch Completed with len {len(batch_queue)}")
+            if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
             for emb, item in zip(emb_responses, batch_queue):
                 batch_response[item["id"]] = emb
             batch_queue = []
             batch_queue.append(s)
+            token_count = calculate_tokens_emb_aoai(s["content"])
+
 
     if batch_queue:
         emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
-        if args.verbose: print(f"Batch Completed with len {len(batch_queue)}") 
+        if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
         for emb, item in zip(emb_responses, batch_queue):
             batch_response[item["id"]] = emb
     
