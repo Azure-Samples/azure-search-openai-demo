@@ -7,6 +7,7 @@ import os
 import re
 import time
 
+import tiktoken
 import openai
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -39,6 +40,17 @@ open_ai_token_cache = {}
 CACHE_KEY_TOKEN_CRED = 'openai_token_cred'
 CACHE_KEY_CREATED_TIME = 'created_time'
 CACHE_KEY_TOKEN_TYPE = 'token_type'
+
+#Embedding batch section
+AOAI_EMBEDDING_MODEL = 'text-embedding-ada-002'
+MAX_EMB_TOKEN_LIMIT = 8100
+MAX_BATCH_SIZE = 16
+
+def calculate_tokens_emb_aoai(input: str):
+    num_tokens = 0
+    encoding = tiktoken.encoding_for_model(AOAI_EMBEDDING_MODEL)
+    num_tokens += len(encoding.encode(input))
+    return num_tokens
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
@@ -234,6 +246,12 @@ def compute_embedding(text):
     refresh_openai_token()
     return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding_in_batch(texts):
+    refresh_openai_token()
+    emb_response = openai.Embedding.create(engine=args.openaideployment, input=texts)
+    return [data.embedding for data in emb_response.data]
+
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
     index_client = SearchIndexClient(endpoint=f"https://{args.searchservice}.search.windows.net/",
@@ -270,6 +288,32 @@ def create_search_index():
         index_client.create_index(index)
     else:
         if args.verbose: print(f"Search index {args.index} already exists")
+
+def update_embeddings_in_batch(sections):
+    batch_queue = []
+    copy_s = []
+    batch_response = {}
+    for s in sections:
+        if calculate_tokens_emb_aoai(s["content"]) <= MAX_EMB_TOKEN_LIMIT and len(batch_queue) < MAX_BATCH_SIZE:
+            batch_queue.append(s)
+            copy_s.append(s)
+        else:
+            emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
+            if args.verbose: print(f"Batch Completed with len {len(batch_queue)}")
+            for emb, item in zip(emb_responses, batch_queue):
+                batch_response[item["id"]] = emb
+            batch_queue = []
+            batch_queue.append(s)
+
+    if batch_queue:
+        emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
+        if args.verbose: print(f"Batch Completed with len {len(batch_queue)}") 
+        for emb, item in zip(emb_responses, batch_queue):
+            batch_response[item["id"]] = emb
+    
+    for s in copy_s:
+        s["embedding"] = batch_response[s["id"]]
+        yield s
 
 def index_sections(filename, sections):
     if args.verbose: print(f"Indexing sections from '{filename}' into search index '{args.index}'")
@@ -333,6 +377,7 @@ if __name__ == "__main__":
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
     parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
+    parser.add_argument("--disablebatchvectors", action="store_true", help="Dont Compute embeddings in batch for the sections")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
     parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
@@ -347,6 +392,7 @@ if __name__ == "__main__":
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
+    compute_vectors_in_batch = not args.disablebatchvectors
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
@@ -391,5 +437,7 @@ if __name__ == "__main__":
                 if not args.skipblobs:
                     upload_blobs(filename)
                 page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not compute_vectors_in_batch)
+                if use_vectors and compute_vectors_in_batch:
+                    sections = update_embeddings_in_batch(sections)
                 index_sections(os.path.basename(filename), sections)
