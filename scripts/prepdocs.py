@@ -314,9 +314,12 @@ def refresh_openai_token():
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
-# recursively read the directory to allow for a subdirectory structure
-def read_files(location, use_vectors):
-    for filename in glob.glob(location):
+"""Readfile function
+
+recursively read directory structure under `pathPattern` and execute indexing for the individual files
+"""
+def read_files(pathPattern, use_vectors):
+    for filename in glob.glob(pathPattern):
         if args.verbose: print(f"Processing '{filename}'")
         if args.remove:
             remove_blobs(filename)
@@ -326,7 +329,7 @@ def read_files(location, use_vectors):
             remove_from_index(None)
         else:
             if os.path.isdir(filename):
-                read_files(filename + "/*")
+                read_files(filename + "/*", use_vectors)
                 continue
             try:
                 if not args.skipblobs:
