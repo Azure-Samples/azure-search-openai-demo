@@ -239,12 +239,12 @@ def create_sections(filename, page_map, use_vectors):
 def before_retry_sleep(retry_state):
     if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
 def compute_embedding(text):
     refresh_openai_token()
     return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
 def compute_embedding_in_batch(texts):
     refresh_openai_token()
     emb_response = openai.Embedding.create(engine=args.openaideployment, input=texts)
@@ -379,7 +379,7 @@ if __name__ == "__main__":
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
     parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
-    parser.add_argument("--disablebatchvectors", action="store_true", help="Dont Compute embeddings in batch for the sections")
+    parser.add_argument("--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
     parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
