@@ -19,6 +19,7 @@
   - [Enabling authentication](#enabling-authentication)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
+- [Productionizing](#productionizing)
 - [Resources](#resources)
   - [Note](#note)
   - [FAQ](#faq)
@@ -166,7 +167,7 @@ To then limit access to a specific set of users or groups, you can follow the st
 
 ## Running locally
 
-You can only run locally **after** having successfully run the `azd up` command.
+You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
 
 1. Run `azd auth login`
 2. Change dir to `app`
@@ -189,10 +190,26 @@ This sample is designed to be a starting point for your own production applicati
 but you should do a thorough review of the security and performance before deploying
 to production. Here are some things to consider:
 
-* OpenAI Capacity: The
-* Resource SKUs: ZRS for storage, Premium for App Service, Search replicas.
-* Authentication: By default, the deployed app is publicly accessible. See [Enabling authentication](#enabling-authentication) above for how to enable authentication.
-
+* **OpenAI Capacity**: The default TPM (tokens per minute) is set to 30K. That is equivalent
+  to approximately 30 conversations per minute (assuming 1K per user message/response).
+  You can increase the capacity by changing the `chatGptDeploymentCapacity` and `embeddingDeploymentCapacity` parameters in `infra/main.bicep` to your account's maximum capacity.
+  You can also view the Quotas tab from Azure OpenAI studio to understand how much capacity you have.
+* **Azure Storage**: The default storage account uses the `Standard_LRS` SKU.
+  We recommend using `Standard_ZRS` for production deployments,
+  which you can specify using the `sku` property in `infra/main.bicep`.
+* **Azure Cognitive Search**: The default search service uses the `Standard` SKU
+  with the free semantic search option. You should either change `semanticSearch` to "standard"
+  or disable semantic search entirely in the approaches files. If you see errors about search service capacity being exceeded, you may find it helpful to increase the number of replicas by changing `replicaCount` in `infra/core/search/search-services.bicep`.
+* **Azure App Service**: The default app service plan uses the `Basic` SKU with 1 CPU core and 1.75 GB RAM.
+  We recommend using a Premium level SKU, starting with 1 CPU core.
+  You can use auto-scaling rules or scheduled scaling rules,
+  and scale up the maximum/minimum based on load.
+* **Authentication**: By default, the deployed app is publicly accessible.
+  We recommend restricting access to authenticated users or restricting the endpoint to a private DNS zone.
+  See [Enabling authentication](#enabling-authentication) above for how to enable authentication.
+* **Loadtesting**: We recommend running a loadtest for your expected number of users.
+  You can use the [locust tool](https://docs.locust.io/) with the `locustfile.py` in this sample
+  or set up a loadtest with Azure Load Testing.
 
 
 ## Resources
