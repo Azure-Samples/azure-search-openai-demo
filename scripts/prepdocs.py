@@ -29,7 +29,14 @@ from azure.search.documents.indexes.models import (
 )
 from azure.storage.blob import BlobServiceClient
 from pypdf import PdfReader, PdfWriter
-from tenacity import retry, stop_after_attempt, wait_random_exponential
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
+
+args = argparse.Namespace(verbose=False)
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -212,7 +219,7 @@ def filename_to_id(filename):
     filename_hash = base64.b16encode(filename.encode('utf-8')).decode('ascii')
     return f"file-{filename_ascii}-{filename_hash}"
 
-def create_sections(filename, page_map, use_vectors):
+def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None):
     file_id = filename_to_id(filename)
     for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
@@ -223,16 +230,16 @@ def create_sections(filename, page_map, use_vectors):
             "sourcefile": filename
         }
         if use_vectors:
-            section["embedding"] = compute_embedding(content)
+            section["embedding"] = compute_embedding(content, embedding_deployment)
         yield section
 
 def before_retry_sleep(retry_state):
     if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
-def compute_embedding(text):
+@retry(retry=retry_if_exception_type(openai.error.RateLimitError), wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding(text, embedding_deployment):
     refresh_openai_token()
-    return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
+    return openai.Embedding.create(engine=embedding_deployment, input=text)["data"][0]["embedding"]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -307,14 +314,18 @@ def remove_from_index(filename):
         # It can take a few seconds for search results to reflect changes, so wait a bit
         time.sleep(2)
 
-# refresh open ai token every 5 minutes
+
 def refresh_openai_token():
-    if open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and open_ai_token_cache[CACHE_KEY_CREATED_TIME] + 300 < time.time():
+    """
+    Refresh OpenAI token every 5 minutes
+    """
+    if CACHE_KEY_TOKEN_TYPE in open_ai_token_cache and open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and open_ai_token_cache[CACHE_KEY_CREATED_TIME] + 300 < time.time():
         token_cred = open_ai_token_cache[CACHE_KEY_TOKEN_CRED]
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
-def read_files(path_pattern: str, use_vectors: bool):
+
+def read_files(path_pattern: str, use_vectors: bool, embedding_deployment: str = None):
     """
     Recursively read directory structure under `path_pattern`
     and execute indexing for the individual files
@@ -332,9 +343,10 @@ def read_files(path_pattern: str, use_vectors: bool):
                 if not args.skipblobs:
                     upload_blobs(filename)
                 page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors, embedding_deployment)
                 index_sections(os.path.basename(filename), sections)
             except Exception as e:
+                print(type(e))
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
 if __name__ == "__main__":
@@ -402,4 +414,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        read_files(args.files, use_vectors)
+        read_files(args.files, use_vectors, args.openaideployment)
