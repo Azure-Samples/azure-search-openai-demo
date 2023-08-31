@@ -314,12 +314,12 @@ def refresh_openai_token():
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
-"""Readfile function
-
-recursively read directory structure under `pathPattern` and execute indexing for the individual files
-"""
-def read_files(pathPattern, use_vectors):
-    for filename in glob.glob(pathPattern):
+def read_files(path_pattern: str, use_vectors: bool):
+    """
+    Recursively read directory structure under `path_pattern`
+    and execute indexing for the individual files
+    """
+    for filename in glob.glob(path_pattern):
         if args.verbose: print(f"Processing '{filename}'")
         if args.remove:
             remove_blobs(filename)
