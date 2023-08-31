@@ -64,7 +64,7 @@ param useApplicationInsights bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
-var tags = { 'azd-env-name': environmentName }
+var tags ={'azd-env-name': environmentName, costCenter: '12521', owner: 'vilma.norja@helen.fi', prodLevel: 'dev', Responsible: 'vilma.norja@helen.fi'} 
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {

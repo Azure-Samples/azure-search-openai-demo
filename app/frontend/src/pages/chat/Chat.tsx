@@ -17,11 +17,11 @@ const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
+    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Text);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
-    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(true);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -141,8 +141,8 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
+                            <h1 className={styles.chatEmptyStateTitle}>Kysy minulta kysymys</h1>
+                            <h2 className={styles.chatEmptyStateSubtitle}>Kirjoita kysymys tai kokeile esimerkkiä</h2>
                             <ExampleList onExampleClicked={onExampleClicked} />
                         </div>
                     ) : (
@@ -187,7 +187,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Kysy uusi kysymys"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                         />

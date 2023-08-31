@@ -237,7 +237,7 @@ def create_search_index():
             name=args.index,
             fields=[
                 SimpleField(name="id", type="Edm.String", key=True),
-                SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+                SearchableField(name="content", type="Edm.String", analyzer_name="fi.lucene"),
                 SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
                             vector_search_dimensions=1536, vector_search_configuration="default"),

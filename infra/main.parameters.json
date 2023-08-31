@@ -33,7 +33,7 @@
       "value": "S0"
     },
     "searchIndexName": {
-      "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
+      "value": "${AZURE_SEARCH_INDEX=sharepoint-index-intra-asiakastuotteet}"
     },
     "searchServiceName": {
       "value": "${AZURE_SEARCH_SERVICE}"
