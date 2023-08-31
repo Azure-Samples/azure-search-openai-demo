@@ -54,7 +54,7 @@
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
     "useApplicationInsights": {
-      "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
+      "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
     }
   }
 }
