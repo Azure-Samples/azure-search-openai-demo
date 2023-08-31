@@ -147,7 +147,7 @@ def get_document_text(filename):
 
     return page_map
 
-def split_text(page_map):
+def split_text(page_map, filename):
     SENTENCE_ENDINGS = [".", "!", "?"]
     WORDS_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
     if args.verbose: print(f"Splitting '{filename}' into sections")
@@ -214,7 +214,7 @@ def filename_to_id(filename):
 
 def create_sections(filename, page_map, use_vectors):
     file_id = filename_to_id(filename)
-    for i, (content, pagenum) in enumerate(split_text(page_map)):
+    for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
             "id": f"{file_id}-page-{i}",
             "content": content,
