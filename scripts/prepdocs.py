@@ -324,9 +324,6 @@ def read_files(pathPattern, use_vectors):
         if args.remove:
             remove_blobs(filename)
             remove_from_index(filename)
-        elif args.removeall:
-            remove_blobs(None)
-            remove_from_index(None)
         else:
             if os.path.isdir(filename):
                 read_files(filename + "/*", use_vectors)
