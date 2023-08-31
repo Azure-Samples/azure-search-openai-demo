@@ -47,7 +47,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 > **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [here](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
 
-## Azure deployment 
+## Azure deployment
 
 ### Cost estimation
 
@@ -182,6 +182,18 @@ Once in the web app:
 * Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
 * Explore citations and sources
 * Click on "settings" to try different options, tweak prompts, etc.
+
+## Productionizing
+
+This sample is designed to be a starting point for your own production application,
+but you should do a thorough review of the security and performance before deploying
+to production. Here are some things to consider:
+
+* OpenAI Capacity: The
+* Resource SKUs: ZRS for storage, Premium for App Service, Search replicas.
+* Authentication: By default, the deployed app is publicly accessible. See [Enabling authentication](#enabling-authentication) above for how to enable authentication.
+
+
 
 ## Resources
 
