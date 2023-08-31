@@ -205,8 +205,12 @@ to production. Here are some things to consider:
   You can use auto-scaling rules or scheduled scaling rules,
   and scale up the maximum/minimum based on load.
 * **Authentication**: By default, the deployed app is publicly accessible.
-  We recommend restricting access to authenticated users or restricting the endpoint to a private DNS zone.
+  We recommend restricting access to authenticated users.
   See [Enabling authentication](#enabling-authentication) above for how to enable authentication.
+* **Networking**: We recommend deploying inside a Virtual Network. If the app is only for
+  internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
+  for firewalls and other forms of protection. For more details, read
+  [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/t5/azure-architecture-blog/azure-openai-landing-zone-reference-architecture/ba-p/3882102).
 * **Loadtesting**: We recommend running a loadtest for your expected number of users.
   You can use the [locust tool](https://docs.locust.io/) with the `locustfile.py` in this sample
   or set up a loadtest with Azure Load Testing.
