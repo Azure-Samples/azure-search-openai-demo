@@ -47,7 +47,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 > **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [here](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
 
-## Azure deployment 
+## Azure deployment
 
 ### Cost estimation
 
@@ -160,9 +160,22 @@ To see any exceptions and server errors, navigate to the "Investigate -> Failure
 
 ### Enabling authentication
 
-By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data.  You can require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
+By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data.
 
-To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
+To enable [AAD-based App Service authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service), set the `AZURE_USE_AUTHENTICATION` variable to true before running `azd up`:
+
+1. Run `azd env set AZURE_USE_AUTHENTICATION true`
+1. Run `azd up`
+
+When that is true, `azd up` will enable Azure authentication for the App Service app by:
+
+* Using a preprovision hook to call `auth_init.py` to create an App Registration. That script sets the `AZURE_AUTH_APP_ID`, `AZURE_AUTH_CLIENT_ID`, and `AZURE_AUTH_CLIENT_SECRET` environment variables.
+* During provisioning, using configuration in `appservice.bicep` to set the registered app as the authentication provider for the App Service app.
+* Using a postprovision hook to call `auth_update.py` to set the redirect URI to the URL of the deployed App Service app
+
+The web app code does not currently contain any login/logout links, as the App Service app is configured to redirect logged out users automatically. You may add those links to the web app code if you want to.
+
+To limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
 
 ## Running locally
 
@@ -194,23 +207,6 @@ Once in the web app:
 >Note: The PDF documents used in this demo contain information generated using a language model (Azure OpenAI Service). The information contained in these documents is only for demonstration purposes and does not reflect the opinions or beliefs of Microsoft. Microsoft makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the information contained in this document. All rights reserved to Microsoft.
 
 ### FAQ
-
-<details>
-<summary>How do I enable Azure authentication for the App Service app?</summary>
-
-Before running `azd up`, run this command:
-
-```azd env set AZURE_USE_AUTHENTICATION true```
-
-When that is true, `azd up` will enable Azure authentication for the App Service app by:
-
-* Using a preprovision hook to call `auth_init.py` to create an App Registration. That script sets the `AZURE_AUTH_APP_ID`, `AZURE_AUTH_CLIENT_ID`, and `AZURE_AUTH_CLIENT_SECRET` environment variables.
-* During provisioning, using configuration in `appservice.bicep` to set the registered app as the authentication provider for the App Service app.
-* Using a postprovision hook to call `auth_update.py` to set the redirect URI to the URL of the deployed App Service app
-
-The web app code does not currently contain any login/logout links, as the App Service app is configured to redirect logged out users automatically. You may add those links to the web app code if you want to.
-
-</details>
 
 <details>
 <summary>Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?</summary>
