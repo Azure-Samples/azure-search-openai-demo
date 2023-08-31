@@ -314,6 +314,29 @@ def refresh_openai_token():
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
+# recursively read the directory to allow for a subdirectory structure
+def read_files(location, use_vectors):
+    for filename in glob.glob(location):
+        if args.verbose: print(f"Processing '{filename}'")
+        if args.remove:
+            remove_blobs(filename)
+            remove_from_index(filename)
+        elif args.removeall:
+            remove_blobs(None)
+            remove_from_index(None)
+        else:
+            if os.path.isdir(filename):
+                read_files(filename + "/*")
+                continue
+            try:
+                if not args.skipblobs:
+                    upload_blobs(filename)
+                page_map = get_document_text(filename)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                index_sections(os.path.basename(filename), sections)
+            except Exception as e:
+                print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
@@ -379,17 +402,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        for filename in glob.glob(args.files):
-            if args.verbose: print(f"Processing '{filename}'")
-            if args.remove:
-                remove_blobs(filename)
-                remove_from_index(filename)
-            elif args.removeall:
-                remove_blobs(None)
-                remove_from_index(None)
-            else:
-                if not args.skipblobs:
-                    upload_blobs(filename)
-                page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
-                index_sections(os.path.basename(filename), sections)
+        read_files(args.files, use_vectors)
