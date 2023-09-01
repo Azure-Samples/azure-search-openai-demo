@@ -13,6 +13,7 @@ param deleteRetentionPolicy object = {}
 param dnsEndpointType string = 'Standard'
 param kind string = 'StorageV2'
 param minimumTlsVersion string = 'TLS1_2'
+param requireHttpsConnection bool = true
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Disabled'
 param sku object = { name: 'Standard_LRS' }
@@ -38,6 +39,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
       defaultAction: 'Allow'
     }
     publicNetworkAccess: publicNetworkAccess
+    supportsHttpsTrafficOnly: requireHttpsConnection
   }
 
   resource blobServices 'blobServices' = if (!empty(containers)) {
