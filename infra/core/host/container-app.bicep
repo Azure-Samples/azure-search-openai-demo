@@ -39,10 +39,10 @@ param daprAppProtocol string = 'http'
 param postgresServiceId string = ''
 
 @description('CPU cores allocated to a single container instance, e.g. 0.5')
-param containerCpuCoreCount string = '0.5'
+param containerCpuCoreCount string = '2'
 
 @description('Memory allocated to a single container instance, e.g. 1Gi')
-param containerMemory string = '1.0Gi'
+param containerMemory string = '4.0Gi'
 
 resource userIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: identityName
