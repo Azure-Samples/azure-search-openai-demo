@@ -8,7 +8,7 @@
   - [Cost estimation](#cost-estimation)
   - [Prerequisites](#prerequisites)
     - [Local environment](#local-environment)
-    - [To run in GitHub Codespaces or VS Code Remote Containers](#github-codespaces-or-vs-code-remote-containers)
+    - [GitHub Codespaces or VS Code Remote Containers](#github-codespaces-or-vs-code-remote-containers)
   - [Project initialization](#project-initialization)
   - [Deploying from scratch](#deploying-from-scratch)
   - [Deploying with existing resources](#deploying-with-existing-resources)
