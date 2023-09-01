@@ -228,6 +228,23 @@ The primary differences:
 In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'. You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
 </details>
 
+<details>
+<summary>What is the difference between the Chat and Ask tabs?</summary>
+
+The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
+
+- It uses the ChatGPT API to turn the user question into a good search query.
+- It queries Azure Cognitive Search for search results for that query (optionally using the vector embeddings for that query).
+- It then combines the search results and original user question, and asks ChatGPT API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
+
+The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
+
+- It queries Azure Cognitive Search for search results for the user question (optionally using the vector embeddings for that question).
+- It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
+
+There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
+</details>
+
 
 ### Troubleshooting
 
