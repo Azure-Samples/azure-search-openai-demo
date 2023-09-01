@@ -11,7 +11,7 @@
     - [To run in GitHub Codespaces or VS Code Remote Containers](#to-run-in-github-codespaces-or-vs-code-remote-containers)
   - [Project initialization](#project-initialization)
   - [Deploying from scratch](#deploying-from-scratch)
-  - [Deploying with existing resources](#deploying-with-existing-resources)
+  - [Deploying with existing Azure resources](#deploying-with-existing-azure-resources)
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
@@ -110,7 +110,9 @@ It will look like the following:
 
 > NOTE: It may take a minute for the application to be fully deployed. If you see a "Python Developer" welcome screen, then wait a minute and refresh the page.
 
-### Deploying with existing resources
+### Deploying with existing Azure resources
+
+If you already have existing Azure resources, you can re-use those by setting `azd` environment values. For example:
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
