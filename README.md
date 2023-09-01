@@ -6,10 +6,10 @@
 - [Getting started](#getting-started)
 - [Azure deployment](#azure-deployment)
   - [Cost estimation](#cost-estimation)
-  - [Prerequisites](#prerequisites)
-    - [To run locally](#to-run-locally)
-    - [To run in GitHub Codespaces or VS Code Remote Containers](#to-run-in-github-codespaces-or-vs-code-remote-containers)
-  - [Project initialization](#project-initialization)
+  - [Project setup](#project-setup)
+    - [GitHub Codespaces](#github-codespaces)
+    - [VS Code Remote Containers](#vs-code-remote-containers)
+    - [Local environment](#local-environment)
   - [Deploying from scratch](#deploying-from-scratch)
   - [Deploying with existing Azure resources](#deploying-with-existing-azure-resources)
   - [Deploying again](#deploying-again)
@@ -48,7 +48,9 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 > **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [here](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
 
-## Azure deployment
+> Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
+
+## Azure deployment 
 
 ### Cost estimation
 
@@ -67,9 +69,27 @@ To reduce costs, you can switch to free SKUs for Azure App Service, Azure Cognit
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
-### Prerequisites
+### Project setup
 
-#### To run locally
+You have a few options for setting up this project. 
+The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
+but you can also [set it up locally](#local-environment) if desired.
+
+#### GitHub Codespaces
+
+You can run this repo virtually by using GitHub Codespaces, which will open a web-based VS Code in your browser:
+
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
+
+#### VS Code Remote Containers
+
+A related option is VS Code Remote Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
+
+[![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+
+#### Local environment
+
+First install the required tools:
 
 * [Azure Developer CLI](https://aka.ms/azure-dev/install)
 * [Python 3.9+](https://www.python.org/downloads/)
@@ -78,18 +98,9 @@ either by deleting the resource group in the Portal or running `azd down`.
 * [Node.js 14+](https://nodejs.org/en/download/)
 * [Git](https://git-scm.com/downloads)
 * [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
-  * **Important**: Ensure you can run `pwsh.exe` from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
+  * **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
 
->NOTE: Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
-
-#### To Run in GitHub Codespaces or VS Code Remote Containers
-
-You can run this repo virtually by using GitHub Codespaces or VS Code Remote Containers.  Click on one of the buttons below to open this repo in one of those options.
-
-[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
-[![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
-
-### Project initialization
+Then bring down the project code:
 
 1. Create a new folder and switch to it in the terminal
 1. Run `azd auth login`
