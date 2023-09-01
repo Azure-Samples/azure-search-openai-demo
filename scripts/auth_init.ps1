@@ -1,9 +1,9 @@
 . ./scripts/loadenv.ps1
 
-$venvPythonPath = "./.venv/scripts/python.exe"
+$venvPythonPath = "./scripts/.venv/scripts/python.exe"
 if (Test-Path -Path "/usr") {
   # fallback to Linux venv path
-  $venvPythonPath = "./.venv/bin/python"
+  $venvPythonPath = "./scripts/.venv/bin/python"
 }
 
 Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/auth_init.py" -Wait -NoNewWindow

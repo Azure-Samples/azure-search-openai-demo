@@ -2,4 +2,4 @@
 
 . ./scripts/loadenv.sh
 
-./.venv/bin/python ./scripts/auth_init.py
+./scripts/.venv/bin/python ./scripts/auth_init.py
