@@ -7,8 +7,8 @@
 - [Azure deployment](#azure-deployment)
   - [Cost estimation](#cost-estimation)
   - [Prerequisites](#prerequisites)
-    - [To run locally](#to-run-locally)
-    - [To run in GitHub Codespaces or VS Code Remote Containers](#to-run-in-github-codespaces-or-vs-code-remote-containers)
+    - [Local environment](#local-environment)
+    - [To run in GitHub Codespaces or VS Code Remote Containers](#github-codespaces-or-vs-code-remote-containers)
   - [Project initialization](#project-initialization)
   - [Deploying from scratch](#deploying-from-scratch)
   - [Deploying with existing resources](#deploying-with-existing-resources)
@@ -68,7 +68,10 @@ either by deleting the resource group in the Portal or running `azd down`.
 
 ### Prerequisites
 
-#### To run locally
+You have a few options for setting up this project. You can either set it up locally if you have all the tools listed below,
+or you can use GitHub Codespaces which will install the tools for you.
+
+#### Local environment
 
 * [Azure Developer CLI](https://aka.ms/azure-dev/install)
 * [Python 3.9+](https://www.python.org/downloads/)
@@ -81,7 +84,7 @@ either by deleting the resource group in the Portal or running `azd down`.
 
 >NOTE: Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
 
-#### To Run in GitHub Codespaces or VS Code Remote Containers
+#### GitHub Codespaces or VS Code Remote Containers
 
 You can run this repo virtually by using GitHub Codespaces or VS Code Remote Containers.  Click on one of the buttons below to open this repo in one of those options.
 
