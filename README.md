@@ -82,7 +82,7 @@ You can run this repo virtually by using GitHub Codespaces, which will open a we
 
 #### VS Code Remote Containers
 
-A related option is VS Code Remote Containers, which will open the container in your local VS Code:
+A related option is VS Code Remote Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
 
 [![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
