@@ -6,7 +6,13 @@ targetScope = 'subscription'
 param environmentName string
 
 @minLength(1)
-@description('Primary location for all resources')
+@description('Primary location for all resources (restricted subset due to Form Analyzer)')
+@allowed(['canadaeast', 'eastus', 'francecentral', 'japaneast', 'northcentralus'])
+@metadata({
+  azd: {
+    type: 'location'
+  }
+})
 param location string
 
 param appServicePlanName string = ''
