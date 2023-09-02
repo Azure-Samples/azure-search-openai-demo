@@ -1,6 +1,7 @@
 from typing import Any
 
 import openai
+from litellm import acompletion
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
@@ -77,7 +78,7 @@ If you cannot generate a search query, return just the number 0.
             self.chatgpt_token_limit - len(user_q)
             )
 
-        chat_completion = await openai.ChatCompletion.acreate(
+        chat_completion = await acompletion(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
             messages=messages,
@@ -147,7 +148,7 @@ If you cannot generate a search query, return just the number 0.
             history[-1]["user"]+ "\n\nSources:\n" + content, # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             max_tokens=self.chatgpt_token_limit)
 
-        chat_completion = await openai.ChatCompletion.acreate(
+        chat_completion = await acompletion(
             deployment_id=self.chatgpt_deployment,
             model=self.chatgpt_model,
             messages=messages,

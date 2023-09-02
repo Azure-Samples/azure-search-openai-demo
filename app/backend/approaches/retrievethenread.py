@@ -1,6 +1,7 @@
 from typing import Any
 
 import openai
+from litellm import acompletion
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
@@ -98,7 +99,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.append_message('user', self.question)
 
         messages = message_builder.messages
-        chat_completion = await openai.ChatCompletion.acreate(
+        chat_completion = await acompletion(
             deployment_id=self.openai_deployment,
             model=self.chatgpt_model,
             messages=messages,
