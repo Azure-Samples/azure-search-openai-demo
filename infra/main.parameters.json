@@ -14,11 +14,17 @@
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
+    "appServicePlanLocation": {
+      "value": "${AZURE_APPSERVICEPLAN_LOCATION}"
+    },
     "openAiServiceName": {
       "value": "${AZURE_OPENAI_SERVICE}"
     },
     "openAiResourceGroupName": {
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
+    },
+    "openAiLocation": {
+      "value": "${AZURE_OPENAI_LOCATION}"
     },
     "openAiSkuName": {
       "value": "S0"
