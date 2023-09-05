@@ -140,10 +140,10 @@ If you cannot generate a search query, return just the number 0.
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
         messages = self.get_messages_from_history(
-            system_message + "\n\nSources:\n" + content,
+            system_message,
             self.chatgpt_model,
             history,
-            history[-1]["user"],
+            history[-1]["user"]+ "\n\nSources:\n" + content, # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             max_tokens=self.chatgpt_token_limit)
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 

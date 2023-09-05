@@ -35,6 +35,11 @@ MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
 
+open_ai_token_cache = {}
+CACHE_KEY_TOKEN_CRED = 'openai_token_cred'
+CACHE_KEY_CREATED_TIME = 'created_time'
+CACHE_KEY_TOKEN_TYPE = 'token_type'
+
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
         return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
@@ -126,7 +131,7 @@ def get_document_text(filename):
                         if idx >=0 and idx < page_length:
                             table_chars[idx] = table_id
 
-            # build page text by replacing charcters in table spans with table html
+            # build page text by replacing characters in table spans with table html
             page_text = ""
             added_tables = set()
             for idx, table_id in enumerate(table_chars):
@@ -142,7 +147,7 @@ def get_document_text(filename):
 
     return page_map
 
-def split_text(page_map):
+def split_text(page_map, filename):
     SENTENCE_ENDINGS = [".", "!", "?"]
     WORDS_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
     if args.verbose: print(f"Splitting '{filename}' into sections")
@@ -209,7 +214,7 @@ def filename_to_id(filename):
 
 def create_sections(filename, page_map, use_vectors):
     file_id = filename_to_id(filename)
-    for i, (content, pagenum) in enumerate(split_text(page_map)):
+    for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
             "id": f"{file_id}-page-{i}",
             "content": content,
@@ -226,6 +231,7 @@ def before_retry_sleep(retry_state):
 
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
 def compute_embedding(text):
+    refresh_openai_token()
     return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
 
 def create_search_index():
@@ -301,6 +307,35 @@ def remove_from_index(filename):
         # It can take a few seconds for search results to reflect changes, so wait a bit
         time.sleep(2)
 
+# refresh open ai token every 5 minutes
+def refresh_openai_token():
+    if open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and open_ai_token_cache[CACHE_KEY_CREATED_TIME] + 300 < time.time():
+        token_cred = open_ai_token_cache[CACHE_KEY_TOKEN_CRED]
+        openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
+        open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+
+def read_files(path_pattern: str, use_vectors: bool):
+    """
+    Recursively read directory structure under `path_pattern`
+    and execute indexing for the individual files
+    """
+    for filename in glob.glob(path_pattern):
+        if args.verbose: print(f"Processing '{filename}'")
+        if args.remove:
+            remove_blobs(filename)
+            remove_from_index(filename)
+        else:
+            if os.path.isdir(filename):
+                read_files(filename + "/*", use_vectors)
+                continue
+            try:
+                if not args.skipblobs:
+                    upload_blobs(filename)
+                page_map = get_document_text(filename)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                index_sections(os.path.basename(filename), sections)
+            except Exception as e:
+                print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
 if __name__ == "__main__":
 
@@ -349,6 +384,9 @@ if __name__ == "__main__":
         if args.openaikey is None:
             openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
             openai.api_type = "azure_ad"
+            open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+            open_ai_token_cache[CACHE_KEY_TOKEN_CRED] = azd_credential
+            open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
         else:
             openai.api_type = "azure"
             openai.api_key = args.openaikey
@@ -364,17 +402,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        for filename in glob.glob(args.files):
-            if args.verbose: print(f"Processing '{filename}'")
-            if args.remove:
-                remove_blobs(filename)
-                remove_from_index(filename)
-            elif args.removeall:
-                remove_blobs(None)
-                remove_from_index(None)
-            else:
-                if not args.skipblobs:
-                    upload_blobs(filename)
-                page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
-                index_sections(os.path.basename(filename), sections)
+        read_files(args.files, use_vectors)
