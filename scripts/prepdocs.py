@@ -378,6 +378,7 @@ if __name__ == "__main__":
     parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
+    parser.add_argument("--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)")
     parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
     parser.add_argument("--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
@@ -394,7 +395,7 @@ if __name__ == "__main__":
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
-    compute_vectors_in_batch = not args.disablebatchvectors
+    compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname == AOAI_EMBEDDING_MODEL
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
