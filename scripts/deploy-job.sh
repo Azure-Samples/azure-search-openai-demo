@@ -48,3 +48,17 @@ az role assignment create --role "Storage Blob Data Contributor" --assignee `az 
 
 az containerapp job start \
     --name "job-prepdocs" --resource-group "$AZURE_RESOURCE_GROUP"
+
+# az storage account blob-service-properties cors-rule add \
+#     --account-name $AZURE_STORAGE_ACCOUNT \
+#     --origins "*" \
+#     --methods PUT \
+#     --allowed-headers "*" \
+#     --exposed-headers "*" \
+#     --max-age 200
+
+az storage cors add --methods GET PUT OPTIONS \
+    --origins "*" --allowed-headers "*" --exposed-headers "*" --max-age 200 \
+    --services b --account-name $AZURE_STORAGE_ACCOUNT
+
+az storage container create --name uploads --account-name $AZURE_STORAGE_ACCOUNT
