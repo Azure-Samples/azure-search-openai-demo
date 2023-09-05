@@ -20,12 +20,12 @@ class MockAzureCredential:
 def mock_openai_embedding(monkeypatch):
     async def mock_acreate(*args, **kwargs):
         return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
+
     monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
 
 
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
-
     class AsyncChatCompletionIterator:
         def __init__(self, answer):
             self.num = 1
@@ -57,7 +57,6 @@ def mock_openai_chatcompletion(monkeypatch):
 
 @pytest.fixture
 def mock_acs_search(monkeypatch):
-
     class Caption:
         def __init__(self, text):
             self.text = text
@@ -72,19 +71,18 @@ def mock_acs_search(monkeypatch):
         async def __anext__(self):
             if self.num == 1:
                 self.num = 0
-                return {'sourcepage': 'Benefit_Options-2.pdf',
-                    'sourcefile': 'Benefit_Options.pdf',
-                    'content': 'There is a whistleblower policy.',
-                    'embeddings': [],
-                    'category': None,
-                    'id': 'file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2',
-                    '@search.score': 0.03279569745063782,
-                    '@search.reranker_score': 3.4577205181121826,
-                    '@search.highlights': None,
-                    '@search.captions': [
-                        Caption('Caption: A whistleblower policy.')
-                        ]
-                    }
+                return {
+                    "sourcepage": "Benefit_Options-2.pdf",
+                    "sourcefile": "Benefit_Options.pdf",
+                    "content": "There is a whistleblower policy.",
+                    "embeddings": [],
+                    "category": None,
+                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                    "@search.score": 0.03279569745063782,
+                    "@search.reranker_score": 3.4577205181121826,
+                    "@search.highlights": None,
+                    "@search.captions": [Caption("Caption: A whistleblower policy.")],
+                }
             else:
                 raise StopAsyncIteration
 
@@ -101,10 +99,6 @@ async def client(mock_openai_chatcompletion, mock_openai_embedding, mock_acs_sea
         quart_app = app.create_app()
 
         async with quart_app.test_app() as test_app:
-            quart_app.config.update(
-                {
-                    "TESTING": True
-                }
-            )
+            quart_app.config.update({"TESTING": True})
 
             yield test_app.test_client()

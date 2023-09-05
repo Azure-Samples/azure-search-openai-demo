@@ -56,7 +56,7 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    async def run_until_final_call(self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream: bool=False) -> tuple:
+    async def run_until_final_call(self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream: bool = False) -> tuple:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -158,13 +158,11 @@ If you cannot generate a search query, return just the number 0.
                 stream=should_stream)
         return (extra_info, chat_coroutine)
 
-
     async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
         extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
         chat_content = (await chat_coroutine).choices[0].message.content
         extra_info["answer"] = chat_content
         return extra_info
-
 
     async def run_with_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> AsyncGenerator[dict, None]:
         extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=True)

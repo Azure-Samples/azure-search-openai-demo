@@ -27,46 +27,62 @@ async def test_ask_with_unknown_approach(client):
 
 @pytest.mark.asyncio
 async def test_ask_rtr_text(client, snapshot):
-    response = await client.post("/ask", json={"approach": "rtr",
-                                               "question": "What is the capital of France?",
-                                               "overrides": {"retrieval_mode": "text"},
-                                               })
+    response = await client.post(
+        "/ask",
+        json={
+            "approach": "rtr",
+            "question": "What is the capital of France?",
+            "overrides": {"retrieval_mode": "text"},
+        },
+    )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
 async def test_ask_rtr_text_semanticranker(client, snapshot):
-    response = await client.post("/ask", json={"approach": "rtr",
-                                               "question": "What is the capital of France?",
-                                               "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
-                                               })
+    response = await client.post(
+        "/ask",
+        json={
+            "approach": "rtr",
+            "question": "What is the capital of France?",
+            "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
+        },
+    )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
 async def test_ask_rtr_text_semanticcaptions(client, snapshot):
-    response = await client.post("/ask", json={"approach": "rtr",
-                                               "question": "What is the capital of France?",
-                                               "overrides": {"retrieval_mode": "text", "semantic_captions": True},
-                                               })
+    response = await client.post(
+        "/ask",
+        json={
+            "approach": "rtr",
+            "question": "What is the capital of France?",
+            "overrides": {"retrieval_mode": "text", "semantic_captions": True},
+        },
+    )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
 async def test_ask_rtr_hybrid(client, snapshot):
-    response = await client.post("/ask", json={"approach": "rtr",
-                                               "question": "What is the capital of France?",
-                                               "overrides": {"retrieval_mode": "hybrid"},
-                                               })
+    response = await client.post(
+        "/ask",
+        json={
+            "approach": "rtr",
+            "question": "What is the capital of France?",
+            "overrides": {"retrieval_mode": "hybrid"},
+        },
+    )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -95,7 +111,7 @@ async def test_chat_text(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -110,7 +126,7 @@ async def test_chat_text_semanticranker(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -125,7 +141,7 @@ async def test_chat_text_semanticcaptions(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -140,7 +156,7 @@ async def test_chat_hybrid(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -155,7 +171,7 @@ async def test_chat_vector(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), 'result.json')
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -184,7 +200,7 @@ async def test_chat_stream_text(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_data()
-    snapshot.assert_match(result, 'result.jsonlines')
+    snapshot.assert_match(result, "result.jsonlines")
 
 
 @pytest.mark.asyncio
