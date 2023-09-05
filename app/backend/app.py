@@ -121,12 +121,9 @@ async def chat_stream():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        # Workaround for: https://github.com/openai/openai-python/issues/371
-        async with aiohttp.ClientSession() as s:
-            openai.aiosession.set(s)
-            response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
-            response = await make_response(format_as_ndjson(response_generator))
-            response.timeout = None
+        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
+        response = await make_response(format_as_ndjson(response_generator))
+        response.timeout = None
         return response
     except Exception as e:
         logging.exception("Exception in /chat")
