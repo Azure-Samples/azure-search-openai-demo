@@ -42,12 +42,15 @@ CACHE_KEY_CREATED_TIME = 'created_time'
 CACHE_KEY_TOKEN_TYPE = 'token_type'
 
 #Embedding batch support section
-AOAI_EMBEDDING_MODEL = 'text-embedding-ada-002'
-MAX_EMB_TOKEN_LIMIT = 8100
-MAX_BATCH_SIZE = 16
+SUPPORTED_BATCH_AOAI_MODEL = {
+    'text-embedding-ada-002': {
+        'token_limit' : 8100,
+        'max_batch_size' : 16
+    }
+}
 
 def calculate_tokens_emb_aoai(input: str):
-    encoding = tiktoken.encoding_for_model(AOAI_EMBEDDING_MODEL)
+    encoding = tiktoken.encoding_for_model(args.openaimodelname)
     return len(encoding.encode(input))
 
 def blob_name_from_file_page(filename, page = 0):
@@ -292,10 +295,9 @@ def update_embeddings_in_batch(sections):
     copy_s = []
     batch_response = {}
     token_count = 0
-    print(sections)
     for s in sections:
         token_count += calculate_tokens_emb_aoai(s["content"])
-        if token_count <= MAX_EMB_TOKEN_LIMIT and len(batch_queue) < MAX_BATCH_SIZE:
+        if token_count <= SUPPORTED_BATCH_AOAI_MODEL[args.openaimodelname]['token_limit'] and len(batch_queue) < SUPPORTED_BATCH_AOAI_MODEL[args.openaimodelname]['max_batch_size']:
             batch_queue.append(s)
             copy_s.append(s)
         else:
@@ -307,7 +309,6 @@ def update_embeddings_in_batch(sections):
             batch_queue.append(s)
             token_count = calculate_tokens_emb_aoai(s["content"])
 
-    print(batch_queue)
     if batch_queue:
         emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
         if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
@@ -382,7 +383,7 @@ def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool
                 sections = create_sections(os.path.basename(filename), page_map, use_vectors and not vectors_batch_support)
                 print (use_vectors and vectors_batch_support)
                 if use_vectors and vectors_batch_support:
-                    sections=update_embeddings_in_batch(sections)
+                    sections = update_embeddings_in_batch(sections)
                 index_sections(os.path.basename(filename), sections)
             except Exception as e:
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
@@ -422,7 +423,7 @@ if __name__ == "__main__":
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
-    compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname == AOAI_EMBEDDING_MODEL
+    compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname in SUPPORTED_BATCH_AOAI_MODEL
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
