@@ -44,7 +44,7 @@ az role assignment create --role "Cognitive Services OpenAI User" --assignee `az
 az role assignment create --role "Cognitive Services User" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Search Index Data Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Search Service Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
-az role assignment create --role "Storage Blob Data Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
+# az role assignment create --role "Storage Blob Data Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 
 az containerapp job start \
     --name "job-prepdocs" --resource-group "$AZURE_RESOURCE_GROUP"
@@ -62,3 +62,40 @@ az storage cors add --methods GET PUT OPTIONS \
     --services b --account-name $AZURE_STORAGE_ACCOUNT
 
 az storage container create --name uploads --account-name $AZURE_STORAGE_ACCOUNT
+
+cd ../app/docs_uploader
+
+az acr build -t doc-uploader:1.0 -r $AZURE_CONTAINER_REGISTRY_NAME .
+
+az containerapp create -n doc-uploader -g $AZURE_RESOURCE_GROUP --environment $AZURE_CONTAINER_ENVIRONMENT_NAME \
+    --image $AZURE_CONTAINER_REGISTRY_NAME.azurecr.io/doc-uploader:1.0 \
+    --cpu "1" --memory "2Gi" \
+    --env-vars "AZURE_ENV_NAME=$AZURE_ENV_NAME" \
+        "AZURE_FORMRECOGNIZER_RESOURCE_GROUP=$AZURE_FORMRECOGNIZER_RESOURCE_GROUP" \
+        "AZURE_FORMRECOGNIZER_SERVICE=$AZURE_FORMRECOGNIZER_SERVICE" \
+        "AZURE_LOCATION=$AZURE_LOCATION" \
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT=$AZURE_OPENAI_CHATGPT_DEPLOYMENT" \
+        "AZURE_OPENAI_CHATGPT_MODEL=$AZURE_OPENAI_CHATGPT_MODEL" \
+        "AZURE_OPENAI_EMB_DEPLOYMENT=$AZURE_OPENAI_EMB_DEPLOYMENT" \
+        "AZURE_OPENAI_RESOURCE_GROUP=$AZURE_OPENAI_RESOURCE_GROUP" \
+        "AZURE_OPENAI_SERVICE=$AZURE_OPENAI_SERVICE" \
+        "AZURE_RESOURCE_GROUP=$AZURE_RESOURCE_GROUP" \
+        "AZURE_SEARCH_INDEX=$AZURE_SEARCH_INDEX" \
+        "AZURE_SEARCH_SERVICE=$AZURE_SEARCH_SERVICE" \
+        "AZURE_SEARCH_SERVICE_RESOURCE_GROUP=$AZURE_SEARCH_SERVICE_RESOURCE_GROUP" \
+        "AZURE_STORAGE_ACCOUNT=$AZURE_STORAGE_ACCOUNT" \
+        "AZURE_STORAGE_CONTAINER=$AZURE_STORAGE_CONTAINER" \
+        "AZURE_STORAGE_RESOURCE_GROUP=$AZURE_STORAGE_RESOURCE_GROUP" \
+        "AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID" \
+        "AZURE_TENANT_ID=$AZURE_TENANT_ID" \
+        "AZURE_USE_APPLICATION_INSIGHTS=$AZURE_USE_APPLICATION_INSIGHTS" \
+        "BACKEND_URI=$BACKEND_URI" \
+    --registry-server $AZURE_CONTAINER_REGISTRY_NAME.azurecr.io \
+    --registry-identity system \
+    --system-assigned \
+    --min-replicas 1 --max-replicas 1 \
+    --ingress external \
+    --target-port 8000
+
+az role assignment create --role "Contributor" --assignee `az containerapp show -n doc-uploader -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
+az role assignment create --role "Storage Blob Data Contributor" --assignee `az containerapp show -n doc-uploader -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
