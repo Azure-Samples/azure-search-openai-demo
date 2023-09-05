@@ -28,27 +28,11 @@ from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 
-# Replace these with your own values, either in environment variables or directly here
-AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT", "mystorageaccount")
-AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER", "content")
-AZURE_SEARCH_SERVICE = os.getenv("AZURE_SEARCH_SERVICE", "gptkb")
-AZURE_SEARCH_INDEX = os.getenv("AZURE_SEARCH_INDEX", "gptkbindex")
-AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE", "myopenai")
-AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "chat")
-AZURE_OPENAI_CHATGPT_MODEL = os.getenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
-AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT", "embedding")
-
-KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
-KB_FIELDS_CATEGORY = os.getenv("KB_FIELDS_CATEGORY", "category")
-KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
-
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
-CONFIG_BLOB_CLIENT = "blob_client"
-
-APPLICATIONINSIGHTS_CONNECTION_STRING = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 
 bp = Blueprint("routes", __name__, static_folder='static')
 
@@ -69,8 +53,8 @@ async def assets(path):
 # can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
 async def content_file(path):
-    blob_container = current_app.config[CONFIG_BLOB_CLIENT].get_container_client(AZURE_STORAGE_CONTAINER)
-    blob = await blob_container.get_blob_client(path).download_blob()
+    blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    blob = await blob_container_client.get_blob_client(path).download_blob()
     if not blob.properties or not blob.properties.has_key("content_settings"):
         abort(404)
     mime_type = blob.properties["content_settings"]["content_type"]
@@ -130,6 +114,19 @@ async def ensure_openai_token():
 @bp.before_app_serving
 async def setup_clients():
 
+    # Replace these with your own values, either in environment variables or directly here
+    AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT")
+    AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
+    AZURE_SEARCH_SERVICE = os.getenv("AZURE_SEARCH_SERVICE")
+    AZURE_SEARCH_INDEX = os.getenv("AZURE_SEARCH_INDEX")
+    AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
+    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
+    AZURE_OPENAI_CHATGPT_MODEL = os.getenv("AZURE_OPENAI_CHATGPT_MODEL")
+    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
+
+    KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
+    KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
+
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
@@ -144,6 +141,7 @@ async def setup_clients():
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net",
         credential=azure_credential)
+    blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
     openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
@@ -157,7 +155,8 @@ async def setup_clients():
     # Store on app.config for later use inside requests
     current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
-    current_app.config[CONFIG_BLOB_CLIENT] = blob_client
+    current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACHES] = {
@@ -196,7 +195,7 @@ async def setup_clients():
 
 
 def create_app():
-    if APPLICATIONINSIGHTS_CONNECTION_STRING:
+    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         configure_azure_monitor()
         AioHttpClientInstrumentor().instrument()
     app = Quart(__name__)

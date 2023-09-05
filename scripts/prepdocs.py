@@ -157,7 +157,7 @@ def get_document_text(filename):
 
     return page_map
 
-def split_text(page_map):
+def split_text(page_map, filename):
     SENTENCE_ENDINGS = [".", "!", "?"]
     WORDS_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
     if args.verbose: print(f"Splitting '{filename}' into sections")
@@ -224,7 +224,7 @@ def filename_to_id(filename):
 
 def create_sections(filename, page_map, use_vectors):
     file_id = filename_to_id(filename)
-    for i, (content, pagenum) in enumerate(split_text(page_map)):
+    for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
             "id": f"{file_id}-page-{i}",
             "content": content,
@@ -292,6 +292,7 @@ def update_embeddings_in_batch(sections):
     copy_s = []
     batch_response = {}
     token_count = 0
+    print(sections)
     for s in sections:
         token_count += calculate_tokens_emb_aoai(s["content"])
         if token_count <= MAX_EMB_TOKEN_LIMIT and len(batch_queue) < MAX_BATCH_SIZE:
@@ -306,7 +307,7 @@ def update_embeddings_in_batch(sections):
             batch_queue.append(s)
             token_count = calculate_tokens_emb_aoai(s["content"])
 
-
+    print(batch_queue)
     if batch_queue:
         emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
         if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
@@ -359,6 +360,32 @@ def refresh_openai_token():
         token_cred = open_ai_token_cache[CACHE_KEY_TOKEN_CRED]
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+
+def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool):
+    """
+    Recursively read directory structure under `path_pattern`
+    and execute indexing for the individual files
+    """
+    for filename in glob.glob(path_pattern):
+        if args.verbose: print(f"Processing '{filename}'")
+        if args.remove:
+            remove_blobs(filename)
+            remove_from_index(filename)
+        else:
+            if os.path.isdir(filename):
+                read_files(filename + "/*", use_vectors, vectors_batch_support)
+                continue
+            try:
+                if not args.skipblobs:
+                    upload_blobs(filename)
+                page_map = get_document_text(filename)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not vectors_batch_support)
+                print (use_vectors and vectors_batch_support)
+                if use_vectors and vectors_batch_support:
+                    sections=update_embeddings_in_batch(sections)
+                index_sections(os.path.basename(filename), sections)
+            except Exception as e:
+                print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
 if __name__ == "__main__":
 
@@ -428,19 +455,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        for filename in glob.glob(args.files):
-            if args.verbose: print(f"Processing '{filename}'")
-            if args.remove:
-                remove_blobs(filename)
-                remove_from_index(filename)
-            elif args.removeall:
-                remove_blobs(None)
-                remove_from_index(None)
-            else:
-                if not args.skipblobs:
-                    upload_blobs(filename)
-                page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not compute_vectors_in_batch)
-                if use_vectors and compute_vectors_in_batch:
-                    sections = update_embeddings_in_batch(sections)
-                index_sections(os.path.basename(filename), sections)
+        read_files(args.files, use_vectors, compute_vectors_in_batch)
