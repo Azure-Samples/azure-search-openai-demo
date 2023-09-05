@@ -32,7 +32,8 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
 }
 
 export async function chatApi(options: ChatRequest): Promise<Response> {
-    return await fetch("/chat", {
+    const url = options.shouldStream ? "/chat_stream" : "/chat";
+    return await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -51,8 +52,7 @@ export async function chatApi(options: ChatRequest): Promise<Response> {
                 prompt_template_suffix: options.overrides?.promptTemplateSuffix,
                 exclude_category: options.overrides?.excludeCategory,
                 suggest_followup_questions: options.overrides?.suggestFollowupQuestions
-            },
-            should_stream: options.shouldStream
+            }
         })
     });
 }

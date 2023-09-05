@@ -96,12 +96,6 @@ async def ask():
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
 
-
-async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
-    async for event in r:
-        yield json.dumps(event, ensure_ascii=False) + "\n"
-
-
 @bp.route("/chat", methods=["POST"])
 async def chat():
     if not request.is_json:
@@ -112,18 +106,35 @@ async def chat():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        should_stream = request_json.get("should_stream", False)
-        response_generator = impl.run(request_json["history"], request_json.get("overrides", {}), should_stream)
-        if should_stream:
-            response = await make_response(format_as_ndjson(response_generator))
-            response.timeout = None
-            return response
-        else:
-            # anext() is nicer but only available in Python 3.10
-            return jsonify(await response_generator.__anext__())
+        r = await impl.run_without_streaming(request_json["history"], request_json.get("overrides", {}))
+        return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
+
+
+async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
+    async for event in r:
+        yield json.dumps(event, ensure_ascii=False) + "\n"
+
+@bp.route("/chat_stream", methods=["POST"])
+async def chat_stream():
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    request_json = await request.get_json()
+    approach = request_json["approach"]
+    try:
+        impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
+        if not impl:
+            return jsonify({"error": "unknown approach"}), 400
+        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
+        response = await make_response(format_as_ndjson(response_generator))
+        response.timeout = None
+        return response
+    except Exception as e:
+        logging.exception("Exception in /chat")
+        return jsonify({"error": str(e)}), 500
+
 
 @bp.before_request
 async def ensure_openai_token():

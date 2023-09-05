@@ -1,34 +1,12 @@
 from collections import namedtuple
 from unittest import mock
 
+import openai
+import pytest
 import pytest_asyncio
+from azure.search.documents.aio import SearchClient
 
 import app
-from approaches.approach import AskApproach
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-
-
-class MockedAskApproach(AskApproach):
-    async def run(self, question, overrides):
-        assert question == "What is the capital of France?"
-        return {"answer": "Paris"}
-
-
-class MockedChatApproach(ChatReadRetrieveReadApproach):
-    def __init__(self):
-        pass
-
-    async def run(self, history, overrides, should_stream:bool):
-        messages = ChatReadRetrieveReadApproach.get_messages_from_history(self, ChatReadRetrieveReadApproach.query_prompt_template, "gpt-3.5-turbo", history, "Generate search query")
-        assert messages[0]["role"] == "system"
-        assert messages[1]["content"] == "Generate search query"
-        assert messages[1]["role"] == "user"
-        if should_stream:
-            yield {"answer": "", "data_points": [], "thoughts": ""}
-            yield {"choices": [{"delta": {"content": "Paris"}}]}
-        else:
-            yield {"answer": "Paris", "data_points": [], "thoughts": ""}
-
 
 MockToken = namedtuple("MockToken", ["token", "expires_on"])
 
@@ -38,9 +16,86 @@ class MockAzureCredential:
         return MockToken("mock_token", 9999999999)
 
 
+@pytest.fixture
+def mock_openai_embedding(monkeypatch):
+    async def mock_acreate(*args, **kwargs):
+        return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
+    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+
+
+@pytest.fixture
+def mock_openai_chatcompletion(monkeypatch):
+
+    class AsyncChatCompletionIterator:
+        def __init__(self, answer):
+            self.num = 1
+            self.answer = answer
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            if self.num == 1:
+                self.num = 0
+                return openai.util.convert_to_openai_object({"choices": [{"delta": {"content": self.answer}}]})
+            else:
+                raise StopAsyncIteration
+
+    async def mock_acreate(*args, **kwargs):
+        messages = kwargs["messages"]
+        if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
+            answer = "capital of France"
+        else:
+            answer = "The capital of France is Paris."
+        if "stream" in kwargs and kwargs["stream"] is True:
+            return AsyncChatCompletionIterator(answer)
+        else:
+            return openai.util.convert_to_openai_object({"choices": [{"message": {"content": answer}}]})
+
+    monkeypatch.setattr(openai.ChatCompletion, "acreate", mock_acreate)
+
+
+@pytest.fixture
+def mock_acs_search(monkeypatch):
+
+    class Caption:
+        def __init__(self, text):
+            self.text = text
+
+    class AsyncSearchResultsIterator:
+        def __init__(self):
+            self.num = 1
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            if self.num == 1:
+                self.num = 0
+                return {'sourcepage': 'Benefit_Options-2.pdf',
+                    'sourcefile': 'Benefit_Options.pdf',
+                    'content': 'There is a whistleblower policy.',
+                    'embeddings': [],
+                    'category': None,
+                    'id': 'file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2',
+                    '@search.score': 0.03279569745063782,
+                    '@search.reranker_score': 3.4577205181121826,
+                    '@search.highlights': None,
+                    '@search.captions': [
+                        Caption('Caption: A whistleblower policy.')
+                        ]
+                    }
+            else:
+                raise StopAsyncIteration
+
+    async def mock_search(*args, **kwargs):
+        return AsyncSearchResultsIterator()
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+
 @pytest_asyncio.fixture
-async def client():
-    # mock the DefaultAzureCredential
+async def client(mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search):
     with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
         mock_default_azure_credential.return_value = MockAzureCredential()
         quart_app = app.create_app()
@@ -48,9 +103,7 @@ async def client():
         async with quart_app.test_app() as test_app:
             quart_app.config.update(
                 {
-                    "TESTING": True,
-                    app.CONFIG_ASK_APPROACHES: {"mock": MockedAskApproach()},
-                    app.CONFIG_CHAT_APPROACHES: {"mock": MockedChatApproach()},
+                    "TESTING": True
                 }
             )
 
