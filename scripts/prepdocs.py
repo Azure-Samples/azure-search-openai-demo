@@ -41,7 +41,7 @@ CACHE_KEY_TOKEN_CRED = 'openai_token_cred'
 CACHE_KEY_CREATED_TIME = 'created_time'
 CACHE_KEY_TOKEN_TYPE = 'token_type'
 
-#Embedding batch section
+#Embedding batch support section
 AOAI_EMBEDDING_MODEL = 'text-embedding-ada-002'
 MAX_EMB_TOKEN_LIMIT = 8100
 MAX_BATCH_SIZE = 16
