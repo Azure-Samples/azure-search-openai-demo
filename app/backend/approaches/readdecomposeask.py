@@ -85,7 +85,7 @@ class ReadDecomposeAsk(AskApproach):
             return "\n".join([d['content'] async for d in r])
         return None
 
-    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
+    async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
 
         search_results = None
         async def search_and_store(q: str) -> Any:
