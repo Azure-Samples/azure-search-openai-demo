@@ -12,6 +12,8 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { useLogin } from "../../authConfig";
+import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -262,6 +264,7 @@ const Chat = () => {
                         required
                         onChange={onRetrievalModeChange}
                     />
+                    { useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>
         </div>

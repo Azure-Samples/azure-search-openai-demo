@@ -43,7 +43,7 @@ const Layout = () => {
                         </ul>
                     </nav>
                     <h4 className={styles.headerRightText}>Azure OpenAI + Cognitive Search</h4>
-                    { useLogin && <LoginButton /> }
+                    {useLogin && <LoginButton/>}
                 </div>
             </header>
 

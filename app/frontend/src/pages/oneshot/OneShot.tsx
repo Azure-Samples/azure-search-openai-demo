@@ -9,6 +9,8 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
+import { useLogin } from "../../authConfig";
+import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -260,6 +262,7 @@ export function Component(): JSX.Element {
                     required
                     onChange={onRetrievalModeChange}
                 />
+                { useLogin && <TokenClaimsDisplay />}
             </Panel>
         </div>
     );
