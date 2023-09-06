@@ -123,7 +123,7 @@ async def chat_stream():
             return jsonify({"error": "unknown approach"}), 400
         response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
         response = await make_response(format_as_ndjson(response_generator))
-        response.timeout = None
+        response.timeout = None # type: ignore
         return response
     except Exception as e:
         logging.exception("Exception in /chat")
