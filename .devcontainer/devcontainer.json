@@ -1,21 +1,14 @@
 {
     "name": "Azure Developer CLI",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "args": {
-            "VARIANT": "bullseye"
-        }
-    },
+    "image": "mcr.microsoft.com/devcontainers/python:3.10",
     "features": {
-        "ghcr.io/devcontainers/features/python:1": {
-            "version": "os-provided"
-        },
         "ghcr.io/devcontainers/features/node:1": {
             "version": "16",
             "nodeGypDependencies": false
         },
         "ghcr.io/devcontainers/features/powershell:1.1.0": {},
-        "ghcr.io/devcontainers/features/azure-cli:1.0.8": {}
+        "ghcr.io/devcontainers/features/azure-cli:1.0.8": {},
+        "ghcr.io/azure/azure-dev/azd:latest": {}
     },
     "customizations": {
         "vscode": {
@@ -27,7 +20,7 @@
         }
     },
     "forwardPorts": [
-        5000
+        50505
     ],
     "postCreateCommand": "",
     "remoteUser": "vscode",

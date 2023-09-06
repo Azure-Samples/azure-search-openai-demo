@@ -1,0 +1,10 @@
+-r app/backend/requirements.txt
+-r scripts/requirements.txt
+ruff
+black
+pytest
+pytest-asyncio
+coverage
+pytest-cov
+pre-commit
+locust

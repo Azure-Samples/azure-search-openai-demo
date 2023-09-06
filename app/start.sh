@@ -17,7 +17,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo 'Creating python virtual environment "backend/backend_env"'
-python -m venv backend/backend_env
+python3 -m venv backend/backend_env
 
 echo ""
 echo "Restoring backend python packages"
@@ -56,8 +56,7 @@ echo "Starting backend"
 echo ""
 
 cd ../backend
-xdg-open http://127.0.0.1:5000
-./backend_env/bin/python ./app.py
+./backend_env/bin/python -m quart --app main:app run --port 50505 --reload
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
     exit $?

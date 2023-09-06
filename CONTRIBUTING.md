@@ -1,4 +1,4 @@
-# Contributing to [project-title]
+# Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
@@ -16,6 +16,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
+ - [Running Tests](#tests)
+ - [Code Style](#style)
 
 ## <a name="coc"></a> Code of Conduct
 Help us keep this project open and inclusive. Please read and follow our [Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
@@ -58,19 +60,55 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 
 * Search the repository (https://github.com/[organization-name]/[repository-name]/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
-
-* Make your changes in a new git fork:
-
+* Make your changes in a new git fork
+* Follow [Code style conventions](#style)
+* [Run the tests](#tests) (and write new ones, if needed)
 * Commit your changes using a descriptive commit message
-* Push your fork to GitHub:
-* In GitHub, create a pull request
-* If we suggest changes then:
-  * Make the required updates.
-  * Rebase your fork and force push to your GitHub repository (this will update your Pull Request):
+* Push your fork to GitHub
+* In GitHub, create a pull request to the `main` branch of the repository
+* Ask a maintainer to review your PR and address any comments they might have
 
-    ```shell
-    git rebase master -i
-    git push -f
-    ```
+## <a name="tests"></a> Running tests
 
-That's it! Thank you for your contribution!
+Install the development dependencies:
+
+```
+python3 -m pip install -r requirements-dev.txt
+```
+
+Install the pre-commit hooks:
+
+```
+pre-commit install
+```
+
+Run the tests:
+
+```
+python3 -m pytest
+```
+
+## <a name="style"></a> Code Style
+
+This codebase includes several languages: TypeScript, Python, Bicep, Powershell, and Bash.
+Code should follow the standard conventions of each language.
+
+For Python, you can enforce the conventions using `ruff` and `black`.
+
+Install the development dependencies:
+
+```
+python3 -m pip install -r requirements-dev.txt
+```
+
+Run `ruff` to lint a file:
+
+```
+python3 -m ruff <path-to-file>
+```
+
+Run `black` to format a file:
+
+```
+python3 -m black <path-to-file>
+```
