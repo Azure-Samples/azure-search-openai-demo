@@ -5,13 +5,18 @@ from abc import ABC
 import msal, os
 from msgraph import GraphServiceClient
 from azure.core.credentials import TokenCredential, AccessToken
-import asyncio
+import logging
+from typing import Any
 
 class AuthError(Exception):
+    error: str = None
+    status_code: int = None
+
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
+# TokenCredential wrapper class to use an auth token to call the Microsoft Graph API
 class AuthToken(TokenCredential):
     _token: dict = None
 
@@ -68,18 +73,63 @@ class AuthenticationHelper(ABC):
         return AuthenticationHelper._confidential_client
 
     @staticmethod
-    async def get_auth_claims_if_enabled() -> str:
-        auth_claims = {}
+    def build_security_filters(overrides: dict[str, Any], auth_claims: dict[str, Any]):
+        # Build different permutations of the oid or groups security filter using OData filters
+        # https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search
+        # https://learn.microsoft.com/azure/search/search-query-odata-filter
+        use_oid_security_filter = overrides.get("use_oid_security_filter")
+        use_groups_security_filter = overrides.get("use_groups_security_filter")
+
+        oid_security_filter = "oids/any(g:search.in(g, '{}'))".format(auth_claims["oid"]) if use_oid_security_filter else None
+        groups_security_filter = "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims["groups"])) if use_groups_security_filter else None
+
+        # If only one security filter is specified, return that filter
+        # If both security filters are specified, combine them with "or" so only 1 security filter needs to pass
+        # If no security filters are specified, don't return any filter
+        if oid_security_filter and not groups_security_filter:
+            return oid_security_filter
+        elif groups_security_filter and not oid_security_filter:
+            return groups_security_filter
+        elif oid_security_filter and groups_security_filter:
+            return "({} or {})".format(oid_security_filter, groups_security_filter)
+        else:
+            return None
+
+    @staticmethod
+    async def get_auth_claims_if_enabled() -> dict[str: Any]:
         if AuthenticationHelper.use_authentication():
-            auth_token = AuthenticationHelper.get_token_auth_header()
-            graph_resource_access_token = AuthenticationHelper.get_confidential_client().acquire_token_on_behalf_of(
-                user_assertion=auth_token,
-                scopes=["https://graph.microsoft.com/.default"]
-            )
-            print(graph_resource_access_token)
-            auth_claims = graph_resource_access_token["id_token_claims"]
-            client = GraphServiceClient(credentials=AuthToken(graph_resource_access_token))
-            user = await client.me.get()
-            print(user.user_principal_name, user.display_name, user.id)
-        print(auth_claims)
-        return auth_claims
+            try:
+                # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
+                # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
+                # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
+                auth_token = AuthenticationHelper.get_token_auth_header()
+                graph_resource_access_token = AuthenticationHelper.get_confidential_client().acquire_token_on_behalf_of(
+                    user_assertion=auth_token,
+                    scopes=["https://graph.microsoft.com/.default"]
+                )
+                if 'error' in graph_resource_access_token:
+                    raise AuthError(error=str(graph_resource_access_token), status_code=401)
+
+                # Read the claims from the response. The oid and groups claims are used for security filtering
+                # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference
+                id_token_claims = graph_resource_access_token["id_token_claims"]
+                auth_claims = { "oid": id_token_claims["oid"], "groups": id_token_claims.get("groups") or [] }
+
+                # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
+                # or a groups overage claim may have been emitted.
+                # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference#groups-overage-claim
+                missing_groups_claim = "groups" not in id_token_claims
+                has_group_overage_claim = missing_groups_claim and \
+                    "_claim_names" in id_token_claims and \
+                    "groups" in id_token_claims["_claim_names"]
+                if missing_groups_claim or has_group_overage_claim:
+                    # Read the user's groups from Microsoft Graph
+                    client = GraphServiceClient(credentials=AuthToken(graph_resource_access_token))
+                    user_groups = await client.me.member_of.get()
+                    for group in user_groups.value:
+                        auth_claims["groups"].append(group.id)
+                return auth_claims
+            except:
+                logging.exception("Exception getting authorization information")
+
+        return {}

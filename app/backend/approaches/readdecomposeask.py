@@ -14,7 +14,7 @@ from langchain.tools.base import BaseTool
 from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
-
+from core.authentication import AuthenticationHelper
 
 class ReadDecomposeAsk(AskApproach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
@@ -24,13 +24,20 @@ class ReadDecomposeAsk(AskApproach):
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    async def search(self, query_text: str, overrides: dict[str, Any]) -> tuple[list[str], str]:
+    async def search(self, query_text: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> tuple[list[str], str]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top") or 3
+
+        security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
+        filters = []
+        if exclude_category:
+            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
+        if security_filter:
+            filters.append(security_filter)
+        filter = None if len(filters) == 0 else " and ".join(filters)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
@@ -90,7 +97,7 @@ class ReadDecomposeAsk(AskApproach):
         search_results = None
         async def search_and_store(q: str) -> Any:
             nonlocal search_results
-            search_results, content = await self.search(q, overrides)
+            search_results, content = await self.search(q, overrides, auth_claims)
             return content
 
         # Use to capture thought process during iterations

@@ -8,6 +8,7 @@ from approaches.approach import ChatApproach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
+from core.authentication import AuthenticationHelper
 
 class ChatReadRetrieveReadApproach(ChatApproach):
     # Chat roles
@@ -60,9 +61,16 @@ If you cannot generate a search query, return just the number 0.
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top") or 3
+
+        security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
+        filters = []
+        if exclude_category:
+            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
+        if security_filter:
+            filters.append(security_filter)
+        filter = None if len(filters) == 0 else " and ".join(filters)
 
         user_q = 'Generate search query for: ' + history[-1]["user"]
 

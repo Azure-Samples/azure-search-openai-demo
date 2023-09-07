@@ -12,7 +12,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import { useLogin, checkClaim, getToken } from "../../authConfig";
+import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -51,7 +51,7 @@ const Chat = () => {
         setActiveAnalysisPanelTab(undefined);
 
         const token = client ? await getToken(client) : undefined
-        console.log(token)
+
         try {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
             const request: ChatRequest = {
@@ -276,7 +276,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             checked={useOidSecurityFilter}
                             label="Use oid security filter"
-                            disabled={!checkClaim("oid")}
+                            disabled={!client?.getActiveAccount()}
                             onChange={onUseOidSecurityFilterChange}
                         />
                     )}
@@ -285,7 +285,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             checked={useGroupsSecurityFilter}
                             label="Use groups security filter"
-                            disabled={!checkClaim("groups")}
+                            disabled={!client?.getActiveAccount()}
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}

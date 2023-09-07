@@ -9,7 +9,7 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-import { useLogin, checkClaim } from "../../authConfig";
+import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -36,7 +36,8 @@ export function Component(): JSX.Element {
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
-    const idToken = useLogin ? useMsal().instance?.getActiveAccount()?.idToken : undefined
+    const client = useLogin ? useMsal().instance : undefined
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -44,6 +45,8 @@ export function Component(): JSX.Element {
         setIsLoading(true);
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
+
+        const token = client ? await getToken(client) : undefined
 
         try {
             const request: AskRequest = {
@@ -61,7 +64,7 @@ export function Component(): JSX.Element {
                     useOidSecurityFilter: useOidSecurityFilter,
                     useGroupsSecurityFilter: useGroupsSecurityFilter
                 },
-                idToken: idToken
+                idToken: token?.accessToken
             };
             const result = await askApi(request);
             setAnswer(result);
@@ -271,7 +274,7 @@ export function Component(): JSX.Element {
                         className={styles.oneshotSettingsSeparator}
                         checked={useOidSecurityFilter}
                         label="Use oid security filter"
-                        disabled={!checkClaim("oid")}
+                        disabled={!client?.getActiveAccount()}
                         onChange={onUseOidSecurityFilterChange}
                     />
                 )}
@@ -280,7 +283,7 @@ export function Component(): JSX.Element {
                         className={styles.oneshotSettingsSeparator}
                         checked={useGroupsSecurityFilter}
                         label="Use groups security filter"
-                        disabled={!checkClaim("groups")}
+                        disabled={!client?.getActiveAccount()}
                         onChange={onUseGroupsSecurityFilterChange}
                     />
                 )}

@@ -8,21 +8,8 @@ import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-brow
 
 export const useLogin = true;
 
-// Validate claim used for filters is present, before allowing the user to select that claim as an option
-export const checkClaim = (claim: string) => {
-    const idTokenClaims = useMsal().instance?.getActiveAccount()?.idTokenClaims ?? {}
-    if (claim == "groups") {
-        // Check for groups overage claim in addition to a normal groups claim
-        // https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference#groups-overage-claim
-        if ("_claim_names" in idTokenClaims &&
-            "groups" in (idTokenClaims["_claim_names"] as object)) {
-            return true;
-        }
-    }
-
-    return claim in idTokenClaims;
-}
-
+// Get an access token for use with the API server.
+// ID token received when logging in may not be used for this purpose because it has the incorrect audience
 export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult> => {
     return client.acquireTokenSilent({
         ...loginRequest,
@@ -37,8 +24,8 @@ export const getToken = (client: IPublicClientApplication): Promise<Authenticati
  */
 export const msalConfig = {
     auth: {
-        clientId: '5d72e913-36b7-47e2-b21e-44cbe4cf0774', // App ID for client app serving the UI
-        authority: 'https://login.microsoftonline.com/f7cfd049-4e12-4d6b-af39-1230c52cbaea', // Defaults to "https://login.microsoftonline.com/common"
+        clientId: 'c06098e2-79e4-4e6c-8e43-f8b0e7728349', // App ID for client app serving the UI
+        authority: 'https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47', // Defaults to "https://login.microsoftonline.com/common"
         redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
@@ -56,7 +43,7 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: [`api://8f4bfecf-b0cf-42f9-b4bd-de7c5f4b5be1/.default`]
+    scopes: [`api://201ac4a0-3323-43ed-a024-bf37eaedc7bf/.default`]
 };
 
 /**

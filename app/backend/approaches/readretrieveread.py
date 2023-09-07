@@ -12,7 +12,7 @@ from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
 from lookuptool import CsvLookupTool
 from text import nonewlines
-
+from core.authentication import AuthenticationHelper
 
 class ReadRetrieveReadApproach(AskApproach):
     """
@@ -54,13 +54,20 @@ Thought: {agent_scratchpad}"""
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    async def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
+    async def retrieve(self, query_text: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+
+        security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
+        filters = []
+        if exclude_category:
+            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
+        if security_filter:
+            filters.append(security_filter)
+        filter = None if len(filters) == 0 else " and ".join(filters)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
@@ -104,7 +111,7 @@ Thought: {agent_scratchpad}"""
         retrieve_results = None
         async def retrieve_and_store(q: str) -> Any:
             nonlocal retrieve_results
-            retrieve_results, content = await self.retrieve(q, overrides)
+            retrieve_results, content = await self.retrieve(q, overrides, auth_claims)
             return content
 
         # Use to capture thought process during iterations
