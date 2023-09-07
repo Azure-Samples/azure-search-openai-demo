@@ -8,7 +8,9 @@
         },
         "ghcr.io/devcontainers/features/powershell:1.1.0": {},
         "ghcr.io/devcontainers/features/azure-cli:1.0.8": {},
-        "ghcr.io/azure/azure-dev/azd:latest": {}
+        "ghcr.io/azure/azure-dev/azd:latest": {},
+        // Required for azd to package the app to ACA
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
     },
     "customizations": {
         "vscode": {

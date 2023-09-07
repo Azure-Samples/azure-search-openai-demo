@@ -6,7 +6,7 @@ import time
 
 import aiohttp
 import openai
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential, ManagedIdentityCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
@@ -131,7 +131,10 @@ async def setup_clients():
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
+    if os.getenv("AZURE_IDENTITY_ID"):
+        azure_credential = ManagedIdentityCredential(client_id=os.getenv("AZURE_IDENTITY_ID"))
+    else:
+        azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
 
     # Set up clients for Cognitive Search and Storage
     search_client = SearchClient(

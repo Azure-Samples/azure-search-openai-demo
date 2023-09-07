@@ -1,0 +1,7 @@
+fastapi==0.101.1
+uvicorn==0.23.2
+gunicorn==21.2.0
+azure-storage-blob==12.17.0
+azure-mgmt-storage==21.1.0
+azure-identity==1.14.0
+azure-mgmt-appcontainers==3.0.0
