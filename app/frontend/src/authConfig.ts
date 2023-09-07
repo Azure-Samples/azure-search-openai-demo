@@ -1,11 +1,26 @@
+import { useMsal } from "@azure/msal-react";
+
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { LogLevel } from "@azure/msal-browser";
-
 export const useLogin = true;
+
+// Validate claim used for filters is present, before allowing the user to select that claim as an option
+export const checkClaim = (claim: string) => {
+    const idTokenClaims = useMsal().instance?.getActiveAccount()?.idTokenClaims ?? {}
+    if (claim == "groups") {
+        // Check for groups overage claim in addition to a normal groups claim
+        // https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference#groups-overage-claim
+        if ("_claim_names" in idTokenClaims &&
+            "groups" in (idTokenClaims["_claim_names"] as object)) {
+            return true;
+        }
+    }
+
+    return claim in idTokenClaims;
+}
 
 /**
  * Configuration object to be passed to MSAL instance on creation. 
@@ -14,8 +29,8 @@ export const useLogin = true;
  */
 export const msalConfig = {
     auth: {
-        clientId: 'Enter_the_Application_Id_Here', // This is the ONLY mandatory field that you need to supply.
-        authority: 'https://login.microsoftonline.com/Enter_the_Tenant_Id_Here', // Defaults to "https://login.microsoftonline.com/common"
+        clientId: 'f153bbec-e5c2-4f4e-85ae-0e9a80c1d337', // This is the ONLY mandatory field that you need to supply.
+        authority: 'https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47', // Defaults to "https://login.microsoftonline.com/common"
         redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
@@ -33,7 +48,7 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: []
+    scopes: ["openid", "profile", "email"]
 };
 
 /**

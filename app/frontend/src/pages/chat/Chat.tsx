@@ -12,7 +12,8 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import { useLogin } from "../../authConfig";
+import { useLogin, checkClaim } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
 const Chat = () => {
@@ -24,6 +25,8 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
+    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -37,6 +40,7 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
+    const idToken = useLogin ? useMsal().instance?.getActiveAccount()?.idToken : undefined
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -57,8 +61,11 @@ const Chat = () => {
                     retrievalMode: retrievalMode,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
-                    suggestFollowupQuestions: useSuggestFollowupQuestions
-                }
+                    suggestFollowupQuestions: useSuggestFollowupQuestions,
+                    useOidSecurityFilter: useOidSecurityFilter,
+                    useGroupsSecurityFilter: useGroupsSecurityFilter
+                },
+                idToken: idToken
             };
             const result = await chatApi(request);
             setAnswers([...answers, [question, result]]);
@@ -105,6 +112,14 @@ const Chat = () => {
 
     const onUseSuggestFollowupQuestionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSuggestFollowupQuestions(!!checked);
+    };
+
+    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseOidSecurityFilter(!!checked);
+    };
+
+    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseGroupsSecurityFilter(!!checked);
     };
 
     const onExampleClicked = (example: string) => {
@@ -253,6 +268,24 @@ const Chat = () => {
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
                     />
+                    {useLogin && (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useOidSecurityFilter}
+                            label="Use oid security filter"
+                            disabled={!checkClaim("oid")}
+                            onChange={onUseOidSecurityFilterChange}
+                        />
+                    )}
+                    {useLogin &&  (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useGroupsSecurityFilter}
+                            label="Use groups security filter"
+                            disabled={!checkClaim("groups")}
+                            onChange={onUseGroupsSecurityFilterChange}
+                        />
+                    )}
                     <Dropdown
                         className={styles.chatSettingsSeparator}
                         label="Retrieval mode"
