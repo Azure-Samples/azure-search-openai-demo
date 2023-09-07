@@ -396,7 +396,6 @@ def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool
                     sections = update_embeddings_in_batch(sections)
                 index_sections(os.path.basename(filename), sections)
             except Exception as e:
-                print(type(e))
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
 if __name__ == "__main__":
