@@ -8,6 +8,7 @@ import re
 import time
 
 import openai
+import tiktoken
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import AzureDeveloperCliCredential
@@ -39,6 +40,18 @@ open_ai_token_cache = {}
 CACHE_KEY_TOKEN_CRED = 'openai_token_cred'
 CACHE_KEY_CREATED_TIME = 'created_time'
 CACHE_KEY_TOKEN_TYPE = 'token_type'
+
+#Embedding batch support section
+SUPPORTED_BATCH_AOAI_MODEL = {
+    'text-embedding-ada-002': {
+        'token_limit' : 8100,
+        'max_batch_size' : 16
+    }
+}
+
+def calculate_tokens_emb_aoai(input: str):
+    encoding = tiktoken.encoding_for_model(args.openaimodelname)
+    return len(encoding.encode(input))
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
@@ -229,10 +242,16 @@ def create_sections(filename, page_map, use_vectors):
 def before_retry_sleep(retry_state):
     if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
 def compute_embedding(text):
     refresh_openai_token()
     return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
+
+@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding_in_batch(texts):
+    refresh_openai_token()
+    emb_response = openai.Embedding.create(engine=args.openaideployment, input=texts)
+    return [data.embedding for data in emb_response.data]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -270,6 +289,35 @@ def create_search_index():
         index_client.create_index(index)
     else:
         if args.verbose: print(f"Search index {args.index} already exists")
+
+def update_embeddings_in_batch(sections):
+    batch_queue = []
+    copy_s = []
+    batch_response = {}
+    token_count = 0
+    for s in sections:
+        token_count += calculate_tokens_emb_aoai(s["content"])
+        if token_count <= SUPPORTED_BATCH_AOAI_MODEL[args.openaimodelname]['token_limit'] and len(batch_queue) < SUPPORTED_BATCH_AOAI_MODEL[args.openaimodelname]['max_batch_size']:
+            batch_queue.append(s)
+            copy_s.append(s)
+        else:
+            emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
+            if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
+            for emb, item in zip(emb_responses, batch_queue):
+                batch_response[item["id"]] = emb
+            batch_queue = []
+            batch_queue.append(s)
+            token_count = calculate_tokens_emb_aoai(s["content"])
+
+    if batch_queue:
+        emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
+        if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
+        for emb, item in zip(emb_responses, batch_queue):
+            batch_response[item["id"]] = emb
+    
+    for s in copy_s:
+        s["embedding"] = batch_response[s["id"]]
+        yield s
 
 def index_sections(filename, sections):
     if args.verbose: print(f"Indexing sections from '{filename}' into search index '{args.index}'")
@@ -314,7 +362,7 @@ def refresh_openai_token():
         openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
-def read_files(path_pattern: str, use_vectors: bool):
+def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool):
     """
     Recursively read directory structure under `path_pattern`
     and execute indexing for the individual files
@@ -326,13 +374,16 @@ def read_files(path_pattern: str, use_vectors: bool):
             remove_from_index(filename)
         else:
             if os.path.isdir(filename):
-                read_files(filename + "/*", use_vectors)
+                read_files(filename + "/*", use_vectors, vectors_batch_support)
                 continue
             try:
                 if not args.skipblobs:
                     upload_blobs(filename)
                 page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not vectors_batch_support)
+                print (use_vectors and vectors_batch_support)
+                if use_vectors and vectors_batch_support:
+                    sections = update_embeddings_in_batch(sections)
                 index_sections(os.path.basename(filename), sections)
             except Exception as e:
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
@@ -355,7 +406,9 @@ if __name__ == "__main__":
     parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
+    parser.add_argument("--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)")
     parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
+    parser.add_argument("--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)")
     parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
     parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
@@ -370,6 +423,7 @@ if __name__ == "__main__":
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
+    compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname in SUPPORTED_BATCH_AOAI_MODEL
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
@@ -402,4 +456,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        read_files(args.files, use_vectors)
+        read_files(args.files, use_vectors, compute_vectors_in_batch)

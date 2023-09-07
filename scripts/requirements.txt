@@ -4,4 +4,5 @@ azure-search-documents==11.4.0b6
 azure-ai-formrecognizer==3.2.1
 azure-storage-blob==12.14.1
 openai[datalib]==0.27.8
+tiktoken==0.4.0
 tenacity==8.2.2
