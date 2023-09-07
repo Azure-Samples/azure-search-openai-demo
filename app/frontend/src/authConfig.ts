@@ -1,4 +1,5 @@
 import { useMsal } from "@azure/msal-react";
+import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-browser";
 
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -22,6 +23,13 @@ export const checkClaim = (claim: string) => {
     return claim in idTokenClaims;
 }
 
+export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult> => {
+    return client.acquireTokenSilent({
+        ...loginRequest,
+        redirectUri: '/redirect'
+    })
+}
+
 /**
  * Configuration object to be passed to MSAL instance on creation. 
  * For a full list of MSAL.js configuration parameters, visit:
@@ -29,8 +37,8 @@ export const checkClaim = (claim: string) => {
  */
 export const msalConfig = {
     auth: {
-        clientId: 'f153bbec-e5c2-4f4e-85ae-0e9a80c1d337', // This is the ONLY mandatory field that you need to supply.
-        authority: 'https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47', // Defaults to "https://login.microsoftonline.com/common"
+        clientId: '5d72e913-36b7-47e2-b21e-44cbe4cf0774', // App ID for client app serving the UI
+        authority: 'https://login.microsoftonline.com/f7cfd049-4e12-4d6b-af39-1230c52cbaea', // Defaults to "https://login.microsoftonline.com/common"
         redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
@@ -48,7 +56,7 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: ["openid", "profile", "email"]
+    scopes: [`api://8f4bfecf-b0cf-42f9-b4bd-de7c5f4b5be1/.default`]
 };
 
 /**

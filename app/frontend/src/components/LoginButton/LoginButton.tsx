@@ -1,5 +1,5 @@
 import { DefaultButton } from '@fluentui/react';
-import { AuthenticatedTemplate, useMsal } from '@azure/msal-react';
+import { useMsal } from '@azure/msal-react';
 
 import styles from "./LoginButton.module.css";
 import { loginRequest } from '../../authConfig';

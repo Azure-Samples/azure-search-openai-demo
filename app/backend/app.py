@@ -28,6 +28,8 @@ from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 
+from core.authentication import AuthenticationHelper
+
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACHES = "ask_approaches"
@@ -35,6 +37,7 @@ CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 
 bp = Blueprint("routes", __name__, static_folder='static')
+logging.basicConfig(level=logging.INFO)
 
 @bp.route("/")
 async def index():
@@ -70,6 +73,7 @@ async def ask():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    auth_claims = await AuthenticationHelper.get_auth_claims_if_enabled()
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
@@ -78,7 +82,7 @@ async def ask():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run(request_json["question"], request_json.get("overrides") or {})
+            r = await impl.run(request_json["question"], request_json.get("overrides") or {}, auth_claims)
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /ask")
@@ -89,6 +93,7 @@ async def chat():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    auth_claims = await AuthenticationHelper.get_auth_claims_if_enabled()
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
@@ -97,7 +102,7 @@ async def chat():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run(request_json["history"], request_json.get("overrides") or {})
+            r = await impl.run(request_json["history"], request_json.get("overrides") or {}, auth_claims)
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")

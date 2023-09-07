@@ -12,7 +12,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import { useLogin, checkClaim } from "../../authConfig";
+import { useLogin, checkClaim, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -40,7 +40,8 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
-    const idToken = useLogin ? useMsal().instance?.getActiveAccount()?.idToken : undefined
+    const client = useLogin ? useMsal().instance : undefined
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -49,6 +50,8 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
 
+        const token = client ? await getToken(client) : undefined
+        console.log(token)
         try {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
             const request: ChatRequest = {
@@ -65,7 +68,7 @@ const Chat = () => {
                     useOidSecurityFilter: useOidSecurityFilter,
                     useGroupsSecurityFilter: useGroupsSecurityFilter
                 },
-                idToken: idToken
+                idToken: token?.accessToken
             };
             const result = await chatApi(request);
             setAnswers([...answers, [question, result]]);

@@ -9,7 +9,6 @@ from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
 
-
 class ChatReadRetrieveReadApproach(ChatApproach):
     # Chat roles
     SYSTEM = "system"
@@ -57,7 +56,7 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> Any:
+    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
