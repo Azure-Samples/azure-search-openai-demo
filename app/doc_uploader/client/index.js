@@ -23,7 +23,7 @@ uploadButton.addEventListener("click", async () => {
 
     const jobName = jobInfo.result?.name;
     if (jobName) {
-        progress.innerText = `Job ${jobName} is starting...`;
+        progress.innerText = `Job ${jobName} started. Waiting for output...`;
     }
 
     const logFileUrl = jobInfo.logFileUrl;

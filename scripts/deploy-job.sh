@@ -3,8 +3,10 @@ set +a
 source <(azd env get-values)
 set -a
 
+# build the job image
 az acr build -t prepdocs:1.0 -r $AZURE_CONTAINER_REGISTRY_NAME .
 
+# create the job
 az containerapp job create \
     --name "job-prepdocs" --resource-group "$AZURE_RESOURCE_GROUP"  --environment $AZURE_CONTAINER_ENVIRONMENT_NAME \
     --trigger-type "Manual" \
@@ -38,30 +40,22 @@ az containerapp job create \
     --mi-system-assigned
 
 # give the job permissions to resources
-# az role assignment create --role "Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Storage Blob Data Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Cognitive Services OpenAI User" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Cognitive Services User" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Search Index Data Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Search Service Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
-# az role assignment create --role "Storage Blob Data Contributor" --assignee `az containerapp job show -n job-prepdocs -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 
-az containerapp job start \
-    --name "job-prepdocs" --resource-group "$AZURE_RESOURCE_GROUP"
-
-# az storage account blob-service-properties cors-rule add \
-#     --account-name $AZURE_STORAGE_ACCOUNT \
-#     --origins "*" \
-#     --methods PUT \
-#     --allowed-headers "*" \
-#     --exposed-headers "*" \
-#     --max-age 200
+# az containerapp job start \
+#     --name "job-prepdocs" --resource-group "$AZURE_RESOURCE_GROUP"
 
 az storage cors add --methods GET PUT OPTIONS \
     --origins "*" --allowed-headers "*" --exposed-headers "*" --max-age 200 \
     --services b --account-name $AZURE_STORAGE_ACCOUNT
 
 az storage container create --name uploads --account-name $AZURE_STORAGE_ACCOUNT
+
+# build and deploy the uploader app
 
 cd ../app/docs_uploader
 
@@ -99,3 +93,7 @@ az containerapp create -n doc-uploader -g $AZURE_RESOURCE_GROUP --environment $A
 
 az role assignment create --role "Contributor" --assignee `az containerapp show -n doc-uploader -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
 az role assignment create --role "Storage Blob Data Contributor" --assignee `az containerapp show -n doc-uploader -g $AZURE_RESOURCE_GROUP -o tsv --query identity.principalId` --resource-group $AZURE_RESOURCE_GROUP
+
+# az containerapp up -n doc-uploader -g $AZURE_RESOURCE_GROUP \
+#     --registry-server $AZURE_CONTAINER_REGISTRY_NAME.azurecr.io \
+#     --source .
