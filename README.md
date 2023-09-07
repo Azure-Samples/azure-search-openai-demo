@@ -6,12 +6,12 @@
 - [Getting started](#getting-started)
 - [Azure deployment](#azure-deployment)
   - [Cost estimation](#cost-estimation)
-  - [Prerequisites](#prerequisites)
-    - [To run locally](#to-run-locally)
-    - [To run in GitHub Codespaces or VS Code Remote Containers](#to-run-in-github-codespaces-or-vs-code-remote-containers)
-  - [Project initialization](#project-initialization)
+  - [Project setup](#project-setup)
+    - [GitHub Codespaces](#github-codespaces)
+    - [VS Code Remote Containers](#vs-code-remote-containers)
+    - [Local environment](#local-environment)
   - [Deploying from scratch](#deploying-from-scratch)
-  - [Deploying with existing resources](#deploying-with-existing-resources)
+  - [Deploying with existing Azure resources](#deploying-with-existing-azure-resources)
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
@@ -19,6 +19,7 @@
   - [Enabling authentication](#enabling-authentication)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
+- [Productionizing](#productionizing)
 - [Resources](#resources)
   - [Note](#note)
   - [FAQ](#faq)
@@ -47,6 +48,8 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 > **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [here](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
 
+> Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
+
 ## Azure deployment 
 
 ### Cost estimation
@@ -66,9 +69,27 @@ To reduce costs, you can switch to free SKUs for Azure App Service, Azure Cognit
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
-### Prerequisites
+### Project setup
 
-#### To run locally
+You have a few options for setting up this project. 
+The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
+but you can also [set it up locally](#local-environment) if desired.
+
+#### GitHub Codespaces
+
+You can run this repo virtually by using GitHub Codespaces, which will open a web-based VS Code in your browser:
+
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
+
+#### VS Code Remote Containers
+
+A related option is VS Code Remote Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
+
+[![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+
+#### Local environment
+
+First install the required tools:
 
 * [Azure Developer CLI](https://aka.ms/azure-dev/install)
 * [Python 3.9+](https://www.python.org/downloads/)
@@ -77,18 +98,9 @@ either by deleting the resource group in the Portal or running `azd down`.
 * [Node.js 14+](https://nodejs.org/en/download/)
 * [Git](https://git-scm.com/downloads)
 * [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
-  * **Important**: Ensure you can run `pwsh.exe` from a PowerShell command. If this fails, you likely need to upgrade PowerShell.
+  * **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
 
->NOTE: Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
-
-#### To Run in GitHub Codespaces or VS Code Remote Containers
-
-You can run this repo virtually by using GitHub Codespaces or VS Code Remote Containers.  Click on one of the buttons below to open this repo in one of those options.
-
-[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
-[![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
-
-### Project initialization
+Then bring down the project code:
 
 1. Create a new folder and switch to it in the terminal
 1. Run `azd auth login`
@@ -109,7 +121,9 @@ It will look like the following:
 
 > NOTE: It may take a minute for the application to be fully deployed. If you see a "Python Developer" welcome screen, then wait a minute and refresh the page.
 
-### Deploying with existing resources
+### Deploying with existing Azure resources
+
+If you already have existing Azure resources, you can re-use those by setting `azd` environment values. For example:
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
@@ -166,7 +180,7 @@ To then limit access to a specific set of users or groups, you can follow the st
 
 ## Running locally
 
-You can only run locally **after** having successfully run the `azd up` command.
+You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
 
 1. Run `azd auth login`
 2. Change dir to `app`
@@ -182,6 +196,44 @@ Once in the web app:
 * Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
 * Explore citations and sources
 * Click on "settings" to try different options, tweak prompts, etc.
+
+## Productionizing
+
+This sample is designed to be a starting point for your own production application,
+but you should do a thorough review of the security and performance before deploying
+to production. Here are some things to consider:
+
+* **OpenAI Capacity**: The default TPM (tokens per minute) is set to 30K. That is equivalent
+  to approximately 30 conversations per minute (assuming 1K per user message/response).
+  You can increase the capacity by changing the `chatGptDeploymentCapacity` and `embeddingDeploymentCapacity`
+  parameters in `infra/main.bicep` to your account's maximum capacity.
+  You can also view the Quotas tab in [Azure OpenAI studio](https://oai.azure.com/)
+  to understand how much capacity you have.
+* **Azure Storage**: The default storage account uses the `Standard_LRS` SKU.
+  To improve your resiliency, we recommend using `Standard_ZRS` for production deployments,
+  which you can specify using the `sku` property under the `storage` module in `infra/main.bicep`.
+* **Azure Cognitive Search**: The default search service uses the `Standard` SKU
+  with the free semantic search option, which gives you 1000 free queries a month.
+  Assuming your app will experience more than 1000 questions, you should either change `semanticSearch`
+  to "standard" or disable semantic search entirely in the `/app/backend/approaches` files.
+  If you see errors about search service capacity being exceeded, you may find it helpful to increase
+  the number of replicas by changing `replicaCount` in `infra/core/search/search-services.bicep`
+  or manually scaling it from the Azure Portal.
+* **Azure App Service**: The default app service plan uses the `Basic` SKU with 1 CPU core and 1.75 GB RAM.
+  We recommend using a Premium level SKU, starting with 1 CPU core.
+  You can use auto-scaling rules or scheduled scaling rules,
+  and scale up the maximum/minimum based on load.
+* **Authentication**: By default, the deployed app is publicly accessible.
+  We recommend restricting access to authenticated users.
+  See [Enabling authentication](#enabling-authentication) above for how to enable authentication.
+* **Networking**: We recommend deploying inside a Virtual Network. If the app is only for
+  internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
+  for firewalls and other forms of protection.
+  For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/t5/azure-architecture-blog/azure-openai-landing-zone-reference-architecture/ba-p/3882102).
+* **Loadtesting**: We recommend running a loadtest for your expected number of users.
+  You can use the [locust tool](https://docs.locust.io/) with the `locustfile.py` in this sample
+  or set up a loadtest with Azure Load Testing.
+
 
 ## Resources
 
@@ -226,6 +278,23 @@ The primary differences:
 <summary>How do you use GPT-4 with this sample?</summary>
 
 In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'. You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
+</details>
+
+<details>
+<summary>What is the difference between the Chat and Ask tabs?</summary>
+
+The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
+
+- It uses the ChatGPT API to turn the user question into a good search query.
+- It queries Azure Cognitive Search for search results for that query (optionally using the vector embeddings for that query).
+- It then combines the search results and original user question, and asks ChatGPT API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
+
+The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
+
+- It queries Azure Cognitive Search for search results for the user question (optionally using the vector embeddings for that question).
+- It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
+
+There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
 

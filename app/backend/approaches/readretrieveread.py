@@ -99,7 +99,7 @@ Thought: {agent_scratchpad}"""
         content = "\n".join(results)
         return results, content
 
-    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
+    async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
 
         retrieve_results = None
         async def retrieve_and_store(q: str) -> Any:
