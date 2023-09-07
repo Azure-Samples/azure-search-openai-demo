@@ -35,7 +35,7 @@ if (Test-Path -Path "/usr") {
   $venvPythonPath = "./backend_env/bin/python"
 }
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r requirements.txt" -Wait -NoNewWindow
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m ./backend_env/scripts/pip.exe install -r requirements.txt" -Wait -NoNewWindow
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore backend python packages"
     exit $LASTEXITCODE

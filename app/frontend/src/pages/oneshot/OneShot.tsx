@@ -289,11 +289,11 @@ export function Component(): JSX.Element {
                     disabled={!useSemanticRanker}
                 />
                 <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useAutoSpeakAnswers}
-                        label="Automatically speak answers"
-                        onChange={onEnableAutoSpeakAnswersChange}
-                    />
+                    className={styles.oneshotSettingsSeparator}
+                    checked={useAutoSpeakAnswers}
+                    label="Automatically speak answers"
+                    onChange={onEnableAutoSpeakAnswersChange}
+                />
                 <Dropdown
                     className={styles.oneshotSettingsSeparator}
                     label="Retrieval mode"

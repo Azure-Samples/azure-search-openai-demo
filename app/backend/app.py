@@ -116,7 +116,7 @@ async def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
-@app.route("/speech", methods=["POST"])
+@bp.route("/speech", methods=["POST"])
 def speech():
     ensure_openai_token()
     text = request.json["text"]
