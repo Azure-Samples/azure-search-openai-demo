@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Features](#features)
-- [Getting started](#getting-started)
+- [Azure account requirements](#azure-account-requirements)
 - [Azure deployment](#azure-deployment)
   - [Cost estimation](#cost-estimation)
   - [Project setup](#project-setup)
@@ -44,11 +44,13 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ![Chat screen](docs/chatscreen.png)
 
-## Getting started
+## Azure account requirements
 
-> **IMPORTANT:** In order to deploy and run this example, you'll need an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [here](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
+**IMPORTANT:** In order to deploy and run this example, you'll need:
 
-> Your Azure Account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
+* **Azure account**. If you're new to Azure, [get an Azure account for free](https://azure.microsoft.com/free/cognitive-search/) and you'll get some free Azure credits to get started.
+* **Azure subscription with access enabled for the Azure OpenAI service**. You can request access with [this form](https://aka.ms/oaiapply).
+* **Azure account permissions**: Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
 
 ## Azure deployment 
 
