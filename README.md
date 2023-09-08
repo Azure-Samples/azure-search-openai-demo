@@ -299,6 +299,29 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
+<details>
+<summary>How can we view logs from the App Service app?</summary>
+
+You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools. 
+
+To log additional things, first set the level of logs you want to see by writing this code inside the `create_app()` function in `app.py`:
+
+```python
+logging.basicConfig(level=logging.INFO)
+```
+
+Change the `INFO` to `DEBUG` or `WARN` as needed. 
+
+Then, inside a route handler, make calls using the global variable `current_app`'s logger method:
+
+```python
+current_app.logger.info("Received /chat request")
+```
+
+Test that change locally, and if it looks good, you can re-deploy the code with `azd deploy`.
+
+If you're having troubles finding the logs in App Service, see this blog post on [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about viewing App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54).
+</details>
 
 ### Troubleshooting
 
@@ -314,5 +337,4 @@ Here are the most common failure scenarios and solutions:
 
 1. You see `CERTIFICATE_VERIFY_FAILED` when the `prepdocs.py` script runs. That's typically due to incorrect SSL certificates setup on your machine. Try the suggestions in this [StackOverflow answer](https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394).
 
-1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html)
-and file an issue if the error logs don't help you resolve the issue.
+1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about downloading App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54). Please file an issue if the logs don't help you resolve the error.
