@@ -49,4 +49,5 @@ export type ChatRequest = {
     approach: Approaches;
     overrides?: AskRequestOverrides;
     idToken?: string;
+    shouldStream?: boolean;
 };
