@@ -238,19 +238,33 @@ def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
     index_client = SearchIndexClient(endpoint=f"https://{args.searchservice}.search.windows.net/",
                                      credential=search_creds)
+    fields=[
+        SimpleField(name="id", type="Edm.String", key=True),
+        SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+        SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
+                    vector_search_dimensions=1536, vector_search_configuration="default"),
+        SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+        SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
+        SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
+    ]
+
+    if args.useacls:
+        fields.append(
+            SearchField(
+                name="groups",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                filterable=True))
+        fields.append(
+            SearchField(
+                name="oids",
+                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                filterable=True))
+
     if args.index not in index_client.list_index_names():
         index = SearchIndex(
             name=args.index,
-            fields=[
-                SimpleField(name="id", type="Edm.String", key=True),
-                SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
-                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
-                            vector_search_dimensions=1536, vector_search_configuration="default"),
-                SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
-            ],
+            fields=fields,
             semantic_settings=SemanticSettings(
                 configurations=[SemanticConfiguration(
                     name='default',
@@ -343,7 +357,10 @@ if __name__ == "__main__":
         description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
         epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v"
         )
-    parser.add_argument("files", help="Files to be processed")
+    parser.add_argument("files", nargs="?", help="Files to be processed")
+    parser.add_argument("--datalakestorageaccount", help="Azure Data Lake Storage Gen2 Account name")
+    parser.add_argument("--datalakefilesystem", help="Azure Data Lake Storage Gen2 Filesystem name")
+    parser.add_argument("--useacls", action="store_true", help="Create an index with ACL fields to support security filtering and login")
     parser.add_argument("--category", help="Value for the category field in the search index for all sections indexed in this run")
     parser.add_argument("--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage")
     parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
@@ -370,6 +387,9 @@ if __name__ == "__main__":
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
+    if args.files and args.datalakestorageaccount:
+        print("Error: Only files, or only data lake storage account / filesystem should be provided. Please provide only one of these arguments")
+        exit(1)
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
