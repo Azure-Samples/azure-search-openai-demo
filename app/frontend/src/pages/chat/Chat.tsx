@@ -194,7 +194,6 @@ const Chat = () => {
             setRunningIndex(-1);
         });
         setRunningIndex(index);
-        
     };
 
     const onToggleTab = (tab: AnalysisPanelTabs, index: number) => {

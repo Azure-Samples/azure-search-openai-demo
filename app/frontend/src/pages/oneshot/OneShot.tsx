@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Checkbox, ChoiceGroup, IChoiceGroupOption, Panel, DefaultButton, Spinner, TextField, SpinButton, IDropdownOption, Dropdown, getFadedOverflowStyle } from "@fluentui/react";
+import { Checkbox, ChoiceGroup, IChoiceGroupOption, Panel, DefaultButton, Spinner, TextField, SpinButton, IDropdownOption, Dropdown} from "@fluentui/react";
 
 import styles from "./OneShot.module.css";
 
@@ -61,6 +61,8 @@ export function Component(): JSX.Element {
                 }
             };
             const result = await askApi(request);
+            setAnswer([result, null]);
+            setIsLoading(false);
             const speechUrl = await getSpeechApi(result.answer);
             setAnswer([result, speechUrl]);
             if(useAutoSpeakAnswers) {
