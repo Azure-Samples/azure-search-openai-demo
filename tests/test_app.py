@@ -1,9 +1,19 @@
 import json
 
 import pytest
+import quart.testing.app
 
-from app import format_as_ndjson
+import app
 
+
+@pytest.mark.asyncio
+async def test_missing_env_vars():
+    quart_app = app.create_app()
+
+    with pytest.raises(quart.testing.app.LifespanError) as exc_info:
+        async with quart_app.test_app() as test_app:
+            test_app.test_client()
+        assert str(exc_info.value) == "Lifespan failure in startup. ''AZURE_OPENAI_EMB_DEPLOYMENT''"
 
 @pytest.mark.asyncio
 async def test_index(client):
@@ -209,5 +219,5 @@ async def test_format_as_ndjson():
         yield {"a": "I ❤️ 🐍"}
         yield {"b": "Newlines inside \n strings are fine"}
 
-    result = [line async for line in format_as_ndjson(gen())]
+    result = [line async for line in app.format_as_ndjson(gen())]
     assert result == ['{"a": "I ❤️ 🐍"}\n', '{"b": "Newlines inside \\n strings are fine"}\n']
