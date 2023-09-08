@@ -165,14 +165,14 @@ If you cannot generate a search query, return just the number 0.
                 stream=should_stream)
         return (extra_info, chat_coroutine)
 
-    async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
-        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
+    async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
+        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, auth_claims, should_stream=False)
         chat_content = (await chat_coroutine).choices[0].message.content
         extra_info["answer"] = chat_content
         return extra_info
 
-    async def run_with_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> AsyncGenerator[dict, None]:
-        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=True)
+    async def run_with_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]) -> AsyncGenerator[dict, None]:
+        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, auth_claims, should_stream=True)
         yield extra_info
         async for event in await chat_coroutine:
             yield event

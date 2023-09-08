@@ -125,12 +125,13 @@ async def chat_stream():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    auth_claims = await AuthenticationHelper.get_auth_claims_if_enabled()
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
+        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}), auth_claims)
         response = await make_response(format_as_ndjson(response_generator))
         response.timeout = None # type: ignore
         return response
