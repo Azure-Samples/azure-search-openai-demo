@@ -300,6 +300,20 @@ There are also two other /ask approaches with a slightly different approach, but
 </details>
 
 <details>
+<summary>What does the `azd up` command do?</summary>
+
+The `azd up` command comes from the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview), and takes care of both provisioning the Azure resources and deploying code to the selected Azure hosts.
+
+The `azd up` command uses the `azure.yaml` file combined with the infrastructure-as-code `.bicep` files in the `infra/` folder. The `azure.yaml` file for this project declares several "hooks" for the prepackage step and postprovision steps. The `up` command first runs the `prepackage` hook which installs Node dependencies and builds the React.JS-based JavaScript files. It then packages all the code (both frontend and backend) into a zip file which it will deploy later.
+
+Next, it provisions the resources based on `main.bicep` and `main.parameters.json`. At that point, since there is no default value for the OpenAI resource location, it asks you to pick a location from a short list of available regions. Then it will send requests to Azure to provision all the required resources. With everything provisioned, it runs the `postprovision` hook to process the local data and add it to an Azure Cognitive Search index.
+
+Finally, it looks at `azure.yaml` to determine the Azure host (appservice, in this case) and uploads the zip to Azure App Service. The `azd up` command is now complete, but it may take another 5-10 minutes for the App Service app to be fully available and working, especially for the initial deploy.
+
+Related commands are `azd provision` for just provisioning (if infra files change) and `azd deploy` for just deploying updated app code.
+</details>
+
+<details>
 <summary>How can we view logs from the App Service app?</summary>
 
 You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools.
@@ -328,7 +342,6 @@ logging.info("System message: %s", system_message)
 ```
 
 If you're having troubles finding the logs in App Service, see this blog post on [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about viewing App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54).
-
 </details>
 
 ### Troubleshooting
