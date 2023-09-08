@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
+import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
 
@@ -21,6 +22,7 @@ const Chat = () => {
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
+    const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
@@ -38,7 +40,6 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse, speechUrl: string | null][]>([]);
     const [runningIndex, setRunningIndex] = useState<number>(-1);
-    const speechUrlMap = new Map<number, string | null>();
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -53,6 +54,7 @@ const Chat = () => {
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 approach: Approaches.ReadRetrieveRead,
+                shouldStream: shouldStream,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -64,13 +66,43 @@ const Chat = () => {
                     autoSpeakAnswers: useAutoSpeakAnswers
                 }
             };
-            const result = await chatApi(request);
-            setAnswers([...answers, [question, result, null]]);
-            setIsLoading(false);
-            const url = await getSpeechApi(result.answer);
-            setAnswers([...answers, [question, result, url]]);
-            if(useAutoSpeakAnswers){
-                startOrStopSynthesis(url, answers.length);
+
+            const response = await chatApi(request);
+            let speechUrl = null;
+            if (!response.body) {
+                throw Error("No response body");
+            }
+            if (shouldStream) {
+                let answer: string = '';
+                let askResponse: AskResponse = {} as AskResponse;
+                let latestResponse: AskResponse = {} as AskResponse;
+                for await (const event of readNDJSONStream(response.body)) {
+                    if (event["data_points"]) {
+                        askResponse = event;
+                    } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
+                        answer += event["choices"][0]["delta"]["content"];
+                        latestResponse = {...askResponse, answer: answer};
+                        setIsLoading(false);
+                        setAnswers([...answers, [question, latestResponse, null]]);
+                    }
+                }
+                speechUrl = await getSpeechApi(latestResponse.answer);
+                setAnswers([...answers, [question, latestResponse, speechUrl]]);
+                if(useAutoSpeakAnswers){
+                    startOrStopSynthesis(speechUrl, answers.length);
+                }
+            } else {
+                const parsedResponse: AskResponse = await response.json();
+                if (response.status > 299 || !response.ok) {
+                    throw Error(parsedResponse.error || "Unknown error");
+                }
+                setAnswers([...answers, [question, parsedResponse, null]]);
+                setIsLoading(false);
+                speechUrl = await getSpeechApi(parsedResponse.answer);
+                setAnswers([...answers, [question, parsedResponse, speechUrl]]);
+                if(useAutoSpeakAnswers){
+                    startOrStopSynthesis(speechUrl, answers.length);
+                }
             }
         } catch (e) {
             setError(e);
@@ -107,6 +139,10 @@ const Chat = () => {
 
     const onUseSemanticCaptionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSemanticCaptions(!!checked);
+    };
+
+    const onShouldStreamChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setShouldStream(!!checked);
     };
 
     const onExcludeCategoryChanged = (_ev?: React.FormEvent, newValue?: string) => {
@@ -148,16 +184,17 @@ const Chat = () => {
             setRunningIndex(-1);
         }
 
-        if(!url) {
+        if (!url) {
             return;
         }
 
         audio = new Audio(url);
-        audio.play();
-        setRunningIndex(index);
-        audio.addEventListener('ended', () => {
+        await audio.play();
+        audio.addEventListener('ended', () => {                
             setRunningIndex(-1);
         });
+        setRunningIndex(index);
+        
     };
 
     const onToggleTab = (tab: AnalysisPanelTabs, index: number) => {
@@ -309,6 +346,12 @@ const Chat = () => {
                         ]}
                         required
                         onChange={onRetrievalModeChange}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={shouldStream}
+                        label="Stream chat completion responses"
+                        onChange={onShouldStreamChange}
                     />
                 </Panel>
             </div>
