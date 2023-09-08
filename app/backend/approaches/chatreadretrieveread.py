@@ -131,7 +131,7 @@ If you cannot generate a search query, return just the number 0.
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        prompt_override = overrides.get("prompt_override")
+        prompt_override = overrides.get("prompt_template")
         if prompt_override is None:
             system_message = self.system_message_chat_conversation.format(injected_prompt="", follow_up_questions_prompt=follow_up_questions_prompt)
         elif prompt_override.startswith(">>>"):

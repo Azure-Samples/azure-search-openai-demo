@@ -155,6 +155,36 @@ async def test_chat_text_semanticcaptions(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_prompt_template(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "approach": "rrr",
+            "history": [{"user": "What is the capital of France?"}],
+            "overrides": {"retrieval_mode": "text", "prompt_template": "You are a cat."},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_prompt_template_concat(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "approach": "rrr",
+            "history": [{"user": "What is the capital of France?"}],
+            "overrides": {"retrieval_mode": "text", "prompt_template": ">>> Meow like a cat."},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_chat_hybrid(client, snapshot):
     response = await client.post(
         "/chat",
