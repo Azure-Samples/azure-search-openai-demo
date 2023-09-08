@@ -52,7 +52,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * **Azure subscription with access enabled for the Azure OpenAI service**. You can request access with [this form](https://aka.ms/oaiapply).
 * **Azure account permissions**: Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
 
-## Azure deployment 
+## Azure deployment
 
 ### Cost estimation
 
@@ -73,7 +73,7 @@ either by deleting the resource group in the Portal or running `azd down`.
 
 ### Project setup
 
-You have a few options for setting up this project. 
+You have a few options for setting up this project.
 The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
 but you can also [set it up locally](#local-environment) if desired.
 
@@ -302,25 +302,33 @@ There are also two other /ask approaches with a slightly different approach, but
 <details>
 <summary>How can we view logs from the App Service app?</summary>
 
-You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools. 
+You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools.
 
-To log additional things, first set the level of logs you want to see by writing this code inside the `create_app()` function in `app.py`:
-
-```python
-logging.basicConfig(level=logging.INFO)
-```
-
-Change the `INFO` to `DEBUG` or `WARN` as needed. 
-
-Then, inside a route handler, make calls using the global variable `current_app`'s logger method:
+The following line of code in `app/backend/app.py` configures the logging level:
 
 ```python
-current_app.logger.info("Received /chat request")
+logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
 ```
 
-Test that change locally, and if it looks good, you can re-deploy the code with `azd deploy`.
+To change the default level, you can set the `APP_LOG_LEVEL` environment variable locally or in App Service
+to one of the [allowed log levels](https://docs.python.org/3/library/logging.html#logging-levels):
+`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
+
+If you need to log in a route handler, use the the global variable `current_app`'s logger:
+
+```python
+async def chat_stream():
+    current_app.logger.info("Received /chat request")
+```
+
+Otherwise, use the `logging` module's root logger:
+
+```python
+logging.info("System message: %s", system_message)
+```
 
 If you're having troubles finding the logs in App Service, see this blog post on [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about viewing App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54).
+
 </details>
 
 ### Troubleshooting
