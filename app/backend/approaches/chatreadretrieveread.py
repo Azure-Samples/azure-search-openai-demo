@@ -1,16 +1,15 @@
-from typing import Any
+from typing import Any, AsyncGenerator
 
 import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from approaches.approach import ChatApproach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
 
 
-class ChatReadRetrieveReadApproach(ChatApproach):
+class ChatReadRetrieveReadApproach:
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -57,7 +56,7 @@ If you cannot generate a search query, return just the number 0.
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    async def run(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> Any:
+    async def run_until_final_call(self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream: bool = False) -> tuple:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -132,7 +131,7 @@ If you cannot generate a search query, return just the number 0.
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        prompt_override = overrides.get("prompt_override")
+        prompt_override = overrides.get("prompt_template")
         if prompt_override is None:
             system_message = self.system_message_chat_conversation.format(injected_prompt="", follow_up_questions_prompt=follow_up_questions_prompt)
         elif prompt_override.startswith(">>>"):
@@ -146,20 +145,31 @@ If you cannot generate a search query, return just the number 0.
             history,
             history[-1]["user"]+ "\n\nSources:\n" + content, # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             max_tokens=self.chatgpt_token_limit)
-
-        chat_completion = await openai.ChatCompletion.acreate(
-            deployment_id=self.chatgpt_deployment,
-            model=self.chatgpt_model,
-            messages=messages,
-            temperature=overrides.get("temperature") or 0.7,
-            max_tokens=1024,
-            n=1)
-
-        chat_content = chat_completion.choices[0].message.content
-
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+        extra_info = {"data_points": results, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
+        chat_coroutine = openai.ChatCompletion.acreate(
+                deployment_id=self.chatgpt_deployment,
+                model=self.chatgpt_model,
+                messages=messages,
+                temperature=overrides.get("temperature") or 0.7,
+                max_tokens=1024,
+                n=1,
+                stream=should_stream)
+        return (extra_info, chat_coroutine)
+
+    async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
+        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
+        chat_content = (await chat_coroutine).choices[0].message.content
+        extra_info["answer"] = chat_content
+        return extra_info
+
+    async def run_with_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> AsyncGenerator[dict, None]:
+        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=True)
+        yield extra_info
+        async for event in await chat_coroutine:
+            yield event
+
 
     def get_messages_from_history(self, system_prompt: str, model_id: str, history: list[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)

@@ -44,7 +44,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    async def run(self, q: str, overrides: dict[str, Any]) -> Any:
+    async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
