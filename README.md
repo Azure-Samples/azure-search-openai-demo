@@ -52,7 +52,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * **Azure subscription with access enabled for the Azure OpenAI service**. You can request access with [this form](https://aka.ms/oaiapply).
 * **Azure account permissions**: Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
 
-## Azure deployment 
+## Azure deployment
 
 ### Cost estimation
 
@@ -73,7 +73,7 @@ either by deleting the resource group in the Portal or running `azd down`.
 
 ### Project setup
 
-You have a few options for setting up this project. 
+You have a few options for setting up this project.
 The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
 but you can also [set it up locally](#local-environment) if desired.
 
@@ -299,6 +299,37 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
+<details>
+<summary>How can we view logs from the App Service app?</summary>
+
+You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools.
+
+The following line of code in `app/backend/app.py` configures the logging level:
+
+```python
+logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+```
+
+To change the default level, you can set the `APP_LOG_LEVEL` environment variable locally or in App Service
+to one of the [allowed log levels](https://docs.python.org/3/library/logging.html#logging-levels):
+`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
+
+If you need to log in a route handler, use the the global variable `current_app`'s logger:
+
+```python
+async def chat_stream():
+    current_app.logger.info("Received /chat request")
+```
+
+Otherwise, use the `logging` module's root logger:
+
+```python
+logging.info("System message: %s", system_message)
+```
+
+If you're having troubles finding the logs in App Service, see this blog post on [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about viewing App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54).
+
+</details>
 
 ### Troubleshooting
 
@@ -314,5 +345,4 @@ Here are the most common failure scenarios and solutions:
 
 1. You see `CERTIFICATE_VERIFY_FAILED` when the `prepdocs.py` script runs. That's typically due to incorrect SSL certificates setup on your machine. Try the suggestions in this [StackOverflow answer](https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394).
 
-1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html)
-and file an issue if the error logs don't help you resolve the issue.
+1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about downloading App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54). Please file an issue if the logs don't help you resolve the error.
