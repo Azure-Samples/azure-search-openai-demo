@@ -43,6 +43,10 @@ logging.basicConfig(level=logging.INFO)
 async def index():
     return await bp.send_static_file("index.html")
 
+@bp.route("/redirect")
+async def redirect():
+    return ""
+
 @bp.route("/favicon.ico")
 async def favicon():
     return await bp.send_static_file("favicon.ico")

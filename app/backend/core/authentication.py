@@ -66,10 +66,10 @@ class AuthenticationHelper(ABC):
         # This example only uses the default memory token cache and should not be used for production
         if AuthenticationHelper._confidential_client is None:
             AuthenticationHelper._confidential_client = msal.ConfidentialClientApplication(
-                os.getenv("CLIENT_ID"),
-                authority=os.getenv("AUTHORITY"),
-                client_credential=os.getenv("CLIENT_SECRET"))
-        
+                os.getenv("AZURE_SERVER_APP_ID"),
+                authority="https://login.microsoftonline.com/{}".format(os.getenv("AZURE_TENANT_ID")),
+                client_credential=os.getenv("AZURE_SERVER_APP_SECRET"))
+
         return AuthenticationHelper._confidential_client
 
     @staticmethod

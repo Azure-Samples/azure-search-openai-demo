@@ -1,4 +1,3 @@
-import { useMsal } from "@azure/msal-react";
 import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-browser";
 
 /*
@@ -6,7 +5,7 @@ import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-brow
  * Licensed under the MIT License.
  */
 
-export const useLogin = true;
+export const useLogin = true; // Set to true to enable login
 
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
@@ -24,8 +23,8 @@ export const getToken = (client: IPublicClientApplication): Promise<Authenticati
  */
 export const msalConfig = {
     auth: {
-        clientId: 'c06098e2-79e4-4e6c-8e43-f8b0e7728349', // App ID for client app serving the UI
-        authority: 'https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47', // Defaults to "https://login.microsoftonline.com/common"
+        clientId: 'c06098e2-79e4-4e6c-8e43-f8b0e7728349', // Replace with your client app id
+        authority: `https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47`, // Defaults to "https://login.microsoftonline.com/common"
         redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
@@ -43,14 +42,5 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: [`api://201ac4a0-3323-43ed-a024-bf37eaedc7bf/.default`]
-};
-
-/**
- * An optional silentRequest object can be used to achieve silent SSO
- * between applications by providing a "login_hint" property.
- */
-export const silentRequest = {
-    scopes: ["openid", "profile"],
-    loginHint: "example@domain.net"
+    scopes: [`api://201ac4a0-3323-43ed-a024-bf37eaedc7bf/.default`] // Replace the app id with your server app id
 };
