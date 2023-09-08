@@ -38,6 +38,7 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse, speechUrl: string | null][]>([]);
     const [runningIndex, setRunningIndex] = useState<number>(-1);
+    const speechUrlMap = new Map<number, string | null>();
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -64,10 +65,12 @@ const Chat = () => {
                 }
             };
             const result = await chatApi(request);
-            const speechUrl = await getSpeechApi(result.answer);
-            setAnswers([...answers, [question, result, speechUrl]]);
+            setAnswers([...answers, [question, result, null]]);
+            setIsLoading(false);
+            const url = await getSpeechApi(result.answer);
+            setAnswers([...answers, [question, result, url]]);
             if(useAutoSpeakAnswers){
-                startOrStopSynthesis(speechUrl, answers.length);
+                startOrStopSynthesis(url, answers.length);
             }
         } catch (e) {
             setError(e);
@@ -133,7 +136,7 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const startOrStopSynthesis = (url: string | null, index: number) => {
+    const startOrStopSynthesis = async (url: string | null, index: number) => {
         if(runningIndex === index) {
             audio.pause();
             setRunningIndex(-1);
@@ -145,7 +148,7 @@ const Chat = () => {
             setRunningIndex(-1);
         }
 
-        if(url === null) {
+        if(!url) {
             return;
         }
 

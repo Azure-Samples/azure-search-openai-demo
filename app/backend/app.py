@@ -117,9 +117,13 @@ async def chat():
         return jsonify({"error": str(e)}), 500
 
 @bp.route("/speech", methods=["POST"])
-def speech():
-    ensure_openai_token()
-    text = request.json["text"]
+async def speech():
+    await ensure_openai_token()
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    
+    request_json = await request.get_json()
+    text = request_json["text"]
     try:
         speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
         speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
