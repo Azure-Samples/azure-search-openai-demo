@@ -9,30 +9,18 @@ import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
-    answer: AskResponse;
+    streamedAnswer: AskResponse;
     isSelected?: boolean;
     onCitationClicked: (filePath: string) => void;
-    onThoughtProcessClicked: () => void;
-    onSupportingContentClicked: () => void;
-    onFollowupQuestionClicked?: (question: string) => void;
-    showFollowupQuestions?: boolean;
 }
 
-export const Answer = ({
-    answer,
-    isSelected,
-    onCitationClicked,
-    onThoughtProcessClicked,
-    onSupportingContentClicked,
-    onFollowupQuestionClicked,
-    showFollowupQuestions
-}: Props) => {
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
+export const AnswerStreaming = ({ streamedAnswer, onCitationClicked }: Props) => {
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(streamedAnswer.answer, onCitationClicked), [streamedAnswer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
     return (
-        <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
+        <Stack className={`${styles.answerContainer}`} verticalAlign="space-between">
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
@@ -42,16 +30,14 @@ export const Answer = ({
                             iconProps={{ iconName: "Lightbulb" }}
                             title="Show thought process"
                             ariaLabel="Show thought process"
-                            onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.thoughts}
+                            disabled={true}
                         />
                         <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "ClipboardList" }}
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
-                            onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.data_points?.length}
+                            disabled={true}
                         />
                     </div>
                 </Stack>
@@ -70,21 +56,6 @@ export const Answer = ({
                             return (
                                 <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
                                     {`${++i}. ${x}`}
-                                </a>
-                            );
-                        })}
-                    </Stack>
-                </Stack.Item>
-            )}
-
-            {!!parsedAnswer.followupQuestions.length && showFollowupQuestions && onFollowupQuestionClicked && (
-                <Stack.Item>
-                    <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
-                        <span className={styles.followupQuestionLearnMore}>Follow-up questions:</span>
-                        {parsedAnswer.followupQuestions.map((x, i) => {
-                            return (
-                                <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>
-                                    {`${x}`}
                                 </a>
                             );
                         })}
