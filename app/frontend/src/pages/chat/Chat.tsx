@@ -6,7 +6,7 @@ import readNDJSONStream from "ndjson-readablestream";
 import styles from "./Chat.module.css";
 
 import { chatApi, RetrievalMode, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
-import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
+import { Answer, AnswerError, AnswerLoading, AnswerStreaming } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
@@ -29,6 +29,7 @@ const Chat = () => {
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isStreaming, setIsStreaming] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
 
     const [activeCitation, setActiveCitation] = useState<string>();
@@ -36,6 +37,35 @@ const Chat = () => {
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [streamedAnswers, setstreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
+
+    const handleAsyncRequest = async (question: string, answers: [string, AskResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
+        let answer: string = "";
+        let askResponse: AskResponse = {} as AskResponse;
+
+        const updateState = (newContent: string) => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    answer += newContent;
+                    const latestResponse: AskResponse = { ...askResponse, answer };
+                    setstreamedAnswers([...answers, [question, latestResponse]]);
+                    setIsStreaming(true);
+                    resolve(null);
+                }, 33);
+            });
+        };
+
+        for await (const event of readNDJSONStream(responseBody)) {
+            if (event["data_points"]) {
+                askResponse = event;
+            } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
+                setIsLoading(false);
+                await updateState(event["choices"][0]["delta"]["content"]);
+            }
+        }
+        const fullResponse: AskResponse = { ...askResponse, answer };
+        return fullResponse;
+    };
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -58,7 +88,7 @@ const Chat = () => {
                     retrievalMode: retrievalMode,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
-                    suggestFollowupQuestions: useSuggestFollowupQuestions,
+                    suggestFollowupQuestions: useSuggestFollowupQuestions
                 }
             };
 
@@ -67,18 +97,9 @@ const Chat = () => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                let answer: string = '';
-                let askResponse: AskResponse = {} as AskResponse;
-                for await (const event of readNDJSONStream(response.body)) {
-                    if (event["data_points"]) {
-                        askResponse = event;
-                    } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
-                        answer += event["choices"][0]["delta"]["content"];
-                        let latestResponse: AskResponse = {...askResponse, answer: answer};
-                        setIsLoading(false);
-                        setAnswers([...answers, [question, latestResponse]]);
-                    }
-                }
+                setIsStreaming(true);
+                const parsedResponse: AskResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                setAnswers([...answers, [question, parsedResponse]]);
             } else {
                 const parsedResponse: AskResponse = await response.json();
                 if (response.status > 299 || !response.ok) {
@@ -90,6 +111,7 @@ const Chat = () => {
             setError(e);
         } finally {
             setIsLoading(false);
+            setIsStreaming(false);
         }
     };
 
@@ -102,6 +124,7 @@ const Chat = () => {
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
+    useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
@@ -177,23 +200,37 @@ const Chat = () => {
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
-                            {answers.map((answer, index) => (
-                                <div key={index}>
-                                    <UserChatMessage message={answer[0]} />
-                                    <div className={styles.chatMessageGpt}>
-                                        <Answer
-                                            key={index}
-                                            answer={answer[1]}
-                                            isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
-                                            onCitationClicked={c => onShowCitation(c, index)}
-                                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                        />
+                            {isStreaming &&
+                                streamedAnswers.map((streamedAnswer, index) => (
+                                    <div key={index}>
+                                        <UserChatMessage message={streamedAnswer[0]} />
+                                        <div className={styles.chatMessageGpt}>
+                                            <AnswerStreaming
+                                                streamedAnswer={streamedAnswer[1]}
+                                                isSelected={false}
+                                                onCitationClicked={c => onShowCitation(c, index)}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            {!isStreaming &&
+                                answers.map((answer, index) => (
+                                    <div key={index}>
+                                        <UserChatMessage message={answer[0]} />
+                                        <div className={styles.chatMessageGpt}>
+                                            <Answer
+                                                key={index}
+                                                answer={answer[1]}
+                                                isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
+                                                onCitationClicked={c => onShowCitation(c, index)}
+                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
                             {isLoading && (
                                 <>
                                     <UserChatMessage message={lastQuestionRef.current} />
