@@ -35,8 +35,6 @@ def update_acl(credential: AzureKeyCredential|TokenCredential, search_service: s
     if result.get_count() == 0:
         if args.verbose: print(F"No documents match {document} - exiting")
         return
-
-
     
     documents_to_merge = []
     for document in result:
