@@ -19,8 +19,8 @@ foreach ($line in $output) {
 
 Write-Host "Environment variables set."
 
-if ([string]::IsNullOrEmpty($env:AZURE_ADLS_GEN2_ACCOUNT)) {
-    Write-Error "AZURE_ADLS_GEN2_ACCOUNT must be set in order to continue"
+if ([string]::IsNullOrEmpty($env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT)) {
+    Write-Error "AZURE_ADLS_GEN2_STORAGE_ACCOUNT must be set in order to continue"
     exit 1
 }
 
@@ -58,10 +58,10 @@ Write-Host "HR ID: $hrId"
 
 # Create default ADLS Gen2 Container
 Write-Host "Ensuring ADLS Gen2 filesystem exists..."
-$result = az storage fs exists -n gptkbcontainer --account-name $env:AZURE_ADLS_GEN2_ACCOUNT --auth-mode login | ConvertFrom-Json
+$result = az storage fs exists -n gptkbcontainer --account-name $env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT --auth-mode login | ConvertFrom-Json
 if (-not $result.exists) {
   Write-Host "Creating ADLS Gen2 filesystem..."
-  $result = az storage fs create -n gptkbcontainer --account-name $env:AZURE_ADLS_GEN2_ACCOUNT --auth-mode login
+  $result = az storage fs create -n gptkbcontainer --account-name $env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT --auth-mode login
 }
 
 # Create ADLS Gen2 Container directories

@@ -6,6 +6,7 @@ import io
 import os
 import re
 import time
+import tempfile
 
 import openai
 import tiktoken
@@ -29,6 +30,7 @@ from azure.search.documents.indexes.models import (
     VectorSearchAlgorithmConfiguration,
 )
 from azure.storage.blob import BlobServiceClient
+from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient
 from pypdf import PdfReader, PdfWriter
 from tenacity import (
     retry,
@@ -264,19 +266,24 @@ def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
     index_client = SearchIndexClient(endpoint=f"https://{args.searchservice}.search.windows.net/",
                                      credential=search_creds)
+    fields=[
+        SimpleField(name="id", type="Edm.String", key=True),
+        SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+        SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
+                    vector_search_dimensions=1536, vector_search_configuration="default"),
+        SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+        SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
+        SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
+    ]
+    if args.useacls:
+        fields.append(SimpleField(name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
+        fields.append(SimpleField(name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
+
     if args.index not in index_client.list_index_names():
         index = SearchIndex(
             name=args.index,
-            fields=[
-                SimpleField(name="id", type="Edm.String", key=True),
-                SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
-                SearchField(name="embedding", type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                            hidden=False, searchable=True, filterable=False, sortable=False, facetable=False,
-                            vector_search_dimensions=1536, vector_search_configuration="default"),
-                SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True)
-            ],
+            fields=fields,
             semantic_settings=SemanticSettings(
                 configurations=[SemanticConfiguration(
                     name='default',
@@ -326,7 +333,7 @@ def update_embeddings_in_batch(sections):
         s["embedding"] = batch_response[s["id"]]
         yield s
 
-def index_sections(filename, sections):
+def index_sections(filename, sections, acls):
     if args.verbose: print(f"Indexing sections from '{filename}' into search index '{args.index}'")
     search_client = SearchClient(endpoint=f"https://{args.searchservice}.search.windows.net/",
                                     index_name=args.index,
@@ -334,6 +341,8 @@ def index_sections(filename, sections):
     i = 0
     batch = []
     for s in sections:
+        if acls:
+            s.update(acls)
         batch.append(s)
         i += 1
         if i % 1000 == 0:
@@ -398,13 +407,71 @@ def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool
             except Exception as e:
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
+def read_adls_gen2_files(use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None):
+    datalake_service = DataLakeServiceClient(account_url=f"https://{args.datalakestorageaccount}.dfs.core.windows.net", credential=adls_gen2_creds)
+    filesystem_client = datalake_service.get_file_system_client(file_system=args.datalakefilesystem)
+    paths = filesystem_client.get_paths(path=args.datalakepath, recursive=True)
+    for path in paths:
+        if not path.is_directory:
+            if args.remove:
+                remove_blobs(path.name)
+                remove_from_index(path.name)
+            else:
+                temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
+                try:
+                    temp_file = open(temp_file_path, 'wb')
+                    file_client = filesystem_client.get_file_client(path)
+                    file_client.download_file().readinto(temp_file)
+
+                    acls = None
+                    if (args.useacls):
+                        # Parse out user ids and group ids
+                        acls = { "oids": [], "groups": [] }
+                        # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
+                        # Request ACLs as GUIDs
+                        acl_list = file_client.get_access_control(upn=False)['acl']
+                        # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
+                        # ACL Format: user::rwx,group::r-x,other::r--,user:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:r--
+                        acl_list = acl_list.split(',')
+                        for acl in acl_list:
+                            acl_parts = acl.split(':')
+                            if len(acl_parts) != 3:
+                                continue
+                            if len(acl_parts[1]) == 0:
+                                continue
+                            if acl_parts[0] == "user" and acl_parts[2].contains('r'):
+                                acls["oids"].append(acl_parts[1])
+                            if acl_parts[0] == "group" and acl_parts[2].contains('r'):
+                                acls["groups"].append(acl_parts[1])
+
+                    temp_file.close()
+                    if not args.skipblobs:
+                        upload_blobs(temp_file.name)
+                    page_map = get_document_text(temp_file.name)
+                    sections = create_sections(os.path.basename(path.name), page_map, use_vectors and not vectors_batch_support, embedding_deployment)
+                    if use_vectors and vectors_batch_support:
+                        sections = update_embeddings_in_batch(sections)
+                    index_sections(os.path.basename(path.name), sections, acls)
+                except Exception as e:
+                    print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
+                finally:
+                    try:
+                        os.remove(temp_file_path)
+                    except Exception as e:
+                        print(f"\tGot an error while delete {temp_file_path} -> {e}")
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
         epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v"
         )
-    parser.add_argument("files", help="Files to be processed")
+    parser.add_argument("files", nargs="?", help="Files to be processed")
+    parser.add_argument("--datalakestorageaccount", required=False, help="Optional. Azure Data Lake Storage Gen2 Account name")
+    parser.add_argument("--datalakefilesystem", required=False, default="gptkbcontainer", help="Optional. Azure Data Lake Storage Gen2 filesystem name")
+    parser.add_argument("--datalakepath", required=False, help="Optional. Azure Data Lake Storage Gen2 filesystem path containing files to index. If omitted, index the entire filesystem")
+    parser.add_argument("--datalakekey", required=False, help="Optional. Use this key when authenticating to Azure Data Lake Gen2")
+    parser.add_argument("--useacls", action="store_true", help="Store ACLs from Azure Data Lake Gen2 Filesystem in the search index")
     parser.add_argument("--category", help="Value for the category field in the search index for all sections indexed in this run")
     parser.add_argument("--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage")
     parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
@@ -431,9 +498,14 @@ if __name__ == "__main__":
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = AzureDeveloperCliCredential() if args.tenantid is None else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
+    adls_gen2_creds = azd_credential if args.datalakekey is None else AzureKeyCredential(args.datalakekey)
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
     compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname in SUPPORTED_BATCH_AOAI_MODEL
+
+    if args.files and args.datalakestorageaccount:
+        print("Error: Only files, or only data lake storage account / filesystem should be provided. Please provide only one of these arguments.")
+        exit(1)
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
@@ -466,4 +538,7 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment)
+        if args.files:
+            read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment)
+        else:
+            read_adls_gen2_files(use_vectors, compute_vectors_in_batch, args.openaideployment)
