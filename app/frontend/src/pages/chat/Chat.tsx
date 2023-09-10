@@ -49,19 +49,22 @@ const Chat = () => {
                     answer += newContent;
                     const latestResponse: AskResponse = { ...askResponse, answer };
                     setstreamedAnswers([...answers, [question, latestResponse]]);
-                    setIsStreaming(true);
                     resolve(null);
                 }, 33);
             });
         };
-
-        for await (const event of readNDJSONStream(responseBody)) {
-            if (event["data_points"]) {
-                askResponse = event;
-            } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
-                setIsLoading(false);
-                await updateState(event["choices"][0]["delta"]["content"]);
+        try {
+            setIsStreaming(true);
+            for await (const event of readNDJSONStream(responseBody)) {
+                if (event["data_points"]) {
+                    askResponse = event;
+                } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
+                    setIsLoading(false);
+                    await updateState(event["choices"][0]["delta"]["content"]);
+                }
             }
+        } finally {
+            setIsStreaming(false);
         }
         const fullResponse: AskResponse = { ...askResponse, answer };
         return fullResponse;
@@ -97,7 +100,6 @@ const Chat = () => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                setIsStreaming(true);
                 const parsedResponse: AskResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
@@ -111,7 +113,6 @@ const Chat = () => {
             setError(e);
         } finally {
             setIsLoading(false);
-            setIsStreaming(false);
         }
     };
 
