@@ -1,0 +1,24 @@
+AQM Private 2023-09-07.xlsx
+Asset Count 2023-09-07.xlsx
+Inspections 2023-09-07 ONLY 2023.xlsx
+LCSP Transition Lab 2023-09-07.xlsx
+Omnia Confirmation 2023-09-07.xlsx
+Omnia Connect 2023-09-07.xlsx
+Omnia Engagements 2023-09-07.xlsx
+Omnia Extensions 2023-09-07.xlsx
+Omnia Metadata 2023-09-07.xlsx
+Omnia Milestone 2023-09-07.xlsx
+Omnia Reveal - 2023-09-07.xlsx
+Omnia Scribe 2023-09-07.xlsx
+
+What is included in my Northwind Health Plus plan that is not in standard?
+
+      text: "What is the stock performance of Microsoft?",
+        value: "What is the stock performance of Microsoft?"
+    },
+    { text: "What are the analysts perspective on Tesla?", value: "What are the analysts perspective on Tesla?" },
+    { text: "How is Microsoft performing in cloud business? Is it sustainable?", value: "How is Microsoft performing in cloud business? Is it sustainable?" }
+];
+
+
+/subscriptions/4734de56-f03d-4d55-9dee-1a5eae8104db/resourceGroups/rg-azure-search-openai/providers/Microsoft.CognitiveServices/accounts/cog-fr-thmhmds3lyulm' has been soft-deleted. To restore the resource, you must specify 'restore' to be 'true' in the property. If you don't want to restore existing resource, please purge it first."
