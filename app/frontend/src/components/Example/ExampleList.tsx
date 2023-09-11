@@ -9,8 +9,8 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is the stock price trend of microsoft?",
-        value: "What is the stock price trend of microsoft?"
+        text: "What is the stock price trend of Microsoft?",
+        value: "What is the stock price trend of Microsoft?"
     },
     { text: "What is Pfizer outlook on Covid 19?", value: "what is Pfizer outlook on Covid 19?" },
     { text: "Can you provide Biographical information of apple?", value: "Can you provide Biographical information of apple?" }
