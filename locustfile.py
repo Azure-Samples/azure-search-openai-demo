@@ -14,7 +14,7 @@ class ChatUser(HttpUser):
         self.client.post(
             "/chat",
             json={
-                "history": [{"user": random.choice(["What is included in my Northwind Health Plus plan that is not in standard?", "What does a Product Manager do?", "What happens in a performance review?", "Whats your whistleblower policy?"])}],
+                "history": [{"user": random.choice(["What is the stock price trend of Microsoft?", "What is Pfizer outlook on Covid 19?", "Can you provide Biographical information of apple?", "Whats the financial snapshot of Oracle?"])}],
                 "approach": "rrr",
                 "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": False, "top": 3, "suggest_followup_questions": False},
             },
