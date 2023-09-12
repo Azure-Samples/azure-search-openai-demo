@@ -64,9 +64,8 @@ Write-Host ""
 Write-Host "Starting backend"
 Write-Host ""
 Set-Location ../backend
-Start-Process http://127.0.0.1:5000
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m flask run --port=5000 --reload --debug" -Wait -NoNewWindow
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m quart --app main:app run --port 50505 --reload" -Wait -NoNewWindow
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start backend"

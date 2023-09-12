@@ -8,6 +8,7 @@ import re
 import time
 
 import openai
+import tiktoken
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import AzureDeveloperCliCredential
@@ -29,11 +30,35 @@ from azure.search.documents.indexes.models import (
 )
 from azure.storage.blob import BlobServiceClient
 from pypdf import PdfReader, PdfWriter
-from tenacity import retry, stop_after_attempt, wait_random_exponential
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
+
+args = argparse.Namespace(verbose=False)
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
+
+open_ai_token_cache = {}
+CACHE_KEY_TOKEN_CRED = 'openai_token_cred'
+CACHE_KEY_CREATED_TIME = 'created_time'
+CACHE_KEY_TOKEN_TYPE = 'token_type'
+
+#Embedding batch support section
+SUPPORTED_BATCH_AOAI_MODEL = {
+    'text-embedding-ada-002': {
+        'token_limit' : 8100,
+        'max_batch_size' : 16
+    }
+}
+
+def calculate_tokens_emb_aoai(input: str):
+    encoding = tiktoken.encoding_for_model(args.openaimodelname)
+    return len(encoding.encode(input))
 
 def blob_name_from_file_page(filename, page = 0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
@@ -126,7 +151,7 @@ def get_document_text(filename):
                         if idx >=0 and idx < page_length:
                             table_chars[idx] = table_id
 
-            # build page text by replacing charcters in table spans with table html
+            # build page text by replacing characters in table spans with table html
             page_text = ""
             added_tables = set()
             for idx, table_id in enumerate(table_chars):
@@ -142,7 +167,7 @@ def get_document_text(filename):
 
     return page_map
 
-def split_text(page_map):
+def split_text(page_map, filename):
     SENTENCE_ENDINGS = [".", "!", "?"]
     WORDS_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
     if args.verbose: print(f"Splitting '{filename}' into sections")
@@ -207,9 +232,9 @@ def filename_to_id(filename):
     filename_hash = base64.b16encode(filename.encode('utf-8')).decode('ascii')
     return f"file-{filename_ascii}-{filename_hash}"
 
-def create_sections(filename, page_map, use_vectors):
+def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None):
     file_id = filename_to_id(filename)
-    for i, (content, pagenum) in enumerate(split_text(page_map)):
+    for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
             "id": f"{file_id}-page-{i}",
             "content": content,
@@ -218,18 +243,24 @@ def create_sections(filename, page_map, use_vectors):
             "sourcefile": filename
         }
         if use_vectors:
-            section["embedding"] = compute_embedding(content)
+            section["embedding"] = compute_embedding(content, embedding_deployment)
         yield section
 
 def before_retry_sleep(retry_state):
     if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
-def compute_embedding(text):
-    if args.openaitype == "azure":
-        return openai.Embedding.create(engine=args.openaideployment, input=text)["data"][0]["embedding"]
-    else:
-        return openai.Embedding.create(model=args.openaimodel, input=text)["data"][0]["embedding"]
+@retry(retry=retry_if_exception_type(openai.error.RateLimitError), wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding(text, embedding_deployment):
+    refresh_openai_token()
+    embedding_args = {"deployment_id": embedding_deployment} if args.openaihost == "azure" else {}
+    return openai.Embedding.create(**embedding_args, model=args.openaimodel, input=text)["data"][0]["embedding"]
+
+@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+def compute_embedding_in_batch(texts):
+    refresh_openai_token()
+    embedding_args = {"deployment_id": args.openaideployment} if args.openaihost == "azure" else {}
+    emb_response = openai.Embedding.create(**embedding_args, model=args.openaimodel, input=texts)
+    return [data.embedding for data in emb_response.data]
 
 def create_search_index():
     if args.verbose: print(f"Ensuring search index {args.index} exists")
@@ -268,6 +299,35 @@ def create_search_index():
     else:
         if args.verbose: print(f"Search index {args.index} already exists")
 
+def update_embeddings_in_batch(sections):
+    batch_queue = []
+    copy_s = []
+    batch_response = {}
+    token_count = 0
+    for s in sections:
+        token_count += calculate_tokens_emb_aoai(s["content"])
+        if token_count <= SUPPORTED_BATCH_AOAI_MODEL[args.openaimodelname]['token_limit'] and len(batch_queue) < SUPPORTED_BATCH_AOAI_MODEL[args.openaimodelname]['max_batch_size']:
+            batch_queue.append(s)
+            copy_s.append(s)
+        else:
+            emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
+            if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
+            for emb, item in zip(emb_responses, batch_queue):
+                batch_response[item["id"]] = emb
+            batch_queue = []
+            batch_queue.append(s)
+            token_count = calculate_tokens_emb_aoai(s["content"])
+
+    if batch_queue:
+        emb_responses = compute_embedding_in_batch([item["content"] for item in batch_queue])
+        if args.verbose: print(f"Batch Completed. Batch size  {len(batch_queue)} Token count {token_count}")
+        for emb, item in zip(emb_responses, batch_queue):
+            batch_response[item["id"]] = emb
+
+    for s in copy_s:
+        s["embedding"] = batch_response[s["id"]]
+        yield s
+
 def index_sections(filename, sections):
     if args.verbose: print(f"Indexing sections from '{filename}' into search index '{args.index}'")
     search_client = SearchClient(endpoint=f"https://{args.searchservice}.search.windows.net/",
@@ -305,6 +365,41 @@ def remove_from_index(filename):
         time.sleep(2)
 
 
+def refresh_openai_token():
+    """
+    Refresh OpenAI token every 5 minutes
+    """
+    if CACHE_KEY_TOKEN_TYPE in open_ai_token_cache and open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] == 'azure_ad' and open_ai_token_cache[CACHE_KEY_CREATED_TIME] + 300 < time.time():
+        token_cred = open_ai_token_cache[CACHE_KEY_TOKEN_CRED]
+        openai.api_key = token_cred.get_token("https://cognitiveservices.azure.com/.default").token
+        open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+
+
+def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None):
+    """
+    Recursively read directory structure under `path_pattern`
+    and execute indexing for the individual files
+    """
+    for filename in glob.glob(path_pattern):
+        if args.verbose: print(f"Processing '{filename}'")
+        if args.remove:
+            remove_blobs(filename)
+            remove_from_index(filename)
+        else:
+            if os.path.isdir(filename):
+                read_files(filename + "/*", use_vectors, vectors_batch_support)
+                continue
+            try:
+                if not args.skipblobs:
+                    upload_blobs(filename)
+                page_map = get_document_text(filename)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not vectors_batch_support, embedding_deployment)
+                if use_vectors and vectors_batch_support:
+                    sections = update_embeddings_in_batch(sections)
+                index_sections(os.path.basename(filename), sections)
+            except Exception as e:
+                print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
@@ -321,13 +416,14 @@ if __name__ == "__main__":
     parser.add_argument("--searchservice", help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
     parser.add_argument("--index", help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
     parser.add_argument("--searchkey", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
-    parser.add_argument("--openaitype", help="Type of the API used to compute embeddings ('azure' or 'openai')")
+    parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
     parser.add_argument("--openaimodel", required=False, help="Name of the OpenAI model used for embedding (required only for non-Azure endpoints)")
-    parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure). This is required only when using non-Azure endpoints.")
     parser.add_argument("--openaiorg", required=False, help="This is required only when using non-Azure endpoints.")
+    parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
+    parser.add_argument("--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections")
     parser.add_argument("--remove", action="store_true", help="Remove references to this document from blob storage and the search index")
     parser.add_argument("--removeall", action="store_true", help="Remove all blobs from blob storage and documents from the search index")
     parser.add_argument("--localpdfparser", action="store_true", help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents")
@@ -341,6 +437,7 @@ if __name__ == "__main__":
     default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
+    compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname in SUPPORTED_BATCH_AOAI_MODEL
 
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
@@ -352,21 +449,24 @@ if __name__ == "__main__":
         formrecognizer_creds = default_creds if args.formrecognizerkey is None else AzureKeyCredential(args.formrecognizerkey)
 
     if use_vectors:
-        if args.openaitype == "azure":
+        if args.openaihost == "azure":
             if args.openaikey is None:
                 openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
                 openai.api_type = "azure_ad"
+                open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+                open_ai_token_cache[CACHE_KEY_TOKEN_CRED] = azd_credential
+                open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
             else:
                 openai.api_type = args.openaitype
                 openai.api_key = args.openaikey
 
             openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
             openai.api_version = "2022-12-01"
-
         else:
             openai.api_type = args.openaitype
             openai.api_key = args.openaikey
             openai.organization = args.openaiorg
+
     if args.removeall:
         remove_blobs(None)
         remove_from_index(None)
@@ -375,17 +475,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        for filename in glob.glob(args.files):
-            if args.verbose: print(f"Processing '{filename}'")
-            if args.remove:
-                remove_blobs(filename)
-                remove_from_index(filename)
-            elif args.removeall:
-                remove_blobs(None)
-                remove_from_index(None)
-            else:
-                if not args.skipblobs:
-                    upload_blobs(filename)
-                page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors)
-                index_sections(os.path.basename(filename), sections)
+        read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment)

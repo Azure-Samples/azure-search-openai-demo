@@ -5,24 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask",
+            "name": "Python: Quart",
             "type": "python",
             "request": "launch",
-            "module": "flask",
+            "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
             "env": {
-                "FLASK_APP": "app.py",
-                "FLASK_ENV": "development",
-                "FLASK_DEBUG": "0"
+                "QUART_APP": "main:app",
+                "QUART_ENV": "development",
+                "QUART_DEBUG": "0"
             },
             "args": [
                 "run",
-                "--no-debugger",
                 "--no-reload",
-                "-p 5000"
+                "-p 50505"
             ],
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "justMyCode": false,
             "envFile": "${input:dotEnvFilePath}",
         },
         {
