@@ -56,12 +56,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            if self.openai_type == "azure":
-                query_vector = openai.Embedding.create(
-                    engine=self.embedding_deployment, model=self.embedding_model, input=q)["data"][0]["embedding"]
-            else:
-                query_vector = openai.Embedding.create(model=self.embedding_model, input=q)[
-                    "data"][0]["embedding"]
+            embedding_args = {"model": self.embedding_model} if self.openai_type.casefold() == "openai".casefold() else {"engine": self.embedding_deployment}
+            query_vector = openai.Embedding.create(
+                    **embedding_args, input=query_text)["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -105,20 +102,12 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.append_message('user', self.question)
 
         messages = message_builder.messages
-        if self.openai_type == "azure":
-            chat_completion = openai.ChatCompletion.create(
-                deployment_id=self.openai_deployment,
-                model=self.chatgpt_model,
-                messages=messages,
-                temperature=overrides.get("temperature") or 0.3,
-                max_tokens=1024,
-                n=1)
-        else:
-            chat_completion = openai.ChatCompletion.create(
-                model=self.chatgpt_model,
-                messages=messages,
-                temperature=overrides.get("temperature") or 0.3,
-                max_tokens=1024,
-                n=1)
+        chat_completion_args = {"model": self.chatgpt_model} if self.openai_type.casefold() == "openai".casefold() else {"model": self.chatgpt_model, "deployment_id": self.chatgpt_deployment}
+
+        chat_completion = openai.ChatCompletion.create(
+            **chat_completion_args,
+            temperature=overrides.get("temperature") or 0.3,
+            max_tokens=1024,
+            n=1)
 
         return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}

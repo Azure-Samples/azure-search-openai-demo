@@ -36,12 +36,10 @@ class ReadDecomposeAsk(Approach):
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            if self.openai_api_type == "azure":
-                query_vector = openai.Embedding.create(
-                    engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
-            else:
-                query_vector = openai.Embedding.create(
-                    model=self.embedding_model, input=query_text)["data"][0]["embedding"]
+            embedding_args = {"model": self.embedding_model} if self.openai_type.casefold() == "openai".casefold() else {"engine": self.embedding_deployment}
+            query_vector = openai.Embedding.create(
+                    **embedding_args, input=query_text)["data"][0]["embedding"]
+            
         else:
             query_vector = None
 
