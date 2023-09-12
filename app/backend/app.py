@@ -139,6 +139,10 @@ async def chat_stream():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
+@bp.route("/auth_setup", methods=["GET"])
+def auth_setup():
+    return jsonify(AuthenticationHelper.get_auth_setup_for_client())
+
 
 @bp.before_request
 async def ensure_openai_token():

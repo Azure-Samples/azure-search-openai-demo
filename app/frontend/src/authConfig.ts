@@ -1,11 +1,64 @@
 import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-browser";
 
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+interface AuthSetup {
+    // Set to true if login elements should be shown in the UI
+    useLogin: boolean;
+    /**
+     * Configuration object to be passed to MSAL instance on creation.
+     * For a full list of MSAL.js configuration parameters, visit:
+     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
+     */
+    msalConfig: {
+        auth: {
+            clientId: string, // Client app id used for login
+            authority: string, // Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
+            redirectUri: string, // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+            postLogoutRedirectUri: string, // Indicates the page to navigate after logout.
+            navigateToLoginRequestUrl: boolean // If "true", will navigate back to the original request location before processing the auth code response.
+        },
+        cache: {
+            cacheLocation: string, // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+            storeAuthStateInCookie: boolean // Set this to "true" if you are having issues on IE11 or Edge
+        }
+    },
+    loginRequest: {
+        /**
+         * Scopes you add here will be prompted for user consent during sign-in.
+         * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
+         * For more information about OIDC scopes, visit:
+         * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+         */
+        scopes: Array<string>
+    }
+}
 
-export const useLogin = true; // Set to true to enable login
+// Fetch the auth setup JSON data from the API if not already cached
+async function fetchAuthSetup(): Promise<AuthSetup> {
+    const response = await fetch('/auth_setup');
+    if (!response.ok) {
+        throw new Error(`auth setup response was not ok: ${response.status}`);
+    }
+    return await response.json();
+}
+
+const authSetup = await fetchAuthSetup();
+
+export const useLogin = authSetup.useLogin;
+
+/**
+ * Configuration object to be passed to MSAL instance on creation. 
+ * For a full list of MSAL.js configuration parameters, visit:
+ * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
+ */
+export const msalConfig = authSetup.msalConfig;
+
+/**
+ * Scopes you add here will be prompted for user consent during sign-in.
+ * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
+ * For more information about OIDC scopes, visit: 
+ * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+ */
+export const loginRequest = authSetup.loginRequest;
 
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
@@ -15,32 +68,3 @@ export const getToken = (client: IPublicClientApplication): Promise<Authenticati
         redirectUri: '/redirect'
     })
 }
-
-/**
- * Configuration object to be passed to MSAL instance on creation. 
- * For a full list of MSAL.js configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
- */
-export const msalConfig = {
-    auth: {
-        clientId: 'c06098e2-79e4-4e6c-8e43-f8b0e7728349', // Replace with your client app id
-        authority: `https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47`, // Defaults to "https://login.microsoftonline.com/common"
-        redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
-        postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
-        navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
-    },
-    cache: {
-        cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-    }
-};
-
-/**
- * Scopes you add here will be prompted for user consent during sign-in.
- * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
- * For more information about OIDC scopes, visit: 
- * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
- */
-export const loginRequest = {
-    scopes: [`api://201ac4a0-3323-43ed-a024-bf37eaedc7bf/.default`] // Replace the app id with your server app id
-};

@@ -30,12 +30,41 @@ class AuthToken(TokenCredential):
 class AuthenticationHelper(ABC):
 
     _confidential_client: msal.ConfidentialClientApplication = None
+    _authority: str = "https://login.microsoftonline.com/{}".format(os.getenv("AZURE_TENANT_ID"))
 
     @staticmethod
     def use_authentication():
         # Checks for environment variables related to authentication.
-        # If they are not defined, authentication is not used.
-        return os.getenv("CLIENT_ID") and os.getenv("AUTHORITY") and os.getenv("CLIENT_SECRET")
+        # If they are not defined, authentication is not useds
+        var_names = ["AZURE_SERVER_APP_ID", "AZURE_SERVER_APP_SECRET", "AZURE_CLIENT_APP_ID", "AZURE_TENANT_ID"]
+        return all(var_name in os.environ for var_name in var_names)
+
+    @staticmethod
+    def get_auth_setup_for_client() -> dict[str, Any]:
+        # returns MSAL.js settings used by the client app
+        return {
+            "useLogin": AuthenticationHelper.use_authentication(), # Whether or not login elements are enabled on the UI
+            "msalConfig": {
+                "auth": {
+                    "clientId": os.getenv("AZURE_CLIENT_APP_ID"), # Client app id used for login
+                    "authority": AuthenticationHelper._authority, # Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
+                    "redirectUri": "/redirect", # Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+                    "postLogoutRedirectUri": "/", # Indicates the page to navigate after logout.
+                    "navigateToLoginRequestUrl": False # If "true", will navigate back to the original request location before processing the auth code response.
+                },
+                "cache": {
+                    "cacheLocation": "sessionStorage", # Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+                    "storeAuthStateInCookie": False # Set this to "true" if you are having issues on IE11 or Edge
+                }
+            },
+            "loginRequest": {
+                # Scopes you add here will be prompted for user consent during sign-in.
+                # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
+                # For more information about OIDC scopes, visit:
+                # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+                "scopes": ["api://{}/.default".format(os.getenv("AZURE_SERVER_APP_ID"))]
+            }
+        }
 
     @staticmethod
     def get_token_auth_header() -> str:
@@ -67,7 +96,7 @@ class AuthenticationHelper(ABC):
         if AuthenticationHelper._confidential_client is None:
             AuthenticationHelper._confidential_client = msal.ConfidentialClientApplication(
                 os.getenv("AZURE_SERVER_APP_ID"),
-                authority="https://login.microsoftonline.com/{}".format(os.getenv("AZURE_TENANT_ID")),
+                authority=AuthenticationHelper._authority,
                 client_credential=os.getenv("AZURE_SERVER_APP_SECRET"))
 
         return AuthenticationHelper._confidential_client
