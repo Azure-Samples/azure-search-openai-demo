@@ -18,6 +18,9 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
   }
   sku: sku
 }
@@ -32,7 +35,7 @@ resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01
   }
   sku: contains(deployment, 'sku') ? deployment.sku : {
     name: 'Standard'
-    capacity: 20
+    capacity: 2
   }
 }]
 
