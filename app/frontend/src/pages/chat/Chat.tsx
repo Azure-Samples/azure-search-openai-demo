@@ -255,7 +255,7 @@ const Chat = () => {
 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
-                        label="Retrieve this many documents from search:"
+                        label="Retrieve this many search results:"
                         min={1}
                         max={50}
                         defaultValue={retrieveCount.toString()}
