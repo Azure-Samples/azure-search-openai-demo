@@ -17,9 +17,8 @@ param applicationInsightsName string = ''
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
-param searchServiceResourceGroupLocation string = location
-
-param searchServiceSkuName string = 'standard'
+param searchServiceLocation string = ''
+param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 
 param storageAccountName string = ''
@@ -197,7 +196,7 @@ module searchService 'core/search/search-services.bicep' = {
   scope: searchServiceResourceGroup
   params: {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
-    location: searchServiceResourceGroupLocation
+    location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
     authOptions: {
       aadOrApiKey: {

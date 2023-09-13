@@ -41,8 +41,11 @@
     "searchServiceResourceGroupName": {
       "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
     },
+    "searchServiceLocation": {
+      "value": "${AZURE_SEARCH_SERVICE_LOCATION}"
+    },
     "searchServiceSkuName": {
-      "value": "standard"
+      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
