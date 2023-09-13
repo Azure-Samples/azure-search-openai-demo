@@ -1,3 +1,5 @@
+// Refactored from https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/1-Authentication/1-sign-in/SPA/src/authConfig.js
+
 import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-browser";
 
 interface AuthSetup {

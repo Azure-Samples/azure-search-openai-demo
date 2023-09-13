@@ -47,6 +47,7 @@ async def index():
     return await bp.send_static_file("index.html")
 
 
+# Empty page is recommended for login redirect to work.
 @bp.route("/redirect")
 async def redirect():
     return ""
@@ -150,6 +151,7 @@ async def chat_stream():
         return jsonify({"error": str(e)}), 500
 
 
+# Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
 def auth_setup():
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]

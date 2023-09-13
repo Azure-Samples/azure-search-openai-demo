@@ -11,6 +11,7 @@ from quart import request
 from tempfile import TemporaryDirectory
 
 
+# AuthError is raised when the authentication token sent by the client UI cannot be parsed
 class AuthError(Exception):
     error: str = None
     status_code: int = None

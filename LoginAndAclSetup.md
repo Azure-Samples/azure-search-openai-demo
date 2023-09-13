@@ -53,7 +53,7 @@ The following instructions explain how to setup the two apps using the Azure Por
   1. Select **Delegated permissions**.
   1. Search for and and select `User.Read`.
   1. Select **Add permissions**.
-1. Select **Expose an API** in the left hand menu. The server app works by using the [https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram](On-Behalf-Of Flow), which requires the server app to expose at least 1 API.
+1. Select **Expose an API** in the left hand menu. The server app works by using the [https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram](On Behalf Of Flow), which requires the server app to expose at least 1 API.
   1. The application must define a URI to expose APIs. Select **Add** next to **Application ID URI**.
   1. By default, the Application ID URI is set to `api://<application client id>`. Accept the default by selecting **Save**.
   1. Under **Scopes defined by this API**, select **Add a scope**.
@@ -81,7 +81,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 1. Select **Register** to create the application
 1. In the app's registration screen, find the **Application (client) ID**.
   1. Run the following `azd` command to save this ID: `azd env set AZURE_CLIENT_APP_ID <Application (client) ID>`.
-1. In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram](On-Behalf-Of Flow) to work.
+1. In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram](On Behalf Of Flow) to work.
   1. Select **Add a permission**, and then **My APIs**.
   1. In the list of applications, select your server application **Azure Search OpenAI Demo API**
   1. Ensure **Delegated permissions** is selected.
