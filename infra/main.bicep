@@ -141,7 +141,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       // Shared by all OpenAI deployments
-      OPENAI_API_TYPE: openAiType
+      OPENAI_HOST: openAiHost
       OPENAI_EMB_MODEL: embeddingModelName
       OPENAI_CHATGPT_MODEL: chatGptModelName
       // Specific to Azure OpenAI
