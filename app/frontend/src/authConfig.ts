@@ -65,6 +65,6 @@ export const loginRequest = authSetup.loginRequest;
 export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult> => {
     return client.acquireTokenSilent({
         ...loginRequest,
-        redirectUri: '/redirect'
+        redirectUri: authSetup.msalConfig.auth.redirectUri
     })
 }

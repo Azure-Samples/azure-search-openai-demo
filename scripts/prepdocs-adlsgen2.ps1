@@ -41,11 +41,11 @@ Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r ./scrip
 
 Write-Host 'Running "prepdocs.py"'
 $adlsGen2FilesystemPathArg = ""
-if ($env:ADLS_GEN2_FILESYSTEM_PATH) {
+if ($env:AZURE_ADLS_GEN2_FILESYSTEM_PATH) {
   $adlsGen2FilesystemPathArg = "--datalakefilesystempath $env:ADLS_GEN2_FILESYSTEM_PATH"
 }
 $adlsGen2FilesystemArg = ""
-if ($env:ADLS_GEN2_FILESYSTEM) {
+if ($env:AZURE_ADLS_GEN2_FILESYSTEM) {
   $adlsGen2FilesystemArg = "--datalakefilesystem $env:ADLS_GEN2_FILESYSTEM"
 }
 Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/prepdocs.py --datalakestorageaccount $env:ADLS_GEN2_STORAGE_ACCOUNT $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg --useacls --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --searchservice $env:AZURE_SEARCH_SERVICE --openaiservice $env:AZURE_OPENAI_SERVICE --openaideployment $env:AZURE_OPENAI_EMB_DEPLOYMENT --index $env:AZURE_SEARCH_INDEX --formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE --tenantid $env:AZURE_TENANT_ID --openaimodelname $env:AZURE_OPENAI_EMB_MODEL_NAME -v" -Wait -NoNewWindow

@@ -36,7 +36,7 @@ class AuthenticationHelper(ABC):
     def use_authentication():
         # Checks for environment variables related to authentication.
         # If they are not defined, authentication is not useds
-        var_names = ["AZURE_SERVER_APP_ID", "AZURE_SERVER_APP_SECRET", "AZURE_CLIENT_APP_ID", "AZURE_TENANT_ID"]
+        var_names = ["AZURE_USE_AUTHENTICATION", "AZURE_SERVER_APP_ID", "AZURE_SERVER_APP_SECRET", "AZURE_CLIENT_APP_ID", "AZURE_TENANT_ID"]
         return all(var_name in os.environ for var_name in var_names)
 
     @staticmethod
