@@ -27,19 +27,6 @@ This guide demonstrates how to add an optional login and document level access c
 
 Two Azure AD apps must be registered in order to make the optional login and document level access control system work correctly.
 
-### Automatic Setup
-
-1. Run `azd env set AZURE_USE_AUTHENTICATION true`.
-1. (Optional) Run `azd env set AZURE_SERVER_APP_DISPLAY_NAME <desired_display_name>`. This sets the desired display name for the Azure AD app used by the API server. If this variable is not set, a default name `azure-search-openai-demo-server` is automatically chosen.
-1. (Optional) Run `azd env set AZURE_CLIENT_APP_DISPLAY_NAME <desired_display_name>`. This sets the desired display name for the Azure AD app used by the client UI. If this variable is not set, a default name `azure-search-openai-demo-client` is automatically chosen.
-1. (Optional) Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <existing Data Lake Storage Gen2 account name>` to add [sample access control](#azure-data-lake-storage-gen2-setup) to the data. Skip this if you are customizing your data and do not want to use the sample access control values.
-1. Run `azd up`.
-
-When `AZURE_USE_AUTHENTICATION` is set to true, `azd up` to automatically provision the two required Azure AD apps using the following steps:
-
-* Using a preprovision hook to call [auth_init.ps1](./scripts/auth_init.ps1) to create two app registrations. That script also sets all the [required variables](#environment-variables-reference) for authentication.
-* Using a postprovision hook to call [auth_update.ps1](./scripts/auth_update.ps1) to update the client app registration with the correct [redirect URI](https://learn.microsoft.com/azure/active-directory/develop/reply-url).
-
 ### Manual Setup
 
 The following instructions explain how to setup the two apps using the Azure Portal.
@@ -136,15 +123,15 @@ In order to use the sample access control, you need to join these groups in your
 
 ### Azure Data Lake Storage Gen2 Prep Docs
 
-Once a Data Lake Storage Gen2 storage account has been setup with sample data and access control lists, the [prepdocs-adlsgen2.ps1](./scripts/adlsgen2setup.ps1) can be used to automatically process PDFs in the storage account and store them with their [access control lists in the search index](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control).
+Once a Data Lake Storage Gen2 storage account has been setup with sample data and access control lists, the [prepdocs.ps1](./scripts/prepdocs.ps1) can be used to automatically process PDFs in the storage account and store them with their [access control lists in the search index](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control).
 
-To run this script, first set the following environment variables:
+To run this script with a Data Lake Storage Gen2 account, first set the following environment variables:
 
 1. `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction).
 1. (Optional) `AZURE_ADLS_GEN2_FILESYSTEM`: Name of existing Data Lake Storage Gen2 filesystem / container in the storage account. If empty, `gptkbcontainer` is used.
 1. (Optional) `AZURE_ADLS_GEN2_FILESYSTEM_PATH`: Specific path in the Data Lake Storage Gen2 filesystem / container to process. Only PDFs contained in this path will be processed.
 
-Once the environment variables are set, run the script using the following command: `./scripts/prepdocs-adlsgen2.ps1`.
+Once the environment variables are set, run the script using the following command: `./scripts/prepdocs.ps1` or `./scripts/prepdocs.sh`.
 
 ### Manually managing Document Level Access Control
 
@@ -163,13 +150,11 @@ To run the script, the following parameters are used:
 
 The following environment variables are used to setup the optional login and document level access control:
 
-1. `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up` to ensure all other environment variables are set and the necessary Azure AD apps are provisioned.
-1. `AZURE_SERVER_APP_ID`: Application ID of the Azure AD app for the API server. If `AZURE_SERVER_APP_ID` is empty prior to running `azd up`, a new Azure AD app will be created.
-1. `AZURE_SERVER_APP_DISPLAY_NAME`: Display name of the Azure AD app for the API server. If `AZURE_SERVER_APP_ID` is referencing an existing Azure AD app, this variable is not used. If `AZURE_SERVER_APP_ID` is empty, a new Azure AD app is created that uses this display name. If the display name is not set prior to running `azd up`, a default value is automatically chosen.
-1. `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app. If `AZURE_SERVER_APP_SECRET` is empty prior to running `azd up`, a new client secret is generated.
-1. `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI. If `AZURE_CLIENT_APP_ID` is empty prior to running `azd up`, a new Azure AD app will be created.
-1. `AZURE_CLIENT_APP_DISPLAY_NAME`: Display name of the Azure AD app for the client UI. If `AZURE_CLIENT_APP_ID` is referencing an existing Azure AD app, this variable is not used. If `AZURE_CLIENT_APP_ID` is empty, a new Azure AD app is created using this display name. If the display name is not set prior to running `azd up`, a default value is automatically chosen.
+1. `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
+1. `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
+1. `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
+1. `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
 1. `AZURE_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. This is set automatically by `azd up`.
 1. `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 1. `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
-1. `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) scrip..
+1. `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
