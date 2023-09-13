@@ -12,9 +12,10 @@ from langchain.prompts import BasePromptTemplate, PromptTemplate
 from langchain.tools.base import BaseTool
 
 from approaches.approach import AskApproach
+from core.authentication import AuthenticationHelper
 from langchainadapters import HtmlCallbackHandler
 from text import nonewlines
-from core.authentication import AuthenticationHelper
+
 
 class ReadDecomposeAsk(AskApproach):
     def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
@@ -50,51 +51,40 @@ class ReadDecomposeAsk(AskApproach):
             query_text = ""
 
         if overrides.get("semantic_ranker") and has_text:
-            r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC,
-                                          query_language="en-us",
-                                          query_speller="lexicon",
-                                          semantic_configuration_name="default",
-                                          top=top,
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                query_type=QueryType.SEMANTIC,
+                query_language="en-us",
+                query_speller="lexicon",
+                semantic_configuration_name="default",
+                top=top,
+                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         else:
-            r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          top=top,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(query_text, filter=filter, top=top, vector=query_vector, top_k=50 if query_vector else None, vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc['@search.captions'] ])) async for doc in r]
+            results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc["@search.captions"]])) async for doc in r]
         else:
             results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) async for doc in r]
         return results, "\n".join(results)
 
     async def lookup(self, q: str) -> Optional[str]:
-        r = await self.search_client.search(q,
-                                      top = 1,
-                                      include_total_count=True,
-                                      query_type=QueryType.SEMANTIC,
-                                      query_language="en-us",
-                                      query_speller="lexicon",
-                                      semantic_configuration_name="default",
-                                      query_answer="extractive|count-1",
-                                      query_caption="extractive|highlight-false")
+        r = await self.search_client.search(q, top=1, include_total_count=True, query_type=QueryType.SEMANTIC, query_language="en-us", query_speller="lexicon", semantic_configuration_name="default", query_answer="extractive|count-1", query_caption="extractive|highlight-false")
 
         answers = await r.get_answers()
         if answers and len(answers) > 0:
             return answers[0].text
         if await r.get_count() > 0:
-            return "\n".join([d['content'] async for d in r])
+            return "\n".join([d["content"] async for d in r])
         return None
 
     async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
-
         search_results = None
+
         async def search_and_store(q: str) -> Any:
             nonlocal search_results
             search_results, content = await self.search(q, overrides, auth_claims)
@@ -106,13 +96,12 @@ class ReadDecomposeAsk(AskApproach):
 
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
         tools = [
-            Tool(name="Search", func=lambda _: 'Not implemented', coroutine=search_and_store, description="useful for when you need to ask with search", callbacks=cb_manager),
-            Tool(name="Lookup", func=lambda _: 'Not implemented', coroutine=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager)
+            Tool(name="Search", func=lambda _: "Not implemented", coroutine=search_and_store, description="useful for when you need to ask with search", callbacks=cb_manager),
+            Tool(name="Lookup", func=lambda _: "Not implemented", coroutine=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager),
         ]
 
         prompt_prefix = overrides.get("prompt_template")
-        prompt = PromptTemplate.from_examples(
-            EXAMPLES, SUFFIX, ["input", "agent_scratchpad"], prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX)
+        prompt = PromptTemplate.from_examples(EXAMPLES, SUFFIX, ["input", "agent_scratchpad"], prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX)
 
         class ReAct(ReActDocstoreAgent):
             @classmethod
@@ -128,7 +117,6 @@ class ReadDecomposeAsk(AskApproach):
         result = re.sub(r"<([a-zA-Z0-9_ \-\.]+)>", r"[\1]", result)
 
         return {"data_points": search_results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
-
 
 
 # Modified version of langchain's ReAct prompt that includes instructions and examples for how to cite information sources
@@ -240,7 +228,9 @@ Action: Finish[yes <info4444.pdf><datapoints_aaa.txt>]""",
 ]
 SUFFIX = """\nQuestion: {input}
 {agent_scratchpad}"""
-PREFIX = "Answer questions as shown in the following examples, by splitting the question into individual search or lookup actions to find facts until you can answer the question. " \
-"Observations are prefixed by their source name in angled brackets, source names MUST be included with the actions in the answers." \
-"All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. "
+PREFIX = (
+    "Answer questions as shown in the following examples, by splitting the question into individual search or lookup actions to find facts until you can answer the question. "
+    "Observations are prefixed by their source name in angled brackets, source names MUST be included with the actions in the answers."
+    "All questions must be answered from the results from search or look up actions, only facts resulting from those can be used in an answer. "
+)
 "Answer questions as truthfully as possible, and ONLY answer the questions using the information from observations, do not speculate or your own knowledge."

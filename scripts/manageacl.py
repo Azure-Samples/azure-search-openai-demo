@@ -1,41 +1,37 @@
+import argparse
+
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.identity import AzureDeveloperCliCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import (
-    SimpleField,
-    SearchFieldDataType
-)
-import argparse
-from azure.identity import AzureDeveloperCliCredential
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.search.documents.indexes.models import SearchFieldDataType, SimpleField
 
-def enable_acls(credential: AzureKeyCredential|TokenCredential, search_service: str, index: str):
-    index_client = SearchIndexClient(
-        endpoint=f"https://{args.search_service}.search.windows.net/",
-        credential=credential)
-    if args.verbose: print(f"Enabling acls for index {index}")
+
+def enable_acls(credential: AzureKeyCredential | TokenCredential, search_service: str, index: str):
+    index_client = SearchIndexClient(endpoint=f"https://{args.search_service}.search.windows.net/", credential=credential)
+    if args.verbose:
+        print(f"Enabling acls for index {index}")
     try:
         index_definition = index_client.get_index(index)
-        if not any(field.name == 'oids' for field in index_definition.fields):
+        if not any(field.name == "oids" for field in index_definition.fields):
             index_definition.fields.append(SimpleField(name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
-        if not any(field.name == 'groups' for field in index_definition.fields):
+        if not any(field.name == "groups" for field in index_definition.fields):
             index_definition.fields.append(SimpleField(name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
-        
+
         index_client.create_or_update_index(index_definition)
     except Exception as e:
         print(f"\tGot an error while updating index {index} -> {e} --> unable to enable acls")
 
-def update_acl(credential: AzureKeyCredential|TokenCredential, search_service: str, index: str, acl_type: str, acl_action: str, document: str, acl: str = None):
-    search_client = SearchClient(
-        endpoint=f"https://{args.search_service}.search.windows.net/",
-        credential=credential,
-        index_name=index
-    )
+
+def update_acl(credential: AzureKeyCredential | TokenCredential, search_service: str, index: str, acl_type: str, acl_action: str, document: str, acl: str = None):
+    search_client = SearchClient(endpoint=f"https://{args.search_service}.search.windows.net/", credential=credential, index_name=index)
     filter = f"sourcefile eq '{document}'"
     result = search_client.search("", filter=filter, select=["id", acl_type], include_total_count=True)
     if result.get_count() == 0:
-        if args.verbose: print(F"No documents match {document} - exiting")
+        if args.verbose:
+            print(f"No documents match {document} - exiting")
         return
-    
+
     documents_to_merge = []
     for document in result:
         if acl_action == "view":
@@ -53,15 +49,13 @@ def update_acl(credential: AzureKeyCredential|TokenCredential, search_service: s
             new_acls = []
         documents_to_merge.append({"id": document["id"], acl_type: new_acls})
 
-    r = search_client.merge_documents(documents=documents_to_merge)
-    if args.verbose: print(F"ACLs updated")
+    search_client.merge_documents(documents=documents_to_merge)
+    if args.verbose:
+        print("ACLs updated")
+
 
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(
-        description="Manage ACLs in a search index",
-        epilog="Example: manageacl.py --searchservice mysearch --index myindex --enable-acls"
-        )
+    parser = argparse.ArgumentParser(description="Manage ACLs in a search index", epilog="Example: manageacl.py --searchservice mysearch --index myindex --enable-acls")
     parser.add_argument("--search-service", required=True, help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
     parser.add_argument("--index", required=True, help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
     parser.add_argument("--search-key", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
