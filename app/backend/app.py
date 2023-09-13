@@ -191,6 +191,7 @@ async def setup_clients():
         # Store on app.config for later use inside requests
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
     else:
+        openai.api_type = "openai"
         openai.api_key = OPENAI_API_KEY
         openai.organization = OPENAI_ORGANIZATION
 
