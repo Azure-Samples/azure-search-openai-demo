@@ -30,8 +30,8 @@ Two Azure AD apps must be registered in order to make the optional login and doc
 ### Automatic Setup
 
 1. Run `azd env set AZURE_USE_AUTHENTICATION true`.
-1. (Optional) Run `azd env set AZURE_SERVER_APP_DISPLAY_NAME <desired_display_name>`. This sets the desired display name for the Azure AD app used by the API server. If this variable is not set, a default name is automatically chosen that matches the pattern `azure-search-openai-demo-server-<number>`.
-1. (Optional) Run `azd env set AZURE_CLIENT_APP_DISPLAY_NAME <desired_display_name>`. This sets the desired display name for the Azure AD app used by the client UI. If this variable is not set, a default name is automatically chosen that matches the pattern `azure-search-openai-demo-client-<number>`.
+1. (Optional) Run `azd env set AZURE_SERVER_APP_DISPLAY_NAME <desired_display_name>`. This sets the desired display name for the Azure AD app used by the API server. If this variable is not set, a default name `azure-search-openai-demo-server` is automatically chosen.
+1. (Optional) Run `azd env set AZURE_CLIENT_APP_DISPLAY_NAME <desired_display_name>`. This sets the desired display name for the Azure AD app used by the client UI. If this variable is not set, a default name `azure-search-openai-demo-client` is automatically chosen.
 1. (Optional) Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <existing Data Lake Storage Gen2 account name>` to add [sample access control](#azure-data-lake-storage-gen2-setup) to the data. Skip this if you are customizing your data and do not want to use the sample access control values.
 1. Run `azd up`.
 
@@ -159,7 +159,7 @@ To run the script, the following parameters are used:
 1. `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document. Example to remove all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action remove_all`.
 1. `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document. Example to remove a specific User ID from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 
-### Environment Variables Reference
+## Environment Variables Reference
 
 The following environment variables are used to setup the optional login and document level access control:
 

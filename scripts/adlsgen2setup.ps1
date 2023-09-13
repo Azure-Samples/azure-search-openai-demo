@@ -40,7 +40,7 @@ function Ensure-SecurityGroupExists {
     Write-Host "Creating group $groupName"
     $output = az ad group create --display-name $groupName --mail-nickname $groupName 2>&1
     if ($?) {
-      $result = $output | ConvertFrom-Json
+      return $output | ConvertFrom-Json
     }
 
     throw $output
