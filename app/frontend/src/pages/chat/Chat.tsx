@@ -6,7 +6,7 @@ import readNDJSONStream from "ndjson-readablestream";
 import styles from "./Chat.module.css";
 
 import { chatApi, RetrievalMode, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
-import { Answer, AnswerError, AnswerLoading, AnswerStreaming } from "../../components/Answer";
+import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
@@ -206,10 +206,15 @@ const Chat = () => {
                                     <div key={index}>
                                         <UserChatMessage message={streamedAnswer[0]} />
                                         <div className={styles.chatMessageGpt}>
-                                            <AnswerStreaming
-                                                streamedAnswer={streamedAnswer[1]}
+                                            <Answer
+                                                key={index}
+                                                answer={streamedAnswer[1]}
                                                 isSelected={false}
                                                 onCitationClicked={c => onShowCitation(c, index)}
+                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
                                         </div>
                                     </div>
