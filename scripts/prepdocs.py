@@ -259,7 +259,7 @@ def compute_embedding(text, embedding_deployment, embedding_model):
 def compute_embedding_in_batch(texts):
     refresh_openai_token()
     embedding_args = {"deployment_id": args.openaideployment} if args.openaihost == "azure" else {}
-    emb_response = openai.Embedding.create(**embedding_args, model=args.openaimodel, input=texts)
+    emb_response = openai.Embedding.create(**embedding_args, model=args.openaimodelname, input=texts)
     return [data.embedding for data in emb_response.data]
 
 def create_search_index():
@@ -419,7 +419,7 @@ if __name__ == "__main__":
     parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument("--openaideployment", help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)")
-    parser.add_argument("--openaimodel", required=False, help="Name of the OpenAI model used for embedding (required only for non-Azure endpoints)")
+    parser.add_argument("--openaimodelname", required=False, help="Name of the OpenAI model used for embedding (required only for non-Azure endpoints)")
     parser.add_argument("--openaikey", required=False, help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure). This is required only when using non-Azure endpoints.")
     parser.add_argument("--openaiorg", required=False, help="This is required only when using non-Azure endpoints.")
     parser.add_argument("--novectors", action="store_true", help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)")
@@ -450,22 +450,21 @@ if __name__ == "__main__":
 
     if use_vectors:
         if args.openaihost == "azure":
-            if args.openaikey is None:
+            if not args.openaikey:
                 openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
                 openai.api_type = "azure_ad"
                 open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
                 open_ai_token_cache[CACHE_KEY_TOKEN_CRED] = azd_credential
                 open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
             else:
-                openai.api_type = args.openaitype
                 openai.api_key = args.openaikey
-
+                openai.api_type = "azure"
             openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
-            openai.api_version = "2022-12-01"
+            openai.api_version = "2023-05-15"
         else:
-            openai.api_type = "openai"
             openai.api_key = args.openaikey
             openai.organization = args.openaiorg
+            openai.api_type = "openai"
 
     if args.removeall:
         remove_blobs(None)
@@ -475,4 +474,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodel)
+        read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodelname)
