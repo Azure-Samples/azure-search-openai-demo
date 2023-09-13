@@ -36,10 +36,10 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 """
     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
-    def __init__(self, search_client: SearchClient, openai_host: str, openai_deployment: str, chatgpt_model: str, embedding_deployment: str, embedding_model: str, sourcepage_field: str, content_field: str):
+    def __init__(self, search_client: SearchClient, openai_host: str, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, embedding_model: str, sourcepage_field: str, content_field: str):
         self.search_client = search_client
         self.openai_host = openai_host
-        self.openai_deployment = openai_deployment
+        self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment

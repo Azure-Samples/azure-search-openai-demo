@@ -37,7 +37,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-args = argparse.Namespace(verbose=False)
+args = argparse.Namespace(verbose=False, openaihost="azure")
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -232,7 +232,7 @@ def filename_to_id(filename):
     filename_hash = base64.b16encode(filename.encode('utf-8')).decode('ascii')
     return f"file-{filename_ascii}-{filename_hash}"
 
-def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None):
+def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None, embedding_model: str = None):
     file_id = filename_to_id(filename)
     for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
@@ -243,17 +243,17 @@ def create_sections(filename, page_map, use_vectors, embedding_deployment: str =
             "sourcefile": filename
         }
         if use_vectors:
-            section["embedding"] = compute_embedding(content, embedding_deployment)
+            section["embedding"] = compute_embedding(content, embedding_deployment, embedding_model)
         yield section
 
 def before_retry_sleep(retry_state):
     if args.verbose: print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
 @retry(retry=retry_if_exception_type(openai.error.RateLimitError), wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
-def compute_embedding(text, embedding_deployment):
+def compute_embedding(text, embedding_deployment, embedding_model):
     refresh_openai_token()
     embedding_args = {"deployment_id": embedding_deployment} if args.openaihost == "azure" else {}
-    return openai.Embedding.create(**embedding_args, model=args.openaimodel, input=text)["data"][0]["embedding"]
+    return openai.Embedding.create(**embedding_args, model=embedding_model, input=text)["data"][0]["embedding"]
 
 @retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
 def compute_embedding_in_batch(texts):
@@ -375,7 +375,7 @@ def refresh_openai_token():
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
 
-def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None):
+def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None, embedding_model: str = None):
     """
     Recursively read directory structure under `path_pattern`
     and execute indexing for the individual files
@@ -393,7 +393,7 @@ def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool
                 if not args.skipblobs:
                     upload_blobs(filename)
                 page_map = get_document_text(filename)
-                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not vectors_batch_support, embedding_deployment)
+                sections = create_sections(os.path.basename(filename), page_map, use_vectors and not vectors_batch_support, embedding_deployment, embedding_model)
                 if use_vectors and vectors_batch_support:
                     sections = update_embeddings_in_batch(sections)
                 index_sections(os.path.basename(filename), sections)
@@ -475,4 +475,4 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment)
+        read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodel)

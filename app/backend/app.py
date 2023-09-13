@@ -149,9 +149,9 @@ async def setup_clients():
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     # Shared by all OpenAI deployments
-    OPENAI_HOST = os.environ["OPENAI_HOST"]
-    OPENAI_CHATGPT_MODEL = os.environ["OPENAI_CHATGPT_MODEL"]
-    OPENAI_EMB_MODEL = os.environ["OPENAI_EMB_MODEL"]
+    OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
+    OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
@@ -215,7 +215,6 @@ async def setup_clients():
             OPENAI_HOST,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
             OPENAI_CHATGPT_MODEL,
-            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
             AZURE_OPENAI_EMB_DEPLOYMENT,
             OPENAI_EMB_MODEL,
             KB_FIELDS_SOURCEPAGE,

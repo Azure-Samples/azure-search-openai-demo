@@ -356,8 +356,8 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost
-output OPENAI_EMB_MODEL string = embeddingModelName
-output OPENAI_CHATGPT_MODEL string = chatGptModelName
+output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
+output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
