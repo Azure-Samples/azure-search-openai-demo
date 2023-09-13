@@ -142,8 +142,8 @@ module backend 'core/host/appservice.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
-      OPENAI_EMB_MODEL: embeddingModelName
-      OPENAI_CHATGPT_MODEL: chatGptModelName
+      AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
+      AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       // Specific to Azure OpenAI
       AZURE_OPENAI_SERVICE: openAi.outputs.name
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
@@ -233,7 +233,7 @@ module storage 'core/storage/storage-account.bicep' = {
     tags: tags
     publicNetworkAccess: 'Enabled'
     sku: {
-      name: 'Standard_LRS'
+      name: 'Standard_ZRS'
     }
     deleteRetentionPolicy: {
       enabled: true
