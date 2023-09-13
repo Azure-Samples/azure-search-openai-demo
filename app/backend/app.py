@@ -40,7 +40,6 @@ CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 
 bp = Blueprint("routes", __name__, static_folder='static')
-logging.basicConfig(level=logging.INFO)
 
 @bp.route("/")
 async def index():
