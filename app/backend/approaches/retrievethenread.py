@@ -58,7 +58,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         if security_filter:
             filters.append(security_filter)
         filter = None if len(filters) == 0 else " and ".join(filters)
-        print(filter)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
