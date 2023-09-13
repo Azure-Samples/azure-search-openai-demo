@@ -2,7 +2,6 @@
 
 import logging
 import os
-from abc import ABC
 from typing import Any
 
 import msal
@@ -19,26 +18,37 @@ class AuthError(Exception):
         self.status_code = status_code
 
 
-class AuthenticationHelper(ABC):
+class AuthenticationHelper():
     _confidential_client: msal.ConfidentialClientApplication = None
-    _authority: str = "https://login.microsoftonline.com/{}".format(os.getenv("AZURE_TENANT_ID"))
+    _authority: str = None
+    _use_authentication: bool = False
+    _server_app_id: str = None
+    _server_app_secret: str = None
+    _client_app_id: str = None
+    _tenant_id: str = None
 
-    @staticmethod
-    def use_authentication():
-        # Checks for environment variables related to authentication.
-        # If they are not defined, authentication is not used
-        var_names = ["AZURE_USE_AUTHENTICATION", "AZURE_SERVER_APP_ID", "AZURE_SERVER_APP_SECRET", "AZURE_CLIENT_APP_ID", "AZURE_TENANT_ID"]
-        return all(var_name in os.environ for var_name in var_names)
+    def __init__(self, use_authentication: bool, server_app_id: str, server_app_secret: str, client_app_id: str, tenant_id: str):
+        self._use_authentication = use_authentication
+        self._server_app_id = server_app_id
+        self._server_app_secret = server_app_secret
+        self._client_app_id = client_app_id
+        self._tenant_id = tenant_id
 
-    @staticmethod
-    def get_auth_setup_for_client() -> dict[str, Any]:
+        self._authority = "https://login.microsoftonline.com/{}".format(tenant_id)
+        if self._use_authentication:
+            self._confidential_client = msal.ConfidentialClientApplication(server_app_id, authority=self._authority, client_credential=server_app_secret)
+
+    def use_authentication(self):
+        return self._use_authentication
+
+    def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
-            "useLogin": AuthenticationHelper.use_authentication(),  # Whether or not login elements are enabled on the UI
+            "useLogin": self._use_authentication,  # Whether or not login elements are enabled on the UI
             "msalConfig": {
                 "auth": {
-                    "clientId": os.getenv("AZURE_CLIENT_APP_ID"),  # Client app id used for login
-                    "authority": AuthenticationHelper._authority,  # Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
+                    "clientId": self._client_app_id,  # Client app id used for login
+                    "authority": self._authority,  # Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
                     "redirectUri": "/redirect",  # Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
                     "postLogoutRedirectUri": "/",  # Indicates the page to navigate after logout.
                     "navigateToLoginRequestUrl": False,  # If "true", will navigate back to the original request location before processing the auth code response.
@@ -50,7 +60,7 @@ class AuthenticationHelper(ABC):
                 # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
                 # For more information about OIDC scopes, visit:
                 # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-                "scopes": ["api://{}/.default".format(os.getenv("AZURE_SERVER_APP_ID"))]
+                "scopes": ["api://{}/.default".format(self._server_app_id)]
             },
         }
 
@@ -74,14 +84,6 @@ class AuthenticationHelper(ABC):
         return token
 
     @staticmethod
-    def get_confidential_client():
-        # This example only uses the default memory token cache and should not be used for production
-        if AuthenticationHelper._confidential_client is None:
-            AuthenticationHelper._confidential_client = msal.ConfidentialClientApplication(os.getenv("AZURE_SERVER_APP_ID"), authority=AuthenticationHelper._authority, client_credential=os.getenv("AZURE_SERVER_APP_SECRET"))
-
-        return AuthenticationHelper._confidential_client
-
-    @staticmethod
     def build_security_filters(overrides: dict[str, Any], auth_claims: dict[str, Any]):
         # Build different permutations of the oid or groups security filter using OData filters
         # https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search
@@ -89,8 +91,8 @@ class AuthenticationHelper(ABC):
         use_oid_security_filter = overrides.get("use_oid_security_filter")
         use_groups_security_filter = overrides.get("use_groups_security_filter")
 
-        oid_security_filter = "oids/any(g:search.in(g, '{}'))".format(auth_claims["oid"]) if use_oid_security_filter else None
-        groups_security_filter = "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims["groups"])) if use_groups_security_filter else None
+        oid_security_filter = "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid") or "") if use_oid_security_filter else None
+        groups_security_filter = "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups") or [])) if use_groups_security_filter else None
 
         # If only one security filter is specified, return that filter
         # If both security filters are specified, combine them with "or" so only 1 security filter needs to pass
@@ -106,7 +108,7 @@ class AuthenticationHelper(ABC):
 
     @staticmethod
     async def list_groups(graph_resource_access_token: str) -> [str]:
-        headers = ({"Authorization": "Bearer " + graph_resource_access_token},)
+        headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
         resp = urllib3.request("GET", "https://graph.microsoft.com/v1.0/me/memberOf?$select=id", headers=headers, timeout=urllib3.Timeout(connect=10, read=10))
         groups = []
         while resp.status == 200:
@@ -121,33 +123,31 @@ class AuthenticationHelper(ABC):
 
         return groups
 
-    @staticmethod
-    async def get_auth_claims_if_enabled() -> dict[str:Any]:
-        if AuthenticationHelper.use_authentication():
-            try:
-                # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
-                # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
-                # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
-                auth_token = AuthenticationHelper.get_token_auth_header()
-                graph_resource_access_token = AuthenticationHelper.get_confidential_client().acquire_token_on_behalf_of(user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"])
-                if "error" in graph_resource_access_token:
-                    raise AuthError(error=str(graph_resource_access_token), status_code=401)
+    async def get_auth_claims_if_enabled(self) -> dict[str:Any]:
+        if not self._use_authentication:
+            return {}
+        try:
+            # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
+            # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
+            # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
+            auth_token = AuthenticationHelper.get_token_auth_header()
+            graph_resource_access_token = self._confidential_client.acquire_token_on_behalf_of(user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"])
+            if "error" in graph_resource_access_token:
+                raise AuthError(error=str(graph_resource_access_token), status_code=401)
 
-                # Read the claims from the response. The oid and groups claims are used for security filtering
-                # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference
-                id_token_claims = graph_resource_access_token["id_token_claims"]
-                auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups") or []}
+            # Read the claims from the response. The oid and groups claims are used for security filtering
+            # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference
+            id_token_claims = graph_resource_access_token["id_token_claims"]
+            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups") or []}
 
-                # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
-                # or a groups overage claim may have been emitted.
-                # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference#groups-overage-claim
-                missing_groups_claim = "groups" not in id_token_claims
-                has_group_overage_claim = missing_groups_claim and "_claim_names" in id_token_claims and "groups" in id_token_claims["_claim_names"]
-                if missing_groups_claim or has_group_overage_claim:
-                    # Read the user's groups from Microsoft Graph
-                    auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
-                return auth_claims
-            except Exception:
-                logging.exception("Exception getting authorization information")
-
-        return {}
+            # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
+            # or a groups overage claim may have been emitted.
+            # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference#groups-overage-claim
+            missing_groups_claim = "groups" not in id_token_claims
+            has_group_overage_claim = missing_groups_claim and "_claim_names" in id_token_claims and "groups" in id_token_claims["_claim_names"]
+            if missing_groups_claim or has_group_overage_claim:
+                # Read the user's groups from Microsoft Graph
+                auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
+            return auth_claims
+        except Exception:
+            logging.exception("Exception getting authorization information")

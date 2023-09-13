@@ -37,6 +37,7 @@ CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
+CONFIG_AUTH_CLIENT = "auth_client"
 
 bp = Blueprint("routes", __name__, static_folder="static")
 
@@ -84,7 +85,8 @@ async def ask():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
-    auth_claims = await AuthenticationHelper.get_auth_claims_if_enabled()
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    auth_claims = await auth_helper.get_auth_claims_if_enabled()
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
@@ -105,7 +107,8 @@ async def chat():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
-    auth_claims = await AuthenticationHelper.get_auth_claims_if_enabled()
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    auth_claims = await auth_helper.get_auth_claims_if_enabled()
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
@@ -131,7 +134,8 @@ async def chat_stream():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
-    auth_claims = await AuthenticationHelper.get_auth_claims_if_enabled()
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    auth_claims = await auth_helper.get_auth_claims_if_enabled()
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
@@ -148,7 +152,8 @@ async def chat_stream():
 
 @bp.route("/auth_setup", methods=["GET"])
 def auth_setup():
-    return jsonify(AuthenticationHelper.get_auth_setup_for_client())
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    return jsonify(auth_helper.get_auth_setup_for_client())
 
 
 @bp.before_request
@@ -171,6 +176,11 @@ async def setup_clients():
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ["AZURE_OPENAI_CHATGPT_DEPLOYMENT"]
     AZURE_OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     AZURE_OPENAI_EMB_DEPLOYMENT = os.environ["AZURE_OPENAI_EMB_DEPLOYMENT"]
+    AZURE_USE_AUTHENTICATION = os.environ["AZURE_USE_AUTHENTICATION"]
+    AZURE_SERVER_APP_ID = os.environ["AZURE_SERVER_APP_ID"]
+    AZURE_SERVER_APP_SECRET = os.environ["AZURE_SERVER_APP_SECRET"]
+    AZURE_CLIENT_APP_ID = os.environ["AZURE_CLIENT_APP_ID"]
+    AZURE_TENANT_ID = os.environ["AZURE_TENANT_ID"]
 
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
@@ -180,6 +190,9 @@ async def setup_clients():
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+
+    # Set up authentication helper
+    auth_helper = AuthenticationHelper(use_authentication=AZURE_USE_AUTHENTICATION, server_app_id=AZURE_SERVER_APP_ID, server_app_secret=AZURE_SERVER_APP_SECRET, client_app_id=AZURE_CLIENT_APP_ID, tenant_id=AZURE_TENANT_ID)
 
     # Set up clients for Cognitive Search and Storage
     search_client = SearchClient(endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net", index_name=AZURE_SEARCH_INDEX, credential=azure_credential)
@@ -197,6 +210,7 @@ async def setup_clients():
     current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
