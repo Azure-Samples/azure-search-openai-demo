@@ -3,10 +3,10 @@
 from quart import request
 from abc import ABC
 import msal, os
-from msgraph import GraphServiceClient
 from azure.core.credentials import TokenCredential, AccessToken
 import logging
 from typing import Any
+import urllib3
 
 class AuthError(Exception):
     error: str = None
@@ -15,17 +15,6 @@ class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
-
-# TokenCredential wrapper class to use an auth token to call the Microsoft Graph API
-class AuthToken(TokenCredential):
-    _token: dict = None
-
-    def __init__(self, token: dict):
-        self._token = token
-
-    def get_token(self, *scopes, **kwargs) -> AccessToken:
-        return AccessToken(self._token["access_token"], self._token["expires_in"])
-
 
 class AuthenticationHelper(ABC):
 
@@ -125,6 +114,35 @@ class AuthenticationHelper(ABC):
             return None
 
     @staticmethod
+    async def list_groups(graph_resource_access_token: str) -> [str]:
+        headers={"Authorization": "Bearer " + graph_resource_access_token},
+        resp = urllib3.request(
+            "GET",
+            "https://graph.microsoft.com/v1.0/me/memberOf?$select=id",
+            headers=headers,
+            timeout=urllib3.Timeout(connect=10, read=10)
+        )
+        groups = []
+        while (resp.status == 200):
+            value = resp.json()["value"]
+            for group in value:
+                groups.append(group["id"])
+            nextLink = resp.json().get("@odata.nextLink")
+            if nextLink:
+                resp = urllib3.request(
+                    "GET",
+                    nextLink,
+                    headers=headers,
+                    timeout=urllib3.Timeout(connect=10, read=10)
+                )
+            else:
+                break
+
+        return groups
+
+
+
+    @staticmethod
     async def get_auth_claims_if_enabled() -> dict[str: Any]:
         if AuthenticationHelper.use_authentication():
             try:
@@ -153,10 +171,7 @@ class AuthenticationHelper(ABC):
                     "groups" in id_token_claims["_claim_names"]
                 if missing_groups_claim or has_group_overage_claim:
                     # Read the user's groups from Microsoft Graph
-                    client = GraphServiceClient(credentials=AuthToken(graph_resource_access_token))
-                    user_groups = await client.me.member_of.get()
-                    for group in user_groups.value:
-                        auth_claims["groups"].append(group.id)
+                    auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
                 return auth_claims
             except:
                 logging.exception("Exception getting authorization information")
