@@ -463,7 +463,7 @@ if __name__ == "__main__":
             openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
             openai.api_version = "2022-12-01"
         else:
-            openai.api_type = args.openaitype
+            openai.api_type = "openai"
             openai.api_key = args.openaikey
             openai.organization = args.openaiorg
 
