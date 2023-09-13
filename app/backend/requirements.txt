@@ -12,3 +12,4 @@ opentelemetry-instrumentation-asgi==0.40b0
 opentelemetry-instrumentation-requests==0.40b0
 opentelemetry-instrumentation-aiohttp-client==0.40b0
 msal==1.23.0
+msal-extensions==1.0.0

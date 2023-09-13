@@ -4,9 +4,11 @@ import logging
 import os
 from typing import Any
 
-import msal
+from msal import ConfidentialClientApplication
+from msal_extensions import build_encrypted_persistence, PersistedTokenCache
 import urllib3
 from quart import request
+from tempfile import TemporaryDirectory
 
 
 class AuthError(Exception):
@@ -19,24 +21,31 @@ class AuthError(Exception):
 
 
 class AuthenticationHelper():
-    _confidential_client: msal.ConfidentialClientApplication = None
+    _confidential_client: ConfidentialClientApplication = None
     _authority: str = None
     _use_authentication: bool = False
     _server_app_id: str = None
     _server_app_secret: str = None
     _client_app_id: str = None
     _tenant_id: str = None
+    _token_cache_path: str = None
+    _temporary_directory: TemporaryDirectory = None
 
-    def __init__(self, use_authentication: bool, server_app_id: str, server_app_secret: str, client_app_id: str, tenant_id: str):
+    def __init__(self, use_authentication: bool, server_app_id: str, server_app_secret: str, client_app_id: str, tenant_id: str, token_cache_path: str):
         self._use_authentication = use_authentication
         self._server_app_id = server_app_id
         self._server_app_secret = server_app_secret
         self._client_app_id = client_app_id
         self._tenant_id = tenant_id
-
         self._authority = "https://login.microsoftonline.com/{}".format(tenant_id)
+
         if self._use_authentication:
-            self._confidential_client = msal.ConfidentialClientApplication(server_app_id, authority=self._authority, client_credential=server_app_secret)
+            self._token_cache_path = token_cache_path
+            if not self._token_cache_path:
+                self._temporary_directory = TemporaryDirectory()
+                self._token_cache_path = os.path.join(self._temporary_directory.name, "token_cache.bin")
+            persistence = build_encrypted_persistence(location=self._token_cache_path)
+            self._confidential_client = ConfidentialClientApplication(server_app_id, authority=self._authority, client_credential=server_app_secret, token_cache=PersistedTokenCache(persistence))
 
     def use_authentication(self):
         return self._use_authentication

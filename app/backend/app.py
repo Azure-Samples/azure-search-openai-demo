@@ -176,11 +176,12 @@ async def setup_clients():
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ["AZURE_OPENAI_CHATGPT_DEPLOYMENT"]
     AZURE_OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     AZURE_OPENAI_EMB_DEPLOYMENT = os.environ["AZURE_OPENAI_EMB_DEPLOYMENT"]
-    AZURE_USE_AUTHENTICATION = os.environ["AZURE_USE_AUTHENTICATION"]
-    AZURE_SERVER_APP_ID = os.environ["AZURE_SERVER_APP_ID"]
-    AZURE_SERVER_APP_SECRET = os.environ["AZURE_SERVER_APP_SECRET"]
-    AZURE_CLIENT_APP_ID = os.environ["AZURE_CLIENT_APP_ID"]
-    AZURE_TENANT_ID = os.environ["AZURE_TENANT_ID"]
+    AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION")
+    AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
+    AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
+    AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
+    AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
+    TOKEN_CACHE_PATH = os.getenv("TOKEN_CACHE_PATH")
 
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
@@ -192,7 +193,7 @@ async def setup_clients():
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
     # Set up authentication helper
-    auth_helper = AuthenticationHelper(use_authentication=AZURE_USE_AUTHENTICATION, server_app_id=AZURE_SERVER_APP_ID, server_app_secret=AZURE_SERVER_APP_SECRET, client_app_id=AZURE_CLIENT_APP_ID, tenant_id=AZURE_TENANT_ID)
+    auth_helper = AuthenticationHelper(use_authentication=AZURE_USE_AUTHENTICATION, server_app_id=AZURE_SERVER_APP_ID, server_app_secret=AZURE_SERVER_APP_SECRET, client_app_id=AZURE_CLIENT_APP_ID, tenant_id=AZURE_TENANT_ID, token_cache_path=TOKEN_CACHE_PATH)
 
     # Set up clients for Cognitive Search and Storage
     search_client = SearchClient(endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net", index_name=AZURE_SEARCH_INDEX, credential=azure_credential)
