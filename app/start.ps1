@@ -65,7 +65,7 @@ Write-Host "Starting backend"
 Write-Host ""
 Set-Location ../backend
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m quart --app main:app run --port 50505 --reload" -Wait -NoNewWindow
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m quart --app main:app run --port 50505 --host localhost --reload" -Wait -NoNewWindow
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start backend"
