@@ -118,7 +118,9 @@ async def chat():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run_without_streaming(request_json["history"], request_json.get("overrides", {}), auth_claims)
+            r = await impl.run_without_streaming(
+                request_json["history"], request_json.get("overrides", {}), auth_claims
+            )
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
@@ -142,7 +144,9 @@ async def chat_stream():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}), auth_claims)
+        response_generator = impl.run_with_streaming(
+            request_json["history"], request_json.get("overrides", {}), auth_claims
+        )
         response = await make_response(format_as_ndjson(response_generator))
         response.timeout = None  # type: ignore
         return response
@@ -162,7 +166,9 @@ def auth_setup():
 async def ensure_openai_token():
     openai_token = current_app.config[CONFIG_OPENAI_TOKEN]
     if openai_token.expires_on < time.time() + 60:
-        openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token("https://cognitiveservices.azure.com/.default")
+        openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token(
+            "https://cognitiveservices.azure.com/.default"
+        )
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
         openai.api_key = openai_token.token
 
@@ -195,11 +201,24 @@ async def setup_clients():
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
     # Set up authentication helper
-    auth_helper = AuthenticationHelper(use_authentication=AZURE_USE_AUTHENTICATION, server_app_id=AZURE_SERVER_APP_ID, server_app_secret=AZURE_SERVER_APP_SECRET, client_app_id=AZURE_CLIENT_APP_ID, tenant_id=AZURE_TENANT_ID, token_cache_path=TOKEN_CACHE_PATH)
+    auth_helper = AuthenticationHelper(
+        use_authentication=AZURE_USE_AUTHENTICATION,
+        server_app_id=AZURE_SERVER_APP_ID,
+        server_app_secret=AZURE_SERVER_APP_SECRET,
+        client_app_id=AZURE_CLIENT_APP_ID,
+        tenant_id=AZURE_TENANT_ID,
+        token_cache_path=TOKEN_CACHE_PATH,
+    )
 
     # Set up clients for Cognitive Search and Storage
-    search_client = SearchClient(endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net", index_name=AZURE_SEARCH_INDEX, credential=azure_credential)
-    blob_client = BlobServiceClient(account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential)
+    search_client = SearchClient(
+        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        index_name=AZURE_SEARCH_INDEX,
+        credential=azure_credential,
+    )
+    blob_client = BlobServiceClient(
+        account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
+    )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
@@ -218,9 +237,28 @@ async def setup_clients():
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACHES] = {
-        "rtr": RetrieveThenReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_CHATGPT_MODEL, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-        "rrr": ReadRetrieveReadApproach(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
-        "rda": ReadDecomposeAsk(search_client, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_EMB_DEPLOYMENT, KB_FIELDS_SOURCEPAGE, KB_FIELDS_CONTENT),
+        "rtr": RetrieveThenReadApproach(
+            search_client,
+            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            AZURE_OPENAI_CHATGPT_MODEL,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT,
+        ),
+        "rrr": ReadRetrieveReadApproach(
+            search_client,
+            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT,
+        ),
+        "rda": ReadDecomposeAsk(
+            search_client,
+            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT,
+        ),
     }
     current_app.config[CONFIG_CHAT_APPROACHES] = {
         "rrr": ChatReadRetrieveReadApproach(

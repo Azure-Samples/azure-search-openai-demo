@@ -18,14 +18,23 @@ from text import nonewlines
 
 
 class ReadDecomposeAsk(AskApproach):
-    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(
+        self,
+        search_client: SearchClient,
+        openai_deployment: str,
+        embedding_deployment: str,
+        sourcepage_field: str,
+        content_field: str,
+    ):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    async def search(self, query_text: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> tuple[list[str], str]:
+    async def search(
+        self, query_text: str, overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ) -> tuple[list[str], str]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -42,7 +51,9 @@ class ReadDecomposeAsk(AskApproach):
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][
+                0
+            ]["embedding"]
         else:
             query_vector = None
 
@@ -65,15 +76,35 @@ class ReadDecomposeAsk(AskApproach):
                 vector_fields="embedding" if query_vector else None,
             )
         else:
-            r = await self.search_client.search(query_text, filter=filter, top=top, vector=query_vector, top_k=50 if query_vector else None, vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                top=top,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc["@search.captions"]])) async for doc in r]
+            results = [
+                doc[self.sourcepage_field] + ":" + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
+                async for doc in r
+            ]
         else:
             results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:500]) async for doc in r]
         return results, "\n".join(results)
 
     async def lookup(self, q: str) -> Optional[str]:
-        r = await self.search_client.search(q, top=1, include_total_count=True, query_type=QueryType.SEMANTIC, query_language="en-us", query_speller="lexicon", semantic_configuration_name="default", query_answer="extractive|count-1", query_caption="extractive|highlight-false")
+        r = await self.search_client.search(
+            q,
+            top=1,
+            include_total_count=True,
+            query_type=QueryType.SEMANTIC,
+            query_language="en-us",
+            query_speller="lexicon",
+            semantic_configuration_name="default",
+            query_answer="extractive|count-1",
+            query_caption="extractive|highlight-false",
+        )
 
         answers = await r.get_answers()
         if answers and len(answers) > 0:
@@ -94,14 +125,35 @@ class ReadDecomposeAsk(AskApproach):
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        llm = AzureOpenAI(
+            deployment_name=self.openai_deployment,
+            temperature=overrides.get("temperature") or 0.3,
+            openai_api_key=openai.api_key,
+        )
         tools = [
-            Tool(name="Search", func=lambda _: "Not implemented", coroutine=search_and_store, description="useful for when you need to ask with search", callbacks=cb_manager),
-            Tool(name="Lookup", func=lambda _: "Not implemented", coroutine=self.lookup, description="useful for when you need to ask with lookup", callbacks=cb_manager),
+            Tool(
+                name="Search",
+                func=lambda _: "Not implemented",
+                coroutine=search_and_store,
+                description="useful for when you need to ask with search",
+                callbacks=cb_manager,
+            ),
+            Tool(
+                name="Lookup",
+                func=lambda _: "Not implemented",
+                coroutine=self.lookup,
+                description="useful for when you need to ask with lookup",
+                callbacks=cb_manager,
+            ),
         ]
 
         prompt_prefix = overrides.get("prompt_template")
-        prompt = PromptTemplate.from_examples(EXAMPLES, SUFFIX, ["input", "agent_scratchpad"], prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX)
+        prompt = PromptTemplate.from_examples(
+            EXAMPLES,
+            SUFFIX,
+            ["input", "agent_scratchpad"],
+            prompt_prefix + "\n\n" + PREFIX if prompt_prefix else PREFIX,
+        )
 
         class ReAct(ReActDocstoreAgent):
             @classmethod

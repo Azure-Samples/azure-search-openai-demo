@@ -49,7 +49,14 @@ Thought: {agent_scratchpad}"""
 
     CognitiveSearchToolDescription = "useful for searching the Microsoft employee benefits information such as healthcare plans, retirement plans, etc."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(
+        self,
+        search_client: SearchClient,
+        openai_deployment: str,
+        embedding_deployment: str,
+        sourcepage_field: str,
+        content_field: str,
+    ):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.embedding_deployment = embedding_deployment
@@ -73,7 +80,9 @@ Thought: {agent_scratchpad}"""
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text))["data"][
+                0
+            ]["embedding"]
         else:
             query_vector = None
 
@@ -97,9 +106,19 @@ Thought: {agent_scratchpad}"""
                 vector_fields="embedding" if query_vector else None,
             )
         else:
-            r = await self.search_client.search(query_text, filter=filter, top=top, vector=query_vector, top_k=50 if query_vector else None, vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                top=top,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc["@search.captions"]])) async for doc in r]
+            results = [
+                doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc["@search.captions"]]))
+                async for doc in r
+            ]
         else:
             results = [doc[self.sourcepage_field] + ":" + nonewlines(doc[self.content_field][:250]) async for doc in r]
         content = "\n".join(results)
@@ -117,14 +136,31 @@ Thought: {agent_scratchpad}"""
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        acs_tool = Tool(name="CognitiveSearch", func=lambda _: "Not implemented", coroutine=retrieve_and_store, description=self.CognitiveSearchToolDescription, callbacks=cb_manager)
+        acs_tool = Tool(
+            name="CognitiveSearch",
+            func=lambda _: "Not implemented",
+            coroutine=retrieve_and_store,
+            description=self.CognitiveSearchToolDescription,
+            callbacks=cb_manager,
+        )
         employee_tool = EmployeeInfoTool("Employee1", callbacks=cb_manager)
         tools = [acs_tool, employee_tool]
 
-        prompt = ZeroShotAgent.create_prompt(tools=tools, prefix=overrides.get("prompt_template_prefix") or self.template_prefix, suffix=overrides.get("prompt_template_suffix") or self.template_suffix, input_variables=["input", "agent_scratchpad"])
-        llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
+        prompt = ZeroShotAgent.create_prompt(
+            tools=tools,
+            prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
+            suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
+            input_variables=["input", "agent_scratchpad"],
+        )
+        llm = AzureOpenAI(
+            deployment_name=self.openai_deployment,
+            temperature=overrides.get("temperature") or 0.3,
+            openai_api_key=openai.api_key,
+        )
         chain = LLMChain(llm=llm, prompt=prompt)
-        agent_exec = AgentExecutor.from_agent_and_tools(agent=ZeroShotAgent(llm_chain=chain), tools=tools, verbose=True, callback_manager=cb_manager)
+        agent_exec = AgentExecutor.from_agent_and_tools(
+            agent=ZeroShotAgent(llm_chain=chain), tools=tools, verbose=True, callback_manager=cb_manager
+        )
         result = await agent_exec.arun(q)
 
         # Remove references to tool names that might be confused with a citation
@@ -137,7 +173,13 @@ class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""
 
     def __init__(self, employee_name: str, callbacks: Callbacks = None):
-        super().__init__(filename="data/employeeinfo.csv", key_field="name", name="Employee", description="useful for answering questions about the employee, their benefits and other personal information", callbacks=callbacks)
+        super().__init__(
+            filename="data/employeeinfo.csv",
+            key_field="name",
+            name="Employee",
+            description="useful for answering questions about the employee, their benefits and other personal information",
+            callbacks=callbacks,
+        )
         self.func = lambda _: "Not implemented"
         self.coroutine = self.employee_info
         self.employee_name = employee_name

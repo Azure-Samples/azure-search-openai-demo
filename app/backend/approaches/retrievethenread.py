@@ -38,7 +38,15 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 """
     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(
+        self,
+        search_client: SearchClient,
+        openai_deployment: str,
+        chatgpt_model: str,
+        embedding_deployment: str,
+        sourcepage_field: str,
+        content_field: str,
+    ):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
         self.chatgpt_model = chatgpt_model
@@ -63,7 +71,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=q))["data"][0]["embedding"]
+            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=q))["data"][0][
+                "embedding"
+            ]
         else:
             query_vector = None
 
@@ -86,14 +96,26 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 vector_fields="embedding" if query_vector else None,
             )
         else:
-            r = await self.search_client.search(query_text, filter=filter, top=top, vector=query_vector, top_k=50 if query_vector else None, vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                top=top,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]])) async for doc in r]
+            results = [
+                doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
+                async for doc in r
+            ]
         else:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
         content = "\n".join(results)
 
-        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model)
+        message_builder = MessageBuilder(
+            overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model
+        )
 
         # add user question
         user_content = q + "\n" + f"Sources:\n {content}"
@@ -104,6 +126,18 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.append_message("user", self.question)
 
         messages = message_builder.messages
-        chat_completion = await openai.ChatCompletion.acreate(deployment_id=self.openai_deployment, model=self.chatgpt_model, messages=messages, temperature=overrides.get("temperature") or 0.3, max_tokens=1024, n=1)
+        chat_completion = await openai.ChatCompletion.acreate(
+            deployment_id=self.openai_deployment,
+            model=self.chatgpt_model,
+            messages=messages,
+            temperature=overrides.get("temperature") or 0.3,
+            max_tokens=1024,
+            n=1,
+        )
 
-        return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + "\n\n".join([str(message) for message in messages])}
+        return {
+            "data_points": results,
+            "answer": chat_completion.choices[0].message.content,
+            "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
+            + "\n\n".join([str(message) for message in messages]),
+        }
