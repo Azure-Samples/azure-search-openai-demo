@@ -13,52 +13,39 @@ from tempfile import TemporaryDirectory
 
 # AuthError is raised when the authentication token sent by the client UI cannot be parsed
 class AuthError(Exception):
-    error: str = None
-    status_code: int = None
-
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
 
 class AuthenticationHelper():
-    _confidential_client: ConfidentialClientApplication = None
-    _authority: str = None
-    _use_authentication: bool = False
-    _server_app_id: str = None
-    _server_app_secret: str = None
-    _client_app_id: str = None
-    _tenant_id: str = None
-    _token_cache_path: str = None
-    _temporary_directory: TemporaryDirectory = None
-
     def __init__(self, use_authentication: bool, server_app_id: str, server_app_secret: str, client_app_id: str, tenant_id: str, token_cache_path: str):
-        self._use_authentication = use_authentication
-        self._server_app_id = server_app_id
-        self._server_app_secret = server_app_secret
-        self._client_app_id = client_app_id
-        self._tenant_id = tenant_id
-        self._authority = "https://login.microsoftonline.com/{}".format(tenant_id)
+        self.use_authentication = use_authentication
+        self.server_app_id = server_app_id
+        self.server_app_secret = server_app_secret
+        self.client_app_id = client_app_id
+        self.tenant_id = tenant_id
+        self.authority = "https://login.microsoftonline.com/{}".format(tenant_id)
 
-        if self._use_authentication:
-            self._token_cache_path = token_cache_path
-            if not self._token_cache_path:
-                self._temporary_directory = TemporaryDirectory()
-                self._token_cache_path = os.path.join(self._temporary_directory.name, "token_cache.bin")
-            persistence = build_encrypted_persistence(location=self._token_cache_path)
-            self._confidential_client = ConfidentialClientApplication(server_app_id, authority=self._authority, client_credential=server_app_secret, token_cache=PersistedTokenCache(persistence))
+        if self.use_authentication:
+            self.token_cache_path = token_cache_path
+            if not self.token_cache_path:
+                self.temporary_directory = TemporaryDirectory()
+                self.token_cache_path = os.path.join(self.temporary_directory.name, "token_cache.bin")
+            persistence = build_encrypted_persistence(location=self.token_cache_path)
+            self.confidential_client = ConfidentialClientApplication(server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=PersistedTokenCache(persistence))
 
     def use_authentication(self):
-        return self._use_authentication
+        return self.use_authentication
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
-            "useLogin": self._use_authentication,  # Whether or not login elements are enabled on the UI
+            "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
             "msalConfig": {
                 "auth": {
-                    "clientId": self._client_app_id,  # Client app id used for login
-                    "authority": self._authority,  # Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
+                    "clientId": self.client_app_id,  # Client app id used for login
+                    "authority": self.authority,  # Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
                     "redirectUri": "/redirect",  # Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
                     "postLogoutRedirectUri": "/",  # Indicates the page to navigate after logout.
                     "navigateToLoginRequestUrl": False,  # If "true", will navigate back to the original request location before processing the auth code response.
@@ -70,7 +57,7 @@ class AuthenticationHelper():
                 # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
                 # For more information about OIDC scopes, visit:
                 # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-                "scopes": ["api://{}/.default".format(self._server_app_id)]
+                "scopes": ["api://{}/.default".format(self.server_app_id)]
             },
         }
 
@@ -134,14 +121,14 @@ class AuthenticationHelper():
         return groups
 
     async def get_auth_claims_if_enabled(self) -> dict[str:Any]:
-        if not self._use_authentication:
+        if not self.use_authentication:
             return {}
         try:
             # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
             # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
             # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
             auth_token = AuthenticationHelper.get_token_auth_header()
-            graph_resource_access_token = self._confidential_client.acquire_token_on_behalf_of(user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"])
+            graph_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"])
             if "error" in graph_resource_access_token:
                 raise AuthError(error=str(graph_resource_access_token), status_code=401)
 

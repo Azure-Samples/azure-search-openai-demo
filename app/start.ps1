@@ -65,6 +65,7 @@ Write-Host "Starting backend"
 Write-Host ""
 Set-Location ../backend
 
+# f"https://{env('CODESPACE_NAME')}-8000.{env('GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN')}"
 Start-Process -FilePath $venvPythonPath -ArgumentList "-m quart --app main:app run --port 50505 --host localhost --reload" -Wait -NoNewWindow
 
 if ($LASTEXITCODE -ne 0) {
