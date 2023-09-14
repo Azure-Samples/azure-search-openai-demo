@@ -27,16 +27,16 @@ class ReadRetrieveReadApproach(AskApproach):
     """
 
     template_prefix = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
-"Answer the question using only the data provided in the information sources below. " \
-"For tabular information return it as an html table. Do not return markdown format. " \
-"Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
-"For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
-"It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
-"If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
-"Never quote tool names as sources." \
-"If you cannot answer using the sources below, say that you don't know. " \
-"\n\nYou can access to the following tools:"
+        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " \
+        "Answer the question using only the data provided in the information sources below. " \
+        "For tabular information return it as an html table. Do not return markdown format. " \
+        "Each source has a name followed by colon and the actual data, quote the source name for each piece of data you use in the response. " \
+        "For example, if the question is \"What color is the sky?\" and one of the information sources says \"info123: the sky is blue whenever it's not cloudy\", then answer with \"The sky is blue [info123]\" " \
+        "It's important to strictly follow the format where the name of the source is in square brackets at the end of the sentence, and only up to the prefix before the colon (\":\"). " \
+        "If there are multiple sources, cite each one in their own square brackets. For example, use \"[info343][ref-76]\" and not \"[info343,ref-76]\". " \
+        "Never quote tool names as sources." \
+        "If you cannot answer using the sources below, say that you don't know. " \
+        "\n\nYou can access to the following tools:"
 
     template_suffix = """
 Begin!
@@ -75,23 +75,23 @@ Thought: {agent_scratchpad}"""
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC,
-                                          query_language="en-us",
-                                          query_speller="lexicon",
-                                          semantic_configuration_name="default",
-                                          top = top,
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+                                                filter=filter,
+                                                query_type=QueryType.SEMANTIC,
+                                                query_language="en-us",
+                                                query_speller="lexicon",
+                                                semantic_configuration_name="default",
+                                                top=top,
+                                                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                                                vector=query_vector,
+                                                top_k=50 if query_vector else None,
+                                                vector_fields="embedding" if query_vector else None)
         else:
             r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          top=top,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+                                                filter=filter,
+                                                top=top,
+                                                vector=query_vector,
+                                                top_k=50 if query_vector else None,
+                                                vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ":" + nonewlines(" -.- ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
@@ -102,6 +102,7 @@ Thought: {agent_scratchpad}"""
     async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
 
         retrieve_results = None
+
         async def retrieve_and_store(q: str) -> Any:
             nonlocal retrieve_results
             retrieve_results, content = await self.retrieve(q, overrides)
@@ -123,20 +124,21 @@ Thought: {agent_scratchpad}"""
             tools=tools,
             prefix=overrides.get("prompt_template_prefix") or self.template_prefix,
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
-            input_variables = ["input", "agent_scratchpad"])
+            input_variables=["input", "agent_scratchpad"])
         llm = AzureOpenAI(deployment_name=self.openai_deployment, temperature=overrides.get("temperature") or 0.3, openai_api_key=openai.api_key)
-        chain = LLMChain(llm = llm, prompt = prompt)
+        chain = LLMChain(llm=llm, prompt=prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
-            agent = ZeroShotAgent(llm_chain = chain),
-            tools = tools,
-            verbose = True,
-            callback_manager = cb_manager)
+            agent=ZeroShotAgent(llm_chain=chain),
+            tools=tools,
+            verbose=True,
+            callback_manager=cb_manager)
         result = await agent_exec.arun(q)
 
         # Remove references to tool names that might be confused with a citation
         result = result.replace("[CognitiveSearch]", "").replace("[Employee]", "")
 
         return {"data_points": retrieve_results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
+
 
 class EmployeeInfoTool(CsvLookupTool):
     employee_name: str = ""

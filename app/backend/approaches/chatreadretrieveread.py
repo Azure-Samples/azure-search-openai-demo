@@ -41,10 +41,10 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
-        {'role' : USER, 'content' : 'What are my health plans?' },
-        {'role' : ASSISTANT, 'content' : 'Show available health plans' },
-        {'role' : USER, 'content' : 'does my plan cover cardio?' },
-        {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
+        {'role': USER, 'content': 'What are my health plans?'},
+        {'role': ASSISTANT, 'content': 'Show available health plans'},
+        {'role': USER, 'content': 'does my plan cover cardio?'},
+        {'role': ASSISTANT, 'content': 'Health plan cardio coverage'}
     ]
 
     def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
@@ -74,7 +74,7 @@ If you cannot generate a search query, return just the number 0.
             user_q,
             self.query_prompt_few_shots,
             self.chatgpt_token_limit - len(user_q)
-            )
+        )
 
         chat_completion = await openai.ChatCompletion.acreate(
             deployment_id=self.chatgpt_deployment,
@@ -86,7 +86,7 @@ If you cannot generate a search query, return just the number 0.
 
         query_text = chat_completion.choices[0].message.content
         if query_text.strip() == "0":
-            query_text = history[-1]["user"] # Use the last user input if we failed to generate a better query
+            query_text = history[-1]["user"]  # Use the last user input if we failed to generate a better query
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -103,23 +103,23 @@ If you cannot generate a search query, return just the number 0.
         # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC,
-                                          query_language="en-us",
-                                          query_speller="lexicon",
-                                          semantic_configuration_name="default",
-                                          top=top,
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+                                                filter=filter,
+                                                query_type=QueryType.SEMANTIC,
+                                                query_language="en-us",
+                                                query_speller="lexicon",
+                                                semantic_configuration_name="default",
+                                                top=top,
+                                                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                                                vector=query_vector,
+                                                top_k=50 if query_vector else None,
+                                                vector_fields="embedding" if query_vector else None)
         else:
             r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          top=top,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+                                                filter=filter,
+                                                top=top,
+                                                vector=query_vector,
+                                                top_k=50 if query_vector else None,
+                                                vector_fields="embedding" if query_vector else None)
         if use_semantic_captions:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) async for doc in r]
         else:
@@ -143,19 +143,19 @@ If you cannot generate a search query, return just the number 0.
             system_message,
             self.chatgpt_model,
             history,
-            history[-1]["user"]+ "\n\nSources:\n" + content, # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
+            history[-1]["user"] + "\n\nSources:\n" + content,  # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             max_tokens=self.chatgpt_token_limit)
         msg_to_display = '\n\n'.join([str(message) for message in messages])
 
         extra_info = {"data_points": results, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
         chat_coroutine = openai.ChatCompletion.acreate(
-                deployment_id=self.chatgpt_deployment,
-                model=self.chatgpt_model,
-                messages=messages,
-                temperature=overrides.get("temperature") or 0.7,
-                max_tokens=1024,
-                n=1,
-                stream=should_stream)
+            deployment_id=self.chatgpt_deployment,
+            model=self.chatgpt_model,
+            messages=messages,
+            temperature=overrides.get("temperature") or 0.7,
+            max_tokens=1024,
+            n=1,
+            stream=should_stream)
         return (extra_info, chat_coroutine)
 
     async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
@@ -170,8 +170,7 @@ If you cannot generate a search query, return just the number 0.
         async for event in await chat_coroutine:
             yield event
 
-
-    def get_messages_from_history(self, system_prompt: str, model_id: str, history: list[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> list:
+    def get_messages_from_history(self, system_prompt: str, model_id: str, history: list[dict[str, str]], user_conv: str, few_shots=[], max_tokens: int = 4096) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.

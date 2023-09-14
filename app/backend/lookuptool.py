@@ -16,7 +16,7 @@ class CsvLookupTool(Tool):
         with open(filename, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                self.data[row[key_field]] =  "\n".join([f"{i}:{row[i]}" for i in row])
+                self.data[row[key_field]] = "\n".join([f"{i}:{row[i]}" for i in row])
 
     def lookup(self, key: str) -> str:
         return self.data.get(key, "")

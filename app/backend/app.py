@@ -39,13 +39,16 @@ CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 
 bp = Blueprint("routes", __name__, static_folder='static')
 
+
 @bp.route("/")
 async def index():
     return await bp.send_static_file("index.html")
 
+
 @bp.route("/favicon.ico")
 async def favicon():
     return await bp.send_static_file("favicon.ico")
+
 
 @bp.route("/assets/<path:path>")
 async def assets(path):
@@ -54,6 +57,8 @@ async def assets(path):
 # Serve content files from blob storage from within the app to keep the example self-contained.
 # *** NOTE *** this assumes that the content files are public, or at least that all users of the app
 # can access all the files. This is also slow and memory hungry.
+
+
 @bp.route("/content/<path>")
 async def content_file(path):
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
@@ -67,6 +72,7 @@ async def content_file(path):
     await blob.readinto(blob_file)
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
+
 
 @bp.route("/ask", methods=["POST"])
 async def ask():
@@ -86,6 +92,7 @@ async def ask():
     except Exception as e:
         logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
+
 
 @bp.route("/chat", methods=["POST"])
 async def chat():
@@ -111,6 +118,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
     async for event in r:
         yield json.dumps(event, ensure_ascii=False) + "\n"
 
+
 @bp.route("/chat_stream", methods=["POST"])
 async def chat_stream():
     if not request.is_json:
@@ -123,7 +131,7 @@ async def chat_stream():
             return jsonify({"error": "unknown approach"}), 400
         response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
         response = await make_response(format_as_ndjson(response_generator))
-        response.timeout = None # type: ignore
+        response.timeout = None  # type: ignore
         return response
     except Exception as e:
         logging.exception("Exception in /chat")
@@ -137,6 +145,7 @@ async def ensure_openai_token():
         openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token("https://cognitiveservices.azure.com/.default")
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
         openai.api_key = openai_token.token
+
 
 @bp.before_app_serving
 async def setup_clients():
@@ -158,7 +167,7 @@ async def setup_clients():
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential = True)
+    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
     # Set up clients for Cognitive Search and Storage
     search_client = SearchClient(
@@ -203,11 +212,11 @@ async def setup_clients():
             KB_FIELDS_CONTENT
         ),
         "rda": ReadDecomposeAsk(search_client,
-            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            AZURE_OPENAI_EMB_DEPLOYMENT,
-            KB_FIELDS_SOURCEPAGE,
-            KB_FIELDS_CONTENT
-        )
+                                AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+                                AZURE_OPENAI_EMB_DEPLOYMENT,
+                                KB_FIELDS_SOURCEPAGE,
+                                KB_FIELDS_CONTENT
+                                )
     }
     current_app.config[CONFIG_CHAT_APPROACHES] = {
         "rrr": ChatReadRetrieveReadApproach(

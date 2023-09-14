@@ -8,6 +8,7 @@ def ch(text: Union[str, object]) -> str:
     s = text if isinstance(text, str) else str(text)
     return s.replace("<", "&lt;").replace(">", "&gt;").replace("\r", "").replace("\n", "<br>")
 
+
 class HtmlCallbackHandler (BaseCallbackHandler):
     html: str = ""
 
@@ -77,10 +78,10 @@ class HtmlCallbackHandler (BaseCallbackHandler):
         self.html += f"<span style='color:{color}'>{ch(text)}</span><br>"
 
     def on_agent_action(
-        self,
-        action: AgentAction,
-        color: Optional[str] = None,
-        **kwargs: Any) -> Any:
+            self,
+            action: AgentAction,
+            color: Optional[str] = None,
+            **kwargs: Any) -> Any:
         self.html += f"<span style='color:{color}'>{ch(action.log)}</span><br>"
 
     def on_agent_finish(
