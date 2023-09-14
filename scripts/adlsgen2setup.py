@@ -1,14 +1,15 @@
 import argparse
-import aiohttp
-from azure.identity.aio import AzureDeveloperCliCredential
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.filedatalake.aio import (
-    DataLakeServiceClient,
-    DataLakeDirectoryClient
-)
-import os
 import asyncio
+import os
+
+import aiohttp
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import AzureDeveloperCliCredential
+from azure.storage.filedatalake.aio import (
+    DataLakeDirectoryClient,
+    DataLakeServiceClient,
+)
+
 
 class AdlsGen2Setup:
     async def __aenter__(self):
@@ -29,20 +30,24 @@ class AdlsGen2Setup:
 
     async def run(self):
         token_result = await self.credentials.get_token("https://graph.microsoft.com/.default")
-        self.graph_headers = { "Authorization": f"Bearer {token_result.token}"}
-        if self.verbose: print("Ensuring gptkbcontainer exists...")
+        self.graph_headers = {"Authorization": f"Bearer {token_result.token}"}
+        if self.verbose:
+            print("Ensuring gptkbcontainer exists...")
         async with self.service_client.get_file_system_client("gptkbcontainer") as filesystem_client:
             if not await filesystem_client.exists():
                 await filesystem_client.create_file_system()
 
-            if self.verbose: print("Creating groups...")
+            if self.verbose:
+                print("Creating groups...")
             admin_id = await self.create_or_get_group("GPTKB_AdminTest")
             hr_id = await self.create_or_get_group("GPTKB_HRTest")
             employee_id = await self.create_or_get_group("GPTKB_EmployeeTest")
 
-            if self.verbose: print("Ensuring benefitinfo and employeeinfo directories exist...")
+            if self.verbose:
+                print("Ensuring benefitinfo and employeeinfo directories exist...")
             async with await filesystem_client.create_directory("benefitinfo") as benefit_info, await filesystem_client.create_directory("employeeinfo") as employee_info:
-                if self.verbose: print("Uploading PDFs...")
+                if self.verbose:
+                    print("Uploading PDFs...")
                 await self.upload_file(directory_client=benefit_info, file_path=os.path.join(self.data_directory, "Benefit_Options.pdf"))
                 await self.upload_file(directory_client=benefit_info, file_path=os.path.join(self.data_directory, "Northwind_Health_Plus_Benefits_Details.pdf"))
                 await self.upload_file(directory_client=benefit_info, file_path=os.path.join(self.data_directory, "Northwind_Standard_Benefits_Details.pdf"))
@@ -50,7 +55,8 @@ class AdlsGen2Setup:
                 await self.upload_file(directory_client=employee_info, file_path=os.path.join(self.data_directory, "role_library.pdf"))
                 await self.upload_file(directory_client=employee_info, file_path=os.path.join(self.data_directory, "employee_handbook.pdf"))
 
-                if self.verbose: print("Setting access control...")
+                if self.verbose:
+                    print("Setting access control...")
                 await filesystem_client._get_root_directory_client().set_access_control(acl=f"group:{employee_id}:r-x,group:{hr_id}:r-x")
                 await filesystem_client._get_root_directory_client().update_access_control_recursive(acl=f"group:{admin_id}:r-x")
 
@@ -59,17 +65,16 @@ class AdlsGen2Setup:
                 await benefit_info.update_access_control_recursive(acl=f"group:{hr_id}:r-x")
                 await employee_info.update_access_control_recursive(acl=f"group:{hr_id}:r-x")
 
-
     async def upload_file(self, directory_client: DataLakeDirectoryClient, file_path: str):
         with open(file=file_path, mode="rb") as f:
             file_client = directory_client.get_file_client(file=os.path.basename(file_path))
             await file_client.upload_data(f, overwrite=True)
 
-    
     async def create_or_get_group(self, group_name: str):
         group_id = None
         async with aiohttp.ClientSession(headers=self.graph_headers) as session:
-            if self.verbose: print(f"Searching for group {group_name}...")
+            if self.verbose:
+                print(f"Searching for group {group_name}...")
             async with session.get(f"https://graph.microsoft.com/v1.0/groups?$select=id&$top=1&$filter=displayName eq '{group_name}'") as response:
                 if response.status != 200:
                     raise Exception(await response.json())
@@ -77,26 +82,25 @@ class AdlsGen2Setup:
                 if len(content["value"]) == 1:
                     group_id = content["value"][0]["id"]
             if not group_id:
-                if self.verbose: print(f"Could not find group {group_name}, creating...")
-                group = {
-                    "displayName": group_name,
-                    "groupTypes": [
-                        "Unified"
-                    ],
-                    "securityEnabled": self.security_enabled_groups
-                }
-                async with session.post(f"https://graph.microsoft.com/v1.0/groups", json=group):
+                if self.verbose:
+                    print(f"Could not find group {group_name}, creating...")
+                group = {"displayName": group_name, "groupTypes": ["Unified"], "securityEnabled": self.security_enabled_groups}
+                async with session.post("https://graph.microsoft.com/v1.0/groups", json=group):
                     if response.status != 201:
                         raise Exception(await response.json())
                     group_id = response.json()["id"]
-        
-        if self.verbose: print(f"Group {group_name} ID {group_id}")
+
+        if self.verbose:
+            print(f"Group {group_name} ID {group_id}")
         return group_id
 
 
 async def main(args: any):
-    async with AzureDeveloperCliCredential() as credentials, AdlsGen2Setup(data_directory=args.data_directory, storage_account_name=args.storage_account, filesystem_name="gptkbcontainer", security_enabled_groups=args.create_security_enabled_groups, credentials=credentials, verbose=args.verbose) as command:
+    async with AzureDeveloperCliCredential() as credentials, AdlsGen2Setup(
+        data_directory=args.data_directory, storage_account_name=args.storage_account, filesystem_name="gptkbcontainer", security_enabled_groups=args.create_security_enabled_groups, credentials=credentials, verbose=args.verbose
+    ) as command:
         await command.run()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -108,5 +112,5 @@ if __name__ == "__main__":
     parser.add_argument("--create-security-enabled-groups", required=False, action="store_true", help="Whether or not the sample groups created are security enabled in Azure AD")
     parser.add_argument("--verbose", "-v", required=False, action="store_true", help="Verbose output")
     args = parser.parse_args()
-    
+
     asyncio.run(main(args))

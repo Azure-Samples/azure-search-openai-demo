@@ -2,13 +2,13 @@
 
 import logging
 import os
+from tempfile import TemporaryDirectory
 from typing import Any
 
-from msal import ConfidentialClientApplication
-from msal_extensions import build_encrypted_persistence, PersistedTokenCache
 import urllib3
+from msal import ConfidentialClientApplication
+from msal_extensions import PersistedTokenCache, build_encrypted_persistence
 from quart import request
-from tempfile import TemporaryDirectory
 
 
 # AuthError is raised when the authentication token sent by the client UI cannot be parsed
@@ -18,14 +18,14 @@ class AuthError(Exception):
         self.status_code = status_code
 
 
-class AuthenticationHelper():
+class AuthenticationHelper:
     def __init__(self, use_authentication: bool, server_app_id: str, server_app_secret: str, client_app_id: str, tenant_id: str, token_cache_path: str):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
         self.server_app_secret = server_app_secret
         self.client_app_id = client_app_id
         self.tenant_id = tenant_id
-        self.authority = "https://login.microsoftonline.com/{}".format(tenant_id)
+        self.authority = f"https://login.microsoftonline.com/{tenant_id}"
 
         if self.use_authentication:
             self.token_cache_path = token_cache_path
@@ -57,7 +57,7 @@ class AuthenticationHelper():
                 # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
                 # For more information about OIDC scopes, visit:
                 # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-                "scopes": ["api://{}/.default".format(self.server_app_id)]
+                "scopes": [f"api://{self.server_app_id}/.default"]
             },
         }
 
