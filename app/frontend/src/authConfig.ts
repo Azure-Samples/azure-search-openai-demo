@@ -31,6 +31,9 @@ interface AuthSetup {
          * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
          */
         scopes: Array<string>
+    },
+    tokenRequest: {
+        scopes: Array<string>
     }
 }
 
@@ -48,25 +51,31 @@ const authSetup = await fetchAuthSetup();
 export const useLogin = authSetup.useLogin;
 
 /**
- * Configuration object to be passed to MSAL instance on creation. 
+ * Configuration object to be passed to MSAL instance on creation.
  * For a full list of MSAL.js configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
+ * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
  */
 export const msalConfig = authSetup.msalConfig;
 
 /**
  * Scopes you add here will be prompted for user consent during sign-in.
  * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
- * For more information about OIDC scopes, visit: 
+ * For more information about OIDC scopes, visit:
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = authSetup.loginRequest;
 
+const tokenRequest = authSetup.tokenRequest;
+
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
-export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult> => {
+export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult | undefined> => {
     return client.acquireTokenSilent({
-        ...loginRequest,
+        ...tokenRequest,
         redirectUri: authSetup.msalConfig.auth.redirectUri
+    })
+    .catch((error) => {
+        console.log(error);
+        return undefined;
     })
 }
