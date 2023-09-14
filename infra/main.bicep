@@ -145,7 +145,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
       AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       // Specific to Azure OpenAI
-      AZURE_OPENAI_SERVICE: openAi.outputs.name
+      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAi.outputs.name : ''
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
       // Used only with non-Azure OpenAI deployments
