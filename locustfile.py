@@ -14,9 +14,26 @@ class ChatUser(HttpUser):
         self.client.post(
             "/chat",
             json={
-                "history": [{"user": random.choice(["What is included in my Northwind Health Plus plan that is not in standard?", "What does a Product Manager do?", "What happens in a performance review?", "Whats your whistleblower policy?"])}],
+                "history": [
+                    {
+                        "user": random.choice(
+                            [
+                                "What is included in my Northwind Health Plus plan that is not in standard?",
+                                "What does a Product Manager do?",
+                                "What happens in a performance review?",
+                                "Whats your whistleblower policy?",
+                            ]
+                        )
+                    }
+                ],
                 "approach": "rrr",
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": False, "top": 3, "suggest_followup_questions": False},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "semantic_ranker": True,
+                    "semantic_captions": False,
+                    "top": 3,
+                    "suggest_followup_questions": False,
+                },
             },
         )
         time.sleep(5)
@@ -31,6 +48,12 @@ class ChatUser(HttpUser):
                     {"user": "Does my plan cover eye exams?"},
                 ],
                 "approach": "rrr",
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": False, "top": 3, "suggest_followup_questions": False},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "semantic_ranker": True,
+                    "semantic_captions": False,
+                    "top": 3,
+                    "suggest_followup_questions": False,
+                },
             },
         )

@@ -17,15 +17,15 @@ param applicationInsightsName string = ''
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
-param searchServiceResourceGroupLocation string = location
-
-param searchServiceSkuName string = 'standard'
+param searchServiceLocation string = ''
+param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
+param storageSkuName string // Set in main.parameters.json
 
 @allowed(['azure', 'openai'])
 param openAiHost string // Set in main.parameters.json
@@ -210,7 +210,7 @@ module searchService 'core/search/search-services.bicep' = {
   scope: searchServiceResourceGroup
   params: {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
-    location: searchServiceResourceGroupLocation
+    location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
     authOptions: {
       aadOrApiKey: {
@@ -233,7 +233,7 @@ module storage 'core/storage/storage-account.bicep' = {
     tags: tags
     publicNetworkAccess: 'Enabled'
     sku: {
-      name: 'Standard_LRS'
+      name: storageSkuName
     }
     deleteRetentionPolicy: {
       enabled: true
