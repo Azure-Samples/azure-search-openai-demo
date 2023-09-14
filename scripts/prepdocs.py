@@ -304,7 +304,12 @@ def compute_embedding(text, embedding_deployment, embedding_model):
     return openai.Embedding.create(**embedding_args, model=embedding_model, input=text)["data"][0]["embedding"]
 
 
-@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+@retry(
+    retry=retry_if_exception_type(openai.error.RateLimitError),
+    wait=wait_random_exponential(min=15, max=60),
+    stop=stop_after_attempt(15),
+    before_sleep=before_retry_sleep,
+)
 def compute_embedding_in_batch(texts):
     refresh_openai_token()
     embedding_args = {"deployment_id": args.openaideployment} if args.openaihost == "azure" else {}
@@ -621,6 +626,7 @@ if __name__ == "__main__":
             openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
             openai.api_version = "2023-05-15"
         else:
+            print("using normal openai")
             openai.api_key = args.openaikey
             openai.organization = args.openaiorg
             openai.api_type = "openai"
