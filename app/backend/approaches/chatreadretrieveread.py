@@ -103,7 +103,7 @@ If you cannot generate a search query, return just the number 0.
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            embedding = await openai.Embedding.create(engine=self.embedding_deployment, input=query_text)
+            embedding = await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text)
             query_vector = embedding["data"][0]["embedding"]
         else:
             query_vector = None
