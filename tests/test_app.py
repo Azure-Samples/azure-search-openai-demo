@@ -15,7 +15,6 @@ async def test_missing_env_vars():
             test_app.test_client()
         assert str(exc_info.value) == "Lifespan failure in startup. ''AZURE_OPENAI_EMB_DEPLOYMENT''"
 
-
 @pytest.mark.asyncio
 async def test_index(client):
     response = await client.get("/")
