@@ -411,7 +411,7 @@ def update_embeddings_in_batch(sections):
         yield s
 
 
-def index_sections(filename, sections, acls):
+def index_sections(filename, sections, acls=None):
     if args.verbose:
         print(f"Indexing sections from '{filename}' into search index '{args.index}'")
     search_client = SearchClient(
