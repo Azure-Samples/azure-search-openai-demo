@@ -1,84 +1,102 @@
 import argparse
+import asyncio
+from enum import Enum
 
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity import AzureDeveloperCliCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SearchFieldDataType, SimpleField
 
 
-def enable_acls(credential: AzureKeyCredential | TokenCredential, search_service: str, index: str):
-    index_client = SearchIndexClient(endpoint=f"https://{args.search_service}.search.windows.net/", credential=credential)
-    if args.verbose:
-        print(f"Enabling acls for index {index}")
-    try:
-        index_definition = index_client.get_index(index)
-        if not any(field.name == "oids" for field in index_definition.fields):
-            index_definition.fields.append(SimpleField(name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
-        if not any(field.name == "groups" for field in index_definition.fields):
-            index_definition.fields.append(SimpleField(name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
+class AclActions(Enum):
+    remove_all = 1
+    remove = 2
+    add = 3
+    view = 4
+    enable_acls = 5
 
-        index_client.create_or_update_index(index_definition)
-    except Exception as e:
-        print(f"\tGot an error while updating index {index} -> {e} --> unable to enable acls")
+class ManageAcl:
+    async def __aenter__(self):
+        endpoint = f"https://{self.service_name}.search.windows.net"
+        self.search_client = SearchClient(endpoint=endpoint, credential=self.credentials, index_name=self.index_name)
+        await self.search_client.__aenter__()
+        self.search_index_client = SearchIndexClient(endpoint=endpoint, credential=self.credentials)
+        await self.search_index_client.__aexit__()
+        return self
 
+    async def __aexit__(self, *args, **kwargs):
+        await self.search_client.__aexit__(*args, **kwargs)
+        await self.search_index_client.__aexit__(*args, **kwargs)
 
-def update_acl(credential: AzureKeyCredential | TokenCredential, search_service: str, index: str, acl_type: str, acl_action: str, document: str, acl: str = None):
-    search_client = SearchClient(endpoint=f"https://{args.search_service}.search.windows.net/", credential=credential, index_name=index)
-    filter = f"sourcefile eq '{document}'"
-    result = search_client.search("", filter=filter, select=["id", acl_type], include_total_count=True)
-    if result.get_count() == 0:
-        if args.verbose:
-            print(f"No documents match {document} - exiting")
-        return
+    def __init__(self, service_name: str, index_name: str, document: str, acl_action: AclActions, acl_type: str, acl: str, credentials: AsyncTokenCredential|AzureKeyCredential, verbose: bool = False):
+        self.service_name = service_name
+        self.index_name = index_name
+        self.credentials = credentials
+        self.document = document
+        self.acl_action = acl_action
+        self.acl_type = acl_type
+        self.acl = acl
+        self.verbose = verbose
 
-    documents_to_merge = []
-    for document in result:
-        if acl_action == "view":
-            # Assumes the acls are consistent across all sections of the document
-            print(document[acl_type])
+    async def run(self):
+        if self.acl_action == AclActions.enable_acls:
+            if self.verbose: print(f"Enabling acls for index {self.index_name}")
+            index_definition = await self.search_index_client.get_index(self.index_name)
+            if not any(field.name == "oids" for field in index_definition.fields):
+                index_definition.fields.append(SimpleField(name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
+            if not any(field.name == "groups" for field in index_definition.fields):
+                index_definition.fields.append(SimpleField(name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
+
+            await self.search_index_client.create_or_update_index(index_definition)
             return
 
-        if acl_action == "remove":
-            new_acls = [acl_value for acl_value in document[acl_type] if acl_value != acl]
-        elif acl_action == "add":
-            new_acls = document[acl_type]
-            if not any(acl_value == acl for acl_value in new_acls):
-                new_acls.append(acl)
-        else:
-            new_acls = []
-        documents_to_merge.append({"id": document["id"], acl_type: new_acls})
+        filter = f"sourcefile eq '{self.document}'"
+        result = await self.search_client.search("", filter=filter, select=["id", self.acl_type], include_total_count=True)
+        if await result.get_count() == 0:
+            if args.verbose: print(f"No documents match {self.document} - exiting")
+            return
 
-    search_client.merge_documents(documents=documents_to_merge)
-    if args.verbose:
-        print("ACLs updated")
+        documents_to_merge = []
+        async for document in result:
+            if self.acl_action == "view":
+                # Assumes the acls are consistent across all sections of the document
+                print(document[self.acl_type])
+                return
 
+            if self.acl_action == "remove":
+                new_acls = [acl_value for acl_value in document[self.acl_type] if acl_value != self.acl]
+            elif self.acl_action == "add":
+                new_acls = document[self.acl_type]
+                if not any(acl_value == self.acl for acl_value in new_acls):
+                    new_acls.append(self.acl)
+            else:
+                new_acls = []
+            documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
+
+        await self.search_client.merge_documents(documents=documents_to_merge)
+        if self.verbose: print("ACLs updated")
+
+async def main(args: any):
+    # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
+    azd_credential = AzureDeveloperCliCredential() if args.tenant_id is None else AzureDeveloperCliCredential(tenant_id=args.tenant_id, process_timeout=60)
+    search_credential = azd_credential if args.search_key is None else AzureKeyCredential(args.search_key)
+
+    async with ManageAcl(service_name=args.search_service, index_name=args.index, document=args.document, acl_action=args.acl_action, acl_type=args.acl_type, acl=args.acl, credentials=search_credential, verbose=args.verbose) as command:
+        await command.run()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Manage ACLs in a search index", epilog="Example: manageacl.py --searchservice mysearch --index myindex --enable-acls")
+    parser = argparse.ArgumentParser(description="Manage ACLs in a search index", epilog="Example: manageacl.py --searchservice mysearch --index myindex --acl-action enable_acls")
     parser.add_argument("--search-service", required=True, help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)")
     parser.add_argument("--index", required=True, help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)")
     parser.add_argument("--search-key", required=False, help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)")
-    parser.add_argument("--enable-acls", required=False, action="store_true", help="Optional. Adds fields required for ACL management to the search index if they aren't already-present")
     parser.add_argument("--acl-type", required=False, choices=["oids", "groups"], help="Optional. Type of ACL")
-    parser.add_argument("--acl-action", required=False, choices=["remove", "add", "view", "remove_all"], help="Optional. Whether to remove or add the ACL to the document")
+    parser.add_argument("--acl-action", required=False, choices=["remove", "add", "view", "remove_all", "enable_acls"], help="Optional. Whether to remove or add the ACL to the document, or enable acls on the index")
     parser.add_argument("--acl", required=False, default=None, help="Optional. Value of ACL to add or remove.")
     parser.add_argument("--document", required=False, help="Optional. Name of document to update ACLs for")
     parser.add_argument("--tenant-id", required=False, help="Optional. Use this to define the Azure directory where to authenticate)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
-    # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-    azd_credential = AzureDeveloperCliCredential() if args.tenant_id is None else AzureDeveloperCliCredential(tenant_id=args.tenant_id, process_timeout=60)
-    search_credential = azd_credential if args.search_key is None else AzureKeyCredential(args.search_key)
-
-    if args.enable_acls:
-        enable_acls(search_credential, args.search_service, args.index)
-    elif args.acl_type and args.acl_action and args.document:
-        if args.acl_action in ["remove", "add"] and args.acl is None:
-            print("Error: --acl must be specified if --acl-action is remove or add")
-            exit(1)
-
-        update_acl(search_credential, args.search_service, args.index, args.acl_type, args.acl_action, args.document, args.acl)
-    else:
-        print("Error: Specify either --enable-acls or --acl-type [type] --acl-action [action] --document [document] [--acl acl_value]")
+    asyncio.run(main(args))
