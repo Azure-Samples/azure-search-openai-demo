@@ -17,6 +17,7 @@ class AclActions(Enum):
     view = 4
     enable_acls = 5
 
+
 class ManageAcl:
     async def __aenter__(self):
         endpoint = f"https://{self.service_name}.search.windows.net"
@@ -30,7 +31,7 @@ class ManageAcl:
         await self.search_client.__aexit__(*args, **kwargs)
         await self.search_index_client.__aexit__(*args, **kwargs)
 
-    def __init__(self, service_name: str, index_name: str, document: str, acl_action: AclActions, acl_type: str, acl: str, credentials: AsyncTokenCredential|AzureKeyCredential, verbose: bool = False):
+    def __init__(self, service_name: str, index_name: str, document: str, acl_action: AclActions, acl_type: str, acl: str, credentials: AsyncTokenCredential | AzureKeyCredential, verbose: bool = False):
         self.service_name = service_name
         self.index_name = index_name
         self.credentials = credentials
@@ -42,7 +43,8 @@ class ManageAcl:
 
     async def run(self):
         if self.acl_action == AclActions.enable_acls:
-            if self.verbose: print(f"Enabling acls for index {self.index_name}")
+            if self.verbose:
+                print(f"Enabling acls for index {self.index_name}")
             index_definition = await self.search_index_client.get_index(self.index_name)
             if not any(field.name == "oids" for field in index_definition.fields):
                 index_definition.fields.append(SimpleField(name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True))
@@ -55,7 +57,8 @@ class ManageAcl:
         filter = f"sourcefile eq '{self.document}'"
         result = await self.search_client.search("", filter=filter, select=["id", self.acl_type], include_total_count=True)
         if await result.get_count() == 0:
-            if args.verbose: print(f"No documents match {self.document} - exiting")
+            if args.verbose:
+                print(f"No documents match {self.document} - exiting")
             return
 
         documents_to_merge = []
@@ -76,7 +79,9 @@ class ManageAcl:
             documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
 
         await self.search_client.merge_documents(documents=documents_to_merge)
-        if self.verbose: print("ACLs updated")
+        if self.verbose:
+            print("ACLs updated")
+
 
 async def main(args: any):
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
@@ -85,6 +90,7 @@ async def main(args: any):
 
     async with ManageAcl(service_name=args.search_service, index_name=args.index, document=args.document, acl_action=args.acl_action, acl_type=args.acl_type, acl=args.acl, credentials=search_credential, verbose=args.verbose) as command:
         await command.run()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage ACLs in a search index", epilog="Example: manageacl.py --searchservice mysearch --index myindex --acl-action enable_acls")
