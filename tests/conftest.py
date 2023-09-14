@@ -114,6 +114,7 @@ envs = [
     },
 ]
 
+
 @pytest_asyncio.fixture(params=envs)
 async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")

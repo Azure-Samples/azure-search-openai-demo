@@ -47,7 +47,6 @@ If you cannot generate a search query, return just the number 0.
         {"role": ASSISTANT, "content": "Health plan cardio coverage"},
     ]
 
-
     def __init__(
         self,
         search_client: SearchClient,
@@ -55,7 +54,7 @@ If you cannot generate a search query, return just the number 0.
         chatgpt_deployment: str,
         chatgpt_model: str,
         embedding_deployment: str,
-        embedding_deployment: str,
+        embedding_model: str,
         sourcepage_field: str,
         content_field: str,
     ):

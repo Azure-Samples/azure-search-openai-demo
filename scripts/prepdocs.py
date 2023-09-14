@@ -271,7 +271,7 @@ def filename_to_id(filename):
     filename_hash = base64.b16encode(filename.encode("utf-8")).decode("ascii")
     return f"file-{filename_ascii}-{filename_hash}"
 
-  
+
 def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None, embedding_model: str = None):
     file_id = filename_to_id(filename)
     for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
@@ -290,7 +290,6 @@ def create_sections(filename, page_map, use_vectors, embedding_deployment: str =
 def before_retry_sleep(retry_state):
     if args.verbose:
         print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
-
 
 
 @retry(
@@ -458,7 +457,13 @@ def refresh_openai_token():
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
 
-def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None, embedding_model: str = None):
+def read_files(
+    path_pattern: str,
+    use_vectors: bool,
+    vectors_batch_support: bool,
+    embedding_deployment: str = None,
+    embedding_model: str = None,
+):
     """
     Recursively read directory structure under `path_pattern`
     and execute indexing for the individual files

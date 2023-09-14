@@ -70,10 +70,8 @@ Thought: {agent_scratchpad}"""
 
     async def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in [
-            "vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get(
-            "semantic_captions") and has_text else False
+        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
@@ -153,13 +151,17 @@ Thought: {agent_scratchpad}"""
             input_variables=["input", "agent_scratchpad"],
         )
         if self.openai_type == "azure":
-            llm = AzureOpenAI(deployment_name=self.openai_deployment,
-                              temperature=overrides.get("temperature", 0.3),
-                              openai_api_key=openai.api_key)
+            llm = AzureOpenAI(
+                deployment_name=self.openai_deployment,
+                temperature=overrides.get("temperature", 0.3),
+                openai_api_key=openai.api_key,
+            )
         else:
-            llm = OpenAI(model_name=self.openai_model,
-                         temperature=overrides.get("temperature", 0.3),
-                         openai_api_key=openai.api_key)
+            llm = OpenAI(
+                model_name=self.openai_model,
+                temperature=overrides.get("temperature", 0.3),
+                openai_api_key=openai.api_key,
+            )
 
         chain = LLMChain(llm=llm, prompt=prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
@@ -168,7 +170,7 @@ Thought: {agent_scratchpad}"""
         result = await agent_exec.arun(q)
 
         # Remove references to tool names that might be confused with a citation
-        result = result.replace("[CognitiveSearch]","").replace("[Employee]", "")
+        result = result.replace("[CognitiveSearch]", "").replace("[Employee]", "")
 
         return {"data_points": retrieve_results or [], "answer": result, "thoughts": cb_handler.get_and_reset_log()}
 

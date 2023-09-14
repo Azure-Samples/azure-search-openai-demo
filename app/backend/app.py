@@ -249,7 +249,7 @@ async def setup_clients():
             AZURE_OPENAI_EMB_DEPLOYMENT,
             OPENAI_EMB_MODEL,
             KB_FIELDS_SOURCEPAGE,
-            KB_FIELDS_CONTENT
+            KB_FIELDS_CONTENT,
         )
     }
 
