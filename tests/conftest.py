@@ -19,6 +19,10 @@ class MockAzureCredential:
 @pytest.fixture
 def mock_openai_embedding(monkeypatch):
     async def mock_acreate(*args, **kwargs):
+        if openai.api_type == "openai":
+            assert kwargs.get("deployment_id") is None
+        else:
+            assert kwargs.get("deployment_id") is not None
         return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
 
     monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
@@ -42,6 +46,10 @@ def mock_openai_chatcompletion(monkeypatch):
                 raise StopAsyncIteration
 
     async def mock_acreate(*args, **kwargs):
+        if openai.api_type == "openai":
+            assert kwargs.get("deployment_id") is None
+        else:
+            assert kwargs.get("deployment_id") is not None
         messages = kwargs["messages"]
         if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
@@ -92,16 +100,30 @@ def mock_acs_search(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
 
-@pytest_asyncio.fixture
-async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search):
+envs = [
+    {
+        "OPENAI_HOST": "openai",
+        "OPENAI_API_KEY": "secretkey",
+        "OPENAI_ORGANIZATION": "organization",
+    },
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+    },
+]
+
+
+@pytest_asyncio.fixture(params=envs)
+async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
     monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
     monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
-    monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
-    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "test-chatgpt")
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
-    monkeypatch.setenv("AZURE_OPENAI_EMB_DEPLOYMENT", "test-ada")
+    for key, value in request.param.items():
+        monkeypatch.setenv(key, value)
 
     with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
         mock_default_azure_credential.return_value = MockAzureCredential()

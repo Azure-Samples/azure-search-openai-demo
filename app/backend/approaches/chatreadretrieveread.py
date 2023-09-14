@@ -50,16 +50,20 @@ If you cannot generate a search query, return just the number 0.
     def __init__(
         self,
         search_client: SearchClient,
+        openai_host: str,
         chatgpt_deployment: str,
         chatgpt_model: str,
         embedding_deployment: str,
+        embedding_model: str,
         sourcepage_field: str,
         content_field: str,
     ):
         self.search_client = search_client
+        self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_deployment = embedding_deployment
+        self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
@@ -86,8 +90,9 @@ If you cannot generate a search query, return just the number 0.
             self.chatgpt_token_limit - len(user_q),
         )
 
+        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
         chat_completion = await openai.ChatCompletion.acreate(
-            deployment_id=self.chatgpt_deployment,
+            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=0.0,
@@ -103,7 +108,8 @@ If you cannot generate a search query, return just the number 0.
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            embedding = await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text)
+            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
+            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=query_text)
             query_vector = embedding["data"][0]["embedding"]
         else:
             query_vector = None
@@ -181,7 +187,7 @@ If you cannot generate a search query, return just the number 0.
             + msg_to_display.replace("\n", "<br>"),
         }
         chat_coroutine = openai.ChatCompletion.acreate(
-            deployment_id=self.chatgpt_deployment,
+            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,

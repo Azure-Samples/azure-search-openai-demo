@@ -139,6 +139,8 @@ async def chat_stream():
 
 @bp.before_request
 async def ensure_openai_token():
+    if openai.api_type != "azure_ad":
+        return
     openai_token = current_app.config[CONFIG_OPENAI_TOKEN]
     if openai_token.expires_on < time.time() + 60:
         openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token(
@@ -155,10 +157,17 @@ async def setup_clients():
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
-    AZURE_OPENAI_SERVICE = os.environ["AZURE_OPENAI_SERVICE"]
-    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.environ["AZURE_OPENAI_CHATGPT_DEPLOYMENT"]
-    AZURE_OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    AZURE_OPENAI_EMB_DEPLOYMENT = os.environ["AZURE_OPENAI_EMB_DEPLOYMENT"]
+    # Shared by all OpenAI deployments
+    OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
+    OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
+    # Used with Azure OpenAI deployments
+    AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
+    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
+    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
+    # Used only with non-Azure OpenAI deployments
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
 
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
@@ -181,14 +190,19 @@ async def setup_clients():
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
-    openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-    openai.api_version = "2023-05-15"
-    openai.api_type = "azure_ad"
-    openai_token = await azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-    openai.api_key = openai_token.token
+    if OPENAI_HOST == "azure":
+        openai.api_type = "azure_ad"
+        openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
+        openai.api_version = "2023-05-15"
+        openai_token = await azure_credential.get_token("https://cognitiveservices.azure.com/.default")
+        openai.api_key = openai_token.token
+        # Store on app.config for later use inside requests
+        current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
+    else:
+        openai.api_type = "openai"
+        openai.api_key = OPENAI_API_KEY
+        openai.organization = OPENAI_ORGANIZATION
 
-    # Store on app.config for later use inside requests
-    current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
 
@@ -197,23 +211,31 @@ async def setup_clients():
     current_app.config[CONFIG_ASK_APPROACHES] = {
         "rtr": RetrieveThenReadApproach(
             search_client,
+            OPENAI_HOST,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            AZURE_OPENAI_CHATGPT_MODEL,
+            OPENAI_CHATGPT_MODEL,
             AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
             KB_FIELDS_SOURCEPAGE,
             KB_FIELDS_CONTENT,
         ),
         "rrr": ReadRetrieveReadApproach(
             search_client,
+            OPENAI_HOST,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            OPENAI_CHATGPT_MODEL,
             AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
             KB_FIELDS_SOURCEPAGE,
             KB_FIELDS_CONTENT,
         ),
         "rda": ReadDecomposeAsk(
             search_client,
+            OPENAI_HOST,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            OPENAI_CHATGPT_MODEL,
             AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
             KB_FIELDS_SOURCEPAGE,
             KB_FIELDS_CONTENT,
         ),
@@ -221,9 +243,11 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_APPROACHES] = {
         "rrr": ChatReadRetrieveReadApproach(
             search_client,
+            OPENAI_HOST,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            AZURE_OPENAI_CHATGPT_MODEL,
+            OPENAI_CHATGPT_MODEL,
             AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
             KB_FIELDS_SOURCEPAGE,
             KB_FIELDS_CONTENT,
         )

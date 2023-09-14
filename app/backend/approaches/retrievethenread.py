@@ -40,15 +40,19 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
     def __init__(
         self,
         search_client: SearchClient,
-        openai_deployment: str,
+        openai_host: str,
+        chatgpt_deployment: str,
         chatgpt_model: str,
         embedding_deployment: str,
+        embedding_model: str,
         sourcepage_field: str,
         content_field: str,
     ):
         self.search_client = search_client
-        self.openai_deployment = openai_deployment
+        self.openai_host = openai_host
+        self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
+        self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
@@ -63,7 +67,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            embedding = await openai.Embedding.acreate(engine=self.embedding_deployment, input=q)
+            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
+            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=q)
             query_vector = embedding["data"][0]["embedding"]
         else:
             query_vector = None
@@ -117,8 +122,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.append_message("user", self.question)
 
         messages = message_builder.messages
+        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
         chat_completion = await openai.ChatCompletion.acreate(
-            deployment_id=self.openai_deployment,
+            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.3,

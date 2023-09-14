@@ -6,7 +6,7 @@ from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
-from langchain.llms.openai import AzureOpenAI
+from langchain.llms.openai import AzureOpenAI, OpenAI
 
 from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
@@ -51,16 +51,22 @@ Thought: {agent_scratchpad}"""
     def __init__(
         self,
         search_client: SearchClient,
+        openai_host: str,
         openai_deployment: str,
+        openai_model: str,
         embedding_deployment: str,
+        embedding_model: str,
         sourcepage_field: str,
         content_field: str,
     ):
         self.search_client = search_client
         self.openai_deployment = openai_deployment
+        self.openai_model = openai_model
         self.embedding_deployment = embedding_deployment
+        self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.openai_host = openai_host
 
     async def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
@@ -72,7 +78,8 @@ Thought: {agent_scratchpad}"""
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            embedding = await openai.Embedding.acreate(engine=self.embedding_deployment, input=query_text)
+            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
+            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=query_text)
             query_vector = embedding["data"][0]["embedding"]
         else:
             query_vector = None
@@ -143,11 +150,19 @@ Thought: {agent_scratchpad}"""
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
             input_variables=["input", "agent_scratchpad"],
         )
-        llm = AzureOpenAI(
-            deployment_name=self.openai_deployment,
-            temperature=overrides.get("temperature") or 0.3,
-            openai_api_key=openai.api_key,
-        )
+        if self.openai_type == "azure":
+            llm = AzureOpenAI(
+                deployment_name=self.openai_deployment,
+                temperature=overrides.get("temperature", 0.3),
+                openai_api_key=openai.api_key,
+            )
+        else:
+            llm = OpenAI(
+                model_name=self.openai_model,
+                temperature=overrides.get("temperature", 0.3),
+                openai_api_key=openai.api_key,
+            )
+
         chain = LLMChain(llm=llm, prompt=prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(
             agent=ZeroShotAgent(llm_chain=chain), tools=tools, verbose=True, callback_manager=cb_manager
