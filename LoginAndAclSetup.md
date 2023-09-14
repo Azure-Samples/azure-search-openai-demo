@@ -37,35 +37,41 @@ The following instructions explain how to setup the two apps using the Azure Por
 1. Select the Azure AD Service.
 1. In the left hand menu, select **Application Registrations**.
 1. Select **New Registration**.
-  1. In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo API`.
-  1. Under **Supported account types**, select **Accounts in this organizational directory only**.
+   1. In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo API`.
+   1. Under **Supported account types**, select **Accounts in this organizational directory only**.
 1. Select **Register** to create the application
 1. In the app's registration screen, find the **Application (client) ID**.
-  1. Run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_ID <Application (client) ID>`.
+   1. Run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_ID <Application (client) ID>`.
 1. Select **Certificates & secrets** in the left hand menu.
 1. In the **Client secrets** section, select **New client secret**.
-  1. Type a description, for example `Azure Search OpenAI Demo Key`.
-  1. Select one of the available key durations.
-  1. The generated key value will be displayed after you select **Add**.
-  1. Copy the generated ke value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
+   1. Type a description, for example `Azure Search OpenAI Demo Key`.
+   1. Select one of the available key durations.
+   1. The generated key value will be displayed after you select **Add**.
+   1. Copy the generated ke value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
 1. Select **API Permissions** in the left hand menu. By default, the [delegated `User.Read`](https://learn.microsoft.com/graph/permissions-reference#user-permissions) permission should be present. This permission is required to read the signed-in user's profile to get the security information used for document level access control. If this permission is not present, it needs to be added to the application.
-  1. Select **Add a permission**, and then **Microsoft Graph**.
-  1. Select **Delegated permissions**.
-  1. Search for and and select `User.Read`.
-  1. Select **Add permissions**.
-1. Select **Expose an API** in the left hand menu. The server app works by using the [https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram](On Behalf Of Flow), which requires the server app to expose at least 1 API.
-  1. The application must define a URI to expose APIs. Select **Add** next to **Application ID URI**.
-  1. By default, the Application ID URI is set to `api://<application client id>`. Accept the default by selecting **Save**.
-  1. Under **Scopes defined by this API**, select **Add a scope**.
-  1. Fill in the values as indicated:
-    1. For **Scope name**, use **access_as_user**.
-    1. For **Who can consent?**, select **Admins and users**.
-    1. For **Admin consent display name**, type **Access Azure Search OpenAI Demo API**.
-    1. For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Demo API as the signed-in user.**.
-    1. For **User consent display name**, type **Access Azure Search OpenAI Demo API**.
-    1. For **User consent description**, type **Allow the app to access Azure Search OpenAI Demo API on your behalf**.
-    1. Leave **State** set to **Enabled**.
-    1. Select **Add scope** at the bottom to save the scope.
+   1. Select **Add a permission**, and then **Microsoft Graph**.
+   1. Select **Delegated permissions**.
+   1. Search for and and select `User.Read`.
+   1. Select **Add permissions**.
+1. Select **Expose an API** in the left hand menu. The server app works by using the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram), which requires the server app to expose at least 1 API.
+   1. The application must define a URI to expose APIs. Select **Add** next to **Application ID URI**.
+      1. By default, the Application ID URI is set to `api://<application client id>`. Accept the default by selecting **Save**.
+   1. Under **Scopes defined by this API**, select **Add a scope**.
+   1. Fill in the values as indicated:
+      1. For **Scope name**, use **access_as_user**.
+      1. For **Who can consent?**, select **Admins and users**.
+      1. For **Admin consent display name**, type **Access Azure Search OpenAI Demo API**.
+      1. For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Demo API as the signed-in user.**.
+      1. For **User consent display name**, type **Access Azure Search OpenAI Demo API**.
+      1. For **User consent description**, type **Allow the app to access Azure Search OpenAI Demo API on your behalf**.
+      1. Leave **State** set to **Enabled**.
+      1. Select **Add scope** at the bottom to save the scope.
+1. (Optional) Enable group claims. Include which Azure AD groups the user is part of as part of the login in the [optional claims](https://learn.microsoft.com/azure/active-directory/develop/optional-claims). The groups are used for [optional security filtering](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) in the search results.
+   1. In the left hand menu, select **Token configuration**
+   1. Under **Optional claims**, select **Add groups claim**
+   1. Select which [group types](https://learn.microsoft.com/azure/active-directory/hybrid/connect/how-to-connect-fed-group-claims) to include in the claim. Note that a [overage claim](https://learn.microsoft.com/azure/active-directory/develop/access-token-claims-reference#groups-overage-claim) will be emitted if the user is part of too many groups. In this case, the API server will use the [Microsoft Graph](https://learn.microsoft.com/graph/api/user-list-memberof?view=graph-rest-1.0&tabs=http) to list the groups the user is part of instead of relying on the groups in the claim.
+   1. Select **Add** to save your changes
+
 
 #### Client App
 
@@ -73,20 +79,24 @@ The following instructions explain how to setup the two apps using the Azure Por
 1. Select the Azure AD Service.
 1. In the left hand menu, select **Application Registrations**.
 1. Select **New Registration**.
-  1. In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo Web App`.
-  1. Under **Supported account types**, select **Accounts in this organizational directory only**.
-  1. Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
-    1. If you are running the sample locally, use `http://localhost:50505/redirect`.
-    1. If you are running the sample, use the endpoint provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/redirect`.
+   1. In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo Web App`.
+   1. Under **Supported account types**, select **Accounts in this organizational directory only**.
+   1. Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
+     1. If you are running the sample locally, use `http://localhost:50505/redirect`.
+     1. If you are running the sample, use the endpoint provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/redirect`.
+     1. If you are running the sample from codespaces, use the codespaces endpoint: `https://<your-codespace>-50505.app.github.dev/`
 1. Select **Register** to create the application
 1. In the app's registration screen, find the **Application (client) ID**.
-  1. Run the following `azd` command to save this ID: `azd env set AZURE_CLIENT_APP_ID <Application (client) ID>`.
-1. In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram](On Behalf Of Flow) to work.
-  1. Select **Add a permission**, and then **My APIs**.
-  1. In the list of applications, select your server application **Azure Search OpenAI Demo API**
-  1. Ensure **Delegated permissions** is selected.
-  1. In the **Select permissions** section, select the **access_as_user** permission
-  1. Select **Add permissions**.
+   1. Run the following `azd` command to save this ID: `azd env set AZURE_CLIENT_APP_ID <Application (client) ID>`.
+1. In the left hand menu, select **Authentication**.
+   1. Under **Implicit grant and hybrid flows**, select **ID Tokens (used for implicit and hybrid flows)**
+   1. Select **Save**
+1. In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram) to work.
+   1. Select **Add a permission**, and then **My APIs**.
+   1. In the list of applications, select your server application **Azure Search OpenAI Demo API**
+   1. Ensure **Delegated permissions** is selected.
+   1. In the **Select permissions** section, select the **access_as_user** permission
+   1. Select **Add permissions**.
 
 #### Configure Server App Authorized Client Applications
 
@@ -98,6 +108,10 @@ Consent from the user must be obtained for use of the client and server app. The
 1. For **Client ID**, enter the client application ID.
 1. Check the `api://<server application id>/access_as_user` scope under **Authorized scopes**.
 1. Select **Add application**
+
+#### Testing
+
+In both the chat and ask a question modes, an optional **Use oid security filter** and **Use groups security filter** will appear. The oid (User ID) filter maps to the `oids` field and the groups (Group ID) filter maps to the `groups` field in the search index. Use the optional scripts included in the sample to manage values for these fields.
 
 ## Optional scripts
 
@@ -120,6 +134,8 @@ To run the script, run the following command: `./scripts/adlsgen2setup.ps1`. The
    1. `GPTKB_HRTest`: Can read files in both `employeeinfo` and `benefitinfo`.
 
 In order to use the sample access control, you need to join these groups in your Azure AD tenant.
+
+Note that this optional scripts may not work in codespaces if your administrator has applied a [Conditional Access policy](https://learn.microsoft.com/azure/active-directory/conditional-access/overview) to your tenant.
 
 ### Azure Data Lake Storage Gen2 Prep Docs
 
