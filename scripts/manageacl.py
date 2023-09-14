@@ -9,15 +9,6 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SearchFieldDataType, SimpleField
 
-
-class AclActions(Enum):
-    remove_all = 1
-    remove = 2
-    add = 3
-    view = 4
-    enable_acls = 5
-
-
 class ManageAcl:
     async def __aenter__(self):
         endpoint = f"https://{self.service_name}.search.windows.net"
@@ -36,7 +27,7 @@ class ManageAcl:
         service_name: str,
         index_name: str,
         document: str,
-        acl_action: AclActions,
+        acl_action: str,
         acl_type: str,
         acl: str,
         credentials: AsyncTokenCredential | AzureKeyCredential,
@@ -52,7 +43,7 @@ class ManageAcl:
         self.verbose = verbose
 
     async def run(self):
-        if self.acl_action == AclActions.enable_acls:
+        if self.acl_action == "enable_acls":
             if self.verbose:
                 print(f"Enabling acls for index {self.index_name}")
             index_definition = await self.search_index_client.get_index(self.index_name)
@@ -159,5 +150,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
+
+    if not args.acl_type and args.acl_action != "enable_acls":
+        print("Must specify either --acl-type or --acl-action enable_acls")
+        exit(1)
 
     asyncio.run(main(args))

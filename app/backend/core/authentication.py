@@ -7,7 +7,11 @@ from typing import Any
 
 import urllib3
 from msal import ConfidentialClientApplication
-from msal_extensions import PersistedTokenCache, build_encrypted_persistence
+from msal_extensions import (
+    FilePersistence,
+    PersistedTokenCache,
+    build_encrypted_persistence,
+)
 from quart import request
 
 
@@ -40,7 +44,11 @@ class AuthenticationHelper:
             if not self.token_cache_path:
                 self.temporary_directory = TemporaryDirectory()
                 self.token_cache_path = os.path.join(self.temporary_directory.name, "token_cache.bin")
-            persistence = build_encrypted_persistence(location=self.token_cache_path)
+            try:
+                persistence = build_encrypted_persistence(location=self.token_cache_path)
+            except Exception:
+                logging.exception("Encryption unavailable. Opting in to plain text.")
+                persistence = FilePersistence(location=self.token_cache_path)
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id,
                 authority=self.authority,
@@ -73,7 +81,10 @@ class AuthenticationHelper:
                 # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
                 # For more information about OIDC scopes, visit:
                 # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-                "scopes": [f"api://{self.server_app_id}/.default"]
+                "scopes": [f"api://{self.server_app_id}/.default"],
+            },
+            "tokenRequest": {
+                "scopes": [f"api://{self.server_app_id}/access_as_user"],
             },
         }
 
@@ -183,5 +194,9 @@ class AuthenticationHelper:
                 # Read the user's groups from Microsoft Graph
                 auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
             return auth_claims
+        except AuthError as e:
+            logging.exception("Exception getting authorization information - " + e.error)
+            return {}
         except Exception:
             logging.exception("Exception getting authorization information")
+            return {}

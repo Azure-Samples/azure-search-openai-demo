@@ -146,9 +146,9 @@ async def main(args: any):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Upload sample data to a Data Lake Storage Gen2 account and associate sample access control lists with it using sample groups",
-        epilog="Example: adlsgen2setup.py --storage-account <name of storage account> --create-security-enabled-groups <true|false>",
+        epilog="Example: ./scripts/adlsgen2setup.py ./data --storage-account <name of storage account> --create-security-enabled-groups <true|false>",
     )
-    parser.add_argument("--data-directory", required=True, help="Data directory that contains sample PDFs")
+    parser.add_argument("data_directory", help="Data directory that contains sample PDFs")
     parser.add_argument(
         "--storage-account",
         required=True,
