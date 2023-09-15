@@ -33,10 +33,10 @@ class ManageAcl:
         endpoint = f"https://{self.service_name}.search.windows.net"
         async with SearchClient(
             endpoint=endpoint, credential=self.credentials, index_name=self.index_name
-        ), SearchIndexClient(endpoint=endpoint, credential=self.credentials):
+        ) as search_client, SearchIndexClient(endpoint=endpoint, credential=self.credentials) as search_index_client:
             if self.acl_action == "enable_acls":
                 logging.info(f"Enabling acls for index {self.index_name}")
-                index_definition = await self.search_index_client.get_index(self.index_name)
+                index_definition = await search_index_client.get_index(self.index_name)
                 if not any(field.name == "oids" for field in index_definition.fields):
                     index_definition.fields.append(
                         SimpleField(
@@ -54,11 +54,11 @@ class ManageAcl:
                         )
                     )
 
-                await self.search_index_client.create_or_update_index(index_definition)
+                await search_index_client.create_or_update_index(index_definition)
                 return
 
             filter = f"sourcefile eq '{self.document}'"
-            result = await self.search_client.search(
+            result = await search_client.search(
                 "", filter=filter, select=["id", self.acl_type], include_total_count=True
             )
             if await result.get_count() == 0:
@@ -82,7 +82,7 @@ class ManageAcl:
                     new_acls = []
                 documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
 
-            await self.search_client.merge_documents(documents=documents_to_merge)
+            await search_client.merge_documents(documents=documents_to_merge)
             logging.info("ACLs updated")
 
 
@@ -95,7 +95,7 @@ async def main(args: any):
     )
     search_credential = azd_credential if args.search_key is None else AzureKeyCredential(args.search_key)
 
-    async with ManageAcl(
+    command = ManageAcl(
         service_name=args.search_service,
         index_name=args.index,
         document=args.document,
@@ -103,9 +103,8 @@ async def main(args: any):
         acl_type=args.acl_type,
         acl=args.acl,
         credentials=search_credential,
-        verbose=args.verbose,
-    ) as command:
-        await command.run()
+    )
+    await command.run()
 
 
 if __name__ == "__main__":
