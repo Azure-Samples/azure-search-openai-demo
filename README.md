@@ -319,7 +319,6 @@ Feature comparison:
 
 | Feature | azure-search-openai-demo | sample-app-aoai-chatGPT |
 | --- | --- | --- |
-| Chat _with_ your data | ✅ Yes | ✅ Yes |
 | RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
 | Vector support | ✅ Yes | ✅ Yes |
 | Data ingestion | ✅ Yes (PDF) | ✅ Yes (PDF, TXT, MD, HTML) |
