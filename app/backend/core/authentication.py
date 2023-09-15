@@ -5,7 +5,7 @@ import os
 from tempfile import TemporaryDirectory
 from typing import Any
 
-import urllib3
+import aiohttp
 from msal import ConfidentialClientApplication
 from msal_extensions import (
     FilePersistence,
@@ -15,7 +15,7 @@ from msal_extensions import (
 from quart import request
 
 
-# AuthError is raised when the authentication token sent by the client UI cannot be parsed
+# AuthError is raised when the authentication token sent by the client UI cannot be parsed or there is an authentication error accessing the graph API
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
@@ -55,9 +55,6 @@ class AuthenticationHelper:
                 client_credential=server_app_secret,
                 token_cache=PersistedTokenCache(persistence),
             )
-
-    def use_authentication(self):
-        return self.use_authentication
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
@@ -143,22 +140,29 @@ class AuthenticationHelper:
     @staticmethod
     async def list_groups(graph_resource_access_token: str) -> [str]:
         headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
-        resp = urllib3.request(
-            "GET",
-            "https://graph.microsoft.com/v1.0/me/memberOf?$select=id",
-            headers=headers,
-            timeout=urllib3.Timeout(connect=10, read=10),
-        )
         groups = []
-        while resp.status == 200:
-            value = resp.json()["value"]
-            for group in value:
-                groups.append(group["id"])
-            nextLink = resp.json().get("@odata.nextLink")
-            if nextLink:
-                resp = urllib3.request("GET", nextLink, headers=headers, timeout=urllib3.Timeout(connect=10, read=10))
-            else:
-                break
+        async with aiohttp.ClientSession(headers=headers) as session:
+            resp_json = None
+            resp_status = None
+            async with session.get("https://graph.microsoft.com/v1.0/me/memberOf?$select=id") as resp:
+                resp_json = await resp.json()
+                resp_status = resp.status
+                if resp_status != 200:
+                    raise AuthError(error=resp_json, status_code=resp_status)
+
+            while resp_status == 200:
+                value = resp_json["value"]
+                for group in value:
+                    groups.append(group["id"])
+                nextLink = resp_json.get("@odata.nextLink")
+                if nextLink:
+                    async with session.get(nextLink) as resp:
+                        resp_json = resp.json()
+                        resp_status = resp.status
+                else:
+                    break
+            if resp_status != 200:
+                raise AuthError(error=resp_json, status_code=resp_status)
 
         return groups
 
