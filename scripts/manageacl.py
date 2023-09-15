@@ -11,6 +11,10 @@ from azure.search.documents.indexes.models import SearchFieldDataType, SimpleFie
 
 
 class ManageAcl:
+    """
+    Manually enable document level access control on a search index and manually set access control values using the [manageacl.ps1](./scripts/manageacl.ps1) script.
+    """
+
     def __init__(
         self,
         service_name: str,
@@ -21,6 +25,26 @@ class ManageAcl:
         acl: str,
         credentials: AsyncTokenCredential | AzureKeyCredential,
     ):
+        """
+        Initializes the command
+
+        Parameters
+        ----------
+        service_name: str
+            Name of the Azure Search service
+        index_name: str
+            Name of the Azure Search index
+        document: str
+            File path of the document to manage acls for
+        acl_action: str
+            Action to take regarding the index or document. Valid values include enable_acls (turn acls on for the entire index), view (print acls for the document), remove_all (remove all acls), remove (remove a specific acl), or add (add a specific acl)
+        acl_type: str
+            Type of acls to manage. Valid values include groups or oids.
+        acl: str
+            The actual value of the acl, if the acl action is add or remove
+        credentials: AsyncTokenCredential | AzureKeyCredential
+            Credentials for the azure search service
+        """
         self.service_name = service_name
         self.index_name = index_name
         self.credentials = credentials

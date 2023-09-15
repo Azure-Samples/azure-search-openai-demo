@@ -153,7 +153,7 @@ Once the environment variables are set, run the script using the following comma
 
 ### Manually managing Document Level Access Control
 
-Manually enable document level access control on a search index and manuall set access control values using the [manageacl.ps1](./scripts/manageacl.ps1) script.
+Manually enable document level access control on a search index and manually set access control values using the [manageacl.ps1](./scripts/manageacl.ps1) script.
 
 Run `azd up` or manually set the `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` environment variables prior to running the script.
 

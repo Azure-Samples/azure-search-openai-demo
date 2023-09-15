@@ -14,6 +14,10 @@ from azure.storage.filedatalake.aio import (
 
 
 class AdlsGen2Setup:
+    """
+    Sets up a Data Lake Storage Gen 2 account with sample data and access control
+    """
+
     def __init__(
         self,
         data_directory: str,
@@ -23,6 +27,22 @@ class AdlsGen2Setup:
         data_access_control_format: dict[str, any],
         credentials: AsyncTokenCredential,
     ):
+        """
+        Initializes the command
+
+        Parameters
+        ----------
+        data_directory
+            Directory where sample files are located
+        storage_account_name
+            Name of the Data Lake Storage Gen 2 account to use
+        filesystem_name
+            Name of the container / filesystem in the Data Lake Storage Gen 2 account to use
+        security_enabled_groups
+            When creating groups in Azure AD, whether or not to make them security enabled
+        data_access_control_format
+            File describing how to create groups, upload files with access control. See the sampleacls.json for the format of this file
+        """
         self.data_directory = data_directory
         self.storage_account_name = storage_account_name
         self.filesystem_name = filesystem_name
