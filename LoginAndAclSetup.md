@@ -47,7 +47,7 @@ The following instructions explain how to setup the two apps using the Azure Por
    1. Type a description, for example `Azure Search OpenAI Demo Key`.
    1. Select one of the available key durations.
    1. The generated key value will be displayed after you select **Add**.
-   1. Copy the generated ke value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
+   1. Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
 1. Select **API Permissions** in the left hand menu. By default, the [delegated `User.Read`](https://learn.microsoft.com/graph/permissions-reference#user-permissions) permission should be present. This permission is required to read the signed-in user's profile to get the security information used for document level access control. If this permission is not present, it needs to be added to the application.
    1. Select **Add a permission**, and then **Microsoft Graph**.
    1. Select **Delegated permissions**.
@@ -98,20 +98,20 @@ The following instructions explain how to setup the two apps using the Azure Por
    1. In the **Select permissions** section, select the **access_as_user** permission
    1. Select **Add permissions**.
 
-#### Configure Server App Authorized Client Applications
+#### Configure Server App Known Client Applications
 
-Consent from the user must be obtained for use of the client and server app. The client app can prompt the user for consent through a dialog when they log in. The server app has no ability to show a dialog for consent. Client apps can be [pre-authorized](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#gaining-consent-for-the-middle-tier-application) to access the server app, so a consent dialog is not required for the server app when it's used from the client app.
+Consent from the user must be obtained for use of the client and server app. The client app can prompt the user for consent through a dialog when they log in. The server app has no ability to show a dialog for consent. Client apps can be [added to the list of known clients](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#gaining-consent-for-the-middle-tier-application) to access the server app, so a consent dialog is shown for the server app.
 
 1. Navigate to the server app registration
-1. In the left hand menu, select **Expose an API**
-1. Under **Authorized client applications**, select **Add a client application**
-1. For **Client ID**, enter the client application ID.
-1. Check the `api://<server application id>/access_as_user` scope under **Authorized scopes**.
-1. Select **Add application**
+1. In the left hand menu, select **Manifest**
+1. Replace `"knownClientApplications": []` with `"knownClientApplications": ["<client application id>"]`
+1. Select **Save**
 
 #### Testing
 
 In both the chat and ask a question modes, an optional **Use oid security filter** and **Use groups security filter** will appear. The oid (User ID) filter maps to the `oids` field and the groups (Group ID) filter maps to the `groups` field in the search index. Use the optional scripts included in the sample to manage values for these fields.
+
+It's possible that your tenant admin has placed a restriction on consent to apps with [unverified publishers](https://learn.microsoft.com/azure/active-directory/develop/publisher-verification-overview). In this case, only admins may consent to the client and server apps, and normal user accounts are unable to use the login system until the admin consents on behalf of the entire organization.
 
 ## Optional scripts
 
