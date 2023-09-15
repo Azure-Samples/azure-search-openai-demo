@@ -33,79 +33,79 @@ The following instructions explain how to setup the two apps using the Azure Por
 
 #### Setting up the Server App
 
-1. Sign in to the [Azure portal](https://portal.azure.com/).
-1. Select the Azure AD Service.
-1. In the left hand menu, select **Application Registrations**.
-1. Select **New Registration**.
-   1. In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo API`.
-   1. Under **Supported account types**, select **Accounts in this organizational directory only**.
-1. Select **Register** to create the application
-1. In the app's registration screen, find the **Application (client) ID**.
-   1. Run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_ID <Application (client) ID>`.
-1. Select **Certificates & secrets** in the left hand menu.
-1. In the **Client secrets** section, select **New client secret**.
-   1. Type a description, for example `Azure Search OpenAI Demo Key`.
-   1. Select one of the available key durations.
-   1. The generated key value will be displayed after you select **Add**.
-   1. Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
-1. Select **API Permissions** in the left hand menu. By default, the [delegated `User.Read`](https://learn.microsoft.com/graph/permissions-reference#user-permissions) permission should be present. This permission is required to read the signed-in user's profile to get the security information used for document level access control. If this permission is not present, it needs to be added to the application.
-   1. Select **Add a permission**, and then **Microsoft Graph**.
-   1. Select **Delegated permissions**.
-   1. Search for and and select `User.Read`.
-   1. Select **Add permissions**.
-1. Select **Expose an API** in the left hand menu. The server app works by using the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram), which requires the server app to expose at least 1 API.
-   1. The application must define a URI to expose APIs. Select **Add** next to **Application ID URI**.
-      1. By default, the Application ID URI is set to `api://<application client id>`. Accept the default by selecting **Save**.
-   1. Under **Scopes defined by this API**, select **Add a scope**.
-   1. Fill in the values as indicated:
-      1. For **Scope name**, use **access_as_user**.
-      1. For **Who can consent?**, select **Admins and users**.
-      1. For **Admin consent display name**, type **Access Azure Search OpenAI Demo API**.
-      1. For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Demo API as the signed-in user.**.
-      1. For **User consent display name**, type **Access Azure Search OpenAI Demo API**.
-      1. For **User consent description**, type **Allow the app to access Azure Search OpenAI Demo API on your behalf**.
-      1. Leave **State** set to **Enabled**.
-      1. Select **Add scope** at the bottom to save the scope.
-1. (Optional) Enable group claims. Include which Azure AD groups the user is part of as part of the login in the [optional claims](https://learn.microsoft.com/azure/active-directory/develop/optional-claims). The groups are used for [optional security filtering](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) in the search results.
-   1. In the left hand menu, select **Token configuration**
-   1. Under **Optional claims**, select **Add groups claim**
-   1. Select which [group types](https://learn.microsoft.com/azure/active-directory/hybrid/connect/how-to-connect-fed-group-claims) to include in the claim. Note that a [overage claim](https://learn.microsoft.com/azure/active-directory/develop/access-token-claims-reference#groups-overage-claim) will be emitted if the user is part of too many groups. In this case, the API server will use the [Microsoft Graph](https://learn.microsoft.com/graph/api/user-list-memberof?view=graph-rest-1.0&tabs=http) to list the groups the user is part of instead of relying on the groups in the claim.
-   1. Select **Add** to save your changes
+* Sign in to the [Azure portal](https://portal.azure.com/).
+* Select the Azure AD Service.
+* In the left hand menu, select **Application Registrations**.
+* Select **New Registration**.
+  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo API`.
+  * Under **Supported account types**, select **Accounts in this organizational directory only**.
+* Select **Register** to create the application
+* In the app's registration screen, find the **Application (client) ID**.
+  * Run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_ID <Application (client) ID>`.
+* Select **Certificates & secrets** in the left hand menu.
+* In the **Client secrets** section, select **New client secret**.
+  * Type a description, for example `Azure Search OpenAI Demo Key`.
+  * Select one of the available key durations.
+  * The generated key value will be displayed after you select **Add**.
+  * Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
+* Select **API Permissions** in the left hand menu. By default, the [delegated `User.Read`](https://learn.microsoft.com/graph/permissions-reference#user-permissions) permission should be present. This permission is required to read the signed-in user's profile to get the security information used for document level access control. If this permission is not present, it needs to be added to the application.
+  * Select **Add a permission**, and then **Microsoft Graph**.
+  * Select **Delegated permissions**.
+  * Search for and and select `User.Read`.
+  * Select **Add permissions**.
+* Select **Expose an API** in the left hand menu. The server app works by using the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram), which requires the server app to expose at least 1 API.
+  * The application must define a URI to expose APIs. Select **Add** next to **Application ID URI**.
+    * By default, the Application ID URI is set to `api://<application client id>`. Accept the default by selecting **Save**.
+  * Under **Scopes defined by this API**, select **Add a scope**.
+  * Fill in the values as indicated:
+    * For **Scope name**, use **access_as_user**.
+    * For **Who can consent?**, select **Admins and users**.
+    * For **Admin consent display name**, type **Access Azure Search OpenAI Demo API**.
+    * For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Demo API as the signed-in user.**.
+    * For **User consent display name**, type **Access Azure Search OpenAI Demo API**.
+    * For **User consent description**, type **Allow the app to access Azure Search OpenAI Demo API on your behalf**.
+    * Leave **State** set to **Enabled**.
+    * Select **Add scope** at the bottom to save the scope.
+* (Optional) Enable group claims. Include which Azure AD groups the user is part of as part of the login in the [optional claims](https://learn.microsoft.com/azure/active-directory/develop/optional-claims). The groups are used for [optional security filtering](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) in the search results.
+  * In the left hand menu, select **Token configuration**
+  * Under **Optional claims**, select **Add groups claim**
+  * Select which [group types](https://learn.microsoft.com/azure/active-directory/hybrid/connect/how-to-connect-fed-group-claims) to include in the claim. Note that a [overage claim](https://learn.microsoft.com/azure/active-directory/develop/access-token-claims-reference#groups-overage-claim) will be emitted if the user is part of too many groups. In this case, the API server will use the [Microsoft Graph](https://learn.microsoft.com/graph/api/user-list-memberof?view=graph-rest-*0&tabs=http) to list the groups the user is part of instead of relying on the groups in the claim.
+  * Select **Add** to save your changes
 
 
 #### Client App
 
-1. Sign in to the [Azure portal](https://portal.azure.com/).
-1. Select the Azure AD Service.
-1. In the left hand menu, select **Application Registrations**.
-1. Select **New Registration**.
-   1. In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo Web App`.
-   1. Under **Supported account types**, select **Accounts in this organizational directory only**.
-   1. Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
-     1. If you are running the sample locally, use `http://localhost:50505/redirect`.
-     1. If you are running the sample, use the endpoint provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/redirect`.
-     1. If you are running the sample from codespaces, use the codespaces endpoint: `https://<your-codespace>-50505.app.github.dev/`
-1. Select **Register** to create the application
-1. In the app's registration screen, find the **Application (client) ID**.
-   1. Run the following `azd` command to save this ID: `azd env set AZURE_CLIENT_APP_ID <Application (client) ID>`.
-1. In the left hand menu, select **Authentication**.
-   1. Under **Implicit grant and hybrid flows**, select **ID Tokens (used for implicit and hybrid flows)**
-   1. Select **Save**
-1. In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram) to work.
-   1. Select **Add a permission**, and then **My APIs**.
-   1. In the list of applications, select your server application **Azure Search OpenAI Demo API**
-   1. Ensure **Delegated permissions** is selected.
-   1. In the **Select permissions** section, select the **access_as_user** permission
-   1. Select **Add permissions**.
+* Sign in to the [Azure portal](https://portal.azure.com/).
+* Select the Azure AD Service.
+* In the left hand menu, select **Application Registrations**.
+* Select **New Registration**.
+  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo Web App`.
+  * Under **Supported account types**, select **Accounts in this organizational directory only**.
+  * Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
+    * If you are running the sample locally, use `http://localhost:50505/redirect`.
+    * If you are running the sample, use the endpoint provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/redirect`.
+    * If you are running the sample from codespaces, use the codespaces endpoint: `https://<your-codespace>-50505.app.github.dev/`
+* Select **Register** to create the application
+* In the app's registration screen, find the **Application (client) ID**.
+  * Run the following `azd` command to save this ID: `azd env set AZURE_CLIENT_APP_ID <Application (client) ID>`.
+* In the left hand menu, select **Authentication**.
+  * Under **Implicit grant and hybrid flows**, select **ID Tokens (used for implicit and hybrid flows)**
+  * Select **Save**
+* In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram) to work.
+  * Select **Add a permission**, and then **My APIs**.
+  * In the list of applications, select your server application **Azure Search OpenAI Demo API**
+  * Ensure **Delegated permissions** is selected.
+  * In the **Select permissions** section, select the **access_as_user** permission
+  * Select **Add permissions**.
 
 #### Configure Server App Known Client Applications
 
 Consent from the user must be obtained for use of the client and server app. The client app can prompt the user for consent through a dialog when they log in. The server app has no ability to show a dialog for consent. Client apps can be [added to the list of known clients](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#gaining-consent-for-the-middle-tier-application) to access the server app, so a consent dialog is shown for the server app.
 
-1. Navigate to the server app registration
-1. In the left hand menu, select **Manifest**
-1. Replace `"knownClientApplications": []` with `"knownClientApplications": ["<client application id>"]`
-1. Select **Save**
+* Navigate to the server app registration
+* In the left hand menu, select **Manifest**
+* Replace `"knownClientApplications": []` with `"knownClientApplications": ["<client application id>"]`
+* Select **Save**
 
 #### Testing
 
@@ -124,14 +124,14 @@ Two optional scripts are provided that allow easier setup of sample data with do
 In order to use this script, an existing Data Lake Storage Gen2 storage account. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <your-storage-account>` prior to running the script.
 
 To run the script, run the following command: `./scripts/adlsgen2setup.ps1`. The script performs the following steps:
-1. Creates 3 example [groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups): `GPTKB_AdminTest`, `GPTKB_EmployeeTest`, `GPTKB_HRTest`
-1. Creates a filesystem / container `gptkbcontainer` in the storage account.
-1. Creates two directories, `benefitinfo` and `employeeinfo` in the `gptkbcontainer` filesystem / container.
-1. Uploads the sample PDFs into both directories.
-1. [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) on the `benefitinfo` and `employeeinfo` for the following groups:
-   1. `GPTKB_AdminTest`: Can read all files in `gptkbcontainer`.
-   1. `GPTKB_EmployeeTest`: Can only read files in `employeeinfo`.
-   1. `GPTKB_HRTest`: Can read files in both `employeeinfo` and `benefitinfo`.
+* Creates 3 example [groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups): `GPTKB_AdminTest`, `GPTKB_EmployeeTest`, `GPTKB_HRTest`
+* Creates a filesystem / container `gptkbcontainer` in the storage account.
+* Creates two directories, `benefitinfo` and `employeeinfo` in the `gptkbcontainer` filesystem / container.
+* Uploads the sample PDFs into both directories.
+* [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) on the `benefitinfo` and `employeeinfo` for the following groups:
+  * `GPTKB_AdminTest`: Can read all files in `gptkbcontainer`.
+  * `GPTKB_EmployeeTest`: Can only read files in `employeeinfo`.
+  * `GPTKB_HRTest`: Can read files in both `employeeinfo` and `benefitinfo`.
 
 In order to use the sample access control, you need to join these groups in your Azure AD tenant.
 
@@ -143,9 +143,9 @@ Once a Data Lake Storage Gen2 storage account has been setup with sample data an
 
 To run this script with a Data Lake Storage Gen2 account, first set the following environment variables:
 
-1. `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction).
-1. (Optional) `AZURE_ADLS_GEN2_FILESYSTEM`: Name of existing Data Lake Storage Gen2 filesystem / container in the storage account. If empty, `gptkbcontainer` is used.
-1. (Optional) `AZURE_ADLS_GEN2_FILESYSTEM_PATH`: Specific path in the Data Lake Storage Gen2 filesystem / container to process. Only PDFs contained in this path will be processed.
+* `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction).
+* (Optional) `AZURE_ADLS_GEN2_FILESYSTEM`: Name of existing Data Lake Storage Gen2 filesystem / container in the storage account. If empty, `gptkbcontainer` is used.
+* (Optional) `AZURE_ADLS_GEN2_FILESYSTEM_PATH`: Specific path in the Data Lake Storage Gen2 filesystem / container to process. Only PDFs contained in this path will be processed.
 
 Once the environment variables are set, run the script using the following command: `./scripts/prepdocs.ps1` or `./scripts/prepdocs.sh`.
 
@@ -156,21 +156,21 @@ Manually enable document level access control on a search index and manuall set 
 Run `azd up` or manually set the `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` environment variables prior to running the script.
 
 To run the script, the following parameters are used:
-1. `./scripts/manageacls.ps1 --enable-acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index. Does nothing if these fields already exist
-1. `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action view`: Prints access control values associated with either User IDs or Group IDs for a specific document. Example to view all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action view`.
-1. `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for a specific document. Example to add a Group ID to the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
-1. `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document. Example to remove all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action remove_all`.
-1. `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document. Example to remove a specific User ID from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+* `./scripts/manageacls.ps1 --enable-acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index. Does nothing if these fields already exist
+* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action view`: Prints access control values associated with either User IDs or Group IDs for a specific document. Example to view all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action view`.
+* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for a specific document. Example to add a Group ID to the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document. Example to remove all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action remove_all`.
+* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document. Example to remove a specific User ID from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 
 ## Environment Variables Reference
 
 The following environment variables are used to setup the optional login and document level access control:
 
-1. `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
-1. `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
-1. `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
-1. `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
-1. `AZURE_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. This is set automatically by `azd up`.
-1. `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
-1. `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
-1. `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
+* `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
+* `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
+* `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
+* `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
+* `AZURE_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. This is set automatically by `azd up`.
+* `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
+* `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
+* `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
