@@ -81,7 +81,7 @@ class AuthenticationHelper:
                 # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
                 # For more information about OIDC scopes, visit:
                 # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-                "scopes": [f"api://{self.server_app_id}/.default"],
+                "scopes": [".default"],
             },
             "tokenRequest": {
                 "scopes": [f"api://{self.server_app_id}/access_as_user"],
