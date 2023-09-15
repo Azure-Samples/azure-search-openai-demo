@@ -144,7 +144,7 @@ If you already have existing Azure resources, you can re-use those by setting `a
 1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
 1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
   then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
-1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. ([See possible values](https://learn.microsoft.com/en-us/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
+1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. ([See possible values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
 
 #### Other existing Azure resources
 
@@ -299,19 +299,19 @@ The resource group and all the resources will be deleted.
 
 ### FAQ
 
-<details>
+<details><a id="ingestion-why-chunk"></a>
 <summary>Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?</summary>
 
 Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 </details>
 
-<details>
+<details><a id="ingestion-more-pdfs"></a>
 <summary>How can we upload additional PDFs without redeploying everything?</summary>
 
 To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
 </details>
 
-<details>
+<details><a id="compare-samples"></a>
 <summary>How does this sample compare to other Chat with Your Data samples?</summary>
 
 Another popular repository for this use case is here:
@@ -324,15 +324,33 @@ The primary differences:
 * This repository includes multiple RAG (retrieval-augmented generation) approaches that chain the results of multiple API calls (to Azure OpenAI and ACS) together in different ways. The other repository uses only the built-in data sources option for the ChatCompletions API, which uses a RAG approach on the specified ACS index. That should work for most uses, but if you needed more flexibility, this sample may be a better option.
 * This repository is also a bit more experimental in other ways, since it's not tied to the Azure OpenAI Studio like the other repository.
 
+Feature comparison:
+
+| Feature | azure-search-openai-demo | sample-app-aoai-chatGPT |
+| --- | --- | --- |
+| RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
+| Vector support | ✅ Yes | ✅ Yes |
+| Data ingestion | ✅ Yes (PDF) | ✅ Yes (PDF, TXT, MD, HTML) |
+| Persistent chat history | ❌ No (browser tab only) | ✅ Yes, in CosmosDB |
+
+Technology comparison:
+
+| Tech | azure-search-openai-demo | sample-app-aoai-chatGPT |
+| --- | --- | --- |
+| Frontend | React | React |
+| Backend | Python (Quart) | Python (Flask) |
+| Vector DB | Azure Cognitive Search | Azure Cognitive Search |
+| Deployment | Azure Developer CLI (azd) | Azure Portal, az, azd |
+
 </details>
 
-<details>
+<details><a id="switch-gpt4"></a>
 <summary>How do you use GPT-4 with this sample?</summary>
 
 In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'. You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
 </details>
 
-<details>
+<details><a id="chat-ask-diff"></a>
 <summary>What is the difference between the Chat and Ask tabs?</summary>
 
 The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
@@ -349,7 +367,7 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
-<details>
+<details><a id="azd-up-explanation"></a>
 <summary>What does the `azd up` command do?</summary>
 
 The `azd up` command comes from the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview), and takes care of both provisioning the Azure resources and deploying code to the selected Azure hosts.
@@ -363,7 +381,7 @@ Finally, it looks at `azure.yaml` to determine the Azure host (appservice, in th
 Related commands are `azd provision` for just provisioning (if infra files change) and `azd deploy` for just deploying updated app code.
 </details>
 
-<details>
+<details><a id="appservice-logs"></a>
 <summary>How can we view logs from the App Service app?</summary>
 
 You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools.
