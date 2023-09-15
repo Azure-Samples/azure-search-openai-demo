@@ -41,7 +41,7 @@ from tenacity import (
     wait_random_exponential,
 )
 
-args = argparse.Namespace(verbose=False)
+args = argparse.Namespace(verbose=False, openaihost="azure")
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -276,7 +276,7 @@ def filename_to_id(filename):
     return f"file-{filename_ascii}-{filename_hash}"
 
 
-def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None):
+def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None, embedding_model: str = None):
     file_id = filename_to_id(filename)
     for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
@@ -287,7 +287,7 @@ def create_sections(filename, page_map, use_vectors, embedding_deployment: str =
             "sourcefile": filename,
         }
         if use_vectors:
-            section["embedding"] = compute_embedding(content, embedding_deployment)
+            section["embedding"] = compute_embedding(content, embedding_deployment, embedding_model)
         yield section
 
 
@@ -302,15 +302,22 @@ def before_retry_sleep(retry_state):
     stop=stop_after_attempt(15),
     before_sleep=before_retry_sleep,
 )
-def compute_embedding(text, embedding_deployment):
+def compute_embedding(text, embedding_deployment, embedding_model):
     refresh_openai_token()
-    return openai.Embedding.create(engine=embedding_deployment, input=text)["data"][0]["embedding"]
+    embedding_args = {"deployment_id": embedding_deployment} if args.openaihost == "azure" else {}
+    return openai.Embedding.create(**embedding_args, model=embedding_model, input=text)["data"][0]["embedding"]
 
 
-@retry(wait=wait_random_exponential(min=15, max=60), stop=stop_after_attempt(15), before_sleep=before_retry_sleep)
+@retry(
+    retry=retry_if_exception_type(openai.error.RateLimitError),
+    wait=wait_random_exponential(min=15, max=60),
+    stop=stop_after_attempt(15),
+    before_sleep=before_retry_sleep,
+)
 def compute_embedding_in_batch(texts):
     refresh_openai_token()
-    emb_response = openai.Embedding.create(engine=args.openaideployment, input=texts)
+    embedding_args = {"deployment_id": args.openaideployment} if args.openaihost == "azure" else {}
+    emb_response = openai.Embedding.create(**embedding_args, model=args.openaimodelname, input=texts)
     return [data.embedding for data in emb_response.data]
 
 
@@ -470,7 +477,13 @@ def refresh_openai_token():
         open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
 
 
-def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None):
+def read_files(
+    path_pattern: str,
+    use_vectors: bool,
+    vectors_batch_support: bool,
+    embedding_deployment: str = None,
+    embedding_model: str = None,
+):
     """
     Recursively read directory structure under `path_pattern`
     and execute indexing for the individual files
@@ -494,6 +507,7 @@ def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool
                     page_map,
                     use_vectors and not vectors_batch_support,
                     embedding_deployment,
+                    embedding_model,
                 )
                 if use_vectors and vectors_batch_support:
                     sections = update_embeddings_in_batch(sections)
@@ -502,7 +516,9 @@ def read_files(path_pattern: str, use_vectors: bool, vectors_batch_support: bool
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
 
-def read_adls_gen2_files(use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None):
+def read_adls_gen2_files(
+    use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None, embedding_model: str = None
+):
     datalake_service = DataLakeServiceClient(
         account_url=f"https://{args.datalakestorageaccount}.dfs.core.windows.net", credential=adls_gen2_creds
     )
@@ -550,6 +566,7 @@ def read_adls_gen2_files(use_vectors: bool, vectors_batch_support: bool, embeddi
                         page_map,
                         use_vectors and not vectors_batch_support,
                         embedding_deployment,
+                        embedding_model,
                     )
                     if use_vectors and vectors_batch_support:
                         sections = update_embeddings_in_batch(sections)
@@ -618,6 +635,7 @@ if __name__ == "__main__":
         required=False,
         help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
+    parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument(
         "--openaideployment",
@@ -637,8 +655,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--openaikey",
         required=False,
-        help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure). This is required only when using non-Azure endpoints.",
     )
+    parser.add_argument("--openaiorg", required=False, help="This is required only when using non-Azure endpoints.")
     parser.add_argument(
         "--remove",
         action="store_true",
@@ -664,6 +683,7 @@ if __name__ == "__main__":
         required=False,
         help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
+
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
@@ -699,18 +719,23 @@ if __name__ == "__main__":
         )
 
     if use_vectors:
-        if args.openaikey is None:
-            openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
-            openai.api_type = "azure_ad"
-            open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
-            open_ai_token_cache[CACHE_KEY_TOKEN_CRED] = azd_credential
-            open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
+        if args.openaihost == "azure":
+            if not args.openaikey:
+                openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
+                openai.api_type = "azure_ad"
+                open_ai_token_cache[CACHE_KEY_CREATED_TIME] = time.time()
+                open_ai_token_cache[CACHE_KEY_TOKEN_CRED] = azd_credential
+                open_ai_token_cache[CACHE_KEY_TOKEN_TYPE] = "azure_ad"
+            else:
+                openai.api_key = args.openaikey
+                openai.api_type = "azure"
+            openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
+            openai.api_version = "2023-05-15"
         else:
-            openai.api_type = "azure"
+            print("using normal openai")
             openai.api_key = args.openaikey
-
-        openai.api_base = f"https://{args.openaiservice}.openai.azure.com"
-        openai.api_version = "2022-12-01"
+            openai.organization = args.openaiorg
+            openai.api_type = "openai"
 
     if args.removeall:
         remove_blobs(None)
@@ -721,6 +746,6 @@ if __name__ == "__main__":
 
         print("Processing files...")
         if args.files:
-            read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment)
+            read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodelname)
         else:
-            read_adls_gen2_files(use_vectors, compute_vectors_in_batch, args.openaideployment)
+            read_adls_gen2_files(use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodelname)
