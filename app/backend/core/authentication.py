@@ -144,7 +144,7 @@ class AuthenticationHelper:
         async with aiohttp.ClientSession(headers=headers) as session:
             resp_json = None
             resp_status = None
-            async with session.get("https://graph.microsoft.com/v1.0/me/memberOf?$select=id") as resp:
+            async with session.get("https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=id") as resp:
                 resp_json = await resp.json()
                 resp_status = resp.status
                 if resp_status != 200:
