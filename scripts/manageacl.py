@@ -30,19 +30,19 @@ class ManageAcl:
 
         Parameters
         ----------
-        service_name: str
+        service_name
             Name of the Azure Search service
-        index_name: str
+        index_name
             Name of the Azure Search index
-        document: str
+        document
             File path of the document to manage acls for
-        acl_action: str
+        acl_action
             Action to take regarding the index or document. Valid values include enable_acls (turn acls on for the entire index), view (print acls for the document), remove_all (remove all acls), remove (remove a specific acl), or add (add a specific acl)
-        acl_type: str
+        acl_type
             Type of acls to manage. Valid values include groups or oids.
-        acl: str
+        acl
             The actual value of the acl, if the acl action is add or remove
-        credentials: AsyncTokenCredential | AzureKeyCredential
+        credentials
             Credentials for the azure search service
         """
         self.service_name = service_name
