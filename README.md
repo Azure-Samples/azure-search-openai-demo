@@ -144,7 +144,7 @@ If you already have existing Azure resources, you can re-use those by setting `a
 1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
 1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
   then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
-1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. ([See possible values](https://learn.microsoft.com/en-us/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
+1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. ([See possible values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
 
 #### Other existing Azure resources
 
@@ -319,6 +319,24 @@ The primary differences:
 
 * This repository includes multiple RAG (retrieval-augmented generation) approaches that chain the results of multiple API calls (to Azure OpenAI and ACS) together in different ways. The other repository uses only the built-in data sources option for the ChatCompletions API, which uses a RAG approach on the specified ACS index. That should work for most uses, but if you needed more flexibility, this sample may be a better option.
 * This repository is also a bit more experimental in other ways, since it's not tied to the Azure OpenAI Studio like the other repository.
+
+Feature comparison:
+
+| Feature | azure-search-openai-demo | sample-app-aoai-chatGPT |
+| --- | --- | --- |
+| RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
+| Vector support | ✅ Yes | ✅ Yes |
+| Data ingestion | ✅ Yes (PDF) | ✅ Yes (PDF, TXT, MD, HTML) |
+| Persistent chat history | ❌ No (browser tab only) | ✅ Yes, in CosmosDB |
+
+Technology comparison:
+
+| Tech | azure-search-openai-demo | sample-app-aoai-chatGPT |
+| --- | --- | --- |
+| Frontend | React | React |
+| Backend | Python (Quart) | Python (Flask) |
+| Vector DB | Azure Cognitive Search | Azure Cognitive Search |
+| Deployment | Azure Developer CLI (azd) | Azure Portal, az, azd |
 
 </details>
 
