@@ -4,13 +4,13 @@ import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from core.authentication import AuthenticationHelper
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
 
 
-class ChatReadRetrieveReadApproach:
+class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -79,16 +79,8 @@ If you cannot generate a search query, return just the number 0.
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        exclude_category = overrides.get("exclude_category") or None
-        top = overrides.get("top") or 3
-
-        security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
-        filters = []
-        if exclude_category:
-            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
-        if security_filter:
-            filters.append(security_filter)
-        filter = None if len(filters) == 0 else " and ".join(filters)
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
         user_q = "Generate search query for: " + history[-1]["user"]
 

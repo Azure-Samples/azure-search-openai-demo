@@ -5,7 +5,6 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import AskApproach
-from core.authentication import AuthenticationHelper
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 
@@ -62,16 +61,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-
-        security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
-        filters = []
-        if exclude_category:
-            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
-        if security_filter:
-            filters.append(security_filter)
-        filter = None if len(filters) == 0 else " and ".join(filters)
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
