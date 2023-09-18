@@ -154,9 +154,9 @@ class AuthenticationHelper:
                 value = resp_json["value"]
                 for group in value:
                     groups.append(group["id"])
-                nextLink = resp_json.get("@odata.nextLink")
-                if nextLink:
-                    async with session.get(nextLink) as resp:
+                next_link = resp_json.get("@odata.nextLink")
+                if next_link:
+                    async with session.get(next_link) as resp:
                         resp_json = resp.json()
                         resp_status = resp.status
                 else:

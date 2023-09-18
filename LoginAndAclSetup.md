@@ -118,13 +118,13 @@ It's possible that your tenant admin has placed a restriction on consent to apps
 
 ## Optional scripts
 
-Two optional scripts are provided that allow easier setup of sample data with document level access control.
+Two optional scripts are provided that allow easier setup of sample data with document level access control. Either the [Data Lake Storage Gen2 script](#azure-data-lake-storage-gen2-setup) or the [manual access control management](#manually-managing-document-level-access-control) can be used to setup sample data for the document level access control system.
 
 ### Azure Data Lake Storage Gen2 Setup
 
 [Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) implements an [access control model](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) that can be used for document level access control. The [adlsgen2setup.ps1](./scripts/adlsgen2setup.ps1) script uploads the sample data included in the [data](./data) folder to a Data Lake Storage Gen2 storage account. The [Storage Blob Data Owner](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control-model#role-based-access-control-azure-rbac) role is required to use the script.
 
-In order to use this script, an existing Data Lake Storage Gen2 storage account. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <your-storage-account>` prior to running the script.
+In order to use this script, an existing Data Lake Storage Gen2 storage account is required. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <your-storage-account>` prior to running the script.
 
 To run the script, run the following command: `./scripts/adlsgen2setup.ps1`. The script performs the following steps:
 * Creates 3 example [groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups): `GPTKB_AdminTest`, `GPTKB_EmployeeTest`, `GPTKB_HRTest`
