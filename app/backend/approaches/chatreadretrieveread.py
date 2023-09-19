@@ -1,4 +1,4 @@
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Optional
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -69,22 +69,37 @@ If you cannot generate a search query, return just the number 0.
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     async def run_until_final_call(
-        self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream: bool = False
+            self,
+            history: list[dict[str, str]],
+            overrides: dict[str, Any],
+            should_stream: bool = False,
+            query_history: Optional[list[dict[str, str]]] = None
     ) -> tuple:
+
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top") or 3
         exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        use_query_history = overrides.get("use_query_history", True)
+        query_filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        user_q = "Generate search query for: " + history[-1]["user"]
+        query_history = query_history or []
+
+        if use_query_history:
+            query_history_input = query_history or []
+        else:
+            query_history_input = history
+
+        raw_user_query = history[-1]["user"]
+
+        user_q = "Generate search query for: " + raw_user_query
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
             self.query_prompt_template,
             self.chatgpt_model,
-            history,
+            query_history_input,
             user_q,
             self.query_prompt_few_shots,
             self.chatgpt_token_limit - len(user_q),
@@ -104,6 +119,8 @@ If you cannot generate a search query, return just the number 0.
         if query_text.strip() == "0":
             query_text = history[-1]["user"]  # Use the last user input if we failed to generate a better query
 
+        query_history.append({"user": raw_user_query, "bot": query_text})
+
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         # If retrieval mode includes vectors, compute an embedding for the query
@@ -122,7 +139,7 @@ If you cannot generate a search query, return just the number 0.
         if overrides.get("semantic_ranker") and has_text:
             r = await self.search_client.search(
                 query_text,
-                filter=filter,
+                filter=query_filter,
                 query_type=QueryType.SEMANTIC,
                 query_language="en-us",
                 query_speller="lexicon",
@@ -136,7 +153,7 @@ If you cannot generate a search query, return just the number 0.
         else:
             r = await self.search_client.search(
                 query_text,
-                filter=filter,
+                filter=query_filter,
                 top=top,
                 vector=query_vector,
                 top_k=50 if query_vector else None,
@@ -185,6 +202,7 @@ If you cannot generate a search query, return just the number 0.
             "data_points": results,
             "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>"
             + msg_to_display.replace("\n", "<br>"),
+            "query_history": query_history
         }
         chat_coroutine = openai.ChatCompletion.acreate(
             **chatgpt_args,
@@ -197,16 +215,21 @@ If you cannot generate a search query, return just the number 0.
         )
         return (extra_info, chat_coroutine)
 
-    async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
-        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
+    async def run_without_streaming(
+            self, history: list[dict[str, str]], overrides: dict[str, Any],
+            query_history: Optional[list[dict[str, str]]] = None) -> dict[str, Any]:
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            history=history, overrides=overrides, should_stream=False, query_history=query_history)
         chat_content = (await chat_coroutine).choices[0].message.content
         extra_info["answer"] = chat_content
         return extra_info
 
     async def run_with_streaming(
-        self, history: list[dict[str, str]], overrides: dict[str, Any]
+        self, history: list[dict[str, str]], overrides: dict[str, Any],
+        query_history: Optional[list[dict[str, str]]] = None
     ) -> AsyncGenerator[dict, None]:
-        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=True)
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            history=history, overrides=overrides, should_stream=True, query_history=query_history)
         yield extra_info
         async for event in await chat_coroutine:
             yield event

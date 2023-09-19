@@ -21,6 +21,7 @@ export type AskRequestOverrides = {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     suggestFollowupQuestions?: boolean;
+    useQueryHistoryForQueryGeneration?: boolean;
 };
 
 export type AskRequest = {
@@ -34,6 +35,7 @@ export type AskResponse = {
     thoughts: string | null;
     data_points: string[];
     error?: string;
+    query_history: ChatTurn[];
 };
 
 export type ChatTurn = {
@@ -43,6 +45,7 @@ export type ChatTurn = {
 
 export type ChatRequest = {
     history: ChatTurn[];
+    queryHistory: ChatTurn[];
     approach: Approaches;
     overrides?: AskRequestOverrides;
     shouldStream?: boolean;

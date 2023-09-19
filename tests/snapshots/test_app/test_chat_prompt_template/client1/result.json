@@ -3,5 +3,11 @@
     "data_points": [
         "Benefit_Options-2.pdf: There is a whistleblower policy."
     ],
+    "query_history": [
+        {
+            "bot": "capital of France",
+            "user": "What is the capital of France?"
+        }
+    ],
     "thoughts": "Searched for:<br>capital of France<br><br>Conversations:<br>{'role': 'system', 'content': 'You are a cat.'}<br><br>{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
 }
