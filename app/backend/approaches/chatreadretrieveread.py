@@ -1,6 +1,7 @@
 from typing import Any, AsyncGenerator
 
 import openai
+import json
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
@@ -33,6 +34,7 @@ Try not to repeat questions that have already been asked.
 Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
+You have access to azure cognitive search index with 100's of documents.
 Generate a search query based on the conversation and the new question.
 Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
 Do not include any text inside [] or <<>> in the search query terms.
@@ -80,6 +82,23 @@ If you cannot generate a search query, return just the number 0.
 
         user_q = "Generate search query for: " + history[-1]["user"]
 
+        functions= [  
+            {
+                "name": "search_sources",
+                "description": "Retrieve sources from the Azure Cognitive Search index",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "search_query": {
+                            "type": "string",
+                            "description": "Query string to retrieve documents from azure search eg: 'Health care plan'"
+                        }
+                    },
+                    "required": ["search_query"]
+                }
+            }
+        ]
+
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
             self.query_prompt_template,
@@ -98,9 +117,11 @@ If you cannot generate a search query, return just the number 0.
             temperature=0.0,
             max_tokens=32,
             n=1,
+            functions=functions,
+            function_call="auto"
         )
 
-        query_text = chat_completion.choices[0].message.content
+        query_text = self.get_search_query(chat_completion, history[-1]["user"])
         if query_text.strip() == "0":
             query_text = history[-1]["user"]  # Use the last user input if we failed to generate a better query
 
@@ -177,7 +198,7 @@ If you cannot generate a search query, return just the number 0.
             # Model does not handle lengthy system messages well.
             # Moved sources to latest user conversation to solve follow up questions prompt.
             history[-1]["user"] + "\n\nSources:\n" + content,
-            max_tokens=self.chatgpt_token_limit,
+            max_tokens=self.chatgpt_token_limit - 1024,
         )
         msg_to_display = "\n\n".join([str(message) for message in messages])
 
@@ -186,6 +207,7 @@ If you cannot generate a search query, return just the number 0.
             "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>"
             + msg_to_display.replace("\n", "<br>"),
         }
+        
         chat_coroutine = openai.ChatCompletion.acreate(
             **chatgpt_args,
             model=self.chatgpt_model,
@@ -199,7 +221,8 @@ If you cannot generate a search query, return just the number 0.
 
     async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
         extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
-        chat_content = (await chat_coroutine).choices[0].message.content
+        chat_resp = await chat_coroutine
+        chat_content = chat_resp.choices[0].message.content
         extra_info["answer"] = chat_content
         return extra_info
 
@@ -242,3 +265,17 @@ If you cannot generate a search query, return just the number 0.
 
         messages = message_builder.messages
         return messages
+    
+    def get_search_query(self, chat_completion: any, user_query: str):
+        response_message = chat_completion["choices"][0]["message"]
+        print(response_message)
+        if function_call := response_message.get("function_call"):
+            if function_call["name"] == "search_sources":
+                arg = json.loads(function_call["arguments"])
+                search_query = arg["search_query"]
+                if search_query is not None and search_query != "0":
+                    return search_query
+        elif query_text := response_message.get("content"):
+            if query_text.strip() != "0":
+                return query_text
+        return user_query
