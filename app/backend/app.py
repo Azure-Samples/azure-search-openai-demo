@@ -106,7 +106,10 @@ async def chat():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run_without_streaming(request_json["history"], request_json.get("overrides", {}))
+            r = await impl.run_without_streaming(
+                history=request_json["history"],
+                overrides=request_json.get("overrides", {}),
+                query_history=request_json.get("queryHistory", []))
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
@@ -128,7 +131,10 @@ async def chat_stream():
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
+        response_generator = impl.run_with_streaming(
+            history=request_json["history"],
+            overrides=request_json.get("overrides", {}),
+            query_history=request_json.get("queryHistory", []))
         response = await make_response(format_as_ndjson(response_generator))
         response.timeout = None  # type: ignore
         return response

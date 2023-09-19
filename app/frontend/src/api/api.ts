@@ -41,6 +41,7 @@ export async function chatApi(options: ChatRequest): Promise<Response> {
         body: JSON.stringify({
             history: options.history,
             approach: options.approach,
+            queryHistory: options.queryHistory,
             overrides: {
                 retrieval_mode: options.overrides?.retrievalMode,
                 semantic_ranker: options.overrides?.semanticRanker,
@@ -51,7 +52,8 @@ export async function chatApi(options: ChatRequest): Promise<Response> {
                 prompt_template_prefix: options.overrides?.promptTemplatePrefix,
                 prompt_template_suffix: options.overrides?.promptTemplateSuffix,
                 exclude_category: options.overrides?.excludeCategory,
-                suggest_followup_questions: options.overrides?.suggestFollowupQuestions
+                suggest_followup_questions: options.overrides?.suggestFollowupQuestions,
+                use_query_history: options.overrides?.useQueryHistoryForQueryGeneration,
             }
         })
     });
