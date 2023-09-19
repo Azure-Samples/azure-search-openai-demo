@@ -198,7 +198,7 @@ If you cannot generate a search query, return just the number 0.
             # Model does not handle lengthy system messages well.
             # Moved sources to latest user conversation to solve follow up questions prompt.
             history[-1]["user"] + "\n\nSources:\n" + content,
-            max_tokens=self.chatgpt_token_limit - 1024,
+            max_tokens=self.chatgpt_token_limit,
         )
         msg_to_display = "\n\n".join([str(message) for message in messages])
 
