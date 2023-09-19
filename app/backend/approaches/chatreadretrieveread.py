@@ -1,10 +1,9 @@
+import json
 from typing import Any, AsyncGenerator
 
 import openai
-import json
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
-
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
