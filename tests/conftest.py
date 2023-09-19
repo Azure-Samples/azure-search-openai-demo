@@ -104,6 +104,25 @@ def mock_acs_search(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
 
+@pytest.fixture
+def mock_acs_search_filter(monkeypatch):
+    class AsyncSearchResultsIterator:
+        def __init__(self):
+            self.num = 1
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            raise StopAsyncIteration
+
+    async def mock_search(*args, **kwargs):
+        monkeypatch.setenv("FILTER", kwargs.get("filter"))
+        return AsyncSearchResultsIterator()
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+
 envs = [
     {
         "OPENAI_HOST": "openai",
@@ -118,9 +137,51 @@ envs = [
     },
 ]
 
+auth_envs = [
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_USE_AUTHENTICATION": True,
+        "AZURE_SERVER_APP_ID": "SERVER_APP",
+        "AZURE_SERVER_APP_SECRET": "SECRET",
+        "AZURE_CLIENT_APP_ID": "CLIENT_APP",
+        "AZURE_TENANT_ID": "TENANT_ID",
+    },
+]
+
 
 @pytest_asyncio.fixture(params=envs)
 async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+    monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+    monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+    for key, value in request.param.items():
+        monkeypatch.setenv(key, value)
+
+    with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
+        mock_default_azure_credential.return_value = MockAzureCredential()
+        quart_app = app.create_app()
+
+        async with quart_app.test_app() as test_app:
+            quart_app.config.update({"TESTING": True})
+
+            yield test_app.test_client()
+
+
+@pytest_asyncio.fixture(params=auth_envs)
+async def auth_client(
+    monkeypatch,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_confidential_client_success,
+    mock_list_groups_success,
+    mock_acs_search_filter,
+    request,
+):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
     monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
