@@ -23,6 +23,8 @@ class AuthError(Exception):
 
 
 class AuthenticationHelper:
+    scope: str = "https://graph.microsoft.com/.default"
+
     def __init__(
         self,
         use_authentication: bool,
