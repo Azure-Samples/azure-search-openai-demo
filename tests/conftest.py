@@ -1,12 +1,16 @@
+import json
 from collections import namedtuple
 from unittest import mock
 
+import aiohttp
+import msal
 import openai
 import pytest
 import pytest_asyncio
 from azure.search.documents.aio import SearchClient
 
 import app
+from core.authentication import AuthenticationHelper
 
 MockToken = namedtuple("MockToken", ["token", "expires_on"])
 
@@ -133,3 +137,133 @@ async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding,
             quart_app.config.update({"TESTING": True})
 
             yield test_app.test_client()
+
+
+@pytest.fixture
+def mock_confidential_client_success(monkeypatch):
+    def mock_acquire_token_on_behalf_of(self, *args, **kwargs):
+        assert kwargs.get("user_assertion") is not None
+        scopes = kwargs.get("scopes")
+        assert scopes == [AuthenticationHelper.scope]
+        return {"access_token": "MockToken", "id_token_claims": {"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}}
+
+    monkeypatch.setattr(
+        msal.ConfidentialClientApplication, "acquire_token_on_behalf_of", mock_acquire_token_on_behalf_of
+    )
+
+    def mock_init(self, *args, **kwargs):
+        pass
+
+    monkeypatch.setattr(msal.ConfidentialClientApplication, "__init__", mock_init)
+
+
+@pytest.fixture
+def mock_confidential_client_unauthorized(monkeypatch):
+    def mock_acquire_token_on_behalf_of(self, *args, **kwargs):
+        assert kwargs.get("user_assertion") is not None
+        scopes = kwargs.get("scopes")
+        assert scopes == [AuthenticationHelper.scope]
+        return {"error": "unauthorized"}
+
+    monkeypatch.setattr(
+        msal.ConfidentialClientApplication, "acquire_token_on_behalf_of", mock_acquire_token_on_behalf_of
+    )
+
+    def mock_init(self, *args, **kwargs):
+        pass
+
+    monkeypatch.setattr(msal.ConfidentialClientApplication, "__init__", mock_init)
+
+
+@pytest.fixture
+def mock_confidential_client_overage(monkeypatch):
+    def mock_acquire_token_on_behalf_of(self, *args, **kwargs):
+        assert kwargs.get("user_assertion") is not None
+        scopes = kwargs.get("scopes")
+        assert scopes == [AuthenticationHelper.scope]
+        return {
+            "access_token": "MockToken",
+            "id_token_claims": {
+                "oid": "OID_X",
+                "_claim_names": {"groups": "src1"},
+                "_claim_sources": {"src1": {"endpoint": "https://example.com"}},
+            },
+        }
+
+    monkeypatch.setattr(
+        msal.ConfidentialClientApplication, "acquire_token_on_behalf_of", mock_acquire_token_on_behalf_of
+    )
+
+    def mock_init(self, *args, **kwargs):
+        pass
+
+    monkeypatch.setattr(msal.ConfidentialClientApplication, "__init__", mock_init)
+
+
+class MockResponse:
+    def __init__(self, text, status):
+        self.text = text
+        self.status = status
+
+    async def text(self):
+        return self._text
+
+    async def __aexit__(self, exc_type, exc, tb):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def json(self):
+        return json.loads(self.text)
+
+
+@pytest.fixture
+def mock_list_groups_success(monkeypatch):
+    class MockListResponse:
+        def __init__(self):
+            self.num = 2
+
+        def run(self, *args, **kwargs):
+            if self.num == 2:
+                self.num = 1
+                return MockResponse(
+                    text=json.dumps(
+                        {"@odata.nextLink": "https://odatanextlink.com", "value": [{"id": "OVERAGE_GROUP_Y"}]}
+                    ),
+                    status=200,
+                )
+            if self.num == 1:
+                assert kwargs.get("url") == "https://odatanextlink.com"
+                self.num = 0
+                return MockResponse(text=json.dumps({"value": [{"id": "OVERAGE_GROUP_Z"}]}), status=200)
+
+            raise Exception("too many runs")
+
+    mock_list_response = MockListResponse()
+
+    def mock_get(*args, **kwargs):
+        return mock_list_response.run(*args, **kwargs)
+
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+
+
+@pytest.fixture
+def mock_list_groups_unauthorized(monkeypatch):
+    class MockListResponse:
+        def __init__(self):
+            self.num = 1
+
+        def run(self, *args, **kwargs):
+            if self.num == 1:
+                self.num = 0
+                return MockResponse(text=json.dumps({"error": "unauthorized"}), status=401)
+
+            raise Exception("too many runs")
+
+    mock_list_response = MockListResponse()
+
+    def mock_get(*args, **kwargs):
+        return mock_list_response.run(*args, **kwargs)
+
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)

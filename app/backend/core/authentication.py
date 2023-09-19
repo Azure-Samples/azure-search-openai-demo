@@ -1,5 +1,6 @@
 # Refactored from https://github.com/Azure-Samples/ms-identity-python-on-behalf-of
 
+import json
 import logging
 import os
 from tempfile import TemporaryDirectory
@@ -12,7 +13,6 @@ from msal_extensions import (
     PersistedTokenCache,
     build_encrypted_persistence,
 )
-from quart import request
 
 
 # AuthError is raised when the authentication token sent by the client UI cannot be parsed or there is an authentication error accessing the graph API
@@ -32,7 +32,7 @@ class AuthenticationHelper:
         server_app_secret: str,
         client_app_id: str,
         tenant_id: str,
-        token_cache_path: str,
+        token_cache_path: str = None,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -88,9 +88,9 @@ class AuthenticationHelper:
         }
 
     @staticmethod
-    def get_token_auth_header() -> str:
+    def get_token_auth_header(headers: dict) -> str:
         # Obtains the Access Token from the Authorization Header
-        auth = request.headers.get("Authorization", None)
+        auth = headers.get("Authorization", None)
         if not auth:
             raise AuthError(
                 {"code": "authorization_header_missing", "description": "Authorization header is expected"}, 401
@@ -146,11 +146,11 @@ class AuthenticationHelper:
         async with aiohttp.ClientSession(headers=headers) as session:
             resp_json = None
             resp_status = None
-            async with session.get("https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=id") as resp:
+            async with session.get(url="https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=id") as resp:
                 resp_json = await resp.json()
                 resp_status = resp.status
                 if resp_status != 200:
-                    raise AuthError(error=resp_json, status_code=resp_status)
+                    raise AuthError(error=json.dumps(resp_json), status_code=resp_status)
 
             while resp_status == 200:
                 value = resp_json["value"]
@@ -158,24 +158,24 @@ class AuthenticationHelper:
                     groups.append(group["id"])
                 next_link = resp_json.get("@odata.nextLink")
                 if next_link:
-                    async with session.get(next_link) as resp:
-                        resp_json = resp.json()
+                    async with session.get(url=next_link) as resp:
+                        resp_json = await resp.json()
                         resp_status = resp.status
                 else:
                     break
             if resp_status != 200:
-                raise AuthError(error=resp_json, status_code=resp_status)
+                raise AuthError(error=json.dumps(resp_json), status_code=resp_status)
 
         return groups
 
-    async def get_auth_claims_if_enabled(self) -> dict[str:Any]:
+    async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str:Any]:
         if not self.use_authentication:
             return {}
         try:
             # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
             # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
             # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
-            auth_token = AuthenticationHelper.get_token_auth_header()
+            auth_token = AuthenticationHelper.get_token_auth_header(headers)
             graph_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(
                 user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"]
             )

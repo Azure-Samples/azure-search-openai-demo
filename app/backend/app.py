@@ -87,7 +87,7 @@ async def ask():
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled()
+    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
@@ -109,7 +109,7 @@ async def chat():
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled()
+    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
@@ -138,7 +138,7 @@ async def chat_stream():
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled()
+    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
