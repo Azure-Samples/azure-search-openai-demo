@@ -127,14 +127,11 @@ Two optional scripts are provided that allow easier setup of sample data with do
 In order to use this script, an existing Data Lake Storage Gen2 storage account is required. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <your-storage-account>` prior to running the script.
 
 To run the script, run the following command: `./scripts/adlsgen2setup.ps1`. The script performs the following steps:
-* Creates 3 example [groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups): `GPTKB_AdminTest`, `GPTKB_EmployeeTest`, `GPTKB_HRTest`
+* Creates example [groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups) listed in the [sampleacls.json](./scripts/sampleacls.json) file.
 * Creates a filesystem / container `gptkbcontainer` in the storage account.
-* Creates two directories, `benefitinfo` and `employeeinfo` in the `gptkbcontainer` filesystem / container.
-* Uploads the sample PDFs into both directories.
-* [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) on the `benefitinfo` and `employeeinfo` for the following groups:
-  * `GPTKB_AdminTest`: Can read all files in `gptkbcontainer`.
-  * `GPTKB_EmployeeTest`: Can only read files in `employeeinfo`.
-  * `GPTKB_HRTest`: Can read files in both `employeeinfo` and `benefitinfo`.
+* Creates the directories listed in the [sampleacls.json](./scripts/sampleacls.json) file.
+* Uploads the sample PDFs referenced in the [sampleacls.json](./scripts/sampleacls.json) file into the appropriate directories.
+* [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) using the information from the [sampleacls.json](./scripts/sampleacls.json) file.
 
 In order to use the sample access control, you need to join these groups in your Azure AD tenant.
 

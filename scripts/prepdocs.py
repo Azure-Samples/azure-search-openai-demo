@@ -577,7 +577,7 @@ def read_adls_gen2_files(
                     try:
                         os.remove(temp_file_path)
                     except Exception as e:
-                        print(f"\tGot an error while delete {temp_file_path} -> {e}")
+                        print(f"\tGot an error while deleting {temp_file_path} -> {e}")
 
 
 if __name__ == "__main__":

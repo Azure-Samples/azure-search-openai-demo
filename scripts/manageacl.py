@@ -55,59 +55,85 @@ class ManageAcl:
 
     async def run(self):
         endpoint = f"https://{self.service_name}.search.windows.net"
+        if self.acl_action == "enable_acls":
+            await self.enable_acls(endpoint)
+
         async with SearchClient(
-            endpoint=endpoint, credential=self.credentials, index_name=self.index_name
-        ) as search_client, SearchIndexClient(endpoint=endpoint, credential=self.credentials) as search_index_client:
-            if self.acl_action == "enable_acls":
-                logging.info(f"Enabling acls for index {self.index_name}")
-                index_definition = await search_index_client.get_index(self.index_name)
-                if not any(field.name == "oids" for field in index_definition.fields):
-                    index_definition.fields.append(
-                        SimpleField(
-                            name="oids",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                        )
-                    )
-                if not any(field.name == "groups" for field in index_definition.fields):
-                    index_definition.fields.append(
-                        SimpleField(
-                            name="groups",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                        )
-                    )
+            endpoint=endpoint, index_name=self.index_name, credential=self.credentials
+        ) as search_client:
+            if self.acl_action == "view":
+                await self.view_acl(search_client)
+            elif self.acl_action == "remove":
+                await self.remove_acl(search_client)
+            elif self.acl_action == "remove_all":
+                await self.remove_all_acls(search_client)
+            elif self.acl_action == "add":
+                await self.add_acl(search_client)
+            else:
+                raise Exception(f"Unknown action {self.acl_action}")
 
-                await search_index_client.create_or_update_index(index_definition)
-                return
-
-            filter = f"sourcefile eq '{self.document}'"
-            result = await search_client.search(
-                "", filter=filter, select=["id", self.acl_type], include_total_count=True
-            )
-            if await result.get_count() == 0:
-                logging.info(f"No documents match {self.document} - exiting")
-                return
-
-            documents_to_merge = []
-            async for document in result:
-                if self.acl_action == "view":
-                    # Assumes the acls are consistent across all sections of the document
-                    print(document[self.acl_type])
-                    return
-
-                if self.acl_action == "remove":
-                    new_acls = [acl_value for acl_value in document[self.acl_type] if acl_value != self.acl]
-                elif self.acl_action == "add":
-                    new_acls = document[self.acl_type]
-                    if not any(acl_value == self.acl for acl_value in new_acls):
-                        new_acls.append(self.acl)
-                else:
-                    new_acls = []
-                documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
-
-            await search_client.merge_documents(documents=documents_to_merge)
             logging.info("ACLs updated")
+
+    async def view_acl(self, search_client: SearchClient):
+        async for document in await self.get_documents(search_client):
+            # Assumes the acls are consistent across all sections of the document
+            print(document[self.acl_type])
+            return
+
+    async def remove_acl(self, search_client: SearchClient):
+        documents_to_merge = []
+        async for document in await self.get_documents(search_client):
+            new_acls = [acl_value for acl_value in document[self.acl_type] if acl_value != self.acl]
+            documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
+
+        await search_client.merge_documents(documents=documents_to_merge)
+
+    async def remove_all_acls(self, search_client: SearchClient):
+        documents_to_merge = []
+        async for document in await self.get_documents(search_client):
+            documents_to_merge.append({"id": document["id"], self.acl_type: []})
+
+        await search_client.merge_documents(documents=documents_to_merge)
+
+    async def add_acl(self, search_client: SearchClient):
+        documents_to_merge = []
+        async for document in await self.get_documents(search_client):
+            new_acls = document[self.acl_type]
+            if not any(acl_value == self.acl for acl_value in new_acls):
+                new_acls.append(self.acl)
+            documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
+
+        await search_client.merge_documents(documents=documents_to_merge)
+
+    async def get_documents(self, search_client: SearchClient):
+        filter = f"sourcefile eq '{self.document}'"
+        result = await search_client.search("", filter=filter, select=["id", self.acl_type], include_total_count=True)
+        if await result.get_count() == 0:
+            logging.info(f"No documents match {self.document} - exiting")
+            return
+
+    async def enable_acls(self, endpoint: str):
+        async with SearchIndexClient(endpoint=endpoint, credential=self.credentials) as search_index_client:
+            logging.info(f"Enabling acls for index {self.index_name}")
+            index_definition = await search_index_client.get_index(self.index_name)
+            if not any(field.name == "oids" for field in index_definition.fields):
+                index_definition.fields.append(
+                    SimpleField(
+                        name="oids",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
+                    )
+                )
+            if not any(field.name == "groups" for field in index_definition.fields):
+                index_definition.fields.append(
+                    SimpleField(
+                        name="groups",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
+                    )
+                )
+
+            await search_index_client.create_or_update_index(index_definition)
 
 
 async def main(args: any):
