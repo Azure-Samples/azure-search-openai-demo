@@ -1,7 +1,14 @@
 import openai
 import pytest
+import scripts
 import tenacity
-from scripts.prepdocs import args, compute_embedding, filename_to_id
+from conftest import MockAzureCredential
+from scripts.prepdocs import (
+    args,
+    compute_embedding,
+    filename_to_id,
+    read_adls_gen2_files,
+)
 
 
 def test_filename_to_id():
@@ -67,3 +74,46 @@ def test_compute_embedding_autherror(monkeypatch, capsys):
     monkeypatch.setattr(tenacity.nap.time, "sleep", lambda x: None)
     with pytest.raises(openai.error.AuthenticationError):
         compute_embedding("foo", "ada", "text-ada-003")
+
+
+def test_read_adls_gen2_files(monkeypatch, mock_data_lake_service_client):
+    monkeypatch.setattr(args, "verbose", True)
+    monkeypatch.setattr(args, "useacls", True)
+    monkeypatch.setattr(args, "datalakestorageaccount", "STORAGE")
+    monkeypatch.setattr(scripts.prepdocs, "adls_gen2_creds", MockAzureCredential())
+
+    def mock_remove(*args, **kwargs):
+        pass
+
+    class MockIndexSections:
+        def __init__(self):
+            self.filenames = []
+
+        def call(self, filename, sections, acls):
+            if filename == "a.txt":
+                assert acls == {"oids": ["A-USER-ID"], "groups": ["A-GROUP-ID"]}
+            elif filename == "b.txt":
+                assert acls == {"oids": ["B-USER-ID"], "groups": ["B-GROUP-ID"]}
+            elif filename == "c.txt":
+                assert acls == {"oids": ["C-USER-ID"], "groups": ["C-GROUP-ID"]}
+            else:
+                raise Exception(f"Unexpected filename {filename}")
+
+            self.filenames.append(filename)
+
+    mock_index_sections = MockIndexSections()
+
+    def mock_index_sections_method(filename, sections, acls):
+        mock_index_sections.call(filename, sections, acls)
+
+    monkeypatch.setattr(scripts.prepdocs, "remove_blobs", mock_remove)
+    monkeypatch.setattr(scripts.prepdocs, "upload_blobs", mock_remove)
+    monkeypatch.setattr(scripts.prepdocs, "remove_from_index", mock_remove)
+    monkeypatch.setattr(scripts.prepdocs, "get_document_text", mock_remove)
+    monkeypatch.setattr(scripts.prepdocs, "update_embeddings_in_batch", mock_remove)
+    monkeypatch.setattr(scripts.prepdocs, "create_sections", mock_remove)
+    monkeypatch.setattr(scripts.prepdocs, "index_sections", mock_index_sections_method)
+
+    read_adls_gen2_files(use_vectors=True, vectors_batch_support=True)
+
+    assert mock_index_sections.filenames == ["a.txt", "b.txt", "c.txt"]

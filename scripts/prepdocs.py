@@ -41,7 +41,20 @@ from tenacity import (
     wait_random_exponential,
 )
 
-args = argparse.Namespace(verbose=False, openaihost="azure")
+args = argparse.Namespace(
+    verbose=False,
+    openaihost="azure",
+    datalakestorageaccount=None,
+    datalakefilesystem=None,
+    datalakepath=None,
+    remove=False,
+    useacls=False,
+    skipblobs=False,
+    storageaccount=None,
+    container=None,
+)
+adls_gen2_creds = None
+storage_creds = None
 
 MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
@@ -552,12 +565,11 @@ def read_adls_gen2_files(
                                 continue
                             if len(acl_parts[1]) == 0:
                                 continue
-                            if acl_parts[0] == "user" and acl_parts[2].contains("r"):
+                            if acl_parts[0] == "user" and "r" in acl_parts[2]:
                                 acls["oids"].append(acl_parts[1])
-                            if acl_parts[0] == "group" and acl_parts[2].contains("r"):
+                            if acl_parts[0] == "group" and "r" in acl_parts[2]:
                                 acls["groups"].append(acl_parts[1])
 
-                    temp_file.close()
                     if not args.skipblobs:
                         upload_blobs(temp_file.name)
                     page_map = get_document_text(temp_file.name)
@@ -575,6 +587,7 @@ def read_adls_gen2_files(
                     print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
                 finally:
                     try:
+                        temp_file.close()
                         os.remove(temp_file_path)
                     except Exception as e:
                         print(f"\tGot an error while deleting {temp_file_path} -> {e}")

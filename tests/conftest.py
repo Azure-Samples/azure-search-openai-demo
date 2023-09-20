@@ -1,3 +1,4 @@
+import argparse
 import json
 from collections import namedtuple
 from unittest import mock
@@ -8,6 +9,12 @@ import openai
 import pytest
 import pytest_asyncio
 from azure.search.documents.aio import SearchClient
+from azure.storage.filedatalake import (
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    FileSystemClient,
+    StorageStreamDownloader,
+)
 
 import app
 from core.authentication import AuthenticationHelper
@@ -328,3 +335,51 @@ def mock_list_groups_unauthorized(monkeypatch):
         return mock_list_response.run(*args, **kwargs)
 
     monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+
+
+@pytest.fixture
+def mock_data_lake_service_client(monkeypatch):
+    def mock_init(self, *args, **kwargs):
+        pass
+
+    def mock_get_file_system_client(self, *args, **kwargs):
+        return FileSystemClient(account_url=None, file_system_name=None, credential=None)
+
+    monkeypatch.setattr(DataLakeServiceClient, "__init__", mock_init)
+    monkeypatch.setattr(DataLakeServiceClient, "get_file_system_client", mock_get_file_system_client)
+
+    def mock_get_file_client(self, path, *args, **kwargs):
+        return DataLakeFileClient(account_url=None, file_system_name=None, file_path=path, credential=None)
+
+    def mock_get_paths(self, *args, **kwargs):
+        return [argparse.Namespace(is_directory=False, name=name) for name in ["a.txt", "b.txt", "c.txt"]]
+
+    monkeypatch.setattr(FileSystemClient, "__init__", mock_init)
+    monkeypatch.setattr(FileSystemClient, "get_file_client", mock_get_file_client)
+    monkeypatch.setattr(FileSystemClient, "get_paths", mock_get_paths)
+
+    def mock_init_file(self, *args, **kwargs):
+        self.path = kwargs.get("file_path")
+
+    def mock_download_file(self, *args, **kwargs):
+        return StorageStreamDownloader(None)
+
+    def mock_get_access_control(self, *args, **kwargs):
+        if self.path.name == "a.txt":
+            return {"acl": "user:A-USER-ID:r-x,group:A-GROUP-ID:r-x"}
+        if self.path.name == "b.txt":
+            return {"acl": "user:B-USER-ID:r-x,group:B-GROUP-ID:r-x"}
+        if self.path.name == "c.txt":
+            return {"acl": "user:C-USER-ID:r-x,group:C-GROUP-ID:r-x"}
+
+        raise Exception(f"Unexpected path {self.path.name}")
+
+    monkeypatch.setattr(DataLakeFileClient, "__init__", mock_init_file)
+    monkeypatch.setattr(DataLakeFileClient, "download_file", mock_download_file)
+    monkeypatch.setattr(DataLakeFileClient, "get_access_control", mock_get_access_control)
+
+    def mock_readinto(self, *args, **kwargs):
+        pass
+
+    monkeypatch.setattr(StorageStreamDownloader, "__init__", mock_init)
+    monkeypatch.setattr(StorageStreamDownloader, "readinto", mock_readinto)

@@ -70,22 +70,12 @@ class AdlsGen2Setup:
                 logging.info("Ensuring directories exist...")
                 directories: dict[str, DataLakeDirectoryClient] = {}
                 try:
-                    for directory, access_control in self.data_access_control_format["directories"].items():
+                    for directory in self.data_access_control_format["directories"].keys():
                         directory_client = (
                             await filesystem_client.create_directory(directory)
                             if directory != "/"
                             else filesystem_client._get_root_directory_client()
                         )
-                        if "groups" in access_control:
-                            for group_name in access_control["groups"]:
-                                if group_name not in groups:
-                                    logging.error(
-                                        f"Directory {directory} has unknown group {group_name} in access control list, exiting"
-                                    )
-                                    return
-                                await directory_client.update_access_control_recursive(
-                                    acl=f"group:{groups[group_name]}:r-x"
-                                )
                         directories[directory] = directory_client
 
                     logging.info("Uploading files...")
@@ -97,6 +87,20 @@ class AdlsGen2Setup:
                         await self.upload_file(
                             directory_client=directories[directory], file_path=os.path.join(self.data_directory, file)
                         )
+
+                    logging.info("Setting access control...")
+                    for directory, access_control in self.data_access_control_format["directories"].items():
+                        directory_client = directories[directory]
+                        if "groups" in access_control:
+                            for group_name in access_control["groups"]:
+                                if group_name not in groups:
+                                    logging.error(
+                                        f"Directory {directory} has unknown group {group_name} in access control list, exiting"
+                                    )
+                                    return
+                                await directory_client.update_access_control_recursive(
+                                    acl=f"group:{groups[group_name]}:r-x"
+                                )
                 finally:
                     for directory_client in directories.values():
                         await directory_client.close()
