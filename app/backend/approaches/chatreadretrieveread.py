@@ -82,7 +82,7 @@ If you cannot generate a search query, return just the number 0.
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        user_query_request  = "Generate search query for: " + history[-1]["user"]
+        user_query_request = "Generate search query for: " + history[-1]["user"]
 
         functions = [
             {
