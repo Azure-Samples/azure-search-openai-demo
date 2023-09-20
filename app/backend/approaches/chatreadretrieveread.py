@@ -16,6 +16,8 @@ class ChatReadRetrieveReadApproach:
     USER = "user"
     ASSISTANT = "assistant"
 
+    NO_RESPONSE = "0"
+
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
@@ -82,7 +84,7 @@ If you cannot generate a search query, return just the number 0.
 
         user_q = "Generate search query for: " + history[-1]["user"]
 
-        functions= [  
+        functions = [
             {
                 "name": "search_sources",
                 "description": "Retrieve sources from the Azure Cognitive Search index",
@@ -91,11 +93,11 @@ If you cannot generate a search query, return just the number 0.
                     "properties": {
                         "search_query": {
                             "type": "string",
-                            "description": "Query string to retrieve documents from azure search eg: 'Health care plan'"
+                            "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
                         }
                     },
-                    "required": ["search_query"]
-                }
+                    "required": ["search_query"],
+                },
             }
         ]
 
@@ -118,7 +120,7 @@ If you cannot generate a search query, return just the number 0.
             max_tokens=32,
             n=1,
             functions=functions,
-            function_call="auto"
+            function_call="auto",
         )
 
         query_text = self.get_search_query(chat_completion, history[-1]["user"])
@@ -207,7 +209,7 @@ If you cannot generate a search query, return just the number 0.
             "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>"
             + msg_to_display.replace("\n", "<br>"),
         }
-        
+
         chat_coroutine = openai.ChatCompletion.acreate(
             **chatgpt_args,
             model=self.chatgpt_model,
@@ -265,17 +267,16 @@ If you cannot generate a search query, return just the number 0.
 
         messages = message_builder.messages
         return messages
-    
-    def get_search_query(self, chat_completion: any, user_query: str):
+
+    def get_search_query(self, chat_completion: dict[str, any], user_query: str):
         response_message = chat_completion["choices"][0]["message"]
-        print(response_message)
         if function_call := response_message.get("function_call"):
             if function_call["name"] == "search_sources":
                 arg = json.loads(function_call["arguments"])
                 search_query = arg["search_query"]
-                if search_query is not None and search_query != "0":
+                if search_query is not None and search_query != self.NO_RESPONSE:
                     return search_query
         elif query_text := response_message.get("content"):
-            if query_text.strip() != "0":
+            if query_text.strip() != self.NO_RESPONSE:
                 return query_text
         return user_query
