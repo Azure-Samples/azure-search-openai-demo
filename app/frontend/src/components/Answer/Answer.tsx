@@ -11,6 +11,7 @@ import { AnswerIcon } from "./AnswerIcon";
 interface Props {
     answer: AskResponse;
     isSelected?: boolean;
+    isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
@@ -21,13 +22,14 @@ interface Props {
 export const Answer = ({
     answer,
     isSelected,
+    isStreaming,
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, isStreaming, onCitationClicked ), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
@@ -51,7 +53,7 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.data_points.length}
+                            disabled={!answer.data_points?.length}
                         />
                     </div>
                 </Stack>
