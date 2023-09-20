@@ -1,4 +1,4 @@
-# ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
+# OneStream ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
 ## Table of Contents
 
