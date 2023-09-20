@@ -24,6 +24,7 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useQueryHistory, setUseQueryHistory] = useState<boolean>(true);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -36,6 +37,7 @@ const Chat = () => {
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [queryHistory, setQueryHistory] = useState<ChatTurn[]>([]);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -49,6 +51,7 @@ const Chat = () => {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
+                queryHistory: queryHistory,
                 approach: Approaches.ReadRetrieveRead,
                 shouldStream: shouldStream,
                 overrides: {
@@ -59,6 +62,7 @@ const Chat = () => {
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
                     suggestFollowupQuestions: useSuggestFollowupQuestions,
+                    useQueryHistoryForQueryGeneration: useQueryHistory,
                 }
             };
 
@@ -77,6 +81,7 @@ const Chat = () => {
                         let latestResponse: AskResponse = {...askResponse, answer: answer};
                         setIsLoading(false);
                         setAnswers([...answers, [question, latestResponse]]);
+                        setQueryHistory(latestResponse.query_history)
                     }
                 }
             } else {
@@ -85,6 +90,7 @@ const Chat = () => {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
                 setAnswers([...answers, [question, parsedResponse]]);
+                setQueryHistory(parsedResponse.query_history)
             }
         } catch (e) {
             setError(e);
@@ -99,6 +105,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
+        setQueryHistory([]);
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
@@ -133,6 +140,10 @@ const Chat = () => {
 
     const onUseSuggestFollowupQuestionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSuggestFollowupQuestions(!!checked);
+    };
+
+    const onUseQueryHistoryChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseQueryHistory(!!checked);
     };
 
     const onExampleClicked = (example: string) => {
@@ -280,6 +291,12 @@ const Chat = () => {
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useQueryHistory}
+                        label="Should query history be used"
+                        onChange={onUseQueryHistoryChange}
                     />
                     <Dropdown
                         className={styles.chatSettingsSeparator}
