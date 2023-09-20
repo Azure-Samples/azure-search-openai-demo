@@ -82,7 +82,7 @@ If you cannot generate a search query, return just the number 0.
         exclude_category = overrides.get("exclude_category") or None
         filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
 
-        user_q = "Generate search query for: " + history[-1]["user"]
+        user_query_request  = "Generate search query for: " + history[-1]["user"]
 
         functions = [
             {
@@ -106,9 +106,9 @@ If you cannot generate a search query, return just the number 0.
             self.query_prompt_template,
             self.chatgpt_model,
             history,
-            user_q,
+            user_query_request,
             self.query_prompt_few_shots,
-            self.chatgpt_token_limit - len(user_q),
+            self.chatgpt_token_limit - len(user_query_request),
         )
 
         chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
@@ -124,8 +124,6 @@ If you cannot generate a search query, return just the number 0.
         )
 
         query_text = self.get_search_query(chat_completion, history[-1]["user"])
-        if query_text.strip() == "0":
-            query_text = history[-1]["user"]  # Use the last user input if we failed to generate a better query
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -273,8 +271,8 @@ If you cannot generate a search query, return just the number 0.
         if function_call := response_message.get("function_call"):
             if function_call["name"] == "search_sources":
                 arg = json.loads(function_call["arguments"])
-                search_query = arg["search_query"]
-                if search_query is not None and search_query != self.NO_RESPONSE:
+                search_query = arg.get("search_query", self.NO_RESPONSE)
+                if search_query != self.NO_RESPONSE:
                     return search_query
         elif query_text := response_message.get("content"):
             if query_text.strip() != self.NO_RESPONSE:
