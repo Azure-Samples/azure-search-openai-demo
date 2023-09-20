@@ -38,7 +38,6 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
     const [queryHistory, setQueryHistory] = useState<ChatTurn[]>([]);
-    //const [queryHistory, setQueryHistory] = useState<[user: string, bot: string][]>([]);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -50,7 +49,6 @@ const Chat = () => {
 
         try {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
-            // const queryHistory: ChatTurn[] = [];
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 queryHistory: queryHistory,
