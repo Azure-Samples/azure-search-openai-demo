@@ -207,6 +207,7 @@ const Chat = () => {
                                         <UserChatMessage message={streamedAnswer[0]} />
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
+                                                isStreaming={true}
                                                 key={index}
                                                 answer={streamedAnswer[1]}
                                                 isSelected={false}
@@ -225,6 +226,7 @@ const Chat = () => {
                                         <UserChatMessage message={answer[0]} />
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
+                                                isStreaming={false}
                                                 key={index}
                                                 answer={answer[1]}
                                                 isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}

@@ -155,6 +155,7 @@ export function Component(): JSX.Element {
                     <div className={styles.oneshotAnswerContainer}>
                         <Answer
                             answer={answer}
+                            isStreaming={false}
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
