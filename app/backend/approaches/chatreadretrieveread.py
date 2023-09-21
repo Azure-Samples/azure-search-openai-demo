@@ -1,3 +1,4 @@
+import re
 from typing import Any, AsyncGenerator
 
 import openai
@@ -14,6 +15,9 @@ class ChatReadRetrieveReadApproach:
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
+
+    NO_CITATION_RESPONSE = "I'm sorry, but I don't have any information about your question regarding '{0}' in my available sources. Please try again with a valid questions based on sources provided."
+    CITATION_EXP = r"\[[^\]]+\]"
 
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
@@ -200,7 +204,10 @@ If you cannot generate a search query, return just the number 0.
     async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
         extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
         chat_content = (await chat_coroutine).choices[0].message.content
-        extra_info["answer"] = chat_content
+        citations = re.findall(self.CITATION_EXP, chat_content)
+        extra_info["answer"] = (
+            chat_content if len(citations) > 0 else self.NO_CITATION_RESPONSE.format(history[-1]["user"])
+        )
         return extra_info
 
     async def run_with_streaming(
