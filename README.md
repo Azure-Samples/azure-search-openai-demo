@@ -49,10 +49,10 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 **IMPORTANT:** In order to deploy and run this example, you'll need:
 
 * **Azure account**. If you're new to Azure, [get an Azure account for free](https://azure.microsoft.com/free/cognitive-search/) and you'll get some free Azure credits to get started.
-* **Azure subscription with access enabled for the Azure OpenAI service**. You can request access with [this form](https://aka.ms/oaiapply).
-* **Azure account permissions**: Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner).
+* **Azure subscription with access enabled for the Azure OpenAI service**. You can request access with [this form](https://aka.ms/oaiapply). If your access request to Azure OpenAI service doesn't match the [acceptance criteria](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access?context=%2Fazure%2Fcognitive-services%2Fopenai%2Fcontext%2Fcontext), you can use [OpenAI public API](https://platform.openai.com/docs/api-reference/introduction) instead. Learn [how to switch to an OpenAI instance](#switching-from-an-azure-openai-endpoint-to-an-openai-instance).
+* **Azure account permissions**: Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner). If you don't have subscription-level permissions, you must be granted [RBAC](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview) for an existing resource group and [deploy to that existing group](#existing-resource-group).
 
-## Azure deployment 
+## Azure deployment
 
 ### Cost estimation
 
@@ -66,14 +66,14 @@ However, you can try the [Azure pricing calculator](https://azure.com/e/8ffbe5b1
 - Azure Blob Storage: Standard tier with ZRS (Zone-redundant storage). Pricing per storage and read operations. [Pricing](https://azure.microsoft.com/pricing/details/storage/blobs/)
 - Azure Monitor: Pay-as-you-go tier. Costs based on data ingested. [Pricing](https://azure.microsoft.com/pricing/details/monitor/)
 
-To reduce costs, you can switch to free SKUs for Azure App Service, Azure Cognitive Search, and Form Recognizer by changing the parameters file under the `infra` folder. There are some limits to consider; for example, you can have up to 1 free Cognitive Search resource per subscription, and the free Form Recognizer resource only analyzes the first 2 pages of each document. You can also reduce costs associated with the Form Recognizer by reducing the number of documents in the `data` folder, or by removing the postprovision hook in `azure.yaml` that runs the `prepdocs.py` script.
+To reduce costs, you can switch to free SKUs for Azure App Service and Form Recognizer by changing the parameters file under the `infra` folder. There are some limits to consider; for example, the free Form Recognizer resource only analyzes the first 2 pages of each document. You can also reduce costs associated with the Form Recognizer by reducing the number of documents in the `data` folder, or by removing the postprovision hook in `azure.yaml` that runs the `prepdocs.py` script.
 
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
 ### Project setup
 
-You have a few options for setting up this project. 
+You have a few options for setting up this project.
 The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
 but you can also [set it up locally](#local-environment) if desired.
 
@@ -116,24 +116,45 @@ Execute the following command, if you don't have any pre-existing Azure services
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
-
 It will look like the following:
 
 !['Output from running azd up'](assets/endpoint.png)
 
-> NOTE: It may take a minute for the application to be fully deployed. If you see a "Python Developer" welcome screen, then wait a minute and refresh the page.
+> NOTE: It may take 5-10 minutes for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page.
 
 ### Deploying with existing Azure resources
 
-If you already have existing Azure resources, you can re-use those by setting `azd` environment values. For example:
+If you already have existing Azure resources, you can re-use those by setting `azd` environment values.
+
+#### Existing resource group
+
+1. Run `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
+1. Run `azd env set AZURE_LOCATION {Location of existing resource group}`
+
+#### Existing OpenAI resource
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing ChatGPT deployment}`. Only needed if your ChatGPT deployment is not the default 'chat'.
 1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing GPT embedding deployment}`. Only needed if your embeddings deployment is not the default 'embedding'.
-1. Run `azd up` - This will provision the rest of the Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
 
-> NOTE: You can also use existing Search and Storage Accounts.  See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+#### Existing Azure Cognitive Search resource
+
+1. Run `azd env set AZURE_SEARCH_SERVICE {Name of existing Azure Cognitive Search service}`
+1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
+1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
+  then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
+1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. The free tier won't work as it doesn't support managed identity. ([See other possible values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
+
+#### Other existing Azure resources
+
+You can also use existing Form Recognizer and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+
+#### Provision remaining resources
+
+Now you can run `azd up`, following the steps in [Deploying from scratch](#deploying-from-scratch) above.
+That will both provision resources and deploy the code.
+
 
 ### Deploying again
 
@@ -159,6 +180,20 @@ either you or they can follow these steps:
 1. Run `./scripts/roles.ps1` or `.scripts/roles.sh` to assign all of the necessary roles to the user.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Once the script runs, they should be able to run the app locally.
 
 ## Enabling optional features
+
+#### Using a non-Azure OpenAI instance
+
+To use an existing non-Azure OpenAI account, follow these steps before running `azd up`
+
+1. Run `azd env set OPENAI_HOST openai`
+2. Run `azd env set OPENAI_ORGANIZATION {Your OpenAI organization}`
+3. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
+4. Run `azd up`
+
+You can retrieve your OpenAI key by checking [your user page](https://platform.openai.com/account/api-keys) and your organization by navigating to [your organization page](https://platform.openai.com/account/org-settings).
+Learn more about creating an OpenAI free trial at [this link](https://openai.com/pricing).
+Do *not* check your key into source control.
+
 
 ### Enabling Application Insights
 
@@ -242,6 +277,17 @@ to production. Here are some things to consider:
 * [Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and Cognitive Search](https://aka.ms/entgptsearchblog)
 * [Azure Cognitive Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
 * [Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
+* [Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/en-gb/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
+
+## Clean up
+
+To clean up all the resources created by this sample:
+
+1. Run `azd down`
+2. When asked if you are sure you want to continue, enter `y`
+3. When asked if you want to permanently delete the resources, enter `y`
+
+The resource group and all the resources will be deleted.
 
 ### Note
 
@@ -249,19 +295,19 @@ to production. Here are some things to consider:
 
 ### FAQ
 
-<details>
+<details><a id="ingestion-why-chunk"></a>
 <summary>Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?</summary>
 
 Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 </details>
 
-<details>
+<details><a id="ingestion-more-pdfs"></a>
 <summary>How can we upload additional PDFs without redeploying everything?</summary>
 
 To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
 </details>
 
-<details>
+<details><a id="compare-samples"></a>
 <summary>How does this sample compare to other Chat with Your Data samples?</summary>
 
 Another popular repository for this use case is here:
@@ -274,15 +320,33 @@ The primary differences:
 * This repository includes multiple RAG (retrieval-augmented generation) approaches that chain the results of multiple API calls (to Azure OpenAI and ACS) together in different ways. The other repository uses only the built-in data sources option for the ChatCompletions API, which uses a RAG approach on the specified ACS index. That should work for most uses, but if you needed more flexibility, this sample may be a better option.
 * This repository is also a bit more experimental in other ways, since it's not tied to the Azure OpenAI Studio like the other repository.
 
+Feature comparison:
+
+| Feature | azure-search-openai-demo | sample-app-aoai-chatGPT |
+| --- | --- | --- |
+| RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
+| Vector support | ✅ Yes | ✅ Yes |
+| Data ingestion | ✅ Yes (PDF) | ✅ Yes (PDF, TXT, MD, HTML) |
+| Persistent chat history | ❌ No (browser tab only) | ✅ Yes, in CosmosDB |
+
+Technology comparison:
+
+| Tech | azure-search-openai-demo | sample-app-aoai-chatGPT |
+| --- | --- | --- |
+| Frontend | React | React |
+| Backend | Python (Quart) | Python (Flask) |
+| Vector DB | Azure Cognitive Search | Azure Cognitive Search |
+| Deployment | Azure Developer CLI (azd) | Azure Portal, az, azd |
+
 </details>
 
-<details>
+<details><a id="switch-gpt4"></a>
 <summary>How do you use GPT-4 with this sample?</summary>
 
 In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'. You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
 </details>
 
-<details>
+<details><a id="chat-ask-diff"></a>
 <summary>What is the difference between the Chat and Ask tabs?</summary>
 
 The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
@@ -299,6 +363,50 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
+<details><a id="azd-up-explanation"></a>
+<summary>What does the `azd up` command do?</summary>
+
+The `azd up` command comes from the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview), and takes care of both provisioning the Azure resources and deploying code to the selected Azure hosts.
+
+The `azd up` command uses the `azure.yaml` file combined with the infrastructure-as-code `.bicep` files in the `infra/` folder. The `azure.yaml` file for this project declares several "hooks" for the prepackage step and postprovision steps. The `up` command first runs the `prepackage` hook which installs Node dependencies and builds the React.JS-based JavaScript files. It then packages all the code (both frontend and backend) into a zip file which it will deploy later.
+
+Next, it provisions the resources based on `main.bicep` and `main.parameters.json`. At that point, since there is no default value for the OpenAI resource location, it asks you to pick a location from a short list of available regions. Then it will send requests to Azure to provision all the required resources. With everything provisioned, it runs the `postprovision` hook to process the local data and add it to an Azure Cognitive Search index.
+
+Finally, it looks at `azure.yaml` to determine the Azure host (appservice, in this case) and uploads the zip to Azure App Service. The `azd up` command is now complete, but it may take another 5-10 minutes for the App Service app to be fully available and working, especially for the initial deploy.
+
+Related commands are `azd provision` for just provisioning (if infra files change) and `azd deploy` for just deploying updated app code.
+</details>
+
+<details><a id="appservice-logs"></a>
+<summary>How can we view logs from the App Service app?</summary>
+
+You can view production logs in the Portal using either the Log stream or by downloading the default_docker.log file from Advanced tools.
+
+The following line of code in `app/backend/app.py` configures the logging level:
+
+```python
+logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+```
+
+To change the default level, you can set the `APP_LOG_LEVEL` environment variable locally or in App Service
+to one of the [allowed log levels](https://docs.python.org/3/library/logging.html#logging-levels):
+`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
+
+If you need to log in a route handler, use the the global variable `current_app`'s logger:
+
+```python
+async def chat_stream():
+    current_app.logger.info("Received /chat request")
+```
+
+Otherwise, use the `logging` module's root logger:
+
+```python
+logging.info("System message: %s", system_message)
+```
+
+If you're having troubles finding the logs in App Service, see this blog post on [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about viewing App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54).
+</details>
 
 ### Troubleshooting
 
@@ -314,5 +422,4 @@ Here are the most common failure scenarios and solutions:
 
 1. You see `CERTIFICATE_VERIFY_FAILED` when the `prepdocs.py` script runs. That's typically due to incorrect SSL certificates setup on your machine. Try the suggestions in this [StackOverflow answer](https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394).
 
-1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html)
-and file an issue if the error logs don't help you resolve the issue.
+1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about downloading App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54). Please file an issue if the logs don't help you resolve the error.

@@ -194,6 +194,7 @@ export function Component(): JSX.Element {
                     <div className={styles.oneshotAnswerContainer}>
                         <Answer
                             answer={answer[0]}
+                            isStreaming={false}
                             isSpeaking = {isSpeaking}
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
@@ -270,7 +271,7 @@ export function Component(): JSX.Element {
 
                 <SpinButton
                     className={styles.oneshotSettingsSeparator}
-                    label="Retrieve this many documents from search:"
+                    label="Retrieve this many search results:"
                     min={1}
                     max={50}
                     defaultValue={retrieveCount.toString()}

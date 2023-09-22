@@ -17,15 +17,20 @@ param applicationInsightsName string = ''
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
-param searchServiceResourceGroupLocation string = location
-
-param searchServiceSkuName string = 'standard'
+param searchServiceLocation string = ''
+// The free tier does not support managed identity (required) or semantic search (optional)
+@allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
+param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
+param storageSkuName string // Set in main.parameters.json
+
+@allowed(['azure', 'openai'])
+param openAiHost string // Set in main.parameters.json
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
@@ -36,7 +41,7 @@ param speechServiceName string = ''
 param speechServiceSkuName string = 'S0'
 
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'francecentral', 'japaneast', 'northcentralus'])
+@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus'])
 @metadata({
   azd: {
     type: 'location'
@@ -46,6 +51,9 @@ param openAiResourceGroupLocation string
 
 param openAiSkuName string = 'S0'
 
+param openAiApiKey string = ''
+param openAiApiOrganization string = ''
+
 param formRecognizerServiceName string = ''
 param formRecognizerResourceGroupName string = ''
 param formRecognizerResourceGroupLocation string = location
@@ -54,7 +62,7 @@ param formRecognizerSkuName string = 'S0'
 
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
-param chatGptModelName string = 'gpt-35-turbo'
+param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
 param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string = 'embedding'
 param embeddingDeploymentCapacity int = 30
@@ -145,20 +153,27 @@ module backend 'core/host/appservice.bicep' = {
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
-      AZURE_OPENAI_SERVICE: openAi.outputs.name
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
-      AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
-      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       AZURE_SPEECH_RESOURCE_ID : useSpeechResource ? speechResourceID : ''
       AZURE_SPEECH_REGION : useSpeechResource ? speechResourceGroupLocation : ''
+      // Shared by all OpenAI deployments
+      OPENAI_HOST: openAiHost
+      AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
+      AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
+      // Specific to Azure OpenAI
+      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAi.outputs.name : ''
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
+      // Used only with non-Azure OpenAI deployments
+      OPENAI_API_KEY: openAiApiKey
+      OPENAI_ORGANIZATION: openAiApiOrganization
     }
   }
 }
 
-module openAi 'core/ai/cognitiveservices.bicep' = {
+module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -226,7 +241,7 @@ module searchService 'core/search/search-services.bicep' = {
   scope: searchServiceResourceGroup
   params: {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
-    location: searchServiceResourceGroupLocation
+    location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
     authOptions: {
       aadOrApiKey: {
@@ -249,7 +264,7 @@ module storage 'core/storage/storage-account.bicep' = {
     tags: tags
     publicNetworkAccess: 'Enabled'
     sku: {
-      name: 'Standard_LRS'
+      name: storageSkuName
     }
     deleteRetentionPolicy: {
       enabled: true
@@ -265,7 +280,7 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
-module openAiRoleUser 'core/security/role.bicep' = {
+module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
   scope: openAiResourceGroup
   name: 'openai-role-user'
   params: {
@@ -346,7 +361,7 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = {
 }
 
 // SYSTEM IDENTITIES
-module openAiRoleBackend 'core/security/role.bicep' = {
+module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
   scope: openAiResourceGroup
   name: 'openai-role-backend'
   params: {
@@ -390,12 +405,18 @@ output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
-output AZURE_OPENAI_SERVICE string = openAi.outputs.name
-output AZURE_OPENAI_RESOURCE_GROUP string = openAiResourceGroup.name
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = chatGptDeploymentName
-output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
-output AZURE_OPENAI_EMB_DEPLOYMENT string = embeddingDeploymentName
+// Shared by all OpenAI deployments
+output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
+output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
+// Specific to Azure OpenAI
+output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
+output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiHost == 'azure') ? chatGptDeploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiHost == 'azure') ? embeddingDeploymentName : ''
+// Used only with non-Azure OpenAI deployments
+output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
+output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
 
 output AZURE_SPEECH_RESOURCE_ID string = useSpeechResource ? speechResourceID : ''
 output AZURE_SPEECH_REGION string = useSpeechResource ? speechResourceGroupLocation : ''

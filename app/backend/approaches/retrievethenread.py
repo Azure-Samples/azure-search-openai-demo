@@ -16,15 +16,16 @@ class RetrieveThenReadApproach(AskApproach):
     (answer) with that prompt.
     """
 
-    system_chat_template = \
-"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. " + \
-"Use 'you' to refer to the individual asking the questions even if they ask with 'I'. " + \
-"Answer the following question using only the data provided in the sources below. " + \
-"For tabular information return it as an html table. Do not return markdown format. "  + \
-"Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. " + \
-"If you cannot answer using the sources below, say you don't know. Use below example to answer"
+    system_chat_template = (
+        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
+        + "Answer the following question using only the data provided in the sources below. "
+        + "For tabular information return it as an html table. Do not return markdown format. "
+        + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
+        + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
+    )
 
-    #shots/sample conversation
+    # shots/sample conversation
     question = """
 'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
 
@@ -36,10 +37,22 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 """
     answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
-    def __init__(self, search_client: SearchClient, openai_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(
+        self,
+        search_client: SearchClient,
+        openai_host: str,
+        chatgpt_deployment: str,
+        chatgpt_model: str,
+        embedding_deployment: str,
+        embedding_model: str,
+        sourcepage_field: str,
+        content_field: str,
+    ):
         self.search_client = search_client
-        self.openai_deployment = openai_deployment
+        self.openai_host = openai_host
+        self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
+        self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
@@ -54,7 +67,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = (await openai.Embedding.acreate(engine=self.embedding_deployment, input=q))["data"][0]["embedding"]
+            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
+            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=q)
+            query_vector = embedding["data"][0]["embedding"]
         else:
             query_vector = None
 
@@ -63,47 +78,63 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC,
-                                          query_language="en-us",
-                                          query_speller="lexicon",
-                                          semantic_configuration_name="default",
-                                          top=top,
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                query_type=QueryType.SEMANTIC,
+                query_language="en-us",
+                query_speller="lexicon",
+                semantic_configuration_name="default",
+                top=top,
+                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         else:
-            r = await self.search_client.search(query_text,
-                                          filter=filter,
-                                          top=top,
-                                          vector=query_vector,
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                top=top,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) async for doc in r]
+            results = [
+                doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
+                async for doc in r
+            ]
         else:
             results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
         content = "\n".join(results)
 
-        message_builder = MessageBuilder(overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model)
+        message_builder = MessageBuilder(
+            overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model
+        )
 
         # add user question
         user_content = q + "\n" + f"Sources:\n {content}"
-        message_builder.append_message('user', user_content)
+        message_builder.append_message("user", user_content)
 
         # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
-        message_builder.append_message('assistant', self.answer)
-        message_builder.append_message('user', self.question)
+        message_builder.append_message("assistant", self.answer)
+        message_builder.append_message("user", self.question)
 
         messages = message_builder.messages
+        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
         chat_completion = await openai.ChatCompletion.acreate(
-            deployment_id=self.openai_deployment,
+            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.3,
             max_tokens=1024,
-            n=1)
+            n=1,
+        )
 
-        return {"data_points": results, "answer": chat_completion.choices[0].message.content, "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>" + '\n\n'.join([str(message) for message in messages])}
+        return {
+            "data_points": results,
+            "answer": chat_completion.choices[0].message.content,
+            "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
+            + "\n\n".join([str(message) for message in messages]),
+        }

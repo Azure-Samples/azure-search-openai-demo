@@ -12,6 +12,7 @@ interface Props {
     answer: AskResponse;
     isSelected?: boolean;
     isSpeaking?: boolean;
+    isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
@@ -24,6 +25,7 @@ export const Answer = ({
     answer,
     isSelected,
     isSpeaking,
+    isStreaming,
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
@@ -31,7 +33,7 @@ export const Answer = ({
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, isStreaming, onCitationClicked ), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
@@ -55,7 +57,7 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.data_points.length}
+                            disabled={!answer.data_points?.length}
                         />
                         {isSpeaking && 
                             (<IconButton
