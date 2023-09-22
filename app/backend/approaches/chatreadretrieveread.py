@@ -1,3 +1,4 @@
+import json
 from typing import Any, AsyncGenerator
 
 import openai
@@ -15,6 +16,8 @@ class ChatReadRetrieveReadApproach(Approach):
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
+
+    NO_RESPONSE = "0"
 
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
@@ -34,6 +37,7 @@ Try not to repeat questions that have already been asked.
 Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
+You have access to Azure Cognitive Search index with 100's of documents.
 Generate a search query based on the conversation and the new question.
 Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
 Do not include any text inside [] or <<>> in the search query terms.
@@ -82,16 +86,33 @@ If you cannot generate a search query, return just the number 0.
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
 
-        user_q = "Generate search query for: " + history[-1]["user"]
+        user_query_request = "Generate search query for: " + history[-1]["user"]
+
+        functions = [
+            {
+                "name": "search_sources",
+                "description": "Retrieve sources from the Azure Cognitive Search index",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "search_query": {
+                            "type": "string",
+                            "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
+                        }
+                    },
+                    "required": ["search_query"],
+                },
+            }
+        ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
             self.query_prompt_template,
             self.chatgpt_model,
             history,
-            user_q,
+            user_query_request,
             self.query_prompt_few_shots,
-            self.chatgpt_token_limit - len(user_q),
+            self.chatgpt_token_limit - len(user_query_request),
         )
 
         chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
@@ -102,11 +123,11 @@ If you cannot generate a search query, return just the number 0.
             temperature=0.0,
             max_tokens=32,
             n=1,
+            functions=functions,
+            function_call="auto",
         )
 
-        query_text = chat_completion.choices[0].message.content
-        if query_text.strip() == "0":
-            query_text = history[-1]["user"]  # Use the last user input if we failed to generate a better query
+        query_text = self.get_search_query(chat_completion, history[-1]["user"])
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -188,6 +209,7 @@ If you cannot generate a search query, return just the number 0.
             "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>"
             + msg_to_display.replace("\n", "<br>"),
         }
+
         chat_coroutine = openai.ChatCompletion.acreate(
             **chatgpt_args,
             model=self.chatgpt_model,
@@ -205,7 +227,8 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=False
         )
-        chat_content = (await chat_coroutine).choices[0].message.content
+        chat_resp = await chat_coroutine
+        chat_content = chat_resp.choices[0].message.content
         extra_info["answer"] = chat_content
         return extra_info
 
@@ -217,7 +240,9 @@ If you cannot generate a search query, return just the number 0.
         )
         yield extra_info
         async for event in await chat_coroutine:
-            yield event
+            # "2023-07-01-preview" API version has a bug where first response has empty choices
+            if event["choices"]:
+                yield event
 
     def get_messages_from_history(
         self,
@@ -249,3 +274,16 @@ If you cannot generate a search query, return just the number 0.
 
         messages = message_builder.messages
         return messages
+
+    def get_search_query(self, chat_completion: dict[str, any], user_query: str):
+        response_message = chat_completion["choices"][0]["message"]
+        if function_call := response_message.get("function_call"):
+            if function_call["name"] == "search_sources":
+                arg = json.loads(function_call["arguments"])
+                search_query = arg.get("search_query", self.NO_RESPONSE)
+                if search_query != self.NO_RESPONSE:
+                    return search_query
+        elif query_text := response_message.get("content"):
+            if query_text.strip() != self.NO_RESPONSE:
+                return query_text
+        return user_query
