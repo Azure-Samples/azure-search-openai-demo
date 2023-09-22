@@ -59,7 +59,7 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.data_points?.length}
                         />
-                        {isSpeaking && 
+                        {isSpeaking &&
                             (<IconButton
                                 style={{ color: "red" }}
                                 iconProps={{ iconName: "Volume3" }}
@@ -68,7 +68,7 @@ export const Answer = ({
                                 onClick={() => onSpeechSynthesisClicked()}
                             />)
                         }
-                        {!isSpeaking && 
+                        {!isSpeaking &&
                             (<IconButton
                                 style={{ color: "black" }}
                                 iconProps={{ iconName: "Volume3" }}

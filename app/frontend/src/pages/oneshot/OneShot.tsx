@@ -141,7 +141,7 @@ export function Component(): JSX.Element {
             audio.pause();
             setIsSpeaking(false);
         }
-        
+
         if(url === null) {
             return;
         }

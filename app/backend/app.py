@@ -117,12 +117,13 @@ async def chat():
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
+
 @bp.route("/speech", methods=["POST"])
 async def speech():
     AZURE_SPEECH_RESOURCEID = os.getenv("AZURE_SPEECH_RESOURCE_ID")
     AZURE_SPEECH_REGION = os.getenv("AZURE_SPEECH_REGION")
 
-    if not AZURE_SPEECH_RESOURCEID or AZURE_SPEECH_RESOURCEID == '':
+    if not AZURE_SPEECH_RESOURCEID or AZURE_SPEECH_RESOURCEID == "":
         return jsonify({"error": "speech resource not configured"}), 400
 
     await ensure_speech_token()
@@ -134,7 +135,7 @@ async def speech():
     try:
         auth_token = "aad#" + AZURE_SPEECH_RESOURCEID + "#" + current_app.config[CONFIG_SPEECH_TOKEN].token
         speech_config = speechsdk.SpeechConfig(auth_token=auth_token, region=AZURE_SPEECH_REGION)
-        speech_config.speech_synthesis_voice_name='en-US-SaraNeural'
+        speech_config.speech_synthesis_voice_name = "en-US-SaraNeural"
         speech_config.speech_synthesis_output_format = speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
@@ -142,6 +143,7 @@ async def speech():
     except Exception as e:
         logging.exception("Exception in /speech")
         return jsonify({"error": str(e)}), 500
+
 
 async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
     async for event in r:
@@ -179,11 +181,13 @@ async def ensure_openai_token():
         current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
         openai.api_key = openai_token.token
 
+
 async def ensure_speech_token():
     speech_token = current_app.config[CONFIG_SPEECH_TOKEN]
     if speech_token.expires_on < time.time() + 60:
         speech_token = current_app.config[CONFIG_SPEECH_CREDENTIAL].get_token("https://cognitiveservices.azure.com")
         current_app.config[CONFIG_SPEECH_TOKEN] = speech_token
+
 
 @bp.before_app_serving
 async def setup_clients():
@@ -238,7 +242,7 @@ async def setup_clients():
         openai.api_key = OPENAI_API_KEY
         openai.organization = OPENAI_ORGANIZATION
 
-    if not os.getenv("AZURE_SPEECH_RESOURCE_ID") == '':
+    if not os.getenv("AZURE_SPEECH_RESOURCE_ID") == "":
         speech_credential = ChainedTokenCredential(ManagedIdentityCredential(), AzureCliCredential())
         speech_token = speech_credential.get_token("https://cognitiveservices.azure.com/")
         current_app.config[CONFIG_SPEECH_CREDENTIAL] = speech_credential

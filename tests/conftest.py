@@ -15,20 +15,22 @@ class MockAzureCredential:
     async def get_token(self, uri):
         return MockToken("mock_token", 9999999999)
 
+
 class MockAzureChainedCredential:
     def get_token(self, uri):
         return MockToken("mock_token", 9999999999)
 
+
 @pytest.fixture
 def mock_speechsdk(monkeypatch):
-    class Mock_Audio():
+    class Mock_Audio:
         def __init__(self, audio_data):
             self.audio_data = audio_data
 
         def read(self):
             return self.audio_data
 
-    class SythesisResult():
+    class SythesisResult:
         def __init__(self, result):
             self.__result = result
 
@@ -39,7 +41,6 @@ def mock_speechsdk(monkeypatch):
         return SythesisResult(Mock_Audio("mock_audio_data"))
 
     monkeypatch.setattr(speechsdk.SpeechSynthesizer, "speak_text_async", mock_speak_text_async)
-
 
 
 @pytest.fixture
@@ -146,8 +147,9 @@ envs = [
 
 
 @pytest_asyncio.fixture(params=envs)
-async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request, mock_speechsdk):
-
+async def client(
+    monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request, mock_speechsdk
+):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
     monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
@@ -159,12 +161,14 @@ async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding,
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
 
-    with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential, mock.patch("app.ChainedTokenCredential") as mock_speech_azure_credential :
-            mock_default_azure_credential.return_value = MockAzureCredential()
-            mock_speech_azure_credential.return_value = MockAzureChainedCredential()
-            quart_app = app.create_app()
+    with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential, mock.patch(
+        "app.ChainedTokenCredential"
+    ) as mock_speech_azure_credential:
+        mock_default_azure_credential.return_value = MockAzureCredential()
+        mock_speech_azure_credential.return_value = MockAzureChainedCredential()
+        quart_app = app.create_app()
 
-            async with quart_app.test_app() as test_app:
-                quart_app.config.update({"TESTING": True})
+        async with quart_app.test_app() as test_app:
+            quart_app.config.update({"TESTING": True})
 
-                yield test_app.test_client()
+            yield test_app.test_client()
