@@ -86,6 +86,7 @@ const Chat = () => {
                         setAnswers([...answers, [question, latestResponse, null]]);
                     }
                 }
+
                 speechUrl = await getSpeechApi(latestResponse.answer);
                 setAnswers([...answers, [question, latestResponse, speechUrl]]);
                 if(useAutoSpeakAnswers){
@@ -178,7 +179,7 @@ const Chat = () => {
             setRunningIndex(-1);
             return;
         }
-        
+
         if(runningIndex !== -1) {
             audio.pause();
             setRunningIndex(-1);
@@ -190,7 +191,7 @@ const Chat = () => {
 
         audio = new Audio(url);
         await audio.play();
-        audio.addEventListener('ended', () => {                
+        audio.addEventListener('ended', () => {
             setRunningIndex(-1);
         });
         setRunningIndex(index);

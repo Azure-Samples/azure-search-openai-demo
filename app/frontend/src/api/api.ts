@@ -66,10 +66,15 @@ export async function getSpeechApi(text: string): Promise<string|null> {
         body: JSON.stringify({
             text: text
         })
-    }).then((response) => { 
+    }).then((response) => {
         if(response.status == 200){
             return response.blob();
-        } else {
+        }
+        else if(response.status == 400) {
+            console.log("Speech synthesis is not enabled.");
+            return null;
+        }
+        else {
             console.error("Unable to get speech synthesis.");
             return null;
         }

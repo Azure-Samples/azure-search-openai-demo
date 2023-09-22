@@ -13,6 +13,7 @@
   "cdnProfilesEndpoints": "cdne-",
   "cognitiveServicesAccounts": "cog-",
   "cognitiveServicesFormRecognizer": "cog-fr-",
+  "cognitiveServicesSpeech": "cog-sp-",
   "cognitiveServicesTextAnalytics": "cog-ta-",
   "computeAvailabilitySets": "avail-",
   "computeCloudServices": "cld-",

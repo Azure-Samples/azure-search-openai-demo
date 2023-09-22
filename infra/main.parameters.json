@@ -56,11 +56,11 @@
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
     },
-    "speechKey": {
-      "value": "${SPEECH_KEY}"
+    "speechServiceName": {
+      "value": "${AZURE_SPEECH_SERVICE}"
     },
-    "speechRegion": {
-      "value": "${SPEECH_REGION}"
+    "speechResourceGroupName": {
+      "value": "${AZURE_SPEECH_RESOURCE_GROUP}"
     }
   }
 }
