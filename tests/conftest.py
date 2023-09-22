@@ -32,15 +32,19 @@ def mock_openai_embedding(monkeypatch):
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
         def __init__(self, answer):
-            self.num = 1
+            self.num = 2
             self.answer = answer
 
         def __aiter__(self):
             return self
 
         async def __anext__(self):
-            if self.num == 1:
-                self.num = 0
+            if self.num == 2:
+                self.num -= 1
+                # Emulate the first response being empty - bug with "2023-07-01-preview"
+                return openai.util.convert_to_openai_object({"choices": []})
+            elif self.num == 1:
+                self.num -= 1
                 return openai.util.convert_to_openai_object({"choices": [{"delta": {"content": self.answer}}]})
             else:
                 raise StopAsyncIteration
