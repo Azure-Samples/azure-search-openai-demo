@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import json
 import logging
+from typing import Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -27,7 +28,7 @@ class ManageAcl:
         acl_action: str,
         acl_type: str,
         acl: str,
-        credentials: AsyncTokenCredential | AzureKeyCredential,
+        credentials: Union[AsyncTokenCredential, AzureKeyCredential],
     ):
         """
         Initializes the command

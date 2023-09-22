@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 from collections import namedtuple
 from unittest import mock
 
@@ -168,7 +169,8 @@ async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding,
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
-    monkeypatch.delenv("AZURE_USE_AUTHENTICATION")
+    if os.getenv("AZURE_USE_AUTHENTICATION") is not None:
+        monkeypatch.delenv("AZURE_USE_AUTHENTICATION")
 
     with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
         mock_default_azure_credential.return_value = MockAzureCredential()
