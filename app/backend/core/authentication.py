@@ -201,7 +201,8 @@ class AuthenticationHelper:
                 auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
             return auth_claims
         except AuthError as e:
-            logging.exception("Exception getting authorization information - " + e.error)
+            print(e.error)
+            logging.exception("Exception getting authorization information - " + json.dumps(e.error))
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
