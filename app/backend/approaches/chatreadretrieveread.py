@@ -232,7 +232,9 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=True)
         yield extra_info
         async for event in await chat_coroutine:
-            yield event
+            # "2023-07-01-preview" API version has a bug where first response has empty choices
+            if event["choices"]:
+                yield event
 
     def get_messages_from_history(
         self,
