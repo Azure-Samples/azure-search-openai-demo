@@ -53,19 +53,21 @@ data = load_jsonl(path)
 
 # Evaluate the default vs the improved system prompt to see if the improved prompt
 # performs consistently better across a larger set of inputs
+openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
+
 result = evaluate(
     evaluation_name="baseline-evaluation",
-    asset=qna,  # model_uri:
+    asset=qna,
     data=data,
     task_type="qa",
     prediction_data="answer",
-    truth_data="truth",  # Optional
+    truth_data="truth",
     metrics_config={
         "openai_params": {
             "api_version": "2023-05-15",
             "api_base": "https://cog-pg6yesvgqiudc.openai.azure.com/",
-            "api_type": "azure",  # TODO: try azure_ad instead
-            "api_key": os.getenv("OPENAI_API_KEY"),
+            "api_type": "azure_ad",  # TODO: try azure_ad instead
+            "api_key": openai_token.token,
             "deployment_id": "chat",
             "model": "gpt-4",
         },
