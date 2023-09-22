@@ -80,7 +80,9 @@ param useSpeechResource bool = true
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
-var speechResourceID = !empty(speechServiceName) ? '${subscription().id}/resourceGroups/${resourceGroup.name}/providers/Microsoft.CognitiveServices/accounts/${speechServiceName}' : '${subscription().id}/resourceGroups/${resourceGroup.name}/providers/Microsoft.CognitiveServices/accounts/${abbrs.cognitiveServicesSpeech}${resourceToken}'
+var speechResourceGroupNameString = !empty(speechResourceGroupName) ? speechResourceGroupName : resourceGroup.name
+var speechServiceNameString = !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
+var speechResourceID = '${subscription().id}/resourceGroups/${speechResourceGroupNameString}/providers/Microsoft.CognitiveServices/accounts/${speechServiceNameString}'
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -106,7 +108,7 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
 }
 
 resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechResourceGroupName)) {
-  name: !empty(speechResourceGroupName) ? speechResourceGroupName : resourceGroup.name
+  name: speechResourceGroupNameString
 }
 
 // Monitor application with Azure Monitor
@@ -227,7 +229,7 @@ module speechRecognizer 'core/ai/cognitiveservices.bicep' = if (useSpeechResourc
   name: 'speechRecognizer'
   scope: speechResourceGroup
   params: {
-    name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
+    name: speechServiceNameString
     kind: 'SpeechServices'
     location: speechResourceGroupLocation
     tags: tags

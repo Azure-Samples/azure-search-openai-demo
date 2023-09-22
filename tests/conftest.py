@@ -6,6 +6,7 @@ import pytest
 import pytest_asyncio
 import azure.cognitiveservices.speech as speechsdk
 from azure.search.documents.aio import SearchClient
+
 import app
 
 MockToken = namedtuple("MockToken", ["token", "expires_on"])
