@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import json
 import logging
 
 from azure.core.credentials import AzureKeyCredential
@@ -77,7 +78,7 @@ class ManageAcl:
     async def view_acl(self, search_client: SearchClient):
         async for document in await self.get_documents(search_client):
             # Assumes the acls are consistent across all sections of the document
-            print(document[self.acl_type])
+            print(json.dumps(document[self.acl_type]))
             return
 
     async def remove_acl(self, search_client: SearchClient):
@@ -86,14 +87,16 @@ class ManageAcl:
             new_acls = [acl_value for acl_value in document[self.acl_type] if acl_value != self.acl]
             documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
 
-        await search_client.merge_documents(documents=documents_to_merge)
+        if len(documents_to_merge) > 0:
+            await search_client.merge_documents(documents=documents_to_merge)
 
     async def remove_all_acls(self, search_client: SearchClient):
         documents_to_merge = []
         async for document in await self.get_documents(search_client):
             documents_to_merge.append({"id": document["id"], self.acl_type: []})
 
-        await search_client.merge_documents(documents=documents_to_merge)
+        if len(documents_to_merge) > 0:
+            await search_client.merge_documents(documents=documents_to_merge)
 
     async def add_acl(self, search_client: SearchClient):
         documents_to_merge = []
@@ -103,14 +106,13 @@ class ManageAcl:
                 new_acls.append(self.acl)
             documents_to_merge.append({"id": document["id"], self.acl_type: new_acls})
 
-        await search_client.merge_documents(documents=documents_to_merge)
+        if len(documents_to_merge) > 0:
+            await search_client.merge_documents(documents=documents_to_merge)
 
     async def get_documents(self, search_client: SearchClient):
         filter = f"sourcefile eq '{self.document}'"
-        result = await search_client.search("", filter=filter, select=["id", self.acl_type], include_total_count=True)
-        if await result.get_count() == 0:
-            logging.info(f"No documents match {self.document} - exiting")
-            return
+        result = await search_client.search("", filter=filter, select=["id", self.acl_type])
+        return result
 
     async def enable_acls(self, endpoint: str):
         async with SearchIndexClient(endpoint=endpoint, credential=self.credentials) as search_index_client:
