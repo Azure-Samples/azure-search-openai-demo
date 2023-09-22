@@ -8,7 +8,10 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity import AzureDeveloperCliCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.search.documents.indexes.models import SearchFieldDataType, SimpleField
+from azure.search.documents.indexes.models import (
+    SearchFieldDataType,
+    SimpleField,
+)
 
 
 class ManageAcl:
@@ -58,6 +61,7 @@ class ManageAcl:
         endpoint = f"https://{self.service_name}.search.windows.net"
         if self.acl_action == "enable_acls":
             await self.enable_acls(endpoint)
+            return
 
         async with SearchClient(
             endpoint=endpoint, index_name=self.index_name, credential=self.credentials
