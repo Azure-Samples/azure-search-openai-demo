@@ -49,13 +49,10 @@ class AdlsGen2Setup:
         self.credentials = credentials
         self.security_enabled_groups = security_enabled_groups
         self.data_access_control_format = data_access_control_format
+        self.graph_headers = None
 
     async def run(self):
-        async with DataLakeServiceClient(
-            account_url=f"https://{self.storage_account_name}.dfs.core.windows.net", credential=self.credentials
-        ) as service_client:
-            token_result = await self.credentials.get_token("https://graph.microsoft.com/.default")
-            self.graph_headers = {"Authorization": f"Bearer {token_result.token}"}
+        async with self.create_service_client() as service_client:
             logging.info(f"Ensuring {self.filesystem_name} exists...")
             async with service_client.get_file_system_client(self.filesystem_name) as filesystem_client:
                 if not await filesystem_client.exists():
@@ -105,6 +102,11 @@ class AdlsGen2Setup:
                     for directory_client in directories.values():
                         await directory_client.close()
 
+    async def create_service_client(self):
+        return DataLakeServiceClient(
+            account_url=f"https://{self.storage_account_name}.dfs.core.windows.net", credential=self.credentials
+        )
+
     async def upload_file(self, directory_client: DataLakeDirectoryClient, file_path: str):
         with open(file=file_path, mode="rb") as f:
             file_client = directory_client.get_file_client(file=os.path.basename(file_path))
@@ -112,14 +114,17 @@ class AdlsGen2Setup:
 
     async def create_or_get_group(self, group_name: str):
         group_id = None
+        if not self.graph_headers:
+            token_result = await self.credentials.get_token("https://graph.microsoft.com/.default")
+            self.graph_headers = {"Authorization": f"Bearer {token_result.token}"}
         async with aiohttp.ClientSession(headers=self.graph_headers) as session:
             logging.info(f"Searching for group {group_name}...")
             async with session.get(
                 f"https://graph.microsoft.com/v1.0/groups?$select=id&$top=1&$filter=displayName eq '{group_name}'"
             ) as response:
-                if response.status != 200:
-                    raise Exception(await response.json())
                 content = await response.json()
+                if response.status != 200:
+                    raise Exception(content)
                 if len(content["value"]) == 1:
                     group_id = content["value"][0]["id"]
             if not group_id:
@@ -129,10 +134,11 @@ class AdlsGen2Setup:
                     "groupTypes": ["Unified"],
                     "securityEnabled": self.security_enabled_groups,
                 }
-                async with session.post("https://graph.microsoft.com/v1.0/groups", json=group):
+                async with session.post("https://graph.microsoft.com/v1.0/groups", json=group) as response:
+                    content = await response.json()
                     if response.status != 201:
-                        raise Exception(await response.json())
-                    group_id = response.json()["id"]
+                        raise Exception(content)
+                    group_id = content["id"]
         logging.info(f"Group {group_name} ID {group_id}")
         return group_id
 

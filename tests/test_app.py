@@ -1,5 +1,4 @@
 import json
-import os
 
 import pytest
 import quart.testing.app
@@ -70,7 +69,7 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
     )
     assert response.status_code == 200
     assert (
-        os.getenv("FILTER")
+        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
     )
     result = await response.get_json()
@@ -169,7 +168,7 @@ async def test_chat_text_filter(auth_client, snapshot):
     )
     assert response.status_code == 200
     assert (
-        os.getenv("FILTER")
+        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
     )
     result = await response.get_json()
@@ -313,7 +312,7 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
     )
     assert response.status_code == 200
     assert (
-        os.getenv("FILTER")
+        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
     )
     result = await response.get_data()

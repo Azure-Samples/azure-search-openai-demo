@@ -38,6 +38,7 @@ CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
+CONFIG_SEARCH_CLIENT = "search_client"
 
 bp = Blueprint("routes", __name__, static_folder="static")
 
@@ -245,6 +246,7 @@ async def setup_clients():
         openai.organization = OPENAI_ORGANIZATION
 
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
+    current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
