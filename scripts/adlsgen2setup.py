@@ -102,7 +102,7 @@ class AdlsGen2Setup:
                     for directory_client in directories.values():
                         await directory_client.close()
 
-    async def create_service_client(self):
+    def create_service_client(self):
         return DataLakeServiceClient(
             account_url=f"https://{self.storage_account_name}.dfs.core.windows.net", credential=self.credentials
         )
