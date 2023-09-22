@@ -106,26 +106,23 @@ const Chat = () => {
             if (!response.body) {
                 throw Error("No response body");
             }
-            if (shouldStream) {
-                const parsedResponse: AskResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
 
-                speechUrl = await getSpeechApi(parsedResponse.answer);
-                setAnswers([...answers, [question, parsedResponse, speechUrl]]);
-                if(useAutoSpeakAnswers){
-                    startOrStopSynthesis(speechUrl, answers.length);
-                }
+            var parsedResponse: AskResponse = {} as AskResponse;
+            if (shouldStream) {
+                parsedResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
             } else {
-                const parsedResponse: AskResponse = await response.json();
+                parsedResponse = await response.json();
                 if (response.status > 299 || !response.ok) {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
                 setAnswers([...answers, [question, parsedResponse, null]]);
                 setIsLoading(false);
-                speechUrl = await getSpeechApi(parsedResponse.answer);
-                setAnswers([...answers, [question, parsedResponse, speechUrl]]);
-                if(useAutoSpeakAnswers){
-                    startOrStopSynthesis(speechUrl, answers.length);
-                }
+            }
+            
+            speechUrl = await getSpeechApi(parsedResponse.answer);
+            setAnswers([...answers, [question, parsedResponse, speechUrl]]);
+            if(useAutoSpeakAnswers){
+                startOrStopSynthesis(speechUrl, answers.length);
             }
         } catch (e) {
             setError(e);

@@ -248,8 +248,6 @@ async def setup_clients():
         current_app.config[CONFIG_SPEECH_CREDENTIAL] = speech_credential
         current_app.config[CONFIG_SPEECH_TOKEN] = speech_token
 
-    # Store on app.config for later use inside requests
-    current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
 
