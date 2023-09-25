@@ -18,10 +18,10 @@ class ChatUser(HttpUser):
                     {
                         "user": random.choice(
                             [
-                                "What is included in my Northwind Health Plus plan that is not in standard?",
-                                "What does a Product Manager do?",
-                                "What happens in a performance review?",
-                                "Whats your whistleblower policy?",
+                                "Why did the Commission propose a new NIS Directive?",
+                                "How has the COVID-19 crisis influenced the new Directive?",
+                                "Which sectors and types of entities will the NIS2 cover?",
+                                "How will the NIS2 strengthen and streamline security requirements?",
                             ]
                         )
                     }
@@ -41,8 +41,8 @@ class ChatUser(HttpUser):
             json={
                 "history": [
                     {
-                        "user": "What happens in a performance review?",
-                        "bot": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                        "user": "Which sectors and types of entities will the NIS2 cover?",
+                        "bot": "The NIS2 covers entities from the following  sectors: Sectors of high criticality: energy (electricity, district heating and cooling, oil, gas and hydrogen); transport (air, rail, water and road); banking; financial market infrastructures; health including  manufacture of pharmaceutical products including vaccines; drinking water; waste water; digital infrastructure (internet exchange points; DNS service providers; TLD name registries; cloud computing service providers; data centre service providers; content delivery networks; trust service providers; providers of  public electronic communications networks and publicly available electronic communications services); ICT service management (managed service providers and managed security service providers), public administration and space. Other critical sectors: postal and courier services; waste management; chemicals; food; manufacturing of medical devices, computers and electronics, machinery and equipment, motor vehicles, trailers and semi-trailers and other transport equipment; digital providers (online market places, online search engines, and social networking service platforms) and research organisations.",
                     },
                     {"user": "Does my plan cover eye exams?"},
                 ],

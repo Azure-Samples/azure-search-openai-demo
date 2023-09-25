@@ -146,3 +146,4 @@ npm-debug.log*
 node_modules
 static/
 infra/main.parameters-dev.json
+infra/main.parameters.json
