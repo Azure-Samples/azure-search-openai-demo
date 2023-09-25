@@ -37,13 +37,14 @@ class ReadDecomposeAsk(AskApproach):
         self.content_field = content_field
         self.openai_host = openai_host
 
-    async def search(self, query_text: str, overrides: dict[str, Any]) -> tuple[list[str], str]:
+    async def search(
+        self, query_text: str, overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ) -> tuple[list[str], str]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
@@ -109,12 +110,12 @@ class ReadDecomposeAsk(AskApproach):
             return "\n".join([d["content"] async for d in r])
         return None
 
-    async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
+    async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
         search_results = None
 
         async def search_and_store(q: str) -> Any:
             nonlocal search_results
-            search_results, content = await self.search(q, overrides)
+            search_results, content = await self.search(q, overrides, auth_claims)
             return content
 
         # Use to capture thought process during iterations

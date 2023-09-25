@@ -12,7 +12,9 @@
     "watch": "tsc && vite build --watch"
   },
   "dependencies": {
+    "@azure/msal-react": "^2.0.2",
     "@fluentui/react": "^8.110.7",
+    "@fluentui/react-components": "^9.30.3",
     "@fluentui/react-icons": "^2.0.206",
     "@react-spring/web": "^9.7.3",
     "dompurify": "^3.0.4",

@@ -9,6 +9,9 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
+import { useLogin, getToken } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
+import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -21,6 +24,8 @@ export function Component(): JSX.Element {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
+    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
+    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -31,6 +36,8 @@ export function Component(): JSX.Element {
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
+    const client = useLogin ? useMsal().instance : undefined
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -38,6 +45,8 @@ export function Component(): JSX.Element {
         setIsLoading(true);
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
+
+        const token = client ? await getToken(client) : undefined
 
         try {
             const request: AskRequest = {
@@ -51,8 +60,11 @@ export function Component(): JSX.Element {
                     top: retrieveCount,
                     retrievalMode: retrievalMode,
                     semanticRanker: useSemanticRanker,
-                    semanticCaptions: useSemanticCaptions
-                }
+                    semanticCaptions: useSemanticCaptions,
+                    useOidSecurityFilter: useOidSecurityFilter,
+                    useGroupsSecurityFilter: useGroupsSecurityFilter
+                },
+                idToken: token?.accessToken
             };
             const result = await askApi(request);
             setAnswer(result);
@@ -118,6 +130,14 @@ export function Component(): JSX.Element {
         } else {
             setActiveAnalysisPanelTab(tab);
         }
+    };
+
+    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseOidSecurityFilter(!!checked);
+    };
+
+    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseGroupsSecurityFilter(!!checked);
     };
 
     const approaches: IChoiceGroupOption[] = [
@@ -250,6 +270,24 @@ export function Component(): JSX.Element {
                     onChange={onUseSemanticCaptionsChange}
                     disabled={!useSemanticRanker}
                 />
+                {useLogin && (
+                    <Checkbox
+                        className={styles.oneshotSettingsSeparator}
+                        checked={useOidSecurityFilter}
+                        label="Use oid security filter"
+                        disabled={!client?.getActiveAccount()}
+                        onChange={onUseOidSecurityFilterChange}
+                    />
+                )}
+                {useLogin &&  (
+                    <Checkbox
+                        className={styles.oneshotSettingsSeparator}
+                        checked={useGroupsSecurityFilter}
+                        label="Use groups security filter"
+                        disabled={!client?.getActiveAccount()}
+                        onChange={onUseGroupsSecurityFilterChange}
+                    />
+                )}
                 <Dropdown
                     className={styles.oneshotSettingsSeparator}
                     label="Retrieval mode"
@@ -261,6 +299,7 @@ export function Component(): JSX.Element {
                     required
                     onChange={onRetrievalModeChange}
                 />
+                { useLogin && <TokenClaimsDisplay />}
             </Panel>
         </div>
     );

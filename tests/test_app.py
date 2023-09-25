@@ -52,6 +52,31 @@ async def test_ask_rtr_text(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_ask_rtr_text_filter(auth_client, snapshot):
+    response = await auth_client.post(
+        "/ask",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "approach": "rtr",
+            "question": "What is the capital of France?",
+            "overrides": {
+                "retrieval_mode": "text",
+                "use_oid_security_filter": True,
+                "use_groups_security_filter": True,
+                "exclude_category": "excluded",
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_text_semanticranker(client, snapshot):
     response = await client.post(
         "/ask",
@@ -121,6 +146,31 @@ async def test_chat_text(client, snapshot):
         },
     )
     assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_text_filter(auth_client, snapshot):
+    response = await auth_client.post(
+        "/chat",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "approach": "rrr",
+            "history": [{"user": "What is the capital of France?"}],
+            "overrides": {
+                "retrieval_mode": "text",
+                "use_oid_security_filter": True,
+                "use_groups_security_filter": True,
+                "exclude_category": "excluded",
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -240,6 +290,31 @@ async def test_chat_stream_text(client, snapshot):
         },
     )
     assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_text_filter(auth_client, snapshot):
+    response = await auth_client.post(
+        "/chat_stream",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "approach": "rrr",
+            "history": [{"user": "What is the capital of France?"}],
+            "overrides": {
+                "retrieval_mode": "text",
+                "use_oid_security_filter": True,
+                "use_groups_security_filter": True,
+                "exclude_category": "excluded",
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
     result = await response.get_data()
     snapshot.assert_match(result, "result.jsonlines")
 

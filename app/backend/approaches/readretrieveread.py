@@ -68,13 +68,12 @@ Thought: {agent_scratchpad}"""
         self.content_field = content_field
         self.openai_host = openai_host
 
-    async def retrieve(self, query_text: str, overrides: dict[str, Any]) -> Any:
+    async def retrieve(self, query_text: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Any:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
@@ -122,12 +121,12 @@ Thought: {agent_scratchpad}"""
         content = "\n".join(results)
         return results, content
 
-    async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
+    async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
         retrieve_results = None
 
         async def retrieve_and_store(q: str) -> Any:
             nonlocal retrieve_results
-            retrieve_results, content = await self.retrieve(q, overrides)
+            retrieve_results, content = await self.retrieve(q, overrides, auth_claims)
             return content
 
         # Use to capture thought process during iterations

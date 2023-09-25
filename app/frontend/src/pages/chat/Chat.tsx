@@ -13,6 +13,9 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { useLogin, getToken } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
+import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -24,6 +27,8 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
+    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -70,6 +75,8 @@ const Chat = () => {
         return fullResponse;
     };
 
+    const client = useLogin ? useMsal().instance : undefined
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -77,6 +84,8 @@ const Chat = () => {
         setIsLoading(true);
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
+
+        const token = client ? await getToken(client) : undefined
 
         try {
             const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
@@ -91,8 +100,11 @@ const Chat = () => {
                     retrievalMode: retrievalMode,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
-                    suggestFollowupQuestions: useSuggestFollowupQuestions
-                }
+                    suggestFollowupQuestions: useSuggestFollowupQuestions,
+                    useOidSecurityFilter: useOidSecurityFilter,
+                    useGroupsSecurityFilter: useGroupsSecurityFilter
+                },
+                idToken: token?.accessToken
             };
 
             const response = await chatApi(request);
@@ -157,6 +169,14 @@ const Chat = () => {
 
     const onUseSuggestFollowupQuestionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSuggestFollowupQuestions(!!checked);
+    };
+
+    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseOidSecurityFilter(!!checked);
+    };
+
+    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseGroupsSecurityFilter(!!checked);
     };
 
     const onExampleClicked = (example: string) => {
@@ -326,6 +346,24 @@ const Chat = () => {
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
                     />
+                    {useLogin && (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useOidSecurityFilter}
+                            label="Use oid security filter"
+                            disabled={!client?.getActiveAccount()}
+                            onChange={onUseOidSecurityFilterChange}
+                        />
+                    )}
+                    {useLogin &&  (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useGroupsSecurityFilter}
+                            label="Use groups security filter"
+                            disabled={!client?.getActiveAccount()}
+                            onChange={onUseGroupsSecurityFilterChange}
+                        />
+                    )}
                     <Dropdown
                         className={styles.chatSettingsSeparator}
                         label="Retrieval mode"
@@ -343,6 +381,7 @@ const Chat = () => {
                         label="Stream chat completion responses"
                         onChange={onShouldStreamChange}
                     />
+                    { useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>
         </div>
