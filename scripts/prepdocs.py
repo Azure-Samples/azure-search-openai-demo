@@ -317,7 +317,7 @@ def before_retry_sleep(retry_state):
 )
 def compute_embedding(text, embedding_deployment, embedding_model):
     refresh_openai_token()
-    embedding_args = {"deployment_id": embedding_deployment} if args.openaihost == "azure" else {}
+    embedding_args = {"deployment_id": embedding_deployment} if args.openaihost != "openai" else {}
     return openai.Embedding.create(**embedding_args, model=embedding_model, input=text)["data"][0]["embedding"]
 
 
@@ -329,7 +329,7 @@ def compute_embedding(text, embedding_deployment, embedding_model):
 )
 def compute_embedding_in_batch(texts):
     refresh_openai_token()
-    embedding_args = {"deployment_id": args.openaideployment} if args.openaihost == "azure" else {}
+    embedding_args = {"deployment_id": args.openaideployment} if args.openaihost != "openai" else {}
     emb_response = openai.Embedding.create(**embedding_args, model=args.openaimodelname, input=texts)
     return [data.embedding for data in emb_response.data]
 
@@ -712,12 +712,6 @@ if __name__ == "__main__":
     use_vectors = not args.novectors
     compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname in SUPPORTED_BATCH_AOAI_MODEL
 
-    if args.files and args.datalakestorageaccount:
-        print(
-            "Error: Only files, or only data lake storage account / filesystem should be provided. Please provide only one of these arguments."
-        )
-        exit(1)
-
     if not args.skipblobs:
         storage_creds = default_creds if args.storagekey is None else args.storagekey
     if not args.localpdfparser:
@@ -732,7 +726,7 @@ if __name__ == "__main__":
         )
 
     if use_vectors:
-        if args.openaihost == "azure":
+        if args.openaihost != "openai":
             if not args.openaikey:
                 openai.api_key = azd_credential.get_token("https://cognitiveservices.azure.com/.default").token
                 openai.api_type = "azure_ad"
@@ -758,7 +752,9 @@ if __name__ == "__main__":
             create_search_index()
 
         print("Processing files...")
-        if args.files:
+        if not args.datalakestorageaccount:
+            print(f"Using local files in {args.files}")
             read_files(args.files, use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodelname)
         else:
+            print(f"Using Data Lake Gen2 Storage Account {args.datalakestorageaccount}")
             read_adls_gen2_files(use_vectors, compute_vectors_in_batch, args.openaideployment, args.openaimodelname)

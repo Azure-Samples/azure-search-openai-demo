@@ -4,9 +4,8 @@
 
 echo 'Running "prepdocs.py"'
 
-fileArg='./data/*'
 if [ -n "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
-  fileArg="--datalakestorageaccount $AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
+  adlsGen2StorageAccountArg="--datalakestorageaccount $AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
   adlsGen2FilesystemPathArg=""
   if [ -n "$AZURE_ADLS_GEN2_FILESYSTEM_PATH" ]; then
     adlsGen2FilesystemPathArg="--datalakefilesystempath $AZURE_ADLS_GEN2_FILESYSTEM_PATH"
@@ -19,7 +18,7 @@ if [ -n "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
 fi
 
 ./scripts/.venv/bin/python ./scripts/prepdocs.py \
-"$fileArg" $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
+'./data/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
 --container "$AZURE_STORAGE_CONTAINER" --searchservice "$AZURE_SEARCH_SERVICE" \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" \
