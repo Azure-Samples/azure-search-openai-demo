@@ -56,7 +56,10 @@ echo "Starting backend"
 echo ""
 
 cd ../backend
-./backend_env/bin/python -m quart --app main:app run --port 50505 --reload
+
+port=50505
+host=localhost
+./backend_env/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
     exit $?

@@ -62,6 +62,13 @@ param embeddingDeploymentName string = 'embedding'
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
+// Used for the optional login and document level access control system
+param useAuthentication bool = false
+param serverAppId string = ''
+@secure()
+param serverAppSecret string = ''
+param clientAppId string = ''
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -153,6 +160,12 @@ module backend 'core/host/appservice.bicep' = {
       // Used only with non-Azure OpenAI deployments
       OPENAI_API_KEY: openAiApiKey
       OPENAI_ORGANIZATION: openAiApiOrganization
+      // Optional login and document level access control system
+      AZURE_USE_AUTHENTICATION: useAuthentication
+      AZURE_SERVER_APP_ID: serverAppId
+      AZURE_SERVER_APP_SECRET: serverAppSecret
+      AZURE_CLIENT_APP_ID: clientAppId
+      AZURE_TENANT_ID: tenant().tenantId
     }
   }
 }

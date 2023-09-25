@@ -30,12 +30,15 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
 from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
+from core.authentication import AuthenticationHelper
 
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACHES = "ask_approaches"
 CONFIG_CHAT_APPROACHES = "chat_approaches"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
+CONFIG_AUTH_CLIENT = "auth_client"
+CONFIG_SEARCH_CLIENT = "search_client"
 
 bp = Blueprint("routes", __name__, static_folder="static")
 
@@ -43,6 +46,13 @@ bp = Blueprint("routes", __name__, static_folder="static")
 @bp.route("/")
 async def index():
     return await bp.send_static_file("index.html")
+
+
+# Empty page is recommended for login redirect to work.
+# See https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations for more information
+@bp.route("/redirect")
+async def redirect():
+    return ""
 
 
 @bp.route("/favicon.ico")
@@ -78,6 +88,8 @@ async def ask():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
@@ -86,7 +98,7 @@ async def ask():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run(request_json["question"], request_json.get("overrides") or {})
+            r = await impl.run(request_json["question"], request_json.get("overrides") or {}, auth_claims)
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /ask")
@@ -98,6 +110,8 @@ async def chat():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
@@ -106,7 +120,9 @@ async def chat():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run_without_streaming(request_json["history"], request_json.get("overrides", {}))
+            r = await impl.run_without_streaming(
+                request_json["history"], request_json.get("overrides", {}), auth_claims
+            )
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /chat")
@@ -123,18 +139,29 @@ async def chat_stream():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
     approach = request_json["approach"]
     try:
         impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
         if not impl:
             return jsonify({"error": "unknown approach"}), 400
-        response_generator = impl.run_with_streaming(request_json["history"], request_json.get("overrides", {}))
+        response_generator = impl.run_with_streaming(
+            request_json["history"], request_json.get("overrides", {}), auth_claims
+        )
         response = await make_response(format_as_ndjson(response_generator))
         response.timeout = None  # type: ignore
         return response
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
+
+
+# Send MSAL.js settings to the client UI
+@bp.route("/auth_setup", methods=["GET"])
+def auth_setup():
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    return jsonify(auth_helper.get_auth_setup_for_client())
 
 
 @bp.before_request
@@ -168,6 +195,12 @@ async def setup_clients():
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
+    AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
+    AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
+    AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
+    AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
+    TOKEN_CACHE_PATH = os.getenv("TOKEN_CACHE_PATH")
 
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
@@ -177,6 +210,16 @@ async def setup_clients():
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+
+    # Set up authentication helper
+    auth_helper = AuthenticationHelper(
+        use_authentication=AZURE_USE_AUTHENTICATION,
+        server_app_id=AZURE_SERVER_APP_ID,
+        server_app_secret=AZURE_SERVER_APP_SECRET,
+        client_app_id=AZURE_CLIENT_APP_ID,
+        tenant_id=AZURE_TENANT_ID,
+        token_cache_path=TOKEN_CACHE_PATH,
+    )
 
     # Set up clients for Cognitive Search and Storage
     search_client = SearchClient(
@@ -204,7 +247,9 @@ async def setup_clients():
         openai.organization = OPENAI_ORGANIZATION
 
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
+    current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes

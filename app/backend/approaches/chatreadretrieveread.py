@@ -5,12 +5,13 @@ import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
 
 
-class ChatReadRetrieveReadApproach:
+class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -73,14 +74,17 @@ If you cannot generate a search query, return just the number 0.
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     async def run_until_final_call(
-        self, history: list[dict[str, str]], overrides: dict[str, Any], should_stream: bool = False
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: bool = False,
     ) -> tuple:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
         user_query_request = "Generate search query for: " + history[-1]["user"]
 
@@ -195,10 +199,8 @@ If you cannot generate a search query, return just the number 0.
             system_message,
             self.chatgpt_model,
             history,
-            # Model does not handle lengthy system messages well.
-            # Moved sources to latest user conversation to solve follow up questions prompt.
             history[-1]["user"] + "\n\nSources:\n" + content,
-            max_tokens=self.chatgpt_token_limit,
+            max_tokens=self.chatgpt_token_limit,  # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
         )
         msg_to_display = "\n\n".join([str(message) for message in messages])
 
@@ -219,17 +221,23 @@ If you cannot generate a search query, return just the number 0.
         )
         return (extra_info, chat_coroutine)
 
-    async def run_without_streaming(self, history: list[dict[str, str]], overrides: dict[str, Any]) -> dict[str, Any]:
-        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=False)
+    async def run_without_streaming(
+        self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ) -> dict[str, Any]:
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            history, overrides, auth_claims, should_stream=False
+        )
         chat_resp = await chat_coroutine
         chat_content = chat_resp.choices[0].message.content
         extra_info["answer"] = chat_content
         return extra_info
 
     async def run_with_streaming(
-        self, history: list[dict[str, str]], overrides: dict[str, Any]
+        self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
     ) -> AsyncGenerator[dict, None]:
-        extra_info, chat_coroutine = await self.run_until_final_call(history, overrides, should_stream=True)
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            history, overrides, auth_claims, should_stream=True
+        )
         yield extra_info
         async for event in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
@@ -247,8 +255,7 @@ If you cannot generate a search query, return just the number 0.
     ) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)
 
-        # Add examples to show the chat what responses we want.
-        # It will try to mimic any responses and make sure they match the rules laid out in the system message.
+        # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
         for shot in few_shots:
             message_builder.append_message(shot.get("role"), shot.get("content"))
 
