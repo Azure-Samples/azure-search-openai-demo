@@ -49,6 +49,7 @@ async def index():
 
 
 # Empty page is recommended for login redirect to work.
+# See https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations for more information
 @bp.route("/redirect")
 async def redirect():
     return ""
