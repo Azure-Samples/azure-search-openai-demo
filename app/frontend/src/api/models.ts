@@ -32,11 +32,26 @@ export type AskRequest = {
     idToken?: string;
 };
 
-export type AskResponse = {
-    answer: string;
+export type ResponseMessage = {
+    content: string;
+    role: string;
+}
+
+export type ResponseExtraArgs = {
     thoughts: string | null;
     data_points: string[];
-    error?: string;
+}
+
+export type ResponseChoice = {
+    index: number;
+    message: ResponseMessage;
+    extra_args: ResponseExtraArgs;
+};
+
+export type AskResponse = {
+    choices: ResponseChoice[];
+    object: string;
+    error?: string; // TODO: This isnt in spec, is it from backend? Can just use HTTP?
 };
 
 export type ChatTurn = {

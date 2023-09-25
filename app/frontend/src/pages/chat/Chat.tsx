@@ -52,7 +52,13 @@ const Chat = () => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: AskResponse = { ...askResponse, answer };
+                    const latestResponse: AskResponse = { ...askResponse,
+                        choices: [{ ...askResponse.choices[0],
+                                    message: { content: answer,
+                                        role: askResponse.choices[0].message.role
+                                    } }
+                                ]
+                    };
                     setstreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
                 }, 33);
@@ -61,7 +67,8 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                if (event["data_points"]) {
+                if (event["choices"] && event["choices"][0]["extra_args"] && event["choices"][0]["extra_args"]["data_points"]) {
+                    event["choices"][0]["message"] = event["choices"][0]["delta"];
                     askResponse = event;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
@@ -71,7 +78,13 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: AskResponse = { ...askResponse, answer };
+        const fullResponse: AskResponse = { ...askResponse,
+            choices: [{ ...askResponse.choices[0],
+                        message: { content: answer,
+                            role: askResponse.choices[0].message.role
+                        } }
+                    ]
+        };
         return fullResponse;
     };
 
@@ -88,7 +101,10 @@ const Chat = () => {
         const token = client ? await getToken(client) : undefined
 
         try {
-            const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
+            const history: ChatTurn[] = answers.map(a => ({
+                user: a[0],
+                bot: a[1].choices[0].message.content
+            }));
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 approach: Approaches.ReadRetrieveRead,
