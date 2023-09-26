@@ -82,7 +82,7 @@ Install the pre-commit hooks:
 pre-commit install
 ```
 
-## <a name="tests"></a> Running unit tests
+## <a name="unit-tests"></a> Running unit tests
 
 Run the tests:
 
@@ -92,8 +92,11 @@ python3 -m pytest
 
 Check the coverage report to make sure your changes are covered.
 
+```
+python3 -m pytest --cov
+```
 
-## <a name="tests"></a> Running E2E tests
+## <a name="e2e-tests"></a> Running E2E tests
 
 
 Install Playwright browser dependencies:

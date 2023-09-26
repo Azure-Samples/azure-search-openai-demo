@@ -11,10 +11,10 @@ from playwright.sync_api import Page, Route, expect
 import app
 
 
-def _server_health_check(url: str, timeout: float = 10.0, check_interval: float = 0.5) -> bool:
-    """Make requests until getting a response"""
+def wait_for_server_ready(url: str, timeout: float = 10.0, check_interval: float = 0.5) -> bool:
+    """Make requests to provided url until it responds without error."""
     conn_error = None
-    for i in range(int(timeout / check_interval)):
+    for _ in range(int(timeout / check_interval)):
         try:
             requests.get(url)
         except requests.ConnectionError as exc:
@@ -27,7 +27,7 @@ def _server_health_check(url: str, timeout: float = 10.0, check_interval: float 
 
 @pytest.fixture(scope="session")
 def free_port() -> str:
-    """Returns a free port for the test server to bind"""
+    """Returns a free port for the test server to bind."""
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.bind(("", 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -39,7 +39,7 @@ def live_server_url(mock_env, free_port):
     proc = Process(target=lambda: uvicorn.run(app.create_app(), port=free_port), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"
-    _server_health_check(url, timeout=10.0, check_interval=0.5)
+    wait_for_server_ready(url, timeout=10.0, check_interval=0.5)
     yield url
     proc.kill()
 

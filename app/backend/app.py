@@ -63,8 +63,7 @@ async def favicon():
 
 @bp.route("/assets/<path:path>")
 async def assets(path):
-    this_folder = Path(__file__).resolve().parent
-    return await send_from_directory(this_folder / "static" / "assets", path)
+    return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
 # Serve content files from blob storage from within the app to keep the example self-contained.
