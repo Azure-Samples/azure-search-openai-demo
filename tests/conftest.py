@@ -160,26 +160,32 @@ auth_envs = [
 ]
 
 
-@pytest_asyncio.fixture(params=envs)
-async def client(monkeypatch, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
-    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
-    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
-    monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
-    monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
-    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
-    for key, value in request.param.items():
-        monkeypatch.setenv(key, value)
-    if os.getenv("AZURE_USE_AUTHENTICATION") is not None:
-        monkeypatch.delenv("AZURE_USE_AUTHENTICATION")
+@pytest.fixture(params=envs, ids=["client0", "client1"])
+def mock_env(monkeypatch, request):
+    with mock.patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+        for key, value in request.param.items():
+            monkeypatch.setenv(key, value)
+        if os.getenv("AZURE_USE_AUTHENTICATION") is not None:
+            monkeypatch.delenv("AZURE_USE_AUTHENTICATION")
 
-    with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
-        mock_default_azure_credential.return_value = MockAzureCredential()
-        quart_app = app.create_app()
+        with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
+            mock_default_azure_credential.return_value = MockAzureCredential()
+            yield
 
-        async with quart_app.test_app() as test_app:
-            quart_app.config.update({"TESTING": True})
 
-            yield test_app.test_client()
+@pytest_asyncio.fixture()
+async def client(monkeypatch, mock_env, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
+    quart_app = app.create_app()
+
+    async with quart_app.test_app() as test_app:
+        quart_app.config.update({"TESTING": True})
+
+        yield test_app.test_client()
 
 
 @pytest_asyncio.fixture(params=auth_envs)

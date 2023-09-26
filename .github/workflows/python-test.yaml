@@ -41,3 +41,7 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           run: python3 -m pytest
+        - name: Run E2E tests with Playwright
+          run: |
+            playwright install --with-deps
+            python3 -m pytest tests/e2e.py
