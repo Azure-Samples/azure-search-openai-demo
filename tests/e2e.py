@@ -2,6 +2,7 @@ import socket
 import time
 from contextlib import closing
 from multiprocessing import Process
+from typing import Generator
 
 import pytest
 import requests
@@ -26,16 +27,16 @@ def wait_for_server_ready(url: str, timeout: float = 10.0, check_interval: float
 
 
 @pytest.fixture(scope="session")
-def free_port() -> str:
+def free_port() -> int:
     """Returns a free port for the test server to bind."""
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.bind(("", 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        return str(s.getsockname()[1])
+        return s.getsockname()[1]
 
 
 @pytest.fixture()
-def live_server_url(mock_env, free_port):
+def live_server_url(mock_env, free_port: int) -> Generator[str, None, None]:
     proc = Process(target=lambda: uvicorn.run(app.create_app(), port=free_port), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"
