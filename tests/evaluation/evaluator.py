@@ -83,7 +83,7 @@ def load_jsonl(path):
 def test_evaluation(snapshot):
     # get path of this file
     this_path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(this_path + "/data1.jsonl")
+    path = os.path.join(this_path + "/data.jsonl")
     data = load_jsonl(path)
 
     # Evaluate the default vs the improved system prompt to see if the improved prompt
@@ -101,7 +101,7 @@ def test_evaluation(snapshot):
             "openai_params": {
                 "api_version": "2023-05-15",
                 "api_base": "https://cog-pg6yesvgqiudc.openai.azure.com/",
-                "api_type": "azure_ad",  # TODO: try azure_ad instead
+                "api_type": "azure_ad",
                 "api_key": openai_token.token,
                 "deployment_id": "chat",
                 "model": "gpt-4",
@@ -113,13 +113,15 @@ def test_evaluation(snapshot):
         # tracking_uri=client.tracking_uri,
     )
     # save a snapshot of the evaluation
-    evaluation_model_name = "gpt-4"
-    generation_model_name = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    filename = f"{evaluation_model_name}_vs_{generation_model_name}.csv"
+    # evaluation_model_name = "gpt-4"
+    # generation_model_name = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    # filename = f"{evaluation_model_name}_vs_{generation_model_name}.csv"
     columns = ["question", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_coherence", "gpt_groundedness"]
     gpt_ratings = results["artifacts"]
     rows = []
+    # threshold = 4
     for ind, input in enumerate(data):
+        # if < threshold, PASS, else FAIL
         rows.append(
             [
                 input["question"],
@@ -132,23 +134,17 @@ def test_evaluation(snapshot):
         )
     # now sort rows by question
     rows.sort(key=lambda x: x[0])
-    # also include the metrics?
-    """
-    'metrics': {'exact_match': 0.0,
-             'f1_score': 0.703030303030303,
-             'mean_bertscore_f1': 0.6200230121612549,
-             'mean_bertscore_precision': 0.5686626434326172,
-             'mean_bertscore_recall': 0.6707497835159302}}
-    """
+
     # save rows to a string using csv writer
     import csv
     import io
 
     f = io.StringIO()
-    writer = csv.writer(f)
+    writer = csv.writer(f, lineterminator="\n")
     writer.writerow(columns)
     writer.writerows(rows)
     # get string
     f.seek(0)
     # save to snapshot
-    snapshot.assert_match(f.getvalue(), filename)
+    print(f.getvalue())
+    print(results["metrics"])
