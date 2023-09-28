@@ -6,7 +6,8 @@ pytest
 pytest-asyncio
 pytest-snapshot
 coverage
+playwright==1.38.0
 pytest-cov
+pytest-playwright
 pre-commit
 locust
-azure-storage-file-datalake==12.12.0

@@ -1,4 +1,6 @@
 import json
+import os
+from unittest import mock
 
 import pytest
 import quart.testing.app
@@ -8,12 +10,12 @@ import app
 
 @pytest.mark.asyncio
 async def test_missing_env_vars():
-    quart_app = app.create_app()
+    with mock.patch.dict(os.environ, clear=True):
+        quart_app = app.create_app()
 
-    with pytest.raises(quart.testing.app.LifespanError) as exc_info:
-        async with quart_app.test_app() as test_app:
-            test_app.test_client()
-        assert str(exc_info.value) == "Lifespan failure in startup. ''AZURE_OPENAI_EMB_DEPLOYMENT''"
+        with pytest.raises(quart.testing.app.LifespanError, match="Error during startup 'AZURE_STORAGE_ACCOUNT'"):
+            async with quart_app.test_app() as test_app:
+                test_app.test_client()
 
 
 @pytest.mark.asyncio

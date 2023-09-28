@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Stack, TextField } from "@fluentui/react";
+import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 
 import styles from "./QuestionInput.module.css";
@@ -56,13 +57,9 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                 onKeyDown={onEnterPress}
             />
             <div className={styles.questionInputButtonsContainer}>
-                <div
-                    className={`${styles.questionInputSendButton} ${sendQuestionDisabled ? styles.questionInputSendButtonDisabled : ""}`}
-                    aria-label="Ask question button"
-                    onClick={sendQuestion}
-                >
-                    <Send28Filled primaryFill="rgba(115, 118, 225, 1)" />
-                </div>
+                <Tooltip content="Ask question button" relationship="label">
+                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+                </Tooltip>
             </div>
         </Stack>
     );
