@@ -316,5 +316,5 @@ def create_app():
     app.register_blueprint(bp)
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "DEBUG"))
+    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
     return app
