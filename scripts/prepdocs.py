@@ -103,10 +103,11 @@ def upload_blobs(filename):
             writer.write(f)
             f.seek(0)
             blob_container.upload_blob(blob_name, f, overwrite=True)
-    else:
-        blob_name = blob_name_from_file_page(filename)
-        with open(filename, "rb") as data:
-            blob_container.upload_blob(blob_name, data, overwrite=True)
+    # Also upload the original file
+    blob_name = os.path.basename(filename)
+    print(f"\tUploading blob for whole file -> {blob_name}")
+    with open(filename, "rb") as data:
+        blob_container.upload_blob(blob_name, data, overwrite=True)
 
 
 def remove_blobs(filename):

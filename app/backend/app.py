@@ -8,6 +8,7 @@ from typing import AsyncGenerator
 
 import aiohttp
 import openai
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
@@ -70,8 +71,16 @@ async def assets(path):
 # can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
 async def content_file(path):
+    # remove page number from path
+    # filename-1.txt -> filename.txt
+    path = path.rsplit(".pdf")[0].rsplit("-")[0] + ".pdf"
+    logging.info(f"content_file: {path}")
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
-    blob = await blob_container_client.get_blob_client(path).download_blob()
+    try:
+        blob = await blob_container_client.get_blob_client(path).download_blob()
+    except ResourceNotFoundError:
+        logging.exception("Path not found: %s", path)
+        abort(404)
     if not blob.properties or not blob.properties.has_key("content_settings"):
         abort(404)
     mime_type = blob.properties["content_settings"]["content_type"]
@@ -307,5 +316,5 @@ def create_app():
     app.register_blueprint(bp)
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "DEBUG"))
     return app
