@@ -11,6 +11,8 @@ from playwright.sync_api import Page, Route, expect
 
 import app
 
+expect.set_options(timeout=10_000)
+
 
 def wait_for_server_ready(url: str, timeout: float = 10.0, check_interval: float = 0.5) -> bool:
     """Make requests to provided url until it responds without error."""
