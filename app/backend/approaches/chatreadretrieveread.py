@@ -1,20 +1,23 @@
-from typing import Any, Sequence
+import json
+from typing import Any, AsyncGenerator
 
 import openai
-import tiktoken
-from azure.search.documents import SearchClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
-from approaches.approach import Approach
-from text import nonewlines
 
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
+from text import nonewlines
+
 
 class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
+
+    NO_RESPONSE = "0"
 
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
@@ -28,13 +31,14 @@ Each source has a name followed by colon and the actual information, always incl
 {follow_up_questions_prompt}
 {injected_prompt}
 """
-    follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook. 
+    follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook.
 Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
 Try not to repeat questions that have already been asked.
 Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
-Generate a search query based on the conversation and the new question. 
+You have access to Azure Cognitive Search index with 100's of documents.
+Generate a search query based on the conversation and the new question.
 Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
 Do not include any text inside [] or <<>> in the search query terms.
 Do not include any special characters like '+'.
@@ -42,131 +46,218 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
-        {'role' : USER, 'content' : 'What are my health plans?' },
-        {'role' : ASSISTANT, 'content' : 'Show available health plans' },
-        {'role' : USER, 'content' : 'does my plan cover cardio?' },
-        {'role' : ASSISTANT, 'content' : 'Health plan cardio coverage' }
+        {"role": USER, "content": "What are my health plans?"},
+        {"role": ASSISTANT, "content": "Show available health plans"},
+        {"role": USER, "content": "does my plan cover cardio?"},
+        {"role": ASSISTANT, "content": "Health plan cardio coverage"},
     ]
 
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, chatgpt_model: str, embedding_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(
+        self,
+        search_client: SearchClient,
+        openai_host: str,
+        chatgpt_deployment: str,
+        chatgpt_model: str,
+        embedding_deployment: str,
+        embedding_model: str,
+        sourcepage_field: str,
+        content_field: str,
+    ):
         self.search_client = search_client
+        self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_deployment = embedding_deployment
+        self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
-    def run(self, history: Sequence[dict[str, str]], overrides: dict[str, Any]) -> Any:
+    async def run_until_final_call(
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: bool = False,
+    ) -> tuple:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
-        user_q = 'Generate search query for: ' + history[-1]["user"]
+        user_query_request = "Generate search query for: " + history[-1]["user"]
+
+        functions = [
+            {
+                "name": "search_sources",
+                "description": "Retrieve sources from the Azure Cognitive Search index",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "search_query": {
+                            "type": "string",
+                            "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
+                        }
+                    },
+                    "required": ["search_query"],
+                },
+            }
+        ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
             self.query_prompt_template,
             self.chatgpt_model,
             history,
-            user_q,
+            user_query_request,
             self.query_prompt_few_shots,
-            self.chatgpt_token_limit - len(user_q)
-            )
+            self.chatgpt_token_limit - len(user_query_request),
+        )
 
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
+        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
+        chat_completion = await openai.ChatCompletion.acreate(
+            **chatgpt_args,
             model=self.chatgpt_model,
-            messages=messages, 
-            temperature=0.0, 
-            max_tokens=32, 
-            n=1)
-        
-        query_text = chat_completion.choices[0].message.content
-        if query_text.strip() == "0":
-            query_text = history[-1]["user"] # Use the last user input if we failed to generate a better query
+            messages=messages,
+            temperature=0.0,
+            max_tokens=32,
+            n=1,
+            functions=functions,
+            function_call="auto",
+        )
+
+        query_text = self.get_search_query(chat_completion, history[-1]["user"])
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
-            query_vector = openai.Embedding.create(engine=self.embedding_deployment, input=query_text)["data"][0]["embedding"]
+            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
+            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=query_text)
+            query_vector = embedding["data"][0]["embedding"]
         else:
             query_vector = None
 
-         # Only keep the text query if the retrieval mode uses text, otherwise drop it
+        # Only keep the text query if the retrieval mode uses text, otherwise drop it
         if not has_text:
             query_text = None
 
         # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            r = self.search_client.search(query_text, 
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None,
-                                          vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                query_type=QueryType.SEMANTIC,
+                query_language="en-us",
+                query_speller="lexicon",
+                semantic_configuration_name="default",
+                top=top,
+                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         else:
-            r = self.search_client.search(query_text, 
-                                          filter=filter, 
-                                          top=top, 
-                                          vector=query_vector, 
-                                          top_k=50 if query_vector else None, 
-                                          vector_fields="embedding" if query_vector else None)
+            r = await self.search_client.search(
+                query_text,
+                filter=filter,
+                top=top,
+                vector=query_vector,
+                top_k=50 if query_vector else None,
+                vector_fields="embedding" if query_vector else None,
+            )
         if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
+            results = [
+                doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
+                async for doc in r
+            ]
         else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
+            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
         content = "\n".join(results)
 
-        follow_up_questions_prompt = self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
-        
+        follow_up_questions_prompt = (
+            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
+        )
+
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        prompt_override = overrides.get("prompt_override")
+        prompt_override = overrides.get("prompt_template")
         if prompt_override is None:
-            system_message = self.system_message_chat_conversation.format(injected_prompt="", follow_up_questions_prompt=follow_up_questions_prompt)
+            system_message = self.system_message_chat_conversation.format(
+                injected_prompt="", follow_up_questions_prompt=follow_up_questions_prompt
+            )
         elif prompt_override.startswith(">>>"):
-            system_message = self.system_message_chat_conversation.format(injected_prompt=prompt_override[3:] + "\n", follow_up_questions_prompt=follow_up_questions_prompt)
+            system_message = self.system_message_chat_conversation.format(
+                injected_prompt=prompt_override[3:] + "\n", follow_up_questions_prompt=follow_up_questions_prompt
+            )
         else:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
-        
+
         messages = self.get_messages_from_history(
-            system_message + "\n\nSources:\n" + content,
+            system_message,
             self.chatgpt_model,
             history,
-            history[-1]["user"],
-            max_tokens=self.chatgpt_token_limit)
+            history[-1]["user"] + "\n\nSources:\n" + content,
+            max_tokens=self.chatgpt_token_limit,  # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
+        )
+        msg_to_display = "\n\n".join([str(message) for message in messages])
 
-        chat_completion = openai.ChatCompletion.create(
-            deployment_id=self.chatgpt_deployment,
+        extra_info = {
+            "data_points": results,
+            "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>"
+            + msg_to_display.replace("\n", "<br>"),
+        }
+
+        chat_coroutine = openai.ChatCompletion.acreate(
+            **chatgpt_args,
             model=self.chatgpt_model,
-            messages=messages, 
-            temperature=overrides.get("temperature") or 0.7, 
-            max_tokens=1024, 
-            n=1)
+            messages=messages,
+            temperature=overrides.get("temperature") or 0.7,
+            max_tokens=1024,
+            n=1,
+            stream=should_stream,
+        )
+        return (extra_info, chat_coroutine)
 
-        chat_content = chat_completion.choices[0].message.content
+    async def run_without_streaming(
+        self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ) -> dict[str, Any]:
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            history, overrides, auth_claims, should_stream=False
+        )
+        chat_resp = await chat_coroutine
+        chat_content = chat_resp.choices[0].message.content
+        extra_info["answer"] = chat_content
+        return extra_info
 
-        msg_to_display = '\n\n'.join([str(message) for message in messages])
+    async def run_with_streaming(
+        self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ) -> AsyncGenerator[dict, None]:
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            history, overrides, auth_claims, should_stream=True
+        )
+        yield extra_info
+        async for event in await chat_coroutine:
+            # "2023-07-01-preview" API version has a bug where first response has empty choices
+            if event["choices"]:
+                yield event
 
-        return {"data_points": results, "answer": chat_content, "thoughts": f"Searched for:<br>{query_text}<br><br>Conversations:<br>" + msg_to_display.replace('\n', '<br>')}
-    
-    def get_messages_from_history(self, system_prompt: str, model_id: str, history: Sequence[dict[str, str]], user_conv: str, few_shots = [], max_tokens: int = 4096) -> []:
+    def get_messages_from_history(
+        self,
+        system_prompt: str,
+        model_id: str,
+        history: list[dict[str, str]],
+        user_conv: str,
+        few_shots=[],
+        max_tokens: int = 4096,
+    ) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
         for shot in few_shots:
-            message_builder.append_message(shot.get('role'), shot.get('content'))
+            message_builder.append_message(shot.get("role"), shot.get("content"))
 
         user_content = user_conv
         append_index = len(few_shots) + 1
@@ -174,11 +265,25 @@ If you cannot generate a search query, return just the number 0.
         message_builder.append_message(self.USER, user_content, index=append_index)
 
         for h in reversed(history[:-1]):
-            if h.get("bot"):
-                message_builder.append_message(self.ASSISTANT, h.get('bot'), index=append_index)
-            message_builder.append_message(self.USER, h.get('user'), index=append_index)
+            if bot_msg := h.get("bot"):
+                message_builder.append_message(self.ASSISTANT, bot_msg, index=append_index)
+            if user_msg := h.get("user"):
+                message_builder.append_message(self.USER, user_msg, index=append_index)
             if message_builder.token_length > max_tokens:
                 break
-        
+
         messages = message_builder.messages
         return messages
+
+    def get_search_query(self, chat_completion: dict[str, any], user_query: str):
+        response_message = chat_completion["choices"][0]["message"]
+        if function_call := response_message.get("function_call"):
+            if function_call["name"] == "search_sources":
+                arg = json.loads(function_call["arguments"])
+                search_query = arg.get("search_query", self.NO_RESPONSE)
+                if search_query != self.NO_RESPONSE:
+                    return search_query
+        elif query_text := response_message.get("content"):
+            if query_text.strip() != self.NO_RESPONSE:
+                return query_text
+        return user_query

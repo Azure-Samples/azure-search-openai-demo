@@ -1,6 +1,6 @@
 import pytest
 
-from app.backend.core.modelhelper import (
+from core.modelhelper import (
     get_oai_chatmodel_tiktok,
     get_token_limit,
     num_tokens_from_messages,

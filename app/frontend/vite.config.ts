@@ -20,12 +20,13 @@ export default defineConfig({
                     }
                 }
             }
-        }
+        },
+        target: "esnext"
     },
     server: {
         proxy: {
-            "/ask": "http://localhost:5000",
-            "/chat": "http://localhost:5000"
+            "/ask": "http://localhost:50505",
+            "/chat": "http://localhost:50505"
         }
     }
 });
