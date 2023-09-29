@@ -1,3 +1,4 @@
+-r ../app/backend/requirements.txt
 --extra-index-url=https://azuremlsdktestpypi.azureedge.net/Create-Dev-Index/102333570
 azureml-metrics[prompt-flow]==0.1.0.102333570
 --extra-index-url https://azuremlsdktestpypi.azureedge.net/test-azure-ai-generative

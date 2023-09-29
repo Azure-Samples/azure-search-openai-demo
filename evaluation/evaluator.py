@@ -1,15 +1,17 @@
 import asyncio
+import csv
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 
-import pytest
 import urllib3
 from azure.ai.generative.evaluate import evaluate
 from azure.identity import DefaultAzureCredential
 
-import app
+sys.path.append("app/backend")
+import app  # noqa
 
 logging.basicConfig(level=logging.DEBUG)
 # loadenv from a .azure/env file
@@ -77,21 +79,16 @@ def local_qna(question):
     }
 
 
-# Loading data
 def load_jsonl(path):
     with open(path) as f:
         return [json.loads(line) for line in f.readlines()]
 
 
-@pytest.mark.parametrize("filename", ["ontopic.jsonl"])
-def test_evaluation(snapshot, filename):
-    path = Path(__file__).parent.absolute() / filename
+def run_evaluation(testdata_filename):
+    path = Path(__file__).parent.absolute() / testdata_filename
     data = load_jsonl(path)
 
-    # Evaluate the default vs the improved system prompt to see if the improved prompt
-    # performs consistently better across a larger set of inputs
-    openai_token = azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-
+    gpt_model = "gpt-4"
     results = evaluate(
         evaluation_name="baseline-evaluation",
         asset=local_qna,
@@ -104,50 +101,65 @@ def test_evaluation(snapshot, filename):
                 "api_version": "2023-05-15",
                 "api_base": "https://cog-pg6yesvgqiudc.openai.azure.com/",
                 "api_type": "azure_ad",
-                "api_key": openai_token.token,
+                "api_key": azure_credential.get_token("https://cognitiveservices.azure.com/.default").token,
                 "deployment_id": "chat",
-                "model": "gpt-4",
+                "model": gpt_model,
             },
             "questions": "question",
             "contexts": "context",
         },
-        # TODO: Try params
-        # tracking_uri=client.tracking_uri,
+        # TODO: Try params?
     )
-    print(results)
+
     columns = ["question", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_coherence", "gpt_groundedness"]
     gpt_ratings = results["artifacts"]
     rows = []
+
+    metrics = {key: {"sum_scores": 0, "avg_score": 0, "pass_count": 0, "pass_rate": 0} for key in gpt_ratings.keys()}
 
     def passes_threshold(rating):
         return int(rating) >= 4
 
     for ind, input in enumerate(data):
+        for key in gpt_ratings.keys():
+            metrics[key]["sum_scores"] += int(gpt_ratings[key][ind])
+            metrics[key]["avg_score"] = metrics[key]["sum_scores"] / (ind + 1)
+            if passes_threshold(gpt_ratings[key][ind]):
+                metrics[key]["pass_count"] += 1
+            metrics[key]["pass_rate"] = metrics[key]["pass_count"] / (ind + 1)
         rows.append(
             [
                 input["question"],
-                passes_threshold(gpt_ratings["gpt_similarity"][ind]),
-                passes_threshold(gpt_ratings["gpt_relevance"][ind]),
-                passes_threshold(gpt_ratings["gpt_fluency"][ind]),
-                passes_threshold(gpt_ratings["gpt_coherence"][ind]),
-                passes_threshold(gpt_ratings["gpt_groundedness"][ind]),
+                gpt_ratings["gpt_similarity"][ind],
+                gpt_ratings["gpt_relevance"][ind],
+                gpt_ratings["gpt_fluency"][ind],
+                gpt_ratings["gpt_coherence"][ind],
+                gpt_ratings["gpt_groundedness"][ind],
             ]
         )
-    # now sort rows by question
+    # now sort rows by question for easier diffing if questions get added later
     rows.sort(key=lambda x: x[0])
 
-    # save rows to a string using csv writer
-    import csv
-    import io
+    with open("evaluation/per_question.csv", "w") as question_file:
+        writer = csv.writer(question_file, lineterminator="\n")
+        writer.writerow(columns)
+        writer.writerows(rows)
 
-    f = io.StringIO()
-    writer = csv.writer(f, lineterminator="\n")
-    writer.writerow(columns)
-    writer.writerows(rows)
-    # get string
-    f.seek(0)
-    # save to snapshot
-    evaluation_model_name = "gpt-4"
-    generation_model_name = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    snapshot_filename = f"{filename}_{evaluation_model_name}_vs_{generation_model_name}.csv"
-    snapshot.assert_match(f.getvalue(), snapshot_filename)
+    # summary statistics
+    with open("evaluation/summary.csv", "w") as summary_file:
+        writer = csv.writer(summary_file, lineterminator="\n")
+        columns = ["gpt_metric", "avg_score", "pass_count", "pass_rate"]
+        writer.writerow(columns)
+        for key in metrics.keys():
+            writer.writerow([key, metrics[key]["avg_score"], metrics[key]["pass_count"], metrics[key]["pass_rate"]])
+
+    with open("evaluation/run_env.csv", "w") as metadata_file:
+        writer = csv.writer(metadata_file, lineterminator="\n")
+        columns = ["property", "value"]
+        writer.writerow(columns)
+        writer.writerow(["Evaluation GPT model", gpt_model])
+        writer.writerow(["App GPT model", os.environ["AZURE_OPENAI_CHATGPT_MODEL"]])
+
+
+if __name__ == "__main__":
+    run_evaluation("qa.jsonl")

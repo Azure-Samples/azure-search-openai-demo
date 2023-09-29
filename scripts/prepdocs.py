@@ -521,11 +521,10 @@ def generate_test_qa_data(
     search_client = SearchClient(
         endpoint=f"https://{search_service}.search.windows.net/", index_name=search_index, credential=search_creds
     )
-    r = search_client.search("", top=1000)
+    r = search_client.search("", top=40)
     qa = []
     for doc in r:
-        if len(qa) > 200:
-            break
+        print("Processing doc", doc["sourcepage"])
         text = doc["content"]
 
         result = qa_generator.generate(
