@@ -1,5 +1,6 @@
 import json
 from typing import Any, AsyncGenerator
+import unicodedata
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -253,6 +254,7 @@ If you cannot generate a search query, return just the number 0.
         few_shots=[],
         max_tokens: int = 4096,
     ) -> list:
+        user_conv = unicodedata.normalize('NFC', user_conv)
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
