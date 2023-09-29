@@ -6,3 +6,4 @@ azure-storage-blob==12.14.1
 openai[datalib]==0.27.8
 tiktoken==0.4.0
 tenacity==8.2.2
+https://ragsample.blob.core.windows.net/wheels/azure_ai_tools-0.0.1-py3-none-any.whl

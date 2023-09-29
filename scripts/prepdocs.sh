@@ -12,10 +12,10 @@ $(azd env get-values)
 EOF
 
 echo 'Creating python virtual environment "scripts/.venv"'
-python3 -m venv scripts/.venv
+#python3 -m venv scripts/.venv
 
 echo 'Installing dependencies from "requirements.txt" into virtual environment'
-./scripts/.venv/bin/python -m pip install -r scripts/requirements.txt
+#./scripts/.venv/bin/python -m pip install -r scripts/requirements.txt
 
 echo 'Running "prepdocs.py"'
-./scripts/.venv/bin/python ./scripts/prepdocs.py './data/*' --storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --searchservice "$AZURE_SEARCH_SERVICE" --openaihost "$OPENAI_HOST" --openaiservice "$AZURE_OPENAI_SERVICE" --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" --index "$AZURE_SEARCH_INDEX" --formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" --tenantid "$AZURE_TENANT_ID" -v
+./scripts/.venv/bin/python ./scripts/prepdocs.py './data/*' --gptdeployment "$AZURE_OPENAI_CHATGPT_DEPLOYMENT" --gptmodelname "$AZURE_OPENAI_CHATGPT_MODEL" --storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --searchservice "$AZURE_SEARCH_SERVICE" --openaihost "$OPENAI_HOST" --openaiservice "$AZURE_OPENAI_SERVICE" --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" --index "$AZURE_SEARCH_INDEX" --formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" --tenantid "$AZURE_TENANT_ID" -v

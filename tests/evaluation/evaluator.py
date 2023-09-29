@@ -2,7 +2,9 @@ import asyncio
 import json
 import logging
 import os
+from pathlib import Path
 
+import pytest
 import urllib3
 from azure.ai.generative.evaluate import evaluate
 from azure.identity import DefaultAzureCredential
@@ -58,6 +60,7 @@ async def send_chat_request(question) -> dict:
                     "semantic_captions": False,
                     "top": 3,
                     "suggest_followup_questions": False,
+                    "temperature": 0.0,
                 },
             },
         )
@@ -80,10 +83,9 @@ def load_jsonl(path):
         return [json.loads(line) for line in f.readlines()]
 
 
-def test_evaluation(snapshot):
-    # get path of this file
-    this_path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(this_path + "/data.jsonl")
+@pytest.mark.parametrize("filename", ["ontopic.jsonl"])
+def test_evaluation(snapshot, filename):
+    path = Path(__file__).parent.absolute() / filename
     data = load_jsonl(path)
 
     # Evaluate the default vs the improved system prompt to see if the improved prompt
@@ -112,24 +114,23 @@ def test_evaluation(snapshot):
         # TODO: Try params
         # tracking_uri=client.tracking_uri,
     )
-    # save a snapshot of the evaluation
-    # evaluation_model_name = "gpt-4"
-    # generation_model_name = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    # filename = f"{evaluation_model_name}_vs_{generation_model_name}.csv"
+    print(results)
     columns = ["question", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_coherence", "gpt_groundedness"]
     gpt_ratings = results["artifacts"]
     rows = []
-    # threshold = 4
+
+    def passes_threshold(rating):
+        return int(rating) >= 4
+
     for ind, input in enumerate(data):
-        # if < threshold, PASS, else FAIL
         rows.append(
             [
                 input["question"],
-                gpt_ratings["gpt_similarity"][ind],
-                gpt_ratings["gpt_relevance"][ind],
-                gpt_ratings["gpt_fluency"][ind],
-                gpt_ratings["gpt_coherence"][ind],
-                gpt_ratings["gpt_groundedness"][ind],
+                passes_threshold(gpt_ratings["gpt_similarity"][ind]),
+                passes_threshold(gpt_ratings["gpt_relevance"][ind]),
+                passes_threshold(gpt_ratings["gpt_fluency"][ind]),
+                passes_threshold(gpt_ratings["gpt_coherence"][ind]),
+                passes_threshold(gpt_ratings["gpt_groundedness"][ind]),
             ]
         )
     # now sort rows by question
@@ -146,5 +147,7 @@ def test_evaluation(snapshot):
     # get string
     f.seek(0)
     # save to snapshot
-    print(f.getvalue())
-    print(results["metrics"])
+    evaluation_model_name = "gpt-4"
+    generation_model_name = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    snapshot_filename = f"{filename}_{evaluation_model_name}_vs_{generation_model_name}.csv"
+    snapshot.assert_match(f.getvalue(), snapshot_filename)
