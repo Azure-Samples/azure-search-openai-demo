@@ -15,7 +15,6 @@
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
-  - [Using a non-Azure OpenAI instance](#using-a-non-azure-openai-instance)
   - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
@@ -133,11 +132,9 @@ If you already have existing Azure resources, you can re-use those by setting `a
 1. Run `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
 1. Run `azd env set AZURE_LOCATION {Location of existing resource group}`
 
-#### Existing Azure OpenAI resource
+#### Existing OpenAI resource
 
-If you're using OpenAI.com instead of Azure OpenAI, then you'll need to follow [these other instructions](#using-a-non-azure-openai-instance).
-
-For Azure OpenAI:
+##### Azure OpenAI:
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
@@ -145,6 +142,19 @@ For Azure OpenAI:
 1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing GPT embedding deployment}`. Only needed if your embeddings deployment is not the default 'embedding'.
 
 When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, make sure to select the same location as the existing OpenAI resource group.
+
+##### Openai.com OpenAI:
+
+1. Run `azd env set OPENAI_HOST openai`
+2. Run `azd env set OPENAI_ORGANIZATION {Your OpenAI organization}`
+3. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
+4. Run `azd up`
+
+You can retrieve your OpenAI key by checking [your user page](https://platform.openai.com/account/api-keys) and your organization by navigating to [your organization page](https://platform.openai.com/account/org-settings).
+Learn more about creating an OpenAI free trial at [this link](https://openai.com/pricing).
+Do *not* check your key into source control.
+
+When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, you can select any location as it will not be used.
 
 
 #### Existing Azure Cognitive Search resource
@@ -189,20 +199,6 @@ either you or they can follow these steps:
 1. Run `./scripts/roles.ps1` or `.scripts/roles.sh` to assign all of the necessary roles to the user.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Once the script runs, they should be able to run the app locally.
 
 ## Enabling optional features
-
-#### Using a non-Azure OpenAI instance
-
-To use an existing non-Azure OpenAI account, follow these steps before running `azd up`
-
-1. Run `azd env set OPENAI_HOST openai`
-2. Run `azd env set OPENAI_ORGANIZATION {Your OpenAI organization}`
-3. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
-4. Run `azd up`
-
-You can retrieve your OpenAI key by checking [your user page](https://platform.openai.com/account/api-keys) and your organization by navigating to [your organization page](https://platform.openai.com/account/org-settings).
-Learn more about creating an OpenAI free trial at [this link](https://openai.com/pricing).
-Do *not* check your key into source control.
-
 
 ### Enabling Application Insights
 
