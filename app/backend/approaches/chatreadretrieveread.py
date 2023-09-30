@@ -1,6 +1,5 @@
 import json
 from typing import Any, AsyncGenerator
-import unicodedata
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -250,32 +249,29 @@ If you cannot generate a search query, return just the number 0.
         system_prompt: str,
         model_id: str,
         history: list[dict[str, str]],
-        user_conv: str,
+        user_content: str,
         few_shots=[],
         max_tokens: int = 4096,
     ) -> list:
-        user_conv = unicodedata.normalize('NFC', user_conv)
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
         for shot in few_shots:
             message_builder.append_message(shot.get("role"), shot.get("content"))
 
-        user_content = user_conv
         append_index = len(few_shots) + 1
 
         message_builder.append_message(self.USER, user_content, index=append_index)
 
         for h in reversed(history[:-1]):
+            if message_builder.token_length > max_tokens:
+                break
             if bot_msg := h.get("bot"):
                 message_builder.append_message(self.ASSISTANT, bot_msg, index=append_index)
             if user_msg := h.get("user"):
                 message_builder.append_message(self.USER, user_msg, index=append_index)
-            if message_builder.token_length > max_tokens:
-                break
 
-        messages = message_builder.messages
-        return messages
+        return message_builder.messages
 
     def get_search_query(self, chat_completion: dict[str, any], user_query: str):
         response_message = chat_completion["choices"][0]["message"]
