@@ -15,6 +15,7 @@
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
+  - [Using a non-Azure OpenAI instance](#using-a-non-azure-openai-instance)
   - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
@@ -132,12 +133,19 @@ If you already have existing Azure resources, you can re-use those by setting `a
 1. Run `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
 1. Run `azd env set AZURE_LOCATION {Location of existing resource group}`
 
-#### Existing OpenAI resource
+#### Existing Azure OpenAI resource
+
+If you're using OpenAI.com instead of Azure OpenAI, then you'll need to follow [these other instructions](#using-a-non-azure-openai-instance).
+
+For Azure OpenAI:
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing ChatGPT deployment}`. Only needed if your ChatGPT deployment is not the default 'chat'.
 1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing GPT embedding deployment}`. Only needed if your embeddings deployment is not the default 'embedding'.
+
+When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, make sure to select the same location as the existing OpenAI resource group.
+
 
 #### Existing Azure Cognitive Search resource
 
