@@ -4,6 +4,7 @@ import logging
 import mimetypes
 import os
 import time
+from pathlib import Path
 from typing import AsyncGenerator
 
 import aiohttp
@@ -62,7 +63,7 @@ async def favicon():
 
 @bp.route("/assets/<path:path>")
 async def assets(path):
-    return await send_from_directory("static/assets", path)
+    return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
 # Serve content files from blob storage from within the app to keep the example self-contained.

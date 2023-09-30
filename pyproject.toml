@@ -8,7 +8,7 @@ src = ["app/backend"]
 line-length = 120
 
 [tool.pytest.ini_options]
-addopts = "-ra --cov"
+addopts = "-ra"
 pythonpath = ["app/backend"]
 
 [tool.coverage.paths]
