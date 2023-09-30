@@ -1,6 +1,6 @@
 azure-identity==1.13.0
 quart==0.18.4
-werkzeug==2.3.8 # pin due to 3.0 breaking change with quart
+werkzeug==2.3.7 # pin due to 3.0 breaking change with quart
 langchain==0.0.236
 openai[datalib]==0.27.8
 tiktoken==0.4.0
