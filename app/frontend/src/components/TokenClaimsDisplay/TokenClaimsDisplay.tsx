@@ -8,7 +8,8 @@ import {
     DataGridHeaderCell,
     DataGridCell,
     createTableColumn,
-    TableColumnDefinition
+    TableColumnDefinition,
+    TableRowId
 } from '@fluentui/react-table';
 
 type Claim = {
@@ -43,7 +44,7 @@ export const TokenClaimsDisplay = () => {
             renderHeaderCell: () => {
                 return 'Name';
             },
-            renderCell: item => {
+            renderCell: (item: Claim) => {
                 return item.name
             },
         }),
@@ -55,7 +56,7 @@ export const TokenClaimsDisplay = () => {
             renderHeaderCell: () => {
                 return 'Value';
             },
-            renderCell: item => {
+            renderCell: (item: Claim) => {
                 return item.value
             },
         })
@@ -68,15 +69,15 @@ export const TokenClaimsDisplay = () => {
                 items={items}
                 columns={columns}
                 sortable
-                getRowId={item => item.name}
+                getRowId={(item: Claim) => item.name}
             >
                 <DataGridHeader>
                 <DataGridRow>
-                    {({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}
-                </DataGridRow>
+                        {({ renderHeaderCell }: { renderHeaderCell: () => React.ReactNode }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}
+                    </DataGridRow>
                 </DataGridHeader>
                 <DataGridBody<Claim>>
-                {({ item, rowId }) => (
+                {({ item, rowId }: { item: Claim, rowId: TableRowId }) => (
                     <DataGridRow<Claim> key={rowId}>
                     {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
                     </DataGridRow>
