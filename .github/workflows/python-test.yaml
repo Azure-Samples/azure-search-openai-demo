@@ -23,7 +23,7 @@ jobs:
             python-version: ${{ matrix.python_version }}
             architecture: x64
         - name: Setup node
-          uses: actions/setup-node@v2
+          uses: actions/setup-node@v3
           with:
             node-version: 18
         - name: Build frontend
