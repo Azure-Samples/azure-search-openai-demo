@@ -69,6 +69,9 @@ param serverAppId string = ''
 param serverAppSecret string = ''
 param clientAppId string = ''
 
+// Used for optional CORS support for alternate frontends
+param allowedOrigin string = '' // should start with https://, shouldn't end with a /
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -143,6 +146,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
+    allowedOrigins: [allowedOrigin]
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -166,6 +170,9 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId
       AZURE_TENANT_ID: tenant().tenantId
+      // CORS support, for frontends on other hosts
+      ALLOWED_ORIGIN: allowedOrigin
+      APP_LOG_LEVEL: 'DEBUG'
     }
   }
 }

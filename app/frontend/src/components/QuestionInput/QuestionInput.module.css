@@ -17,11 +17,3 @@
     flex-direction: column;
     justify-content: flex-end;
 }
-
-.questionInputSendButton {
-    cursor: pointer;
-}
-
-.questionInputSendButtonDisabled {
-    opacity: 0.4;
-}

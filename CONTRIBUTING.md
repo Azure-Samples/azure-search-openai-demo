@@ -68,7 +68,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 * In GitHub, create a pull request to the `main` branch of the repository
 * Ask a maintainer to review your PR and address any comments they might have
 
-## <a name="tests"></a> Running tests
+## <a name="tests"></a> Setting up the development environment
 
 Install the development dependencies:
 
@@ -82,10 +82,33 @@ Install the pre-commit hooks:
 pre-commit install
 ```
 
+## <a name="unit-tests"></a> Running unit tests
+
 Run the tests:
 
 ```
 python3 -m pytest
+```
+
+Check the coverage report to make sure your changes are covered.
+
+```
+python3 -m pytest --cov
+```
+
+## <a name="e2e-tests"></a> Running E2E tests
+
+
+Install Playwright browser dependencies:
+
+```
+playwright install --with-deps
+```
+
+Run the tests:
+
+```
+python3 -m pytest tests/e2e.py
 ```
 
 ## <a name="style"></a> Code Style
