@@ -42,7 +42,7 @@ const Chat = () => {
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
-    const [streamedAnswers, setstreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
     const handleAsyncRequest = async (question: string, answers: [string, AskResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
@@ -53,7 +53,7 @@ const Chat = () => {
                 setTimeout(() => {
                     answer += newContent;
                     const latestResponse: AskResponse = { ...askResponse, answer };
-                    setstreamedAnswers([...answers, [question, latestResponse]]);
+                    setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
                 }, 33);
             });
@@ -134,7 +134,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
-        setstreamedAnswers([]);
+        setStreamedAnswers([]);
         setIsLoading(false);
         setIsStreaming(false);
     };
