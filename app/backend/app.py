@@ -73,8 +73,10 @@ async def assets(path):
 async def content_file(path):
     # remove page number from path
     # filename-1.txt -> filename.txt
-    path = path.rsplit(".pdf")[0].rsplit("-")[0] + ".pdf"
-    logging.info(f"content_file: {path}")
+    path_parts = path.rsplit(".pdf")[0].rsplit("-")
+    path = path_parts[0] + ".pdf"
+    page_number = path_parts[1] if len(path_parts) > 1 else "1"
+    logging.info("Opening file %s at page %s", path, page_number)
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
