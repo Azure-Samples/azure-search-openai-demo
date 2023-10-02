@@ -83,8 +83,8 @@
     "clientAppId": {
       "value": "${AZURE_CLIENT_APP_ID}"
     },
-    "allowedOrigins": {
-      "value": "${ALLOWED_ORIGINS}"
+    "allowedOrigin": {
+      "value": "${ALLOWED_ORIGIN}"
     }
   }
 }

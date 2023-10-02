@@ -312,7 +312,7 @@ def create_app():
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
 
-    if allowed_origins := os.getenv("ALLOWED_ORIGINS"):
-        app.logger.info("CORS enabled for %s", allowed_origins)
-        cors(app, allow_origin=allowed_origins.split(","), allow_methods=["GET", "POST"])
+    if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
+        app.logger.info("CORS enabled for %s", allowed_origin)
+        cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
     return app

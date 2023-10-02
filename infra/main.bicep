@@ -70,7 +70,7 @@ param serverAppSecret string = ''
 param clientAppId string = ''
 
 // Used for optional CORS support for alternate frontends
-param allowedOrigins string = '' // comma separated list of allowed origins - no slash at the end!
+param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -146,6 +146,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
+    allowedOrigins: [allowedOrigin]
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -170,7 +171,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_CLIENT_APP_ID: clientAppId
       AZURE_TENANT_ID: tenant().tenantId
       // CORS support, for frontends on other hosts
-      ALLOWED_ORIGINS: allowedOrigins
+      ALLOWED_ORIGIN: allowedOrigin
+      APP_LOG_LEVEL: 'DEBUG'
     }
   }
 }
@@ -185,29 +187,6 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
     sku: {
       name: openAiSkuName
     }
-    deployments: [
-      {
-        name: chatGptDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: chatGptModelName
-          version: chatGptModelVersion
-        }
-        sku: {
-          name: 'Standard'
-          capacity: chatGptDeploymentCapacity
-        }
-      }
-      {
-        name: embeddingDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: embeddingModelName
-          version: '2'
-        }
-        capacity: embeddingDeploymentCapacity
-      }
-    ]
   }
 }
 
