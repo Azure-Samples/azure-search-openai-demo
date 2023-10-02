@@ -521,7 +521,7 @@ def generate_test_qa_data(
     search_client = SearchClient(
         endpoint=f"https://{search_service}.search.windows.net/", index_name=search_index, credential=search_creds
     )
-    r = search_client.search("", top=40)
+    r = search_client.search("", top=1)
     qa = []
     for doc in r:
         print("Processing doc", doc["sourcepage"])
@@ -529,7 +529,7 @@ def generate_test_qa_data(
 
         result = qa_generator.generate(
             text=text,
-            qa_type=QAType.LONG_ANSWER,
+            qa_type=QAType.CONVERSATION,
             num_questions=5,
         )
 
@@ -538,7 +538,7 @@ def generate_test_qa_data(
             qa.append({"question": question, "answer": answer + citation})
 
     # Save qa to jsonl
-    with open("qa.jsonl", "w") as f:
+    with open("qa_multiturn.jsonl", "w") as f:
         for item in qa:
             f.write(json.dumps(item) + "\n")
 
