@@ -115,6 +115,7 @@ Then bring down the project code:
 Execute the following command, if you don't have any pre-existing Azure services and want to start from a fresh deployment.
 
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
+    * **Important**: Beware that the resources created by this command will incur immediate costs, primarily from the Cognitive Search resource. These resources may accrue costs even if you interrupt the command before it is fully executed. You can run `azd down` or delete the resources manually to avoid unnecessary spending.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
 It will look like the following:
@@ -219,6 +220,15 @@ To then limit access to a specific set of users or groups, you can follow the st
 ### Enabling login and document level access control
 
 By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./LoginAndAclSetup.md).
+
+### Enabling CORS for an alternate frontend
+
+By default, the deployed Azure web app will only allow requests from the same origin.  To enable CORS for a frontend hosted on a different origin, run:
+
+1. Run `azd env set ALLOWED ORIGIN https://<your-domain.com>`
+2. Run `azd up`
+
+For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed backend URL, so that all fetch requests will be sent to the deployed backend.
 
 ## Running locally
 

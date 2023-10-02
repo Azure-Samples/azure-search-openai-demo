@@ -1,3 +1,5 @@
+const BACKEND_URI = "";
+
 import { AskRequest, AskResponse, ChatRequest } from "./models";
 import { useLogin } from "../authConfig";
 
@@ -16,7 +18,7 @@ function getHeaders(idToken: string | undefined): Record<string, string> {
 }
 
 export async function askApi(options: AskRequest): Promise<AskResponse> {
-    const response = await fetch("/ask", {
+    const response = await fetch(`${BACKEND_URI}/ask`, {
         method: "POST",
         headers: getHeaders(options.idToken),
         body: JSON.stringify({
@@ -47,8 +49,8 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
 }
 
 export async function chatApi(options: ChatRequest): Promise<Response> {
-    const url = options.shouldStream ? "/chat_stream" : "/chat";
-    return await fetch(url, {
+    const url = options.shouldStream ? "chat_stream" : "chat";
+    return await fetch(`${BACKEND_URI}/${url}`, {
         method: "POST",
         headers: getHeaders(options.idToken),
         body: JSON.stringify({
@@ -73,5 +75,5 @@ export async function chatApi(options: ChatRequest): Promise<Response> {
 }
 
 export function getCitationFilePath(citation: string): string {
-    return `/content/${citation}`;
+    return `${BACKEND_URI}/content/${citation}`;
 }

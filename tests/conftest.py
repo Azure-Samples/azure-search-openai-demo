@@ -168,6 +168,7 @@ def mock_env(monkeypatch, request):
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+        monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
         for key, value in request.param.items():
             monkeypatch.setenv(key, value)
         if os.getenv("AZURE_USE_AUTHENTICATION") is not None:
