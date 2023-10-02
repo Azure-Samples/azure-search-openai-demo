@@ -82,6 +82,9 @@
     },
     "clientAppId": {
       "value": "${AZURE_CLIENT_APP_ID}"
+    },
+    "allowedOrigin": {
+      "value": "${ALLOWED_ORIGIN}"
     }
   }
 }

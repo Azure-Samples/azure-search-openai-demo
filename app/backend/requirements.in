@@ -1,5 +1,6 @@
 azure-identity
 quart
+quart-cors
 langchain
 openai[datalib]
 tiktoken

@@ -26,6 +26,7 @@ from quart import (
     send_file,
     send_from_directory,
 )
+from quart_cors import cors
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
@@ -307,6 +308,11 @@ def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
+
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+
+    if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
+        app.logger.info("CORS enabled for %s", allowed_origin)
+        cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
     return app
