@@ -69,6 +69,9 @@ param serverAppId string = ''
 param serverAppSecret string = ''
 param clientAppId string = ''
 
+// Used for optional CORS support for alternate frontends
+param allowedOrigins string = '' // comma separated list of allowed origins - no slash at the end!
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -166,6 +169,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId
       AZURE_TENANT_ID: tenant().tenantId
+      // CORS support, for frontends on other hosts
+      ALLOWED_ORIGINS: allowedOrigins
     }
   }
 }
