@@ -227,6 +227,8 @@ By default, the deployed Azure web app will only allow requests from the same or
 1. Run `azd env set ALLOWED ORIGIN https://<your-domain.com>`
 2. Run `azd up`
 
+For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed backend URL, so that all fetch requests will be sent to the deployed backend.
+
 ## Running locally
 
 You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
