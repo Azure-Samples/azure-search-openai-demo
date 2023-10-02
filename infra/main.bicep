@@ -187,6 +187,29 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
     sku: {
       name: openAiSkuName
     }
+    deployments: [
+      {
+        name: chatGptDeploymentName
+        model: {
+          format: 'OpenAI'
+          name: chatGptModelName
+          version: chatGptModelVersion
+        }
+        sku: {
+          name: 'Standard'
+          capacity: chatGptDeploymentCapacity
+        }
+      }
+      {
+        name: embeddingDeploymentName
+        model: {
+          format: 'OpenAI'
+          name: embeddingModelName
+          version: '2'
+        }
+        capacity: embeddingDeploymentCapacity
+      }
+    ]
   }
 }
 
