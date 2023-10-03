@@ -4,6 +4,7 @@ import logging
 import mimetypes
 import os
 import time
+from pathlib import Path
 from typing import AsyncGenerator
 
 import aiohttp
@@ -25,6 +26,7 @@ from quart import (
     send_file,
     send_from_directory,
 )
+from quart_cors import cors
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.readdecomposeask import ReadDecomposeAsk
@@ -62,7 +64,7 @@ async def favicon():
 
 @bp.route("/assets/<path:path>")
 async def assets(path):
-    return await send_from_directory("static/assets", path)
+    return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
 # Serve content files from blob storage from within the app to keep the example self-contained.
@@ -306,6 +308,11 @@ def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
+
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+
+    if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
+        app.logger.info("CORS enabled for %s", allowed_origin)
+        cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
     return app

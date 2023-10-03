@@ -42,7 +42,7 @@ const Chat = () => {
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
-    const [streamedAnswers, setstreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
     const handleAsyncRequest = async (question: string, answers: [string, AskResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
@@ -59,7 +59,7 @@ const Chat = () => {
                                     } }
                                 ]
                     };
-                    setstreamedAnswers([...answers, [question, latestResponse]]);
+                    setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
                 }, 33);
             });
@@ -88,7 +88,7 @@ const Chat = () => {
         return fullResponse;
     };
 
-    const client = useLogin ? useMsal().instance : undefined
+    const client = useLogin ? useMsal().instance : undefined;
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -98,7 +98,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
 
-        const token = client ? await getToken(client) : undefined
+        const token = client ? await getToken(client) : undefined;
 
         try {
             const history: ChatTurn[] = answers.map(a => ({
@@ -150,6 +150,9 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
+        setStreamedAnswers([]);
+        setIsLoading(false);
+        setIsStreaming(false);
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
@@ -371,7 +374,7 @@ const Chat = () => {
                             onChange={onUseOidSecurityFilterChange}
                         />
                     )}
-                    {useLogin &&  (
+                    {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
                             checked={useGroupsSecurityFilter}
@@ -397,7 +400,7 @@ const Chat = () => {
                         label="Stream chat completion responses"
                         onChange={onShouldStreamChange}
                     />
-                    { useLogin && <TokenClaimsDisplay />}
+                    {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>
         </div>
