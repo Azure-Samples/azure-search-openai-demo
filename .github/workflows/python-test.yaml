@@ -16,14 +16,14 @@ jobs:
         os: ["ubuntu-20.04"]
         python_version: ["3.9", "3.10", "3.11"]
     steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - name: Setup python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@v4
           with:
             python-version: ${{ matrix.python_version }}
             architecture: x64
         - name: Setup node
-          uses: actions/setup-node@v2
+          uses: actions/setup-node@v3
           with:
             node-version: 18
         - name: Build frontend

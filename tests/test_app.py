@@ -25,6 +25,19 @@ async def test_index(client):
 
 
 @pytest.mark.asyncio
+async def test_cors_notallowed(client) -> None:
+    response = await client.get("/", headers={"Origin": "https://quart.com"})
+    assert "Access-Control-Allow-Origin" not in response.headers
+
+
+@pytest.mark.asyncio
+async def test_cors_allowed(client) -> None:
+    response = await client.get("/", headers={"Origin": "https://frontend.com"})
+    assert response.access_control_allow_origin == "https://frontend.com"
+    assert "Access-Control-Allow-Origin" in response.headers
+
+
+@pytest.mark.asyncio
 async def test_ask_request_must_be_json(client):
     response = await client.post("/ask")
     assert response.status_code == 415
