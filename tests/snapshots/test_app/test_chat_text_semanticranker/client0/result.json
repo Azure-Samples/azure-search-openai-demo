@@ -9,7 +9,9 @@
             },
             "message": {
                 "content": "The capital of France is Paris."
-            }
+            },
+            "role": "assistant"
         }
-    ]
+    ],
+    "object": "chat.completion"
 }

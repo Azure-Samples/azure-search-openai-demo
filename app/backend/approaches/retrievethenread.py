@@ -130,6 +130,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             max_tokens=1024,
             n=1,
         )
+        import logging
+
+        logging.info(chat_completion)
         extra_info = {
             "data_points": results,
             "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
