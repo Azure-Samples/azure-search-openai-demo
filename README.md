@@ -18,6 +18,7 @@
   - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
+  - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
 - [Productionizing](#productionizing)
@@ -225,7 +226,7 @@ By default, the deployed Azure web app allows users to chat with all your indexe
 
 By default, the deployed Azure web app will only allow requests from the same origin.  To enable CORS for a frontend hosted on a different origin, run:
 
-1. Run `azd env set ALLOWED ORIGIN https://<your-domain.com>`
+1. Run `azd env set ALLOWED_ORIGIN https://<your-domain.com>`
 2. Run `azd up`
 
 For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed backend URL, so that all fetch requests will be sent to the deployed backend.
