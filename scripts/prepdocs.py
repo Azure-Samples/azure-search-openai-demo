@@ -166,8 +166,8 @@ def get_document_text(filename):
         if args.verbose:
             print(f"Extracting text from '{filename}' using Azure Form Recognizer")
         form_recognizer_client = DocumentAnalysisClient(
-            endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/",
-            credential=formrecognizer_creds,
+            endpoint=f"https://{args.docintelligenceservice}.cognitiveservices.azure.com/",
+            credential=docintelligence_creds,
             headers={"x-ms-useragent": "azure-search-chat-demo/1.0.0"},
         )
         with open(filename, "rb") as f:
@@ -687,12 +687,12 @@ if __name__ == "__main__":
         help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
-        "--formrecognizerservice",
+        "--docintelligenceservice",
         required=False,
         help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)",
     )
     parser.add_argument(
-        "--formrecognizerkey",
+        "--docintelligencekey",
         required=False,
         help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
@@ -716,13 +716,13 @@ if __name__ == "__main__":
         storage_creds = default_creds if args.storagekey is None else args.storagekey
     if not args.localpdfparser:
         # check if Azure Form Recognizer credentials are provided
-        if args.formrecognizerservice is None:
+        if args.docintelligenceservice is None:
             print(
-                "Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser."
+                "Error: Azure Form Recognizer service is not provided. Please provide docintelligenceservice or use --localpdfparser for local pypdf parser."
             )
             exit(1)
-        formrecognizer_creds = (
-            default_creds if args.formrecognizerkey is None else AzureKeyCredential(args.formrecognizerkey)
+        docintelligence_creds = (
+            default_creds if args.docintelligencekey is None else AzureKeyCredential(args.docintelligencekey)
         )
 
     if use_vectors:
