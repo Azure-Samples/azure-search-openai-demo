@@ -310,7 +310,10 @@ def create_app():
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+    default_level = "INFO"  # In development, log more verbosely
+    if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
+        default_level = "WARNING"
+    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)

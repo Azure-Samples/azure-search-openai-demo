@@ -401,10 +401,10 @@ You can view production logs in the Portal using either the Log stream or by dow
 The following line of code in `app/backend/app.py` configures the logging level:
 
 ```python
-logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 ```
 
-To change the default level, you can set the `APP_LOG_LEVEL` environment variable locally or in App Service
+To change the default level, either change `default_level` or set the `APP_LOG_LEVEL` environment variable
 to one of the [allowed log levels](https://docs.python.org/3/library/logging.html#logging-levels):
 `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
 
