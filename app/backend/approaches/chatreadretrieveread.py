@@ -243,15 +243,10 @@ If you cannot generate a search query, return just the number 0.
             ],
             "object": "chat.completion.chunk",
         }
-        num = 1
+
         async for event in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             if event["choices"]:
-                import logging
-
-                if num < 5:
-                    logging.info(event)
-                num += 1
                 yield event
 
     def get_messages_from_history(
