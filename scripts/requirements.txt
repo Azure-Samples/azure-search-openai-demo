@@ -140,7 +140,7 @@ typing-extensions==4.8.0
     #   azure-storage-file-datalake
 tzdata==2023.3
     # via pandas
-urllib3==2.0.5
+urllib3==2.0.6
     # via requests
 yarl==1.9.2
     # via aiohttp
