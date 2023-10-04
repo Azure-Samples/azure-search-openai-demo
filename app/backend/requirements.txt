@@ -128,7 +128,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.305
+langchain==0.0.306
     # via -r requirements.in
 langsmith==0.0.41
     # via langchain
