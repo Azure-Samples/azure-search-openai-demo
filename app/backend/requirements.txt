@@ -128,7 +128,7 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.306
+langchain==0.0.308
     # via -r requirements.in
 langsmith==0.0.41
     # via langchain
@@ -156,12 +156,9 @@ multidict==6.0.4
     #   yarl
 mypy-extensions==1.0.0
     # via typing-inspect
-numexpr==2.8.7
-    # via langchain
 numpy==1.26.0
     # via
     #   langchain
-    #   numexpr
     #   openai
     #   pandas
     #   pandas-stubs
