@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any
 
 from core.authentication import AuthenticationHelper
@@ -14,9 +14,3 @@ class Approach(ABC):
         if security_filter:
             filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
-
-
-class AskApproach(Approach):
-    @abstractmethod
-    async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
-        ...

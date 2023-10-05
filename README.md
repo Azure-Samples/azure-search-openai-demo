@@ -18,6 +18,7 @@
   - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
+  - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
 - [Productionizing](#productionizing)
@@ -225,7 +226,7 @@ By default, the deployed Azure web app allows users to chat with all your indexe
 
 By default, the deployed Azure web app will only allow requests from the same origin.  To enable CORS for a frontend hosted on a different origin, run:
 
-1. Run `azd env set ALLOWED ORIGIN https://<your-domain.com>`
+1. Run `azd env set ALLOWED_ORIGIN https://<your-domain.com>`
 2. Run `azd up`
 
 For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed backend URL, so that all fetch requests will be sent to the deployed backend.
@@ -375,7 +376,6 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 - It queries Azure Cognitive Search for search results for the user question (optionally using the vector embeddings for that question).
 - It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
 
-There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
 <details><a id="azd-up-explanation"></a>
@@ -400,10 +400,10 @@ You can view production logs in the Portal using either the Log stream or by dow
 The following line of code in `app/backend/app.py` configures the logging level:
 
 ```python
-logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 ```
 
-To change the default level, you can set the `APP_LOG_LEVEL` environment variable locally or in App Service
+To change the default level, either change `default_level` or set the `APP_LOG_LEVEL` environment variable
 to one of the [allowed log levels](https://docs.python.org/3/library/logging.html#logging-levels):
 `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
 

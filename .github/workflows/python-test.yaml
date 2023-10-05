@@ -40,7 +40,7 @@ jobs:
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
-          run: python3 -m pytest --cov
+          run: python3 -m pytest --cov --cov-fail-under=78
         - name: Run E2E tests with Playwright
           run: |
             playwright install --with-deps

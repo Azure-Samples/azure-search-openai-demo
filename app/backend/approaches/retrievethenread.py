@@ -4,12 +4,12 @@ import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from approaches.approach import AskApproach
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 
 
-class RetrieveThenReadApproach(AskApproach):
+class RetrieveThenReadApproach(Approach):
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
