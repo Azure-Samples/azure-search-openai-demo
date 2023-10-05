@@ -46,17 +46,10 @@ async def test_ask_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
-async def test_ask_with_unknown_approach(client):
-    response = await client.post("/ask", json={"approach": "test"})
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
 async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "approach": "rtr",
             "question": "What is the capital of France?",
             "overrides": {"retrieval_mode": "text"},
         },
@@ -72,7 +65,6 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
         "/ask",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "approach": "rtr",
             "question": "What is the capital of France?",
             "overrides": {
                 "retrieval_mode": "text",
@@ -96,7 +88,6 @@ async def test_ask_rtr_text_semanticranker(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "approach": "rtr",
             "question": "What is the capital of France?",
             "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
         },
@@ -111,7 +102,6 @@ async def test_ask_rtr_text_semanticcaptions(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "approach": "rtr",
             "question": "What is the capital of France?",
             "overrides": {"retrieval_mode": "text", "semantic_captions": True},
         },
@@ -126,7 +116,6 @@ async def test_ask_rtr_hybrid(client, snapshot):
     response = await client.post(
         "/ask",
         json={
-            "approach": "rtr",
             "question": "What is the capital of France?",
             "overrides": {"retrieval_mode": "hybrid"},
         },
@@ -145,17 +134,10 @@ async def test_chat_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
-async def test_chat_with_unknown_approach(client):
-    response = await client.post("/chat", json={"approach": "test"})
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
 async def test_chat_text(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "text"},
         },
@@ -171,7 +153,6 @@ async def test_chat_text_filter(auth_client, snapshot):
         "/chat",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {
                 "retrieval_mode": "text",
@@ -195,7 +176,6 @@ async def test_chat_text_semanticranker(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
         },
@@ -210,7 +190,6 @@ async def test_chat_text_semanticcaptions(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "text", "semantic_captions": True},
         },
@@ -225,7 +204,6 @@ async def test_chat_prompt_template(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "text", "prompt_template": "You are a cat."},
         },
@@ -240,7 +218,6 @@ async def test_chat_prompt_template_concat(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "text", "prompt_template": ">>> Meow like a cat."},
         },
@@ -255,7 +232,6 @@ async def test_chat_hybrid(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "hybrid"},
         },
@@ -270,7 +246,6 @@ async def test_chat_vector(client, snapshot):
     response = await client.post(
         "/chat",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "vector"},
         },
@@ -289,17 +264,10 @@ async def test_chat_stream_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
-async def test_chat_stream_with_unknown_approach(client):
-    response = await client.post("/chat_stream", json={"approach": "test"})
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
 async def test_chat_stream_text(client, snapshot):
     response = await client.post(
         "/chat_stream",
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {"retrieval_mode": "text"},
         },
@@ -315,7 +283,6 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
         "/chat_stream",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "approach": "rrr",
             "history": [{"user": "What is the capital of France?"}],
             "overrides": {
                 "retrieval_mode": "text",
