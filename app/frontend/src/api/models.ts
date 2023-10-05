@@ -41,10 +41,13 @@ export type ResponseChoice = {
     extra_args: ResponseExtraArgs;
 };
 
-export type AskResponse = {
+export type ChatAppResponseOrError = {
+    choices?: ResponseChoice[];
+    error?: string;
+};
+
+export type ChatAppResponse = {
     choices: ResponseChoice[];
-    object: string;
-    error?: string; // TODO: This isnt in spec, is it from backend? Can just use HTTP?
 };
 
 export type ChatTurn = {

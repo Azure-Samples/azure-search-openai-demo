@@ -69,7 +69,7 @@ def mock_openai_chatcompletion(monkeypatch):
             return AsyncChatCompletionIterator(answer)
         else:
             return openai.util.convert_to_openai_object(
-                {"object": "chat.completion", "choices": [{"role": "assistant", "message": {"content": answer}}]}
+                {"object": "chat.completion", "choices": [{"message": {"role": "assistant", "content": answer}}]}
             )
 
     monkeypatch.setattr(openai.ChatCompletion, "acreate", mock_acreate)
