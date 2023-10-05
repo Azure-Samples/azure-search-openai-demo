@@ -24,7 +24,7 @@ class ChatReadRetrieveReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-    system_message_chat_conversation = """Assistant helps the company employees with their NIS 2 related questions, and questions about cybersecurity in critical public infrastructure like electrical energy production. Be brief in your answers.
+    system_message_chat_conversation = """Assistant helps executives and senior managers of dental companies employees with exploring the dental news. Be brief in your answers.
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
 For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, e.g. [info1.txt]. Don't combine sources, list each source separately, e.g. [info1.txt][info2.pdf].
@@ -46,10 +46,10 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
-        {"role": USER, "content": "Which sectors and types of entities will the NIS2 cover?"},
-        {"role": ASSISTANT, "content": "Show sectors and types of entities"},
-        {"role": USER, "content": "Why did the Commission propose a new NIS Directive?"},
-        {"role": ASSISTANT, "content": "Background to the new NIS Directive"},
+        {"role": USER, "content": "What are the top news of last week?"},
+        {"role": ASSISTANT, "content": "Show news from last week"},
+        {"role": USER, "content": "Why did 3Shape invest in AI?"},
+        {"role": ASSISTANT, "content": "Show news on 3Shape and AI"},
     ]
 
     def __init__(
