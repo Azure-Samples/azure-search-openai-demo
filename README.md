@@ -376,7 +376,6 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 - It queries Azure Cognitive Search for search results for the user question (optionally using the vector embeddings for that question).
 - It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
 
-There are also two other /ask approaches with a slightly different approach, but they aren't currently working due to [langchain compatibility issues](https://github.com/Azure-Samples/azure-search-openai-demo/issues/541).
 </details>
 
 <details><a id="azd-up-explanation"></a>

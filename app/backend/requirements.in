@@ -1,7 +1,6 @@
 azure-identity
 quart
 quart-cors
-langchain
 openai[datalib]
 tiktoken
 azure-search-documents==11.4.0b6

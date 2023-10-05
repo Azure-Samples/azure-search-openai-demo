@@ -26,7 +26,6 @@ class ChatUser(HttpUser):
                         )
                     }
                 ],
-                "approach": "rrr",
                 "overrides": {
                     "retrieval_mode": "hybrid",
                     "semantic_ranker": True,
@@ -47,7 +46,6 @@ class ChatUser(HttpUser):
                     },
                     {"user": "Does my plan cover eye exams?"},
                 ],
-                "approach": "rrr",
                 "overrides": {
                     "retrieval_mode": "hybrid",
                     "semantic_ranker": True,

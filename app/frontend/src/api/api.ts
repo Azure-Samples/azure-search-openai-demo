@@ -23,7 +23,6 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
         headers: getHeaders(options.idToken),
         body: JSON.stringify({
             question: options.question,
-            approach: options.approach,
             overrides: {
                 retrieval_mode: options.overrides?.retrievalMode,
                 semantic_ranker: options.overrides?.semanticRanker,
@@ -55,7 +54,6 @@ export async function chatApi(options: ChatRequest): Promise<Response> {
         headers: getHeaders(options.idToken),
         body: JSON.stringify({
             history: options.history,
-            approach: options.approach,
             overrides: {
                 retrieval_mode: options.overrides?.retrievalMode,
                 semantic_ranker: options.overrides?.semanticRanker,
