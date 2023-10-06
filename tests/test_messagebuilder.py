@@ -22,3 +22,26 @@ def test_messagebuilder_append():
     ]
     assert builder.model == "gpt-35-turbo"
     assert builder.token_length == 17
+
+
+def test_messagebuilder_unicode():
+    builder = MessageBuilder("a\u0301", "gpt-35-turbo")
+    assert builder.messages == [
+        # 1 token, 1 token, 1 token, 1 token
+        {"role": "system", "content": "á"}
+    ]
+    assert builder.model == "gpt-35-turbo"
+    assert builder.token_length == 4
+
+
+def test_messagebuilder_unicode_append():
+    builder = MessageBuilder("a\u0301", "gpt-35-turbo")
+    builder.append_message("user", "a\u0301")
+    assert builder.messages == [
+        # 1 token, 1 token, 1 token, 1 token
+        {"role": "system", "content": "á"},
+        # 1 token, 1 token, 1 token, 1 token
+        {"role": "user", "content": "á"},
+    ]
+    assert builder.model == "gpt-35-turbo"
+    assert builder.token_length == 8
