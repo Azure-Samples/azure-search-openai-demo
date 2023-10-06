@@ -1,6 +1,6 @@
 const BACKEND_URI = "";
 
-import { AskRequest, AskResponse, ChatRequest } from "./models";
+import { AskRequest, ChatAppResponse, ChatAppResponseOrError, ChatRequest } from "./models";
 import { useLogin } from "../authConfig";
 
 function getHeaders(idToken: string | undefined): Record<string, string> {
@@ -17,7 +17,7 @@ function getHeaders(idToken: string | undefined): Record<string, string> {
     return headers;
 }
 
-export async function askApi(options: AskRequest): Promise<AskResponse> {
+export async function askApi(options: AskRequest): Promise<ChatAppResponse> {
     const response = await fetch(`${BACKEND_URI}/ask`, {
         method: "POST",
         headers: getHeaders(options.idToken),
@@ -39,12 +39,12 @@ export async function askApi(options: AskRequest): Promise<AskResponse> {
         })
     });
 
-    const parsedResponse: AskResponse = await response.json();
+    const parsedResponse: ChatAppResponseOrError = await response.json();
     if (response.status > 299 || !response.ok) {
         throw Error(parsedResponse.error || "Unknown error");
     }
 
-    return parsedResponse;
+    return parsedResponse as ChatAppResponse;
 }
 
 export async function chatApi(options: ChatRequest): Promise<Response> {

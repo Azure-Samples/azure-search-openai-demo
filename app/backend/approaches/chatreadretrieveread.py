@@ -228,9 +228,8 @@ If you cannot generate a search query, return just the number 0.
             history, overrides, auth_claims, should_stream=False
         )
         chat_resp = await chat_coroutine
-        chat_content = chat_resp.choices[0].message.content
-        extra_info["answer"] = chat_content
-        return extra_info
+        chat_resp.choices[0]["extra_args"] = extra_info
+        return chat_resp
 
     async def run_with_streaming(
         self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
@@ -238,7 +237,13 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=True
         )
-        yield extra_info
+        yield {
+            "choices": [
+                {"delta": {"role": self.ASSISTANT}, "extra_args": extra_info, "finish_reason": None, "index": 0}
+            ],
+            "object": "chat.completion.chunk",
+        }
+
         async for event in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             if event["choices"]:

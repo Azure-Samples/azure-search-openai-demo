@@ -40,20 +40,18 @@ def mock_openai_embedding(monkeypatch):
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
         def __init__(self, answer):
-            self.num = 2
-            self.answer = answer
+            self.responses = [
+                {"object": "chat.completion.chunk", "choices": []},
+                {"object": "chat.completion.chunk", "choices": [{"delta": {"role": "assistant"}}]},
+                {"object": "chat.completion.chunk", "choices": [{"delta": {"content": answer}}]},
+            ]
 
         def __aiter__(self):
             return self
 
         async def __anext__(self):
-            if self.num == 2:
-                self.num -= 1
-                # Emulate the first response being empty - bug with "2023-07-01-preview"
-                return openai.util.convert_to_openai_object({"choices": []})
-            elif self.num == 1:
-                self.num -= 1
-                return openai.util.convert_to_openai_object({"choices": [{"delta": {"content": self.answer}}]})
+            if self.responses:
+                return self.responses.pop(0)
             else:
                 raise StopAsyncIteration
 
@@ -70,7 +68,9 @@ def mock_openai_chatcompletion(monkeypatch):
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:
-            return openai.util.convert_to_openai_object({"choices": [{"message": {"content": answer}}]})
+            return openai.util.convert_to_openai_object(
+                {"object": "chat.completion", "choices": [{"message": {"role": "assistant", "content": answer}}]}
+            )
 
     monkeypatch.setattr(openai.ChatCompletion, "acreate", mock_acreate)
 
