@@ -5,7 +5,7 @@ import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
 
-import { chatApi, RetrievalMode, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatRequest, ChatTurn } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -41,18 +41,24 @@ const Chat = () => {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
-    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
 
-    const handleAsyncRequest = async (question: string, answers: [string, AskResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
-        let askResponse: AskResponse = {} as AskResponse;
+        let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
         const updateState = (newContent: string) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: AskResponse = { ...askResponse, answer };
+                    const latestResponse: ChatAppResponse = { ...askResponse,
+                        choices: [{ ...askResponse.choices[0],
+                                    message: { content: answer,
+                                        role: askResponse.choices[0].message.role
+                                    } }
+                                ]
+                    };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
                 }, 33);
@@ -61,7 +67,8 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                if (event["data_points"]) {
+                if (event["choices"] && event["choices"][0]["extra_args"] && event["choices"][0]["extra_args"]["data_points"]) {
+                    event["choices"][0]["message"] = event["choices"][0]["delta"];
                     askResponse = event;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
@@ -71,7 +78,13 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: AskResponse = { ...askResponse, answer };
+        const fullResponse: ChatAppResponse = { ...askResponse,
+            choices: [{ ...askResponse.choices[0],
+                        message: { content: answer,
+                            role: askResponse.choices[0].message.role
+                        } }
+                    ]
+        };
         return fullResponse;
     };
 
@@ -88,7 +101,10 @@ const Chat = () => {
         const token = client ? await getToken(client) : undefined;
 
         try {
-            const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
+            const history: ChatTurn[] = answers.map(a => ({
+                user: a[0],
+                bot: a[1].choices[0].message.content
+            }));
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
                 shouldStream: shouldStream,
@@ -111,14 +127,14 @@ const Chat = () => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: AskResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
-                const parsedResponse: AskResponse = await response.json();
+                const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
-                setAnswers([...answers, [question, parsedResponse]]);
+                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
         } catch (e) {
             setError(e);

@@ -25,11 +25,29 @@ export type AskRequest = {
     idToken?: string;
 };
 
-export type AskResponse = {
-    answer: string;
+export type ResponseMessage = {
+    content: string;
+    role: string;
+}
+
+export type ResponseExtraArgs = {
     thoughts: string | null;
     data_points: string[];
+}
+
+export type ResponseChoice = {
+    index: number;
+    message: ResponseMessage;
+    extra_args: ResponseExtraArgs;
+};
+
+export type ChatAppResponseOrError = {
+    choices?: ResponseChoice[];
     error?: string;
+};
+
+export type ChatAppResponse = {
+    choices: ResponseChoice[];
 };
 
 export type ChatTurn = {
