@@ -19,11 +19,11 @@ interface Props {
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
 export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
-    const isDisabledThoughtProcessTab: boolean = !answer.choices[0].extra_args.thoughts;
-    const isDisabledSupportingContentTab: boolean = !answer.choices[0].extra_args.data_points.length;
+    const isDisabledThoughtProcessTab: boolean = !answer.choices[0].context.thoughts;
+    const isDisabledSupportingContentTab: boolean = !answer.choices[0].context.data_points.length;
     const isDisabledCitationTab: boolean = !activeCitation;
 
-    const sanitizedThoughts = DOMPurify.sanitize(answer.choices[0].extra_args.thoughts!);
+    const sanitizedThoughts = DOMPurify.sanitize(answer.choices[0].context.thoughts!);
 
     return (
         <Pivot
@@ -43,7 +43,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText="Supporting content"
                 headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
             >
-                <SupportingContent supportingContent={answer.choices[0].extra_args.data_points} />
+                <SupportingContent supportingContent={answer.choices[0].context.data_points} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.CitationTab}

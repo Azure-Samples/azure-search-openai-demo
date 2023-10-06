@@ -3,7 +3,7 @@ import { Checkbox, ChoiceGroup, IChoiceGroupOption, Panel, DefaultButton, Spinne
 
 import styles from "./OneShot.module.css";
 
-import { askApi, ChatAppResponse, AskRequest, RetrievalMode } from "../../api";
+import { askApi, ChatAppResponse, ChatAppRequest, RetrievalMode } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -48,23 +48,29 @@ export function Component(): JSX.Element {
         const token = client ? await getToken(client) : undefined
 
         try {
-            const request: AskRequest = {
-                question,
-                overrides: {
-                    promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
-                    promptTemplatePrefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
-                    promptTemplateSuffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
-                    excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
-                    top: retrieveCount,
-                    retrievalMode: retrievalMode,
-                    semanticRanker: useSemanticRanker,
-                    semanticCaptions: useSemanticCaptions,
-                    useOidSecurityFilter: useOidSecurityFilter,
-                    useGroupsSecurityFilter: useGroupsSecurityFilter
-                },
-                idToken: token?.accessToken
+            const request: ChatAppRequest = {
+                messages: [
+                    {
+                        content: question,
+                        role: "user"
+                    }
+                ],
+                context: {
+                    overrides: {
+                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+                        prompt_template_prefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
+                        prompt_template_suffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
+                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
+                        top: retrieveCount,
+                        retrieval_mode: retrievalMode,
+                        semantic_ranker: useSemanticRanker,
+                        semantic_captions: useSemanticCaptions,
+                        use_oid_security_filter: useOidSecurityFilter,
+                        use_groups_security_filter: useGroupsSecurityFilter
+                    }
+                }
             };
-            const result = await askApi(request);
+            const result = await askApi(request, token?.accessToken);
             setAnswer(result);
         } catch (e) {
             setError(e);

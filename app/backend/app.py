@@ -88,38 +88,18 @@ async def ask():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        impl = current_app.config[CONFIG_ASK_APPROACH]
+        approach = current_app.config[CONFIG_ASK_APPROACH]
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run(request_json["question"], request_json.get("overrides") or {}, auth_claims)
+            r = await approach.run(request_json["messages"], context=context)
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /ask")
-        return jsonify({"error": str(e)}), 500
-
-
-@bp.route("/chat", methods=["POST"])
-async def chat():
-    if not request.is_json:
-        return jsonify({"error": "request must be json"}), 415
-    request_json = await request.get_json()
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-    try:
-        impl = current_app.config[CONFIG_CHAT_APPROACH]
-        # Workaround for: https://github.com/openai/openai-python/issues/371
-        async with aiohttp.ClientSession() as s:
-            openai.aiosession.set(s)
-            r = await impl.run_without_streaming(
-                request_json["history"], request_json.get("overrides", {}), auth_claims
-            )
-        return jsonify(r)
-    except Exception as e:
-        logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
 
 
@@ -128,21 +108,25 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         yield json.dumps(event, ensure_ascii=False) + "\n"
 
 
-@bp.route("/chat_stream", methods=["POST"])
-async def chat_stream():
+@bp.route("/chat", methods=["POST"])
+async def chat():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        impl = current_app.config[CONFIG_CHAT_APPROACH]
-        response_generator = impl.run_with_streaming(
-            request_json["history"], request_json.get("overrides", {}), auth_claims
-        )
-        response = await make_response(format_as_ndjson(response_generator))
-        response.timeout = None  # type: ignore
-        return response
+        approach = current_app.config[CONFIG_CHAT_APPROACH]
+        result = await approach.run(request_json["messages"], stream=request_json.get("stream", False), context=context)
+        print(result)
+        print(type(result))
+        if isinstance(result, dict):
+            return jsonify(result)
+        else:
+            response = await make_response(format_as_ndjson(result))
+            response.timeout = None  # type: ignore
+            return response
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500

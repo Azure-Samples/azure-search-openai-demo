@@ -1,7 +1,7 @@
 {
     "choices": [
         {
-            "extra_args": {
+            "context": {
                 "data_points": [
                     "Benefit_Options-2.pdf: Caption: A whistleblower policy."
                 ],
