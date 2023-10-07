@@ -1,5 +1,5 @@
 import json
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Optional
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -56,9 +56,9 @@ If you cannot generate a search query, return just the number 0.
         self,
         search_client: SearchClient,
         openai_host: str,
-        chatgpt_deployment: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
-        embedding_deployment: str,
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,
@@ -278,7 +278,7 @@ If you cannot generate a search query, return just the number 0.
 
         return message_builder.messages
 
-    def get_search_query(self, chat_completion: dict[str, any], user_query: str):
+    def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
         response_message = chat_completion["choices"][0]["message"]
         if function_call := response_message.get("function_call"):
             if function_call["name"] == "search_sources":

@@ -1,11 +1,11 @@
 from abc import ABC
-from typing import Any
+from typing import Any, Optional
 
 from core.authentication import AuthenticationHelper
 
 
 class Approach(ABC):
-    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> str:
+    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         exclude_category = overrides.get("exclude_category") or None
         security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
         filters = []
