@@ -256,7 +256,7 @@ pytz==2023.3.post1
     # via pandas
 pyyaml==6.0.1
     # via uvicorn
-quart==0.19.2
+quart==0.19.3
     # via
     #   -r requirements.in
     #   quart-cors
