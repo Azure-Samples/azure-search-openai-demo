@@ -28,7 +28,7 @@
     "@types/dompurify": "^3.0.3",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.8",
-    "@vitejs/plugin-react": "^4.0.2",
+    "@vitejs/plugin-react": "^4.1.0",
     "prettier": "^3.0.3",
     "typescript": "^5.1.6",
     "vite": "^4.4.2"
