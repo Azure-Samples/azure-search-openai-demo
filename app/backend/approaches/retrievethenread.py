@@ -131,9 +131,10 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             n=1,
         )
 
-        return {
+        extra_info = {
             "data_points": results,
-            "answer": chat_completion.choices[0].message.content,
             "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
             + "\n\n".join([str(message) for message in messages]),
         }
+        chat_completion.choices[0]["extra_args"] = extra_info
+        return chat_completion
