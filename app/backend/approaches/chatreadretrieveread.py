@@ -1,6 +1,7 @@
 import json
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional, Union
 
+import aiohttp
 import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
@@ -86,7 +87,8 @@ If you cannot generate a search query, return just the number 0.
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
 
-        user_query_request = "Generate search query for: " + history[-1]["user"]
+        original_user_query = history[-1]["content"]
+        user_query_request = "Generate search query for: " + original_user_query
 
         functions = [
             {
@@ -127,7 +129,7 @@ If you cannot generate a search query, return just the number 0.
             function_call="auto",
         )
 
-        query_text = self.get_search_query(chat_completion, history[-1]["user"])
+        query_text = self.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -199,7 +201,7 @@ If you cannot generate a search query, return just the number 0.
             system_message,
             self.chatgpt_model,
             history,
-            history[-1]["user"] + "\n\nSources:\n" + content,
+            original_user_query + "\n\nSources:\n" + content,
             max_tokens=self.chatgpt_token_limit,  # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
         )
         msg_to_display = "\n\n".join([str(message) for message in messages])
@@ -227,8 +229,8 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=False
         )
-        chat_resp = await chat_coroutine
-        chat_resp.choices[0]["extra_args"] = extra_info
+        chat_resp = dict(await chat_coroutine)
+        chat_resp["choices"][0]["context"] = extra_info
         return chat_resp
 
     async def run_with_streaming(
@@ -238,9 +240,7 @@ If you cannot generate a search query, return just the number 0.
             history, overrides, auth_claims, should_stream=True
         )
         yield {
-            "choices": [
-                {"delta": {"role": self.ASSISTANT}, "extra_args": extra_info, "finish_reason": None, "index": 0}
-            ],
+            "choices": [{"delta": {"role": self.ASSISTANT}, "context": extra_info, "finish_reason": None, "index": 0}],
             "object": "chat.completion.chunk",
         }
 
@@ -248,6 +248,20 @@ If you cannot generate a search query, return just the number 0.
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             if event["choices"]:
                 yield event
+
+    async def run(
+        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
+    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+        overrides = context.get("overrides", {})
+        auth_claims = context.get("auth_claims", {})
+        if stream is False:
+            # Workaround for: https://github.com/openai/openai-python/issues/371
+            async with aiohttp.ClientSession() as s:
+                openai.aiosession.set(s)
+                response = await self.run_without_streaming(messages, overrides, auth_claims)
+            return response
+        else:
+            return self.run_with_streaming(messages, overrides, auth_claims)
 
     def get_messages_from_history(
         self,

@@ -53,7 +53,7 @@ def test_home(page: Page, live_server_url: str):
 
 
 def test_chat(page: Page, live_server_url: str):
-    # Set up a mock route to the /chat_stream endpoint
+    # Set up a mock route to the /chat endpoint with streaming results
     def handle(route: Route):
         # Read the JSONL from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
@@ -61,7 +61,7 @@ def test_chat(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat_stream", handle)
+    page.route("*/**/chat", handle)
 
     # Check initial page state
     page.goto(live_server_url)
@@ -106,7 +106,7 @@ def test_chat(page: Page, live_server_url: str):
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
-        overrides = route.request.post_data_json["overrides"]
+        overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["retrieval_mode"] == "vectors"
         assert overrides["semantic_ranker"] is False
         assert overrides["semantic_captions"] is True

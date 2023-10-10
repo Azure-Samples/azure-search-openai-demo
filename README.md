@@ -418,7 +418,7 @@ to one of the [allowed log levels](https://docs.python.org/3/library/logging.htm
 If you need to log in a route handler, use the the global variable `current_app`'s logger:
 
 ```python
-async def chat_stream():
+async def chat():
     current_app.logger.info("Received /chat request")
 ```
 

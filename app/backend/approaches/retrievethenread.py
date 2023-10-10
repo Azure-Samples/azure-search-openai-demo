@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, AsyncGenerator, Optional, Union
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -57,7 +57,16 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
 
-    async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
+    async def run(
+        self,
+        messages: list[dict],
+        stream: bool = False,  # Stream is not used in this approach
+        session_state: Any = None,
+        context: dict[str, Any] = {},
+    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+        q = messages[-1]["content"]
+        overrides = context.get("overrides", {})
+        auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -136,5 +145,5 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
             + "\n\n".join([str(message) for message in messages]),
         }
-        chat_completion.choices[0]["extra_args"] = extra_info
+        chat_completion.choices[0]["context"] = extra_info
         return chat_completion
