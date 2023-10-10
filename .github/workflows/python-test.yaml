@@ -37,6 +37,8 @@ jobs:
             pip install -r requirements-dev.txt
         - name: Lint with ruff
           run: ruff .
+        - name: Check types with mypy
+          run: python3 -m mypy scripts/ app/
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests

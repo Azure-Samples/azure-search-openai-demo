@@ -3,6 +3,7 @@ import asyncio
 import json
 import logging
 import os
+from typing import Any, Optional
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
@@ -24,7 +25,7 @@ class AdlsGen2Setup:
         storage_account_name: str,
         filesystem_name: str,
         security_enabled_groups: bool,
-        data_access_control_format: dict[str, any],
+        data_access_control_format: dict[str, Any],
         credentials: AsyncTokenCredential,
     ):
         """
@@ -49,7 +50,7 @@ class AdlsGen2Setup:
         self.credentials = credentials
         self.security_enabled_groups = security_enabled_groups
         self.data_access_control_format = data_access_control_format
-        self.graph_headers = None
+        self.graph_headers: Optional[dict[str, str]] = None
 
     async def run(self):
         async with self.create_service_client() as service_client:
@@ -143,7 +144,7 @@ class AdlsGen2Setup:
         return group_id
 
 
-async def main(args: any):
+async def main(args: Any):
     async with AzureDeveloperCliCredential() as credentials:
         with open(args.data_access_control) as f:
             data_access_control_format = json.load(f)

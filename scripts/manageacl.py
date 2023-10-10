@@ -2,11 +2,11 @@ import argparse
 import asyncio
 import json
 import logging
-from typing import Union
+from typing import Any, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity import AzureDeveloperCliCredential
+from azure.identity.aio import AzureDeveloperCliCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
@@ -143,14 +143,16 @@ class ManageAcl:
             await search_index_client.create_or_update_index(index_definition)
 
 
-async def main(args: any):
+async def main(args: Any):
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (
         AzureDeveloperCliCredential()
         if args.tenant_id is None
         else AzureDeveloperCliCredential(tenant_id=args.tenant_id, process_timeout=60)
     )
-    search_credential = azd_credential if args.search_key is None else AzureKeyCredential(args.search_key)
+    search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = azd_credential
+    if args.search_key is not None:
+        search_credential = AzureKeyCredential(args.search_key)
 
     command = ManageAcl(
         service_name=args.search_service,

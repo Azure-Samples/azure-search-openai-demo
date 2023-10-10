@@ -273,7 +273,7 @@ def create_app():
         AioHttpClientInstrumentor().instrument()
     app = Quart(__name__)
     app.register_blueprint(bp)
-    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
+    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely

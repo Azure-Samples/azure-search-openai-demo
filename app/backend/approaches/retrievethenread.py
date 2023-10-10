@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 import openai
 from azure.search.documents.aio import SearchClient
@@ -41,9 +41,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self,
         search_client: SearchClient,
         openai_host: str,
-        chatgpt_deployment: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
-        embedding_deployment: str,
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,
