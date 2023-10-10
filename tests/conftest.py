@@ -64,7 +64,7 @@ def mock_openai_chatcompletion(monkeypatch):
         if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
         else:
-            answer = "The capital of France is Paris."
+            answer = "The capital of France is Paris. [Benefit_Options-2.pdf]."
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:

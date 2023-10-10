@@ -6,19 +6,36 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
     directory: "/app/frontend"
     schedule:
       interval: "weekly"
+    groups:
+      node-packages:
+        patterns:
+          - "*"
 
   # Maintain dependencies for pip
   - package-ecosystem: "pip"
     directory: "/app/backend"
     schedule:
       interval: "weekly"
+    groups:
+      python-requirements:
+        patterns:
+          - "*"
+
   - package-ecosystem: "pip"
     directory: "/scripts"
     schedule:
       interval: "weekly"
+    groups:
+      python-requirements:
+        patterns:
+          - "*"

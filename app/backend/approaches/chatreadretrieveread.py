@@ -1,5 +1,5 @@
 import json
-from typing import Any, AsyncGenerator, Union
+from typing import Any, AsyncGenerator, Optional, Union
 
 import aiohttp
 import openai
@@ -57,9 +57,9 @@ If you cannot generate a search query, return just the number 0.
         self,
         search_client: SearchClient,
         openai_host: str,
-        chatgpt_deployment: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
-        embedding_deployment: str,
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,

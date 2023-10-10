@@ -98,7 +98,7 @@ A related option is VS Code Remote Containers, which will open the project in yo
 First install the required tools:
 
 * [Azure Developer CLI](https://aka.ms/azure-dev/install)
-* [Python 3.9+](https://www.python.org/downloads/)
+* [Python 3.9, 3.10, or 3.11](https://www.python.org/downloads/)
   * **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
   * **Important**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.
 * [Node.js 14+](https://nodejs.org/en/download/)

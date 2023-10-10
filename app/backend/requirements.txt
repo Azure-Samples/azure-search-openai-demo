@@ -256,7 +256,7 @@ pytz==2023.3.post1
     # via pandas
 pyyaml==6.0.1
     # via uvicorn
-quart==0.19.2
+quart==0.19.3
     # via
     #   -r requirements.in
     #   quart-cors
@@ -294,7 +294,7 @@ typing-extensions==4.8.0
     #   opentelemetry-sdk
 tzdata==2023.3
     # via pandas
-urllib3==2.0.5
+urllib3==2.0.6
     # via requests
 uvicorn[standard]==0.23.2
     # via -r requirements.in

@@ -16,3 +16,14 @@ source = ["scripts", "app"]
 
 [tool.coverage.report]
 show_missing = true
+
+[tool.mypy]
+check_untyped_defs = true
+python_version = 3.9
+
+[[tool.mypy.overrides]]
+module = [
+    "msal.*",
+    "msal_extensions.*",
+]
+ignore_missing_imports = true

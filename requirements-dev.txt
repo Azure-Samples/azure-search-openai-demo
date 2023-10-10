@@ -12,3 +12,4 @@ pytest-playwright
 pre-commit
 locust
 pip-tools
+mypy
