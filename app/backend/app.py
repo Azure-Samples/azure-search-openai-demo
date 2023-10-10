@@ -119,8 +119,6 @@ async def chat():
     try:
         approach = current_app.config[CONFIG_CHAT_APPROACH]
         result = await approach.run(request_json["messages"], stream=request_json.get("stream", False), context=context)
-        print(result)
-        print(type(result))
         if isinstance(result, dict):
             return jsonify(result)
         else:
