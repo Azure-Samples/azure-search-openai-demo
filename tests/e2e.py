@@ -106,7 +106,7 @@ def test_chat(page: Page, live_server_url: str):
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
-        overrides = route.request.post_data_json["overrides"]
+        overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["retrieval_mode"] == "vectors"
         assert overrides["semantic_ranker"] is False
         assert overrides["semantic_captions"] is True
