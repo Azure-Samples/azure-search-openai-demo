@@ -6,7 +6,7 @@
 #
 aiofiles==23.2.1
     # via quart
-aiohttp==3.8.5
+aiohttp==3.8.6
     # via
     #   -r requirements.in
     #   openai
