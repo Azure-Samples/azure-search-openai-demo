@@ -1,3 +1,9 @@
+export const enum Approaches {
+    RetrieveThenRead = "rtr",
+    ReadRetrieveRead = "rrr",
+    ReadDecomposeAsk = "rda"
+}
+
 export const enum RetrievalMode {
     Hybrid = "hybrid",
     Vectors = "vectors",
@@ -15,39 +21,19 @@ export type AskRequestOverrides = {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     suggestFollowupQuestions?: boolean;
-    useOidSecurityFilter?: boolean;
-    useGroupsSecurityFilter?: boolean;
 };
 
 export type AskRequest = {
     question: string;
+    approach: Approaches;
     overrides?: AskRequestOverrides;
-    idToken?: string;
 };
 
-export type ResponseMessage = {
-    content: string;
-    role: string;
-}
-
-export type ResponseExtraArgs = {
+export type AskResponse = {
+    answer: string;
     thoughts: string | null;
     data_points: string[];
-}
-
-export type ResponseChoice = {
-    index: number;
-    message: ResponseMessage;
-    extra_args: ResponseExtraArgs;
-};
-
-export type ChatAppResponseOrError = {
-    choices?: ResponseChoice[];
     error?: string;
-};
-
-export type ChatAppResponse = {
-    choices: ResponseChoice[];
 };
 
 export type ChatTurn = {
@@ -57,7 +43,14 @@ export type ChatTurn = {
 
 export type ChatRequest = {
     history: ChatTurn[];
+    approach: Approaches;
     overrides?: AskRequestOverrides;
-    idToken?: string;
-    shouldStream?: boolean;
+};
+export type IUploadFormData = {
+    formData: FormData;
+};
+
+export type IUploadResponse = {
+    success: boolean;
+    message?: string;
 };

@@ -1,11 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
-import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
 
-import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatRequest, ChatTurn } from "../../api";
+import { chatApi, RetrievalMode, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -13,9 +12,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import { useLogin, getToken } from "../../authConfig";
-import { useMsal } from "@azure/msal-react";
-import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import { UploadFiles } from "../../components/UploadFiles";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -23,72 +20,21 @@ const Chat = () => {
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
-    const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
-    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
-    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isStreaming, setIsStreaming] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
-    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
-
-    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
-        let answer: string = "";
-        let askResponse: ChatAppResponse = {} as ChatAppResponse;
-
-        const updateState = (newContent: string) => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    answer += newContent;
-                    const latestResponse: ChatAppResponse = { ...askResponse,
-                        choices: [{ ...askResponse.choices[0],
-                                    message: { content: answer,
-                                        role: askResponse.choices[0].message.role
-                                    } }
-                                ]
-                    };
-                    setStreamedAnswers([...answers, [question, latestResponse]]);
-                    resolve(null);
-                }, 33);
-            });
-        };
-        try {
-            setIsStreaming(true);
-            for await (const event of readNDJSONStream(responseBody)) {
-                if (event["choices"] && event["choices"][0]["extra_args"] && event["choices"][0]["extra_args"]["data_points"]) {
-                    event["choices"][0]["message"] = event["choices"][0]["delta"];
-                    askResponse = event;
-                } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
-                    setIsLoading(false);
-                    await updateState(event["choices"][0]["delta"]["content"]);
-                }
-            }
-        } finally {
-            setIsStreaming(false);
-        }
-        const fullResponse: ChatAppResponse = { ...askResponse,
-            choices: [{ ...askResponse.choices[0],
-                        message: { content: answer,
-                            role: askResponse.choices[0].message.role
-                        } }
-                    ]
-        };
-        return fullResponse;
-    };
-
-    const client = useLogin ? useMsal().instance : undefined;
+    const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -98,16 +44,11 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
 
-        const token = client ? await getToken(client) : undefined;
-
         try {
-            const history: ChatTurn[] = answers.map(a => ({
-                user: a[0],
-                bot: a[1].choices[0].message.content
-            }));
+            const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
             const request: ChatRequest = {
                 history: [...history, { user: question, bot: undefined }],
-                shouldStream: shouldStream,
+                approach: Approaches.ReadRetrieveRead,
                 overrides: {
                     promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
                     excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
@@ -115,27 +56,11 @@ const Chat = () => {
                     retrievalMode: retrievalMode,
                     semanticRanker: useSemanticRanker,
                     semanticCaptions: useSemanticCaptions,
-                    suggestFollowupQuestions: useSuggestFollowupQuestions,
-                    useOidSecurityFilter: useOidSecurityFilter,
-                    useGroupsSecurityFilter: useGroupsSecurityFilter
-                },
-                idToken: token?.accessToken
-            };
-
-            const response = await chatApi(request);
-            if (!response.body) {
-                throw Error("No response body");
-            }
-            if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
-                setAnswers([...answers, [question, parsedResponse]]);
-            } else {
-                const parsedResponse: ChatAppResponseOrError = await response.json();
-                if (response.status > 299 || !response.ok) {
-                    throw Error(parsedResponse.error || "Unknown error");
+                    suggestFollowupQuestions: useSuggestFollowupQuestions
                 }
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
-            }
+            };
+            const result = await chatApi(request);
+            setAnswers([...answers, [question, result]]);
         } catch (e) {
             setError(e);
         } finally {
@@ -149,13 +74,9 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
-        setStreamedAnswers([]);
-        setIsLoading(false);
-        setIsStreaming(false);
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
-    useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
@@ -177,24 +98,12 @@ const Chat = () => {
         setUseSemanticCaptions(!!checked);
     };
 
-    const onShouldStreamChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setShouldStream(!!checked);
-    };
-
     const onExcludeCategoryChanged = (_ev?: React.FormEvent, newValue?: string) => {
         setExcludeCategory(newValue || "");
     };
 
     const onUseSuggestFollowupQuestionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSuggestFollowupQuestions(!!checked);
-    };
-
-    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseOidSecurityFilter(!!checked);
-    };
-
-    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseGroupsSecurityFilter(!!checked);
     };
 
     const onExampleClicked = (example: string) => {
@@ -225,6 +134,7 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
+                <UploadFiles className={styles.commandButton} />
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
@@ -239,44 +149,23 @@ const Chat = () => {
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
-                            {isStreaming &&
-                                streamedAnswers.map((streamedAnswer, index) => (
-                                    <div key={index}>
-                                        <UserChatMessage message={streamedAnswer[0]} />
-                                        <div className={styles.chatMessageGpt}>
-                                            <Answer
-                                                isStreaming={true}
-                                                key={index}
-                                                answer={streamedAnswer[1]}
-                                                isSelected={false}
-                                                onCitationClicked={c => onShowCitation(c, index)}
-                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                            />
-                                        </div>
+                            {answers.map((answer, index) => (
+                                <div key={index}>
+                                    <UserChatMessage message={answer[0]} />
+                                    <div className={styles.chatMessageGpt}>
+                                        <Answer
+                                            key={index}
+                                            answer={answer[1]}
+                                            isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
+                                            onCitationClicked={c => onShowCitation(c, index)}
+                                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                        />
                                     </div>
-                                ))}
-                            {!isStreaming &&
-                                answers.map((answer, index) => (
-                                    <div key={index}>
-                                        <UserChatMessage message={answer[0]} />
-                                        <div className={styles.chatMessageGpt}>
-                                            <Answer
-                                                isStreaming={false}
-                                                key={index}
-                                                answer={answer[1]}
-                                                isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
-                                                onCitationClicked={c => onShowCitation(c, index)}
-                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
+                                </div>
+                            ))}
                             {isLoading && (
                                 <>
                                     <UserChatMessage message={lastQuestionRef.current} />
@@ -338,7 +227,7 @@ const Chat = () => {
 
                     <SpinButton
                         className={styles.chatSettingsSeparator}
-                        label="Retrieve this many search results:"
+                        label="Retrieve this many documents from search:"
                         min={1}
                         max={50}
                         defaultValue={retrieveCount.toString()}
@@ -364,24 +253,6 @@ const Chat = () => {
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
                     />
-                    {useLogin && (
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useOidSecurityFilter}
-                            label="Use oid security filter"
-                            disabled={!client?.getActiveAccount()}
-                            onChange={onUseOidSecurityFilterChange}
-                        />
-                    )}
-                    {useLogin && (
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useGroupsSecurityFilter}
-                            label="Use groups security filter"
-                            disabled={!client?.getActiveAccount()}
-                            onChange={onUseGroupsSecurityFilterChange}
-                        />
-                    )}
                     <Dropdown
                         className={styles.chatSettingsSeparator}
                         label="Retrieval mode"
@@ -393,13 +264,6 @@ const Chat = () => {
                         required
                         onChange={onRetrievalModeChange}
                     />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={shouldStream}
-                        label="Stream chat completion responses"
-                        onChange={onShouldStreamChange}
-                    />
-                    {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>
         </div>
