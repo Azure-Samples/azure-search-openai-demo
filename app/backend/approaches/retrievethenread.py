@@ -146,4 +146,5 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             + "\n\n".join([str(message) for message in messages]),
         }
         chat_completion.choices[0]["context"] = extra_info
+        chat_completion.choices[0]["session_state"] = session_state
         return chat_completion

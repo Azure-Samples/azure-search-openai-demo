@@ -224,23 +224,40 @@ If you cannot generate a search query, return just the number 0.
         return (extra_info, chat_coroutine)
 
     async def run_without_streaming(
-        self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        session_state: Any = None,
     ) -> dict[str, Any]:
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=False
         )
         chat_resp = dict(await chat_coroutine)
         chat_resp["choices"][0]["context"] = extra_info
+        chat_resp["choices"][0]["session_state"] = session_state
         return chat_resp
 
     async def run_with_streaming(
-        self, history: list[dict[str, str]], overrides: dict[str, Any], auth_claims: dict[str, Any]
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        session_state: Any = None,
     ) -> AsyncGenerator[dict, None]:
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=True
         )
         yield {
-            "choices": [{"delta": {"role": self.ASSISTANT}, "context": extra_info, "finish_reason": None, "index": 0}],
+            "choices": [
+                {
+                    "delta": {"role": self.ASSISTANT},
+                    "context": extra_info,
+                    "session_state": session_state,
+                    "finish_reason": None,
+                    "index": 0,
+                }
+            ],
             "object": "chat.completion.chunk",
         }
 
@@ -258,10 +275,10 @@ If you cannot generate a search query, return just the number 0.
             # Workaround for: https://github.com/openai/openai-python/issues/371
             async with aiohttp.ClientSession() as s:
                 openai.aiosession.set(s)
-                response = await self.run_without_streaming(messages, overrides, auth_claims)
+                response = await self.run_without_streaming(messages, overrides, auth_claims, session_state)
             return response
         else:
-            return self.run_with_streaming(messages, overrides, auth_claims)
+            return self.run_with_streaming(messages, overrides, auth_claims, session_state)
 
     def get_messages_from_history(
         self,

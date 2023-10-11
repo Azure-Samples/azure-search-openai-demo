@@ -121,7 +121,9 @@ const Chat = () => {
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter
                     }
-                }
+                },
+                // ChatAppProtocol: Client must pass on any session state received from the server
+                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
 
             const response = await chatApi(request, token?.accessToken);
