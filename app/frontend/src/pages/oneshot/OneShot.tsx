@@ -70,7 +70,7 @@ export function Component(): JSX.Element {
                     }
                 },
                 // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answer?.choices[0].session_state
+                session_state: answer ? answer.choices[0].session_state : null
             };
             const result = await askApi(request, token?.accessToken);
             setAnswer(result);
