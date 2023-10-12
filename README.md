@@ -169,7 +169,9 @@ When you run `azd up` after and are prompted to select a value for `openAiResour
   then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
 1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. The free tier won't work as it doesn't support managed identity. ([See other possible values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
 1. If you have an existing index that is set up with all the expected fields, then run `azd env set AZURE_SEARCH_INDEX {Name of existing index}`. Otherwise, the `azd up` command will create a new index.
-
+1. If you want to configure the language of the search query, then run `azd env set AZURE_SEARCH_QUERY_LANGUAGE {Name of query language}`. ([See other possible values](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/azure/search/documents/aio/_search_client_async.py#L226))
+1. If you want to configure the type of the speller to use to spell-correct, then run `azd env set AZURE_SEARCH_QUERY_SPELLER {Name of speller type}`. ([See other possible values](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/azure/search/documents/aio/_search_client_async.py#L236))
+1. If you want to configure the name of the analyzer to use for a searchable text field, then run `azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}`. ([See other possible values](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/azure/search/documents/indexes/models/_index.py#L375))
 
 #### Other existing Azure resources
 
