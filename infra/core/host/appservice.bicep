@@ -7,6 +7,7 @@ param applicationInsightsName string = ''
 param appServicePlanId string
 param keyVaultName string = ''
 param managedIdentity bool = !empty(keyVaultName)
+param useVnet bool = false
 param subnet1Id string
 
 // Runtime Properties
@@ -61,7 +62,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     }
     clientAffinityEnabled: clientAffinityEnabled
     httpsOnly: true
-    vnetRouteAllEnabled: true
+    vnetRouteAllEnabled: useVnet
   }
 
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }

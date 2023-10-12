@@ -97,6 +97,9 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
+@description('Use a private endpoint')
+param usePrivateEndpoint bool = false
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
@@ -124,7 +127,7 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
 
-resource privateEndpointResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(privateEndpointResourceGroupName)) {
+resource privateEndpointResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(privateEndpointResourceGroupName) && usePrivateEndpoint) {
   name: !empty(privateEndpointResourceGroupName) ? privateEndpointResourceGroupName : resourceGroup.name
 }
 
@@ -196,7 +199,8 @@ module backend 'core/host/appservice.bicep' = {
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }
-    subnet1Id: vnet.outputs.subnet1Resourceid // TODO: Verify this is the right subnet
+    subnet1Id: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : '' // TODO: Verify this is the right subnet
+    useVnet: usePrivateEndpoint
   }
   
 }
@@ -396,7 +400,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
   }
 }
 
-module vnet 'core/networking/vnet.bicep' = {
+module vnet 'core/networking/vnet.bicep' = if (usePrivateEndpoint) {
   name: vnetName
   scope:  resourceGroup
   params: {
@@ -417,7 +421,7 @@ module vnet 'core/networking/vnet.bicep' = {
 }
 
 // Private Endpoint
-module privateEndpoint 'core/networking/private-endpoint.bicep' = {
+module privateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivateEndpoint) {
   name: 'private-endpoint'
   scope: privateEndpointResourceGroup
   params: {
