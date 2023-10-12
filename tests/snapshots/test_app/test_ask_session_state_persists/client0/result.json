@@ -11,7 +11,9 @@
                 "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
                 "role": "assistant"
             },
-            "session_state": null
+            "session_state": {
+                "conversation_id": 1234
+            }
         }
     ],
     "object": "chat.completion"
