@@ -281,6 +281,7 @@ If you cannot generate a search query, return just the number 0.
         append_index = len(few_shots) + 1
 
         message_builder.append_message(self.USER, user_content, index=append_index)
+        total_token_count = message_builder.count_tokens_for_message(message_builder.messages[-1])
 
         newest_to_oldest = list(reversed(history[:-1]))
         for ind in range(len(newest_to_oldest)):
@@ -290,10 +291,13 @@ If you cannot generate a search query, return just the number 0.
                 while ind < len(newest_to_oldest) and newest_to_oldest[ind].get("role") != self.USER:
                     ind += 1
                 prev_message = newest_to_oldest[ind]
-                if message_builder.calculate_token_length_with_messages([message, prev_message]) > max_tokens:
+                combined_count = message_builder.count_tokens_for_message(
+                    message
+                ) + message_builder.count_tokens_for_message(prev_message)
+                if total_token_count + combined_count > max_tokens:
                     break
-                message_builder.append_message(self.ASSISTANT, message["content"], index=append_index)
-                message_builder.append_message(self.USER, prev_message["content"], index=append_index)
+                message_builder.append_message(message["role"], message["content"], index=append_index)
+                message_builder.append_message(prev_message["role"], prev_message["content"], index=append_index)
         return message_builder.messages
 
     def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
