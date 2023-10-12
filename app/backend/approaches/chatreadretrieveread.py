@@ -292,8 +292,8 @@ If you cannot generate a search query, return just the number 0.
                 prev_message = newest_to_oldest[ind]
                 if message_builder.calculate_token_length_with_messages([message, prev_message]) > max_tokens:
                     break
-                message_builder.append_message(self.ASSISTANT, message.get("content"), index=append_index)
-                message_builder.append_message(self.USER, prev_message.get("content"), index=append_index)
+                message_builder.append_message(self.ASSISTANT, message["content"], index=append_index)
+                message_builder.append_message(self.USER, prev_message["content"], index=append_index)
         return message_builder.messages
 
     def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
