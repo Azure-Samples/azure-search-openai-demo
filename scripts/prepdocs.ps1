@@ -27,7 +27,11 @@ if ($env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT) {
   }
   $aclArg = "--useacls"
 }
-$argumentList = "./scripts/prepdocs.py `"$cwd/data/*`" $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg " + `
+# Optional Search Analyzer name if using a custom analyzer
+if ($env:AZURE_SEARCH_ANALYZER_NAME) {
+  $searchAnalyzerNameArg = "--searchanalyzername $env:AZURE_SEARCH_ANALYZER_NAME"
+}
+$argumentList = "./scripts/prepdocs.py `"$cwd/data/*`" $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg " + `
 "$aclArg --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER " + `
 "--searchservice $env:AZURE_SEARCH_SERVICE --openaihost `"$env:OPENAI_HOST`" " + `
 "--openaiservice `"$env:AZURE_OPENAI_SERVICE`" --openaikey `"$env:OPENAI_API_KEY`" " + `
