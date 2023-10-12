@@ -54,6 +54,25 @@ param formRecognizerResourceGroupLocation string = location
 
 param formRecognizerSkuName string = 'S0'
 
+param privateEndpointName string = ''
+param privateEndpointResourceGroupName string = ''
+param privateDnsZoneName string = ''
+param pvtEndpointDnsGroupName string = ''
+param privateEndpointResourceGroupLocation string = location
+
+param newOrExisting string = 'new' //accepts new or existing
+param vnetRG string = resourceGroupName
+param vnetName string = 'openai-vnet'
+param vnetAddressPrefix string = '10.0.0.0/16'
+param subnet1Name string = 'subnet1' // for Private Endpoint
+param subnet1Prefix string = '10.0.0.0/24'
+param subnet2Name string = 'subnet2' //for VNET Integration app service
+param subnet2Prefix string = '10.0.1.0/24'
+param subnet1nsgname string = 'subnet1nsg'
+param subnet1routetablename string = 'subnet1rt'
+param subnet2nsgname string = 'subnet2nsg'
+param subnet2routetablename string = 'subnet2rt'
+
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
@@ -103,6 +122,10 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
+}
+
+resource privateEndpointResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(privateEndpointResourceGroupName)) {
+  name: !empty(privateEndpointResourceGroupName) ? privateEndpointResourceGroupName : resourceGroup.name
 }
 
 // Monitor application with Azure Monitor
@@ -173,7 +196,9 @@ module backend 'core/host/appservice.bicep' = {
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }
+    subnet1Id: vnet.outputs.subnet1Resourceid // TODO: Verify this is the right subnet
   }
+  
 }
 
 module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
@@ -368,6 +393,41 @@ module searchRoleBackend 'core/security/role.bicep' = {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
     principalType: 'ServicePrincipal'
+  }
+}
+
+module vnet 'core/networking/vnet.bicep' = {
+  name: vnetName
+  scope:  resourceGroup
+  params: {
+    location: location
+    vnetRG: vnetRG
+    vnetName: vnetName
+    vnetAddressPrefix: vnetAddressPrefix
+    subnet1Name: subnet1Name
+    subnet2Name: subnet2Name
+    subnet1Prefix: subnet1Prefix
+    subnet2Prefix: subnet2Prefix
+    subnet1nsgname: subnet1nsgname
+    subnet1routetablename: subnet1routetablename
+    subnet2nsgname: subnet2nsgname
+    subnet2routetablename: subnet2routetablename
+    newOrExisting: newOrExisting
+  }
+}
+
+// Private Endpoint
+module privateEndpoint 'core/networking/private-endpoint.bicep' = {
+  name: 'private-endpoint'
+  scope: privateEndpointResourceGroup
+  params: {
+  location: privateEndpointResourceGroupLocation
+  privateEndpointName: privateEndpointName
+  appServiceid: backend.outputs.id
+  vnetId: vnet.outputs.vnetid
+  subnetId: subnet.id // TODO:  Which subnet? vnet.outputs.subnet1id?
+  privateDnsZoneName: privateDnsZoneName
+  pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
   }
 }
 

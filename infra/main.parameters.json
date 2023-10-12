@@ -88,6 +88,18 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "privateEndpointResourceGroupName": {
+      "value": "${PRIVATE_ENDPOINT_RESOURCE_GROUP}"
+    },
+    "privateEndpointName":{
+      "value": "${PRIVATE_ENDPOINT_NAME}"
+    },
+    "privateDnsZoneName":{
+      "value": "${PRIVATE_DNS_ZONE_NAME}"
+    },
+    "pvtEndpointDnsGroupName":{
+      "value": "${PRIVATE_ENDPOINT_DNS_GROUP_NAME}"
     }
   }
 }
