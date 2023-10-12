@@ -326,6 +326,30 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_with_history(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [
+                {"content": "What happens in a performance review?", "role": "user"},
+                {
+                    "content": "During a performance review, employees will receive feedback on their performance over the past year, including both successes and areas for improvement. The feedback will be provided by the employee's supervisor and is intended to help the employee develop and grow in their role [employee_handbook-3.pdf]. The review is a two-way dialogue between the employee and their manager, so employees are encouraged to be honest and open during the process [employee_handbook-3.pdf]. The employee will also have the opportunity to discuss their goals and objectives for the upcoming year [employee_handbook-3.pdf]. A written summary of the performance review will be provided to the employee, which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                    "role": "assistant",
+                },
+                {"content": "Is dental covered?", "role": "user"},
+            ],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["choices"][0]["context"]["thoughts"].find("performance review") != -1
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_format_as_ndjson():
     async def gen():
         yield {"a": "I ❤️ 🐍"}

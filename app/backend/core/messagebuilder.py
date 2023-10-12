@@ -20,6 +20,12 @@ class MessageBuilder:
         self.model = chatgpt_model
         self.token_length = num_tokens_from_messages(self.messages[-1], self.model)
 
+    def calculate_token_length_with_messages(self, messages: list) -> bool:
+        num_tokens = self.token_length
+        for message in messages:
+            num_tokens += num_tokens_from_messages(message, self.model)
+        return num_tokens
+
     def append_message(self, role: str, content: str, index: int = 1):
         self.messages.insert(index, {"role": role, "content": self.normalize_content(content)})
         self.token_length += num_tokens_from_messages(self.messages[index], self.model)

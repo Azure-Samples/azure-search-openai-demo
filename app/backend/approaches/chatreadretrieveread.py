@@ -282,14 +282,18 @@ If you cannot generate a search query, return just the number 0.
 
         message_builder.append_message(self.USER, user_content, index=append_index)
 
-        for h in reversed(history[:-1]):
-            if message_builder.token_length > max_tokens:
-                break
-            if bot_msg := h.get("bot"):
-                message_builder.append_message(self.ASSISTANT, bot_msg, index=append_index)
-            if user_msg := h.get("user"):
-                message_builder.append_message(self.USER, user_msg, index=append_index)
-
+        newest_to_oldest = list(reversed(history[:-1]))
+        for ind in range(len(newest_to_oldest)):
+            message = newest_to_oldest[ind]
+            if message.get("role") == self.ASSISTANT:
+                ind += 1
+                while ind < len(newest_to_oldest) and newest_to_oldest[ind].get("role") != self.USER:
+                    ind += 1
+                prev_message = newest_to_oldest[ind]
+                if message_builder.calculate_token_length_with_messages([message, prev_message]) > max_tokens:
+                    break
+                message_builder.append_message(self.ASSISTANT, message.get("content"), index=append_index)
+                message_builder.append_message(self.USER, prev_message.get("content"), index=append_index)
         return message_builder.messages
 
     def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
