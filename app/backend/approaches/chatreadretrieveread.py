@@ -109,12 +109,12 @@ If you cannot generate a search query, return just the number 0.
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         messages = self.get_messages_from_history(
-            self.query_prompt_template,
-            self.chatgpt_model,
-            history,
-            user_query_request,
-            self.query_prompt_few_shots,
-            self.chatgpt_token_limit - len(user_query_request),
+            system_prompt=self.query_prompt_template,
+            model_id=self.chatgpt_model,
+            history=history,
+            user_content=user_query_request,
+            max_tokens=self.chatgpt_token_limit - len(user_query_request),
+            few_shots=self.query_prompt_few_shots,
         )
 
         chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
@@ -197,12 +197,15 @@ If you cannot generate a search query, return just the number 0.
         else:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
+        response_token_limit = 1024
+        messages_token_limit = self.chatgpt_token_limit - response_token_limit
         messages = self.get_messages_from_history(
-            system_message,
-            self.chatgpt_model,
-            history,
-            original_user_query + "\n\nSources:\n" + content,
-            max_tokens=self.chatgpt_token_limit,  # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
+            system_prompt=system_message,
+            model_id=self.chatgpt_model,
+            history=history,
+            # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
+            user_content=original_user_query + "\n\nSources:\n" + content,
+            max_tokens=messages_token_limit,
         )
         msg_to_display = "\n\n".join([str(message) for message in messages])
 
@@ -217,7 +220,7 @@ If you cannot generate a search query, return just the number 0.
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,
-            max_tokens=1024,
+            max_tokens=response_token_limit,
             n=1,
             stream=should_stream,
         )
@@ -269,8 +272,8 @@ If you cannot generate a search query, return just the number 0.
         model_id: str,
         history: list[dict[str, str]],
         user_content: str,
+        max_tokens: int,
         few_shots=[],
-        max_tokens: int = 4096,
     ) -> list:
         message_builder = MessageBuilder(system_prompt, model_id)
 
@@ -284,20 +287,12 @@ If you cannot generate a search query, return just the number 0.
         total_token_count = message_builder.count_tokens_for_message(message_builder.messages[-1])
 
         newest_to_oldest = list(reversed(history[:-1]))
-        for ind in range(len(newest_to_oldest)):
-            message = newest_to_oldest[ind]
-            if message.get("role") == self.ASSISTANT:
-                ind += 1
-                while ind < len(newest_to_oldest) and newest_to_oldest[ind].get("role") != self.USER:
-                    ind += 1
-                prev_message = newest_to_oldest[ind]
-                combined_count = message_builder.count_tokens_for_message(
-                    message
-                ) + message_builder.count_tokens_for_message(prev_message)
-                if total_token_count + combined_count > max_tokens:
-                    break
-                message_builder.append_message(message["role"], message["content"], index=append_index)
-                message_builder.append_message(prev_message["role"], prev_message["content"], index=append_index)
+        for message in newest_to_oldest:
+            potential_message_count = message_builder.count_tokens_for_message(message)
+            if (total_token_count + potential_message_count) > max_tokens:
+                break
+            message_builder.append_message(message["role"], message["content"], index=append_index)
+            total_token_count += potential_message_count
         return message_builder.messages
 
     def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
