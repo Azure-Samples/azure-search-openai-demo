@@ -24,7 +24,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     const isDisabledCitationTab: boolean = !activeCitation;
 
     const sanitizedThoughts = DOMPurify.sanitize(answer.thoughts!);
-
+    const randomNumber = Math.floor(Math.random() * 1000000);
     return (
         <Pivot
             className={className}
@@ -50,7 +50,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText="Citation"
                 headerButtonProps={isDisabledCitationTab ? pivotItemDisabledStyle : undefined}
             >
-                <iframe title="Citation" src={activeCitation} width="100%" height={citationHeight} />
+                <iframe title="Citation" src={activeCitation?.replace(".pdf#page", `.pdf?cache=${randomNumber}#page`)} width="100%" height={citationHeight} />
             </PivotItem>
         </Pivot>
     );

@@ -72,13 +72,13 @@ async def assets(path):
 # *** NOTE *** this assumes that the content files are public, or at least that all users of the app
 # can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
-async def content_file(path):
+async def content_file(path: str):
     # remove page number from path
     # filename-1.txt -> filename.txt
-    path_parts = path.rsplit(".pdf")[0].rsplit("-")
-    path = path_parts[0] + ".pdf"
-    page_number = path_parts[1] if len(path_parts) > 1 else "1"
-    logging.info("Opening file %s at page %s", path, page_number)
+    if path.find("#page=") > 0:
+        path_parts = path.rsplit("#page=", 1)
+        path = path_parts[0]
+    logging.info("Opening file %s at page %s", path)
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
@@ -319,9 +319,9 @@ def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
-
+    print("hi")
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", "ERROR"))
+    logging.basicConfig(level=logging.DEBUG)
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)

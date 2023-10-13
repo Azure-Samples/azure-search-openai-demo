@@ -2,7 +2,6 @@ import argparse
 import base64
 import glob
 import html
-import io
 import os
 import re
 import tempfile
@@ -33,7 +32,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.storage.filedatalake import (
     DataLakeServiceClient,
 )
-from pypdf import PdfReader, PdfWriter
+from pypdf import PdfReader
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -76,7 +75,7 @@ def calculate_tokens_emb_aoai(input: str):
 
 def blob_name_from_file_page(filename, page=0):
     if os.path.splitext(filename)[1].lower() == ".pdf":
-        return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
+        return f"{os.path.basename(filename)}#page={page+1}"
     else:
         return os.path.basename(filename)
 
@@ -89,21 +88,7 @@ def upload_blobs(filename):
     if not blob_container.exists():
         blob_container.create_container()
 
-    # if file is PDF split into pages and upload each page as a separate blob
-    if os.path.splitext(filename)[1].lower() == ".pdf":
-        reader = PdfReader(filename)
-        pages = reader.pages
-        for i in range(len(pages)):
-            blob_name = blob_name_from_file_page(filename, i)
-            if args.verbose:
-                print(f"\tUploading blob for page {i} -> {blob_name}")
-            f = io.BytesIO()
-            writer = PdfWriter()
-            writer.add_page(pages[i])
-            writer.write(f)
-            f.seek(0)
-            blob_container.upload_blob(blob_name, f, overwrite=True)
-    # Also upload the original file
+    # Upload the original file
     blob_name = os.path.basename(filename)
     print(f"\tUploading blob for whole file -> {blob_name}")
     with open(filename, "rb") as data:
@@ -123,7 +108,7 @@ def remove_blobs(filename):
         else:
             prefix = os.path.splitext(os.path.basename(filename))[0]
             blobs = filter(
-                lambda b: re.match(f"{prefix}-\d+\.pdf", b),
+                lambda b: re.match(f"{prefix}-\d+\.pdf", b) or b == os.path.basename(filename),
                 blob_container.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0]),
             )
         for b in blobs:
