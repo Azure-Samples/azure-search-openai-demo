@@ -1,3 +1,21 @@
+---
+page_type: sample
+languages:
+- azdeveloper
+- typescript
+- python
+- bicep
+- html
+products:
+- azure
+- azure-app-service
+- azure-openai
+- azure-database-postgresql
+urlFragment: azure-search-openai-demo
+name: ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
+description: AI Shopping Cart Sample Application with Azure OpenAI and Azure Spring Apps
+---
+
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
 ## Table of Contents
