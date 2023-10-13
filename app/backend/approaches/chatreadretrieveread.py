@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Any, AsyncGenerator, Optional, Union
 
 import aiohttp
@@ -290,6 +291,7 @@ If you cannot generate a search query, return just the number 0.
         for message in newest_to_oldest:
             potential_message_count = message_builder.count_tokens_for_message(message)
             if (total_token_count + potential_message_count) > max_tokens:
+                logging.debug("Reached max tokens of %d, history will be truncated", max_tokens)
                 break
             message_builder.append_message(message["role"], message["content"], index=append_index)
             total_token_count += potential_message_count
