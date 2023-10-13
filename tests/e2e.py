@@ -55,6 +55,9 @@ def test_home(page: Page, live_server_url: str):
 def test_chat(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint with streaming results
     def handle(route: Route):
+        # Assert that session_state is specified in the request (None for now)
+        session_state = route.request.post_data_json["session_state"]
+        assert session_state is None
         # Read the JSONL from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
         jsonl = f.read()
@@ -191,6 +194,9 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
 def test_ask(page: Page, live_server_url: str):
     # Set up a mock route to the /ask endpoint
     def handle(route: Route):
+        # Assert that session_state is specified in the request (None for now)
+        session_state = route.request.post_data_json["session_state"]
+        assert session_state is None
         # Read the JSON from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_ask_rtr_hybrid/client0/result.json")
         json = f.read()

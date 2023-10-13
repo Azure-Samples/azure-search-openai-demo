@@ -380,6 +380,41 @@ async def test_chat_with_long_history(client, snapshot, caplog):
 
 
 @pytest.mark.asyncio
+async def test_chat_session_state_persists(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+            "session_state": {"conversation_id": 1234},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_session_state_persists(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+            "stream": True,
+            "session_state": {"conversation_id": 1234},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
 async def test_format_as_ndjson():
     async def gen():
         yield {"a": "I ❤️ 🐍"}

@@ -2,7 +2,7 @@ import { DefaultButton } from '@fluentui/react';
 import { useMsal } from '@azure/msal-react';
 
 import styles from "./LoginButton.module.css";
-import { loginRequest } from '../../authConfig';
+import { getRedirectUri, loginRequest } from '../../authConfig';
 
 
 export const LoginButton = () => {
@@ -17,7 +17,7 @@ export const LoginButton = () => {
       instance
           .loginPopup({
               ...loginRequest,
-              redirectUri: '/redirect',
+              redirectUri: getRedirectUri(),
           })
           .catch((error) => console.log(error));
   };

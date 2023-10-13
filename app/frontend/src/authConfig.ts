@@ -67,12 +67,17 @@ export const loginRequest = authSetup.loginRequest;
 
 const tokenRequest = authSetup.tokenRequest;
 
+// Build an absolute redirect URI using the current window's location and the relative redirect URI from auth setup
+export const getRedirectUri = () => {
+    return window.location.origin + authSetup.msalConfig.auth.redirectUri
+}
+
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
 export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult | undefined> => {
     return client.acquireTokenSilent({
         ...tokenRequest,
-        redirectUri: authSetup.msalConfig.auth.redirectUri
+        redirectUri: getRedirectUri()
     })
     .catch((error) => {
         console.log(error);
