@@ -63,6 +63,8 @@ If you cannot generate a search query, return just the number 0.
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,
+        query_language: str,
+        query_speller: str,
     ):
         self.search_client = search_client
         self.openai_host = openai_host
@@ -72,6 +74,8 @@ If you cannot generate a search query, return just the number 0.
         self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.query_language = query_language
+        self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     async def run_until_final_call(
@@ -151,8 +155,8 @@ If you cannot generate a search query, return just the number 0.
                 query_text,
                 filter=filter,
                 query_type=QueryType.SEMANTIC,
-                query_language="en-us",
-                query_speller="lexicon",
+                query_language=self.query_language,
+                query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
