@@ -41,7 +41,7 @@ azure-monitor-opentelemetry-exporter==1.0.0b17
     # via azure-monitor-opentelemetry
 azure-search-documents==11.4.0b6
     # via -r requirements.in
-azure-storage-blob==12.18.2
+azure-storage-blob==12.18.3
     # via -r requirements.in
 blinker==1.6.2
     # via
