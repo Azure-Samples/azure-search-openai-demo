@@ -127,7 +127,7 @@ If you cannot generate a search query, return just the number 0.
             model=self.chatgpt_model,
             messages=messages,
             temperature=0.0,
-            max_tokens=32,
+            max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
             functions=functions,
             function_call="auto",
