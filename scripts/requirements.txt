@@ -30,7 +30,7 @@ azure-identity==1.14.0
     # via -r requirements.in
 azure-search-documents==11.4.0b6
     # via -r requirements.in
-azure-storage-blob==12.18.2
+azure-storage-blob==12.18.3
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
