@@ -45,6 +45,7 @@ async def test_ask_request_must_be_json(client):
     assert result["error"] == "request must be json"
 
 
+@pytest.mark.asyncio
 async def test_warmup_tiktoken(client, snapshot):
     await client.post(
         "/ask",
