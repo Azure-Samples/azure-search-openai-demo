@@ -9,7 +9,6 @@ coverage
 playwright==1.38.0
 pytest-cov
 pytest-playwright
-pytest-retry
 pre-commit
 locust
 pip-tools
