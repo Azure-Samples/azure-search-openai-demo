@@ -10,7 +10,7 @@ products:
 - azure-app-service
 - azure-openai
 urlFragment: azure-search-openai-demo
-name: ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
+name: ChatGPT + Enterprise data
 description: Deploy an app to chat on top of enterprise data using Azure OpenAI and Cognitive Search.
 ---
 
