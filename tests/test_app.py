@@ -55,6 +55,7 @@ async def test_warmup_tiktoken(client, snapshot):
             },
         },
     )
+    assert 2 + 2 == 4
 
 
 @pytest.mark.asyncio
