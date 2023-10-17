@@ -34,6 +34,7 @@ def num_tokens_from_messages(message: dict[str, str], model: str) -> int:
         num_tokens_from_messages(message, model)
         output: 11
     """
+    print("num_tokens_from_messages", model)
     encoding = tiktoken.encoding_for_model(get_oai_chatmodel_tiktok(model))
     num_tokens = 2  # For "role" and "content" keys
     for key, value in message.items():
