@@ -1,4 +1,6 @@
 ---
+name: ChatGPT + Enterprise data
+description: Deploy an app to chat on top of enterprise data using Azure OpenAI and Cognitive Search.
 languages:
 - azdeveloper
 - typescript
@@ -8,8 +10,6 @@ products:
 - azure
 - azure-app-service
 - azure-openai
-name: ChatGPT + Enterprise data
-description: Deploy an app to chat on top of enterprise data using Azure OpenAI and Cognitive Search.
 page_type: sample
 urlFragment: azure-search-openai-demo
 ---
