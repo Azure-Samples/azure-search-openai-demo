@@ -46,6 +46,7 @@ async def test_ask_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+@pytest.mark.flaky  # Flaky on CI as its first test that loads tiktoken BPE model
 async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",
