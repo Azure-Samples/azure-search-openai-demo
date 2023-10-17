@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from unittest import mock
 
@@ -326,19 +327,55 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_ask_session_state_persists(client, snapshot):
+async def test_chat_with_history(client, snapshot):
     response = await client.post(
-        "/ask",
+        "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [
+                {"content": "What happens in a performance review?", "role": "user"},
+                {
+                    "content": "During a performance review, employees will receive feedback on their performance over the past year, including both successes and areas for improvement. The feedback will be provided by the employee's supervisor and is intended to help the employee develop and grow in their role [employee_handbook-3.pdf]. The review is a two-way dialogue between the employee and their manager, so employees are encouraged to be honest and open during the process [employee_handbook-3.pdf]. The employee will also have the opportunity to discuss their goals and objectives for the upcoming year [employee_handbook-3.pdf]. A written summary of the performance review will be provided to the employee, which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                    "role": "assistant",
+                },
+                {"content": "Is dental covered?", "role": "user"},
+            ],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
-            "session_state": {"conversation_id": 1234},
         },
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["choices"][0]["context"]["thoughts"].find("performance review") != -1
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_with_long_history(client, snapshot, caplog):
+    """This test makes sure that the history is truncated to max tokens minus 1024."""
+    caplog.set_level(logging.DEBUG)
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [
+                {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
+                {
+                    "role": "assistant",
+                    "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]"
+                    * 150,
+                },  # 3900 tokens
+                {"role": "user", "content": "What does a product manager do?"},  # 10 tokens
+            ],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
+    assert result["choices"][0]["context"]["thoughts"].find("Is there a dress code?") == -1
+    assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -351,7 +388,6 @@ async def test_chat_session_state_persists(client, snapshot):
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
-            "stream": False,
             "session_state": {"conversation_id": 1234},
         },
     )

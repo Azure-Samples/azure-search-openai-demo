@@ -18,11 +18,12 @@ class MessageBuilder:
     def __init__(self, system_content: str, chatgpt_model: str):
         self.messages = [{"role": "system", "content": self.normalize_content(system_content)}]
         self.model = chatgpt_model
-        self.token_length = num_tokens_from_messages(self.messages[-1], self.model)
 
     def append_message(self, role: str, content: str, index: int = 1):
         self.messages.insert(index, {"role": role, "content": self.normalize_content(content)})
-        self.token_length += num_tokens_from_messages(self.messages[index], self.model)
+
+    def count_tokens_for_message(self, message: dict[str, str]):
+        return num_tokens_from_messages(message, self.model)
 
     def normalize_content(self, content: str):
         return unicodedata.normalize("NFC", content)
