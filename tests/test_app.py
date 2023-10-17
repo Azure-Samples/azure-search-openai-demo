@@ -46,21 +46,6 @@ async def test_ask_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
-async def test_warmup_tiktoken(client, snapshot):
-    await client.post(
-        "/ask",
-        json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
-            "context": {
-                "overrides": {"retrieval_mode": "text"},
-            },
-        },
-    )
-    assert 2 + 2 == 4
-
-
-@pytest.mark.asyncio
-@pytest.mark.flaky(retries=3, delay=10)  # Flaky on CI as its first test that loads tiktoken BPE model
 async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",
