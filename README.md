@@ -5,15 +5,13 @@ languages:
 - typescript
 - python
 - bicep
-- html
 products:
 - azure
 - azure-app-service
 - azure-openai
-- azure-database-postgresql
 urlFragment: azure-search-openai-demo
 name: ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
-description: AI Shopping Cart Sample Application with Azure OpenAI and Azure Spring Apps
+description: Deploy an app to chat on top of enterprise data using Azure OpenAI and Cognitive Search.
 ---
 
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
