@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-20.04"]
+        os: ["ubuntu-20.04", "windows-latest"]
         python_version: ["3.9", "3.10", "3.11"]
     steps:
         - uses: actions/checkout@v4
@@ -44,8 +44,10 @@ jobs:
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
-          run: python3 -m pytest --cov --cov-fail-under=78
+          if: runner.os == 'ubuntu-latest'
+          run: python3 -m pytest -s -vv --cov --cov-fail-under=78
         - name: Run E2E tests with Playwright
+          if: runner.os == 'ubuntu-latest'
           run: |
             playwright install --with-deps
             python3 -m pytest tests/e2e.py
