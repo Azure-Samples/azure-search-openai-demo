@@ -119,7 +119,9 @@ def test_get_messages_from_history_truncated_longer():
 
 def test_get_messages_from_history_truncated_break_pair():
     """Tests that the truncation breaks the pair of messages."""
-    chat_approach = ChatReadRetrieveReadApproach(None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "")
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
 
     messages = chat_approach.get_messages_from_history(
         system_prompt="You are a bot.",  # 8 tokens
