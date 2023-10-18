@@ -6,7 +6,7 @@
 #
 aiofiles==23.2.1
     # via quart
-aiohttp==3.8.5
+aiohttp==3.8.6
     # via
     #   -r requirements.in
     #   openai
@@ -31,15 +31,15 @@ azure-core==1.29.4
     #   msrest
 azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
-azure-identity==1.14.0
+azure-identity==1.14.1
     # via -r requirements.in
 azure-monitor-opentelemetry==1.0.0
     # via -r requirements.in
 azure-monitor-opentelemetry-exporter==1.0.0b17
     # via azure-monitor-opentelemetry
-azure-search-documents==11.4.0b6
+azure-search-documents==11.4.0b11
     # via -r requirements.in
-azure-storage-blob==12.18.2
+azure-storage-blob==12.18.3
     # via -r requirements.in
 blinker==1.6.2
     # via
