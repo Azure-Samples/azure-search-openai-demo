@@ -4,7 +4,7 @@ param privateDnsZoneName string
 param vnetId string 
 param subnetId string
 param pvtEndpointDnsGroupName string 
-param appServiceid string
+param linkedServiceId string
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
   name: privateEndpointName
@@ -17,7 +17,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
       {
         name: privateEndpointName
         properties: {
-          privateLinkServiceId: appServiceid 
+          privateLinkServiceId: linkedServiceId 
           groupIds: [
             'sites'
           ]
@@ -63,4 +63,3 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 
 output id string = privateDnsZone.id
 output name string = privateEndpoint.name
-

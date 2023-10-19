@@ -64,14 +64,14 @@ param newOrExisting string = 'new' //accepts new or existing
 param vnetRG string = resourceGroupName
 param vnetName string = 'openai-vnet'
 param vnetAddressPrefix string = '10.0.0.0/16'
-param subnet1Name string = 'subnet1' // for Private Endpoint
-param subnet1Prefix string = '10.0.0.0/24'
-param subnet2Name string = 'subnet2' //for VNET Integration app service
-param subnet2Prefix string = '10.0.1.0/24'
-param subnet1nsgname string = 'subnet1nsg'
-param subnet1routetablename string = 'subnet1rt'
-param subnet2nsgname string = 'subnet2nsg'
-param subnet2routetablename string = 'subnet2rt'
+param privateEndpointSubnetName string = 'pepsubnet' // for Private Endpoint
+param privateEndpointSubnetPrefix string = '10.0.0.0/24'
+param vnetSubnetName string = 'subnet2' //for VNET Integration app service
+param vnetSubnetPrefix string = '10.0.1.0/24'
+param privateEndpointSubnetnsgname string = 'pepsubnetnsg'
+param privateEndpointSubnetroutetablename string = 'pepsubnetrt'
+param vnetSubnetnsgname string = 'vnetnsg'
+param vnetSubnetroutetablename string = 'vnetrt'
 
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
@@ -199,7 +199,7 @@ module backend 'core/host/appservice.bicep' = {
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }
-    subnet1Id: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : '' // TODO: Verify this is the right subnet
+    privateEndpointSubnetId: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : '' // TODO: Verify this is the right subnet
     useVnet: usePrivateEndpoint
   }
   
@@ -408,14 +408,14 @@ module vnet 'core/networking/vnet.bicep' = if (usePrivateEndpoint) {
     vnetRG: vnetRG
     vnetName: vnetName
     vnetAddressPrefix: vnetAddressPrefix
-    subnet1Name: subnet1Name
-    subnet2Name: subnet2Name
-    subnet1Prefix: subnet1Prefix
-    subnet2Prefix: subnet2Prefix
-    subnet1nsgname: subnet1nsgname
-    subnet1routetablename: subnet1routetablename
-    subnet2nsgname: subnet2nsgname
-    subnet2routetablename: subnet2routetablename
+    subnet1Name: privateEndpointSubnetName
+    subnet2Name: vnetSubnetName
+    subnet1Prefix: privateEndpointSubnetPrefix
+    subnet2Prefix: vnetSubnetPrefix
+    subnet1nsgname: privateEndpointSubnetnsgname
+    subnet1routetablename: privateEndpointSubnetroutetablename
+    subnet2nsgname: vnetSubnetnsgname
+    subnet2routetablename: vnetSubnetroutetablename
     newOrExisting: newOrExisting
   }
 }
@@ -427,9 +427,9 @@ module privateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivate
   params: {
   location: privateEndpointResourceGroupLocation
   privateEndpointName: privateEndpointName
-  appServiceid: backend.outputs.id
+  linkedServiceId: backend.outputs.id
   vnetId: vnet.outputs.vnetid
-  subnetId: subnet.id // TODO:  Which subnet? vnet.outputs.subnet1id?
+  subnetId: vnet.outputs.subnet1Resourceid
   privateDnsZoneName: privateDnsZoneName
   pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
   }

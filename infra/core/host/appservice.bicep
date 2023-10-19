@@ -8,7 +8,7 @@ param appServicePlanId string
 param keyVaultName string = ''
 param managedIdentity bool = !empty(keyVaultName)
 param useVnet bool = false
-param subnet1Id string
+param privateEndpointSubnetId string = ''
 
 // Runtime Properties
 @allowed([
@@ -44,7 +44,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   kind: kind
   properties: {
     serverFarmId: appServicePlanId
-    virtualNetworkSubnetId: subnet1Id
+    virtualNetworkSubnetId: privateEndpointSubnetId
     siteConfig: {
       linuxFxVersion: linuxFxVersion
       alwaysOn: alwaysOn
