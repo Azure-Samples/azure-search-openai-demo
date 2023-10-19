@@ -202,7 +202,6 @@ module backend 'core/host/appservice.bicep' = {
     privateEndpointSubnetId: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : '' // TODO: Verify this is the right subnet
     useVnet: usePrivateEndpoint
   }
-  
 }
 
 module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
@@ -425,14 +424,17 @@ module privateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivate
   name: 'private-endpoint'
   scope: privateEndpointResourceGroup
   params: {
-  location: privateEndpointResourceGroupLocation
-  privateEndpointName: privateEndpointName
-  linkedServiceId: backend.outputs.id
-  vnetId: vnet.outputs.vnetid
-  subnetId: vnet.outputs.subnet1Resourceid
-  privateDnsZoneName: privateDnsZoneName
-  pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
+    location: privateEndpointResourceGroupLocation
+    privateEndpointName: privateEndpointName
+    linkedServiceId: backend.outputs.id
+    vnetId: vnet.outputs.vnetid
+    subnetId: vnet.outputs.subnet1Resourceid
+    privateDnsZoneName: privateDnsZoneName
+    pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
   }
+  dependsOn: [
+    vnet
+  ]
 }
 
 output AZURE_LOCATION string = location

@@ -89,6 +89,9 @@
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     },
+    "usePrivateEndpoint": {
+      "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"
+    },
     "privateEndpointResourceGroupName": {
       "value": "${PRIVATE_ENDPOINT_RESOURCE_GROUP}"
     },

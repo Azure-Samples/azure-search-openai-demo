@@ -7,8 +7,8 @@ param applicationInsightsName string = ''
 param appServicePlanId string
 param keyVaultName string = ''
 param managedIdentity bool = !empty(keyVaultName)
-param useVnet bool = false
 param privateEndpointSubnetId string = ''
+param useVnet bool = false
 
 // Runtime Properties
 @allowed([
@@ -37,34 +37,41 @@ param use32BitWorkerProcess bool = false
 param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
 
+var coreProperties = {
+  serverFarmId: appServicePlanId
+  siteConfig: {
+    linuxFxVersion: linuxFxVersion
+    alwaysOn: alwaysOn
+    ftpsState: ftpsState
+    appCommandLine: appCommandLine
+    numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
+    minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
+    minTlsVersion: '1.2'
+    use32BitWorkerProcess: use32BitWorkerProcess
+    functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
+    healthCheckPath: healthCheckPath
+    cors: {
+      allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
+    }
+  }
+  clientAffinityEnabled: clientAffinityEnabled
+  httpsOnly: true
+  vnetRouteAllEnabled: useVnet
+}
+
+var appServiceProperties = union(
+  !empty(privateEndpointSubnetId) ? {
+      virtualNetworkSubnetId: privateEndpointSubnetId
+  } : {},
+  coreProperties
+)
+
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
   tags: tags
   kind: kind
-  properties: {
-    serverFarmId: appServicePlanId
-    virtualNetworkSubnetId: privateEndpointSubnetId
-    siteConfig: {
-      linuxFxVersion: linuxFxVersion
-      alwaysOn: alwaysOn
-      ftpsState: ftpsState
-      appCommandLine: appCommandLine
-      numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
-      minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
-      minTlsVersion: '1.2'
-      use32BitWorkerProcess: use32BitWorkerProcess
-      functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
-      healthCheckPath: healthCheckPath
-      cors: {
-        allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
-      }
-    }
-    clientAffinityEnabled: clientAffinityEnabled
-    httpsOnly: true
-    vnetRouteAllEnabled: useVnet
-  }
-
+  properties: appServiceProperties
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
 
   resource configAppSettings 'config' = {
