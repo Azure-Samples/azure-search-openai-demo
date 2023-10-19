@@ -152,8 +152,6 @@ If you cannot generate a search query, return just the number 0.
 
         # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if overrides.get("semantic_ranker") and has_text:
-            # testing 1 23
-            print("using semantic ranker")
             r = await self.search_client.search(
                 query_text,
                 filter=filter,
