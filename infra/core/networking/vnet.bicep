@@ -10,6 +10,7 @@ param subnet1nsgname string
 param subnet2nsgname string
 param subnet1routetablename string
 param subnet2routetablename string
+param tags object = {}
 
 @allowed([
   'new'
@@ -20,6 +21,7 @@ param newOrExisting string
 resource newvnet 'Microsoft.Network/virtualNetworks@2019-11-01' = if (newOrExisting == 'new') {
   name: vnetName
   location: location
+  tags: tags
   properties: {
     addressSpace: {
       addressPrefixes: [
