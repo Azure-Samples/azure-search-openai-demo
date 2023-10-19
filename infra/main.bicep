@@ -400,7 +400,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
 }
 
 module vnet 'core/networking/vnet.bicep' = if (usePrivateEndpoint) {
-  name: vnetName
+  name: 'vnet'
   scope:  resourceGroup
   params: {
     location: location
@@ -427,14 +427,11 @@ module privateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivate
     location: privateEndpointResourceGroupLocation
     privateEndpointName: privateEndpointName
     linkedServiceId: backend.outputs.id
-    vnetId: vnet.outputs.vnetid
-    subnetId: vnet.outputs.subnet1Resourceid
+    vnetId: usePrivateEndpoint ? vnet.outputs.vnetid : ''
+    subnetId: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : ''
     privateDnsZoneName: privateDnsZoneName
     pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
   }
-  dependsOn: [
-    vnet
-  ]
 }
 
 output AZURE_LOCATION string = location
