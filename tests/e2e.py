@@ -226,7 +226,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
     page.get_by_text("What is the capital of Spain?").click()
 
     # Now there should be a follow-up answer (same, since we're using same test data)
-    expect(page.get_by_text("The capital of France is Paris.")).to_have_count(2)
+    expect(page.get_by_text("The capital of France is Parisia.")).to_have_count(2)
 
 
 def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
