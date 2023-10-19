@@ -22,12 +22,12 @@ export type ChatAppRequestOverrides = {
 export type ResponseMessage = {
     content: string;
     role: string;
-}
+};
 
 export type ResponseContext = {
     thoughts: string | null;
     data_points: string[];
-}
+};
 
 export type ResponseChoice = {
     index: number;
@@ -47,7 +47,7 @@ export type ChatAppResponse = {
 
 export type ChatAppRequestContext = {
     overrides?: ChatAppRequestOverrides;
-}
+};
 
 export type ChatAppRequest = {
     messages: ResponseMessage[];

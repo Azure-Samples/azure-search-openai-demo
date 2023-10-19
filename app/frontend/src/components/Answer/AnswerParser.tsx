@@ -21,19 +21,19 @@ export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitati
     parsedAnswer = parsedAnswer.trim();
 
     // Omit a citation that is still being typed during streaming
-    if (isStreaming){
+    if (isStreaming) {
         let lastIndex = parsedAnswer.length;
         for (let i = parsedAnswer.length - 1; i >= 0; i--) {
-            if (parsedAnswer[i] === ']') {
+            if (parsedAnswer[i] === "]") {
                 break;
-            } else if (parsedAnswer[i] === '[') {
+            } else if (parsedAnswer[i] === "[") {
                 lastIndex = i;
                 break;
             }
         }
         const truncatedAnswer = parsedAnswer.substring(0, lastIndex);
         parsedAnswer = truncatedAnswer;
-    } 
+    }
 
     const parts = parsedAnswer.split(/\[([^\]]+)\]/g);
 
