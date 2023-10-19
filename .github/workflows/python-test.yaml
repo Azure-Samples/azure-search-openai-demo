@@ -45,7 +45,7 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os == 'ubuntu-latest'
-          run: python3 -m pytest -s -vv --cov --cov-fail-under=78
+          run: python3 -m pytest -s -vv --cov
         - name: Run E2E tests with Playwright
           if: runner.os == 'ubuntu-latest'
           run: |

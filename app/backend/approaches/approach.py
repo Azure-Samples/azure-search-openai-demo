@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional, Union
 
 from core.authentication import AuthenticationHelper
@@ -14,8 +14,7 @@ class Approach(ABC):
         if security_filter:
             filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
-
-    async def run(
-        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
-    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
-        raise NotImplementedError
+class AskApproach(Approach):
+    @abstractmethod
+    async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
+        ...
