@@ -8,8 +8,9 @@ languages:
 - bicep
 products:
 - azure
-- azure-app-service
+- azure-cognitive-search
 - azure-openai
+- azure-app-service
 page_type: sample
 urlFragment: azure-search-openai-demo
 ---
