@@ -226,6 +226,13 @@ By default, the deployed Azure web app will have no authentication or access res
 
 To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
 
+### Enabling Private Endpoints
+
+To enable a VNET for the backend and Private Endpoint for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
+
+1. Run `azd env set AZURE_USE_PRIVATE_ENDPOINT true`
+1. Run `azd up`
+
 ### Enabling login and document level access control
 
 By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./LoginAndAclSetup.md).
