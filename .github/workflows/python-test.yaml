@@ -48,4 +48,9 @@ jobs:
         - name: Run E2E tests with Playwright
           run: |
             playwright install --with-deps
-            python3 -m pytest tests/e2e.py
+            python3 -m pytest tests/e2e.py --tracing=retain-on-failure
+        - name: Upload test artifacts
+          uses: actions/upload-artifact@v3
+          with:
+            name: playwright-traces
+            path: test-results
