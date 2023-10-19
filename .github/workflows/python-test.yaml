@@ -44,10 +44,10 @@ jobs:
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
-          if: runner.os == 'ubuntu-latest'
+          if: runner.os != 'Windows'
           run: python3 -m pytest -s -vv --cov --cov-fail-under=78
         - name: Run E2E tests with Playwright
-          if: runner.os == 'ubuntu-latest'
+          if: runner.os != 'Windows'
           run: |
             playwright install --with-deps
             python3 -m pytest tests/e2e.py
