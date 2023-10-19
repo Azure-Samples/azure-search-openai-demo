@@ -3,12 +3,14 @@ param location string = resourceGroup().location
 param privateDnsZoneName string
 param vnetId string 
 param subnetId string
-param pvtEndpointDnsGroupName string 
+param privateDnsGroupName string 
 param linkedServiceId string
+param tags object = {}
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
   name: privateEndpointName
   location: location
+  tags: tags
   properties: {
     subnet: {
       id: subnetId
@@ -45,7 +47,7 @@ resource privateDnsZoneNetworkLink 'Microsoft.Network/privateDnsZones/virtualNet
 }
 
 resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
-  name: pvtEndpointDnsGroupName
+  name: privateDnsGroupName
   properties: {
     privateDnsZoneConfigs: [
       {

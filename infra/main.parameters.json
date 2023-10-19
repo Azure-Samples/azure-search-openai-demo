@@ -101,7 +101,7 @@
     "privateDnsZoneName":{
       "value": "${PRIVATE_DNS_ZONE_NAME}"
     },
-    "pvtEndpointDnsGroupName":{
+    "privateDnsGroupName":{
       "value": "${PRIVATE_ENDPOINT_DNS_GROUP_NAME}"
     }
   }

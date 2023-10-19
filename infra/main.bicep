@@ -57,7 +57,7 @@ param formRecognizerSkuName string = 'S0'
 param privateEndpointName string = ''
 param privateEndpointResourceGroupName string = ''
 param privateDnsZoneName string = ''
-param pvtEndpointDnsGroupName string = ''
+param privateDnsGroupName string = ''
 param privateEndpointResourceGroupLocation string = location
 
 param newOrExisting string = 'new' //accepts new or existing
@@ -404,6 +404,7 @@ module vnet 'core/networking/vnet.bicep' = if (usePrivateEndpoint) {
   scope:  resourceGroup
   params: {
     location: location
+    tags: tags
     vnetRG: vnetRG
     vnetName: vnetName
     vnetAddressPrefix: vnetAddressPrefix
@@ -424,13 +425,14 @@ module privateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivate
   name: 'private-endpoint'
   scope: privateEndpointResourceGroup
   params: {
+    tags: tags
     location: privateEndpointResourceGroupLocation
-    privateEndpointName: privateEndpointName
+    privateEndpointName: !empty(privateEndpointName) ? privateEndpointName : 'pep-${resourceToken}'
     linkedServiceId: backend.outputs.id
     vnetId: usePrivateEndpoint ? vnet.outputs.vnetid : ''
     subnetId: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : ''
-    privateDnsZoneName: privateDnsZoneName
-    pvtEndpointDnsGroupName: pvtEndpointDnsGroupName
+    privateDnsZoneName: !empty(privateDnsZoneName) ? privateDnsZoneName : '${abbrs.networkDnsZones}${resourceToken}'
+    privateDnsGroupName: !empty(privateDnsGroupName) ? privateDnsGroupName : '${abbrs.networkDnsZones}-group${resourceToken}'
   }
 }
 
