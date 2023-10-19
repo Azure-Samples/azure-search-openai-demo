@@ -4,9 +4,9 @@ import github from "../../assets/github.svg";
 
 import styles from "./Layout.module.css";
 
-import { useLogin } from "../../authConfig"
+import { useLogin } from "../../authConfig";
 
-import { LoginButton } from "../../components/LoginButton"
+import { LoginButton } from "../../components/LoginButton";
 
 const Layout = () => {
     return (
@@ -43,7 +43,7 @@ const Layout = () => {
                         </ul>
                     </nav>
                     <h4 className={styles.headerRightText}>Azure OpenAI + Cognitive Search</h4>
-                    {useLogin && <LoginButton/>}
+                    {useLogin && <LoginButton />}
                 </div>
             </header>
 
