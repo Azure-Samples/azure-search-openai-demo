@@ -4,7 +4,7 @@ import json
 import logging
 import os
 from tempfile import TemporaryDirectory
-from typing import Any
+from typing import Any, Optional
 
 import aiohttp
 from msal import ConfidentialClientApplication
@@ -28,11 +28,11 @@ class AuthenticationHelper:
     def __init__(
         self,
         use_authentication: bool,
-        server_app_id: str,
-        server_app_secret: str,
-        client_app_id: str,
-        tenant_id: str,
-        token_cache_path: str = None,
+        server_app_id: Optional[str],
+        server_app_secret: Optional[str],
+        client_app_id: Optional[str],
+        tenant_id: Optional[str],
+        token_cache_path: Optional[str] = None,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -143,7 +143,7 @@ class AuthenticationHelper:
             return None
 
     @staticmethod
-    async def list_groups(graph_resource_access_token: str) -> [str]:
+    async def list_groups(graph_resource_access_token: dict) -> list[str]:
         headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
         groups = []
         async with aiohttp.ClientSession(headers=headers) as session:
@@ -171,7 +171,7 @@ class AuthenticationHelper:
 
         return groups
 
-    async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str:Any]:
+    async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str, Any]:
         if not self.use_authentication:
             return {}
         try:

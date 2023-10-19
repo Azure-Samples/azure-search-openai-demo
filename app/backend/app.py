@@ -30,15 +30,13 @@ from quart import (
 from quart_cors import cors
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.readdecomposeask import ReadDecomposeAsk
-from approaches.readretrieveread import ReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
 
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
-CONFIG_ASK_APPROACHES = "ask_approaches"
-CONFIG_CHAT_APPROACHES = "chat_approaches"
+CONFIG_ASK_APPROACH = "ask_approach"
+CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
@@ -101,44 +99,20 @@ async def ask():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-    approach = request_json["approach"]
+    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        impl = current_app.config[CONFIG_ASK_APPROACHES].get(approach)
-        if not impl:
-            return jsonify({"error": "unknown approach"}), 400
+        approach = current_app.config[CONFIG_ASK_APPROACH]
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await impl.run(request_json["question"], request_json.get("overrides") or {}, auth_claims)
-        return jsonify(r)
-    except Exception as e:
-        logging.exception("Exception in /ask")
-        return jsonify({"error": str(e)}), 500
-
-
-@bp.route("/chat", methods=["POST"])
-async def chat():
-    if not request.is_json:
-        return jsonify({"error": "request must be json"}), 415
-    request_json = await request.get_json()
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-    approach = request_json["approach"]
-    try:
-        impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
-        if not impl:
-            return jsonify({"error": "unknown approach"}), 400
-        # Workaround for: https://github.com/openai/openai-python/issues/371
-        async with aiohttp.ClientSession() as s:
-            openai.aiosession.set(s)
-            r = await impl.run_without_streaming(
-                request_json["history"], request_json.get("overrides", {}), auth_claims
+            r = await approach.run(
+                request_json["messages"], context=context, session_state=request_json.get("session_state")
             )
         return jsonify(r)
     except Exception as e:
-        logging.exception("Exception in /chat")
+        logging.exception("Exception in /ask")
         return jsonify({"error": str(e)}), 500
 
 
@@ -147,24 +121,28 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         yield json.dumps(event, ensure_ascii=False) + "\n"
 
 
-@bp.route("/chat_stream", methods=["POST"])
-async def chat_stream():
+@bp.route("/chat", methods=["POST"])
+async def chat():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+    context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-    approach = request_json["approach"]
+    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        impl = current_app.config[CONFIG_CHAT_APPROACHES].get(approach)
-        if not impl:
-            return jsonify({"error": "unknown approach"}), 400
-        response_generator = impl.run_with_streaming(
-            request_json["history"], request_json.get("overrides", {}), auth_claims
+        approach = current_app.config[CONFIG_CHAT_APPROACH]
+        result = await approach.run(
+            request_json["messages"],
+            stream=request_json.get("stream", False),
+            context=context,
+            session_state=request_json.get("session_state"),
         )
-        response = await make_response(format_as_ndjson(response_generator))
-        response.timeout = None  # type: ignore
-        return response
+        if isinstance(result, dict):
+            return jsonify(result)
+        else:
+            response = await make_response(format_as_ndjson(result))
+            response.timeout = None  # type: ignore
+            return response
     except Exception as e:
         logging.exception("Exception in /chat")
         return jsonify({"error": str(e)}), 500
@@ -218,6 +196,9 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
+    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
+    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
@@ -266,50 +247,31 @@ async def setup_clients():
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
-    current_app.config[CONFIG_ASK_APPROACHES] = {
-        "rtr": RetrieveThenReadApproach(
-            search_client,
-            OPENAI_HOST,
-            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            OPENAI_CHATGPT_MODEL,
-            AZURE_OPENAI_EMB_DEPLOYMENT,
-            OPENAI_EMB_MODEL,
-            KB_FIELDS_SOURCEPAGE,
-            KB_FIELDS_CONTENT,
-        ),
-        "rrr": ReadRetrieveReadApproach(
-            search_client,
-            OPENAI_HOST,
-            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            OPENAI_CHATGPT_MODEL,
-            AZURE_OPENAI_EMB_DEPLOYMENT,
-            OPENAI_EMB_MODEL,
-            KB_FIELDS_SOURCEPAGE,
-            KB_FIELDS_CONTENT,
-        ),
-        "rda": ReadDecomposeAsk(
-            search_client,
-            OPENAI_HOST,
-            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            OPENAI_CHATGPT_MODEL,
-            AZURE_OPENAI_EMB_DEPLOYMENT,
-            OPENAI_EMB_MODEL,
-            KB_FIELDS_SOURCEPAGE,
-            KB_FIELDS_CONTENT,
-        ),
-    }
-    current_app.config[CONFIG_CHAT_APPROACHES] = {
-        "rrr": ChatReadRetrieveReadApproach(
-            search_client,
-            OPENAI_HOST,
-            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-            OPENAI_CHATGPT_MODEL,
-            AZURE_OPENAI_EMB_DEPLOYMENT,
-            OPENAI_EMB_MODEL,
-            KB_FIELDS_SOURCEPAGE,
-            KB_FIELDS_CONTENT,
-        )
-    }
+    current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
+        search_client,
+        OPENAI_HOST,
+        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        OPENAI_CHATGPT_MODEL,
+        AZURE_OPENAI_EMB_DEPLOYMENT,
+        OPENAI_EMB_MODEL,
+        KB_FIELDS_SOURCEPAGE,
+        KB_FIELDS_CONTENT,
+        AZURE_SEARCH_QUERY_LANGUAGE,
+        AZURE_SEARCH_QUERY_SPELLER,
+    )
+
+    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
+        search_client,
+        OPENAI_HOST,
+        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        OPENAI_CHATGPT_MODEL,
+        AZURE_OPENAI_EMB_DEPLOYMENT,
+        OPENAI_EMB_MODEL,
+        KB_FIELDS_SOURCEPAGE,
+        KB_FIELDS_CONTENT,
+        AZURE_SEARCH_QUERY_LANGUAGE,
+        AZURE_SEARCH_QUERY_SPELLER,
+    )
 
 
 def create_app():
@@ -318,10 +280,13 @@ def create_app():
         AioHttpClientInstrumentor().instrument()
     app = Quart(__name__)
     app.register_blueprint(bp)
-    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)
-    print("hi")
+    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    logging.basicConfig(level=logging.DEBUG)
+    default_level = "INFO"  # In development, log more verbosely
+    if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
+        default_level = "WARNING"
+    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)

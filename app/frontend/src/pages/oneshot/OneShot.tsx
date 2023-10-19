@@ -3,7 +3,7 @@ import { Checkbox, ChoiceGroup, IChoiceGroupOption, Panel, DefaultButton, Spinne
 
 import styles from "./OneShot.module.css";
 
-import { askApi, Approaches, AskResponse, AskRequest, RetrievalMode } from "../../api";
+import { askApi, ChatAppResponse, ChatAppRequest, RetrievalMode } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -15,7 +15,6 @@ import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
-    const [approach, setApproach] = useState<Approaches>(Approaches.RetrieveThenRead);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
     const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
@@ -31,12 +30,12 @@ export function Component(): JSX.Element {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
-    const [answer, setAnswer] = useState<AskResponse>();
+    const [answer, setAnswer] = useState<ChatAppResponse>();
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
-    const client = useLogin ? useMsal().instance : undefined
+    const client = useLogin ? useMsal().instance : undefined;
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -46,27 +45,34 @@ export function Component(): JSX.Element {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
 
-        const token = client ? await getToken(client) : undefined
+        const token = client ? await getToken(client) : undefined;
 
         try {
-            const request: AskRequest = {
-                question,
-                approach,
-                overrides: {
-                    promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
-                    promptTemplatePrefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
-                    promptTemplateSuffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
-                    excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
-                    top: retrieveCount,
-                    retrievalMode: retrievalMode,
-                    semanticRanker: useSemanticRanker,
-                    semanticCaptions: useSemanticCaptions,
-                    useOidSecurityFilter: useOidSecurityFilter,
-                    useGroupsSecurityFilter: useGroupsSecurityFilter
+            const request: ChatAppRequest = {
+                messages: [
+                    {
+                        content: question,
+                        role: "user"
+                    }
+                ],
+                context: {
+                    overrides: {
+                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+                        prompt_template_prefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
+                        prompt_template_suffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
+                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
+                        top: retrieveCount,
+                        retrieval_mode: retrievalMode,
+                        semantic_ranker: useSemanticRanker,
+                        semantic_captions: useSemanticCaptions,
+                        use_oid_security_filter: useOidSecurityFilter,
+                        use_groups_security_filter: useGroupsSecurityFilter
+                    }
                 },
-                idToken: token?.accessToken
+                // ChatAppProtocol: Client must pass on any session state received from the server
+                session_state: answer ? answer.choices[0].session_state : null
             };
-            const result = await askApi(request);
+            const result = await askApi(request, token?.accessToken);
             setAnswer(result);
         } catch (e) {
             setError(e);
@@ -93,10 +99,6 @@ export function Component(): JSX.Element {
 
     const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined, index?: number | undefined) => {
         setRetrievalMode(option?.data || RetrievalMode.Hybrid);
-    };
-
-    const onApproachChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IChoiceGroupOption) => {
-        setApproach((option?.key as Approaches) || Approaches.RetrieveThenRead);
     };
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
@@ -139,21 +141,6 @@ export function Component(): JSX.Element {
     const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseGroupsSecurityFilter(!!checked);
     };
-
-    const approaches: IChoiceGroupOption[] = [
-        {
-            key: Approaches.RetrieveThenRead,
-            text: "Retrieve-Then-Read"
-        },
-        {
-            key: Approaches.ReadRetrieveRead,
-            text: "Read-Retrieve-Read"
-        },
-        {
-            key: Approaches.ReadDecomposeAsk,
-            text: "Read-Decompose-Ask"
-        }
-    ];
 
     return (
         <div className={styles.oneshotContainer}>
@@ -208,45 +195,14 @@ export function Component(): JSX.Element {
                 onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                 isFooterAtBottom={true}
             >
-                <ChoiceGroup
+                <TextField
                     className={styles.oneshotSettingsSeparator}
-                    label="Approach"
-                    options={approaches}
-                    defaultSelectedKey={approach}
-                    onChange={onApproachChange}
+                    defaultValue={promptTemplate}
+                    label="Override prompt template"
+                    multiline
+                    autoAdjustHeight
+                    onChange={onPromptTemplateChange}
                 />
-
-                {(approach === Approaches.RetrieveThenRead || approach === Approaches.ReadDecomposeAsk) && (
-                    <TextField
-                        className={styles.oneshotSettingsSeparator}
-                        defaultValue={promptTemplate}
-                        label="Override prompt template"
-                        multiline
-                        autoAdjustHeight
-                        onChange={onPromptTemplateChange}
-                    />
-                )}
-
-                {approach === Approaches.ReadRetrieveRead && (
-                    <>
-                        <TextField
-                            className={styles.oneshotSettingsSeparator}
-                            defaultValue={promptTemplatePrefix}
-                            label="Override prompt prefix template"
-                            multiline
-                            autoAdjustHeight
-                            onChange={onPromptTemplatePrefixChange}
-                        />
-                        <TextField
-                            className={styles.oneshotSettingsSeparator}
-                            defaultValue={promptTemplateSuffix}
-                            label="Override prompt suffix template"
-                            multiline
-                            autoAdjustHeight
-                            onChange={onPromptTemplateSuffixChange}
-                        />
-                    </>
-                )}
 
                 <SpinButton
                     className={styles.oneshotSettingsSeparator}
@@ -279,7 +235,7 @@ export function Component(): JSX.Element {
                         onChange={onUseOidSecurityFilterChange}
                     />
                 )}
-                {useLogin &&  (
+                {useLogin && (
                     <Checkbox
                         className={styles.oneshotSettingsSeparator}
                         checked={useGroupsSecurityFilter}
@@ -299,7 +255,7 @@ export function Component(): JSX.Element {
                     required
                     onChange={onRetrievalModeChange}
                 />
-                { useLogin && <TokenClaimsDisplay />}
+                {useLogin && <TokenClaimsDisplay />}
             </Panel>
         </div>
     );

@@ -1,11 +1,11 @@
-from abc import ABC, abstractmethod
-from typing import Any
+from abc import ABC
+from typing import Any, AsyncGenerator, Optional, Union
 
 from core.authentication import AuthenticationHelper
 
 
 class Approach(ABC):
-    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> str:
+    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         exclude_category = overrides.get("exclude_category") or None
         security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
         filters = []
@@ -15,8 +15,7 @@ class Approach(ABC):
             filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
 
-
-class AskApproach(Approach):
-    @abstractmethod
-    async def run(self, q: str, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> dict[str, Any]:
-        ...
+    async def run(
+        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
+    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+        raise NotImplementedError

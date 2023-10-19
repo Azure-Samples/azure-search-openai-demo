@@ -47,6 +47,12 @@
     "searchServiceSkuName": {
       "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
     },
+    "searchQueryLanguage": {
+      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+    },
+    "searchQuerySpeller": {
+      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
@@ -58,6 +64,9 @@
     },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+    },
+    "embeddingDeploymentName": {
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
     },
     "openAiHost":{
       "value": "${OPENAI_HOST=azure}"

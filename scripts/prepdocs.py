@@ -6,11 +6,12 @@ import os
 import re
 import tempfile
 import time
+from typing import Any, Optional, Union
 
 import openai
 import tiktoken
 from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import AzureDeveloperCliCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
@@ -59,7 +60,7 @@ MAX_SECTION_LENGTH = 1000
 SENTENCE_SEARCH_LIMIT = 100
 SECTION_OVERLAP = 100
 
-open_ai_token_cache = {}
+open_ai_token_cache: dict[str, Any] = {}
 CACHE_KEY_TOKEN_CRED = "openai_token_cred"
 CACHE_KEY_CREATED_TIME = "created_time"
 CACHE_KEY_TOKEN_TYPE = "token_type"
@@ -104,7 +105,7 @@ def remove_blobs(filename):
     blob_container = blob_service.get_container_client(args.container)
     if blob_container.exists():
         if filename is None:
-            blobs = blob_container.list_blob_names()
+            blobs = iter(blob_container.list_blob_names())
         else:
             prefix = os.path.splitext(os.path.basename(filename))[0]
             blobs = filter(
@@ -163,8 +164,8 @@ def get_document_text(filename):
         for page_num, page in enumerate(form_recognizer_results.pages):
             tables_on_page = [
                 table
-                for table in form_recognizer_results.tables
-                if table.bounding_regions[0].page_number == page_num + 1
+                for table in (form_recognizer_results.tables or [])
+                if table.bounding_regions and table.bounding_regions[0].page_number == page_num + 1
             ]
 
             # mark all positions of the table spans in the page
@@ -275,7 +276,9 @@ def filename_to_id(filename):
     return f"file-{filename_ascii}-{filename_hash}"
 
 
-def create_sections(filename, page_map, use_vectors, embedding_deployment: str = None, embedding_model: str = None):
+def create_sections(
+    filename, page_map, use_vectors, embedding_deployment: Optional[str] = None, embedding_model: Optional[str] = None
+):
     file_id = filename_to_id(filename)
     for i, (content, pagenum) in enumerate(split_text(page_map, filename)):
         section = {
@@ -328,7 +331,7 @@ def create_search_index():
     )
     fields = [
         SimpleField(name="id", type="Edm.String", key=True),
-        SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+        SearchableField(name="content", type="Edm.String", analyzer_name=args.searchanalyzername),
         SearchField(
             name="embedding",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
@@ -383,7 +386,7 @@ def create_search_index():
 
 
 def update_embeddings_in_batch(sections):
-    batch_queue = []
+    batch_queue: list = []
     copy_s = []
     batch_response = {}
     token_count = 0
@@ -455,9 +458,9 @@ def remove_from_index(filename):
         r = search_client.search("", filter=filter, top=1000, include_total_count=True)
         if r.get_count() == 0:
             break
-        r = search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
+        removed_docs = search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
         if args.verbose:
-            print(f"\tRemoved {len(r)} sections from index")
+            print(f"\tRemoved {len(removed_docs)} sections from index")
         # It can take a few seconds for search results to reflect changes, so wait a bit
         time.sleep(2)
 
@@ -480,8 +483,8 @@ def read_files(
     path_pattern: str,
     use_vectors: bool,
     vectors_batch_support: bool,
-    embedding_deployment: str = None,
-    embedding_model: str = None,
+    embedding_deployment: Optional[str] = None,
+    embedding_model: Optional[str] = None,
 ):
     """
     Recursively read directory structure under `path_pattern`
@@ -516,7 +519,10 @@ def read_files(
 
 
 def read_adls_gen2_files(
-    use_vectors: bool, vectors_batch_support: bool, embedding_deployment: str = None, embedding_model: str = None
+    use_vectors: bool,
+    vectors_batch_support: bool,
+    embedding_deployment: Optional[str] = None,
+    embedding_model: Optional[str] = None,
 ):
     datalake_service = DataLakeServiceClient(
         account_url=f"https://{args.datalakestorageaccount}.dfs.core.windows.net", credential=adls_gen2_creds
@@ -535,7 +541,7 @@ def read_adls_gen2_files(
                     file_client = filesystem_client.get_file_client(path)
                     file_client.download_file().readinto(temp_file)
 
-                    acls = None
+                    acls: Optional[dict[str, list]] = None
                     if args.useacls:
                         # Parse out user ids and group ids
                         acls = {"oids": [], "groups": []}
@@ -546,7 +552,7 @@ def read_adls_gen2_files(
                         # ACL Format: user::rwx,group::r-x,other::r--,user:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:r--
                         acl_list = acl_list.split(",")
                         for acl in acl_list:
-                            acl_parts = acl.split(":")
+                            acl_parts: list = acl.split(":")
                             if len(acl_parts) != 3:
                                 continue
                             if len(acl_parts[1]) == 0:
@@ -634,6 +640,12 @@ if __name__ == "__main__":
         required=False,
         help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
+    parser.add_argument(
+        "--searchanalyzername",
+        required=False,
+        default="en.microsoft",
+        help="Optional. Name of the Azure Cognitive Search analyzer to use for the content field in the index",
+    )
     parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument(
@@ -692,14 +704,15 @@ if __name__ == "__main__":
         if args.tenantid is None
         else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     )
-    default_creds = azd_credential if args.searchkey is None or args.storagekey is None else None
     adls_gen2_creds = azd_credential if args.datalakekey is None else AzureKeyCredential(args.datalakekey)
-    search_creds = default_creds if args.searchkey is None else AzureKeyCredential(args.searchkey)
+    search_creds: Union[TokenCredential, AzureKeyCredential] = azd_credential
+    if args.searchkey is not None:
+        search_creds = AzureKeyCredential(args.searchkey)
     use_vectors = not args.novectors
     compute_vectors_in_batch = not args.disablebatchvectors and args.openaimodelname in SUPPORTED_BATCH_AOAI_MODEL
 
     if not args.skipblobs:
-        storage_creds = default_creds if args.storagekey is None else args.storagekey
+        storage_creds = azd_credential if args.storagekey is None else args.storagekey
     if not args.localpdfparser:
         # check if Azure Form Recognizer credentials are provided
         if args.formrecognizerservice is None:
@@ -707,9 +720,9 @@ if __name__ == "__main__":
                 "Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser."
             )
             exit(1)
-        formrecognizer_creds = (
-            default_creds if args.formrecognizerkey is None else AzureKeyCredential(args.formrecognizerkey)
-        )
+        formrecognizer_creds: Union[TokenCredential, AzureKeyCredential] = azd_credential
+        if args.formrecognizerkey is not None:
+            formrecognizer_creds = AzureKeyCredential(args.formrecognizerkey)
 
     if use_vectors:
         if args.openaihost != "openai":

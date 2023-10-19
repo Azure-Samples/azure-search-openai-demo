@@ -4,7 +4,7 @@ import DOMPurify from "dompurify";
 import styles from "./AnalysisPanel.module.css";
 
 import { SupportingContent } from "../SupportingContent";
-import { AskResponse } from "../../api";
+import { ChatAppResponse } from "../../api";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 
 interface Props {
@@ -13,18 +13,19 @@ interface Props {
     onActiveTabChanged: (tab: AnalysisPanelTabs) => void;
     activeCitation: string | undefined;
     citationHeight: string;
-    answer: AskResponse;
+    answer: ChatAppResponse;
 }
 
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
 export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
-    const isDisabledThoughtProcessTab: boolean = !answer.thoughts;
-    const isDisabledSupportingContentTab: boolean = !answer.data_points.length;
+    const isDisabledThoughtProcessTab: boolean = !answer.choices[0].context.thoughts;
+    const isDisabledSupportingContentTab: boolean = !answer.choices[0].context.data_points.length;
     const isDisabledCitationTab: boolean = !activeCitation;
 
-    const sanitizedThoughts = DOMPurify.sanitize(answer.thoughts!);
     const randomNumber = Math.floor(Math.random() * 1000000);
+    const sanitizedThoughts = DOMPurify.sanitize(answer.choices[0].context.thoughts!);
+
     return (
         <Pivot
             className={className}
@@ -43,7 +44,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText="Supporting content"
                 headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
             >
-                <SupportingContent supportingContent={answer.data_points} />
+                <SupportingContent supportingContent={answer.choices[0].context.data_points} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.CitationTab}

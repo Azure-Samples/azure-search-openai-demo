@@ -5,7 +5,7 @@ import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
 
-import { chatApi, RetrievalMode, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -41,18 +41,21 @@ const Chat = () => {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
-    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
 
-    const handleAsyncRequest = async (question: string, answers: [string, AskResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
-        let askResponse: AskResponse = {} as AskResponse;
+        let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
         const updateState = (newContent: string) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: AskResponse = { ...askResponse, answer };
+                    const latestResponse: ChatAppResponse = {
+                        ...askResponse,
+                        choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
+                    };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
                 }, 33);
@@ -61,7 +64,8 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                if (event["data_points"]) {
+                if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
+                    event["choices"][0]["message"] = event["choices"][0]["delta"];
                     askResponse = event;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
@@ -71,7 +75,10 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: AskResponse = { ...askResponse, answer };
+        const fullResponse: ChatAppResponse = {
+            ...askResponse,
+            choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
+        };
         return fullResponse;
     };
 
@@ -88,38 +95,44 @@ const Chat = () => {
         const token = client ? await getToken(client) : undefined;
 
         try {
-            const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
-            const request: ChatRequest = {
-                history: [...history, { user: question, bot: undefined }],
-                approach: Approaches.ReadRetrieveRead,
-                shouldStream: shouldStream,
-                overrides: {
-                    promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
-                    excludeCategory: excludeCategory.length === 0 ? undefined : excludeCategory,
-                    top: retrieveCount,
-                    retrievalMode: retrievalMode,
-                    semanticRanker: useSemanticRanker,
-                    semanticCaptions: useSemanticCaptions,
-                    suggestFollowupQuestions: useSuggestFollowupQuestions,
-                    useOidSecurityFilter: useOidSecurityFilter,
-                    useGroupsSecurityFilter: useGroupsSecurityFilter
+            const messages: ResponseMessage[] = answers.flatMap(a => [
+                { content: a[0], role: "user" },
+                { content: a[1].choices[0].message.content, role: "assistant" }
+            ]);
+
+            const request: ChatAppRequest = {
+                messages: [...messages, { content: question, role: "user" }],
+                stream: shouldStream,
+                context: {
+                    overrides: {
+                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
+                        top: retrieveCount,
+                        retrieval_mode: retrievalMode,
+                        semantic_ranker: useSemanticRanker,
+                        semantic_captions: useSemanticCaptions,
+                        suggest_followup_questions: useSuggestFollowupQuestions,
+                        use_oid_security_filter: useOidSecurityFilter,
+                        use_groups_security_filter: useGroupsSecurityFilter
+                    }
                 },
-                idToken: token?.accessToken
+                // ChatAppProtocol: Client must pass on any session state received from the server
+                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
 
-            const response = await chatApi(request);
+            const response = await chatApi(request, token?.accessToken);
             if (!response.body) {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: AskResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
-                const parsedResponse: AskResponse = await response.json();
+                const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
-                setAnswers([...answers, [question, parsedResponse]]);
+                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
         } catch (e) {
             setError(e);
