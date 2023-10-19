@@ -199,7 +199,7 @@ module backend 'core/host/appservice.bicep' = {
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }
-    privateEndpointSubnetId: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : '' // TODO: Verify this is the right subnet
+    privateEndpointSubnetId: usePrivateEndpoint ? vnet.outputs.subnet2Resourceid : '' // TODO: Verify this is the right subnet
     useVnet: usePrivateEndpoint
   }
 }
