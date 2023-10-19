@@ -18,4 +18,4 @@ repos:
     rev: v3.0.3
     hooks:
     - id: prettier
-      types_or: [css, javascript, ts, tsx]
+      types_or: [css, javascript, ts, tsx, html]

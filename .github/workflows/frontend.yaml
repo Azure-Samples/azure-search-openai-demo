@@ -11,7 +11,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - name: Install dependencies
-              run: npm install
+            - name: Install frontend dependencies
+              run: |
+                cd ./app/frontend
+                npm install
             - name: Run Prettier
-              run: npx prettier --write .
+              run: npx prettier --check .
