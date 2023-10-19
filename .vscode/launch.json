@@ -26,27 +26,10 @@
         },
         {
             "name": "Frontend: watch",
-            "type": "node",
+            "type": "node-terminal",
             "request": "launch",
+            "command": "npm run dev",
             "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "watch"
-            ],
-            "console": "integratedTerminal",
-        },
-        {
-            "name": "Frontend: build",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "build"
-            ],
-            "console": "integratedTerminal",
         }
     ],
     "inputs": [
