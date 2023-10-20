@@ -4,13 +4,13 @@ import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest } from "./model
 import { useLogin } from "../authConfig";
 
 function getHeaders(idToken: string | undefined): Record<string, string> {
-    var headers : Record<string, string> = {
+    var headers: Record<string, string> = {
         "Content-Type": "application/json"
     };
     // If using login, add the id token of the logged in account as the authorization
     if (useLogin) {
         if (idToken) {
-            headers["Authorization"] = `Bearer ${idToken}`
+            headers["Authorization"] = `Bearer ${idToken}`;
         }
     }
 

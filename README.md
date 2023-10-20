@@ -1,3 +1,20 @@
+---
+name: ChatGPT + Enterprise data
+description: Chat with your data using OpenAI and Cognitive Search.
+languages:
+- azdeveloper
+- typescript
+- python
+- bicep
+products:
+- azure
+- azure-cognitive-search
+- azure-openai
+- azure-app-service
+page_type: sample
+urlFragment: azure-search-openai-demo
+---
+
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
 ## Table of Contents
