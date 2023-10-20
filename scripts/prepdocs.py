@@ -518,7 +518,6 @@ def read_files(
             try:
                 # if filename ends in .md5 skip
                 if filename.endswith(".md5"):
-                    print("Skipping md5 hash index.")
                     continue
 
                 # if there is a file called .md5 in this directory, see if its updated
