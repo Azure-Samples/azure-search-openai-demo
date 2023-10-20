@@ -97,7 +97,7 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
-@description('Use a private endpoint')
+@description('Use network isolation')
 param usePrivateEndpoint bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
@@ -199,7 +199,7 @@ module backend 'core/host/appservice.bicep' = {
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }
-    privateEndpointSubnetId: usePrivateEndpoint ? vnet.outputs.subnet2Resourceid : '' // TODO: Verify this is the right subnet
+    privateEndpointSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     useVnet: usePrivateEndpoint
   }
 }
@@ -399,40 +399,20 @@ module searchRoleBackend 'core/security/role.bicep' = {
   }
 }
 
-module vnet 'core/networking/vnet.bicep' = if (usePrivateEndpoint) {
-  name: 'vnet'
+module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
+  name: 'networks'
   scope:  resourceGroup
   params: {
     location: location
     tags: tags
-    vnetRG: vnetRG
+    resourceToken: resourceToken
     vnetName: vnetName
-    vnetAddressPrefix: vnetAddressPrefix
-    subnet1Name: privateEndpointSubnetName
-    subnet2Name: vnetSubnetName
-    subnet1Prefix: privateEndpointSubnetPrefix
-    subnet2Prefix: vnetSubnetPrefix
-    subnet1nsgname: privateEndpointSubnetnsgname
-    subnet1routetablename: privateEndpointSubnetroutetablename
-    subnet2nsgname: vnetSubnetnsgname
-    subnet2routetablename: vnetSubnetroutetablename
-    newOrExisting: newOrExisting
-  }
-}
-
-// Private Endpoint
-module privateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivateEndpoint) {
-  name: 'private-endpoint'
-  scope: privateEndpointResourceGroup
-  params: {
-    tags: tags
-    location: privateEndpointResourceGroupLocation
-    privateEndpointName: !empty(privateEndpointName) ? privateEndpointName : 'pep-${resourceToken}'
-    linkedServiceId: backend.outputs.id
-    vnetId: usePrivateEndpoint ? vnet.outputs.vnetid : ''
-    subnetId: usePrivateEndpoint ? vnet.outputs.subnet1Resourceid : ''
-    privateDnsZoneName: !empty(privateDnsZoneName) ? privateDnsZoneName : '${abbrs.networkDnsZones}${resourceToken}'
-    privateDnsGroupName: !empty(privateDnsGroupName) ? privateDnsGroupName : '${abbrs.networkDnsZones}-group${resourceToken}'
+    appServicePlanId: appServicePlan.outputs.id
+    appServicePlanName: appServicePlan.outputs.name
+    storageAccountId: storage.outputs.id
+    searchServiceId: searchService.outputs.id 
+    searchServiceName: searchService.outputs.name
+    openAiId: openAi.outputs.id
   }
 }
 

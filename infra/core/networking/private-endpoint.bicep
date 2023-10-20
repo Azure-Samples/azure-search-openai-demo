@@ -1,67 +1,44 @@
-param privateEndpointName string 
-param location string = resourceGroup().location
-param privateDnsZoneName string
-param vnetId string 
-param subnetId string
-param privateDnsGroupName string 
-param linkedServiceId string
+param location string
+param name string
 param tags object = {}
+param serviceId string
+param subnetId string
+param groupIds array = []
+param dnsZoneId string
 
-resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
-  name: privateEndpointName
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
+  name: name
   location: location
-  tags: tags
+  tags: tags  
   properties: {
     subnet: {
       id: subnetId
     }
     privateLinkServiceConnections: [
       {
-        name: privateEndpointName
+        name: 'privatelinkServiceonnection'
         properties: {
-          privateLinkServiceId: linkedServiceId 
-          groupIds: [
-            'sites'
-          ]
+          privateLinkServiceId: serviceId
+          groupIds: groupIds
         }
       }
-    ]
+    ]    
   }
 }
 
-resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: privateDnsZoneName
-  location: 'global'
-}
-
-resource privateDnsZoneNetworkLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: privateDnsZone
-  name: '${privateDnsZoneName}-link'
-  location: 'global'
-  properties: {
-    registrationEnabled: false
-    virtualNetwork: {
-      id: vnetId
-    }
-  }
-}
-
-resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
-  name: privateDnsGroupName
-  properties: {
-    privateDnsZoneConfigs: [
+resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+  parent: privateEndpoint
+  name: '${name}-group'
+  properties:{
+    privateDnsZoneConfigs:[
       {
-        name: 'privatelink_azurewebsites_net'
-        properties: {
-          privateDnsZoneId: privateDnsZone.id
+        name:'config1'
+        properties:{
+          privateDnsZoneId: dnsZoneId
         }
       }
     ]
   }
-  dependsOn: [
-    privateEndpoint
-  ]
 }
 
-output id string = privateDnsZone.id
 output name string = privateEndpoint.name

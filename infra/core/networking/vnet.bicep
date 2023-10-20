@@ -1,141 +1,73 @@
-param location string = resourceGroup().location
-param vnetRG string
-param vnetName string
-param vnetAddressPrefix string
-param subnet1Name string
-param subnet2Name string
-param subnet1Prefix string
-param subnet2Prefix string
-param subnet1nsgname string
-param subnet2nsgname string
-param subnet1routetablename string
-param subnet2routetablename string
+param location string
+param name string
 param tags object = {}
+param appServicePlanName string
+param appServicePlanId string
 
-@allowed([
-  'new'
-  'existing'
-])
-param newOrExisting string
+var addressPrefix = '10.0.0.0/16'
 
-resource newvnet 'Microsoft.Network/virtualNetworks@2019-11-01' = if (newOrExisting == 'new') {
-  name: vnetName
+var subnets = [
+  {
+    name: 'ai-subnet'
+    properties: {
+      addressPrefix:'10.0.1.0/24'
+      privateEndpointNetworkPolicies: 'Enabled'
+      privateLinkServiceNetworkPolicies: 'Enabled'      
+    }
+  }
+  {
+    name: 'AzureBastionSubnet'
+    properties: {
+      addressPrefix:'10.0.2.0/24'
+      privateEndpointNetworkPolicies: 'Enabled'
+      privateLinkServiceNetworkPolicies: 'Enabled'      
+    }
+  }
+  {
+    name: 'app-int-subnet'
+    properties: {
+      addressPrefix:'10.0.3.0/24'
+      privateEndpointNetworkPolicies: 'Enabled'
+      privateLinkServiceNetworkPolicies: 'Enabled'
+      delegations: [
+        {
+          id: appServicePlanId
+          name: appServicePlanName
+          properties: {
+            serviceName: 'Microsoft.Web/serverFarms'
+          }
+        }
+      ]   
+    }
+  }  
+]
+
+resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+  name: name
   location: location
   tags: tags
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetAddressPrefix
+        addressPrefix
       ]
     }
-    subnets: [
-      {
-        name: subnet1Name
-        properties: {
-          addressPrefix: subnet1Prefix
-          networkSecurityGroup: {
-            id: subnet1nsg.id
-          }
-          routeTable: {
-            id: subnet1routetable.id
-          }
-        }
-      }
-      {
-        name: subnet2Name
-        properties: {
-          addressPrefix: subnet2Prefix
-          delegations: [
-            {
-              name: 'delegation'
-              properties: {
-                serviceName: 'Microsoft.Web/serverFarms'
-              }
-            }
-          ]
-          networkSecurityGroup: {
-            id: subnet2nsg.id
-          }
-          routeTable: {
-            id: subnet2routetable.id
-          }
-        }
-      }
-    ]
-  }
-  resource subnet1 'subnets' existing = {
-    name: subnet1Name
-  }
-  resource subnet2 'subnets' existing = {
-    name: subnet2Name
-  }
-
-}
-
-//NSGs
-
-resource subnet1nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = if (newOrExisting == 'new')  {
-  name: subnet1nsgname
-  location: location
-//  properties: {
-   // securityRules: [
-     // {}
-   // ]
- // }
-}
-
-resource subnet2nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = if (newOrExisting == 'new')  {
-  name: subnet2nsgname
-  location: location
- // properties: {
-  //  securityRules: [
-   //   {}
-   // ]
- // }
-}
-
-resource subnet1routetable 'Microsoft.Network/routeTables@2022-07-01' = if (newOrExisting == 'new') {
-  name: subnet1routetablename
-  location: location
-  properties: {
-    disableBgpRoutePropagation: false
-   // routes: [
-   //   {}
-  //  ]
+    subnets: subnets
   }
 }
 
-resource subnet2routetable 'Microsoft.Network/routeTables@2022-07-01' = if (newOrExisting == 'new') {
-  name: subnet2routetablename
-  location: location
-  properties: {
-    disableBgpRoutePropagation: false
- //   routes: [
-   //   {}
-  //  ]
-  }
-}
+output subnets array = [for (name, i) in subnets :{
+  subnets : vnet.properties.subnets[i]
+}]
 
-//Get existing VNET for private endpoint
-resource existingvnet 'Microsoft.Network/virtualNetworks@2021-05-01' existing = if (newOrExisting == 'existing') {
-  name: vnetName
-  scope: az.resourceGroup('${vnetRG}')
-}
-
-//Get existing subnet for private endpoint
-resource existingsubnet1 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' existing = if (newOrExisting == 'existing') {
-  parent: existingvnet
-  name: subnet1Name
-}
-
-//Get existing subnet for vnet integration
-resource existingsubnet2 'Microsoft.Network/virtualNetworks/subnets@2021-05-01' existing = if (newOrExisting == 'existing') {
-  parent: existingvnet
-  name: subnet2Name
-}
-
-output vnetid string = ((newOrExisting == 'new') ? newvnet.id : existingvnet.id)
-output subnet1Resourceid string = ((newOrExisting == 'new') ? newvnet::subnet1.id : existingsubnet1.id)
-output subnet2Resourceid string = ((newOrExisting == 'new') ? newvnet::subnet2.id : existingsubnet2.id)
+output subnetids array = [for (name, i) in subnets :{
+  subnets : vnet.properties.subnets[i].id
+}]
 
 
+output id string = vnet.id
+output name string = vnet.name
+
+output aiSubId string = vnet.properties.subnets[0].id
+output bastionSubId string = vnet.properties.subnets[1].id
+output appIntSubId string = vnet.properties.subnets[2].id
