@@ -525,7 +525,7 @@ def read_files(
                 with open(filename, 'rb') as file:
                     existing_hash = hashlib.md5(file.read()).hexdigest()
                 if os.path.exists(filename + ".md5"):
-                    with open(filename + ".md5", "r", encoding="utf-8") as md5_f:
+                    with open(filename + ".md5", encoding="utf-8") as md5_f:
                         stored_hash = md5_f.read()
 
                 if stored_hash and stored_hash.strip() == existing_hash.strip():
