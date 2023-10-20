@@ -527,14 +527,14 @@ def read_files(
                 if os.path.exists(filename + ".md5"):
                     with open(filename + ".md5", "r", encoding="utf-8") as md5_f:
                         stored_hash = md5_f.read()
-                else:
-                    # Write the hash
-                    with open(filename + ".md5", "w", encoding="utf-8") as md5_f:
-                        md5_f.write(existing_hash)
 
                 if stored_hash and stored_hash.strip() == existing_hash.strip():
                     print("Skipping {filename}, no changes detected")
                     continue
+                else:
+                    # Write the hash
+                    with open(filename + ".md5", "w", encoding="utf-8") as md5_f:
+                        md5_f.write(existing_hash)
 
                 if not args.skipblobs:
                     upload_blobs(filename)
