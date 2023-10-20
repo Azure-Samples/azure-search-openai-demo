@@ -71,8 +71,7 @@ async def assets(path):
 # can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
 async def content_file(path: str):
-    # remove page number from path
-    # filename-1.txt -> filename.txt
+    # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
         path = path_parts[0]
