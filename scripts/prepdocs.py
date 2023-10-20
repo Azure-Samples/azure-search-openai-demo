@@ -517,13 +517,13 @@ def read_files(
                 continue
             try:
                 # if filename ends in .md5 skip
-                if filename.endswith('.md5'):
+                if filename.endswith(".md5"):
                     print("Skipping md5 hash index.")
                     continue
 
                 # if there is a file called .md5 in this directory, see if its updated
                 stored_hash = None
-                with open(filename, 'rb') as file:
+                with open(filename, "rb") as file:
                     existing_hash = hashlib.md5(file.read()).hexdigest()
                 if os.path.exists(filename + ".md5"):
                     with open(filename + ".md5", encoding="utf-8") as md5_f:
