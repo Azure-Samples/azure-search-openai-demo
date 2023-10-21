@@ -57,8 +57,14 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                 onKeyDown={onEnterPress}
             />
             <div className={styles.questionInputButtonsContainer}>
-                <Tooltip content="Ask question button" relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+                <Tooltip content="הכנס כאן את תחושתך" relationship="label">
+                    <Button
+                        size="large"
+                        icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />}
+                        style={{ transform: "rotate(180deg)" }}
+                        disabled={sendQuestionDisabled}
+                        onClick={sendQuestion}
+                    />
                 </Tooltip>
             </div>
         </Stack>
