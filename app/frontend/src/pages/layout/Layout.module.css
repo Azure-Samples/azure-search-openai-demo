@@ -5,14 +5,13 @@
 }
 
 .header {
-    background-color: #222222;
-    color: #f2f2f2;
+    background-color: #fdf3e7;
+    color: #131d38;
 }
 
 .headerContainer {
     display: flex;
-    align-items: center;
-    justify-content: space-around;
+    justify-content: flex-start; /* Align to the right */
     margin-right: 12px;
     margin-left: 12px;
 }
@@ -20,7 +19,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    margin-right: 5rem;
     color: #f2f2f2;
     text-decoration: none;
 }
@@ -65,7 +64,6 @@
 
 .headerRightText {
     font-weight: normal;
-    margin-left: 40px;
 }
 
 .microsoftLogo {
@@ -75,4 +73,16 @@
 
 .githubLogo {
     height: 20px;
+}
+
+.goldaLogo {
+    height: 5rem;
+    width: max-content;
+}
+
+/* Mobile view */
+@media only screen and (max-width: 48rem) {
+    .headerContainer {
+        justify-content: center; /* Center alignment */
+    }
 }

@@ -1,6 +1,7 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
+import golda from "../../assets/golda.jpg";
 
 import styles from "./Layout.module.css";
 
@@ -14,7 +15,8 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <img src={golda} alt="נחמה" width="20px" height="20px" className={styles.goldaLogo} />
+                        <h3 className={styles.headerTitle}>נחמה</h3>
                     </Link>
                     {/* <nav>
                         <ul className={styles.headerNavList}>

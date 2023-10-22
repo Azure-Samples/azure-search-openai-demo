@@ -60,7 +60,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                 <Tooltip content="הכנס כאן את תחושתך" relationship="label">
                     <Button
                         size="large"
-                        icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />}
+                        icon={<Send28Filled primaryFill="rgba(18, 29, 59, 1)" />}
                         style={{ transform: "rotate(180deg)" }}
                         disabled={sendQuestionDisabled}
                         onClick={sendQuestion}
