@@ -8,6 +8,8 @@ param sku object = {
 
 param authOptions object = {}
 param semanticSearch string = 'disabled'
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Enabled'
 
 resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   name: name
@@ -29,7 +31,7 @@ resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
       ipRules: []
     }
     partitionCount: 1
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: publicNetworkAccess
     replicaCount: 1
     semanticSearch: semanticSearch
   }

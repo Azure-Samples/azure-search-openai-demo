@@ -211,6 +211,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiResourceGroupLocation
     tags: tags
+    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
     sku: {
       name: openAiSkuName
     }
@@ -247,6 +248,7 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
     name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
     kind: 'FormRecognizer'
     location: formRecognizerResourceGroupLocation
+    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
     tags: tags
     sku: {
       name: formRecognizerSkuName
@@ -261,6 +263,7 @@ module searchService 'core/search/search-services.bicep' = {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
+    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
     authOptions: {
       aadOrApiKey: {
         aadAuthFailureMode: 'http401WithBearerChallenge'
@@ -280,7 +283,7 @@ module storage 'core/storage/storage-account.bicep' = {
     name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
     sku: {
       name: storageSkuName
     }
