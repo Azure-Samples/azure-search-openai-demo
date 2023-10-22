@@ -52,12 +52,9 @@ const Chat = () => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: ChatAppResponse = { ...askResponse,
-                        choices: [{ ...askResponse.choices[0],
-                                    message: { content: answer,
-                                        role: askResponse.choices[0].message.role
-                                    } }
-                                ]
+                    const latestResponse: ChatAppResponse = {
+                        ...askResponse,
+                        choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
@@ -78,12 +75,9 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: ChatAppResponse = { ...askResponse,
-            choices: [{ ...askResponse.choices[0],
-                        message: { content: answer,
-                            role: askResponse.choices[0].message.role
-                        } }
-                    ]
+        const fullResponse: ChatAppResponse = {
+            ...askResponse,
+            choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
         };
         return fullResponse;
     };
@@ -101,10 +95,10 @@ const Chat = () => {
         const token = client ? await getToken(client) : undefined;
 
         try {
-            const messages: ResponseMessage[] = answers.flatMap(a => ([
+            const messages: ResponseMessage[] = answers.flatMap(a => [
                 { content: a[0], role: "user" },
-                { content: a[1].choices[0].message.content, role: "bot" }
-            ]));
+                { content: a[1].choices[0].message.content, role: "assistant" }
+            ]);
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: question, role: "user" }],
@@ -121,7 +115,9 @@ const Chat = () => {
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter
                     }
-                }
+                },
+                // ChatAppProtocol: Client must pass on any session state received from the server
+                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
 
             const response = await chatApi(request, token?.accessToken);

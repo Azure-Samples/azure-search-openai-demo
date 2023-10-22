@@ -30,7 +30,7 @@ export const Answer = ({
     showFollowupQuestions
 }: Props) => {
     const messageContent = answer.choices[0].message.content;
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked ), [answer]);
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 

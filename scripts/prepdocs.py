@@ -1,6 +1,7 @@
 import argparse
 import base64
 import glob
+import hashlib
 import html
 import io
 import os
@@ -345,7 +346,7 @@ def create_search_index():
     )
     fields = [
         SimpleField(name="id", type="Edm.String", key=True),
-        SearchableField(name="content", type="Edm.String", analyzer_name="en.microsoft"),
+        SearchableField(name="content", type="Edm.String", analyzer_name=args.searchanalyzername),
         SearchField(
             name="embedding",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
@@ -515,6 +516,26 @@ def read_files(
                 read_files(filename + "/*", use_vectors, vectors_batch_support)
                 continue
             try:
+                # if filename ends in .md5 skip
+                if filename.endswith(".md5"):
+                    continue
+
+                # if there is a file called .md5 in this directory, see if its updated
+                stored_hash = None
+                with open(filename, "rb") as file:
+                    existing_hash = hashlib.md5(file.read()).hexdigest()
+                if os.path.exists(filename + ".md5"):
+                    with open(filename + ".md5", encoding="utf-8") as md5_f:
+                        stored_hash = md5_f.read()
+
+                if stored_hash and stored_hash.strip() == existing_hash.strip():
+                    print(f"Skipping {filename}, no changes detected.")
+                    continue
+                else:
+                    # Write the hash
+                    with open(filename + ".md5", "w", encoding="utf-8") as md5_f:
+                        md5_f.write(existing_hash)
+
                 if not args.skipblobs:
                     upload_blobs(filename)
                 page_map = get_document_text(filename)
@@ -653,6 +674,12 @@ if __name__ == "__main__":
         "--searchkey",
         required=False,
         help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+    )
+    parser.add_argument(
+        "--searchanalyzername",
+        required=False,
+        default="en.microsoft",
+        help="Optional. Name of the Azure Cognitive Search analyzer to use for the content field in the index",
     )
     parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")

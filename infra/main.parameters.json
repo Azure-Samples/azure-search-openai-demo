@@ -47,6 +47,12 @@
     "searchServiceSkuName": {
       "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
     },
+    "searchQueryLanguage": {
+      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+    },
+    "searchQuerySpeller": {
+      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },

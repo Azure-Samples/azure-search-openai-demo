@@ -8,7 +8,7 @@ def test_messagebuilder():
         {"role": "system", "content": "You are a bot."}
     ]
     assert builder.model == "gpt-35-turbo"
-    assert builder.token_length == 8
+    assert builder.count_tokens_for_message(builder.messages[0]) == 8
 
 
 def test_messagebuilder_append():
@@ -21,7 +21,8 @@ def test_messagebuilder_append():
         {"role": "user", "content": "Hello, how are you?"},
     ]
     assert builder.model == "gpt-35-turbo"
-    assert builder.token_length == 17
+    assert builder.count_tokens_for_message(builder.messages[0]) == 8
+    assert builder.count_tokens_for_message(builder.messages[1]) == 9
 
 
 def test_messagebuilder_unicode():
@@ -31,7 +32,7 @@ def test_messagebuilder_unicode():
         {"role": "system", "content": "á"}
     ]
     assert builder.model == "gpt-35-turbo"
-    assert builder.token_length == 4
+    assert builder.count_tokens_for_message(builder.messages[0]) == 4
 
 
 def test_messagebuilder_unicode_append():
@@ -44,4 +45,5 @@ def test_messagebuilder_unicode_append():
         {"role": "user", "content": "á"},
     ]
     assert builder.model == "gpt-35-turbo"
-    assert builder.token_length == 8
+    assert builder.count_tokens_for_message(builder.messages[0]) == 4
+    assert builder.count_tokens_for_message(builder.messages[1]) == 4

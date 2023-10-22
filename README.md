@@ -1,3 +1,20 @@
+---
+name: ChatGPT + Enterprise data
+description: Chat with your data using OpenAI and Cognitive Search.
+languages:
+- azdeveloper
+- typescript
+- python
+- bicep
+products:
+- azure
+- azure-cognitive-search
+- azure-openai
+- azure-app-service
+page_type: sample
+urlFragment: azure-search-openai-demo
+---
+
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
 ## Table of Contents
@@ -8,7 +25,7 @@
   - [Cost estimation](#cost-estimation)
   - [Project setup](#project-setup)
     - [GitHub Codespaces](#github-codespaces)
-    - [VS Code Remote Containers](#vs-code-remote-containers)
+    - [VS Code Dev Containers](#vs-code-dev-containers)
     - [Local environment](#local-environment)
   - [Deploying from scratch](#deploying-from-scratch)
   - [Deploying with existing Azure resources](#deploying-with-existing-azure-resources)
@@ -28,7 +45,7 @@
   - [Troubleshooting](#troubleshooting)
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
-[![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
 This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure Cognitive Search for data indexing and retrieval.
 
@@ -87,11 +104,16 @@ You can run this repo virtually by using GitHub Codespaces, which will open a we
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 
-#### VS Code Remote Containers
+#### VS Code Dev Containers
 
-A related option is VS Code Remote Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
+A related option is VS Code Dev Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
 
-[![Open in Remote - Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+1. Start Docker Desktop (install it if not already installed)
+1. Open the project:
+    [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+1. In the VS Code window that opens, once the project files show up (this may take several minutes), open a terminal window
+1. Run `azd auth login`
+1. Now you can follow the instructions in [Deploying from scratch](#deploying-from-scratch) below
 
 #### Local environment
 
@@ -170,6 +192,11 @@ When you run `azd up` after and are prompted to select a value for `openAiResour
 1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. The free tier won't work as it doesn't support managed identity. ([See other possible values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
 1. If you have an existing index that is set up with all the expected fields, then run `azd env set AZURE_SEARCH_INDEX {Name of existing index}`. Otherwise, the `azd up` command will create a new index.
 
+You can also customize the search service (new or existing) for non-English searches:
+
+1. To configure the language of the search query to a value other than "en-us", run `azd env set AZURE_SEARCH_QUERY_LANGUAGE {Name of query language}`. ([See other possible values](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.models.querylanguage?view=azure-python-preview))
+1. To turn off the spell checker, run `azd env set AZURE_SEARCH_QUERY_SPELLER none`. ([See other possible values](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.models.queryspellertype?view=azure-python-preview))
+1. To configure the name of the analyzer to use for a searchable text field to a value other than "en.microsoft", run `azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}`. ([See other possible values](https://learn.microsoft.com/dotnet/api/microsoft.azure.search.models.field.analyzer?view=azure-dotnet-legacy&viewFallbackFrom=azure-dotnet))
 
 #### Other existing Azure resources
 

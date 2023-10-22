@@ -96,7 +96,9 @@ async def ask():
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
-            r = await approach.run(request_json["messages"], context=context)
+            r = await approach.run(
+                request_json["messages"], context=context, session_state=request_json.get("session_state")
+            )
         return jsonify(r)
     except Exception as e:
         logging.exception("Exception in /ask")
@@ -118,7 +120,12 @@ async def chat():
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
         approach = current_app.config[CONFIG_CHAT_APPROACH]
-        result = await approach.run(request_json["messages"], stream=request_json.get("stream", False), context=context)
+        result = await approach.run(
+            request_json["messages"],
+            stream=request_json.get("stream", False),
+            context=context,
+            session_state=request_json.get("session_state"),
+        )
         if isinstance(result, dict):
             return jsonify(result)
         else:
@@ -178,6 +185,9 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
+    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
+    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
@@ -235,6 +245,8 @@ async def setup_clients():
         OPENAI_EMB_MODEL,
         KB_FIELDS_SOURCEPAGE,
         KB_FIELDS_CONTENT,
+        AZURE_SEARCH_QUERY_LANGUAGE,
+        AZURE_SEARCH_QUERY_SPELLER,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
@@ -246,6 +258,8 @@ async def setup_clients():
         OPENAI_EMB_MODEL,
         KB_FIELDS_SOURCEPAGE,
         KB_FIELDS_CONTENT,
+        AZURE_SEARCH_QUERY_LANGUAGE,
+        AZURE_SEARCH_QUERY_SPELLER,
     )
 
 
