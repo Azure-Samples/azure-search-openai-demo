@@ -107,5 +107,3 @@ SYSTEM_MESSAGE_CHAT = """
 {injected_prompt}
 """
 
-
-system_message_chat_conversation

@@ -11,7 +11,7 @@ from azure.search.documents.models import QueryType
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
-from prompt_templates import *
+from approaches.prompt_templates import SYSTEM_MESSAGE_CHAT
 from text import nonewlines
 
 use_RAG = False
@@ -137,7 +137,10 @@ If you cannot generate a search query, return just the number 0.
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
-        if use_RAG:
+        content = ""
+        results = []
+        if os.environ["SHOULD_RAG"] == 'True':
+
         # If retrieval mode includes vectors, compute an embedding for the query
             if has_vector:
                 embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
@@ -183,42 +186,7 @@ If you cannot generate a search query, return just the number 0.
                 results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
             content = "\n".join(results)
 
-        # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
-        content = ""
-        results = []
-        if os.environ["SHOULD_RAG"] == 'True':
-        
-            if overrides.get("semantic_ranker") and has_text:
-                r = await self.search_client.search(
-                    query_text,
-                    filter=filter,
-                    query_type=QueryType.SEMANTIC,
-                    query_language=self.query_language,
-                    query_speller=self.query_speller,
-                    semantic_configuration_name="default",
-                    top=top,
-                    query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                    vector=query_vector,
-                    top_k=50 if query_vector else None,
-                    vector_fields="embedding" if query_vector else None,
-                )
-            else:
-                r = await self.search_client.search(
-                    query_text,
-                    filter=filter,
-                    top=top,
-                    vector=query_vector,
-                    top_k=50 if query_vector else None,
-                    vector_fields="embedding" if query_vector else None,
-                )
-            if use_semantic_captions:
-                results = [
-                    doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
-                    async for doc in r
-                ]
-            else:
-                results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
-                content = "\n".join(results)
+
             
         follow_up_questions_prompt = (
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
