@@ -1,23 +1,23 @@
 .answerContainer {
-    padding: 20px;
+    padding: 1.25rem;
     background: rgb(249, 249, 249);
-    border-radius: 8px;
+    border-radius: 0.5rem;
     box-shadow:
-        0px 2px 4px rgba(0, 0, 0, 0.14),
-        0px 0px 2px rgba(0, 0, 0, 0.12);
-    outline: transparent solid 1px;
+        0px 0.125rem 0.25rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
+    outline: transparent solid 0.0625rem;
 }
 
 .answerLogo {
-    font-size: 28px;
+    font-size: 1.75rem;
 }
 
 .answerText {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
-    line-height: 22px;
-    padding-top: 16px;
-    padding-bottom: 16px;
+    line-height: 1.375rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     white-space: pre-line;
     direction: rtl;
 }
@@ -28,26 +28,26 @@
 
 .answerText td,
 .answerText th {
-    border: 1px solid;
-    padding: 5px;
+    border: 0.0625rem solid;
+    padding: 0.3125rem;
 }
 
 .selected {
-    outline: 2px solid rgba(115, 118, 225, 1);
+    outline: 0.125rem solid rgba(115, 118, 225, 1);
 }
 
 .citationLearnMore {
-    margin-right: 5px;
+    margin-right: 0.3125rem;
     font-weight: 600;
-    line-height: 24px;
+    line-height: 1.5rem;
 }
 
 .citation {
     font-weight: 500;
-    line-height: 24px;
+    line-height: 1.5rem;
     text-align: center;
-    border-radius: 4px;
-    padding: 0px 8px;
+    border-radius: 0.25rem;
+    padding: 0 0.5rem;
     background: #d1dbfa;
     color: #123bb6;
     text-decoration: none;
@@ -59,21 +59,21 @@
 }
 
 .followupQuestionsList {
-    margin-top: 10px;
+    margin-top: 0.625rem;
 }
 
 .followupQuestionLearnMore {
-    margin-right: 5px;
+    margin-right: 0.3125rem;
     font-weight: 600;
-    line-height: 24px;
+    line-height: 1.5rem;
 }
 
 .followupQuestion {
     font-weight: 600;
-    line-height: 24px;
+    line-height: 1.5rem;
     text-align: center;
-    border-radius: 4px;
-    padding: 0px 8px;
+    border-radius: 0.25rem;
+    padding: 0 0.5rem;
     background: #e8ebfa;
     color: black;
     font-style: italic;
@@ -95,18 +95,18 @@ sup {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 0.625rem;
     font-weight: 600;
     vertical-align: top;
-    top: -1;
-    margin: 0px 2px;
-    min-width: 14px;
-    height: 14px;
-    border-radius: 3px;
+    top: -0.0625rem;
+    margin: 0 0.125rem;
+    min-width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 0.1875rem;
     background: #d1dbfa;
     color: #123bb6;
     text-decoration-color: transparent;
-    outline: transparent solid 1px;
+    outline: transparent solid 0.0625rem;
     cursor: pointer;
 }
 
@@ -135,4 +135,44 @@ sup {
 .loadingdots::after {
     content: "";
     animation: loading 1s infinite;
+}
+
+@media only screen and (max-width: 48rem) {
+    .answerContainer {
+        padding: 1rem;
+    }
+
+    .answerLogo {
+        font-size: 1.5rem;
+    }
+
+    .answerText {
+        font-size: 0.875rem;
+        line-height: 1.1rem;
+        padding-top: 0.875rem;
+        padding-bottom: 0.875rem;
+    }
+
+    .answerText td,
+    .answerText th {
+        padding: 0.25rem;
+    }
+
+    .followupQuestionsList {
+        margin-top: 0.5rem;
+    }
+}
+
+@media only screen and (max-width: 30rem) {
+    .answerText {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .answerText td,
+    .answerText th {
+        padding: 0.2rem;
+    }
 }
