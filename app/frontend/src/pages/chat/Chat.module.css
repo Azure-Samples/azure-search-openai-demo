@@ -22,8 +22,6 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     max-height: 64rem;
     padding-top: 3.75rem;
 }
@@ -121,7 +119,6 @@
 
 .commandsContainer {
     display: flex;
-    align-self: flex-end;
 }
 
 .commandButton {

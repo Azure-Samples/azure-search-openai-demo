@@ -3,4 +3,5 @@
     align-items: center;
     gap: 6px;
     cursor: pointer;
+    direction: rtl;
 }
