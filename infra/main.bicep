@@ -56,24 +56,7 @@ param formRecognizerResourceGroupLocation string = location
 
 param formRecognizerSkuName string = 'S0'
 
-param privateEndpointName string = ''
-param privateEndpointResourceGroupName string = ''
-param privateDnsZoneName string = ''
-param privateDnsGroupName string = ''
-param privateEndpointResourceGroupLocation string = location
-
-param newOrExisting string = 'new' //accepts new or existing
-param vnetRG string = resourceGroupName
 param vnetName string = 'openai-vnet'
-param vnetAddressPrefix string = '10.0.0.0/16'
-param privateEndpointSubnetName string = 'pepsubnet' // for Private Endpoint
-param privateEndpointSubnetPrefix string = '10.0.0.0/24'
-param vnetSubnetName string = 'subnet2' //for VNET Integration app service
-param vnetSubnetPrefix string = '10.0.1.0/24'
-param privateEndpointSubnetnsgname string = 'pepsubnetnsg'
-param privateEndpointSubnetroutetablename string = 'pepsubnetrt'
-param vnetSubnetnsgname string = 'vnetnsg'
-param vnetSubnetroutetablename string = 'vnetrt'
 
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
@@ -127,10 +110,6 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
-}
-
-resource privateEndpointResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(privateEndpointResourceGroupName) && usePrivateEndpoint) {
-  name: !empty(privateEndpointResourceGroupName) ? privateEndpointResourceGroupName : resourceGroup.name
 }
 
 // Monitor application with Azure Monitor

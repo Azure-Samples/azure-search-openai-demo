@@ -97,18 +97,6 @@
     },
     "usePrivateEndpoint": {
       "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"
-    },
-    "privateEndpointResourceGroupName": {
-      "value": "${PRIVATE_ENDPOINT_RESOURCE_GROUP}"
-    },
-    "privateEndpointName":{
-      "value": "${PRIVATE_ENDPOINT_NAME}"
-    },
-    "privateDnsZoneName":{
-      "value": "${PRIVATE_DNS_ZONE_NAME}"
-    },
-    "privateDnsGroupName":{
-      "value": "${PRIVATE_ENDPOINT_DNS_GROUP_NAME}"
     }
   }
 }

@@ -10,6 +10,8 @@ param openAiId string
 param searchServiceName string
 param resourceToken string
 
+var environmentData = environment()
+
 module vnet './core/networking/vnet.bicep' = {
   name: vnetName
   params: {
@@ -27,7 +29,7 @@ module vnet './core/networking/vnet.bicep' = {
 module blobDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'blob-dnzones'
   params: {
-    dnsZoneName: 'privatelink.blob.core.windows.net' 
+    dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
