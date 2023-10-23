@@ -12,7 +12,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-ai-formrecognizer==3.3.0
+azure-ai-formrecognizer==3.3.1
     # via -r requirements.in
 azure-common==1.1.28
     # via
@@ -26,15 +26,15 @@ azure-core==1.29.4
     #   azure-storage-blob
     #   azure-storage-file-datalake
     #   msrest
-azure-identity==1.14.0
+azure-identity==1.14.1
     # via -r requirements.in
-azure-search-documents==11.4.0b6
+azure-search-documents==11.4.0b11
     # via -r requirements.in
-azure-storage-blob==12.18.2
+azure-storage-blob==12.18.3
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
-azure-storage-file-datalake==12.13.1
+azure-storage-file-datalake==12.13.2
     # via -r requirements.in
 certifi==2023.7.22
     # via
@@ -101,7 +101,7 @@ pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
     # via msal
-pypdf==3.16.3
+pypdf==3.16.4
     # via -r requirements.in
 python-dateutil==2.8.2
     # via pandas
