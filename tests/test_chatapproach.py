@@ -157,12 +157,6 @@ def test_get_messages_from_history_truncated_break_pair():
     ]
 
 
-""" test this
-    def extract_followup_questions(self, content: str):
-        return content.split("<<")[0], re.findall(r'<<([^>>]+)>>', content)
-"""
-
-
 def test_extract_followup_questions():
     chat_approach = ChatReadRetrieveReadApproach(
         None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
