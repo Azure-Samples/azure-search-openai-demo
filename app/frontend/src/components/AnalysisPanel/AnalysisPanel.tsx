@@ -23,7 +23,6 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     const isDisabledSupportingContentTab: boolean = !answer.choices[0].context.data_points.length;
     const isDisabledCitationTab: boolean = !activeCitation;
 
-    const randomNumber = Math.floor(Math.random() * 1000000);
     const sanitizedThoughts = DOMPurify.sanitize(answer.choices[0].context.thoughts!);
 
     return (
@@ -51,7 +50,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText="Citation"
                 headerButtonProps={isDisabledCitationTab ? pivotItemDisabledStyle : undefined}
             >
-                <iframe title="Citation" src={activeCitation?.replace(".pdf#page", `.pdf?cache=${randomNumber}#page`)} width="100%" height={citationHeight} />
+                <iframe title="Citation" src={activeCitation} width="100%" height={citationHeight} />
             </PivotItem>
         </Pivot>
     );
