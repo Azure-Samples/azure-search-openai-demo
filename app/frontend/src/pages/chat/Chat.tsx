@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption, TooltipHost } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -16,6 +16,7 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import { toolTipText, toolTipTextCalloutProps } from "../../i18n/tooltips.js";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -328,43 +329,55 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
-                    <TextField
-                        className={styles.chatSettingsSeparator}
-                        defaultValue={promptTemplate}
-                        label="Override prompt template"
-                        multiline
-                        autoAdjustHeight
-                        onChange={onPromptTemplateChange}
-                    />
-
-                    <SpinButton
-                        className={styles.chatSettingsSeparator}
-                        label="Retrieve this many search results:"
-                        min={1}
-                        max={50}
-                        defaultValue={retrieveCount.toString()}
-                        onChange={onRetrieveCountChange}
-                    />
-                    <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticRanker}
-                        label="Use semantic ranker for retrieval"
-                        onChange={onUseSemanticRankerChange}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticCaptions}
-                        label="Use query-contextual summaries instead of whole documents"
-                        onChange={onUseSemanticCaptionsChange}
-                        disabled={!useSemanticRanker}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSuggestFollowupQuestions}
-                        label="Suggest follow-up questions"
-                        onChange={onUseSuggestFollowupQuestionsChange}
-                    />
+                    {" "}
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                        <TextField
+                            className={styles.chatSettingsSeparator}
+                            defaultValue={promptTemplate}
+                            label="Override prompt template"
+                            multiline
+                            autoAdjustHeight
+                            onChange={onPromptTemplateChange}
+                        />{" "}
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
+                        <SpinButton
+                            className={styles.chatSettingsSeparator}
+                            label="Retrieve this many search results:"
+                            min={1}
+                            max={50}
+                            defaultValue={retrieveCount.toString()}
+                            onChange={onRetrieveCountChange}
+                        />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.excludeCategory}>
+                        <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useSemanticRanker}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSemanticRanker}
+                            label="Use semantic ranker for retrieval"
+                            onChange={onUseSemanticRankerChange}
+                        />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useQueryContextSummaries}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSemanticCaptions}
+                            label="Use query-contextual summaries instead of whole documents"
+                            onChange={onUseSemanticCaptionsChange}
+                            disabled={!useSemanticRanker}
+                        />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.suggestFollowupQuestions}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSuggestFollowupQuestions}
+                            label="Suggest follow-up questions"
+                            onChange={onUseSuggestFollowupQuestionsChange}
+                        />
+                    </TooltipHost>
                     {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
@@ -383,23 +396,27 @@ const Chat = () => {
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}
-                    <Dropdown
-                        className={styles.chatSettingsSeparator}
-                        label="Retrieval mode"
-                        options={[
-                            { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                            { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                            { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
-                        ]}
-                        required
-                        onChange={onRetrievalModeChange}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={shouldStream}
-                        label="Stream chat completion responses"
-                        onChange={onShouldStreamChange}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrievalMode}>
+                        <Dropdown
+                            className={styles.chatSettingsSeparator}
+                            label="Retrieval mode"
+                            options={[
+                                { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                                { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                                { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
+                            ]}
+                            required
+                            onChange={onRetrievalModeChange}
+                        />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.streamChat}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={shouldStream}
+                            label="Stream chat completion responses"
+                            onChange={onShouldStreamChange}
+                        />
+                    </TooltipHost>
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>

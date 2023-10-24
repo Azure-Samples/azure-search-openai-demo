@@ -1,5 +1,17 @@
 import { useRef, useState } from "react";
-import { Checkbox, ChoiceGroup, IChoiceGroupOption, Panel, DefaultButton, Spinner, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
+import {
+    Checkbox,
+    ChoiceGroup,
+    IChoiceGroupOption,
+    Panel,
+    DefaultButton,
+    Spinner,
+    TextField,
+    SpinButton,
+    IDropdownOption,
+    Dropdown,
+    TooltipHost
+} from "@fluentui/react";
 
 import styles from "./OneShot.module.css";
 
@@ -12,6 +24,7 @@ import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import { toolTipText, toolTipTextCalloutProps } from "../../i18n/tooltips.js";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -195,37 +208,46 @@ export function Component(): JSX.Element {
                 onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                 isFooterAtBottom={true}
             >
-                <TextField
-                    className={styles.oneshotSettingsSeparator}
-                    defaultValue={promptTemplate}
-                    label="Override prompt template"
-                    multiline
-                    autoAdjustHeight
-                    onChange={onPromptTemplateChange}
-                />
-
-                <SpinButton
-                    className={styles.oneshotSettingsSeparator}
-                    label="Retrieve this many search results:"
-                    min={1}
-                    max={50}
-                    defaultValue={retrieveCount.toString()}
-                    onChange={onRetrieveCountChange}
-                />
-                <TextField className={styles.oneshotSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                <Checkbox
-                    className={styles.oneshotSettingsSeparator}
-                    checked={useSemanticRanker}
-                    label="Use semantic ranker for retrieval"
-                    onChange={onUseSemanticRankerChange}
-                />
-                <Checkbox
-                    className={styles.oneshotSettingsSeparator}
-                    checked={useSemanticCaptions}
-                    label="Use query-contextual summaries instead of whole documents"
-                    onChange={onUseSemanticCaptionsChange}
-                    disabled={!useSemanticRanker}
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                    <TextField
+                        className={styles.oneshotSettingsSeparator}
+                        defaultValue={promptTemplate}
+                        label="Override prompt template"
+                        multiline
+                        autoAdjustHeight
+                        onChange={onPromptTemplateChange}
+                    />
+                </TooltipHost>
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
+                    <SpinButton
+                        className={styles.oneshotSettingsSeparator}
+                        label="Retrieve this many search results:"
+                        min={1}
+                        max={50}
+                        defaultValue={retrieveCount.toString()}
+                        onChange={onRetrieveCountChange}
+                    />
+                </TooltipHost>
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.excludeCategory}>
+                    <TextField className={styles.oneshotSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                </TooltipHost>
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useSemanticRanker}>
+                    <Checkbox
+                        className={styles.oneshotSettingsSeparator}
+                        checked={useSemanticRanker}
+                        label="Use semantic ranker for retrieval"
+                        onChange={onUseSemanticRankerChange}
+                    />
+                </TooltipHost>
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useQueryContextSummaries}>
+                    <Checkbox
+                        className={styles.oneshotSettingsSeparator}
+                        checked={useSemanticCaptions}
+                        label="Use query-contextual summaries instead of whole documents"
+                        onChange={onUseSemanticCaptionsChange}
+                        disabled={!useSemanticRanker}
+                    />
+                </TooltipHost>
                 {useLogin && (
                     <Checkbox
                         className={styles.oneshotSettingsSeparator}
@@ -244,17 +266,19 @@ export function Component(): JSX.Element {
                         onChange={onUseGroupsSecurityFilterChange}
                     />
                 )}
-                <Dropdown
-                    className={styles.oneshotSettingsSeparator}
-                    label="Retrieval mode"
-                    options={[
-                        { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                        { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                        { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
-                    ]}
-                    required
-                    onChange={onRetrievalModeChange}
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrievalMode}>
+                    <Dropdown
+                        className={styles.oneshotSettingsSeparator}
+                        label="Retrieval mode"
+                        options={[
+                            { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                            { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                            { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
+                        ]}
+                        required
+                        onChange={onRetrievalModeChange}
+                    />
+                </TooltipHost>
                 {useLogin && <TokenClaimsDisplay />}
             </Panel>
         </div>
