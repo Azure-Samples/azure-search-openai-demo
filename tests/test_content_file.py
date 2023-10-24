@@ -76,7 +76,7 @@ async def test_content_file(monkeypatch, mock_env):
         f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
         transport=MockTransport(),
-        retry_total=0,
+        retry_total=0,  # Necessary to avoid unnecessary network requests during tests
     )
     blob_container_client = blob_client.get_container_client(os.environ["AZURE_STORAGE_CONTAINER"])
 
