@@ -5,6 +5,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import Approach
+from approaches.utils import Utils
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 
@@ -75,7 +76,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
-        filter = self.build_filter(overrides, auth_claims)
+        filter = Utils.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:

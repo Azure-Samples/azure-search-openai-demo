@@ -28,6 +28,7 @@ from quart import (
 )
 from quart_cors import cors
 
+from approaches.appresources import AppResources
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
@@ -249,7 +250,7 @@ async def setup_clients():
         AZURE_SEARCH_QUERY_SPELLER,
     )
 
-    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
+    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(AppResources(
         search_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -260,7 +261,7 @@ async def setup_clients():
         KB_FIELDS_CONTENT,
         AZURE_SEARCH_QUERY_LANGUAGE,
         AZURE_SEARCH_QUERY_SPELLER,
-    )
+    ))
 
 
 def create_app():
