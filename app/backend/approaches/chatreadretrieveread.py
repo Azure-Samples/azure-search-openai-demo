@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from typing import Any, AsyncGenerator, Optional, Union
 
 import aiohttp
@@ -29,14 +30,17 @@ class ChatReadRetrieveReadApproach(Approach):
     system_message_chat_conversation = """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
 For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
-Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, e.g. [info1.txt]. Don't combine sources, list each source separately, e.g. [info1.txt][info2.pdf].
+Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
 {follow_up_questions_prompt}
 {injected_prompt}
 """
-    follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook.
-Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
-Try not to repeat questions that have already been asked.
-Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
+    follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
+Enclose the follow-up questions in double angle brackets. Example:
+<<Are there exclusions for prescriptions?>>
+<<Which pharmacies can be ordered from?>>
+<<What is the limit for over-the-counter medication?>>
+Do no repeat questions that have already been asked.
+Make sure the last question ends with ">>"."""
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
 You have access to Azure Cognitive Search index with 100's of documents.
@@ -243,6 +247,10 @@ If you cannot generate a search query, return just the number 0.
         )
         chat_resp = dict(await chat_coroutine)
         chat_resp["choices"][0]["context"] = extra_info
+        if overrides.get("suggest_followup_questions"):
+            content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])
+            chat_resp["choices"][0]["message"]["content"] = content
+            chat_resp["choices"][0]["context"]["followup_questions"] = followup_questions
         chat_resp["choices"][0]["session_state"] = session_state
         return chat_resp
 
@@ -269,10 +277,37 @@ If you cannot generate a search query, return just the number 0.
             "object": "chat.completion.chunk",
         }
 
+        followup_questions_started = False
+        followup_content = ""
         async for event in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             if event["choices"]:
-                yield event
+                # if event contains << and not >>, it is start of follow-up question, truncate
+                content = event["choices"][0]["delta"].get("content", "")
+                if overrides.get("suggest_followup_questions") and "<<" in content:
+                    followup_questions_started = True
+                    earlier_content = content[: content.index("<<")]
+                    if earlier_content:
+                        event["choices"][0]["delta"]["content"] = earlier_content
+                        yield event
+                    followup_content += content[content.index("<<") :]
+                elif followup_questions_started:
+                    followup_content += content
+                else:
+                    yield event
+        if followup_content:
+            _, followup_questions = self.extract_followup_questions(followup_content)
+            yield {
+                "choices": [
+                    {
+                        "delta": {"role": self.ASSISTANT},
+                        "context": {"followup_questions": followup_questions},
+                        "finish_reason": None,
+                        "index": 0,
+                    }
+                ],
+                "object": "chat.completion.chunk",
+            }
 
     async def run(
         self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
@@ -330,3 +365,6 @@ If you cannot generate a search query, return just the number 0.
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
         return user_query
+
+    def extract_followup_questions(self, content: str):
+        return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)

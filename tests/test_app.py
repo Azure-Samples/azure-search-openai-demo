@@ -415,6 +415,41 @@ async def test_chat_stream_session_state_persists(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_followup(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"suggest_followup_questions": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["choices"][0]["context"]["followup_questions"][0] == "What is the capital of Spain?"
+
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_followup(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "stream": True,
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"suggest_followup_questions": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
 async def test_format_as_ndjson():
     async def gen():
         yield {"a": "I ❤️ 🐍"}
