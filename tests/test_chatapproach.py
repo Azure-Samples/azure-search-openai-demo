@@ -155,3 +155,55 @@ def test_get_messages_from_history_truncated_break_pair():
         },
         {"role": "user", "content": "What does a Product Manager do?"},
     ]
+
+
+def test_extract_followup_questions():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = "Here is answer to your question.<<What is the dress code?>>"
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == "Here is answer to your question."
+    assert followup_questions == ["What is the dress code?"]
+
+
+def test_extract_followup_questions_three():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = """Here is answer to your question.
+
+<<What are some examples of successful product launches they should have experience with?>>
+<<Are there any specific technical skills or certifications required for the role?>>
+<<Is there a preference for candidates with experience in a specific industry or sector?>>"""
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == "Here is answer to your question.\n\n"
+    assert followup_questions == [
+        "What are some examples of successful product launches they should have experience with?",
+        "Are there any specific technical skills or certifications required for the role?",
+        "Is there a preference for candidates with experience in a specific industry or sector?",
+    ]
+
+
+def test_extract_followup_questions_no_followup():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = "Here is answer to your question."
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == "Here is answer to your question."
+    assert followup_questions == []
+
+
+def test_extract_followup_questions_no_pre_content():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = "<<What is the dress code?>>"
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == ""
+    assert followup_questions == ["What is the dress code?"]
