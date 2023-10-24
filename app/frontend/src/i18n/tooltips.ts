@@ -12,7 +12,7 @@ export const toolTipText = {
         "Can improve the relevance and accuracy of search results by providing a more concise and focused summary of the most relevant information related to the query or context.",
     suggestFollowupQuestions: "Provide follow-up questions to continue conversation.",
     retrievalMode:
-        "The retrieval mode choices determine how the chatbot retrieves and ranks responses based on semantic similarity to the user's query. `Vectors + Text (Hybrid)` uses a combination of vector embeddings and text matching, `Vectors` uses only vector embeddings, and `Text` uses only text matching.",
+        "The retrieval mode choices determine how the chatbot retrieves and ranks responses based on semantic similarity to the user's query. `Vectors + Text, aka (Hybrid)` uses a combination of vector embeddings and text matching, `Vectors` uses only vector embeddings, and `Text` uses only text matching.",
     streamChat: "Continuously deliver responses as they are generated or wait until all responses are generated before delivering them."
 };
 
