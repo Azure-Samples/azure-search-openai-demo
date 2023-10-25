@@ -174,38 +174,15 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
 
 @pytest.mark.asyncio
 async def test_read_adls_gen2_files(monkeypatch, mock_data_lake_service_client):
-    def mock_remove(*args, **kwargs):
-        pass
-
     adlsgen2_list_strategy = ADLSGen2ListFileStrategy(
         data_lake_storage_account="a", data_lake_filesystem="a", data_lake_path="a", credential=MockAzureCredential()
     )
 
     files = [file async for file in adlsgen2_list_strategy.list()]
     assert len(files) == 3
-    print(files[0].content.name)
-
-    class MockIndexSections:
-        def __init__(self):
-            self.filenames = []
-
-        def call(self, filename, sections, acls):
-            if filename == "a.txt":
-                assert acls == {"oids": ["A-USER-ID"], "groups": ["A-GROUP-ID"]}
-            elif filename == "b.txt":
-                assert acls == {"oids": ["B-USER-ID"], "groups": ["B-GROUP-ID"]}
-            elif filename == "c.txt":
-                assert acls == {"oids": ["C-USER-ID"], "groups": ["C-GROUP-ID"]}
-            else:
-                raise Exception(f"Unexpected filename {filename}")
-
-            self.filenames.append(filename)
-
-    mock_index_sections = MockIndexSections()
-
-    def mock_index_sections_method(filename, sections, acls):
-        mock_index_sections.call(filename, sections, acls)
-
-    # read_adls_gen2_files(use_vectors=True, vectors_batch_support=True)
-
-    # assert mock_index_sections.filenames == ["a.txt", "b.txt", "c.txt"]
+    assert files[0].filename() == "a.txt"
+    assert files[0].acls == {"oids": ["A-USER-ID"], "groups": ["A-GROUP-ID"]}
+    assert files[1].filename() == "b.txt"
+    assert files[1].acls == {"oids": ["B-USER-ID"], "groups": ["B-GROUP-ID"]}
+    assert files[2].filename() == "c.txt"
+    assert files[2].acls == {"oids": ["C-USER-ID"], "groups": ["C-GROUP-ID"]}
