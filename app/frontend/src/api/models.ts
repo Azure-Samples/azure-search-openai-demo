@@ -27,6 +27,7 @@ export type ResponseMessage = {
 export type ResponseContext = {
     thoughts: string | null;
     data_points: string[];
+    followup_questions: string[] | null;
 };
 
 export type ResponseChoice = {

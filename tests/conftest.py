@@ -39,12 +39,33 @@ def mock_openai_embedding(monkeypatch):
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
-        def __init__(self, answer):
+        def __init__(self, answer: str):
             self.responses = [
                 {"object": "chat.completion.chunk", "choices": []},
                 {"object": "chat.completion.chunk", "choices": [{"delta": {"role": "assistant"}}]},
-                {"object": "chat.completion.chunk", "choices": [{"delta": {"content": answer}}]},
             ]
+            # Split at << to simulate chunked responses
+            if answer.find("<<") > -1:
+                parts = answer.split("<<")
+                self.responses.append(
+                    {
+                        "object": "chat.completion.chunk",
+                        "choices": [{"delta": {"role": "assistant", "content": parts[0] + "<<"}}],
+                    }
+                )
+                self.responses.append(
+                    {
+                        "object": "chat.completion.chunk",
+                        "choices": [{"delta": {"role": "assistant", "content": parts[1]}}],
+                    }
+                )
+            else:
+                self.responses.append(
+                    {
+                        "object": "chat.completion.chunk",
+                        "choices": [{"delta": {"content": answer}}],
+                    }
+                )
 
         def __aiter__(self):
             return self
@@ -65,6 +86,8 @@ def mock_openai_chatcompletion(monkeypatch):
             answer = "capital of France"
         else:
             answer = "The capital of France is Paris. [Benefit_Options-2.pdf]."
+            if messages[0]["content"].find("Generate 3 very brief follow-up questions") > -1:
+                answer = "The capital of France is Paris. [Benefit_Options-2.pdf]. <<What is the capital of Spain?>>"
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:
