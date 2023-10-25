@@ -369,7 +369,7 @@ class TextSplitter:
             num_pages = len(pages)
             for i in range(num_pages - 1):
                 if offset >= pages[i].offset and offset < pages[i + 1].offset:
-                    return pages[i]
+                    return pages[i].page_num
             return pages[num_pages - 1].page_num
 
         all_text = "".join(page.text for page in pages)
@@ -546,7 +546,6 @@ class BlobManager:
             if not await container_client.exists():
                 await container_client.create_container()
 
-            print(file.content.name, os.path.splitext(file.content.name)[1].lower())
             # if file is PDF split into pages and upload each page as a separate blob
             if os.path.splitext(file.content.name)[1].lower() == ".pdf":
                 with open(file.content.name, "rb") as reopened_file:
@@ -763,7 +762,7 @@ class FileStrategy(Strategy):
                 await search_manager.update_content(sections)
                 await self.blob_manager.upload_blob(file)
         elif self.document_action == DocumentAction.Remove:
-            paths = await self.list_file_strategy.list_names()
+            paths = self.list_file_strategy.list_paths()
             async for path in paths:
                 await self.blob_manager.remove_blob(path)
                 await search_manager.remove_content(path)
