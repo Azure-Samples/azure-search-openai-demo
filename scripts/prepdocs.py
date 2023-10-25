@@ -21,11 +21,15 @@ from prepdocs.files import (
 )
 
 
+def is_key_empty(key):
+    return key is None or len(key.strip()) == 0
+
+
 def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStrategy:
-    storage_creds = credential if args.storagekey is None else args.storagekey
+    storage_creds = credential if is_key_empty(args.storagekey) else args.storagekey
     blob_manager = BlobManager(
         endpoint=f"https://{args.storageaccount}.blob.core.windows.net",
-        container=args.storagecontainer,
+        container=args.container,
         credential=storage_creds,
         verbose=args.verbose,
     )
@@ -40,7 +44,7 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
             )
             exit(1)
         formrecognizer_creds = (
-            credential if args.formrecognizerkey is not None else AzureKeyCredential(args.formrecognizerkey)
+            credential if is_key_empty(args.formrecognizerkey) else AzureKeyCredential(args.formrecognizerkey)
         )
         pdf_parser = DocumentAnalysisPdfParser(
             endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/",
@@ -51,13 +55,14 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
     use_vectors = not args.novectors
     embeddings = None
     if use_vectors and args.openaihost != "openai":
-        azure_open_ai_credential = credential if args.openaikey is None else AzureKeyCredential(args.openaikey)
+        azure_open_ai_credential = credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service=args.openaiservice,
             open_ai_deployment=args.openaideployment,
             open_ai_model_name=args.openaimodelname,
             credential=azure_open_ai_credential,
             disable_batch=args.disablebatchvectors,
+            verbose=args.verbose,
         )
     elif use_vectors:
         embeddings = OpenAIEmbeddingService(
@@ -65,13 +70,14 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
             credential=args.openaikey,
             organization=args.openaiorg,
             disable_batch=args.disablebatchvectors,
+            verbose=args.verbose,
         )
     else:
         embeddings = None
 
     print("Processing files...")
     if args.datalakestorageaccount:
-        adls_gen2_creds = credential if args.datalakekey is None else AzureKeyCredential(args.datalakekey)
+        adls_gen2_creds = credential if is_key_empty(args.datalakekey) else AzureKeyCredential(args.datalakekey)
         print(f"Using Data Lake Gen2 Storage Account {args.datalakestorageaccount}")
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=args.datalakestorageaccount,
@@ -104,9 +110,12 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
 
 
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
-    search_creds = credential if args.searchkey is not None else AzureKeyCredential(args.searchkey)
+    search_creds = credential if is_key_empty(args.searchkey) else AzureKeyCredential(args.searchkey)
     search_info = SearchInfo(
-        endpoint=f"https://{args.searchservice}.search.windows.net/", credential=search_creds, index_name=args.index
+        endpoint=f"https://{args.searchservice}.search.windows.net/",
+        credential=search_creds,
+        index_name=args.index,
+        verbose=args.verbose,
     )
 
     if not args.remove and not args.removeall:
@@ -237,5 +246,5 @@ if __name__ == "__main__":
 
     file_strategy = setup_file_strategy(azd_credential, args)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(file_strategy))
+    loop.run_until_complete(main(file_strategy, azd_credential, args))
     loop.close()

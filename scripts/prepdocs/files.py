@@ -37,13 +37,14 @@ from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
 from pypdf import PdfReader, PdfWriter
-from scripts.prepdocs.strategy import SearchInfo, Strategy
 from tenacity import (
     AsyncRetrying,
     retry_if_exception_type,
     stop_after_attempt,
     wait_random_exponential,
 )
+
+from .strategy import SearchInfo, Strategy
 
 USER_AGENT = "azure-search-chat-demo/1.0.0"
 
@@ -52,6 +53,12 @@ class DocumentAction(Enum):
     Add = 0
     Remove = 1
     RemoveAll = 2
+
+
+class EmbeddingBatch:
+    def __init__(self, texts: List[str], token_length: int):
+        self.texts = texts
+        self.token_length = token_length
 
 
 class OpenAIEmbeddings(ABC):
@@ -68,7 +75,7 @@ class OpenAIEmbeddings(ABC):
         encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
         return len(encoding.encode(text))
 
-    def split_text_into_batches(self, texts: List[str]) -> List[List[str]]:
+    def split_text_into_batches(self, texts: List[str]) -> List[EmbeddingBatch]:
         batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL.get(self.open_ai_model_name)
         if not batch_info:
             raise NotImplementedError(
@@ -83,24 +90,25 @@ class OpenAIEmbeddings(ABC):
         for text in texts:
             text_token_length = self.calculate_token_length(text)
             if batch_token_length + text_token_length >= batch_token_limit and len(batch) > 0:
-                batches.append(batch)
+                batches.append(EmbeddingBatch(batch, batch_token_length))
                 batch = []
                 batch_token_length = 0
 
             batch.append(text)
             batch_token_length = batch_token_length + text_token_length
             if len(batch) == batch_max_size:
-                batches.append(batch)
+                batches.append(EmbeddingBatch(batch, batch_token_length))
                 batch = []
                 batch_token_length = 0
 
         if len(batch) > 0:
-            batches.append(batch)
+            batches.append(EmbeddingBatch(batch, batch_token_length))
 
         return batches
 
     async def create_embedding_batch(self, texts: List[str]) -> List[List[float]]:
         batches = self.split_text_into_batches(texts)
+        embeddings = []
         for batch in batches:
             async for attempt in AsyncRetrying(
                 retry=retry_if_exception_type(openai.error.RateLimitError),
@@ -110,8 +118,12 @@ class OpenAIEmbeddings(ABC):
             ):
                 with attempt:
                     emb_args = await self.create_embedding_arguments()
-                    emb_response = await openai.Embedding.acreate(**emb_args, input=batch)
-                    return [data["embedding"] for data in emb_response["data"]]
+                    emb_response = await openai.Embedding.acreate(**emb_args, input=batch.texts)
+                    embeddings.extend([data["embedding"] for data in emb_response["data"]])
+                    if self.verbose:
+                        print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
+
+        return embeddings
 
     async def create_embedding_single(self, text: str) -> List[float]:
         async for attempt in AsyncRetrying(
@@ -157,13 +169,14 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
             "api_type": self.get_api_type(),
             "api_key": await self.wrap_credential(),
             "api_version": "2023-05-15",
+            "api_base": f"https://{self.open_ai_service}.openai.azure.com",
         }
 
     def get_api_type(self) -> str:
-        return "azure_ad" if self.credential is AsyncTokenCredential else "azure"
+        return "azure_ad" if isinstance(self.credential, AsyncTokenCredential) else "azure"
 
     async def wrap_credential(self) -> str:
-        if self.credential is AzureKeyCredential:
+        if isinstance(self.credential, AzureKeyCredential):
             return self.credential.key
 
         if not self.cached_token or self.cached_token.expires_on <= time.time():
@@ -354,7 +367,7 @@ class TextSplitter:
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):
-                if offset >= pages[i].offset and offset < pages[i + 1][1]:
+                if offset >= pages[i].offset and offset < pages[i + 1].offset:
                     return pages[i]
             return pages[num_pages - 1]
 
@@ -399,7 +412,7 @@ class TextSplitter:
                 start += 1
 
             section_text = all_text[start:end]
-            yield (section_text, find_page(start))
+            yield SplitPage(page_num=find_page(start), text=section_text)
 
             last_table_start = section_text.rfind("<table")
             if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind("</table"):
@@ -532,9 +545,11 @@ class BlobManager:
             if not await container_client.exists():
                 await container_client.create_container()
 
-                # if file is PDF split into pages and upload each page as a separate blob
-                if os.path.splitext(file.content.name)[1].lower() == ".pdf":
-                    reader = PdfReader(file.content)
+            print(file.content.name, os.path.splitext(file.content.name)[1].lower())
+            # if file is PDF split into pages and upload each page as a separate blob
+            if os.path.splitext(file.content.name)[1].lower() == ".pdf":
+                with open(file.content.name, "rb") as reopened_file:
+                    reader = PdfReader(reopened_file)
                     pages = reader.pages
                     for i in range(len(pages)):
                         blob_name = BlobManager.blob_name_from_file_page(file.content.name, i)
@@ -546,27 +561,29 @@ class BlobManager:
                         writer.write(f)
                         f.seek(0)
                         await container_client.upload_blob(blob_name, f, overwrite=True)
-                else:
-                    blob_name = BlobManager.blob_name_from_file_page(file.content.name)
-                    await container_client.upload_blob(blob_name, file.content, overwrite=True)
-
-    async def remove_blob(self, path: str = None):
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
-            if not await container_client.exists():
-                return
-            if path is None:
-                blobs = container_client.list_blob_names()
             else:
-                prefix = os.path.splitext(os.path.basename(path))[0]
-                blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
-            async for b in blobs:
-                if path is not None and not re.match(f"{prefix}-\d+\.pdf", b):
-                    continue
-                if self.verbose:
-                    print(f"\tRemoving blob {b}")
-                await container_client.delete_blob(b)
+                blob_name = BlobManager.blob_name_from_file_page(file.content.name)
+                await container_client.upload_blob(blob_name, file.content, overwrite=True)
+
+        async def remove_blob(self, path: str = None):
+            async with BlobServiceClient(
+                account_url=self.endpoint, credential=self.credential
+            ) as service_client, service_client.get_container_client(self.container) as container_client:
+                if not await container_client.exists():
+                    return
+                if path is None:
+                    blobs = container_client.list_blob_names()
+                else:
+                    prefix = os.path.splitext(os.path.basename(path))[0]
+                    blobs = container_client.list_blob_names(
+                        name_starts_with=os.path.splitext(os.path.basename(prefix))[0]
+                    )
+                async for b in blobs:
+                    if path is not None and not re.match(f"{prefix}-\d+\.pdf", b):
+                        continue
+                    if self.verbose:
+                        print(f"\tRemoving blob {b}")
+                    await container_client.delete_blob(b)
 
     @classmethod
     def blob_name_from_file_page(cls, filename, page=0) -> str:
@@ -597,8 +614,8 @@ class SearchManager:
         self.embeddings = embeddings
 
     async def create_index(self):
-        if self.verbose:
-            print(f"Ensuring search index {self.index_name} exists")
+        if self.search_info.verbose:
+            print(f"Ensuring search index {self.search_info.index_name} exists")
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
@@ -632,7 +649,7 @@ class SearchManager:
                 )
 
             index = SearchIndex(
-                name=self.index_name,
+                name=self.search_info.index_name,
                 fields=fields,
                 semantic_settings=SemanticSettings(
                     configurations=[
@@ -652,8 +669,8 @@ class SearchManager:
                     ]
                 ),
             )
-            if self.verbose:
-                print(f"Creating or updating {self.index_name} search index")
+            if self.search_info.verbose:
+                print(f"Creating or updating {self.search_info.index_name} search index")
             await search_index_client.create_or_update_index(index)
 
     async def update_content(self, sections: List[Section]):
@@ -664,8 +681,8 @@ class SearchManager:
             for batch in section_batches:
                 embeddings = None
                 if self.embeddings:
-                    embeddings = self.embeddings.create_embeddings(
-                        texts=[section.split_page.text for section in sections]
+                    embeddings = await self.embeddings.create_embeddings(
+                        texts=[section.split_page.text for section in batch]
                     )
                 documents = [
                     {
@@ -673,7 +690,7 @@ class SearchManager:
                         "content": section.split_page.text,
                         "category": section.category,
                         "sourcepage": BlobManager.blob_name_from_file_page(
-                            filename=section.content.name, page=section.split_page.page_num
+                            filename=section.content.filename(), page=section.split_page.page_num
                         ),
                         "sourcefile": section.content.filename(),
                         "embedding": embeddings[i] if embeddings else None,
@@ -685,7 +702,7 @@ class SearchManager:
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: str = None):
-        if self.verbose:
+        if self.search_info.verbose:
             print(f"Removing sections from '{path or '<all>'}' from search index '{self.index_name}'")
         async with self.search_info.create_search_client() as search_client:
             while True:
@@ -694,7 +711,7 @@ class SearchManager:
                 if await r.get_count() == 0:
                     break
                 removed_docs = await search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
-                if self.verbose:
+                if self.search_info.verbose:
                     print(f"\tRemoved {len(removed_docs)} sections from index")
                 # It can take a few seconds for search results to reflect changes, so wait a bit
                 await asyncio.sleep(2)
@@ -730,15 +747,17 @@ class FileStrategy(Strategy):
     async def run(self, search_info: SearchInfo):
         search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
         if self.document_action == DocumentAction.Add:
-            files = await self.list_file_strategy.list()
+            files = self.list_file_strategy.list()
             async for file in files:
-                await self.blob_manager.upload_blob(file)
-                pages = await self.pdf_parser.parse(content=file.content)
+                pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                if search_info.verbose:
+                    print(f"Splitting '{file.filename()}' into sections")
                 sections = [
                     Section(split_page, content=file, category=self.category)
                     for split_page in self.text_splitter.split_pages(pages)
                 ]
                 await search_manager.update_content(sections)
+                await self.blob_manager.upload_blob(file)
         elif self.document_action == DocumentAction.Remove:
             paths = await self.list_file_strategy.list_names()
             async for path in paths:

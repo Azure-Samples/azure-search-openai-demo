@@ -8,10 +8,17 @@ from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerC
 
 
 class SearchInfo:
-    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], index_name: str):
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        index_name: str,
+        verbose: bool = False,
+    ):
         self.endpoint = endpoint
         self.credential = credential
         self.index_name = index_name
+        self.verbose = verbose
 
     def create_search_client(self) -> SearchClient:
         return SearchClient(endpoint=self.endpoint, index_name=self.index_name, credential=self.credential)
