@@ -3,6 +3,11 @@ param tags object = {}
 
 param applicationInsightsName string
 param logAnalyticsName string
+param amplsName string
+
+param private bool = false
+param vnetName string = ''
+param peSubnetName string = ''
 
 module logAnalytics 'loganalytics.bicep' = {
   name: 'loganalytics'
@@ -10,6 +15,8 @@ module logAnalytics 'loganalytics.bicep' = {
     name: logAnalyticsName
     location: location
     tags: tags
+    private: private
+    amplsName: AMPLS.name
   }
 }
 
@@ -19,6 +26,20 @@ module applicationInsights 'applicationinsights.bicep' = {
     name: applicationInsightsName
     location: location
     tags: tags
+    private: private 
+    amplsName: AMPLS.name
+  }
+}
+
+// Azure Monitor Private Link Scope
+module AMPLS 'ampls.bicep' = if ( private ) {
+  name: 'ampls'
+  params: {
+    name: amplsName
+    location: location
+    tags: tags
+    vnetName: vnetName
+    peSubnetName:  peSubnetName
   }
 }
 

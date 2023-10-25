@@ -9,7 +9,6 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param appServicePlanName string = ''
 param resourceGroupName string = ''
 param logAnalyticsName string = ''
 
@@ -65,6 +64,25 @@ param containerRegistryName string = ''
 param webContainerAppName string = ''
 param webAppExists bool = false
 
+// Vnet for private environment
+param networkResourceGroupName string = ''
+param vnetName string = 'vnet'
+param peSubnetName string = 'privateEndpointSubnet'
+param acaSubnetName string = 'acaServiceSubnet'
+param vnetAddressPrefix string = '10.0.0.0/16'
+param peSubnetAddressPrefix string = '10.0.1.0/24'
+param acaSubnetAddressPrefix string = '10.0.2.0/24'
+
+// Options for closed private environment
+@description('The IP address of the client making the maintenance access. Used with firewall functions provided by azure paas services.')
+param clientIpAddress string
+
+@description('whether to create a private deployment private-> true | public -> false')
+param private bool
+
+// Azure Monitor Private Link Scope for private environment
+param amplsName string = 'ampls'
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
@@ -92,6 +110,10 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
 
+resource networkResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(networkResourceGroupName)) {
+  name: !empty(networkResourceGroupName) ? networkResourceGroupName : resourceGroup.name
+}
+
 // Monitor application with Azure Monitor
 module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
   name: 'monitoring'
@@ -101,9 +123,15 @@ module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights
     tags: tags
     logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
     applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
+    
+    // private environment option. configure AMPLS
+    vnetName: vnetName
+    peSubnetName: peSubnetName
+    private: private
+    amplsName: amplsName
   }
 }
-
+/*
 // Create an App Service Plan to group applications under the same payment plan and SKU
 module appServicePlan 'core/host/appserviceplan.bicep' = {
   name: 'appserviceplan'
@@ -119,6 +147,7 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
     kind: 'linux'
   }
 }
+*/
 
 module containerApps 'core/host/container-apps.bicep' = {
   name: 'container-apps'
@@ -130,6 +159,12 @@ module containerApps 'core/host/container-apps.bicep' = {
     containerRegistryName: !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${resourceToken}'
     logAnalyticsWorkspaceName: monitoring.outputs.logAnalyticsWorkspaceName
     applicationInsightsName: monitoring.outputs.applicationInsightsName
+    // for private environment
+    private: private
+    clientIpAddress: ( private) ? clientIpAddress : ''
+    vnetName: (private) ? vnetName : ''
+    peSubnetName: (private) ? peSubnetName : ''
+    acaSubnetName: (private) ? acaSubnetName : ''
   }
 }
 
@@ -190,6 +225,12 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
         capacity: embeddingDeploymentCapacity
       }
     ]
+    // for private environment
+    private: private
+    clientIpAddress: (private) ? clientIpAddress : ''
+    vnetName: (private) ? vnetName : ''
+    peSubnetName: (private) ? peSubnetName : ''
+    privateDnsZoneNames: [ 'privatelink.openai.azure.com' ]
   }
 }
 
@@ -204,6 +245,12 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
     sku: {
       name: formRecognizerSkuName
     }
+    // for private environment
+    private: private
+    clientIpAddress: ( private) ? clientIpAddress : ''
+    vnetName: (private) ? vnetName : ''
+    peSubnetName: (private) ? peSubnetName : ''
+    privateDnsZoneNames: [ 'privatelink.cognitiveservices.azure.com' ]
   }
 }
 
@@ -223,6 +270,11 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: 'free'
+    // for private environment
+    private: private
+    clientIpAddress: ( private) ? clientIpAddress : ''
+    vnetName: (private) ? vnetName : ''
+    peSubnetName: (private) ? peSubnetName : ''
   }
 }
 
@@ -247,6 +299,11 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
+    // for private environment
+    private: private
+    clientIpAddress: ( private) ? clientIpAddress : ''
+    vnetName: (private) ? vnetName : ''
+    peSubnetName: (private) ? peSubnetName : ''
   }
 }
 
@@ -349,6 +406,21 @@ module searchRoleBackend 'core/security/role.bicep' = {
     principalId: web.outputs.SERVICE_WEB_IDENTITY_PRINCIPAL_ID
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
     principalType: 'ServicePrincipal'
+  }
+}
+
+module vnet 'core/network/vnet.bicep' = if ( private ) {
+  scope: networkResourceGroup
+  name: vnetName
+  params: {
+    vnetName: vnetName
+    location: location
+    tags: tags
+    vnetAddressPrefix: vnetAddressPrefix
+    peSubnetAddressPrefix: peSubnetAddressPrefix
+    acaSubnetAddressPrefix: acaSubnetAddressPrefix
+    peSubnetName: peSubnetName
+    acaSubnetName: acaSubnetName
   }
 }
 

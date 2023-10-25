@@ -5,10 +5,16 @@ param tags object = {}
 param customSubDomainName string = name
 param deployments array = []
 param kind string = 'OpenAI'
+//shoud be Disabled for closed environment. Set to Enabled for convenience during the demo/workshop
 param publicNetworkAccess string = 'Enabled'
 param sku object = {
   name: 'S0'
 }
+param private bool = false
+param clientIpAddress string = ''
+param vnetName string
+param peSubnetName string
+param privateDnsZoneNames array = []
 
 resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: name
@@ -18,7 +24,17 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
-  }
+    //shoud be Disabled for closed environment. Set to Enabled for convenience during the demo/workshop
+    networkAcls: {
+      defaultAction: (private) ? 'Deny' : 'Allow'
+      ipRules: (private) ? [
+        {
+          action: 'Allow'
+          value: clientIpAddress 
+        }
+      ] : []
+    }
+  } 
   sku: sku
 }
 
@@ -35,6 +51,28 @@ resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01
     capacity: 20
   }
 }]
+
+resource existingVnet 'Microsoft.Network/virtualNetworks@2020-05-01' existing = if ( private ) {
+  name: vnetName
+  resource existingsubnet 'subnets' existing = {
+    name: peSubnetName
+  }
+}
+
+module PrivateEndpoint '../network/private-endpoint.bicep' = [for privateDnsZoneName in privateDnsZoneNames: if ( private ) {
+  name: privateDnsZoneName
+  params: {
+    privateDnsZoneName: privateDnsZoneName
+    location: location
+    tags: tags
+    vnetId: existingVnet.id
+    subnetId: existingVnet::existingsubnet.id
+    privateEndpointName: 'pe-${name}-${privateDnsZoneName}'
+    privateLinkServiceId: account.id
+    privateLinkServicegroupId: 'account'
+  }
+}]
+
 
 output endpoint string = account.properties.endpoint
 output id string = account.id

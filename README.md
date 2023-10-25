@@ -178,6 +178,23 @@ By default, the deployed Azure web app will have no authentication or access res
 
 To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
 
+### Configure closed private network 
+
+One way to improve network security is to close the network into a virtual network.
+
+Before building with the azd command, the following commands can be used to configure the deployed environment to be closed.
+
+1. Run `azd env set PRIVATE_DEPLOYMENT true`
+1. Run `azd env set CLIENT_IP_ADDRESS {IP address of your local PC}`
+
+By setting this environment variable, a virtual network is created and the Container Apps environment is integrated with the virtual network. (This is a sample configuration, so the ingress can be accessed directly from the public network. In a production environment, consider protecting it with AppGW, etc.)
+
+Private Endpoints are created in the ”privateEndpointSubnet” subnet in the virtual network to access services such as Azure Monitor, App insight, registry, storage, and ai services. Traffic from Container Apps is accessed through these Private Endpoints.
+
+In closed configuration, access from the outside should be also blocked. However, in order to deploy applications and upload data from your local PC, firewall filtering configuration of each service is set to allow access only from your local PC.
+
+> Note: This is a reference configuration.When setting up the production environment, appropriate architecture design is required.  Container Registry is deployed as Premium SKU to configure network control settings.
+
 ## Running locally
 
 You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.

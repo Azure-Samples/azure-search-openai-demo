@@ -55,6 +55,12 @@
     },
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
+    },
+    "private": {
+      "value": "${PRIVATE_DEPLOYMENT=false}"
+    },
+    "clientIpAddress": {
+      "value": "${CLIENT_IP_ADDRESS}"
     }
   }
 }

@@ -70,7 +70,7 @@ resource app 'Microsoft.App/containerApps@2023-04-01-preview' = {
     userAssignedIdentities: { '${userIdentity.id}': {} }
   }
   properties: {
-    managedEnvironmentId: containerAppsEnvironment.id
+    environmentId: containerAppsEnvironment.id
     configuration: {
       activeRevisionsMode: 'single'
       ingress: ingressEnabled ? {

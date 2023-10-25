@@ -7,6 +7,12 @@ param containerRegistryName string
 param logAnalyticsWorkspaceName string
 param applicationInsightsName string = ''
 
+param private bool = false
+param vnetName string
+param peSubnetName string
+param acaSubnetName string
+param clientIpAddress string = ''
+
 module containerAppsEnvironment 'container-apps-environment.bicep' = {
   name: '${name}-container-apps-environment'
   params: {
@@ -15,6 +21,9 @@ module containerAppsEnvironment 'container-apps-environment.bicep' = {
     tags: tags
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
     applicationInsightsName: applicationInsightsName
+    private: private
+    vnetName: vnetName
+    acaSubnetName: acaSubnetName
   }
 }
 
@@ -24,6 +33,10 @@ module containerRegistry 'container-registry.bicep' = {
     name: containerRegistryName
     location: location
     tags: tags
+    private: private
+    clientIpAddress: clientIpAddress
+    vnetName: vnetName
+    peSubnetName: peSubnetName
   }
 }
 

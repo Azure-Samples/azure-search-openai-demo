@@ -4,7 +4,12 @@ param tags object = {}
 
 param daprEnabled bool = false
 param logAnalyticsWorkspaceName string
-param applicationInsightsName string = ''
+param applicationInsightsName string
+
+// parameters for private deployment
+param private bool = false
+param vnetName string
+param acaSubnetName string
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
   name: name
@@ -19,6 +24,11 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
       }
     }
     daprAIInstrumentationKey: daprEnabled && !empty(applicationInsightsName) ? applicationInsights.properties.InstrumentationKey : ''
+    // Vnet Config for private deployment
+    vnetConfiguration: private ? {
+      infrastructureSubnetId: existingVnet::existingAcaSubnet.id
+      internal: false
+    } : null
     workloadProfiles: [
       {
         name: 'Consumption'
@@ -34,6 +44,14 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10
 
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = if (daprEnabled && !empty(applicationInsightsName)){
   name: applicationInsightsName
+}
+
+
+resource existingVnet 'Microsoft.Network/virtualNetworks@2020-05-01' existing = if ( private ) {
+  name: vnetName
+  resource existingAcaSubnet 'subnets' existing = {
+    name: acaSubnetName
+  }
 }
 
 output defaultDomain string = containerAppsEnvironment.properties.defaultDomain
