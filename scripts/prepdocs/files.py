@@ -1,5 +1,9 @@
+import base64
 import hashlib
+import html
+import io
 import os
+import re
 import tempfile
 import time
 from abc import ABC
@@ -9,11 +13,30 @@ from typing import IO, Any, AsyncGenerator, Generator, List, Optional, Union
 
 import openai
 import tiktoken
+from azure.ai.formrecognizer import DocumentTable
+from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.models import (
+    HnswParameters,
+    PrioritizedFields,
+    SearchableField,
+    SearchField,
+    SearchFieldDataType,
+    SearchIndex,
+    SemanticConfiguration,
+    SemanticField,
+    SemanticSettings,
+    SimpleField,
+    VectorSearch,
+    VectorSearchAlgorithmConfiguration,
+)
+from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
+from pypdf import PdfReader, PdfWriter
 from scripts.prepdocs.strategy import Strategy
 from tenacity import (
     AsyncRetrying,
@@ -22,6 +45,8 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
+
+USER_AGENT = "azure-search-chat-demo/1.0.0"
 
 
 class DocumentAction(Enum):
@@ -47,7 +72,6 @@ class OpenAIEmbeddings(ABC):
         if self.verbose:
             print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
-    @classmethod
     def calculate_token_length(self, text: str):
         encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
         return len(encoding.encode(text))
@@ -64,7 +88,7 @@ class OpenAIEmbeddings(ABC):
         batch = []
         batch_token_length = 0
         for text in texts:
-            text_token_length = OpenAIEmbeddings.calculate_token_length(text)
+            text_token_length = self.calculate_token_length(text)
             if batch_token_length + text_token_length >= batch_token_limit and len(batch) > 0:
                 yield batch
                 batch = []
@@ -175,6 +199,11 @@ class File:
     def __exit__(self):
         self.content.close()
 
+    def filename_to_id(self):
+        filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.content.name)
+        filename_hash = base64.b16encode(self.content.name.encode("utf-8")).decode("ascii")
+        return f"file-{filename_ascii}-{filename_hash}"
+
 
 class ListFileStrategy(ABC):
     async def list(self) -> AsyncGenerator[File]:
@@ -238,48 +267,50 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         self.credential = credential
 
     async def list(self) -> AsyncGenerator[File]:
-        service = DataLakeServiceClient(
+        async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
-        )
-        filesystem = service.get_file_system_client(file_system=self.data_lake_file_system)
-        paths = filesystem.get_paths(path=self.data_lake_path, recursive=True)
-        async for path in paths:
-            if path.is_directory:
-                continue
+        ) as service_client, service_client.get_file_system_client(
+            file_system=self.data_lake_file_system
+        ) as filesystem_client:
+            paths = filesystem_client.get_paths(path=self.data_lake_path, recursive=True)
+            async for path in paths:
+                if path.is_directory:
+                    continue
 
-            temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
-            try:
-                with open(temp_file_path, "wb") as temp_file:
-                    file_client = filesystem.get_file_client(path)
-                    downloader = await file_client.download_file()
-                    await downloader.readinto(temp_file)
-
-                # Parse out user ids and group ids
-                acls = {"oids": [], "groups": []}
-                # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
-                # Request ACLs as GUIDs
-                acl_list = file_client.get_access_control(upn=False)["acl"]
-                # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
-                # ACL Format: user::rwx,group::r-x,other::r--,user:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:r--
-                acl_list = acl_list.split(",")
-                for acl in acl_list:
-                    acl_parts: list = acl.split(":")
-                    if len(acl_parts) != 3:
-                        continue
-                    if len(acl_parts[1]) == 0:
-                        continue
-                    if acl_parts[0] == "user" and "r" in acl_parts[2]:
-                        acls["oids"].append(acl_parts[1])
-                    if acl_parts[0] == "group" and "r" in acl_parts[2]:
-                        acls["groups"].append(acl_parts[1])
-
-                yield File(content=open(temp_file, "rb"), acls=acls)
-            except Exception as e:
-                print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
+                temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
                 try:
-                    os.remove(temp_file_path)
+                    with open(temp_file_path, "wb") as temp_file, filesystem_client.get_file_client(
+                        path
+                    ) as file_client:
+                        downloader = await file_client.download_file()
+                        await downloader.readinto(temp_file)
+
+                    # Parse out user ids and group ids
+                    acls = {"oids": [], "groups": []}
+                    # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
+                    # Request ACLs as GUIDs
+                    acl_list = file_client.get_access_control(upn=False)["acl"]
+                    # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
+                    # ACL Format: user::rwx,group::r-x,other::r--,user:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:r--
+                    acl_list = acl_list.split(",")
+                    for acl in acl_list:
+                        acl_parts: list = acl.split(":")
+                        if len(acl_parts) != 3:
+                            continue
+                        if len(acl_parts[1]) == 0:
+                            continue
+                        if acl_parts[0] == "user" and "r" in acl_parts[2]:
+                            acls["oids"].append(acl_parts[1])
+                        if acl_parts[0] == "group" and "r" in acl_parts[2]:
+                            acls["groups"].append(acl_parts[1])
+
+                    yield File(content=open(temp_file, "rb"), acls=acls)
                 except Exception as e:
-                    print(f"\tGot an error while deleting {temp_file_path} -> {e}")
+                    print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
+                    try:
+                        os.remove(temp_file_path)
+                    except Exception as e:
+                        print(f"\tGot an error while deleting {temp_file_path} -> {e}")
 
 
 class Page:
@@ -289,9 +320,330 @@ class Page:
         self.text = text
 
 
+class SplitPage:
+    def __init__(self, page_num: int, text: str):
+        self.page_num = page_num
+        self.text = text
+
+
+class TextSplitter:
+    def __init__(self):
+        self.sentence_endings = [".", "!", "?"]
+        self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
+        self.max_section_length = 1000
+        self.sentence_search_limit = 100
+        self.section_overlap = 100
+
+    def split_pages(self, pages: List[Page]) -> Generator[SplitPage]:
+        def find_page(offset):
+            num_pages = len(pages)
+            for i in range(num_pages - 1):
+                if offset >= pages[i].offset and offset < pages[i + 1][1]:
+                    return pages[i]
+            return pages[num_pages - 1]
+
+        all_text = "".join(page.text for page in pages)
+        length = len(all_text)
+        start = 0
+        end = length
+        while start + self.section_overlap < length:
+            last_word = -1
+            end = start + self.max_section_length
+
+            if end > length:
+                end = length
+            else:
+                # Try to find the end of the sentence
+                while (
+                    end < length
+                    and (end - start - self.max_section_length) < self.sentence_search_limit
+                    and all_text[end] not in self.sentence_endings
+                ):
+                    if all_text[end] in self.word_breaks:
+                        last_word = end
+                    end += 1
+                if end < length and all_text[end] not in self.sentence_endings and last_word > 0:
+                    end = last_word  # Fall back to at least keeping a whole word
+            if end < length:
+                end += 1
+
+            # Try to find the start of the sentence or at least a whole word boundary
+            last_word = -1
+            while (
+                start > 0
+                and start > end - self.max_section_length - 2 * self.sentence_search_limit
+                and all_text[start] not in self.sentence_endings
+            ):
+                if all_text[start] in self.word_breaks:
+                    last_word = start
+                start -= 1
+            if all_text[start] not in self.sentence_endings and last_word > 0:
+                start = last_word
+            if start > 0:
+                start += 1
+
+            section_text = all_text[start:end]
+            yield (section_text, find_page(start))
+
+            last_table_start = section_text.rfind("<table")
+            if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind("</table"):
+                # If the section ends with an unclosed table, we need to start the next section with the table.
+                # If table starts inside sentence_search_limit, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
+                # If last table starts inside section_overlap, keep overlapping
+                if self.verbose:
+                    print(
+                        f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}"
+                    )
+                start = min(end - self.section_overlap, start + last_table_start)
+            else:
+                start = end - self.section_overlap
+
+        if start + self.section_overlap < end:
+            yield SplitPage(page_num=find_page(start), text=all_text[start:end])
+
+
 class PdfParser(ABC):
-    async def parse(self) -> List[Page]:
+    async def parse(self, content: IO) -> AsyncGenerator[Page]:
         raise NotImplementedError
+
+
+class LocalPdfParser(PdfParser):
+    async def parse(self, content: IO) -> AsyncGenerator[Page]:
+        reader = PdfReader(content)
+        pages = reader.pages
+        offset = 0
+        for page_num, p in enumerate(pages):
+            page_text = p.extract_text()
+            yield Page(page_num=page_num, offset=offset, text=page_text)
+            offset += len(page_text)
+
+
+class DocumentAnalysisPdfParser(PdfParser):
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        model_id="prebuilt-layout",
+        verbose: bool = False,
+    ):
+        self.model_id = model_id
+        self.endpoint = endpoint
+        self.credential = credential
+        self.verbose = verbose
+
+    async def parse(self, content: IO) -> AsyncGenerator[Page]:
+        if self.verbose:
+            print(f"Extracting text from '{content.name}' using Azure Form Recognizer")
+
+        async with DocumentAnalysisClient(
+            endpoint=self.endpoint, credential=self.credential, headers={"x-ms-useragent": USER_AGENT}
+        ) as form_recognizer_client:
+            poller = await form_recognizer_client.begin_analyze_document(model_id=self.model_id, document=content)
+            form_recognizer_results = await poller.result()
+
+            offset = 0
+            for page_num, page in enumerate(form_recognizer_results.pages):
+                tables_on_page = [
+                    table
+                    for table in (form_recognizer_results.tables or [])
+                    if table.bounding_regions and table.bounding_regions[0].page_number == page_num + 1
+                ]
+
+                # mark all positions of the table spans in the page
+                page_offset = page.spans[0].offset
+                page_length = page.spans[0].length
+                table_chars = [-1] * page_length
+                for table_id, table in enumerate(tables_on_page):
+                    for span in table.spans:
+                        # replace all table spans with "table_id" in table_chars array
+                        for i in range(span.length):
+                            idx = span.offset - page_offset + i
+                            if idx >= 0 and idx < page_length:
+                                table_chars[idx] = table_id
+
+                # build page text by replacing characters in table spans with table html
+                page_text = ""
+                added_tables = set()
+                for idx, table_id in enumerate(table_chars):
+                    if table_id == -1:
+                        page_text += form_recognizer_results.content[page_offset + idx]
+                    elif table_id not in added_tables:
+                        page_text += DocumentAnalysisPdfParser.table_to_html(tables_on_page[table_id])
+                        added_tables.add(table_id)
+
+                yield Page(page_num=page_num, offset=offset, text=page_text)
+                offset += len(page_text)
+
+    @classmethod
+    def table_to_html(cls, table: DocumentTable):
+        table_html = "<table>"
+        rows = [
+            sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index)
+            for i in range(table.row_count)
+        ]
+        for row_cells in rows:
+            table_html += "<tr>"
+            for cell in row_cells:
+                tag = "th" if (cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
+                cell_spans = ""
+                if cell.column_span > 1:
+                    cell_spans += f" colSpan={cell.column_span}"
+                if cell.row_span > 1:
+                    cell_spans += f" rowSpan={cell.row_span}"
+                table_html += f"<{tag}{cell_spans}>{html.escape(cell.content)}</{tag}>"
+            table_html += "</tr>"
+        table_html += "</table>"
+        return table_html
+
+
+class BlobManager:
+    def __init__(
+        self,
+        endpoint: str,
+        container: str,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        verbose: bool = False,
+    ):
+        self.endpoint = endpoint
+        self.credential = credential
+        self.container = container
+        self.verbose = verbose
+
+    async def upload_blob(self, file: File):
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            if not await container_client.exists():
+                await container_client.create_container()
+
+                # if file is PDF split into pages and upload each page as a separate blob
+                if os.path.splitext(file.content.name)[1].lower() == ".pdf":
+                    reader = PdfReader(file.content)
+                    pages = reader.pages
+                    for i in range(len(pages)):
+                        blob_name = BlobManager.blob_name_from_file_page(file.content.name, i)
+                        if self.verbose:
+                            print(f"\tUploading blob for page {i} -> {blob_name}")
+                        f = io.BytesIO()
+                        writer = PdfWriter()
+                        writer.add_page(pages[i])
+                        writer.write(f)
+                        f.seek(0)
+                        await container_client.upload_blob(blob_name, f, overwrite=True)
+                else:
+                    blob_name = BlobManager.blob_name_from_file_page(file.content.name)
+                    await container_client.upload_blob(blob_name, file.content, overwrite=True)
+
+    async def remove_blob(self, file: Optional[File] = None):
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            if not await container_client.exists():
+                return
+            if file is None:
+                blobs = container_client.list_blob_names()
+            else:
+                prefix = os.path.splitext(os.path.basename(file.content))[0]
+                blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
+            async for b in blobs:
+                if file is not None and not re.match(f"{prefix}-\d+\.pdf", b):
+                    continue
+                if self.verbose:
+                    print(f"\tRemoving blob {b}")
+                await container_client.delete_blob(b)
+
+    @classmethod
+    def blob_name_from_file_page(cls, filename, page=0):
+        if os.path.splitext(filename)[1].lower() == ".pdf":
+            return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
+        else:
+            return os.path.basename(filename)
+
+
+class Section:
+    def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
+        self.split_page = split_page
+        self.content = content
+        self.category = category
+
+
+class SearchManager:
+    def __init__(
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        search_analyzer_name: str = None,
+        use_acls: bool = False,
+    ):
+        self.endpoint = endpoint
+        self.credential = credential
+        self.index_name = index_name
+        self.search_analyzer_name = search_analyzer_name
+        self.use_acls = use_acls
+
+    async def create_index(self):
+        if self.verbose:
+            print(f"Ensuring search index {self.index_name} exists")
+
+        async with SearchIndexClient(endpoint=self.endpoint, credential=self.credential) as search_index_client:
+            fields = [
+                SimpleField(name="id", type="Edm.String", key=True),
+                SearchableField(name="content", type="Edm.String", analyzer_name=self.search_analyzer_name),
+                SearchField(
+                    name="embedding",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    hidden=False,
+                    searchable=True,
+                    filterable=False,
+                    sortable=False,
+                    facetable=False,
+                    vector_search_dimensions=1536,
+                    vector_search_configuration="default",
+                ),
+                SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True),
+            ]
+            if self.use_acls:
+                fields.append(
+                    SimpleField(
+                        name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True
+                    )
+                )
+                fields.append(
+                    SimpleField(
+                        name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True
+                    )
+                )
+
+            index = SearchIndex(
+                name=self.index_name,
+                fields=fields,
+                semantic_settings=SemanticSettings(
+                    configurations=[
+                        SemanticConfiguration(
+                            name="default",
+                            prioritized_fields=PrioritizedFields(
+                                title_field=None, prioritized_content_fields=[SemanticField(field_name="content")]
+                            ),
+                        )
+                    ]
+                ),
+                vector_search=VectorSearch(
+                    algorithm_configurations=[
+                        VectorSearchAlgorithmConfiguration(
+                            name="default", kind="hnsw", hnsw_parameters=HnswParameters(metric="cosine")
+                        )
+                    ]
+                ),
+            )
+            if self.verbose:
+                print(f"Creating or updating {self.index_name} search index")
+            await search_index_client.create_or_update_index(index)
+
+    async def update_content():
+        pass
 
 
 class FileStrategy(Strategy):
