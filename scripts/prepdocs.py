@@ -84,10 +84,11 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
             data_lake_filesystem=args.datalakefilesystem,
             data_lake_path=args.datalakepath,
             credential=adls_gen2_creds,
+            verbose=args.verbose,
         )
     else:
         print(f"Using local files in {args.files}")
-        list_file_strategy = LocalListFileStrategy(path_pattern=args.files)
+        list_file_strategy = LocalListFileStrategy(path_pattern=args.files, verbose=args.verbose)
 
     if args.removeall:
         document_action = DocumentAction.RemoveAll

@@ -231,8 +231,9 @@ class ListFileStrategy(ABC):
 
 
 class LocalListFileStrategy(ListFileStrategy):
-    def __init__(self, path_pattern: str):
+    def __init__(self, path_pattern: str, verbose: bool = False):
         self.path_pattern = path_pattern
+        self.verbose = verbose
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async for p in self._list_paths(self.path_pattern):
@@ -369,7 +370,7 @@ class TextSplitter:
             for i in range(num_pages - 1):
                 if offset >= pages[i].offset and offset < pages[i + 1].offset:
                     return pages[i]
-            return pages[num_pages - 1]
+            return pages[num_pages - 1].page_num
 
         all_text = "".join(page.text for page in pages)
         length = len(all_text)
@@ -562,28 +563,26 @@ class BlobManager:
                         f.seek(0)
                         await container_client.upload_blob(blob_name, f, overwrite=True)
             else:
-                blob_name = BlobManager.blob_name_from_file_page(file.content.name)
+                blob_name = BlobManager.blob_name_from_file_page(file.content.name, page=0)
                 await container_client.upload_blob(blob_name, file.content, overwrite=True)
 
-        async def remove_blob(self, path: str = None):
-            async with BlobServiceClient(
-                account_url=self.endpoint, credential=self.credential
-            ) as service_client, service_client.get_container_client(self.container) as container_client:
-                if not await container_client.exists():
-                    return
-                if path is None:
-                    blobs = container_client.list_blob_names()
-                else:
-                    prefix = os.path.splitext(os.path.basename(path))[0]
-                    blobs = container_client.list_blob_names(
-                        name_starts_with=os.path.splitext(os.path.basename(prefix))[0]
-                    )
-                async for b in blobs:
-                    if path is not None and not re.match(f"{prefix}-\d+\.pdf", b):
-                        continue
-                    if self.verbose:
-                        print(f"\tRemoving blob {b}")
-                    await container_client.delete_blob(b)
+    async def remove_blob(self, path: str = None):
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            if not await container_client.exists():
+                return
+            if path is None:
+                blobs = container_client.list_blob_names()
+            else:
+                prefix = os.path.splitext(os.path.basename(path))[0]
+                blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
+            async for b in blobs:
+                if path is not None and not re.match(f"{prefix}-\d+\.pdf", b):
+                    continue
+                if self.verbose:
+                    print(f"\tRemoving blob {b}")
+                await container_client.delete_blob(b)
 
     @classmethod
     def blob_name_from_file_page(cls, filename, page=0) -> str:
@@ -669,9 +668,13 @@ class SearchManager:
                     ]
                 ),
             )
-            if self.search_info.verbose:
-                print(f"Creating or updating {self.search_info.index_name} search index")
-            await search_index_client.create_or_update_index(index)
+            if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
+                if self.search_info.verbose:
+                    print(f"Creating {self.search_info.index_name} search index")
+                await search_index_client.create_index(index)
+            else:
+                if self.search_info.verbose:
+                    print(f"Search index {self.search_info.index_name} already exists")
 
     async def update_content(self, sections: List[Section]):
         MAX_BATCH_SIZE = 1000
@@ -703,13 +706,14 @@ class SearchManager:
 
     async def remove_content(self, path: str = None):
         if self.search_info.verbose:
-            print(f"Removing sections from '{path or '<all>'}' from search index '{self.index_name}'")
+            print(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
                 r = await search_client.search("", filter=filter, top=1000, include_total_count=True)
                 if await r.get_count() == 0:
                     break
+                r = [d async for d in r]
                 removed_docs = await search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
                 if self.search_info.verbose:
                     print(f"\tRemoved {len(removed_docs)} sections from index")
