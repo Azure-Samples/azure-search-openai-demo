@@ -335,12 +335,12 @@ If you cannot generate a search query, return just the number 0.
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
-        for shot in few_shots:
-            message_builder.append_message(shot.get("role"), shot.get("content"))
+        for shot in reversed(few_shots):
+            message_builder.insert_message(shot.get("role"), shot.get("content"))
 
         append_index = len(few_shots) + 1
 
-        message_builder.append_message(self.USER, user_content, index=append_index)
+        message_builder.insert_message(self.USER, user_content, index=append_index)
         total_token_count = message_builder.count_tokens_for_message(message_builder.messages[-1])
 
         newest_to_oldest = list(reversed(history[:-1]))
@@ -349,7 +349,7 @@ If you cannot generate a search query, return just the number 0.
             if (total_token_count + potential_message_count) > max_tokens:
                 logging.debug("Reached max tokens of %d, history will be truncated", max_tokens)
                 break
-            message_builder.append_message(message["role"], message["content"], index=append_index)
+            message_builder.insert_message(message["role"], message["content"], index=append_index)
             total_token_count += potential_message_count
         return message_builder.messages
 
