@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import hashlib
 import html
@@ -17,7 +18,6 @@ from azure.ai.formrecognizer import DocumentTable
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
     HnswParameters,
     PrioritizedFields,
@@ -37,7 +37,7 @@ from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
 from pypdf import PdfReader, PdfWriter
-from scripts.prepdocs.strategy import Strategy
+from scripts.prepdocs.strategy import SearchInfo, Strategy
 from tenacity import (
     AsyncRetrying,
     RetryError,
@@ -51,8 +51,8 @@ USER_AGENT = "azure-search-chat-demo/1.0.0"
 
 class DocumentAction(Enum):
     Add = 0
-    Delete = 1
-    DeleteAll = 2
+    Remove = 1
+    RemoveAll = 2
 
 
 class OpenAIEmbeddings(ABC):
@@ -60,13 +60,6 @@ class OpenAIEmbeddings(ABC):
 
     def create_embedding_arguments(self) -> dict[str, Any]:
         raise NotImplementedError
-
-    async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
-        if not self.disable_batch:
-            return await self.create_embedding_batch(texts)
-        else:
-            embeddings = [await self.create_embedding(text) for text in texts]
-            return embeddings
 
     def before_retry_sleep(self):
         if self.verbose:
@@ -132,6 +125,12 @@ class OpenAIEmbeddings(ABC):
         except RetryError:
             self.before_retry_sleep()
 
+    async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
+        if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
+            return await self.create_embedding_batch(self, texts)
+
+        return [await self.create_embedding_single(text) for text in texts]
+
 
 class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
     def __init__(
@@ -191,13 +190,16 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
 class File:
     def __init__(self, content: IO, acls: Optional[dict[str, list]] = None):
         self.content = content
-        self.acls = acls
+        self.acls = acls or {}
 
     def __enter__(self):
         return self
 
     def __exit__(self):
         self.content.close()
+
+    def filename(self):
+        return os.path.basename(self.content.name)
 
     def filename_to_id(self):
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.content.name)
@@ -209,21 +211,28 @@ class ListFileStrategy(ABC):
     async def list(self) -> AsyncGenerator[File]:
         raise NotImplementedError
 
+    async def list_paths(self) -> AsyncGenerator[str]:
+        raise NotImplementedError
+
 
 class LocalListFileStrategy(ListFileStrategy):
     def __init__(self, path_pattern: str):
         self.path_pattern = path_pattern
 
-    async def list(self) -> AsyncGenerator[File]:
-        async for f in self._list(self.path_pattern):
-            yield f
+    async def list_paths(self) -> AsyncGenerator[str]:
+        async for p in self._list_paths(self.path_pattern):
+            yield p
 
-    async def _list(self, path_pattern: str) -> AsyncGenerator[File]:
+    async def _list_paths(self, path_pattern: str) -> AsyncGenerator[str]:
         for path in glob(path_pattern):
             if os.path.isdir(path):
-                async for f in self._list(f"{path}/*"):
-                    yield f
+                async for p in self._list_paths(f"{path}/*"):
+                    yield p
 
+            yield path
+
+    async def list(self) -> AsyncGenerator[File]:
+        async for path in self.list_paths():
             if not self.check_md5(path):
                 yield File(content=open(path, mode="rb"))
 
@@ -266,7 +275,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         self.data_lake_path = data_lake_path
         self.credential = credential
 
-    async def list(self) -> AsyncGenerator[File]:
+    async def list_paths(self) -> AsyncGenerator[str]:
         async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
         ) as service_client, service_client.get_file_system_client(
@@ -277,6 +286,15 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                 if path.is_directory:
                     continue
 
+                yield path
+
+    async def list(self) -> AsyncGenerator[File]:
+        async with DataLakeServiceClient(
+            account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
+        ) as service_client, service_client.get_file_system_client(
+            file_system=self.data_lake_file_system
+        ) as filesystem_client:
+            async for path in await self.list_paths():
                 temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
                 try:
                     with open(temp_file_path, "wb") as temp_file, filesystem_client.get_file_client(
@@ -534,26 +552,26 @@ class BlobManager:
                     blob_name = BlobManager.blob_name_from_file_page(file.content.name)
                     await container_client.upload_blob(blob_name, file.content, overwrite=True)
 
-    async def remove_blob(self, file: Optional[File] = None):
+    async def remove_blob(self, path: str = None):
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential
         ) as service_client, service_client.get_container_client(self.container) as container_client:
             if not await container_client.exists():
                 return
-            if file is None:
+            if path is None:
                 blobs = container_client.list_blob_names()
             else:
-                prefix = os.path.splitext(os.path.basename(file.content))[0]
+                prefix = os.path.splitext(os.path.basename(path))[0]
                 blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
             async for b in blobs:
-                if file is not None and not re.match(f"{prefix}-\d+\.pdf", b):
+                if path is not None and not re.match(f"{prefix}-\d+\.pdf", b):
                     continue
                 if self.verbose:
                     print(f"\tRemoving blob {b}")
                 await container_client.delete_blob(b)
 
     @classmethod
-    def blob_name_from_file_page(cls, filename, page=0):
+    def blob_name_from_file_page(cls, filename, page=0) -> str:
         if os.path.splitext(filename)[1].lower() == ".pdf":
             return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".pdf"
         else:
@@ -570,23 +588,21 @@ class Section:
 class SearchManager:
     def __init__(
         self,
-        endpoint: str,
-        index_name: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        search_info: SearchInfo,
         search_analyzer_name: str = None,
         use_acls: bool = False,
+        embeddings: Optional[OpenAIEmbeddings] = None,
     ):
-        self.endpoint = endpoint
-        self.credential = credential
-        self.index_name = index_name
+        self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
+        self.embeddings = embeddings
 
     async def create_index(self):
         if self.verbose:
             print(f"Ensuring search index {self.index_name} exists")
 
-        async with SearchIndexClient(endpoint=self.endpoint, credential=self.credential) as search_index_client:
+        async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
                 SimpleField(name="id", type="Edm.String", key=True),
                 SearchableField(name="content", type="Edm.String", analyzer_name=self.search_analyzer_name),
@@ -642,23 +658,94 @@ class SearchManager:
                 print(f"Creating or updating {self.index_name} search index")
             await search_index_client.create_or_update_index(index)
 
-    async def update_content():
-        pass
+    async def update_content(self, sections: List[Section]):
+        MAX_BATCH_SIZE = 1000
+        section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
+
+        async with self.search_info.create_search_client() as search_client:
+            for batch in section_batches:
+                embeddings = None
+                if self.embeddings:
+                    embeddings = self.embeddings.create_embeddings(
+                        texts=[section.split_page.text for section in sections]
+                    )
+                documents = [
+                    {
+                        "id": f"{section.content.filename_to_id()}-page-{i}",
+                        "content": section.split_page.text,
+                        "category": section.category,
+                        "sourcepage": BlobManager.blob_name_from_file_page(
+                            filename=section.content.name, page=section.split_page.page_num
+                        ),
+                        "sourcefile": section.content.filename(),
+                        "embedding": embeddings[i] if embeddings else None,
+                        **section.content.acls,
+                    }
+                    for i, section in enumerate(batch)
+                ]
+
+                await search_client.upload_documents(documents)
+
+    async def remove_content(self, path: str = None):
+        if self.verbose:
+            print(f"Removing sections from '{path or '<all>'}' from search index '{self.index_name}'")
+        async with self.search_info.create_search_client() as search_client:
+            while True:
+                filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
+                r = await search_client.search("", filter=filter, top=1000, include_total_count=True)
+                if await r.get_count() == 0:
+                    break
+                removed_docs = await search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
+                if self.verbose:
+                    print(f"\tRemoved {len(removed_docs)} sections from index")
+                # It can take a few seconds for search results to reflect changes, so wait a bit
+                await asyncio.sleep(2)
 
 
 class FileStrategy(Strategy):
     def __init__(
+        self,
         list_file_strategy: ListFileStrategy,
-        storage_account: str,
-        storage_container: str,
+        blob_manager: BlobManager,
         pdf_parser: PdfParser,
-        embedding_service: OpenAIEmbeddingService,
-        search_analyzer_name: str = None,
-        storage_key: AzureKeyCredential = None,
-        tenant_id: str = None,
+        text_splitter: TextSplitter,
+        document_action: DocumentAction = DocumentAction.Add,
+        embeddings: Optional[OpenAIEmbeddings] = None,
+        search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         category: str = None,
-        skip_blobs: bool = False,
-        document_action: DocumentAction = DocumentAction.Add,
     ):
-        raise NotImplementedError
+        self.list_file_strategy = list_file_strategy
+        self.blob_manager = blob_manager
+        self.pdf_parser = pdf_parser
+        self.text_splitter = text_splitter
+        self.document_action = document_action
+        self.embeddings = embeddings
+        self.search_analyzer_name = search_analyzer_name
+        self.use_acls = use_acls
+        self.category = category
+
+    async def setup(self, search_info: SearchInfo):
+        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
+        await search_manager.create_index()
+
+    async def run(self, search_info: SearchInfo):
+        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
+        if self.document_action == DocumentAction.Add:
+            files = await self.list_file_strategy.list()
+            async for file in files:
+                await self.blob_manager.upload_blob(file)
+                pages = await self.pdf_parser.parse(content=file.content)
+                sections = [
+                    Section(split_page, content=file, category=self.category)
+                    for split_page in self.text_splitter.split_pages(pages)
+                ]
+                await search_manager.update_content(sections)
+        elif self.document_action == DocumentAction.Remove:
+            paths = await self.list_file_strategy.list_names()
+            async for path in paths:
+                await self.blob_manager.remove_blob(path)
+                await search_manager.remove_content(path)
+        elif self.document_action == DocumentAction.RemoveAll:
+            await self.blob_manager.remove_blob()
+            await search_manager.remove_content()
