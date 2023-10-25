@@ -58,7 +58,7 @@ class DocumentAction(Enum):
 class OpenAIEmbeddings(ABC):
     SUPPORTED_BATCH_AOAI_MODEL = {"text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16}}
 
-    def create_embedding_arguments(self) -> dict[str, Any]:
+    async def create_embedding_arguments(self) -> dict[str, Any]:
         raise NotImplementedError
 
     def before_retry_sleep(self):
@@ -110,7 +110,8 @@ class OpenAIEmbeddings(ABC):
                     stop=stop_after_attempt(15),
                 ):
                     with attempt:
-                        emb_response = await openai.Embedding.acreate(**self.create_embedding_arguments(), input=batch)
+                        emb_args = await self.create_embedding_arguments()
+                        emb_response = await openai.Embedding.acreate(**emb_args, input=batch)
                         return [data["embedding"] for data in emb_response["data"]]
             except RetryError:
                 self.before_retry_sleep()
@@ -123,7 +124,8 @@ class OpenAIEmbeddings(ABC):
                 stop=stop_after_attempt(15),
             ):
                 with attempt:
-                    emb_response = await openai.Embedding.acreate(**self.create_embedding_arguments(), input=text)
+                    emb_args = await self.create_embedding_arguments()
+                    emb_response = await openai.Embedding.acreate(**emb_args, input=text)
                     return emb_response["data"][0]["embedding"]
         except RetryError:
             self.before_retry_sleep()
@@ -147,16 +149,16 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
         self.open_ai_model_name = open_ai_model_name
-        self.credential = self.wrap_credential(credential)
+        self.credential = credential
         self.disable_batch = disable_batch
         self.cached_token = None
 
-    def create_embedding_arguments(self) -> dict[str, Any]:
+    async def create_embedding_arguments(self) -> dict[str, Any]:
         return {
             "model": self.open_ai_model_name,
             "deployment_id": self.open_ai_deployment,
             "api_type": self.get_api_type(),
-            "api_key": self.wrap_credential(),
+            "api_key": await self.wrap_credential(),
             "api_version": "2023-05-15",
         }
 
@@ -180,7 +182,7 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
         self.organization = organization
         self.disable_batch = disable_batch
 
-    def create_embedding_arguments(self) -> dict[str, Any]:
+    async def create_embedding_arguments(self) -> dict[str, Any]:
         return {
             "model": self.open_ai_model_name,
             "api_key": self.credential,

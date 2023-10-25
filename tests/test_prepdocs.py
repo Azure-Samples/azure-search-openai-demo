@@ -5,7 +5,11 @@ import pytest
 import scripts
 import tenacity
 from conftest import MockAzureCredential
-from scripts.prepdocs.files import File
+from scripts.prepdocs.files import (
+    AzureOpenAIEmbeddingService,
+    File,
+    OpenAIEmbeddingService,
+)
 
 
 def test_filename_to_id():
@@ -21,10 +25,9 @@ def test_filename_to_id():
     assert File(empty).filename_to_id() == "file-______pdf-E38395E382A1E382A4E383ABE5908D2E706466"
 
 
-def test_compute_embedding_success(monkeypatch, capsys):
-    # monkeypatch.setattr(args, "verbose", True)
-
-    def mock_create(*args, **kwargs):
+@pytest.mark.asyncio
+async def test_compute_embedding_success(monkeypatch):
+    async def mock_create(*args, **kwargs):
         # From https://platform.openai.com/docs/api-reference/embeddings/create
         return {
             "object": "list",
@@ -43,14 +46,58 @@ def test_compute_embedding_success(monkeypatch, capsys):
             "usage": {"prompt_tokens": 8, "total_tokens": 8},
         }
 
-    monkeypatch.setattr(openai.Embedding, "create", mock_create)
-    """
-    assert compute_embedding("foo", "ada", "text-ada-003") == [
-        0.0023064255,
-        -0.009327292,
-        -0.0028842222,
+    monkeypatch.setattr(openai.Embedding, "acreate", mock_create)
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name="text-ada-003",
+        credential=MockAzureCredential(),
+        disable_batch=False,
+    )
+    assert await embeddings.create_embeddings(texts=["foo"]) == [
+        [
+            0.0023064255,
+            -0.009327292,
+            -0.0028842222,
+        ]
     ]
-    """
+
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name="text-ada-003",
+        credential=MockAzureCredential(),
+        disable_batch=True,
+    )
+    assert await embeddings.create_embeddings(texts=["foo"]) == [
+        [
+            0.0023064255,
+            -0.009327292,
+            -0.0028842222,
+        ]
+    ]
+
+    embeddings = OpenAIEmbeddingService(
+        open_ai_model_name="text-ada-003", credential=MockAzureCredential(), organization="org", disable_batch=False
+    )
+    assert await embeddings.create_embeddings(texts=["foo"]) == [
+        [
+            0.0023064255,
+            -0.009327292,
+            -0.0028842222,
+        ]
+    ]
+
+    embeddings = OpenAIEmbeddingService(
+        open_ai_model_name="text-ada-003", credential=MockAzureCredential(), organization="org", disable_batch=True
+    )
+    assert await embeddings.create_embeddings(texts=["foo"]) == [
+        [
+            0.0023064255,
+            -0.009327292,
+            -0.0028842222,
+        ]
+    ]
 
 
 def test_compute_embedding_ratelimiterror(monkeypatch, capsys):
