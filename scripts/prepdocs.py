@@ -77,7 +77,7 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
 
     print("Processing files...")
     if args.datalakestorageaccount:
-        adls_gen2_creds = credential if is_key_empty(args.datalakekey) else AzureKeyCredential(args.datalakekey)
+        adls_gen2_creds = credential if is_key_empty(args.datalakekey) else args.datalakekey
         print(f"Using Data Lake Gen2 Storage Account {args.datalakestorageaccount}")
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=args.datalakestorageaccount,

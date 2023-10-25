@@ -10,13 +10,13 @@ import time
 from abc import ABC
 from enum import Enum
 from glob import glob
-from typing import IO, Any, AsyncGenerator, Generator, List, Optional, Union
+from typing import IO, Any, AsyncGenerator, Dict, Generator, List, Optional, Union
 
 import openai
 import tiktoken
 from azure.ai.formrecognizer import DocumentTable
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.indexes.models import (
     HnswParameters,
@@ -64,6 +64,11 @@ class EmbeddingBatch:
 class OpenAIEmbeddings(ABC):
     SUPPORTED_BATCH_AOAI_MODEL = {"text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16}}
 
+    def __init__(self, open_ai_model_name: str, disable_batch: bool = False, verbose: bool = False):
+        self.open_ai_model_name = open_ai_model_name
+        self.disable_batch = disable_batch
+        self.verbose = verbose
+
     async def create_embedding_arguments(self) -> dict[str, Any]:
         raise NotImplementedError
 
@@ -84,8 +89,8 @@ class OpenAIEmbeddings(ABC):
 
         batch_token_limit = batch_info["token_limit"]
         batch_max_size = batch_info["max_batch_size"]
-        batches = []
-        batch = []
+        batches: List[EmbeddingBatch] = []
+        batch: List[str] = []
         batch_token_length = 0
         for text in texts:
             text_token_length = self.calculate_token_length(text)
@@ -135,7 +140,8 @@ class OpenAIEmbeddings(ABC):
             with attempt:
                 emb_args = await self.create_embedding_arguments()
                 emb_response = await openai.Embedding.acreate(**emb_args, input=text)
-                return emb_response["data"][0]["embedding"]
+
+        return emb_response["data"][0]["embedding"]
 
     async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
         if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
@@ -154,13 +160,11 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         disable_batch: bool = False,
         verbose: bool = False,
     ):
+        super().__init__(open_ai_model_name, disable_batch, verbose)
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
-        self.open_ai_model_name = open_ai_model_name
         self.credential = credential
-        self.disable_batch = disable_batch
-        self.cached_token = None
-        self.verbose = verbose
+        self.cached_token: Optional[AccessToken] = None
 
     async def create_embedding_arguments(self) -> dict[str, Any]:
         return {
@@ -179,18 +183,27 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         if isinstance(self.credential, AzureKeyCredential):
             return self.credential.key
 
-        if not self.cached_token or self.cached_token.expires_on <= time.time():
-            self.cached_token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
+        if isinstance(self.credential, AsyncTokenCredential):
+            if not self.cached_token or self.cached_token.expires_on <= time.time():
+                self.cached_token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
 
-        return self.cached_token.token
+            return self.cached_token.token
+
+        raise Exception("Invalid credential type")
 
 
 class OpenAIEmbeddingService(OpenAIEmbeddings):
-    def __init__(self, open_ai_model_name: str, credential: str, organization: str = None, disable_batch: bool = False):
-        self.open_ai_model_name = open_ai_model_name
+    def __init__(
+        self,
+        open_ai_model_name: str,
+        credential: str,
+        organization: Optional[str] = None,
+        disable_batch: bool = False,
+        verbose: bool = False,
+    ):
+        super().__init__(open_ai_model_name, disable_batch, verbose)
         self.credential = credential
         self.organization = organization
-        self.disable_batch = disable_batch
 
     async def create_embedding_arguments(self) -> dict[str, Any]:
         return {
@@ -223,10 +236,10 @@ class File:
 
 
 class ListFileStrategy(ABC):
-    async def list(self) -> AsyncGenerator[File, None]:
+    def list(self) -> AsyncGenerator[File, None]:
         raise NotImplementedError
 
-    async def list_paths(self) -> AsyncGenerator[str, None]:
+    def list_paths(self) -> AsyncGenerator[str, None]:
         raise NotImplementedError
 
 
@@ -284,7 +297,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_storage_account: str,
         data_lake_filesystem: str,
         data_lake_path: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        credential: Union[AsyncTokenCredential, str],
     ):
         self.data_lake_storage_account = data_lake_storage_account
         self.data_lake_filesystem = data_lake_filesystem
@@ -307,7 +320,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
         ) as service_client, service_client.get_file_system_client(self.data_lake_filesystem) as filesystem_client:
             async for path in self.list_paths():
-                temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
+                temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path))
                 try:
                     async with filesystem_client.get_file_client(path) as file_client:
                         with open(temp_file_path, "wb") as temp_file:
@@ -315,7 +328,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             await downloader.readinto(temp_file)
 
                     # Parse out user ids and group ids
-                    acls = {"oids": [], "groups": []}
+                    acls: Dict[str, List[str]] = {"oids": [], "groups": []}
                     # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
                     # Request ACLs as GUIDs
                     access_control = await file_client.get_access_control(upn=False)
@@ -336,7 +349,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
 
                     yield File(content=open(temp_file_path, "rb"), acls=acls)
                 except Exception as e:
-                    print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
+                    print(f"\tGot an error while reading {path} -> {e} --> skipping file")
                     try:
                         os.remove(temp_file_path)
                     except Exception as e:
@@ -357,12 +370,13 @@ class SplitPage:
 
 
 class TextSplitter:
-    def __init__(self):
+    def __init__(self, verbose: bool = False):
         self.sentence_endings = [".", "!", "?"]
         self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
         self.max_section_length = 1000
         self.sentence_search_limit = 100
         self.section_overlap = 100
+        self.verbose = verbose
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
         def find_page(offset):
@@ -433,7 +447,7 @@ class TextSplitter:
 
 
 class PdfParser(ABC):
-    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
+    def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         raise NotImplementedError
 
 
@@ -516,9 +530,9 @@ class DocumentAnalysisPdfParser(PdfParser):
             for cell in row_cells:
                 tag = "th" if (cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
                 cell_spans = ""
-                if cell.column_span > 1:
+                if cell.column_span is not None and cell.column_span > 1:
                     cell_spans += f" colSpan={cell.column_span}"
-                if cell.row_span > 1:
+                if cell.row_span is not None and cell.row_span > 1:
                     cell_spans += f" rowSpan={cell.row_span}"
                 table_html += f"<{tag}{cell_spans}>{html.escape(cell.content)}</{tag}>"
             table_html += "</tr>"
@@ -531,7 +545,7 @@ class BlobManager:
         self,
         endpoint: str,
         container: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        credential: Union[AsyncTokenCredential, str],
         verbose: bool = False,
     ):
         self.endpoint = endpoint
@@ -565,7 +579,7 @@ class BlobManager:
                 blob_name = BlobManager.blob_name_from_file_page(file.content.name, page=0)
                 await container_client.upload_blob(blob_name, file.content, overwrite=True)
 
-    async def remove_blob(self, path: str = None):
+    async def remove_blob(self, path: Optional[str] = None):
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential
         ) as service_client, service_client.get_container_client(self.container) as container_client:
@@ -602,7 +616,7 @@ class SearchManager:
     def __init__(
         self,
         search_info: SearchInfo,
-        search_analyzer_name: str = None,
+        search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
     ):
@@ -703,17 +717,18 @@ class SearchManager:
 
                 await search_client.upload_documents(documents)
 
-    async def remove_content(self, path: str = None):
+    async def remove_content(self, path: Optional[str] = None):
         if self.search_info.verbose:
             print(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
-                r = await search_client.search("", filter=filter, top=1000, include_total_count=True)
-                if await r.get_count() == 0:
+                result = await search_client.search("", filter=filter, top=1000, include_total_count=True)
+                if await result.get_count() == 0:
                     break
-                r = [d async for d in r]
-                removed_docs = await search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
+                removed_docs = await search_client.delete_documents(
+                    documents=[{"id": document["id"]} async for document in result]
+                )
                 if self.search_info.verbose:
                     print(f"\tRemoved {len(removed_docs)} sections from index")
                 # It can take a few seconds for search results to reflect changes, so wait a bit
@@ -731,7 +746,7 @@ class FileStrategy(Strategy):
         embeddings: Optional[OpenAIEmbeddings] = None,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
-        category: str = None,
+        category: Optional[str] = None,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
