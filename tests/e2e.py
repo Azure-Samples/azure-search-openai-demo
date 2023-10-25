@@ -109,6 +109,7 @@ def test_chat(page: Page, live_server_url: str):
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
+        assert route.request.post_data_json["stream"] is False
         overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["retrieval_mode"] == "vectors"
         assert overrides["semantic_ranker"] is False
@@ -116,7 +117,6 @@ def test_chat_customization(page: Page, live_server_url: str):
         assert overrides["top"] == 1
         assert overrides["prompt_template"] == "You are a cat and only talk about tuna."
         assert overrides["exclude_category"] == "dogs"
-        assert overrides["suggest_followup_questions"] is True
         assert overrides["use_oid_security_filter"] is False
         assert overrides["use_groups_security_filter"] is False
 
@@ -141,7 +141,6 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.get_by_label("Exclude category").click()
     page.get_by_label("Exclude category").fill("dogs")
     page.get_by_text("Use query-contextual summaries instead of whole documents").click()
-    page.get_by_text("Suggest follow-up questions").click()
     page.get_by_text("Use semantic ranker for retrieval").click()
     page.get_by_text("Vectors + Text (Hybrid)").click()
     page.get_by_role("option", name="Vectors", exact=True).click()
@@ -189,6 +188,83 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+
+
+def test_chat_followup_streaming(page: Page, live_server_url: str):
+    # Set up a mock route to the /chat_stream endpoint
+    def handle(route: Route):
+        overrides = route.request.post_data_json["context"]["overrides"]
+        assert overrides["suggest_followup_questions"] is True
+        # Read the JSONL from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_stream_followup/client0/result.jsonlines")
+        jsonl = f.read()
+        f.close()
+        route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
+
+    page.route("*/**/chat", handle)
+
+    # Check initial page state
+    page.goto(live_server_url)
+    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
+    page.get_by_role("button", name="Developer settings").click()
+    page.get_by_text("Suggest follow-up questions").click()
+    page.locator("button").filter(has_text="Close").click()
+
+    # Ask a question and wait for the message to appear
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_label("Ask question button").click()
+
+    expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+    # There should be a follow-up question and it should be clickable:
+    expect(page.get_by_text("What is the capital of Spain?")).to_be_visible()
+    page.get_by_text("What is the capital of Spain?").click()
+
+    # Now there should be a follow-up answer (same, since we're using same test data)
+    expect(page.get_by_text("The capital of France is Paris.")).to_have_count(2)
+
+
+def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
+    # Set up a mock route to the /chat_stream endpoint
+    def handle(route: Route):
+        # Read the JSON from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_followup/client0/result.json")
+        json = f.read()
+        f.close()
+        route.fulfill(body=json, status=200)
+
+    page.route("*/**/chat", handle)
+
+    # Check initial page state
+    page.goto(live_server_url)
+    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
+    page.get_by_role("button", name="Developer settings").click()
+    page.get_by_text("Stream chat completion responses").click()
+    page.get_by_text("Suggest follow-up questions").click()
+    page.locator("button").filter(has_text="Close").click()
+
+    # Ask a question and wait for the message to appear
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_label("Ask question button").click()
+
+    expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+    # There should be a follow-up question and it should be clickable:
+    expect(page.get_by_text("What is the capital of Spain?")).to_be_visible()
+    page.get_by_text("What is the capital of Spain?").click()
+
+    # Now there should be a follow-up answer (same, since we're using same test data)
+    expect(page.get_by_text("The capital of France is Paris.")).to_have_count(2)
 
 
 def test_ask(page: Page, live_server_url: str):
