@@ -69,7 +69,7 @@ class OpenAIEmbeddings(ABC):
         encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
         return len(encoding.encode(text))
 
-    def split_text_into_batches(self, texts: List[str]) -> Generator[List[str]]:
+    def split_text_into_batches(self, texts: List[str]) -> List[List[str]]:
         batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL.get(self.open_ai_model_name)
         if not batch_info:
             raise NotImplementedError(
@@ -78,27 +78,30 @@ class OpenAIEmbeddings(ABC):
 
         batch_token_limit = batch_info["token_limit"]
         batch_max_size = batch_info["max_batch_size"]
+        batches = []
         batch = []
         batch_token_length = 0
         for text in texts:
             text_token_length = self.calculate_token_length(text)
             if batch_token_length + text_token_length >= batch_token_limit and len(batch) > 0:
-                yield batch
+                batches.append(batch)
                 batch = []
                 batch_token_length = 0
 
             batch.append(text)
             batch_token_length = batch_token_length + text_token_length
             if len(batch) == batch_max_size:
-                yield batch
+                batches.append(batch)
                 batch = []
                 batch_token_length = 0
 
         if len(batch) > 0:
-            yield batch
+            batches.append(batch)
+
+        return batches
 
     async def create_embedding_batch(self, texts: List[str]) -> List[List[float]]:
-        batches = list(self.split_text_into_batches(texts))
+        batches = self.split_text_into_batches(texts)
         for batch in batches:
             try:
                 async for attempt in AsyncRetrying(
@@ -208,10 +211,10 @@ class File:
 
 
 class ListFileStrategy(ABC):
-    async def list(self) -> AsyncGenerator[File]:
+    async def list(self) -> AsyncGenerator[File, None]:
         raise NotImplementedError
 
-    async def list_paths(self) -> AsyncGenerator[str]:
+    async def list_paths(self) -> AsyncGenerator[str, None]:
         raise NotImplementedError
 
 
@@ -219,11 +222,11 @@ class LocalListFileStrategy(ListFileStrategy):
     def __init__(self, path_pattern: str):
         self.path_pattern = path_pattern
 
-    async def list_paths(self) -> AsyncGenerator[str]:
+    async def list_paths(self) -> AsyncGenerator[str, None]:
         async for p in self._list_paths(self.path_pattern):
             yield p
 
-    async def _list_paths(self, path_pattern: str) -> AsyncGenerator[str]:
+    async def _list_paths(self, path_pattern: str) -> AsyncGenerator[str, None]:
         for path in glob(path_pattern):
             if os.path.isdir(path):
                 async for p in self._list_paths(f"{path}/*"):
@@ -231,7 +234,7 @@ class LocalListFileStrategy(ListFileStrategy):
 
             yield path
 
-    async def list(self) -> AsyncGenerator[File]:
+    async def list(self) -> AsyncGenerator[File, None]:
         async for path in self.list_paths():
             if not self.check_md5(path):
                 yield File(content=open(path, mode="rb"))
@@ -275,7 +278,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         self.data_lake_path = data_lake_path
         self.credential = credential
 
-    async def list_paths(self) -> AsyncGenerator[str]:
+    async def list_paths(self) -> AsyncGenerator[str, None]:
         async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
         ) as service_client, service_client.get_file_system_client(
@@ -288,7 +291,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
 
                 yield path
 
-    async def list(self) -> AsyncGenerator[File]:
+    async def list(self) -> AsyncGenerator[File, None]:
         async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
         ) as service_client, service_client.get_file_system_client(
@@ -352,7 +355,7 @@ class TextSplitter:
         self.sentence_search_limit = 100
         self.section_overlap = 100
 
-    def split_pages(self, pages: List[Page]) -> Generator[SplitPage]:
+    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):
@@ -421,12 +424,12 @@ class TextSplitter:
 
 
 class PdfParser(ABC):
-    async def parse(self, content: IO) -> AsyncGenerator[Page]:
+    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         raise NotImplementedError
 
 
 class LocalPdfParser(PdfParser):
-    async def parse(self, content: IO) -> AsyncGenerator[Page]:
+    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         reader = PdfReader(content)
         pages = reader.pages
         offset = 0
@@ -449,7 +452,7 @@ class DocumentAnalysisPdfParser(PdfParser):
         self.credential = credential
         self.verbose = verbose
 
-    async def parse(self, content: IO) -> AsyncGenerator[Page]:
+    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         if self.verbose:
             print(f"Extracting text from '{content.name}' using Azure Form Recognizer")
 
