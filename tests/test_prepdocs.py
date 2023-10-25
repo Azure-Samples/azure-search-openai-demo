@@ -100,17 +100,44 @@ async def test_compute_embedding_success(monkeypatch):
     ]
 
 
-def test_compute_embedding_ratelimiterror(monkeypatch, capsys):
-    # monkeypatch.setattr(args, "verbose", True)
-
-    def mock_create(*args, **kwargs):
+@pytest.mark.asyncio
+async def test_compute_embedding_ratelimiterror_batch(monkeypatch, capsys):
+    async def mock_acreate(*args, **kwargs):
         raise openai.error.RateLimitError
 
-    monkeypatch.setattr(openai.Embedding, "create", mock_create)
-    monkeypatch.setattr(tenacity.nap.time, "sleep", lambda x: None)
+    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+    monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
     with pytest.raises(tenacity.RetryError):
-        # compute_embedding("foo", "ada", "text-ada-003")
-        pass
+        embeddings = AzureOpenAIEmbeddingService(
+            open_ai_service="x",
+            open_ai_deployment="x",
+            open_ai_model_name="text-embedding-ada-002",
+            credential=MockAzureCredential(),
+            disable_batch=False,
+            verbose=True,
+        )
+        await embeddings.create_embeddings(texts=["foo"])
+    captured = capsys.readouterr()
+    assert captured.out.count("Rate limited on the OpenAI embeddings API") == 14
+
+
+@pytest.mark.asyncio
+async def test_compute_embedding_ratelimiterror_single(monkeypatch, capsys):
+    async def mock_acreate(*args, **kwargs):
+        raise openai.error.RateLimitError
+
+    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+    monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
+    with pytest.raises(tenacity.RetryError):
+        embeddings = AzureOpenAIEmbeddingService(
+            open_ai_service="x",
+            open_ai_deployment="x",
+            open_ai_model_name="text-embedding-ada-002",
+            credential=MockAzureCredential(),
+            disable_batch=True,
+            verbose=True,
+        )
+        await embeddings.create_embeddings(texts=["foo"])
     captured = capsys.readouterr()
     assert captured.out.count("Rate limited on the OpenAI embeddings API") == 14
 

@@ -40,7 +40,6 @@ from pypdf import PdfReader, PdfWriter
 from scripts.prepdocs.strategy import SearchInfo, Strategy
 from tenacity import (
     AsyncRetrying,
-    RetryError,
     retry_if_exception_type,
     stop_after_attempt,
     wait_random_exponential,
@@ -61,7 +60,7 @@ class OpenAIEmbeddings(ABC):
     async def create_embedding_arguments(self) -> dict[str, Any]:
         raise NotImplementedError
 
-    def before_retry_sleep(self):
+    def before_retry_sleep(self, retry_state):
         if self.verbose:
             print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
@@ -103,36 +102,32 @@ class OpenAIEmbeddings(ABC):
     async def create_embedding_batch(self, texts: List[str]) -> List[List[float]]:
         batches = self.split_text_into_batches(texts)
         for batch in batches:
-            try:
-                async for attempt in AsyncRetrying(
-                    retry=retry_if_exception_type(openai.error.RateLimitError),
-                    wait=wait_random_exponential(min=15, max=60),
-                    stop=stop_after_attempt(15),
-                ):
-                    with attempt:
-                        emb_args = await self.create_embedding_arguments()
-                        emb_response = await openai.Embedding.acreate(**emb_args, input=batch)
-                        return [data["embedding"] for data in emb_response["data"]]
-            except RetryError:
-                self.before_retry_sleep()
-
-    async def create_embedding_single(self, text: str) -> List[float]:
-        try:
             async for attempt in AsyncRetrying(
                 retry=retry_if_exception_type(openai.error.RateLimitError),
                 wait=wait_random_exponential(min=15, max=60),
                 stop=stop_after_attempt(15),
+                before_sleep=self.before_retry_sleep,
             ):
                 with attempt:
                     emb_args = await self.create_embedding_arguments()
-                    emb_response = await openai.Embedding.acreate(**emb_args, input=text)
-                    return emb_response["data"][0]["embedding"]
-        except RetryError:
-            self.before_retry_sleep()
+                    emb_response = await openai.Embedding.acreate(**emb_args, input=batch)
+                    return [data["embedding"] for data in emb_response["data"]]
+
+    async def create_embedding_single(self, text: str) -> List[float]:
+        async for attempt in AsyncRetrying(
+            retry=retry_if_exception_type(openai.error.RateLimitError),
+            wait=wait_random_exponential(min=15, max=60),
+            stop=stop_after_attempt(15),
+            before_sleep=self.before_retry_sleep,
+        ):
+            with attempt:
+                emb_args = await self.create_embedding_arguments()
+                emb_response = await openai.Embedding.acreate(**emb_args, input=text)
+                return emb_response["data"][0]["embedding"]
 
     async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
         if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
-            return await self.create_embedding_batch(self, texts)
+            return await self.create_embedding_batch(texts)
 
         return [await self.create_embedding_single(text) for text in texts]
 
@@ -145,6 +140,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_model_name: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         disable_batch: bool = False,
+        verbose: bool = False,
     ):
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
@@ -152,6 +148,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.credential = credential
         self.disable_batch = disable_batch
         self.cached_token = None
+        self.verbose = verbose
 
     async def create_embedding_arguments(self) -> dict[str, Any]:
         return {
