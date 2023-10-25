@@ -280,9 +280,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
-        ) as service_client, service_client.get_file_system_client(
-            file_system=self.data_lake_file_system
-        ) as filesystem_client:
+        ) as service_client, service_client.get_file_system_client(self.data_lake_filesystem) as filesystem_client:
             paths = filesystem_client.get_paths(path=self.data_lake_path, recursive=True)
             async for path in paths:
                 if path.is_directory:
@@ -293,23 +291,21 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
     async def list(self) -> AsyncGenerator[File, None]:
         async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
-        ) as service_client, service_client.get_file_system_client(
-            file_system=self.data_lake_file_system
-        ) as filesystem_client:
-            async for path in await self.list_paths():
+        ) as service_client, service_client.get_file_system_client(self.data_lake_filesystem) as filesystem_client:
+            async for path in self.list_paths():
                 temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
                 try:
-                    with open(temp_file_path, "wb") as temp_file, filesystem_client.get_file_client(
-                        path
-                    ) as file_client:
-                        downloader = await file_client.download_file()
-                        await downloader.readinto(temp_file)
+                    async with filesystem_client.get_file_client(path) as file_client:
+                        with open(temp_file_path, "wb") as temp_file:
+                            downloader = await file_client.download_file()
+                            await downloader.readinto(temp_file)
 
                     # Parse out user ids and group ids
                     acls = {"oids": [], "groups": []}
                     # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
                     # Request ACLs as GUIDs
-                    acl_list = file_client.get_access_control(upn=False)["acl"]
+                    access_control = await file_client.get_access_control(upn=False)
+                    acl_list = access_control["acl"]
                     # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
                     # ACL Format: user::rwx,group::r-x,other::r--,user:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:r--
                     acl_list = acl_list.split(",")
@@ -324,7 +320,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
 
-                    yield File(content=open(temp_file, "rb"), acls=acls)
+                    yield File(content=open(temp_file_path, "rb"), acls=acls)
                 except Exception as e:
                     print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
                     try:

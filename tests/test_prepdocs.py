@@ -2,10 +2,10 @@ import io
 
 import openai
 import pytest
-import scripts
 import tenacity
 from conftest import MockAzureCredential
 from scripts.prepdocs.files import (
+    ADLSGen2ListFileStrategy,
     AzureOpenAIEmbeddingService,
     File,
     OpenAIEmbeddingService,
@@ -142,27 +142,48 @@ async def test_compute_embedding_ratelimiterror_single(monkeypatch, capsys):
     assert captured.out.count("Rate limited on the OpenAI embeddings API") == 14
 
 
-def test_compute_embedding_autherror(monkeypatch, capsys):
-    # monkeypatch.setattr(args, "verbose", True)
-
-    def mock_create(*args, **kwargs):
+@pytest.mark.asyncio
+async def test_compute_embedding_autherror(monkeypatch, capsys):
+    async def mock_acreate(*args, **kwargs):
         raise openai.error.AuthenticationError
 
-    monkeypatch.setattr(openai.Embedding, "create", mock_create)
-    monkeypatch.setattr(tenacity.nap.time, "sleep", lambda x: None)
+    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+    monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
     with pytest.raises(openai.error.AuthenticationError):
-        # compute_embedding("foo", "ada", "text-ada-003")
-        pass
+        embeddings = AzureOpenAIEmbeddingService(
+            open_ai_service="x",
+            open_ai_deployment="x",
+            open_ai_model_name="text-embedding-ada-002",
+            credential=MockAzureCredential(),
+            disable_batch=False,
+            verbose=True,
+        )
+        await embeddings.create_embeddings(texts=["foo"])
+
+    with pytest.raises(openai.error.AuthenticationError):
+        embeddings = AzureOpenAIEmbeddingService(
+            open_ai_service="x",
+            open_ai_deployment="x",
+            open_ai_model_name="text-embedding-ada-002",
+            credential=MockAzureCredential(),
+            disable_batch=True,
+            verbose=True,
+        )
+        await embeddings.create_embeddings(texts=["foo"])
 
 
-def test_read_adls_gen2_files(monkeypatch, mock_data_lake_service_client):
-    # monkeypatch.setattr(args, "verbose", True)
-    # monkeypatch.setattr(args, "useacls", True)
-    # monkeypatch.setattr(args, "datalakestorageaccount", "STORAGE")
-    monkeypatch.setattr(scripts.prepdocs, "adls_gen2_creds", MockAzureCredential())
-
+@pytest.mark.asyncio
+async def test_read_adls_gen2_files(monkeypatch, mock_data_lake_service_client):
     def mock_remove(*args, **kwargs):
         pass
+
+    adlsgen2_list_strategy = ADLSGen2ListFileStrategy(
+        data_lake_storage_account="a", data_lake_filesystem="a", data_lake_path="a", credential=MockAzureCredential()
+    )
+
+    files = [file async for file in adlsgen2_list_strategy.list()]
+    assert len(files) == 3
+    print(files[0].content.name)
 
     class MockIndexSections:
         def __init__(self):
@@ -185,14 +206,6 @@ def test_read_adls_gen2_files(monkeypatch, mock_data_lake_service_client):
     def mock_index_sections_method(filename, sections, acls):
         mock_index_sections.call(filename, sections, acls)
 
-    monkeypatch.setattr(scripts.prepdocs, "remove_blobs", mock_remove)
-    monkeypatch.setattr(scripts.prepdocs, "upload_blobs", mock_remove)
-    monkeypatch.setattr(scripts.prepdocs, "remove_from_index", mock_remove)
-    monkeypatch.setattr(scripts.prepdocs, "get_document_text", mock_remove)
-    monkeypatch.setattr(scripts.prepdocs, "update_embeddings_in_batch", mock_remove)
-    monkeypatch.setattr(scripts.prepdocs, "create_sections", mock_remove)
-    monkeypatch.setattr(scripts.prepdocs, "index_sections", mock_index_sections_method)
-
     # read_adls_gen2_files(use_vectors=True, vectors_batch_support=True)
 
-    assert mock_index_sections.filenames == ["a.txt", "b.txt", "c.txt"]
+    # assert mock_index_sections.filenames == ["a.txt", "b.txt", "c.txt"]

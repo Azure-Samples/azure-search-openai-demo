@@ -390,7 +390,7 @@ def mock_data_lake_service_client(monkeypatch):
         self.directories = {}
 
     def mock_get_file_client(self, path, *args, **kwargs):
-        return azure.storage.filedatalake.DataLakeFileClient(
+        return azure.storage.filedatalake.aio.DataLakeFileClient(
             account_url=None, file_system_name=None, file_path=path, credential=None
         )
 
@@ -413,18 +413,37 @@ def mock_data_lake_service_client(monkeypatch):
         self.directories["/"].child_directories = self.directories
         return self.directories["/"]
 
+    class AsyncListIterator:
+        def __init__(self, input_list):
+            self.input_list = input_list
+            self.index = 0
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            if self.index < len(self.input_list):
+                value = self.input_list[self.index]
+                self.index += 1
+                return value
+            else:
+                raise StopAsyncIteration
+
     def mock_get_paths(self, *args, **kwargs):
-        return [argparse.Namespace(is_directory=False, name=name) for name in ["a.txt", "b.txt", "c.txt"]]
+        return AsyncListIterator(
+            [argparse.Namespace(is_directory=False, name=name) for name in ["a.txt", "b.txt", "c.txt"]]
+        )
 
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "get_file_client", mock_get_file_client)
-    monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "get_paths", mock_get_paths)
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "__init__", mock_init_filesystem_aio)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "__aenter__", mock_aenter)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "__aexit__", mock_aexit)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_paths", mock_get_paths)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "exists", mock_exists_aio)
+    monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_paths", mock_get_paths)
+    monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_file_client", mock_get_file_client)
     monkeypatch.setattr(
         azure.storage.filedatalake.aio.FileSystemClient, "create_file_system", mock_create_filesystem_aio
     )
@@ -445,7 +464,7 @@ def mock_data_lake_service_client(monkeypatch):
     def mock_download_file_aio(self, *args, **kwargs):
         return azure.storage.filedatalake.aio.StorageStreamDownloader(None)
 
-    def mock_get_access_control(self, *args, **kwargs):
+    async def mock_get_access_control(self, *args, **kwargs):
         if self.path.name == "a.txt":
             return {"acl": "user:A-USER-ID:r-x,group:A-GROUP-ID:r-x"}
         if self.path.name == "b.txt":
@@ -461,7 +480,9 @@ def mock_data_lake_service_client(monkeypatch):
 
     monkeypatch.setattr(azure.storage.filedatalake.DataLakeFileClient, "__init__", mock_init_file)
     monkeypatch.setattr(azure.storage.filedatalake.DataLakeFileClient, "download_file", mock_download_file)
-    monkeypatch.setattr(azure.storage.filedatalake.DataLakeFileClient, "get_access_control", mock_get_access_control)
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.DataLakeFileClient, "get_access_control", mock_get_access_control
+    )
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__init__", mock_init_file)
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__aenter__", mock_aenter)
