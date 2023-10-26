@@ -11,6 +11,7 @@ import msal
 import openai
 import pytest
 import pytest_asyncio
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.aio import SearchClient
 
 import app
@@ -19,7 +20,7 @@ from core.authentication import AuthenticationHelper
 MockToken = namedtuple("MockToken", ["token", "expires_on"])
 
 
-class MockAzureCredential:
+class MockAzureCredential(AsyncTokenCredential):
     async def get_token(self, uri):
         return MockToken("mock_token", 9999999999)
 
@@ -452,10 +453,10 @@ def mock_data_lake_service_client(monkeypatch):
             else:
                 raise StopAsyncIteration
 
-    def mock_get_paths(self, *args, **kwargs):
-        return AsyncListIterator(
-            [argparse.Namespace(is_directory=False, name=name) for name in ["a.txt", "b.txt", "c.txt"]]
-        )
+    async def mock_get_paths(self, *args, **kwargs):
+        yield argparse.Namespace(is_directory=False, name="a.txt")
+        yield argparse.Namespace(is_directory=False, name="b.txt")
+        yield argparse.Namespace(is_directory=False, name="c.txt")
 
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "get_file_client", mock_get_file_client)
@@ -488,14 +489,14 @@ def mock_data_lake_service_client(monkeypatch):
         return azure.storage.filedatalake.aio.StorageStreamDownloader(None)
 
     async def mock_get_access_control(self, *args, **kwargs):
-        if self.path.name == "a.txt":
+        if self.path == "a.txt":
             return {"acl": "user:A-USER-ID:r-x,group:A-GROUP-ID:r-x"}
-        if self.path.name == "b.txt":
+        if self.path == "b.txt":
             return {"acl": "user:B-USER-ID:r-x,group:B-GROUP-ID:r-x"}
-        if self.path.name == "c.txt":
+        if self.path == "c.txt":
             return {"acl": "user:C-USER-ID:r-x,group:C-GROUP-ID:r-x"}
 
-        raise Exception(f"Unexpected path {self.path.name}")
+        raise Exception(f"Unexpected path {self.path}")
 
     async def mock_upload_data_aio(self, *args, **kwargs):
         self.uploaded = True

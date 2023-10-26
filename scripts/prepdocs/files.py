@@ -236,11 +236,13 @@ class File:
 
 
 class ListFileStrategy(ABC):
-    def list(self) -> AsyncGenerator[File, None]:
-        raise NotImplementedError
+    async def list(self) -> AsyncGenerator[File, None]:
+        if False:
+            yield
 
-    def list_paths(self) -> AsyncGenerator[str, None]:
-        raise NotImplementedError
+    async def list_paths(self) -> AsyncGenerator[str, None]:
+        if False:
+            yield
 
 
 class LocalListFileStrategy(ListFileStrategy):
@@ -308,12 +310,11 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         async with DataLakeServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
         ) as service_client, service_client.get_file_system_client(self.data_lake_filesystem) as filesystem_client:
-            paths = filesystem_client.get_paths(path=self.data_lake_path, recursive=True)
-            async for path in paths:
+            async for path in filesystem_client.get_paths(path=self.data_lake_path, recursive=True):
                 if path.is_directory:
                     continue
 
-                yield path
+                yield path.name
 
     async def list(self) -> AsyncGenerator[File, None]:
         async with DataLakeServiceClient(
@@ -326,7 +327,6 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                         with open(temp_file_path, "wb") as temp_file:
                             downloader = await file_client.download_file()
                             await downloader.readinto(temp_file)
-
                     # Parse out user ids and group ids
                     acls: Dict[str, List[str]] = {"oids": [], "groups": []}
                     # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
@@ -346,7 +346,6 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["oids"].append(acl_parts[1])
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
-
                     yield File(content=open(temp_file_path, "rb"), acls=acls)
                 except Exception as e:
                     print(f"\tGot an error while reading {path} -> {e} --> skipping file")
@@ -447,8 +446,9 @@ class TextSplitter:
 
 
 class PdfParser(ABC):
-    def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        raise NotImplementedError
+    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
+        if False:
+            yield
 
 
 class LocalPdfParser(PdfParser):
