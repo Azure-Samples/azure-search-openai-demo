@@ -4,6 +4,7 @@ import openai
 import pytest
 import tenacity
 from conftest import MockAzureCredential
+
 from scripts.prepdocslib.blobmanager import File
 from scripts.prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,

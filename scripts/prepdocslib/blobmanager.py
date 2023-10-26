@@ -32,10 +32,11 @@ class BlobManager:
             if not await container_client.exists():
                 await container_client.create_container()
 
-            # Upload the original file
-            blob_name = BlobManager.blob_name_from_file_page(file.content.name, page=0)
-            print(f"\tUploading blob for whole file -> {blob_name}")
-            await container_client.upload_blob(blob_name, file.content, overwrite=True)
+            # Re-open and upload the original file
+            with open(file.content.name, "rb") as reopened_file:
+                blob_name = BlobManager.blob_name_from_file_name(file.content.name)
+                print(f"\tUploading blob for whole file -> {blob_name}")
+                await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
 
     async def remove_blob(self, path: Optional[str] = None):
         async with BlobServiceClient(
@@ -49,16 +50,23 @@ class BlobManager:
             else:
                 prefix = os.path.splitext(os.path.basename(path))[0]
                 blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
-            async for b in blobs:
-                if prefix is not None and not (re.match(f"{prefix}-\d+\.pdf", b) or b == os.path.basename(path)):
+            async for blob_path in blobs:
+                # This still supports PDFs split into individual pages, but we could remove in future to simplify code
+                if prefix is not None and not (
+                    re.match(rf"{prefix}-\d+\.pdf", blob_path) or blob_path == os.path.basename(path)
+                ):
                     continue
                 if self.verbose:
-                    print(f"\tRemoving blob {b}")
-                await container_client.delete_blob(b)
+                    print(f"\tRemoving blob {blob_path}")
+                await container_client.delete_blob(blob_path)
 
     @classmethod
-    def blob_name_from_file_page(cls, filename, page=0) -> str:
+    def sourcepage_from_file_page(cls, filename, page=0) -> str:
         if os.path.splitext(filename)[1].lower() == ".pdf":
             return f"{os.path.basename(filename)}#page={page+1}"
         else:
             return os.path.basename(filename)
+
+    @classmethod
+    def blob_name_from_file_name(cls, filename) -> str:
+        return os.path.basename(filename)

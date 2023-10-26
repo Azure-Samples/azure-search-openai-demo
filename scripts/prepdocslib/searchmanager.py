@@ -128,7 +128,7 @@ class SearchManager:
                         "id": f"{section.content.filename_to_id()}-page-{i}",
                         "content": section.split_page.text,
                         "category": section.category,
-                        "sourcepage": BlobManager.blob_name_from_file_page(
+                        "sourcepage": BlobManager.sourcepage_from_file_page(
                             filename=section.content.filename(), page=section.split_page.page_num
                         ),
                         "sourcefile": section.content.filename(),
