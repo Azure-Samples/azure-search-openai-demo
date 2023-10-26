@@ -127,11 +127,11 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # add user question
         user_content = q + "\n" + f"Sources:\n {content}"
-        message_builder.append_message("user", user_content)
+        message_builder.insert_message("user", user_content)
 
         # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
-        message_builder.append_message("assistant", self.answer)
-        message_builder.append_message("user", self.question)
+        message_builder.insert_message("assistant", self.answer)
+        message_builder.insert_message("user", self.question)
 
         messages = message_builder.messages
         chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
