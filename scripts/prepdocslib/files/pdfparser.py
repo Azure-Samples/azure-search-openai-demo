@@ -6,9 +6,8 @@ from azure.ai.formrecognizer import DocumentTable
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from prepdocslib.strategy import USER_AGENT
 from pypdf import PdfReader
-
-from prepdocs.strategy import USER_AGENT
 
 
 class Page:

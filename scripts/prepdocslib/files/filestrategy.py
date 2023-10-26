@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from prepdocs.strategy import SearchInfo, Strategy
+from prepdocslib.strategy import SearchInfo, Strategy
 
 from .blobmanager import BlobManager
 from .embeddings import OpenAIEmbeddings

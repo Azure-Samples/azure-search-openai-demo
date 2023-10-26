@@ -16,8 +16,7 @@ from azure.search.documents.indexes.models import (
     VectorSearch,
     VectorSearchAlgorithmConfiguration,
 )
-
-from prepdocs.strategy import SearchInfo
+from prepdocslib.strategy import SearchInfo
 
 from .blobmanager import BlobManager
 from .embeddings import OpenAIEmbeddings
