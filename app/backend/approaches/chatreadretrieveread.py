@@ -14,7 +14,6 @@ from core.modelhelper import get_token_limit
 from approaches.prompt_templates import SYSTEM_MESSAGE_CHAT
 from text import nonewlines
 
-use_RAG = False
 
 class ChatReadRetrieveReadApproach(Approach):
     # Chat roles
