@@ -170,5 +170,4 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
             "api_key": self.credential,
             "api_type": "openai",
             "organization": self.organization,
-            "api_version": "2023-05-15",
         }
