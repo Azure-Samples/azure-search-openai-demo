@@ -115,11 +115,6 @@ class SearchManager:
 
         async with self.search_info.create_search_client() as search_client:
             for batch in section_batches:
-                embeddings = None
-                if self.embeddings:
-                    embeddings = await self.embeddings.create_embeddings(
-                        texts=[section.split_page.text for section in batch]
-                    )
                 documents = [
                     {
                         "id": f"{section.content.filename_to_id()}-page-{i}",
@@ -129,11 +124,16 @@ class SearchManager:
                             filename=section.content.filename(), page=section.split_page.page_num
                         ),
                         "sourcefile": section.content.filename(),
-                        "embedding": embeddings[i] if embeddings else None,
                         **section.content.acls,
                     }
                     for i, section in enumerate(batch)
                 ]
+                if self.embeddings:
+                    embeddings = await self.embeddings.create_embeddings(
+                        texts=[section.split_page.text for section in batch]
+                    )
+                    for i, document in enumerate(documents):
+                        document["embedding"] = embeddings[i]
 
                 await search_client.upload_documents(documents)
 
