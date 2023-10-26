@@ -155,3 +155,79 @@ def test_get_messages_from_history_truncated_break_pair():
         },
         {"role": "user", "content": "What does a Product Manager do?"},
     ]
+
+
+def test_extract_followup_questions():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = "Here is answer to your question.<<What is the dress code?>>"
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == "Here is answer to your question."
+    assert followup_questions == ["What is the dress code?"]
+
+
+def test_extract_followup_questions_three():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = """Here is answer to your question.
+
+<<What are some examples of successful product launches they should have experience with?>>
+<<Are there any specific technical skills or certifications required for the role?>>
+<<Is there a preference for candidates with experience in a specific industry or sector?>>"""
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == "Here is answer to your question.\n\n"
+    assert followup_questions == [
+        "What are some examples of successful product launches they should have experience with?",
+        "Are there any specific technical skills or certifications required for the role?",
+        "Is there a preference for candidates with experience in a specific industry or sector?",
+    ]
+
+
+def test_extract_followup_questions_no_followup():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = "Here is answer to your question."
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == "Here is answer to your question."
+    assert followup_questions == []
+
+
+def test_extract_followup_questions_no_pre_content():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    content = "<<What is the dress code?>>"
+    pre_content, followup_questions = chat_approach.extract_followup_questions(content)
+    assert pre_content == ""
+    assert followup_questions == ["What is the dress code?"]
+
+
+def test_get_messages_from_history_few_shots():
+    chat_approach = ChatReadRetrieveReadApproach(
+        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+    )
+
+    user_query_request = "What does a Product manager do?"
+    messages = chat_approach.get_messages_from_history(
+        system_prompt=chat_approach.query_prompt_template,
+        model_id=chat_approach.chatgpt_model,
+        user_content=user_query_request,
+        history=[],
+        max_tokens=chat_approach.chatgpt_token_limit - len(user_query_request),
+        few_shots=chat_approach.query_prompt_few_shots,
+    )
+    # Make sure messages are in the right order
+    assert messages[0]["role"] == "system"
+    assert messages[1]["role"] == "user"
+    assert messages[2]["role"] == "assistant"
+    assert messages[3]["role"] == "user"
+    assert messages[4]["role"] == "assistant"
+    assert messages[5]["role"] == "user"
+    assert messages[5]["content"] == user_query_request
