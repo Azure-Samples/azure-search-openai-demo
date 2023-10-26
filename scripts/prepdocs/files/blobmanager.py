@@ -60,12 +60,13 @@ class BlobManager:
             if not await container_client.exists():
                 return
             if path is None:
+                prefix = None
                 blobs = container_client.list_blob_names()
             else:
                 prefix = os.path.splitext(os.path.basename(path))[0]
                 blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
             async for b in blobs:
-                if path is not None and not re.match(f"{prefix}-\d+\.pdf", b):
+                if prefix is not None and not re.match(f"{prefix}-\d+\.pdf", b):
                     continue
                 if self.verbose:
                     print(f"\tRemoving blob {b}")

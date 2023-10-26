@@ -53,15 +53,19 @@ class FileStrategy(Strategy):
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
-                pages = [page async for page in self.pdf_parser.parse(content=file.content)]
-                if search_info.verbose:
-                    print(f"Splitting '{file.filename()}' into sections")
-                sections = [
-                    Section(split_page, content=file, category=self.category)
-                    for split_page in self.text_splitter.split_pages(pages)
-                ]
-                await search_manager.update_content(sections)
-                await self.blob_manager.upload_blob(file)
+                try:
+                    pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                    if search_info.verbose:
+                        print(f"Splitting '{file.filename()}' into sections")
+                    sections = [
+                        Section(split_page, content=file, category=self.category)
+                        for split_page in self.text_splitter.split_pages(pages)
+                    ]
+                    await search_manager.update_content(sections)
+                    await self.blob_manager.upload_blob(file)
+                finally:
+                    if file:
+                        file.close()
         elif self.document_action == DocumentAction.Remove:
             paths = self.list_file_strategy.list_paths()
             async for path in paths:

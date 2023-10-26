@@ -26,8 +26,8 @@ class File:
     def __enter__(self):
         return self
 
-    def __exit__(self):
-        self.content.close()
+    def __exit__(self, *args):
+        self.close()
 
     def filename(self):
         return os.path.basename(self.content.name)
@@ -36,6 +36,10 @@ class File:
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())
         filename_hash = base64.b16encode(self.filename().encode("utf-8")).decode("ascii")
         return f"file-{filename_ascii}-{filename_hash}"
+
+    def close(self):
+        if self.content:
+            self.content.close()
 
 
 class ListFileStrategy(ABC):
@@ -115,11 +119,13 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_filesystem: str,
         data_lake_path: str,
         credential: Union[AsyncTokenCredential, str],
+        verbose: bool = False,
     ):
         self.data_lake_storage_account = data_lake_storage_account
         self.data_lake_filesystem = data_lake_filesystem
         self.data_lake_path = data_lake_path
         self.credential = credential
+        self.verbose = verbose
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async with DataLakeServiceClient(
@@ -162,9 +168,9 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
                     yield File(content=open(temp_file_path, "rb"), acls=acls)
-                except Exception as e:
-                    print(f"\tGot an error while reading {path} -> {e} --> skipping file")
+                except Exception as data_lake_exception:
+                    print(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")
                     try:
                         os.remove(temp_file_path)
-                    except Exception as e:
-                        print(f"\tGot an error while deleting {temp_file_path} -> {e}")
+                    except Exception as file_delete_exception:
+                        print(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
