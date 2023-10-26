@@ -44,10 +44,17 @@ jobs:
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
-          if: runner.os == 'ubuntu-latest'
-          run: python3 -m pytest -s -vv --cov
+          if: runner.os != 'Windows'
+          run: python3 -m pytest -s -vv --cov --cov-fail-under=78
         - name: Run E2E tests with Playwright
-          if: runner.os == 'ubuntu-latest'
+          id: e2e
+          if: runner.os != 'Windows'
           run: |
             playwright install --with-deps
-            python3 -m pytest tests/e2e.py
+            python3 -m pytest tests/e2e.py --tracing=retain-on-failure
+        - name: Upload test artifacts
+          if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
+          uses: actions/upload-artifact@v3
+          with:
+            name: playwright-traces
+            path: test-results

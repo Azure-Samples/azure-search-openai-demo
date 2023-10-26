@@ -13,7 +13,7 @@ def test_messagebuilder():
 
 def test_messagebuilder_append():
     builder = MessageBuilder("You are a bot.", "gpt-35-turbo")
-    builder.append_message("user", "Hello, how are you?")
+    builder.insert_message("user", "Hello, how are you?")
     assert builder.messages == [
         # 1 token, 1 token, 1 token, 5 tokens
         {"role": "system", "content": "You are a bot."},
@@ -37,7 +37,7 @@ def test_messagebuilder_unicode():
 
 def test_messagebuilder_unicode_append():
     builder = MessageBuilder("a\u0301", "gpt-35-turbo")
-    builder.append_message("user", "a\u0301")
+    builder.insert_message("user", "a\u0301")
     assert builder.messages == [
         # 1 token, 1 token, 1 token, 1 token
         {"role": "system", "content": "á"},
