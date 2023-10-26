@@ -6,7 +6,7 @@ from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool, ZeroShotAgent
 from langchain.callbacks.manager import CallbackManager, Callbacks
 from langchain.chains import LLMChain
-from langchain.llms.openai import OpenAIChat
+from langchain.chat_models import AzureChatOpenAI
 
 from approaches.approach import AskApproach
 from langchainadapters import HtmlCallbackHandler
@@ -149,11 +149,9 @@ Thought: {agent_scratchpad}"""
             suffix=overrides.get("prompt_template_suffix") or self.template_suffix,
             input_variables=["input", "agent_scratchpad"],
         )
-        llm = OpenAIChat(model_name="gpt-3.5-turbo", 
-                         engine="chat", 
-                         temperature=overrides.get("temperature") or 0.3, 
-                         openai_api_key=openai.api_key,
-                         openai_api_base=openai.api_base)
+        llm = AzureChatOpenAI(deployment_name=self.openai_deployment, openai_api_version=openai.api_version,
+                          openai_api_key=openai.api_key, openai_api_type=openai.api_type,
+                          openai_api_base=openai.api_base)
 
         chain = LLMChain(llm=llm, prompt=prompt)
         agent_exec = AgentExecutor.from_agent_and_tools(

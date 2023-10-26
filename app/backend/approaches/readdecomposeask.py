@@ -7,7 +7,7 @@ from azure.search.documents.models import QueryType
 from langchain.agents import AgentExecutor, Tool
 from langchain.agents.react.base import ReActDocstoreAgent
 from langchain.callbacks.manager import CallbackManager
-from langchain.llms.openai import OpenAIChat
+from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import BasePromptTemplate, PromptTemplate
 from langchain.tools.base import BaseTool
 
@@ -122,11 +122,9 @@ class ReadDecomposeAsk(AskApproach):
         cb_handler = HtmlCallbackHandler()
         cb_manager = CallbackManager(handlers=[cb_handler])
 
-        llm = OpenAIChat(model_name="gpt-3.5-turbo", 
-                         engine="chat", 
-                         temperature=overrides.get("temperature") or 0.3, 
-                         openai_api_key=openai.api_key,
-                         openai_api_base=openai.api_base)
+        llm = AzureChatOpenAI(deployment_name=self.openai_deployment, openai_api_version=openai.api_version,
+                          openai_api_key=openai.api_key, openai_api_type=openai.api_type,
+                          openai_api_base=openai.api_base)
         tools = [
             Tool(
                 name="Search",
