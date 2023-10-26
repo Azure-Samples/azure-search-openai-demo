@@ -28,8 +28,8 @@ class File:
         return os.path.basename(self.content.name)
 
     def filename_to_id(self):
-        filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.content.name)
-        filename_hash = base64.b16encode(self.content.name.encode("utf-8")).decode("ascii")
+        filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())
+        filename_hash = base64.b16encode(self.filename().encode("utf-8")).decode("ascii")
         return f"file-{filename_ascii}-{filename_hash}"
 
 
