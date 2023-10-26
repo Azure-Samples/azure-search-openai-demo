@@ -10,6 +10,11 @@ USER_AGENT = "azure-search-chat-demo/1.0.0"
 
 
 class SearchInfo:
+    """
+    Class representing a connection to a search service
+    To learn more, please visit https://learn.microsoft.com/azure/search/search-what-is-azure-search
+    """
+
     def __init__(
         self,
         endpoint: str,
@@ -33,6 +38,10 @@ class SearchInfo:
 
 
 class Strategy(ABC):
+    """
+    Abstract strategy for ingesting documents into a search service. It has a single setup step to perform any required initialization, and then a run step that actually ingests documents into the search service.
+    """
+
     async def setup(self, search_info: SearchInfo):
         raise NotImplementedError
 

@@ -11,6 +11,10 @@ from .listfilestrategy import File
 
 
 class BlobManager:
+    """
+    Class to manage uploading and deleting blobs containing citation information from a blob storage account
+    """
+
     def __init__(
         self,
         endpoint: str,

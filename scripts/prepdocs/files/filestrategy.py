@@ -18,6 +18,10 @@ class DocumentAction(Enum):
 
 
 class FileStrategy(Strategy):
+    """
+    Strategy for ingesting documents into a search service from files stored either locally or in a data lake storage account
+    """
+
     def __init__(
         self,
         list_file_strategy: ListFileStrategy,

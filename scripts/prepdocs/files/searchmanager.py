@@ -26,6 +26,10 @@ from .textsplitter import SplitPage
 
 
 class Section:
+    """
+    A section of a page that is stored in a search service. These sections are used as context by Azure OpenAI service
+    """
+
     def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
         self.split_page = split_page
         self.content = content
@@ -33,6 +37,11 @@ class Section:
 
 
 class SearchManager:
+    """
+    Class to manage a search service. It can create indexes, and update or remove sections stored in these indexes
+    To learn more, please visit https://learn.microsoft.com/azure/search/search-what-is-azure-search
+    """
+
     def __init__(
         self,
         search_info: SearchInfo,

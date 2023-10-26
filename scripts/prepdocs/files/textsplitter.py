@@ -4,12 +4,20 @@ from .pdfparser import Page
 
 
 class SplitPage:
+    """
+    A section of a page that has been split into a smaller chunk.
+    """
+
     def __init__(self, page_num: int, text: str):
         self.page_num = page_num
         self.text = text
 
 
 class TextSplitter:
+    """
+    Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
+    """
+
     def __init__(self, verbose: bool = False):
         self.sentence_endings = [".", "!", "?"]
         self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]

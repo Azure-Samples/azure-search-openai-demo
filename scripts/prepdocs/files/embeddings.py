@@ -15,12 +15,21 @@ from tenacity import (
 
 
 class EmbeddingBatch:
+    """
+    Represents a batch of text that is going to be embedded
+    """
+
     def __init__(self, texts: List[str], token_length: int):
         self.texts = texts
         self.token_length = token_length
 
 
 class OpenAIEmbeddings(ABC):
+    """
+    Contains common logic across both OpenAI and Azure OpenAI embedding services
+    Can split source text into batches for more efficient embedding calls
+    """
+
     SUPPORTED_BATCH_AOAI_MODEL = {"text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16}}
 
     def __init__(self, open_ai_model_name: str, disable_batch: bool = False, verbose: bool = False):
@@ -110,6 +119,11 @@ class OpenAIEmbeddings(ABC):
 
 
 class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
+    """
+    Class for using Azure OpenAI embeddings
+    To learn more please visit https://learn.microsoft.com/azure/ai-services/openai/concepts/understand-embeddings
+    """
+
     def __init__(
         self,
         open_ai_service: str,
@@ -152,6 +166,11 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
 
 
 class OpenAIEmbeddingService(OpenAIEmbeddings):
+    """
+    Class for using OpenAI embeddings
+    To learn more please visit https://platform.openai.com/docs/guides/embeddings
+    """
+
     def __init__(
         self,
         open_ai_model_name: str,

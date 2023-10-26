@@ -14,6 +14,11 @@ from azure.storage.filedatalake.aio import (
 
 
 class File:
+    """
+    Represents a file stored either locally or in a data lake storage account
+    This file might contain access control information about which users or groups can access it
+    """
+
     def __init__(self, content: IO, acls: Optional[dict[str, list]] = None):
         self.content = content
         self.acls = acls or {}
@@ -34,6 +39,10 @@ class File:
 
 
 class ListFileStrategy(ABC):
+    """
+    Abstract strategy for listing files that are located somewhere. For example, on a local computer or remotely in a storage account
+    """
+
     async def list(self) -> AsyncGenerator[File, None]:
         if False:
             yield
@@ -44,6 +53,10 @@ class ListFileStrategy(ABC):
 
 
 class LocalListFileStrategy(ListFileStrategy):
+    """
+    Concrete strategy for listing files that are located in a local filesystem
+    """
+
     def __init__(self, path_pattern: str, verbose: bool = False):
         self.path_pattern = path_pattern
         self.verbose = verbose
@@ -92,6 +105,10 @@ class LocalListFileStrategy(ListFileStrategy):
 
 
 class ADLSGen2ListFileStrategy(ListFileStrategy):
+    """
+    Concrete strategy for listing files that are located in a data lake storage account
+    """
+
     def __init__(
         self,
         data_lake_storage_account: str,
