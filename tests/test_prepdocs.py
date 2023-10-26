@@ -4,12 +4,12 @@ import openai
 import pytest
 import tenacity
 from conftest import MockAzureCredential
-from scripts.prepdocslib.files.blobmanager import File
-from scripts.prepdocslib.files.embeddings import (
+from scripts.prepdocslib.blobmanager import File
+from scripts.prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     OpenAIEmbeddingService,
 )
-from scripts.prepdocslib.files.listfilestrategy import ADLSGen2ListFileStrategy
+from scripts.prepdocslib.listfilestrategy import ADLSGen2ListFileStrategy
 
 
 def test_filename_to_id():

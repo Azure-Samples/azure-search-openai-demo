@@ -16,11 +16,11 @@ from azure.search.documents.indexes.models import (
     VectorSearch,
     VectorSearchAlgorithmConfiguration,
 )
-from prepdocslib.strategy import SearchInfo
 
 from .blobmanager import BlobManager
 from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import File
+from .strategy import SearchInfo
 from .textsplitter import SplitPage
 
 

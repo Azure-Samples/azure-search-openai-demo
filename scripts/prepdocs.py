@@ -1,23 +1,25 @@
 import argparse
 import asyncio
-from typing import Any
+from typing import Any, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
-from prepdocslib.files.blobmanager import BlobManager
-from prepdocslib.files.embeddings import (
+from prepdocslib.blobmanager import BlobManager
+from prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
+    OpenAIEmbeddings,
     OpenAIEmbeddingService,
 )
-from prepdocslib.files.filestrategy import DocumentAction, FileStrategy
-from prepdocslib.files.listfilestrategy import (
+from prepdocslib.filestrategy import DocumentAction, FileStrategy
+from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
+    ListFileStrategy,
     LocalListFileStrategy,
 )
-from prepdocslib.files.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser
-from prepdocslib.files.textsplitter import TextSplitter
+from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
+from prepdocslib.textsplitter import TextSplitter
 
 
 def is_key_empty(key):
@@ -33,6 +35,7 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
         verbose=args.verbose,
     )
 
+    pdf_parser: PdfParser
     if args.localpdfparser:
         pdf_parser = LocalPdfParser()
     else:
@@ -42,7 +45,7 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
                 "Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser."
             )
             exit(1)
-        formrecognizer_creds = (
+        formrecognizer_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
             credential if is_key_empty(args.formrecognizerkey) else AzureKeyCredential(args.formrecognizerkey)
         )
         pdf_parser = DocumentAnalysisPdfParser(
@@ -52,9 +55,11 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
         )
 
     use_vectors = not args.novectors
-    embeddings = None
+    embeddings: Optional[OpenAIEmbeddings] = None
     if use_vectors and args.openaihost != "openai":
-        azure_open_ai_credential = credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
+        azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
+            credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
+        )
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service=args.openaiservice,
             open_ai_deployment=args.openaideployment,
@@ -71,10 +76,9 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
             disable_batch=args.disablebatchvectors,
             verbose=args.verbose,
         )
-    else:
-        embeddings = None
 
     print("Processing files...")
+    list_file_strategy: ListFileStrategy
     if args.datalakestorageaccount:
         adls_gen2_creds = credential if is_key_empty(args.datalakekey) else args.datalakekey
         print(f"Using Data Lake Gen2 Storage Account {args.datalakestorageaccount}")
@@ -110,7 +114,9 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
 
 
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
-    search_creds = credential if is_key_empty(args.searchkey) else AzureKeyCredential(args.searchkey)
+    search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        credential if is_key_empty(args.searchkey) else AzureKeyCredential(args.searchkey)
+    )
     search_info = SearchInfo(
         endpoint=f"https://{args.searchservice}.search.windows.net/",
         credential=search_creds,

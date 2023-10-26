@@ -1,13 +1,12 @@
 from enum import Enum
 from typing import Optional
 
-from prepdocslib.strategy import SearchInfo, Strategy
-
 from .blobmanager import BlobManager
 from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .pdfparser import PdfParser
 from .searchmanager import SearchManager, Section
+from .strategy import SearchInfo, Strategy
 from .textsplitter import TextSplitter
 
 
