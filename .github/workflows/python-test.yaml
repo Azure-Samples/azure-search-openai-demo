@@ -42,9 +42,9 @@ jobs:
         - name: Check types with mypy
           run: |
             cd scripts/
-            python3 -m mypy
+            python3 -m mypy .
             cd ../app/
-            python3 -m mypy
+            python3 -m mypy .
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
