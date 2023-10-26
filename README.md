@@ -356,7 +356,7 @@ Chunking allows us to limit the amount of information we send to OpenAI due to t
 <summary>How can we upload additional PDFs without redeploying everything?</summary>
 
 To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. 
-[This](https://github.com/Azure-Samples/azure-search-openai-demo/pull/835) implement checks to see what's been uploaded before. It writes an .md5 file with an MD5 hash of the files in data/ when they get uploaded, then every time the prep docs script is re-run that file is checked against the current hash and the file is skipped if it hasn't changed.
+A [recent change](https://github.com/Azure-Samples/azure-search-openai-demo/pull/835) added checks to see what's been uploaded before. The prepdocs script now writes an .md5 file with an MD5 hash of the files when they get uploaded. Whenever the prepdocs script is re-run, that file is checked against the current hash and the file is skipped if it hasn't changed.
 </details>
 
 <details><a id="compare-samples"></a>
