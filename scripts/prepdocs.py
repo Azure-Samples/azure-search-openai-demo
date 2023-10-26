@@ -5,20 +5,19 @@ from typing import Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
-from prepdocs.files import (
-    ADLSGen2ListFileStrategy,
+from prepdocs.files.blobmanager import BlobManager
+from prepdocs.files.embeddings import (
     AzureOpenAIEmbeddingService,
-    BlobManager,
-    DocumentAction,
-    DocumentAnalysisPdfParser,
-    FileStrategy,
-    LocalListFileStrategy,
-    LocalPdfParser,
     OpenAIEmbeddingService,
-    SearchInfo,
-    Strategy,
-    TextSplitter,
 )
+from prepdocs.files.filestrategy import DocumentAction, FileStrategy
+from prepdocs.files.listfilestrategy import (
+    ADLSGen2ListFileStrategy,
+    LocalListFileStrategy,
+)
+from prepdocs.files.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser
+from prepdocs.files.textsplitter import TextSplitter
+from prepdocs.strategy import SearchInfo, Strategy
 
 
 def is_key_empty(key):

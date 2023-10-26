@@ -6,6 +6,8 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 
+USER_AGENT = "azure-search-chat-demo/1.0.0"
+
 
 class SearchInfo:
     def __init__(
