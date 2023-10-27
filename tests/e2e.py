@@ -74,8 +74,8 @@ def test_chat(page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
 
     # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").click()
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").fill(
         "Whats the dental plan?"
     )
     page.get_by_role("button", name="Ask question button").click()
@@ -148,8 +148,8 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.locator("button").filter(has_text="Close").click()
 
     # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").click()
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").fill(
         "Whats the dental plan?"
     )
     page.get_by_role("button", name="Ask question button").click()
@@ -179,8 +179,8 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     page.locator("button").filter(has_text="Close").click()
 
     # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").click()
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").fill(
         "Whats the dental plan?"
     )
     page.get_by_label("Ask question button").click()
@@ -212,8 +212,8 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
     page.locator("button").filter(has_text="Close").click()
 
     # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").click()
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").fill(
         "Whats the dental plan?"
     )
     page.get_by_label("Ask question button").click()
@@ -250,8 +250,8 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     page.locator("button").filter(has_text="Close").click()
 
     # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").click()
+    page.get_by_placeholder("Type a new question (e.g. What are perceptions of the flu and its complications, and how has this changed?)").fill(
         "Whats the dental plan?"
     )
     page.get_by_label("Ask question button").click()
@@ -284,9 +284,9 @@ def test_ask(page: Page, live_server_url: str):
     expect(page).to_have_title("GPT + Enterprise data | Sample")
 
     page.get_by_role("link", name="Ask a question").click()
-    page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
-    page.get_by_placeholder("Example: Does my plan cover annual eye exams?").fill("Whats the dental plan?")
-    page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
+    page.get_by_placeholder("Example: What are perceptions of the flu and its complications, and how has this changed?").click()
+    page.get_by_placeholder("Example: What are perceptions of the flu and its complications, and how has this changed?").fill("Whats the dental plan?")
+    page.get_by_placeholder("Example: What are perceptions of the flu and its complications, and how has this changed?").click()
     page.get_by_label("Ask question button").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()

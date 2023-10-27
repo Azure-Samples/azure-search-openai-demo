@@ -9,11 +9,17 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
+        text: "What are perceptions of the flu and its complications, and how has this changed?",
+        value: "What are perceptions of the flu and its complications, and how has this changed?"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    {
+        text: "What is the best communication channel to deliver the messages to drive uptake of the flu vaccine?",
+        value: "What is the best communication channel to deliver the messages to drive uptake of the flu vaccine?"
+    },
+    {
+        text: "What are the drivers and barriers that influence the decision to get vaccinated / recommend vaccination for the COVID and / or Flu? ",
+        value: "What are the drivers and barriers that influence the decision to get vaccinated / recommend vaccination for the COVID and / or Flu? "
+    }
 ];
 
 interface Props {

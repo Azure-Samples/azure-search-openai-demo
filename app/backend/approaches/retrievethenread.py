@@ -17,7 +17,7 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+        "You are an intelligent assistant helping company analysts to understand how research reports can help to address key questions relating to the use, uptake and drivers and barriers to vaccine use and recommendation across multiple stakeholder audiences, including general public, patients, healthcare professionals, pharmacists. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "For tabular information return it as an html table. Do not return markdown format. "
@@ -27,15 +27,14 @@ class RetrieveThenReadApproach(Approach):
 
     # shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+'What are the drivers and barriers that influence the decision to get vaccinated / recommend vaccination for the COVID and / or Flu?'
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
 info2.pdf: Overlake is in-network for the employee plan.
 info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
 info4.pdf: In-network institutions include Overlake, Swedish and others in the region
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "The most frequently reported determinants of influenza vaccine intent or uptake were the “Perceived benefits of vaccines to self or community” and the “Perceived susceptibility to vaccine side effects”, followed by the “Source of information about vaccines” [info2.pdf][info4.pdf]."
 
     def __init__(
         self,

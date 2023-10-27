@@ -27,7 +27,7 @@ class ChatReadRetrieveReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-    system_message_chat_conversation = """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
+    system_message_chat_conversation = """Assistant helps the company consultancy to understand how research reports can help to address key questions relating to the use, uptake and drivers and barriers to vaccine use and recommendation across multiple stakeholder audiences, including general public, patients, healthcare professionals, pharmacists. Be brief in your answers.
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
 For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
@@ -36,9 +36,9 @@ Each source has a name followed by colon and the actual information, always incl
 """
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
-<<Are there exclusions for prescriptions?>>
-<<Which pharmacies can be ordered from?>>
-<<What is the limit for over-the-counter medication?>>
+<<Provide a list of key messages?>>
+<<What are the  best communication channels to deliver key messages?>>
+<<What are the drivers and barriers that influence the decision to get vaccinated?>>
 Do no repeat questions that have already been asked.
 Make sure the last question ends with ">>"."""
 
@@ -52,10 +52,10 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
-        {"role": USER, "content": "What are my health plans?"},
-        {"role": ASSISTANT, "content": "Show available health plans"},
-        {"role": USER, "content": "does my plan cover cardio?"},
-        {"role": ASSISTANT, "content": "Health plan cardio coverage"},
+        {"role": USER, "content": "What are perceptions of the flu and its complications, and how has this changed?"},
+        {"role": ASSISTANT, "content": "Provide perceptions and how they have changed"},
+        {"role": USER, "content": "What are the key messages that resonate the most to drive uptake of the flu vaccine?"},
+        {"role": ASSISTANT, "content": "provide key messages"},
     ]
 
     def __init__(
