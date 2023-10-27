@@ -71,6 +71,7 @@ async def test_upload_and_remove(monkeypatch, mock_env, blob_manager):
 async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
+        print(f.content.name)
         filename = f.content.name.split("/tmp/")[1]
 
         # Set up mocks used by upload_blob
