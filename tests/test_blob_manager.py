@@ -1,4 +1,5 @@
 import os
+import sys
 from tempfile import NamedTemporaryFile
 
 import pytest
@@ -19,6 +20,7 @@ def blob_manager(monkeypatch):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_upload_and_remove(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
@@ -68,6 +70,7 @@ async def test_upload_and_remove(monkeypatch, mock_env, blob_manager):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
@@ -118,6 +121,7 @@ async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
@@ -144,6 +148,7 @@ async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager)
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_dont_remove_if_no_container(monkeypatch, mock_env, blob_manager):
     async def mock_exists(*args, **kwargs):
         return False
