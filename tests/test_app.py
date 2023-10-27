@@ -47,6 +47,12 @@ async def test_ask_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+async def test_ask_with_unknown_approach(client):
+    response = await client.post("/ask", json={"approach": "test"})
+    assert response.status_code == 400
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",

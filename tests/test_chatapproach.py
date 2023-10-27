@@ -1,7 +1,9 @@
 import json
+import pytest
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-
+from approaches.readdecomposeask import ReadDecomposeAsk
+from approaches.readretrieveread import ReadRetrieveReadApproach
 
 def test_get_search_query():
     chat_approach = ChatReadRetrieveReadApproach(
@@ -231,3 +233,21 @@ def test_get_messages_from_history_few_shots():
     assert messages[4]["role"] == "assistant"
     assert messages[5]["role"] == "user"
     assert messages[5]["content"] == user_query_request
+
+def test_readdecomposeask_run():
+    chat_approach = ReadDecomposeAsk(None, "", "gpt-35-turbo", "", "")
+    query = "What is included in my Northwind Health Plus plan that is not in standard?"
+    try:
+        messages = chat_approach.run(query, {})
+    except Exception as e:
+        pytest.fail(f"Function raised an exception: {e}")
+    assert messages != None
+
+def test_readretrieveread_run():
+    chat_approach = ReadRetrieveReadApproach(None, "", "gpt-35-turbo", "", "")
+    query = "What is included in my Northwind Health Plus plan that is not in standard?"
+    try:
+        messages = chat_approach.run(query, {})
+    except Exception as e:
+        pytest.fail(f"Function raised an exception: {e}")
+    assert messages != None
