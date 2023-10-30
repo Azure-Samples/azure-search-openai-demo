@@ -289,38 +289,7 @@ Once in the web app:
 
 This sample is designed to be a starting point for your own production application,
 but you should do a thorough review of the security and performance before deploying
-to production. Here are some things to consider:
-
-* **OpenAI Capacity**: The default TPM (tokens per minute) is set to 30K. That is equivalent
-  to approximately 30 conversations per minute (assuming 1K per user message/response).
-  You can increase the capacity by changing the `chatGptDeploymentCapacity` and `embeddingDeploymentCapacity`
-  parameters in `infra/main.bicep` to your account's maximum capacity.
-  You can also view the Quotas tab in [Azure OpenAI studio](https://oai.azure.com/)
-  to understand how much capacity you have.
-* **Azure Storage**: The default storage account uses the `Standard_LRS` SKU.
-  To improve your resiliency, we recommend using `Standard_ZRS` for production deployments,
-  which you can specify using the `sku` property under the `storage` module in `infra/main.bicep`.
-* **Azure Cognitive Search**: The default search service uses the `Standard` SKU
-  with the free semantic search option, which gives you 1000 free queries a month.
-  Assuming your app will experience more than 1000 questions, you should either change `semanticSearch`
-  to "standard" or disable semantic search entirely in the `/app/backend/approaches` files.
-  If you see errors about search service capacity being exceeded, you may find it helpful to increase
-  the number of replicas by changing `replicaCount` in `infra/core/search/search-services.bicep`
-  or manually scaling it from the Azure Portal.
-* **Azure App Service**: The default app service plan uses the `Basic` SKU with 1 CPU core and 1.75 GB RAM.
-  We recommend using a Premium level SKU, starting with 1 CPU core.
-  You can use auto-scaling rules or scheduled scaling rules,
-  and scale up the maximum/minimum based on load.
-* **Authentication**: By default, the deployed app is publicly accessible.
-  We recommend restricting access to authenticated users.
-  See [Enabling authentication](#enabling-authentication) above for how to enable authentication.
-* **Networking**: We recommend deploying inside a Virtual Network. If the app is only for
-  internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
-  for firewalls and other forms of protection.
-  For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/t5/azure-architecture-blog/azure-openai-landing-zone-reference-architecture/ba-p/3882102).
-* **Loadtesting**: We recommend running a loadtest for your expected number of users.
-  You can use the [locust tool](https://docs.locust.io/) with the `locustfile.py` in this sample
-  or set up a loadtest with Azure Load Testing.
+to production. Read through our [productionizing guide](docs/productionizing.md) for more details.
 
 
 ## Resources
@@ -355,7 +324,8 @@ Chunking allows us to limit the amount of information we send to OpenAI due to t
 <details><a id="ingestion-more-pdfs"></a>
 <summary>How can we upload additional PDFs without redeploying everything?</summary>
 
-To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`. To avoid reuploading existing docs, move them out of the data folder. You could also implement checks to see whats been uploaded before; our code doesn't yet have such checks.
+To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`.
+A [recent change](https://github.com/Azure-Samples/azure-search-openai-demo/pull/835) added checks to see what's been uploaded before. The prepdocs script now writes an .md5 file with an MD5 hash of each file that gets uploaded. Whenever the prepdocs script is re-run, that hash is checked against the current hash and the file is skipped if it hasn't changed.
 </details>
 
 <details><a id="compare-samples"></a>
