@@ -70,6 +70,8 @@ param serverAppId string = ''
 @secure()
 param serverAppSecret string = ''
 param clientAppId string = ''
+@secure()
+param clientAppSecret string = ''
 
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
@@ -149,6 +151,9 @@ module backend 'core/host/appservice.bicep' = {
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     allowedOrigins: [allowedOrigin]
+    authClientId: useAuthentication ? clientAppId : ''
+    authClientSecret: useAuthentication ? clientAppSecret : ''
+    authIssuerUri: useAuthentication ? '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0' : ''
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -402,5 +407,7 @@ output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.n
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_USE_AUTHENTICATION bool = useAuthentication
 
 output BACKEND_URI string = backend.outputs.uri

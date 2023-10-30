@@ -92,6 +92,9 @@
     "clientAppId": {
       "value": "${AZURE_CLIENT_APP_ID}"
     },
+    "clientAppSecret": {
+      "value": "${AZURE_CLIENT_APP_SECRET}"
+    },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     }
