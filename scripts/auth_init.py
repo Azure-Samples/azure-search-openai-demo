@@ -1,15 +1,11 @@
-import os
+# import os
 import subprocess
 
 import urllib3
-from azure.identity import AzureDeveloperCliCredential
 
 
 def get_auth_headers(credential):
-    return {
-        "Authorization": "Bearer "
-        + credential.get_token("https://graph.microsoft.com/.default").token
-    }
+    return {"Authorization": "Bearer " + credential.get_token("https://graph.microsoft.com/.default").token}
 
 
 def check_for_application(credential, app_id):
@@ -63,6 +59,7 @@ def update_azd_env(name, val):
 
 
 if __name__ == "__main__":
+    """
     if os.getenv("AZURE_USE_AUTHENTICATION", "false") != "true":
         print("AZURE_USE_AUTHENTICATION is false, not setting up authentication")
         exit(0)
@@ -87,3 +84,4 @@ if __name__ == "__main__":
     update_azd_env("AZURE_AUTH_APP_ID", app_id)
     update_azd_env("AZURE_AUTH_CLIENT_ID", client_id)
     update_azd_env("AZURE_AUTH_CLIENT_SECRET", client_secret)
+    """

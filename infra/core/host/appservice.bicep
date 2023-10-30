@@ -105,6 +105,9 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
             clientSecretSettingName: !empty(appSettings.AZURE_CLIENT_APP_SECRET) ? 'AZURE_CLIENT_APP_SECRET' : ''
             openIdIssuer: appSettings.AZURE_AUTHENTICATION_ISSUER_URI
           }
+          login: {
+            loginParameters: ['scope=openid profile email offline_access']
+          }
           validation: {
             defaultAuthorizationPolicy: {
               allowedApplications: []

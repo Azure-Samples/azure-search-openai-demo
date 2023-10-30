@@ -1,7 +1,8 @@
-import os
+# import os
 
 import urllib3
-from azure.identity import AzureDeveloperCliCredential
+
+# from azure.identity import AzureDeveloperCliCredential
 
 
 def update_redirect_uris(credential, app_id, uri):
@@ -9,8 +10,7 @@ def update_redirect_uris(credential, app_id, uri):
         "PATCH",
         f"https://graph.microsoft.com/v1.0/applications/{app_id}",
         headers={
-            "Authorization": "Bearer "
-            + credential.get_token("https://graph.microsoft.com/.default").token,
+            "Authorization": "Bearer " + credential.get_token("https://graph.microsoft.com/.default").token,
         },
         json={
             "web": {
@@ -24,6 +24,7 @@ def update_redirect_uris(credential, app_id, uri):
 
 
 if __name__ == "__main__":
+    """
     if os.getenv("AZURE_USE_AUTHENTICATION", "false") != "true":
         print("AZURE_USE_AUTHENTICATION is false, not updating authentication")
         exit(0)
@@ -35,3 +36,4 @@ if __name__ == "__main__":
     uri = os.getenv("BACKEND_URI")
     print(f"Updating application registration {app_id} with redirect URI for {uri}")
     update_redirect_uris(credential, app_id, uri)
+    """
