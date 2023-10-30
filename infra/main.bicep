@@ -151,9 +151,6 @@ module backend 'core/host/appservice.bicep' = {
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     allowedOrigins: [allowedOrigin]
-    authClientId: useAuthentication ? clientAppId : ''
-    authClientSecret: useAuthentication ? clientAppSecret : ''
-    authIssuerUri: useAuthentication ? '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0' : ''
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -178,7 +175,9 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SERVER_APP_ID: serverAppId
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId
+      AZURE_CLIENT_APP_SECRET: clientAppSecret
       AZURE_TENANT_ID: tenant().tenantId
+      AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0'
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }

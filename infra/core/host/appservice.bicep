@@ -24,10 +24,6 @@ param allowedOrigins array = []
 param alwaysOn bool = true
 param appCommandLine string = ''
 param appSettings object = {}
-param authClientId string = ''
-@secure()
-param authClientSecret string = ''
-param authIssuerUri string = ''
 param clientAffinityEnabled bool = false
 param enableOryxBuild bool = contains(kind, 'linux')
 param functionAppScaleLimit int = -1
@@ -76,8 +72,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       },
       runtimeName == 'python' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
       !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
-      !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {},
-      !empty(authClientSecret) ? { AZURE_AUTH_CLIENT_SECRET: authClientSecret } : {}
+      !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {}
     )
   }
 
@@ -94,7 +89,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     ]
   }
 
-  resource configAuth 'config' = if (!(empty(authClientId))) {
+  resource configAuth 'config' = if (!(empty(appSettings.AZURE_CLIENT_APP_ID))) {
     name: 'authsettingsV2'
     properties: {
       globalValidation: {
@@ -106,9 +101,9 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         azureActiveDirectory: {
           enabled: true
           registration: {
-            clientId: authClientId
-            clientSecretSettingName: 'AZURE_AUTH_CLIENT_SECRET'
-            openIdIssuer: authIssuerUri
+            clientId: appSettings.AZURE_CLIENT_APP_ID
+            clientSecretSettingName: !empty(appSettings.AZURE_CLIENT_APP_SECRET) ? 'AZURE_CLIENT_APP_SECRET' : ''
+            openIdIssuer: appSettings.AZURE_AUTHENTICATION_ISSUER_URI
           }
           validation: {
             defaultAuthorizationPolicy: {
