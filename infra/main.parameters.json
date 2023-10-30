@@ -83,6 +83,9 @@
     "useAuthentication": {
       "value": "${AZURE_USE_AUTHENTICATION=false}"
     },
+    "tenantId": {
+      "value": "${AZURE_TENANT_ID}"
+    },
     "serverAppId": {
       "value": "${AZURE_SERVER_APP_ID}"
     },

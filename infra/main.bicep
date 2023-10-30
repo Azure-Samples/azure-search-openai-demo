@@ -66,6 +66,7 @@ param embeddingModelName string = 'text-embedding-ada-002'
 
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
+param tenantId string = tenant().tenantId
 param serverAppId string = ''
 @secure()
 param serverAppSecret string = ''
@@ -176,7 +177,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId
       AZURE_CLIENT_APP_SECRET: clientAppSecret
-      AZURE_TENANT_ID: tenant().tenantId
+      AZURE_TENANT_ID: tenantId
       AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0'
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
