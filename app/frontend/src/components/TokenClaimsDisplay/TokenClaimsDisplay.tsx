@@ -31,7 +31,16 @@ export const TokenClaimsDisplay = () => {
 
     let createClaims = (o: Record<string, unknown> | undefined) => {
         return Object.keys(o ?? {}).map((key: string) => {
-            return { name: key, value: ToString((o ?? {})[key]) };
+            let originalKey = key;
+            try {
+                // Some claim names may be a URL to a full schema, just use the last part of the URL in this case
+                const url = new URL(key);
+                const parts = url.pathname.split("/");
+                key = parts[parts.length - 1];
+            } catch (error) {
+                // Do not parse key if it's not a URL
+            }
+            return { name: key, value: ToString((o ?? {})[originalKey]) };
         });
     };
     const items: Claim[] = createClaims(activeAccount?.idTokenClaims ?? appServicesToken?.user_claims);

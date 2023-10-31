@@ -94,24 +94,32 @@ class AuthenticationHelper:
     def get_token_auth_header(headers: dict) -> str:
         # Obtains the Access Token from the Authorization Header
         auth = headers.get("Authorization", None)
-        if not auth:
-            raise AuthError(
-                {"code": "authorization_header_missing", "description": "Authorization header is expected"}, 401
-            )
+        if auth:
+            parts = auth.split()
 
-        parts = auth.split()
+            if parts[0].lower() != "bearer":
+                raise AuthError(
+                    {"code": "invalid_header", "description": "Authorization header must start with Bearer"}, 401
+                )
+            elif len(parts) == 1:
+                raise AuthError({"code": "invalid_header", "description": "Token not found"}, 401)
+            elif len(parts) > 2:
+                raise AuthError(
+                    {"code": "invalid_header", "description": "Authorization header must be Bearer token"}, 401
+                )
 
-        if parts[0].lower() != "bearer":
-            raise AuthError(
-                {"code": "invalid_header", "description": "Authorization header must start with Bearer"}, 401
-            )
-        elif len(parts) == 1:
-            raise AuthError({"code": "invalid_header", "description": "Token not found"}, 401)
-        elif len(parts) > 2:
-            raise AuthError({"code": "invalid_header", "description": "Authorization header must be Bearer token"}, 401)
+            token = parts[1]
+            return token
 
-        token = parts[1]
-        return token
+        # App services built-in authentication passes the access token directly as a header
+        # To learn more, please visit https://learn.microsoft.com/azure/app-service/configure-authentication-oauth-tokens
+        token = headers.get("x-ms-token-aad-access-token", None)
+        if token:
+            return token
+
+        raise AuthError(
+            {"code": "authorization_header_missing", "description": "Authorization header is expected"}, 401
+        )
 
     @staticmethod
     def build_security_filters(overrides: dict[str, Any], auth_claims: dict[str, Any]):
