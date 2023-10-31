@@ -40,6 +40,10 @@ CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
+ERROR_MESSAGE = """The app encountered an error processing your request.
+If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
+Error type: {error_type}
+"""
 
 bp = Blueprint("routes", __name__, static_folder="static")
 
@@ -93,6 +97,10 @@ async def content_file(path: str):
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
 
+def error_dict(error: Exception) -> dict:
+    return {"error": ERROR_MESSAGE.format(error_type=type(error))}
+
+
 @bp.route("/ask", methods=["POST"])
 async def ask():
     if not request.is_json:
@@ -110,14 +118,18 @@ async def ask():
                 request_json["messages"], context=context, session_state=request_json.get("session_state")
             )
         return jsonify(r)
-    except Exception as e:
-        logging.exception("Exception in /ask")
-        return jsonify({"error": str(e)}), 500
+    except Exception as error:
+        logging.exception("Exception in /ask: %s", error)
+        return jsonify(error_dict(error)), 500
 
 
 async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
-    async for event in r:
-        yield json.dumps(event, ensure_ascii=False) + "\n"
+    try:
+        async for event in r:
+            yield json.dumps(event, ensure_ascii=False) + "\n"
+    except Exception as e:
+        logging.exception("Exception while generating response stream: %s", e)
+        yield json.dumps(error_dict(e))
 
 
 @bp.route("/chat", methods=["POST"])
@@ -142,9 +154,9 @@ async def chat():
             response = await make_response(format_as_ndjson(result))
             response.timeout = None  # type: ignore
             return response
-    except Exception as e:
-        logging.exception("Exception in /chat")
-        return jsonify({"error": str(e)}), 500
+    except Exception as error:
+        logging.exception("Exception in /chat: %s", error)
+        return jsonify(error_dict(error)), 500
 
 
 # Send MSAL.js settings to the client UI
