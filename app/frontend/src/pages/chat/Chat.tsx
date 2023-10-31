@@ -372,7 +372,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             checked={useOidSecurityFilter}
                             label="Use oid security filter"
-                            disabled={isLoggedIn}
+                            disabled={!isLoggedIn}
                             onChange={onUseOidSecurityFilterChange}
                         />
                     )}
@@ -381,7 +381,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             checked={useGroupsSecurityFilter}
                             label="Use groups security filter"
-                            disabled={isLoggedIn}
+                            disabled={!isLoggedIn}
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}
