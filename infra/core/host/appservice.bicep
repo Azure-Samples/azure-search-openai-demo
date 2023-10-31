@@ -106,9 +106,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
             openIdIssuer: appSettings.AZURE_AUTHENTICATION_ISSUER_URI
           }
           login: {
-            loginParameters: ['scope=openid profile email offline_access']
+            loginParameters: ['scope=openid profile email offline_access api://${appSettings.AZURE_SERVER_APP_ID}/access_as_user']
           }
           validation: {
+            allowedAudiences: ['api://${appSettings.AZURE_SERVER_APP_ID}']
             defaultAuthorizationPolicy: {
               allowedApplications: []
             }

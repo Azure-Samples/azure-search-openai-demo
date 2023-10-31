@@ -13,7 +13,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import { useLogin, getToken } from "../../authConfig";
+import { useLogin, getToken, appServicesToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -123,7 +123,7 @@ const Chat = () => {
                 session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
 
-            const response = await chatApi(request, token?.accessToken);
+            const response = await chatApi(request, token);
             if (!response.body) {
                 throw Error("No response body");
             }
@@ -222,6 +222,8 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
+
+    const isLoggedIn = (client?.getActiveAccount() || appServicesToken) != null;
 
     return (
         <div className={styles.container}>
@@ -370,7 +372,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             checked={useOidSecurityFilter}
                             label="Use oid security filter"
-                            disabled={!client?.getActiveAccount()}
+                            disabled={isLoggedIn}
                             onChange={onUseOidSecurityFilterChange}
                         />
                     )}
@@ -379,7 +381,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             checked={useGroupsSecurityFilter}
                             label="Use groups security filter"
-                            disabled={!client?.getActiveAccount()}
+                            disabled={isLoggedIn}
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}

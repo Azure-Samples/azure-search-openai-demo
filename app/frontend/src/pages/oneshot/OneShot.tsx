@@ -9,7 +9,7 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-import { useLogin, getToken } from "../../authConfig";
+import { useLogin, getToken, appServicesToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -72,7 +72,7 @@ export function Component(): JSX.Element {
                 // ChatAppProtocol: Client must pass on any session state received from the server
                 session_state: answer ? answer.choices[0].session_state : null
             };
-            const result = await askApi(request, token?.accessToken);
+            const result = await askApi(request, token);
             setAnswer(result);
         } catch (e) {
             setError(e);
@@ -141,6 +141,8 @@ export function Component(): JSX.Element {
     const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseGroupsSecurityFilter(!!checked);
     };
+
+    const isLoggedIn = (client?.getActiveAccount() || appServicesToken) != null;
 
     return (
         <div className={styles.oneshotContainer}>
@@ -231,7 +233,7 @@ export function Component(): JSX.Element {
                         className={styles.oneshotSettingsSeparator}
                         checked={useOidSecurityFilter}
                         label="Use oid security filter"
-                        disabled={!client?.getActiveAccount()}
+                        disabled={!isLoggedIn}
                         onChange={onUseOidSecurityFilterChange}
                     />
                 )}
@@ -240,7 +242,7 @@ export function Component(): JSX.Element {
                         className={styles.oneshotSettingsSeparator}
                         checked={useGroupsSecurityFilter}
                         label="Use groups security filter"
-                        disabled={!client?.getActiveAccount()}
+                        disabled={!isLoggedIn}
                         onChange={onUseGroupsSecurityFilterChange}
                     />
                 )}
