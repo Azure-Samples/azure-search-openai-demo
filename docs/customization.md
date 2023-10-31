@@ -101,7 +101,7 @@ You can also use the `highlight` parameter to see what text is being matched in 
 {
     "search": "eye exams",
     "highlight": "content"
-    ....
+    ...
 }
 ```
 
