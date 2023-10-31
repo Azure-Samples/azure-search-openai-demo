@@ -6,6 +6,8 @@ from typing import Dict, Optional, Tuple
 import aiohttp
 from azure.identity.aio import AzureDeveloperCliCredential
 
+TIMEOUT = 60
+
 
 async def get_auth_headers(credential):
     token_result = await credential.get_token("https://graph.microsoft.com/.default")
@@ -13,7 +15,7 @@ async def get_auth_headers(credential):
 
 
 async def check_for_application(auth_headers: Dict[str, str], app_id: str) -> Optional[str]:
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=10)) as session:
+    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
         async with session.get(f"https://graph.microsoft.com/v1.0/applications(appId='{app_id}')") as response:
             if response.status == 200:
                 response_json = await response.json()
@@ -23,7 +25,7 @@ async def check_for_application(auth_headers: Dict[str, str], app_id: str) -> Op
 
 
 async def create_application(auth_headers: Dict[str, str], app_payload: object) -> Tuple[str, str]:
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=10)) as session:
+    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
         async with session.post("https://graph.microsoft.com/v1.0/applications", json=app_payload) as response:
             response_json = await response.json()
             object_id = response_json["id"]
@@ -33,7 +35,7 @@ async def create_application(auth_headers: Dict[str, str], app_payload: object) 
 
 
 async def update_application(auth_headers: Dict[str, str], object_id: str, app_payload: object):
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=10)) as session:
+    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
         async with session.patch(
             f"https://graph.microsoft.com/v1.0/applications/{object_id}", json=app_payload
         ) as response:
@@ -44,7 +46,7 @@ async def update_application(auth_headers: Dict[str, str], object_id: str, app_p
 
 
 async def add_client_secret(auth_headers: Dict[str, str], object_id: str):
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=10)) as session:
+    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
         async with session.post(
             f"https://graph.microsoft.com/v1.0/applications/{object_id}/addPassword",
             json={"passwordCredential": {"displayName": "secret"}},
@@ -56,27 +58,29 @@ async def add_client_secret(auth_headers: Dict[str, str], object_id: str):
             raise Exception(response_json)
 
 
-async def create_application_with_secret(
+async def create_or_update_application_with_secret(
     auth_headers: Dict[str, str], app_id_env_var: str, app_secret_env_var: str, app_payload: object
 ) -> Tuple[str, str, bool]:
     app_id = os.getenv(app_id_env_var, "no-id")
+    created_app = False
     if app_id != "no-id":
         print(f"Checking if application {app_id} exists")
         object_id = await check_for_application(auth_headers, app_id)
         if object_id:
             print("Application already exists, not creating new one")
-            return (object_id, app_id, False)
-
-    print("Creating application registration")
-    object_id, app_id = await create_application(auth_headers, app_payload)
-    update_azd_env(app_id_env_var, app_id)
+            await update_application(auth_headers, object_id, app_payload)
+        else:
+            print("Creating application registration")
+            object_id, app_id = await create_application(auth_headers, app_payload)
+            update_azd_env(app_id_env_var, app_id)
+            created_app = True
 
     if os.getenv(app_secret_env_var, "no-secret") == "no-secret":
         print(f"Adding client secret to {app_id}")
         client_secret = await add_client_secret(auth_headers, object_id)
         update_azd_env(app_secret_env_var, client_secret)
 
-    return (object_id, app_id, True)
+    return (object_id, app_id, created_app)
 
 
 def update_azd_env(name, val):
@@ -121,6 +125,13 @@ def create_server_app_permission_setup_payload(server_app_id: str):
                 }
             ],
         },
+        "requiredResourceAccess": [
+            # Graph User.Read
+            {
+                "resourceAppId": "00000003-0000-0000-c000-000000000000",
+                "resourceAccess": [{"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope"}],
+            }
+        ],
         "identifierUris": [f"api://{server_app_id}"],
     }
 
@@ -135,6 +146,7 @@ def create_client_app_payload(server_app_id: str, server_app_permission_setup_pa
         },
         "spa": {"redirectUris": ["http://localhost:50505/redirect"]},
         "requiredResourceAccess": [
+            # access_as_user from server app
             {
                 "resourceAppId": server_app_id,
                 "resourceAccess": [
@@ -143,7 +155,12 @@ def create_client_app_payload(server_app_id: str, server_app_permission_setup_pa
                         "type": "Scope",
                     }
                 ],
-            }
+            },
+            # Graph User.Read
+            {
+                "resourceAppId": "00000003-0000-0000-c000-000000000000",
+                "resourceAccess": [{"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope"}],
+            },
         ],
     }
 
@@ -164,20 +181,22 @@ async def main():
     credential = AzureDeveloperCliCredential()
     auth_headers = await get_auth_headers(credential)
 
-    server_object_id, server_app_id, _ = await create_application_with_secret(
+    server_object_id, server_app_id, _ = await create_or_update_application_with_secret(
         auth_headers,
         app_id_env_var="AZURE_SERVER_APP_ID",
         app_secret_env_var="AZURE_SERVER_APP_SECRET",
         app_payload=create_server_app_initial_payload(),
     )
+    print("Setup server application permissions...")
     server_app_permission_payload = create_server_app_permission_setup_payload(server_app_id)
     await update_application(auth_headers, object_id=server_object_id, app_payload=server_app_permission_payload)
-    _, client_app_id, _ = await create_application_with_secret(
+    _, client_app_id, _ = await create_or_update_application_with_secret(
         auth_headers,
         app_id_env_var="AZURE_CLIENT_APP_ID",
         app_secret_env_var="AZURE_CLIENT_APP_SECRET",
         app_payload=create_client_app_payload(server_app_id, server_app_permission_payload),
     )
+    print("Setup server known client applications...")
     await update_application(
         auth_headers,
         object_id=server_object_id,
