@@ -186,6 +186,7 @@ async def setup_clients():
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
     AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    AZURE_REQUIRE_ACCESS_CONTROL = os.getenv("AZURE_REQUIRE_ACCESS_CONTROL", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
     AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
@@ -211,6 +212,7 @@ async def setup_clients():
         server_app_secret=AZURE_SERVER_APP_SECRET,
         client_app_id=AZURE_CLIENT_APP_ID,
         tenant_id=AZURE_TENANT_ID,
+        require_access_control=AZURE_REQUIRE_ACCESS_CONTROL,
         token_cache_path=TOKEN_CACHE_PATH,
     )
 
