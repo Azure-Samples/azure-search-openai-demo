@@ -14,6 +14,8 @@ interface AppServicesToken {
 interface AuthSetup {
     // Set to true if login elements should be shown in the UI
     useLogin: boolean;
+    // Set to true if access control is enforced by the application
+    requireAccessControl: boolean;
     /**
      * Configuration object to be passed to MSAL instance on creation.
      * For a full list of MSAL.js configuration parameters, visit:
@@ -58,6 +60,8 @@ async function fetchAuthSetup(): Promise<AuthSetup> {
 const authSetup = await fetchAuthSetup();
 
 export const useLogin = authSetup.useLogin;
+
+export const requireAccessControl = authSetup.requireAccessControl;
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
@@ -112,6 +116,12 @@ export const appServicesToken = await getAppServicesToken();
 // Learn more at https://learn.microsoft.com/azure/app-service/configure-authentication-customize-sign-in-out#sign-out-of-a-session
 export const appServicesLogout = () => {
     window.location.href = appServicesAuthLogoutUrl;
+};
+
+// Determine if the user is logged in
+// The user may have logged in either using the app services login or the on-page login
+export const isLoggedIn = (client: IPublicClientApplication | undefined): boolean => {
+    return client?.getActiveAccount() != null || appServicesToken != null;
 };
 
 // Get an access token for use with the API server.

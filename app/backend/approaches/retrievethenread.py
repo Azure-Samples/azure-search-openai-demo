@@ -5,6 +5,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import Approach
+from core.authentication import AuthenticationHelper
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 
@@ -40,6 +41,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
     def __init__(
         self,
         search_client: SearchClient,
+        auth_helper: AuthenticationHelper,
         openai_host: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
@@ -50,6 +52,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         query_language: str,
         query_speller: str,
     ):
+        super().__init__(auth_helper)
         self.search_client = search_client
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment

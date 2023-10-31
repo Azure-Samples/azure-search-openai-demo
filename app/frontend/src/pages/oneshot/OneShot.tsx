@@ -9,7 +9,7 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-import { useLogin, getToken, appServicesToken } from "../../authConfig";
+import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -142,8 +142,6 @@ export function Component(): JSX.Element {
         setUseGroupsSecurityFilter(!!checked);
     };
 
-    const isLoggedIn = (client?.getActiveAccount() || appServicesToken) != null;
-
     return (
         <div className={styles.oneshotContainer}>
             <div className={styles.oneshotTopSection}>
@@ -231,18 +229,18 @@ export function Component(): JSX.Element {
                 {useLogin && (
                     <Checkbox
                         className={styles.oneshotSettingsSeparator}
-                        checked={useOidSecurityFilter}
+                        checked={useOidSecurityFilter || requireAccessControl}
                         label="Use oid security filter"
-                        disabled={!isLoggedIn}
+                        disabled={!isLoggedIn(client) || requireAccessControl}
                         onChange={onUseOidSecurityFilterChange}
                     />
                 )}
                 {useLogin && (
                     <Checkbox
                         className={styles.oneshotSettingsSeparator}
-                        checked={useGroupsSecurityFilter}
+                        checked={useGroupsSecurityFilter || requireAccessControl}
                         label="Use groups security filter"
-                        disabled={!isLoggedIn}
+                        disabled={!isLoggedIn(client) || requireAccessControl}
                         onChange={onUseGroupsSecurityFilterChange}
                     />
                 )}

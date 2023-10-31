@@ -32,6 +32,7 @@ class AuthenticationHelper:
         server_app_secret: Optional[str],
         client_app_id: Optional[str],
         tenant_id: Optional[str],
+        require_access_control: bool = False,
         token_cache_path: Optional[str] = None,
     ):
         self.use_authentication = use_authentication
@@ -42,6 +43,7 @@ class AuthenticationHelper:
         self.authority = f"https://login.microsoftonline.com/{tenant_id}"
 
         if self.use_authentication:
+            self.require_access_control = require_access_control
             self.token_cache_path = token_cache_path
             if not self.token_cache_path:
                 self.temporary_directory = TemporaryDirectory()
@@ -57,11 +59,14 @@ class AuthenticationHelper:
                 client_credential=server_app_secret,
                 token_cache=PersistedTokenCache(persistence),
             )
+        else:
+            self.require_access_control = False
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
             "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
+            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to use the application
             "msalConfig": {
                 "auth": {
                     "clientId": self.client_app_id,  # Client app id used for login
@@ -121,13 +126,12 @@ class AuthenticationHelper:
             {"code": "authorization_header_missing", "description": "Authorization header is expected"}, 401
         )
 
-    @staticmethod
-    def build_security_filters(overrides: dict[str, Any], auth_claims: dict[str, Any]):
+    def build_security_filters(self, overrides: dict[str, Any], auth_claims: dict[str, Any]):
         # Build different permutations of the oid or groups security filter using OData filters
         # https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search
         # https://learn.microsoft.com/azure/search/search-query-odata-filter
-        use_oid_security_filter = overrides.get("use_oid_security_filter")
-        use_groups_security_filter = overrides.get("use_groups_security_filter")
+        use_oid_security_filter = self.require_access_control or overrides.get("use_oid_security_filter")
+        use_groups_security_filter = self.require_access_control or overrides.get("use_groups_security_filter")
 
         oid_security_filter = (
             "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid") or "") if use_oid_security_filter else None
@@ -214,7 +218,11 @@ class AuthenticationHelper:
         except AuthError as e:
             print(e.error)
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
+            if self.require_access_control:
+                raise
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
+            if self.require_access_control:
+                raise
             return {}

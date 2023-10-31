@@ -5,7 +5,7 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 
 def test_get_search_query():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"role":"assistant","function_call":{"name":"search_sources","arguments":"{\\n\\"search_query\\":\\"accesstelemedicineservices\\"\\n}"}},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
@@ -17,7 +17,7 @@ def test_get_search_query():
 
 def test_get_search_query_returns_default():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
@@ -29,7 +29,7 @@ def test_get_search_query_returns_default():
 
 def test_get_messages_from_history():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     messages = chat_approach.get_messages_from_history(
@@ -59,7 +59,7 @@ def test_get_messages_from_history():
 
 def test_get_messages_from_history_truncated():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     messages = chat_approach.get_messages_from_history(
@@ -84,7 +84,7 @@ def test_get_messages_from_history_truncated():
 
 def test_get_messages_from_history_truncated_longer():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     messages = chat_approach.get_messages_from_history(
@@ -120,7 +120,7 @@ def test_get_messages_from_history_truncated_longer():
 def test_get_messages_from_history_truncated_break_pair():
     """Tests that the truncation breaks the pair of messages."""
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     messages = chat_approach.get_messages_from_history(
@@ -159,7 +159,7 @@ def test_get_messages_from_history_truncated_break_pair():
 
 def test_extract_followup_questions():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     content = "Here is answer to your question.<<What is the dress code?>>"
@@ -170,7 +170,7 @@ def test_extract_followup_questions():
 
 def test_extract_followup_questions_three():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     content = """Here is answer to your question.
@@ -189,7 +189,7 @@ def test_extract_followup_questions_three():
 
 def test_extract_followup_questions_no_followup():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     content = "Here is answer to your question."
@@ -200,7 +200,7 @@ def test_extract_followup_questions_no_followup():
 
 def test_extract_followup_questions_no_pre_content():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     content = "<<What is the dress code?>>"
@@ -211,7 +211,7 @@ def test_extract_followup_questions_no_pre_content():
 
 def test_get_messages_from_history_few_shots():
     chat_approach = ChatReadRetrieveReadApproach(
-        None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
+        None, None, "", "gpt-35-turbo", "gpt-35-turbo", "", "", "", "", "en-us", "lexicon"
     )
 
     user_query_request = "What does a Product manager do?"

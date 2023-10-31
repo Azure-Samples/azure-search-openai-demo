@@ -13,7 +13,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-import { useLogin, getToken, appServicesToken } from "../../authConfig";
+import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -223,8 +223,6 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const isLoggedIn = (client?.getActiveAccount() || appServicesToken) != null;
-
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -370,18 +368,18 @@ const Chat = () => {
                     {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
-                            checked={useOidSecurityFilter}
+                            checked={useOidSecurityFilter || requireAccessControl}
                             label="Use oid security filter"
-                            disabled={!isLoggedIn}
+                            disabled={!isLoggedIn(client) || requireAccessControl}
                             onChange={onUseOidSecurityFilterChange}
                         />
                     )}
                     {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
-                            checked={useGroupsSecurityFilter}
+                            checked={useGroupsSecurityFilter || requireAccessControl}
                             label="Use groups security filter"
-                            disabled={!isLoggedIn}
+                            disabled={!isLoggedIn(client) || requireAccessControl}
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}

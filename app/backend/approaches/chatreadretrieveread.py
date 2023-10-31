@@ -9,6 +9,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import Approach
+from core.authentication import AuthenticationHelper
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
@@ -61,6 +62,7 @@ If you cannot generate a search query, return just the number 0.
     def __init__(
         self,
         search_client: SearchClient,
+        auth_helper: AuthenticationHelper,
         openai_host: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
@@ -71,6 +73,7 @@ If you cannot generate a search query, return just the number 0.
         query_language: str,
         query_speller: str,
     ):
+        super().__init__(auth_helper)
         self.search_client = search_client
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment

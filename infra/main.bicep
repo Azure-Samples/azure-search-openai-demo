@@ -68,6 +68,7 @@ param tenantId string = tenant().tenantId
 
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
+param enforceAccessControl bool = false
 param serverAppId string = ''
 @secure()
 param serverAppSecret string = ''
@@ -174,6 +175,7 @@ module backend 'core/host/appservice.bicep' = {
       OPENAI_ORGANIZATION: openAiApiOrganization
       // Optional login and document level access control system
       AZURE_USE_AUTHENTICATION: useAuthentication
+      AZURE_ENFORCE_ACCESS_CONTROL: enforceAccessControl
       AZURE_SERVER_APP_ID: serverAppId
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId
