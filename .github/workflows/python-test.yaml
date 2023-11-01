@@ -25,7 +25,7 @@ jobs:
             python-version: ${{ matrix.python_version }}
             architecture: x64
         - name: Setup node
-          uses: actions/setup-node@v3
+          uses: actions/setup-node@v4
           with:
             node-version: 18
         - name: Build frontend
@@ -40,14 +40,25 @@ jobs:
         - name: Lint with ruff
           run: ruff .
         - name: Check types with mypy
-          run: python3 -m mypy scripts/ app/
+          run: |
+            cd scripts/
+            python3 -m mypy .
+            cd ../app/
+            python3 -m mypy .
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: python3 -m pytest -s -vv --cov --cov-fail-under=78
+          run: python3 -m pytest -s -vv --cov --cov-fail-under=87
         - name: Run E2E tests with Playwright
+          id: e2e
           if: runner.os != 'Windows'
           run: |
             playwright install --with-deps
-            python3 -m pytest tests/e2e.py
+            python3 -m pytest tests/e2e.py --tracing=retain-on-failure
+        - name: Upload test artifacts
+          if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
+          uses: actions/upload-artifact@v3
+          with:
+            name: playwright-traces
+            path: test-results

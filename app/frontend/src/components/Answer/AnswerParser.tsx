@@ -4,21 +4,13 @@ import { getCitationFilePath } from "../../api";
 type HtmlParsedAnswer = {
     answerHtml: string;
     citations: string[];
-    followupQuestions: string[];
 };
 
 export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
     const citations: string[] = [];
-    const followupQuestions: string[] = [];
-
-    // Extract any follow-up questions that might be in the answer
-    let parsedAnswer = answer.replace(/<<([^>>]+)>>/g, (match, content) => {
-        followupQuestions.push(content);
-        return "";
-    });
 
     // trim any whitespace from the end of the answer after removing follow-up questions
-    parsedAnswer = parsedAnswer.trim();
+    let parsedAnswer = answer.trim();
 
     // Omit a citation that is still being typed during streaming
     if (isStreaming) {
@@ -61,7 +53,6 @@ export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitati
 
     return {
         answerHtml: fragments.join(""),
-        citations,
-        followupQuestions
+        citations
     };
 }

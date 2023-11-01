@@ -70,6 +70,11 @@ const Chat = () => {
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
                     await updateState(event["choices"][0]["delta"]["content"]);
+                } else if (event["choices"] && event["choices"][0]["context"]) {
+                    // Update context with new keys from latest event
+                    askResponse.choices[0].context = { ...askResponse.choices[0].context, ...event["choices"][0]["context"] };
+                } else if (event["error"]) {
+                    throw Error(event["error"]);
                 }
             }
         } finally {
