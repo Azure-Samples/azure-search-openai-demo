@@ -1,0 +1,18 @@
+{
+    "choices": [
+        {
+            "context": {
+                "data_points": [
+                    "Benefit_Options-2.pdf: There is a whistleblower policy."
+                ],
+                "thoughts": "Searched for:<br>None<br><br>Conversations:<br>{'role': 'system', 'content': \"Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.\\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.\\nFor tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.\\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\\n\\n\\n\"}<br><br>{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
+            },
+            "message": {
+                "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "role": "assistant"
+            },
+            "session_state": null
+        }
+    ],
+    "object": "chat.completion"
+}

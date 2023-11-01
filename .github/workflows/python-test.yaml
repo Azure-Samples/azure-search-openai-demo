@@ -1,0 +1,64 @@
+name: Python check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *' # Run at midnight every day
+
+jobs:
+  test_package:
+    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-20.04", "windows-latest"]
+        python_version: ["3.9", "3.10", "3.11"]
+    steps:
+        - uses: actions/checkout@v4
+        - name: Setup python
+          uses: actions/setup-python@v4
+          with:
+            python-version: ${{ matrix.python_version }}
+            architecture: x64
+        - name: Setup node
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+        - name: Build frontend
+          run: |
+            cd ./app/frontend
+            npm install
+            npm run build
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements-dev.txt
+        - name: Lint with ruff
+          run: ruff .
+        - name: Check types with mypy
+          run: |
+            cd scripts/
+            python3 -m mypy .
+            cd ../app/
+            python3 -m mypy .
+        - name: Check formatting with black
+          run: black . --check --verbose
+        - name: Run Python tests
+          if: runner.os != 'Windows'
+          run: python3 -m pytest -s -vv --cov --cov-fail-under=87
+        - name: Run E2E tests with Playwright
+          id: e2e
+          if: runner.os != 'Windows'
+          run: |
+            playwright install --with-deps
+            python3 -m pytest tests/e2e.py --tracing=retain-on-failure
+        - name: Upload test artifacts
+          if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
+          uses: actions/upload-artifact@v3
+          with:
+            name: playwright-traces
+            path: test-results

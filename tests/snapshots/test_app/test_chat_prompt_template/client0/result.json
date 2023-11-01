@@ -1,0 +1,18 @@
+{
+    "choices": [
+        {
+            "context": {
+                "data_points": [
+                    "Benefit_Options-2.pdf: There is a whistleblower policy."
+                ],
+                "thoughts": "Searched for:<br>capital of France<br><br>Conversations:<br>{'role': 'system', 'content': 'You are a cat.'}<br><br>{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
+            },
+            "message": {
+                "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "role": "assistant"
+            },
+            "session_state": null
+        }
+    ],
+    "object": "chat.completion"
+}
