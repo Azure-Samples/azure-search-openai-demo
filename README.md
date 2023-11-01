@@ -266,6 +266,10 @@ By default, the deployed Azure web app will only allow requests from the same or
 
 For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed backend URL, so that all fetch requests will be sent to the deployed backend.
 
+For an alternate frontend that's written in Web Components and deployed to Static Web Apps, check out
+[azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
+on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
+
 ## Running locally
 
 You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
@@ -285,19 +289,22 @@ Once in the web app:
 * Explore citations and sources
 * Click on "settings" to try different options, tweak prompts, etc.
 
+## Customizing the UI and data
+
+Once you successfully deploy the app, you can start customizing it for your needs: changing the text, tweaking the prompts, and replacing the data. Consult the [app customization guide](docs/customization.md) as well as the [data ingestion guide](docs/data_ingestion.md) for more details.
+
 ## Productionizing
 
 This sample is designed to be a starting point for your own production application,
 but you should do a thorough review of the security and performance before deploying
 to production. Read through our [productionizing guide](docs/productionizing.md) for more details.
 
-
 ## Resources
 
 * [Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and Cognitive Search](https://aka.ms/entgptsearchblog)
 * [Azure Cognitive Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
 * [Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
-* [Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/en-gb/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
+* [Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
 
 ## Clean up
 
@@ -314,19 +321,6 @@ The resource group and all the resources will be deleted.
 >Note: The PDF documents used in this demo contain information generated using a language model (Azure OpenAI Service). The information contained in these documents is only for demonstration purposes and does not reflect the opinions or beliefs of Microsoft. Microsoft makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the information contained in this document. All rights reserved to Microsoft.
 
 ### FAQ
-
-<details><a id="ingestion-why-chunk"></a>
-<summary>Why do we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents?</summary>
-
-Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
-</details>
-
-<details><a id="ingestion-more-pdfs"></a>
-<summary>How can we upload additional PDFs without redeploying everything?</summary>
-
-To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`.
-A [recent change](https://github.com/Azure-Samples/azure-search-openai-demo/pull/835) added checks to see what's been uploaded before. The prepdocs script now writes an .md5 file with an MD5 hash of each file that gets uploaded. Whenever the prepdocs script is re-run, that hash is checked against the current hash and the file is skipped if it hasn't changed.
-</details>
 
 <details><a id="compare-samples"></a>
 <summary>How does this sample compare to other Chat with Your Data samples?</summary>
@@ -365,22 +359,6 @@ Technology comparison:
 <summary>How do you use GPT-4 with this sample?</summary>
 
 In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'. You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
-</details>
-
-<details><a id="chat-ask-diff"></a>
-<summary>What is the difference between the Chat and Ask tabs?</summary>
-
-The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
-
-- It uses the ChatGPT API to turn the user question into a good search query.
-- It queries Azure Cognitive Search for search results for that query (optionally using the vector embeddings for that query).
-- It then combines the search results and original user question, and asks ChatGPT API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
-
-The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
-
-- It queries Azure Cognitive Search for search results for the user question (optionally using the vector embeddings for that question).
-- It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
-
 </details>
 
 <details><a id="azd-up-explanation"></a>
