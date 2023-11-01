@@ -1,27 +1,18 @@
 import asyncio
 import os
 import subprocess
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 import aiohttp
 from azure.identity.aio import AzureDeveloperCliCredential
 
-TIMEOUT = 60
-
-
-async def get_auth_headers(credential):
-    token_result = await credential.get_token("https://graph.microsoft.com/.default")
-    return {"Authorization": f"Bearer {token_result.token}"}
-
-
-async def check_for_application(auth_headers: Dict[str, str], app_id: str) -> Optional[str]:
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
-        async with session.get(f"https://graph.microsoft.com/v1.0/applications(appId='{app_id}')") as response:
-            if response.status == 200:
-                response_json = await response.json()
-                return response_json["id"]
-
-    return None
+from auth_common import (
+    TIMEOUT,
+    get_application,
+    get_auth_headers,
+    test_authentication_enabled,
+    update_application,
+)
 
 
 async def create_application(auth_headers: Dict[str, str], app_payload: object) -> Tuple[str, str]:
@@ -32,17 +23,6 @@ async def create_application(auth_headers: Dict[str, str], app_payload: object) 
             client_id = response_json["appId"]
 
     return object_id, client_id
-
-
-async def update_application(auth_headers: Dict[str, str], object_id: str, app_payload: object):
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
-        async with session.patch(
-            f"https://graph.microsoft.com/v1.0/applications/{object_id}", json=app_payload
-        ) as response:
-            if response.status != 204:
-                raise Exception(await response.json())
-
-    return True
 
 
 async def add_client_secret(auth_headers: Dict[str, str], object_id: str):
@@ -65,7 +45,7 @@ async def create_or_update_application_with_secret(
     created_app = False
     if app_id != "no-id":
         print(f"Checking if application {app_id} exists")
-        object_id = await check_for_application(auth_headers, app_id)
+        object_id = await get_application(auth_headers, app_id)
         if object_id:
             print("Application already exists, not creating new one")
             await update_application(auth_headers, object_id, app_payload)
@@ -85,20 +65,6 @@ async def create_or_update_application_with_secret(
 
 def update_azd_env(name, val):
     subprocess.run(f"azd env set {name} {val}", shell=True)
-
-
-def test_authentication_enabled():
-    use_authentication = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
-    require_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
-    if require_access_control and not use_authentication:
-        print("AZURE_ENFORCE_ACCESS_CONTROL is true, but AZURE_USE_AUTHENTICATION is false. Stopping setup...")
-        return False
-
-    if not use_authentication:
-        print("AZURE_USE_AUTHENTICATION is false, not setting up authentication...")
-        return False
-
-    return True
 
 
 def create_server_app_initial_payload():
@@ -175,9 +141,10 @@ def create_server_app_known_client_application_payload(client_app_id: str):
 
 async def main():
     if not test_authentication_enabled():
+        print("Not setting up authentication...")
         exit(0)
 
-    print("AZURE_USE_AUTHENTICATION is true, setting up authentication...")
+    print("Setting up authentication...")
     credential = AzureDeveloperCliCredential()
     auth_headers = await get_auth_headers(credential)
 

@@ -1,39 +1,45 @@
-# import os
+import asyncio
+import os
 
-import urllib3
+from azure.identity.aio import AzureDeveloperCliCredential
 
-# from azure.identity import AzureDeveloperCliCredential
+from auth_common import (
+    get_application,
+    get_auth_headers,
+    test_authentication_enabled,
+    update_application,
+)
 
 
-def update_redirect_uris(credential, app_id, uri):
-    urllib3.request(
-        "PATCH",
-        f"https://graph.microsoft.com/v1.0/applications/{app_id}",
-        headers={
-            "Authorization": "Bearer " + credential.get_token("https://graph.microsoft.com/.default").token,
+async def main():
+    if not test_authentication_enabled():
+        print("Not updating authentication...")
+        exit(0)
+
+    print("Updating authentication...")
+    credential = AzureDeveloperCliCredential()
+    auth_headers = await get_auth_headers(credential)
+
+    uri = os.getenv("BACKEND_URI")
+    client_app_id = os.getenv("AZURE_CLIENT_APP_ID")
+    client_object_id = await get_application(auth_headers, client_app_id)
+    # Redirect URIs need to be relative to the deployed application
+    payload = {
+        "publicClient": {"redirectUris": []},
+        "spa": {
+            "redirectUris": [
+                "http://localhost:50505/redirect",
+                f"{uri}/redirect",
+            ]
         },
-        json={
-            "web": {
-                "redirectUris": [
-                    "http://localhost:5000/.auth/login/aad/callback",
-                    f"{uri}/.auth/login/aad/callback",
-                ]
-            }
+        "web": {
+            "redirectUris": [
+                f"{uri}/.auth/login/aad/callback",
+            ]
         },
-    )
+    }
+    await update_application(auth_headers, client_object_id, payload)
 
 
 if __name__ == "__main__":
-    """
-    if os.getenv("AZURE_USE_AUTHENTICATION", "false") != "true":
-        print("AZURE_USE_AUTHENTICATION is false, not updating authentication")
-        exit(0)
-
-    print("AZURE_USE_AUTHENTICATION is true, updating authentication...")
-    credential = AzureDeveloperCliCredential()
-
-    app_id = os.getenv("AZURE_AUTH_APP_ID")
-    uri = os.getenv("BACKEND_URI")
-    print(f"Updating application registration {app_id} with redirect URI for {uri}")
-    update_redirect_uris(credential, app_id, uri)
-    """
+    asyncio.run(main())
