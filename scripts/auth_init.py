@@ -1,7 +1,7 @@
 import asyncio
 import os
 import subprocess
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 
 import aiohttp
 from azure.identity.aio import AzureDeveloperCliCredential
@@ -39,23 +39,25 @@ async def add_client_secret(auth_headers: Dict[str, str], object_id: str):
 
 
 async def create_or_update_application_with_secret(
-    auth_headers: Dict[str, str], app_id_env_var: str, app_secret_env_var: str, app_payload: object
+    auth_headers: Dict[str, str], app_id_env_var: str, app_secret_env_var: str, app_payload: Dict[str, Any]
 ) -> Tuple[str, str, bool]:
     app_id = os.getenv(app_id_env_var, "no-id")
     created_app = False
+    object_id = None
     if app_id != "no-id":
         print(f"Checking if application {app_id} exists")
         object_id = await get_application(auth_headers, app_id)
-        if object_id:
-            print("Application already exists, not creating new one")
-            await update_application(auth_headers, object_id, app_payload)
-        else:
-            print("Creating application registration")
-            object_id, app_id = await create_application(auth_headers, app_payload)
-            update_azd_env(app_id_env_var, app_id)
-            created_app = True
 
-    if os.getenv(app_secret_env_var, "no-secret") == "no-secret":
+    if object_id:
+        print("Application already exists, not creating new one")
+        await update_application(auth_headers, object_id, app_payload)
+    else:
+        print("Creating application registration")
+        object_id, app_id = await create_application(auth_headers, app_payload)
+        update_azd_env(app_id_env_var, app_id)
+        created_app = True
+
+    if object_id and os.getenv(app_secret_env_var, "no-secret") == "no-secret":
         print(f"Adding client secret to {app_id}")
         client_secret = await add_client_secret(auth_headers, object_id)
         update_azd_env(app_secret_env_var, client_secret)
@@ -102,7 +104,7 @@ def create_server_app_permission_setup_payload(server_app_id: str):
     }
 
 
-def create_client_app_payload(server_app_id: str, server_app_permission_setup_payload: object):
+def create_client_app_payload(server_app_id: str, server_app_permission_setup_payload: Dict[str, Any]):
     return {
         "displayName": "Azure Search OpenAI Demo Client App",
         "signInAudience": "AzureADandPersonalMicrosoftAccount",
