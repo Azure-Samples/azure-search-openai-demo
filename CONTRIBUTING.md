@@ -68,7 +68,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 * In GitHub, create a pull request to the `main` branch of the repository
 * Ask a maintainer to review your PR and address any comments they might have
 
-## <a name="tests"></a> Running tests
+## <a name="tests"></a> Setting up the development environment
 
 Install the development dependencies:
 
@@ -82,11 +82,44 @@ Install the pre-commit hooks:
 pre-commit install
 ```
 
+## <a name="unit-tests"></a> Running unit tests
+
 Run the tests:
 
 ```
 python3 -m pytest
 ```
+
+Check the coverage report to make sure your changes are covered.
+
+```
+python3 -m pytest --cov
+```
+
+## <a name="e2e-tests"></a> Running E2E tests
+
+
+Install Playwright browser dependencies:
+
+```
+playwright install --with-deps
+```
+
+Run the tests:
+
+```
+python3 -m pytest tests/e2e.py --tracing=retain-on-failure
+```
+
+When a failure happens, the trace zip will be saved in the test-results folder.
+You can view that using the Playwright CLI:
+
+```
+playwright show-trace test-results/<trace-zip>
+```
+
+You can also use the online trace viewer at https://trace.playwright.dev/
+
 
 ## <a name="style"></a> Code Style
 
@@ -112,3 +145,5 @@ Run `black` to format a file:
 ```
 python3 -m black <path-to-file>
 ```
+
+If you followed the steps above to install the pre-commit hooks, then you can just wait for those hooks to run `ruff` and `black` for you.

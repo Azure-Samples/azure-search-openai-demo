@@ -1,15 +1,15 @@
-from typing import Any
+from typing import Any, AsyncGenerator, Optional, Union
 
 import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
-from approaches.approach import AskApproach
+from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
 from text import nonewlines
 
 
-class RetrieveThenReadApproach(AskApproach):
+class RetrieveThenReadApproach(Approach):
     """
     Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
@@ -41,12 +41,14 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self,
         search_client: SearchClient,
         openai_host: str,
-        chatgpt_deployment: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
-        embedding_deployment: str,
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,
+        query_language: str,
+        query_speller: str,
     ):
         self.search_client = search_client
         self.openai_host = openai_host
@@ -56,14 +58,24 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.query_language = query_language
+        self.query_speller = query_speller
 
-    async def run(self, q: str, overrides: dict[str, Any]) -> dict[str, Any]:
+    async def run(
+        self,
+        messages: list[dict],
+        stream: bool = False,  # Stream is not used in this approach
+        session_state: Any = None,
+        context: dict[str, Any] = {},
+    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+        q = messages[-1]["content"]
+        overrides = context.get("overrides", {})
+        auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        top = overrides.get("top", 3)
+        filter = self.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
         if has_vector:
@@ -82,8 +94,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 query_text,
                 filter=filter,
                 query_type=QueryType.SEMANTIC,
-                query_language="en-us",
-                query_speller="lexicon",
+                query_language=self.query_language,
+                query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
@@ -115,11 +127,11 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         # add user question
         user_content = q + "\n" + f"Sources:\n {content}"
-        message_builder.append_message("user", user_content)
+        message_builder.insert_message("user", user_content)
 
         # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
-        message_builder.append_message("assistant", self.answer)
-        message_builder.append_message("user", self.question)
+        message_builder.insert_message("assistant", self.answer)
+        message_builder.insert_message("user", self.question)
 
         messages = message_builder.messages
         chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
@@ -132,9 +144,11 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             n=1,
         )
 
-        return {
+        extra_info = {
             "data_points": results,
-            "answer": chat_completion.choices[0].message.content,
             "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
             + "\n\n".join([str(message) for message in messages]),
         }
+        chat_completion.choices[0]["context"] = extra_info
+        chat_completion.choices[0]["session_state"] = session_state
+        return chat_completion
