@@ -64,6 +64,11 @@ param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
+param useEvaluation bool = false // if true, add the following deployment:
+param evalGptModelName string = 'gpt-4'
+param evalGptModelVersion string = '0613'
+param evalGptDeploymentCapacity int = 30
+
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
 param serverAppId string = ''

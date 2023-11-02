@@ -1,14 +1,11 @@
 pypdf
 azure-identity
-azure-search-documents==11.4.0b6
+azure-search-documents
 azure-ai-formrecognizer
 azure-storage-blob
 azure-storage-file-datalake
 openai[datalib]
 tiktoken
 tenacity
-https://ragsample.blob.core.windows.net/wheels/azure_ai_tools-0.0.1-py3-none-any.whl
---extra-index-url=https://azuremlsdktestpypi.azureedge.net/Create-Dev-Index/102333570
-azureml-metrics[prompt-flow]==0.1.0.102333570
---extra-index-url https://azuremlsdktestpypi.azureedge.net/test-azure-ai-generative
-azure-ai-generative==0.5.0
+azure-ai-resources @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-resources/1a20231026010/azure_ai_resources-1.0.0a20231026010-py3-none-any.whl
+azure-ai-generative[evaluate,index,document_parsing] @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-generative/1a20231101007/azure_ai_generative-1.0.0a20231101007-py3-none-any.whl
