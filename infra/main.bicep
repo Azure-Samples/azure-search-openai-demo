@@ -1,4 +1,4 @@
-targetScope = 'subscription'
+targetScope = 'resourceGroup'
 
 @minLength(1)
 @maxLength(64)
@@ -11,8 +11,6 @@ param location string
 
 param appServicePlanName string = ''
 param backendServiceName string = ''
-param resourceGroupName string = ''
-
 param applicationInsightsName string = ''
 
 param searchServiceName string = ''
@@ -85,32 +83,29 @@ var resourceToken = toLower(uniqueString(subscription().id, environmentName, loc
 var tags = { 'azd-env-name': environmentName }
 
 // Organize resources in a resource group
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
-  location: location
-  tags: tags
-}
-
 resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(openAiResourceGroupName)) {
-  name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
+  name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup().name
+  scope: subscription()
 }
 
 resource formRecognizerResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(formRecognizerResourceGroupName)) {
-  name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup.name
+  name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup().name
+  scope: subscription()
 }
 
 resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
-  name: !empty(searchServiceResourceGroupName) ? searchServiceResourceGroupName : resourceGroup.name
+  name: !empty(searchServiceResourceGroupName) ? searchServiceResourceGroupName : resourceGroup().name
+  scope: subscription()
 }
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
-  name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
+  name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup().name
+  scope: subscription()
 }
 
 // Monitor application with Azure Monitor
 module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
   name: 'monitoring'
-  scope: resourceGroup
   params: {
     location: location
     tags: tags
@@ -121,7 +116,6 @@ module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights
 // Create an App Service Plan to group applications under the same payment plan and SKU
 module appServicePlan 'core/host/appserviceplan.bicep' = {
   name: 'appserviceplan'
-  scope: resourceGroup
   params: {
     name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
     location: location
@@ -137,7 +131,6 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
 // The application frontend
 module backend 'core/host/appservice.bicep' = {
   name: 'web'
-  scope: resourceGroup
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
@@ -377,7 +370,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
 
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
-output AZURE_RESOURCE_GROUP string = resourceGroup.name
+output AZURE_RESOURCE_GROUP string = resourceGroup().name
 
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost
