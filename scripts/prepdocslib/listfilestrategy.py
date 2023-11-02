@@ -99,7 +99,7 @@ class LocalListFileStrategy(ListFileStrategy):
         if stored_hash and stored_hash.strip() == existing_hash.strip():
             if self.verbose:
                 print(f"Skipping {path}, no changes detected.")
-                return True
+            return True
 
         # Write the hash
         with open(hash_path, "w", encoding="utf-8") as md5_f:
