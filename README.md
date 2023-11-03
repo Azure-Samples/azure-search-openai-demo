@@ -17,6 +17,8 @@ urlFragment: azure-search-openai-demo
 
 # ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
 
+Note: If you are reading this readme, you are likely on the `resource-group-scoped` branch, which is a working but forked implementation of the mainline branch. The only different you will find is that this implementation uses resource group scoped deployments. This limits the permissions needed to provision Azure resources to be scoped to resource groups.
+
 ## Table of Contents
 
 - [Features](#features)
@@ -70,7 +72,9 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * **Azure account**. If you're new to Azure, [get an Azure account for free](https://azure.microsoft.com/free/cognitive-search/) and you'll get some free Azure credits to get started.
 * **Azure subscription with access enabled for the Azure OpenAI service**. You can request access with [this form](https://aka.ms/oaiapply). If your access request to Azure OpenAI service doesn't match the [acceptance criteria](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access?context=%2Fazure%2Fcognitive-services%2Fopenai%2Fcontext%2Fcontext), you can use [OpenAI public API](https://platform.openai.com/docs/api-reference/introduction) instead. Learn [how to switch to an OpenAI instance](#switching-from-an-azure-openai-endpoint-to-an-openai-instance).
 * **Azure account permissions**:
-  * Your Azure account must have [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner) access granted to an existing resource group.
+  * Your Azure Account must have [Reader](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader) access granted to an Azure subscription.
+  * If deploying to an existing resource group(s), your Azure account must have [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner) access granted to the existing resource group(s).
+  * If deploying to a new resource group, your Azure account must have [Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#contributor) access granted to an Azure subscription to create the new resource group.
 
 ## Azure deployment
 
@@ -131,13 +135,9 @@ Then bring down the project code:
 
 1. Create a new folder and switch to it in the terminal
 1. Run `azd auth login`
-1. Run `azd init -t azure-search-openai-demo`
-    * note that this command will initialize a git repository and you do not need to clone this repository
-1. Run `azd config set alpha.resourceGroupDeployments on` to enable the resource group deployment feature
-1. Run:
-   - `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
-   - `azd env set AZURE_LOCATION {Location of existing resource group}`
-
+1. Run `azd init -t azure-search-openai-demo -b resource-group-scoped`
+    * Note: This command will initialize a git repository and you do not need to clone this repository
+1. Run `azd config set alpha.resourceGroupDeployments on` once to enable [resource group scoped deployments](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/resource-group-scoped-deployments#modify-the-template-to-change-the-target-scope).
 
 ### Deploying from scratch
 
@@ -145,6 +145,7 @@ Execute the following command, if you don't have any pre-existing Azure services
 
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
     * **Important**: Beware that the resources created by this command will incur immediate costs, primarily from the Cognitive Search resource. These resources may accrue costs even if you interrupt the command before it is fully executed. You can run `azd down` or delete the resources manually to avoid unnecessary spending.
+    * You will be asked to create or use an existing resource group that will contain all the Azure resources provisioned. You can provide a name for the new resource group, or select an existing one.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
 It will look like the following:
@@ -206,7 +207,6 @@ You can also use existing Form Recognizer and Storage Accounts. See `./infra/mai
 Now you can run `azd up`, following the steps in [Deploying from scratch](#deploying-from-scratch) above.
 That will both provision resources and deploy the code.
 
-
 ### Deploying again
 
 If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
@@ -217,14 +217,13 @@ If you've changed the infrastructure files (`infra` folder or `azure.yaml`), the
 
 ```azd up```
 
-
 ## Sharing environments
 
 To give someone else access to a completely deployed and existing environment,
 either you or they can follow these steps:
 
 1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
-1. Run `azd init -t azure-search-openai-demo` or clone this repository.
+1. Run `azd init -t azure-search-openai-demo -b resource-group-scoped`. Alternatively, clone this repository and checkout the `resource-group-scoped` branch.
 1. Run `azd env refresh -e {environment name}`
    They will need the azd environment name, subscription ID, and location to run this command. You can find those values in your `.azure/{env name}/.env` file.  This will populate their azd environment's `.env` file with all the settings needed to run the app locally.
 1. Set the environment variable `AZURE_PRINCIPAL_ID` either in that `.env` file or in the active shell to their Azure ID, which they can get with `az ad signed-in-user show`.
