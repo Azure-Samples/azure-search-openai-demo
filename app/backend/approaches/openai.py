@@ -1,11 +1,9 @@
 import os
 import json
 import logging
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator
 
-import aiohttp
 import openai
-from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.appresources import AppResources
@@ -14,12 +12,11 @@ from approaches.utils import Utils
 from core.messagebuilder import MessageBuilder
 from core.modelhelper import get_token_limit
 from text import nonewlines
-from approaches.statetypes.statetype import StateType
 from approaches.requestcontext import RequestContext
 
 use_RAG = False
 
-class StateTypeOpenAI(StateType):
+class OpenAI:
     # Chat roles
     SYSTEM = "system"
     USER = "user"
@@ -54,18 +51,29 @@ If you cannot generate a search query, return just the number 0.
         {"role": ASSISTANT, "content": "Health plan cardio coverage"},
     ]
 
-    def __init__(self, system_prompt):
-        super(StateTypeOpenAI, self).__init__(is_wait_for_user_input_before_state = True)
-        self.system_prompt = system_prompt
+    def extract_nonstreamed_response(openai_response):
+        choices = openai_response["choices"]
+        if choices is None or len(choices) != 1:
+            raise Exception("Unexpected choices: " + choices)
+        choice = choices[0]
+        message = choice["message"]
+        if message is None:
+            raise Exception("No message")
+        return message["content"]
 
-    async def run(self, app_resources: AppResources, session_state: Any, request_context: RequestContext) -> AsyncGenerator[dict[str, Any], None]:
+    async def run(request_context: RequestContext, system_prompt, history = None, should_stream = None) -> (dict, AsyncGenerator[dict[str, Any], None]):
+        if history is None:
+            history = request_context.history
+        if should_stream is None:
+            should_stream = request_context.should_stream
+
         has_text = request_context.overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = request_context.overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if request_context.overrides.get("semantic_captions") and has_text else False
         top = request_context.overrides.get("top", 3)
         filter = Utils.build_filter(request_context.overrides, request_context.auth_claims)
 
-        original_user_query = request_context.history[-1]["content"]
+        original_user_query = history[-1]["content"]
         user_query_request = "Generate search query for: " + original_user_query
 
         functions = [
@@ -86,19 +94,19 @@ If you cannot generate a search query, return just the number 0.
         ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        messages = self.get_messages_from_history(
-            system_prompt=self.query_prompt_template,
-            model_id=app_resources.chatgpt_model,
-            history=request_context.history,
+        messages = OpenAI.get_messages_from_history(
+            system_prompt=OpenAI.query_prompt_template,
+            model_id=request_context.app_resources.chatgpt_model,
+            history=history,
             user_content=user_query_request,
-            max_tokens=app_resources.chatgpt_token_limit - len(user_query_request),
-            few_shots=self.query_prompt_few_shots,
+            max_tokens=request_context.app_resources.chatgpt_token_limit - len(user_query_request),
+            few_shots=OpenAI.query_prompt_few_shots,
         )
 
-        chatgpt_args = {"deployment_id": app_resources.chatgpt_deployment} if app_resources.openai_host == "azure" else {}
+        chatgpt_args = {"deployment_id": request_context.app_resources.chatgpt_deployment} if request_context.app_resources.openai_host == "azure" else {}
         chat_completion = await openai.ChatCompletion.acreate(
             **chatgpt_args,
-            model=app_resources.chatgpt_model,
+            model=request_context.app_resources.chatgpt_model,
             messages=messages,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
@@ -107,18 +115,18 @@ If you cannot generate a search query, return just the number 0.
             function_call="auto",
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_text = OpenAI.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         content = ""
         results = []
-        if os.environ["SHOULD_RAG"] == 'True':
+        if False: # os.environ["SHOULD_RAG"] == 'True':
 
             # If retrieval mode includes vectors, compute an embedding for the query
             if has_vector:
-                embedding_args = {"deployment_id": app_resources.embedding_deployment} if app_resources.openai_host == "azure" else {}
-                embedding = await openai.Embedding.acreate(**embedding_args, model=app_resources.embedding_model, input=query_text)
+                embedding_args = {"deployment_id": request_context.app_resources.embedding_deployment} if request_context.app_resources.openai_host == "azure" else {}
+                embedding = await openai.Embedding.acreate(**embedding_args, model=request_context.app_resources.embedding_model, input=query_text)
                 query_vector = embedding["data"][0]["embedding"]
             else:
                 query_vector = None
@@ -129,12 +137,12 @@ If you cannot generate a search query, return just the number 0.
 
             # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
             if request_context.overrides.get("semantic_ranker") and has_text:
-                r = await app_resources.search_client.search(
+                r = await request_context.app_resources.search_client.search(
                     query_text,
                     filter=filter,
                     query_type=QueryType.SEMANTIC,
-                    query_language=app_resources.query_language,
-                    query_speller=app_resources.query_speller,
+                    query_language=request_context.app_resources.query_language,
+                    query_speller=request_context.app_resources.query_speller,
                     semantic_configuration_name="default",
                     top=top,
                     query_caption="extractive|highlight-false" if use_semantic_captions else None,
@@ -143,7 +151,7 @@ If you cannot generate a search query, return just the number 0.
                     vector_fields="embedding" if query_vector else None,
                 )
             else:
-                r = await app_resources.search_client.search(
+                r = await request_context.app_resources.search_client.search(
                     query_text,
                     filter=filter,
                     top=top,
@@ -153,17 +161,17 @@ If you cannot generate a search query, return just the number 0.
                 )
             if use_semantic_captions:
                 results = [
-                    doc[app_resources.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
+                    doc[request_context.app_resources.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
                     async for doc in r
                 ]
             else:
-                results = [doc[app_resources.sourcepage_field] + ": " + nonewlines(doc[app_resources.content_field]) async for doc in r]
+                results = [doc[request_context.app_resources.sourcepage_field] + ": " + nonewlines(doc[request_context.app_resources.content_field]) async for doc in r]
             content = "\n".join(results)
 
 
             
         follow_up_questions_prompt = (
-            app_resources.follow_up_questions_prompt_content if request_context.overrides.get("suggest_followup_questions") else ""
+            request_context.app_resources.follow_up_questions_prompt_content if request_context.overrides.get("suggest_followup_questions") else ""
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
@@ -171,22 +179,22 @@ If you cannot generate a search query, return just the number 0.
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         prompt_override = request_context.overrides.get("prompt_template")
         if prompt_override is None:
-            system_message = self.system_prompt.format(
+            system_message = system_prompt.format(
                 injected_prompt="", follow_up_questions_prompt=follow_up_questions_prompt
             )
         elif prompt_override.startswith(">>>"):
-            system_message = self.system_prompt.format(
+            system_message = system_prompt.format(
                 injected_prompt=prompt_override[3:] + "\n", follow_up_questions_prompt=follow_up_questions_prompt
             )
         else:
             system_message = prompt_override.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
         response_token_limit = 1024
-        messages_token_limit = app_resources.chatgpt_token_limit - response_token_limit
-        messages = self.get_messages_from_history(
+        messages_token_limit = request_context.app_resources.chatgpt_token_limit - response_token_limit
+        messages = OpenAI.get_messages_from_history(
             system_prompt=system_message,
-            model_id=app_resources.chatgpt_model,
-            history=request_context.history,
+            model_id=request_context.app_resources.chatgpt_model,
+            history=history,
             # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             user_content=original_user_query + "\n\nSources:\n" + content,
             max_tokens=messages_token_limit,
@@ -201,19 +209,20 @@ If you cannot generate a search query, return just the number 0.
 
         chat_coroutine = await openai.ChatCompletion.acreate(
             **chatgpt_args,
-            model=app_resources.chatgpt_model,
+            model=request_context.app_resources.chatgpt_model,
             messages=messages,
             temperature=request_context.overrides.get("temperature") or 0.7,
             max_tokens=response_token_limit,
             n=1,
-            stream=request_context.should_stream,
+            stream=should_stream,
         )
 
-        request_context.set_response_extra_info(extra_info)
-        return self.workaround_first_empty_choices(chat_coroutine)
+        if should_stream:
+            chat_coroutine = OpenAI.workaround_first_empty_choices(chat_coroutine)
+
+        return extra_info, chat_coroutine
 
     def get_messages_from_history(
-        self,
         system_prompt: str,
         model_id: str,
         history: list[dict[str, str]],
@@ -229,7 +238,7 @@ If you cannot generate a search query, return just the number 0.
 
         append_index = len(few_shots) + 1
 
-        message_builder.append_message(self.USER, user_content, index=append_index)
+        message_builder.append_message(OpenAI.USER, user_content, index=append_index)
         total_token_count = message_builder.count_tokens_for_message(message_builder.messages[-1])
 
         newest_to_oldest = list(reversed(history[:-1]))
@@ -242,20 +251,20 @@ If you cannot generate a search query, return just the number 0.
             total_token_count += potential_message_count
         return message_builder.messages
 
-    def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
+    def get_search_query(chat_completion: dict[str, Any], user_query: str):
         response_message = chat_completion["choices"][0]["message"]
         if function_call := response_message.get("function_call"):
             if function_call["name"] == "search_sources":
                 arg = json.loads(function_call["arguments"])
-                search_query = arg.get("search_query", self.NO_RESPONSE)
-                if search_query != self.NO_RESPONSE:
+                search_query = arg.get("search_query", OpenAI.NO_RESPONSE)
+                if search_query != OpenAI.NO_RESPONSE:
                     return search_query
         elif query_text := response_message.get("content"):
-            if query_text.strip() != self.NO_RESPONSE:
+            if query_text.strip() != OpenAI.NO_RESPONSE:
                 return query_text
         return user_query
 
-    async def workaround_first_empty_choices(self, chat_coroutine):
+    async def workaround_first_empty_choices(chat_coroutine):
         async for event in chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             if event["choices"]:

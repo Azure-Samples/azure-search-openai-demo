@@ -1,7 +1,3 @@
-import asyncio
-import os
-import json
-import logging
 from typing import Any, AsyncGenerator, Union
 
 import aiohttp
@@ -9,9 +5,9 @@ from inspect import iscoroutine
 
 from approaches.appresources import AppResources
 from approaches.approach import Approach
+from approaches.flow.flow import States, FirstState
+from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
-from approaches.statemachine import States, FirstState
-from approaches.statetypes.statetypeopenai import StateTypeOpenAI
 from approaches.utils import Utils
 
 class ChatReadRetrieveReadApproach(Approach):
@@ -37,7 +33,7 @@ class ChatReadRetrieveReadApproach(Approach):
         event_generators = []
         is_wait_for_user_input_before_state = False
         while (not is_wait_for_user_input_before_state):
-            chat_coroutine = state.run(self.app_resources, session_state, request_context)
+            chat_coroutine = state.run(request_context)
             if not (chat_coroutine is None):
                 if iscoroutine(chat_coroutine):
                     chat_coroutine = await chat_coroutine
@@ -45,6 +41,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 event_generators.append(chat_coroutine)
 
             state_id = session_state["machineState"]
+            print(state_id)
             if not (state_id in States):
                 raise Exception("Unexpected state " + state_id)
             state = States[state_id]
@@ -84,7 +81,7 @@ class ChatReadRetrieveReadApproach(Approach):
         yield {
             "choices": [
                 {
-                    "delta": {"role": StateTypeOpenAI.ASSISTANT},
+                    "delta": {"role": OpenAI.ASSISTANT},
                     "context": request_context.extra_info,
                     "session_state": session_state,
                     "finish_reason": None,
@@ -102,9 +99,9 @@ class ChatReadRetrieveReadApproach(Approach):
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        request_context = RequestContext(messages, overrides, auth_claims, stream)
         if session_state is None:
             session_state = { "machineState": FirstState, "vars": {} }
+        request_context = RequestContext(self.app_resources, session_state, messages, overrides, auth_claims, stream)
         if stream is False:
             # Workaround for: https://github.com/openai/openai-python/issues/371
             async with aiohttp.ClientSession() as s:
