@@ -2,13 +2,13 @@ import asyncio
 import csv
 import json
 import logging
-import os
 import sys
 from pathlib import Path
 
 import urllib3
 from azure.ai.generative.evaluate import evaluate
-from azure.identity import DefaultAzureCredential
+from azure.ai.resources.entities import AzureOpenAIModelConfiguration
+from azure.identity import AzureDeveloperCliCredential
 
 sys.path.append("app/backend")
 import app  # noqa
@@ -18,32 +18,35 @@ logging.basicConfig(level=logging.DEBUG)
 
 # connects to project defined in the config.json file at the root of the repo
 # use "ai init" to update this to point at your project
-azure_credential = DefaultAzureCredential()
+azure_credential = AzureDeveloperCliCredential()
 
 # multi-turn conversation history in the future
 
 
 def qna(question):
     http = urllib3.PoolManager()
-    url = "https://app-backend-pg6yesvgqiudc.azurewebsites.net/chat"
+    url = "https://app-backend-j25rgqsibtmlo.azurewebsites.net/chat"
     headers = {"Content-Type": "application/json"}
     body = {
-        "history": [{"user": question}],
-        "approach": "rrr",
-        "overrides": {
-            "retrieval_mode": "hybrid",
-            "semantic_ranker": True,
-            "semantic_captions": False,
-            "top": 3,
-            "suggest_followup_questions": False,
+        "messages": [{"content": question, "role": "user"}],
+        "stream": False,
+        "context": {
+            "overrides": {
+                "retrieval_mode": "hybrid",
+                "semantic_ranker": True,
+                "semantic_captions": False,
+                "top": 3,
+                "suggest_followup_questions": False,
+            }
         },
     }
     r = http.request("POST", url, headers=headers, body=json.dumps(body))
     # todo: add context without filenames
+    response_dict = json.loads(r.data.decode("utf-8"))
     return {
         "question": question,
-        "answer": json.loads(r.data.decode("utf-8"))["answer"],
-        "context": "\n\n".join(json.loads(r.data.decode("utf-8"))["data_points"]),
+        "answer": response_dict["choices"][0]["message"]["content"],
+        "context": "\n\n".join(response_dict["choices"][0]["context"]["data_points"]),
     }
 
 
@@ -86,60 +89,70 @@ def load_jsonl(path):
 
 def run_evaluation(testdata_filename):
     path = Path(__file__).parent.absolute() / testdata_filename
-    data = load_jsonl(path)
+    data = load_jsonl(path)[0:5]
 
     gpt_model = "gpt-4"
+
+    aoai_config = AzureOpenAIModelConfiguration(
+        api_base="https://cog-pg6yesvgqiudc.openai.azure.com/",
+        api_key=azure_credential.get_token("https://cognitiveservices.azure.com/.default").token,
+        api_version="2023-05-15",
+        deployment_name="chat",
+        model_name=gpt_model,
+        model_kwargs={},
+    )
+    aoai_config = {
+        "api_type": "azure_ad",
+        "api_base": "https://cog-pg6yesvgqiudc.openai.azure.com/",
+        "api_key": azure_credential.get_token("https://cognitiveservices.azure.com/.default").token,
+        "api_version": "2023-07-01-preview",
+        "deployment_id": "chat",
+    }
+    logging.basicConfig(level=logging.DEBUG)
+    gpt_metrics = ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "gpt_fluency", "gpt_similarity"]
     results = evaluate(
         evaluation_name="baseline-evaluation",
-        asset=local_qna,
+        target=qna,
         data=data,
         task_type="qa",
-        prediction_data="answer",
-        truth_data="truth",
-        metrics_config={
-            "openai_params": {
-                "api_version": "2023-05-15",
-                "api_base": "https://cog-pg6yesvgqiudc.openai.azure.com/",
-                "api_type": "azure_ad",
-                "api_key": azure_credential.get_token("https://cognitiveservices.azure.com/.default").token,
-                "deployment_id": "chat",
-                "model": gpt_model,
-            },
-            "questions": "question",
-            "contexts": "context",
+        metrics_list=gpt_metrics,
+        model_config=aoai_config,
+        data_mapping={
+            # Matches qa.jsonl
+            "questions": "question",  # column of data providing input to model
+            "y_test": "truth",  # column of data providing ground truth answer, optional for default metrics
+            # Matches return value of qna()
+            "contexts": "context",  # column of data providing context for each input
+            "y_pred": "answer",  # column of data providing output from model
         },
-        # TODO: Try params?
+        tracking=False,
+        output_path="evaluation",
     )
+    print(results)
+    questions_with_ratings = open("evaluation/eval_results.jsonl").readlines()
 
-    columns = ["question", "gpt_similarity", "gpt_relevance", "gpt_fluency", "gpt_coherence", "gpt_groundedness"]
-    gpt_ratings = results["artifacts"]
-    rows = []
-
-    metrics = {key: {"sum_scores": 0, "avg_score": 0, "pass_count": 0, "pass_rate": 0} for key in gpt_ratings.keys()}
+    metrics = {
+        metric_name: {"sum_scores": 0, "avg_score": 0, "pass_count": 0, "pass_rate": 0} for metric_name in gpt_metrics
+    }
 
     def passes_threshold(rating):
         return int(rating) >= 4
 
-    for ind, input in enumerate(data):
-        for key in gpt_ratings.keys():
-            metrics[key]["sum_scores"] += int(gpt_ratings[key][ind])
-            metrics[key]["avg_score"] = metrics[key]["sum_scores"] / (ind + 1)
-            if passes_threshold(gpt_ratings[key][ind]):
-                metrics[key]["pass_count"] += 1
-            metrics[key]["pass_rate"] = metrics[key]["pass_count"] / (ind + 1)
-        rows.append(
-            [
-                input["question"],
-                gpt_ratings["gpt_similarity"][ind],
-                gpt_ratings["gpt_relevance"][ind],
-                gpt_ratings["gpt_fluency"][ind],
-                gpt_ratings["gpt_coherence"][ind],
-                gpt_ratings["gpt_groundedness"][ind],
-            ]
-        )
+    rows = []
+    for ind, question_json in enumerate(questions_with_ratings):
+        question_with_rating = json.loads(question_json)
+        for metric_name in gpt_metrics:
+            metrics[metric_name]["sum_scores"] += int(question_with_rating[metric_name])
+            metrics[metric_name]["avg_score"] = metrics[metric_name]["sum_scores"] / (ind + 1)
+            if passes_threshold(question_with_rating[metric_name]):
+                metrics[metric_name]["pass_count"] += 1
+            metrics[metric_name]["pass_rate"] = metrics[metric_name]["pass_count"] / (ind + 1)
+        rows.append(list(question_with_rating.values()))
+
     # now sort rows by question for easier diffing if questions get added later
     rows.sort(key=lambda x: x[0])
 
+    columns = ["question"] + gpt_metrics
     with open("evaluation/per_question.csv", "w") as question_file:
         writer = csv.writer(question_file, lineterminator="\n")
         writer.writerow(columns)
@@ -158,7 +171,7 @@ def run_evaluation(testdata_filename):
         columns = ["property", "value"]
         writer.writerow(columns)
         writer.writerow(["Evaluation GPT model", gpt_model])
-        writer.writerow(["App GPT model", os.environ["AZURE_OPENAI_CHATGPT_MODEL"]])
+        # writer.writerow(["App GPT model", os.environ["AZURE_OPENAI_CHATGPT_MODEL"]]) # cant do that with deployed
 
 
 if __name__ == "__main__":
