@@ -34,8 +34,8 @@ Each source has a name followed by colon and the actual information, always incl
 {follow_up_questions_prompt}
 {injected_prompt}
 """
-    
-    = """Generate 3 very brief follow-up questions that the user would likely ask next.
+
+    follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
 <<Are there exclusions for prescriptions?>>
 <<Which pharmacies can be ordered from?>>
@@ -53,10 +53,10 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
-        {"role": USER, "content": "What are my health plans?"},
-        {"role": ASSISTANT, "content": "Show available health plans"},
-        {"role": USER, "content": "does my plan cover cardio?"},
-        {"role": ASSISTANT, "content": "Health plan cardio coverage"},
+        {"role": USER, "content": "What is frontline negotiation?"},
+        {"role": ASSISTANT, "content": "Describe frontline negotiation"},
+        {"role": USER, "content": "what is frontline negotiation?"},
+        {"role": ASSISTANT, "content": "Frontline Negotiation"},
     ]
 
     def __init__(
