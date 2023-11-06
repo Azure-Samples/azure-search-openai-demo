@@ -13,7 +13,9 @@ param appServicePlanName string = ''
 param backendServiceName string = ''
 param resourceGroupName string = ''
 
+param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
+param logAnalyticsName string = ''
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
@@ -115,6 +117,8 @@ module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights
     location: location
     tags: tags
     applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
+    applicationInsightsDashboardName: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
+    logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
   }
 }
 
