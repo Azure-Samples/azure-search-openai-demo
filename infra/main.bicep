@@ -47,6 +47,7 @@ param openAiResourceGroupLocation string
 
 param openAiSkuName string = 'S0'
 
+@secure()
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
