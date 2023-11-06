@@ -23,12 +23,6 @@ class File:
         self.content = content
         self.acls = acls or {}
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.close()
-
     def filename(self):
         return os.path.basename(self.content.name)
 
@@ -48,11 +42,11 @@ class ListFileStrategy(ABC):
     """
 
     async def list(self) -> AsyncGenerator[File, None]:
-        if False:
+        if False:  # pragma: no cover - this is necessary for mypy to type check
             yield
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
-        if False:
+        if False:  # pragma: no cover - this is necessary for mypy to type check
             yield
 
 
@@ -74,8 +68,9 @@ class LocalListFileStrategy(ListFileStrategy):
             if os.path.isdir(path):
                 async for p in self._list_paths(f"{path}/*"):
                     yield p
-
-            yield path
+            else:
+                # Only list files, not directories
+                yield path
 
     async def list(self) -> AsyncGenerator[File, None]:
         async for path in self.list_paths():
