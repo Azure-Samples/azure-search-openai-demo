@@ -21,7 +21,7 @@ param minimumTlsVersion string = 'TLS1_2'
 param supportsHttpsTrafficOnly bool = true
 param networkAcls object = {
   bypass: 'AzureServices'
-  defaultAction: 'Deny'
+  defaultAction: 'Allow'
 }
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
