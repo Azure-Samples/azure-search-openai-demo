@@ -242,7 +242,9 @@ priority==2.0.0
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
@@ -285,7 +287,7 @@ tzdata==2023.3
     # via pandas
 urllib3==2.0.7
     # via requests
-uvicorn==0.23.2
+uvicorn==0.24.0.post1
     # via -r requirements.in
 werkzeug==3.0.1
     # via
