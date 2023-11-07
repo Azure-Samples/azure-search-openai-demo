@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "environmentName": {
-      "value": "${AZURE_ENV_NAME}"
+      "value": "${AZURE_ENV_NAME=dev}"
     },
     "resourceGroupName": {
-      "value": "${AZURE_RESOURCE_GROUP}"
+      "value": "${AZURE_RESOURCE_GROUP=nis2}"
     },
     "location": {
-      "value": "${AZURE_LOCATION}"
+      "value": "${AZURE_LOCATION=westeurope}"
     },
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
@@ -45,7 +45,7 @@
       "value": "${AZURE_SEARCH_SERVICE_LOCATION}"
     },
     "searchServiceSkuName": {
-      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
+      "value": "${AZURE_SEARCH_SERVICE_SKU=basic}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
@@ -60,13 +60,13 @@
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
     "openAiHost":{
-      "value": "${OPENAI_HOST=azure}"
+      "value": "${OPENAI_HOST=openai}"
     },
     "openAiApiKey": {
-      "value": "${OPENAI_API_KEY}"
+      "value": "${OPENAI_API_KEY=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}"
     },
     "openAiApiOrganization": {
-      "value": "${OPENAI_ORGANIZATION}"
+      "value": "${OPENAI_ORGANIZATION=org-pGh89P1RXfQ4I6I0MuWLsGzr}"
     },
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
