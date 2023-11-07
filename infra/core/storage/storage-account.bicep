@@ -1,24 +1,31 @@
+metadata description = 'Creates an Azure storage account.'
 param name string
 param location string = resourceGroup().location
 param tags object = {}
 
-@allowed([ 'Hot', 'Cool', 'Premium' ])
+@allowed([
+  'Cool'
+  'Hot'
+  'Premium' ])
 param accessTier string = 'Hot'
-param allowBlobPublicAccess bool = false
+param allowBlobPublicAccess bool = true
 param allowCrossTenantReplication bool = true
 param allowSharedKeyAccess bool = true
+param containers array = []
 param defaultToOAuthAuthentication bool = false
 param deleteRetentionPolicy object = {}
 @allowed([ 'AzureDnsZone', 'Standard' ])
 param dnsEndpointType string = 'Standard'
 param kind string = 'StorageV2'
 param minimumTlsVersion string = 'TLS1_2'
-param requireHttpsConnection bool = true
+param supportsHttpsTrafficOnly bool = true
+param networkAcls object = {
+  bypass: 'AzureServices'
+  defaultAction: 'Allow'
+}
 @allowed([ 'Enabled', 'Disabled' ])
-param publicNetworkAccess string = 'Disabled'
+param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
-
-param containers array = []
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: name
@@ -34,12 +41,9 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     defaultToOAuthAuthentication: defaultToOAuthAuthentication
     dnsEndpointType: dnsEndpointType
     minimumTlsVersion: minimumTlsVersion
-    networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Allow'
-    }
+    networkAcls: networkAcls
     publicNetworkAccess: publicNetworkAccess
-    supportsHttpsTrafficOnly: requireHttpsConnection
+    supportsHttpsTrafficOnly: supportsHttpsTrafficOnly
   }
 
   resource blobServices 'blobServices' = if (!empty(containers)) {

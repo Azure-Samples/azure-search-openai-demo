@@ -13,7 +13,9 @@ param appServicePlanName string = ''
 param backendServiceName string = ''
 param resourceGroupName string = ''
 
+param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
+param logAnalyticsName string = ''
 
 param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
@@ -37,7 +39,7 @@ param openAiHost string // Set in main.parameters.json
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus'])
+@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus','australiaeast'])
 @metadata({
   azd: {
     type: 'location'
@@ -120,6 +122,8 @@ module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights
     location: location
     tags: tags
     applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
+    applicationInsightsDashboardName: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
+    logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
   }
 }
 
@@ -267,6 +271,7 @@ module storage 'core/storage/storage-account.bicep' = {
     location: storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
+    allowBlobPublicAccess: false
     sku: {
       name: storageSkuName
     }

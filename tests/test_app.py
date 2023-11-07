@@ -47,6 +47,23 @@ async def test_ask_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+async def test_ask_handle_exception(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert "Exception in /ask: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_text(client, snapshot):
     response = await client.post(
         "/ask",
@@ -142,6 +159,39 @@ async def test_chat_request_must_be_json(client):
     assert response.status_code == 415
     result = await response.get_json()
     assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert "Exception in /chat: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "openai.ChatCompletion.acreate", mock.Mock(side_effect=ZeroDivisionError("something bad happened"))
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}], "stream": True},
+    )
+    assert response.status_code == 200
+    assert "Exception while generating response stream: something bad happened" in caplog.text
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
 
 
 @pytest.mark.asyncio
@@ -457,3 +507,24 @@ async def test_format_as_ndjson():
 
     result = [line async for line in app.format_as_ndjson(gen())]
     assert result == ['{"a": "I ❤️ 🐍"}\n', '{"b": "Newlines inside \\n strings are fine"}\n']
+
+
+@pytest.mark.asyncio
+async def test_format_as_ndjson_error(caplog):
+    async def gen():
+        if False:
+            yield {"a": "I ❤️ 🐍"}
+        raise ZeroDivisionError("something bad happened")
+
+    result = [line async for line in app.format_as_ndjson(gen())]
+    assert "Exception while generating response stream: something bad happened\n" in caplog.text
+    assert result == [
+        '{"error": "The app encountered an error processing your request.\\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\\nError type: <class \'ZeroDivisionError\'>\\n"}'
+    ]
+
+
+def test_error_dict(caplog):
+    error = app.error_dict(Exception("test"))
+    assert error == {
+        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\nError type: <class 'Exception'>\n"
+    }

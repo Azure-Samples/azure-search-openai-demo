@@ -1,7 +1,8 @@
+metadata description = 'Creates an Azure Cognitive Services instance.'
 param name string
 param location string = resourceGroup().location
 param tags object = {}
-
+@description('The custom subdomain name used to access the API. Defaults to the value of the name parameter.')
 param customSubDomainName string = name
 param deployments array = []
 param kind string = 'OpenAI'
