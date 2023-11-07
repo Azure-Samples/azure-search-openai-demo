@@ -1,7 +1,7 @@
 metadata description = 'Creates an Application Insights instance and a Log Analytics workspace.'
 param logAnalyticsName string
 param applicationInsightsName string
-param applicationInsightsDashboardName string
+param applicationInsightsDashboardName string = ''
 param location string = resourceGroup().location
 param tags object = {}
 param includeDashboard bool = true
