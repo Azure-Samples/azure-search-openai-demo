@@ -125,6 +125,7 @@ module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights
 
 module applicationInsightsDashboard 'backend-dashboard.bicep' = {
   name: 'application-insights-dashboard'
+  scope: resourceGroup
   params: {
     name: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
     location: location
