@@ -270,11 +270,11 @@ You can also use CIDR notation to specify an IP address range, for example to al
 azd env set ALLOWED_IP 43.133.5.0/24
 ```
 
-Please note that the IP address configured will need to include the one you run `azd deploy` from as this process connects to the cognitive search index, the storage API, the web application and the form recognizer APIs.
+Please note that the IP address configured will need to include the one you run `azd up` from, since deployment connects to the web application and the `prepdocs.py` script connects to the Cognitive Search index, Storage API, and Form Recognizer APIs.
 
 ### Enabling Private Endpoints
 
-To enable a VNET for the backend and Private Endpoint for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
+To enable a virtual network (VNet) for the backend and private endpoint for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
 
 1. Run `azd env set AZURE_USE_PRIVATE_ENDPOINT true`
 1. Run `azd up`
