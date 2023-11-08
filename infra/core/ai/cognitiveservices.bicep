@@ -13,6 +13,14 @@ param sku object = {
   name: 'S0'
 }
 
+param allowHosts array = []
+param networkAcls object = empty(allowHosts) ? {
+  defaultAction: 'Allow'
+} : {
+  ipRules: allowHosts
+  defaultAction: 'Deny'
+} 
+
 resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: name
   location: location
@@ -21,6 +29,7 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    networkAcls: networkAcls
   }
   sku: sku
 }

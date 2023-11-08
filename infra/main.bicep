@@ -78,6 +78,8 @@ param clientAppId string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
+param allowedHost string = '' // For single host specific rules
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -113,6 +115,9 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
+
+var publicNetworkAccess = (usePrivateEndpoint && allowedHost == '') ? 'Disabled' : 'Enabled'
+var allowedHosts = (allowedHost != '') ? [{value: allowedHost}] : []
 
 // Monitor application with Azure Monitor
 module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
@@ -198,7 +203,8 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiResourceGroupLocation
     tags: tags
-    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
+    publicNetworkAccess: publicNetworkAccess
+    allowHosts: allowedHosts
     sku: {
       name: openAiSkuName
     }
@@ -235,11 +241,12 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
     name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
     kind: 'FormRecognizer'
     location: formRecognizerResourceGroupLocation
-    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
+    publicNetworkAccess: publicNetworkAccess
     tags: tags
     sku: {
       name: formRecognizerSkuName
     }
+    allowHosts: allowedHosts
   }
 }
 
@@ -250,7 +257,7 @@ module searchService 'core/search/search-services.bicep' = {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
-    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
+    publicNetworkAccess: publicNetworkAccess
     authOptions: {
       aadOrApiKey: {
         aadAuthFailureMode: 'http401WithBearerChallenge'
@@ -260,6 +267,7 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: 'free'
+    allowHosts: allowedHosts
   }
 }
 
@@ -270,7 +278,7 @@ module storage 'core/storage/storage-account.bicep' = {
     name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
-    publicNetworkAccess: usePrivateEndpoint ? 'Disabled' : 'Enabled'
+    publicNetworkAccess: publicNetworkAccess
     allowBlobPublicAccess: false
     sku: {
       name: storageSkuName
@@ -285,6 +293,7 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
+    allowHosts: allowedHosts
   }
 }
 
