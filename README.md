@@ -270,7 +270,7 @@ You can also use CIDR notation to specify an IP range, for example to allow the 
 azd env set ALLOWED_HOST 43.133.5.124
 ```
 
-Please note that the IP configured will need to include the one you run `azd deploy` from as this process connects to the cognitive search index, the storage API, the web application and the form recognizer APIs.
+Please note that the IP address configured will need to include the one you run `azd up` from, since deployment connects to the web application and the `prepdocs.py` script connects to the Cognitive Search index, Storage API, and Form Recognizer APIs.
 
 ### Enabling Private Endpoints
 
