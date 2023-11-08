@@ -13,11 +13,11 @@ param sku object = {
   name: 'S0'
 }
 
-param allowHosts array = []
-param networkAcls object = empty(allowHosts) ? {
+param allowedIpRules array = []
+param networkAcls object = empty(allowedIpRules) ? {
   defaultAction: 'Allow'
 } : {
-  ipRules: allowHosts
+  ipRules: allowedIpRules
   defaultAction: 'Deny'
 } 
 

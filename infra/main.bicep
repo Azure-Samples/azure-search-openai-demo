@@ -117,7 +117,7 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
 }
 
 var publicNetworkAccess = (usePrivateEndpoint && allowedIp == '') ? 'Disabled' : 'Enabled'
-var allowedHosts = (allowedIp != '') ? [{value: allowedIp}] : []
+var allowedIpRules = (allowedIp != '') ? [{value: allowedIp}] : []
 
 // Monitor application with Azure Monitor
 module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
@@ -205,7 +205,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
     location: openAiResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
-    allowHosts: allowedHosts
+    allowedIpRules: allowedIpRules
     sku: {
       name: openAiSkuName
     }
@@ -247,7 +247,7 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
     sku: {
       name: formRecognizerSkuName
     }
-    allowHosts: allowedHosts
+    allowedIpRules: allowedIpRules
   }
 }
 
@@ -268,7 +268,7 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: 'free'
-    allowHosts: allowedHosts
+    allowedIpRules: allowedIpRules
   }
 }
 
@@ -294,7 +294,7 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
-    allowHosts: allowedHosts
+    allowedIpRules: allowedIpRules
   }
 }
 

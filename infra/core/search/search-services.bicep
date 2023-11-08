@@ -29,12 +29,12 @@ param semanticSearch string = 'disabled'
 @allowed(['Enabled', 'Disabled'])
 param publicNetworkAccess string = 'Enabled'
 
-param allowHosts array = []
-param networkRuleSet object = empty(allowHosts) ? {
+param allowedIpRules array = []
+param networkRuleSet object = empty(allowedIpRules) ? {
   bypass: 'None'
   defaultAction: 'Allow'
 } : {
-  ipRules: allowHosts
+  ipRules: allowedIpRules
   defaultAction: 'Deny'
 } 
 
