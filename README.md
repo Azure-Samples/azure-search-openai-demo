@@ -258,7 +258,7 @@ To then limit access to a specific set of users or groups, you can follow the st
 By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism by default [see optional configuration of authentication](#enabling-authentication) and will allow any IP address to connect by default.
 To restrict access to the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_HOST` environment variable.
 
-For example, to allow only the IP `43.133.5.124` to connect:
+For example, to allow only the IP address `43.133.5.124` to connect:
 
 ```console
 azd env set ALLOWED_HOST 43.133.5.124
