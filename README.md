@@ -255,7 +255,7 @@ To then limit access to a specific set of users or groups, you can follow the st
 
 ### Restricting network traffic
 
-By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism by default (see optional configuration of authentication) and will allow any IP address to connect by default.
+By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism by default [see optional configuration of authentication](#enabling-authentication) and will allow any IP address to connect by default.
 To restrict access to the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_HOST` environment variable.
 
 For example, to allow only the IP `43.133.5.124` to connect:
@@ -278,6 +278,10 @@ To enable a VNET for the backend and Private Endpoint for the web app, set the `
 
 1. Run `azd env set AZURE_USE_PRIVATE_ENDPOINT true`
 1. Run `azd up`
+
+Enabling private endpoints will disable all public network access by default, meaning that you can run `azd provision` but not `azd deploy` unless you are on a machine that is connected to the private VNET.
+
+You can optionally set the [`ALLOWED_HOST` variable, see "Restricting network traffic"](#restricting-network-traffic) which will **enable** public network access, but only to the IP range specified in the environment variable.
 
 ### Enabling login and document level access control
 
