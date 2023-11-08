@@ -253,6 +253,25 @@ By default, the deployed Azure web app will have no authentication or access res
 
 To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
 
+### Restricting network traffic
+
+By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism and will allow any IP address to connect by default.
+To restrict access to the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_HOST` environment variable.
+
+For example, to allow only the IP `43.133.5.124` to connect:
+
+```console
+azd env set ALLOWED_HOST 43.133.5.124
+```
+
+You can also use CIDR notation to specify an IP range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network)
+
+```console
+azd env set ALLOWED_HOST 43.133.5.124
+```
+
+Please note that the IP configured will need to include the one you run `azd deploy` from as this process connects to the cognitive search index, the storage API, the web application and the form recognizer APIs.
+
 ### Enabling Private Endpoints
 
 To enable a VNET for the backend and Private Endpoint for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
