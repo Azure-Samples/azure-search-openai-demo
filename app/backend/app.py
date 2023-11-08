@@ -46,6 +46,9 @@ Error type: {error_type}
 """
 
 bp = Blueprint("routes", __name__, static_folder="static")
+# Fix Windows registry issue with mimetypes
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
 
 
 @bp.route("/")
