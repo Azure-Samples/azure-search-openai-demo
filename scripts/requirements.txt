@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-aiohttp==3.8.5
+aiohttp==3.8.6
     # via openai
 aiosignal==1.3.1
     # via aiohttp
@@ -68,7 +68,7 @@ isodate==0.6.1
     #   azure-storage-blob
     #   azure-storage-file-datalake
     #   msrest
-msal==1.24.1
+msal==1.25.0
     # via
     #   azure-identity
     #   msal-extensions
@@ -100,9 +100,7 @@ portalocker==2.8.2
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 pypdf==3.17.0
     # via -r requirements.in
 python-dateutil==2.8.2
