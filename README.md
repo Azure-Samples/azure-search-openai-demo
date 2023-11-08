@@ -274,12 +274,12 @@ Please note that the IP address configured will need to include the one you run 
 
 ### Enabling Private Endpoints
 
-To enable a virtual network (VNet) for the backend and private endpoint for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
+To enable a [virtual network (VNet)](https://learn.microsoft.com/data-integration/vnet/what-is) for the backend and [private endpoint](https://docs.microsoft.com/azure/private-link/private-endpoint-overview) for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
 
 1. Run `azd env set AZURE_USE_PRIVATE_ENDPOINT true`
 1. Run `azd up`
 
-Enabling private endpoints will disable all public network access by default, meaning that you can run `azd provision` but not `azd deploy` unless you are on a machine that is connected to the private VNET.
+Enabling private endpoints will disable all public network access by default, meaning that you can run `azd provision` but not `azd deploy` unless you are on a machine that is connected to the VNet.
 
 You can optionally set the [`ALLOWED_IP` variable, see "Restricting network traffic"](#restricting-network-traffic) which will **enable** public network access, but only to the IP range specified in the environment variable.
 
