@@ -7,6 +7,7 @@ param appServicePlanName string
 param storageAccountId string
 param searchServiceId string
 param openAiId string
+param formRecognizerId string
 param searchServiceName string
 param resourceToken string
 
@@ -113,6 +114,19 @@ module openAiPe './core/networking/private-endpoint.bicep' = {
     serviceId: openAiId
     groupIds: ['account']
     dnsZoneId: openaiDnsZone.outputs.id
+  }
+}
+
+module formRecognizerPe './core/networking/private-endpoint.bicep' = {
+  name: 'formRecognizerPe'
+  params: {
+    location: location
+    name: 'formRecognizerPe${resourceToken}'
+    tags: tags
+    subnetId: vnet.outputs.aiSubId
+    serviceId: formRecognizerId
+    groupIds: ['account']
+    dnsZoneId: cognitiveservicesDnsZone.outputs.id
   }
 }
 

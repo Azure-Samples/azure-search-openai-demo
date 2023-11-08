@@ -414,6 +414,7 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     searchServiceId: searchService.outputs.id 
     searchServiceName: searchService.outputs.name
     openAiId: openAi.outputs.id
+    formRecognizerId: formRecognizer.outputs.id
   }
 }
 
