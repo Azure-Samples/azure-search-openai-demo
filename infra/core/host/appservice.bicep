@@ -38,6 +38,7 @@ param scmDoBuildDuringDeployment bool = false
 param use32BitWorkerProcess bool = false
 param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
+param allowInboundNetworkRange string = ''
 
 var coreProperties = {
   serverFarmId: appServicePlanId
@@ -68,12 +69,34 @@ var appServiceProperties = union(
   coreProperties
 )
 
+var appServicePropertiesWithAcls = union(
+  !empty(allowInboundNetworkRange) ? {
+    ipSecurityRestrictions: [
+        {
+            ipAddress: allowInboundNetworkRange
+            action: 'Allow'
+            tag: 'Default'
+            priority: 100
+            description: 'Allow specified network range'
+        },{
+            ipAddress: 'Any'
+            action: 'Deny'
+            priority: 2147483647
+            name: 'Deny all'
+            description: 'Deny all access'
+        }
+    ]
+    ipSecurityRestrictionsDefaultAction: 'Deny'
+  } : {},
+  appServiceProperties
+)
+
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
   tags: tags
   kind: kind
-  properties: appServiceProperties
+  properties: appServicePropertiesWithAcls
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
 
   resource configLogs 'config' = {
