@@ -95,8 +95,8 @@
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     },
-    "allowedHost": {
-      "value": "${ALLOWED_HOST}"
+    "allowedIp": {
+      "value": "${ALLOWED_IP}"
     },
     "usePrivateEndpoint": {
       "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"

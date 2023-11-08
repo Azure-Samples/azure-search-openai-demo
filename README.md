@@ -256,21 +256,21 @@ To then limit access to a specific set of users or groups, you can follow the st
 ### Restricting network traffic
 
 By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism by default [see optional configuration of authentication](#enabling-authentication) and will allow any IP address to connect by default.
-To restrict access to the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_HOST` environment variable.
+To restrict access to the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_IP` environment variable.
 
-For example, to allow only the IP `43.133.5.124` to connect:
-
-```console
-azd env set ALLOWED_HOST 43.133.5.124
-```
-
-You can also use CIDR notation to specify an IP range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network)
+For example, to allow only the IP address `43.133.5.124` to connect:
 
 ```console
-azd env set ALLOWED_HOST 43.133.5.124
+azd env set ALLOWED_IP 43.133.5.124
 ```
 
-Please note that the IP configured will need to include the one you run `azd deploy` from as this process connects to the cognitive search index, the storage API, the web application and the form recognizer APIs.
+You can also use CIDR notation to specify an IP address range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network)
+
+```console
+azd env set ALLOWED_IP 43.133.5.0/24
+```
+
+Please note that the IP address configured will need to include the one you run `azd deploy` from as this process connects to the cognitive search index, the storage API, the web application and the form recognizer APIs.
 
 ### Enabling Private Endpoints
 
@@ -281,7 +281,7 @@ To enable a VNET for the backend and Private Endpoint for the web app, set the `
 
 Enabling private endpoints will disable all public network access by default, meaning that you can run `azd provision` but not `azd deploy` unless you are on a machine that is connected to the private VNET.
 
-You can optionally set the [`ALLOWED_HOST` variable, see "Restricting network traffic"](#restricting-network-traffic) which will **enable** public network access, but only to the IP range specified in the environment variable.
+You can optionally set the [`ALLOWED_IP` variable, see "Restricting network traffic"](#restricting-network-traffic) which will **enable** public network access, but only to the IP range specified in the environment variable.
 
 ### Enabling login and document level access control
 

@@ -78,7 +78,7 @@ param clientAppId string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
-param allowedHost string = '' // For single host specific rules
+param allowedIp string = '' // For single host specific rules
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -116,8 +116,8 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
 
-var publicNetworkAccess = (usePrivateEndpoint && allowedHost == '') ? 'Disabled' : 'Enabled'
-var allowedHosts = (allowedHost != '') ? [{value: allowedHost}] : []
+var publicNetworkAccess = (usePrivateEndpoint && allowedIp == '') ? 'Disabled' : 'Enabled'
+var allowedHosts = (allowedIp != '') ? [{value: allowedIp}] : []
 
 // Monitor application with Azure Monitor
 module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
@@ -163,7 +163,7 @@ module backend 'core/host/appservice.bicep' = {
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     allowedOrigins: [allowedOrigin]
-    allowInboundNetworkRange: allowedHost
+    allowInboundNetworkRange: allowedIp
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
