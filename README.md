@@ -264,7 +264,7 @@ For example, to allow only the IP address `43.133.5.124` to connect:
 azd env set ALLOWED_HOST 43.133.5.124
 ```
 
-You can also use CIDR notation to specify an IP range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network)
+You can also use CIDR notation to specify an IP address range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network)
 
 ```console
 azd env set ALLOWED_HOST 43.133.5.124
