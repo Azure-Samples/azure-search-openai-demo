@@ -33,11 +33,11 @@ azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
 azure-identity==1.15.0
     # via -r requirements.in
-azure-monitor-opentelemetry==1.0.0
+azure-monitor-opentelemetry==1.1.0
     # via -r requirements.in
 azure-monitor-opentelemetry-exporter==1.0.0b18
     # via azure-monitor-opentelemetry
-azure-search-documents==11.4.0b11
+azure-search-documents==11.4.0b6
     # via -r requirements.in
 azure-storage-blob==12.19.0
     # via -r requirements.in
@@ -70,7 +70,7 @@ deprecated==1.2.14
     # via opentelemetry-api
 et-xmlfile==1.1.0
     # via openpyxl
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.0
     # via quart
@@ -137,7 +137,7 @@ numpy==1.26.1
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.1.1
+openai[datalib]==0.28.1
     # via -r requirements.in
 openpyxl==3.1.2
     # via openai
@@ -158,7 +158,7 @@ opentelemetry-api==1.21.0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-instrumentation==0.41b0
+opentelemetry-instrumentation==0.42b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -171,31 +171,31 @@ opentelemetry-instrumentation==0.41b0
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
-opentelemetry-instrumentation-aiohttp-client==0.41b0
+opentelemetry-instrumentation-aiohttp-client==0.42b0
     # via -r requirements.in
-opentelemetry-instrumentation-asgi==0.41b0
+opentelemetry-instrumentation-asgi==0.42b0
     # via
     #   -r requirements.in
     #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-dbapi==0.41b0
+opentelemetry-instrumentation-dbapi==0.42b0
     # via opentelemetry-instrumentation-psycopg2
-opentelemetry-instrumentation-django==0.41b0
+opentelemetry-instrumentation-django==0.42b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-fastapi==0.41b0
+opentelemetry-instrumentation-fastapi==0.42b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-flask==0.41b0
+opentelemetry-instrumentation-flask==0.42b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-psycopg2==0.41b0
+opentelemetry-instrumentation-psycopg2==0.42b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-requests==0.41b0
+opentelemetry-instrumentation-requests==0.42b0
     # via
     #   -r requirements.in
     #   azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib==0.41b0
+opentelemetry-instrumentation-urllib==0.42b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib3==0.41b0
+opentelemetry-instrumentation-urllib3==0.42b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-wsgi==0.41b0
+opentelemetry-instrumentation-wsgi==0.42b0
     # via
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-flask
@@ -218,7 +218,7 @@ opentelemetry-semantic-conventions==0.42b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-util-http==0.41b0
+opentelemetry-util-http==0.42b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -242,9 +242,7 @@ priority==2.0.0
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
@@ -293,7 +291,7 @@ werkzeug==3.0.1
     # via
     #   flask
     #   quart
-wrapt==1.15.0
+wrapt==1.16.0
     # via
     #   deprecated
     #   opentelemetry-instrumentation
