@@ -35,6 +35,8 @@ urlFragment: azure-search-openai-demo
   - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
+  - [Restricting network traffic](#restricting-network-traffic)
+  - [Enabling private endpoints](#enabling-private-endpoints)
   - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
@@ -253,10 +255,14 @@ By default, the deployed Azure web app will have no authentication or access res
 
 To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
 
+### Enabling login and document level access control
+
+By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./LoginAndAclSetup.md).
+
 ### Restricting network traffic
 
-By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism by default [see optional configuration of authentication](#enabling-authentication) and will allow any IP address to connect by default.
-To restrict access to the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_IP` environment variable.
+By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism unless [it is explicitly configured](#enabling-authentication) and will allow any IP address to connect by default.
+To restrict access of the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_IP` environment variable.
 
 For example, to allow only the IP address `43.133.5.124` to connect:
 
@@ -272,7 +278,7 @@ azd env set ALLOWED_IP 43.133.5.0/24
 
 Please note that the IP address configured will need to include the one you run `azd up` from, since deployment connects to the web application and the `prepdocs.py` script connects to the Cognitive Search index, Storage API, and Form Recognizer APIs.
 
-### Enabling Private Endpoints
+### Enabling private endpoints
 
 To enable a [virtual network (VNet)](https://learn.microsoft.com/data-integration/vnet/what-is) for the backend and [private endpoint](https://docs.microsoft.com/azure/private-link/private-endpoint-overview) for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
 
@@ -281,11 +287,7 @@ To enable a [virtual network (VNet)](https://learn.microsoft.com/data-integratio
 
 Enabling private endpoints will disable all public network access by default, meaning that you can run `azd provision` but not `azd deploy` unless you are on a machine that is connected to the VNet.
 
-You can optionally set the [`ALLOWED_IP` variable, see "Restricting network traffic"](#restricting-network-traffic) which will **enable** public network access, but only to the IP range specified in the environment variable.
-
-### Enabling login and document level access control
-
-By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./LoginAndAclSetup.md).
+You can optionally set the `ALLOWED_IP` variable which will **enable** public network access, but only to the IP range specified in the environment variable. [(See "Restricting network traffic".)](#restricting-network-traffic)
 
 ### Enabling CORS for an alternate frontend
 
