@@ -70,7 +70,7 @@ deprecated==1.2.14
     # via opentelemetry-api
 et-xmlfile==1.1.0
     # via openpyxl
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.0
     # via quart
