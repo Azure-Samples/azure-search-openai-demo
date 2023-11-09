@@ -30,6 +30,21 @@ updates:
       python-requirements:
         patterns:
           - "*"
-    ignore:
-      -  dependency-name: "openai[datalib]"
-      -  dependency-name: "azure-search-documents"
+
+  - package-ecosystem: "pip"
+    directory: "/app/backend"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-requirements:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "pip"
+    directory: "/scripts"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-requirements:
+        patterns:
+          - "*"
