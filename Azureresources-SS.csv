@@ -1,0 +1,7 @@
+﻿NAME,TYPE,LOCATION,RESOURCE GROUP,RESOURCE ID,KIND,RESOURCE TYPE,
+"app-backend-ffnboozazrin6","App Service","East US","rg-infomate","/subscriptions/aefaffc3-b280-474d-8fc1-1ce9bb9e9dbb/resourceGroups/rg-infomate/providers/Microsoft.Web/sites/app-backend-ffnboozazrin6","app,linux","microsoft.web/sites"
+"cog-ffnboozazrin6","Azure OpenAI","East US","rg-infomate","/subscriptions/aefaffc3-b280-474d-8fc1-1ce9bb9e9dbb/resourceGroups/rg-infomate/providers/Microsoft.CognitiveServices/accounts/cog-ffnboozazrin6","OpenAI","microsoft.cognitiveservices/accounts"
+"cog-fr-ffnboozazrin6","Document intelligence","East US","rg-infomate","/subscriptions/aefaffc3-b280-474d-8fc1-1ce9bb9e9dbb/resourceGroups/rg-infomate/providers/Microsoft.CognitiveServices/accounts/cog-fr-ffnboozazrin6","FormRecognizer","microsoft.cognitiveservices/accounts"
+"gptkb-ffnboozazrin6","Search service","East US","rg-infomate","/subscriptions/aefaffc3-b280-474d-8fc1-1ce9bb9e9dbb/resourceGroups/rg-infomate/providers/Microsoft.Search/searchServices/gptkb-ffnboozazrin6","","microsoft.search/searchservices"
+"plan-ffnboozazrin6","App Service plan","East US","rg-infomate","/subscriptions/aefaffc3-b280-474d-8fc1-1ce9bb9e9dbb/resourceGroups/rg-infomate/providers/Microsoft.Web/serverFarms/plan-ffnboozazrin6","linux","microsoft.web/serverfarms"
+"stffnboozazrin6","Storage account","East US","rg-infomate","/subscriptions/aefaffc3-b280-474d-8fc1-1ce9bb9e9dbb/resourceGroups/rg-infomate/providers/Microsoft.Storage/storageAccounts/stffnboozazrin6","StorageV2","microsoft.storage/storageaccounts"
