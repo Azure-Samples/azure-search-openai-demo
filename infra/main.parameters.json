@@ -33,7 +33,7 @@
       "value": "S0"
     },
     "searchIndexName": {
-      "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
+      "value": "${AZURE_SEARCH_INDEX=hackathonindex}"
     },
     "searchServiceName": {
       "value": "${AZURE_SEARCH_SERVICE}"

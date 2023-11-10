@@ -1,38 +1,22 @@
 {
     "files": {
-        "Benefit_Options.pdf": {
-            "directory": "benefitinfo"
+        "What_is_Azure_Deployment_Environments.pdf": {
+            "directory": "azuredeploymentinfo"
         },
-        "employee_handbook.pdf": {
-            "directory": "employeeinfo"
-        },
-        "Northwind_Health_Plus_Benefits_Details.pdf": {
-            "directory": "benefitinfo"
-        },
-        "Northwind_Standard_Benefits_Details.pdf": {
-            "directory": "benefitinfo"
-        },
-        "PerksPlus.pdf": {
-            "directory": "benefitinfo"
-        },
-        "role_library.pdf": {
-            "directory": "employeeinfo"
+        "codedeploy-user-aws.pdf": {
+            "directory": "awsdeploymentinfo"
         }
     },
     "directories": {
-        "employeeinfo": {
-            "groups": ["GPTKB_HRTest"]
+        "azuredeploymentinfo": {
+            "groups": ["GPTKB_AzureTest"]
         },
-        "benefitinfo": {
-            "groups": ["GPTKB_EmployeeTest", "GPTKB_HRTest"]
-        },
-        "/": {
-            "groups": ["GPTKB_AdminTest"]
+        "awsdeploymentinfo": {
+            "groups": ["GPTKB_AWSTest"]
         }
     },
     "groups": [
-        "GPTKB_AdminTest",
-        "GPTKB_HRTest",
-        "GPTKB_EmployeeTest"
+        "GPTKB_AzureTest",
+        "GPTKB_AWSTest"
     ]
 }
