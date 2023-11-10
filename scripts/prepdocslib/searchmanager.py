@@ -143,11 +143,14 @@ class SearchManager:
                     for i, document in enumerate(documents):
                         document["embedding"] = embeddings[i]
 
+                # Remove any existing documents with the same sourcefile before uploading new ones
+                # that ensures we don't have outdated documents in the index
+                await self.remove_content(path=batch[0].content.filename())
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: Optional[str] = None):
         if self.search_info.verbose:
-            print(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
+            print(f"\tRemoving sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
