@@ -94,7 +94,7 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
     elif args.blobstoragehashcheck:
         print("Using Blob Storage Account files to get hashes of existing files")
         list_file_strategy = BlobListFileStrategy(
-            path_pattern=args.files, verbose=args.verbose, blob_manager=blob_manager
+            path_pattern=args.files, blob_manager=blob_manager, verbose=args.verbose
         )
     else:
         print(f"Using local files in {args.files}")

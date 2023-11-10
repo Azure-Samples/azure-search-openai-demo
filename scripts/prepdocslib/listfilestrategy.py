@@ -86,10 +86,10 @@ class BlobListFileStrategy(ListFileStrategy):
     Concrete strategy for listing remote files that are located in a blob storage account
     """
 
-    def __init__(self, path_pattern: str, verbose: bool = False, blob_manager: BlobManager = None):
+    def __init__(self, path_pattern: str, blob_manager: BlobManager, verbose: bool = False):
         self.path_pattern = path_pattern
-        self.verbose = verbose
         self.blob_manager = blob_manager
+        self.verbose = verbose
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async for p in self._list_paths(self.path_pattern):
