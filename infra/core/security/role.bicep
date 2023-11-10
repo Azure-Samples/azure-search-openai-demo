@@ -1,3 +1,4 @@
+metadata description = 'Creates a role assignment for a service principal.'
 param principalId string
 
 @allowed([
