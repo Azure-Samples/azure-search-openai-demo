@@ -1,39 +1,17 @@
-import base64
 import hashlib
 import os
-import re
 import tempfile
 from abc import ABC
 from glob import glob
-from typing import IO, AsyncGenerator, Dict, List, Optional, Union
+from typing import AsyncGenerator, Dict, List, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
 
-
-class File:
-    """
-    Represents a file stored either locally or in a data lake storage account
-    This file might contain access control information about which users or groups can access it
-    """
-
-    def __init__(self, content: IO, acls: Optional[dict[str, list]] = None):
-        self.content = content
-        self.acls = acls or {}
-
-    def filename(self):
-        return os.path.basename(self.content.name)
-
-    def filename_to_id(self):
-        filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())
-        filename_hash = base64.b16encode(self.filename().encode("utf-8")).decode("ascii")
-        return f"file-{filename_ascii}-{filename_hash}"
-
-    def close(self):
-        if self.content:
-            self.content.close()
+from .blobmanager import BlobManager
+from .file import File
 
 
 class ListFileStrategy(ABC):
@@ -99,6 +77,55 @@ class LocalListFileStrategy(ListFileStrategy):
         # Write the hash
         with open(hash_path, "w", encoding="utf-8") as md5_f:
             md5_f.write(existing_hash)
+
+        return False
+
+
+class BlobListFileStrategy(ListFileStrategy):
+    """
+    Concrete strategy for listing remote files that are located in a blob storage account
+    """
+
+    def __init__(self, path_pattern: str, verbose: bool = False, blob_manager: BlobManager = None):
+        self.path_pattern = path_pattern
+        self.verbose = verbose
+        self.blob_manager = blob_manager
+
+    async def list_paths(self) -> AsyncGenerator[str, None]:
+        async for p in self._list_paths(self.path_pattern):
+            yield p
+
+    async def _list_paths(self, path_pattern: str) -> AsyncGenerator[str, None]:
+        for path in glob(path_pattern):
+            if os.path.isdir(path):
+                async for p in self._list_paths(f"{path}/*"):
+                    yield p
+            else:
+                # Only list files, not directories
+                yield path
+
+    async def list(self) -> AsyncGenerator[File, None]:
+        async for path in self.list_paths():
+            if not await self.check_md5(path):
+                yield File(content=open(path, mode="rb"))
+
+    async def check_md5(self, path: str) -> bool:
+        # if filename ends in .md5 skip
+        if path.endswith(".md5"):
+            return True
+
+        # get hash from local file
+        with open(path, "rb") as file:
+            existing_hash = hashlib.md5(file.read()).hexdigest()
+
+        # get hash from blob storage
+        blob_hash = await self.blob_manager.get_blob_hash(os.path.basename(path))
+
+        # compare hashes from local and blob storage
+        if blob_hash and blob_hash.strip() == existing_hash.strip():
+            if self.verbose:
+                print(f"\tSkipping {path}, no changes detected.")
+            return True
 
         return False
 

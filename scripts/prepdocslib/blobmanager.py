@@ -1,3 +1,4 @@
+import binascii
 import os
 import re
 from typing import Optional, Union
@@ -5,7 +6,7 @@ from typing import Optional, Union
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob.aio import BlobServiceClient
 
-from .listfilestrategy import File
+from .file import File
 
 
 class BlobManager:
@@ -59,6 +60,18 @@ class BlobManager:
                 if self.verbose:
                     print(f"\tRemoving blob {blob_path}")
                 await container_client.delete_blob(blob_path)
+
+    async def get_blob_hash(self, blob_name: str):
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential
+        ) as service_client, service_client.get_blob_client(self.container, blob_name) as blob_client:
+            if not await blob_client.exists():
+                return None
+
+            blob_properties = await blob_client.get_blob_properties()
+            blob_hash_raw_bytes = blob_properties.content_settings.content_md5
+            hex_hash = binascii.hexlify(blob_hash_raw_bytes)
+            return hex_hash.decode("utf-8")
 
     @classmethod
     def sourcepage_from_file_page(cls, filename, page=0) -> str:
