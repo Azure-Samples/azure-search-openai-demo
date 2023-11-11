@@ -39,7 +39,7 @@ interface AuthSetup {
 
 // Default auth setup to use in development mode
 const defaultAuthSetup: AuthSetup = {
-    useLogin: false,
+    useLogin: true,
     msalConfig: {
         auth: {
             clientId: "00000000-0000-0000-0000-000000000000",
