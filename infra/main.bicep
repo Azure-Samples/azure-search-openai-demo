@@ -67,6 +67,7 @@ param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
 param useEvaluation bool = false // if true, add the following deployment:
+param evalGptDeploymentName string = 'eval'
 param evalGptModelName string = 'gpt-4'
 param evalGptModelVersion string = '0613'
 param evalGptDeploymentCapacity int = 30
@@ -189,6 +190,46 @@ module backend 'core/host/appservice.bicep' = {
   }
 }
 
+
+var defaultOpenAiDeployments = [
+  {
+    name: chatGptDeploymentName
+    model: {
+      format: 'OpenAI'
+      name: chatGptModelName
+      version: chatGptModelVersion
+    }
+    sku: {
+      name: 'Standard'
+      capacity: chatGptDeploymentCapacity
+    }
+  }
+  {
+    name: embeddingDeploymentName
+    model: {
+      format: 'OpenAI'
+      name: embeddingModelName
+      version: '2'
+    }
+    capacity: embeddingDeploymentCapacity
+  }
+]
+
+var openAiDeployments = concat(defaultOpenAiDeployments, useEvaluation ? [
+    {
+      name: evalGptDeploymentName
+      model: {
+        format: 'OpenAI'
+        name: evalGptModelName
+        version: evalGptModelVersion
+      }
+      sku: {
+        name: 'Standard'
+        capacity: evalGptDeploymentCapacity
+      }
+    }
+  ] : [])
+
 module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
   name: 'openai'
   scope: openAiResourceGroup
@@ -199,29 +240,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
     sku: {
       name: openAiSkuName
     }
-    deployments: [
-      {
-        name: chatGptDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: chatGptModelName
-          version: chatGptModelVersion
-        }
-        sku: {
-          name: 'Standard'
-          capacity: chatGptDeploymentCapacity
-        }
-      }
-      {
-        name: embeddingDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: embeddingModelName
-          version: '2'
-        }
-        capacity: embeddingDeploymentCapacity
-      }
-    ]
+    deployments: openAiDeployments
   }
 }
 
@@ -393,11 +412,13 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
 output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
+output AZURE_OPENAI_EVALGPT_MODEL string = useEvaluation ? evalGptModelName : ''
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiHost == 'azure') ? chatGptDeploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiHost == 'azure') ? embeddingDeploymentName : ''
+output AZURE_OPENAI_EVAL_DEPLOYMENT string = (openAiHost == 'azure' && useEvaluation) ? evalGptDeploymentName : ''
 // Used only with non-Azure OpenAI deployments
 output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
 output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''

@@ -1,3 +1,4 @@
 #-r ../app/backend/requirements.txt
-azure-ai-resources @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-resources/1a20231026010/azure_ai_resources-1.0.0a20231026010-py3-none-any.whl
-azure-ai-generative[evaluate] @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-generative/1a20231101007/azure_ai_generative-1.0.0a20231101007-py3-none-any.whl
+azure-ai-resources @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-resources/1a20231106011/azure_ai_resources-1.0.0a20231106011-py3-none-any.whl
+azure-ai-ml @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-ml/1.12a20231106004/azure_ai_ml-1.12.0a20231106004-py3-none-any.whl
+azure-ai-generative[evaluate] @https://pkgs.dev.azure.com/azure-sdk/29ec6040-b234-4e31-b139-33dc4287b756/_packaging/3572dbf9-b5ef-433b-9137-fc4d7768e7cc/pypi/download/azure-ai-generative/1a20231106011/azure_ai_generative-1.0.0a20231106011-py3-none-any.whl

@@ -1,0 +1,27 @@
+{
+    "gpt_groundedness": {
+        "mean_rating": 4.91,
+        "pass_count": 194,
+        "pass_rate": 0.97
+    },
+    "gpt_relevance": {
+        "mean_rating": 4.84,
+        "pass_count": 191,
+        "pass_rate": 0.955
+    },
+    "gpt_coherence": {
+        "mean_rating": 4.995,
+        "pass_count": 200,
+        "pass_rate": 1.0
+    },
+    "gpt_fluency": {
+        "mean_rating": 4.995,
+        "pass_count": 200,
+        "pass_rate": 1.0
+    },
+    "gpt_similarity": {
+        "mean_rating": 3.245,
+        "pass_count": 110,
+        "pass_rate": 0.55
+    }
+}

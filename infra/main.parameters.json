@@ -94,6 +94,9 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "useEvaluation": {
+      "value": "${USE_EVALUATION=false}"
     }
   }
 }

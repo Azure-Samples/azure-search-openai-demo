@@ -1,6 +1,0 @@
-gpt_metric,avg_score,pass_count,pass_rate
-gpt_groundedness,4.96,197,0.985
-gpt_coherence,4.83,195,0.975
-gpt_similarity,3.585,133,0.665
-gpt_fluency,4.835,195,0.975
-gpt_relevance,4.995,200,1.0
