@@ -1,24 +1,18 @@
 import asyncio
 import json
 import logging
-import sys
+import os
+import re
 from pathlib import Path
 
 import urllib3
 from azure.ai.generative.evaluate import evaluate
 from azure.identity import AzureDeveloperCliCredential
 
-sys.path.append("app/backend")
-import app  # noqa
-
 logging.basicConfig(level=logging.DEBUG)
-# loadenv from a .azure/env file
 
-# connects to project defined in the config.json file at the root of the repo
-# use "ai init" to update this to point at your project
-azure_credential = AzureDeveloperCliCredential()
-
-# multi-turn conversation history in the future
+EVAL_DIR = Path(__file__).parent.absolute()
+# TODO: multi-turn conversation history in the future
 
 
 def deployed_target(question, overrides={}):
@@ -50,6 +44,11 @@ def deployed_target(question, overrides={}):
 
 
 async def send_chat_request(question) -> dict:
+    import sys
+
+    sys.path.append("app/backend")
+    import app  # noqa
+
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         test_client = test_app.test_client()
@@ -86,17 +85,18 @@ def load_jsonl(path):
         return [json.loads(line) for line in f.readlines()]
 
 
-def run_evaluation(testdata_filename, overrides={}, destination_dir="results"):
-    path = Path(__file__).parent.absolute() / testdata_filename
+def run_evaluation(testdata_filename, destination_dir, overrides={}):
+    path = EVAL_DIR / testdata_filename
     data = load_jsonl(path)
 
-    gpt_model = "gpt-4"
+    gpt_model = os.environ["AZURE_OPENAI_EVALGPT_MODEL"]
+    azure_credential = AzureDeveloperCliCredential()
     aoai_config = {
         "api_type": "azure_ad",
-        "api_base": "https://cog-pg6yesvgqiudc.openai.azure.com/",
+        "api_base": f"https://{os.environ['AZURE_OPENAI_SERVICE']}.openai.azure.com",
         "api_key": azure_credential.get_token("https://cognitiveservices.azure.com/.default").token,
         "api_version": "2023-07-01-preview",
-        "deployment_id": "chat",
+        "deployment_id": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
     }
 
     gpt_metrics = ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "gpt_fluency", "gpt_similarity"]
@@ -124,18 +124,40 @@ def run_evaluation(testdata_filename, overrides={}, destination_dir="results"):
         questions_with_ratings = [json.loads(question_json) for question_json in f.readlines()]
 
     metrics = {
-        metric_name: {"mean_rating": results.metrics_summary[f"mean_{metric_name}"], "pass_count": 0, "pass_rate": 0}
+        metric_name: {
+            "mean_rating": round(results.metrics_summary[f"mean_{metric_name}"], 2),
+            "pass_count": 0,
+            "pass_rate": 0,
+        }
         for metric_name in gpt_metrics
     }
+    total_length = 0
+    max_length = 0
+    min_length = 9999999999
+    total_with_citation = 0
 
     def passes_threshold(rating):
         return int(rating) >= 4
 
     for ind, question_with_rating in enumerate(questions_with_ratings):
+        total_length += len(question_with_rating["answer"])
+        max_length = max(max_length, len(question_with_rating["answer"]))
+        min_length = min(min_length, len(question_with_rating["answer"]))
+        total_with_citation += 1 if re.search(r"\[[^\]]+\]", question_with_rating["answer"]) else 0
         for metric_name in gpt_metrics:
             if passes_threshold(question_with_rating[metric_name]):
                 metrics[metric_name]["pass_count"] += 1
-            metrics[metric_name]["pass_rate"] = metrics[metric_name]["pass_count"] / (ind + 1)
+            metrics[metric_name]["pass_rate"] = round(metrics[metric_name]["pass_count"] / (ind + 1), 2)
+    metrics["answer_length"] = {
+        "total": total_length,
+        "mean": round(total_length / len(questions_with_ratings), 2),
+        "max": max_length,
+        "min": min_length,
+    }
+    metrics["answer_has_citation"] = {
+        "total": total_with_citation,
+        "rate": round(total_with_citation / len(questions_with_ratings), 2),
+    }
 
     # summary statistics
     with open(Path(destination_dir) / "summary.json", "w") as summary_file:
@@ -152,14 +174,14 @@ def run_evaluation(testdata_filename, overrides={}, destination_dir="results"):
 
 if __name__ == "__main__":
     run_evaluation(
-        "qa.jsonl",
+        "input/qa.jsonl",
+        destination_dir=EVAL_DIR / "results/no_semantic_ranker_weak_prompt",
         overrides={
             "retrieval_mode": "hybrid",
             "semantic_ranker": False,
             "semantic_captions": False,
             "top": 3,
             "suggest_followup_questions": False,
-            "prompt_template": open("prompt_chris.txt").read(),
+            "prompt_template": open(EVAL_DIR / "input/prompt_weak.txt").read(),
         },
-        destination_dir="no_semantic_ranker_chris_prompt",
     )
