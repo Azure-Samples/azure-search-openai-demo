@@ -100,6 +100,44 @@ async def content_file(path: str):
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
 
+@bp.route("/mapping", methods=["POST"])
+async def mapping():
+    logging.info("Reached mapping endpoint")
+    path = "mapping.json"
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    request_json = await request.get_json()
+    mapping = request_json.get("mapping", {})
+    logging.info("request_json")
+    logging.info(mapping)
+    
+    # Create a BlobServiceClient object
+    blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    try:
+       # Fetch the blob client
+       blob = blob_container_client.get_blob_client(path)
+
+       # Fetch the index mapping from storage blob
+       downloader = await blob.download_blob(max_concurrency=1, encoding='UTF-8')
+       blob_text = await downloader.readall()
+       
+       # Convert the blob contents to json
+       blob_json = json.loads(blob_text)
+       logging.info("Blob contents: %s", blob_json)
+
+       # Update the index mapping with the new mapping
+       blob_json.update(mapping)
+       logging.info("Updated mapping: %s", blob_json)
+
+       # Update the index mapping with the new mapping
+       await blob.upload_blob(data=json.dumps(blob_json), overwrite=True)
+       logging.info("Successfully uploaded mapping.json")
+       return jsonify({"success": "Successfully uploaded mapping.json"}), 201
+    except Exception as error:
+        logging.exception("Exception occured in /mapping: %s", error)
+        abort(500)
+
+
 def error_dict(error: Exception) -> dict:
     return {"error": ERROR_MESSAGE.format(error_type=type(error))}
 
@@ -300,7 +338,7 @@ def create_app():
     default_level = "INFO"  # In development, log more verbosely
     if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
         default_level = "WARNING"
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
+    logging.basicConfig(level="INFO")
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)
