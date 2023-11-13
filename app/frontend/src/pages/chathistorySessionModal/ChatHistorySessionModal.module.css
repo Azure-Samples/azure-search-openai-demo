@@ -76,3 +76,15 @@
 .githubLogo {
     height: 20px;
 }
+
+.modal {
+    /*position: fixed;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+    /*background-color: blue;*/
+    /*width: 100px; !* Adjust the width as needed *!*/
+    /*height: 100px;*/
+    /*padding: 20px;*/
+    /*box-sizing: border-box;*/
+}

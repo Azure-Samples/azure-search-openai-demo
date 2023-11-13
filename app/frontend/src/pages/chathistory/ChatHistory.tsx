@@ -1,6 +1,8 @@
 import styles from "./ChatHistory.module.css";
 import {useState} from "react";
 import {ChatHistorySessionModal} from "../chathistorySessionModal/ChatHistorySessionModal"
+import { Container } from 'react-bootstrap';
+
 const ChatHistory = () => {
     type SessionType = {
         name: string,
@@ -35,28 +37,28 @@ const ChatHistory = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.commandsContainer}>
+        <>
+            <div className={styles.chatHistory}>
                 {sessions.map((session, index) => (
                     <button key={index} onClick={handleClickOnChatSession.bind(this, session)}
-                            className='chat-sessions'>
+                            className={styles.chatSessions}>
                         <text style={{fontSize: "40px", alignSelf: "center"}}> {session.name} </text>
                     </button>
                 ))}
                 <button type="submit"
-                        className="chat-session-button"
+                        className={styles.chatSessionButton}
                         onClick={handleShowModal}>
-                    <span className="button-content">+</span>
+                    <span className={styles.buttonContent}> + </span>
                 </button>
 
+            </div>
+
                 <ChatHistorySessionModal
-                    // className="modal"
                     show={showModal}
                     handleClose={handleCloseModal}
                     handleCreateSession={handleCreateSession}
                 />
-            </div>
-        </div>
+        </>
     );
 };
 
