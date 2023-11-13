@@ -17,7 +17,7 @@ videos = {
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
             ]
         },
-        "femaleBot": {
+        "maleBot": {
             "femalePatient": [
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
@@ -47,7 +47,7 @@ videos = {
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
             ]
         },
-        "femaleBot": {
+        "maleBot": {
             "femalePatient": [
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
@@ -77,7 +77,7 @@ videos = {
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
             ]
         },
-        "femaleBot": {
+        "maleBot": {
             "femalePatient": [
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
@@ -107,7 +107,7 @@ videos = {
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
             ]
         },
-        "femaleBot": {
+        "maleBot": {
             "femalePatient": [
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
@@ -137,7 +137,7 @@ videos = {
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
             ]
         },
-        "femaleBot": {
+        "maleBot": {
             "femalePatient": [
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
                 "http://youtube.com/watch?v=YE7VzlLtp-4",
