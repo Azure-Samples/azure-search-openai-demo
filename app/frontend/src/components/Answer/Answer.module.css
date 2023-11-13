@@ -137,6 +137,14 @@ sup {
     animation: loading 1s infinite;
 }
 
+.videoContainer {
+    display: flex;
+}
+
+.videoContainer iframe {
+    width: 100%;
+}
+
 @media only screen and (max-width: 48rem) {
     .answerContainer {
         padding: 1rem;
