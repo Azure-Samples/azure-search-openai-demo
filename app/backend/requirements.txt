@@ -130,7 +130,7 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-numpy==1.26.1
+numpy==1.26.2
     # via
     #   openai
     #   pandas
