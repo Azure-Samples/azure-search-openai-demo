@@ -6,7 +6,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import DataTable
 
 ROWS = [
-    ("folder", "groundedness", "%", "relevance", "%", "coherence", "%", "citation %"),
+    ("folder", "groundedness", "%", "relevance", "%", "coherence", "%", "citation %", "length"),
 ]
 
 
@@ -29,6 +29,7 @@ for folder in folders:
                 coherence["mean_rating"],
                 coherence["pass_rate"],
                 citation,
+                summary.get("answer_length", {}).get("mean", "Unknown"),
             )
         )
 

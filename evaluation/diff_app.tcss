@@ -17,6 +17,10 @@ Screen {
     border: solid green;
 }
 
+#metrics {
+    height: 3
+}
+
 #buttons {
     height: 3;
     align: center middle;
