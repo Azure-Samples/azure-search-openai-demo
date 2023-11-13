@@ -148,10 +148,13 @@ async def ask():
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
+    index_name = request_json.get("index", "index1")
+    approach_index_name = CONFIG_ASK_APPROACH + index_name
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+
     try:
-        approach = current_app.config[CONFIG_ASK_APPROACH]
+        approach = current_app.config[approach_index_name]
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
@@ -179,10 +182,12 @@ async def chat():
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
+    index_name = request_json.get("index", "index1")
+    approach_index_name = CONFIG_CHAT_APPROACH + index_name
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        approach = current_app.config[CONFIG_CHAT_APPROACH]
+        approach = current_app.config[approach_index_name]
         result = await approach.run(
             request_json["messages"],
             stream=request_json.get("stream", False),
@@ -199,6 +204,24 @@ async def chat():
         logging.exception("Exception in /chat: %s", error)
         return jsonify(error_dict(error)), 500
 
+@bp.route("/mapping", methods=["GET"])
+async def mapping():
+    path = "mapping.json"
+
+    # Create a BlobServiceClient object
+    blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    try:
+        # Fetch the blob client
+        blob_client = blob_container_client.get_blob_client(path)
+
+        # Fetch the index mapping from storage blob
+        blob = await blob_client.download_blob(blob=path)
+        index_mapping_bin = await blob.readall()
+        index_mapping_json = json.loads(index_mapping_bin)
+        return index_mapping_json
+    except Exception as error:
+        logging.exception("Exception in GET /mapping: %s", error)
+        return jsonify(error_dict(error)), 500
 
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
@@ -268,11 +291,6 @@ async def setup_clients():
     )
 
     # Set up clients for Cognitive Search and Storage
-    search_client = SearchClient(
-        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-        index_name=AZURE_SEARCH_INDEX,
-        credential=azure_credential,
-    )
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
@@ -293,37 +311,55 @@ async def setup_clients():
         openai.organization = OPENAI_ORGANIZATION
 
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
-    current_app.config[CONFIG_SEARCH_CLIENT] = search_client
+    # current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
-    current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
-        search_client,
-        OPENAI_HOST,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
-    )
 
-    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
-        search_client,
-        OPENAI_HOST,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
-    )
+    # Array of index_names to be stored. storing placeholders for now.
+    index_name_list = ["index1", "index2" "index3", "index4"]
+    for index_name in index_name_list:
+        config_ask_approach_for_index_name = CONFIG_CHAT_APPROACH + index_name
+        search_client = SearchClient(
+            endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+            index_name=index_name,
+            credential=azure_credential,
+        )
+        current_app.config[config_ask_approach_for_index_name ] = RetrieveThenReadApproach(
+            search_client,
+            OPENAI_HOST,
+            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            OPENAI_CHATGPT_MODEL,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT,
+            AZURE_SEARCH_QUERY_LANGUAGE,
+            AZURE_SEARCH_QUERY_SPELLER,
+        )
+
+    for index_name in index_name_list:
+        config_chat_approach_for_index_name = CONFIG_CHAT_APPROACH + index_name
+        search_client = SearchClient(
+            endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+            index_name=index_name,
+            credential=azure_credential,
+        )
+
+        current_app.config[config_chat_approach_for_index_name] = ChatReadRetrieveReadApproach(
+            search_client,
+            OPENAI_HOST,
+            AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+            OPENAI_CHATGPT_MODEL,
+            AZURE_OPENAI_EMB_DEPLOYMENT,
+            OPENAI_EMB_MODEL,
+            KB_FIELDS_SOURCEPAGE,
+            KB_FIELDS_CONTENT,
+            AZURE_SEARCH_QUERY_LANGUAGE,
+            AZURE_SEARCH_QUERY_SPELLER,
+        )
 
 
 def create_app():
