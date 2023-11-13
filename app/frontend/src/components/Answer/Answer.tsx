@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
+
 import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 
@@ -7,6 +8,8 @@ import styles from "./Answer.module.css";
 import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
+
+import { transformYotubeUrlsToEmbdedded } from "./AnswerVideoEmbedder";
 
 interface Props {
     answer: ChatAppResponse;
@@ -33,6 +36,30 @@ export const Answer = ({
     const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
+
+    const [iframeWidth, setIframeWidth] = useState(1000);
+
+    useEffect(() => {
+        const updateWidth = () => {
+            // Select the parent div using a class name that contains 'chatMessageGpt'
+            const parentDiv = document.querySelector('[class*="chatMessageGpt"]');
+            if (parentDiv instanceof HTMLElement) {
+                const marginOfMessageBubbleFromBothEndsInPx = 32
+                const additionalBufferToAvoidScrollBar = 16;
+                setIframeWidth(parentDiv.offsetWidth - marginOfMessageBubbleFromBothEndsInPx - additionalBufferToAvoidScrollBar);
+            }
+        };
+        
+        updateWidth();
+
+        // Set up the resize event listener
+        window.addEventListener('resize', updateWidth);
+
+        // Clean up the event listener
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []); // Empty dependency array ensures this runs once on mount and then on every resize
+
+    const sanitizedAnswerHtmlWithEmbddedVideos = transformYotubeUrlsToEmbdedded(sanitizedAnswerHtml, iframeWidth)
 
     return (
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
@@ -61,7 +88,7 @@ export const Answer = ({
             </Stack.Item>
 
             <Stack.Item grow>
-                <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}></div>
+                <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtmlWithEmbddedVideos }}></div>
             </Stack.Item>
 
             {!!parsedAnswer.citations.length && (
