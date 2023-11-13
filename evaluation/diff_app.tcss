@@ -1,0 +1,27 @@
+Screen {
+    padding: 1;
+}
+
+#sources {
+    height: 2
+}
+
+.source {
+    width: 1fr;
+    border: solid green;
+}
+
+.answer {
+    height: 100%;
+    width: 1fr;
+    border: solid green;
+}
+
+#buttons {
+    height: 3;
+    align: center middle;
+}
+
+#quit {
+    margin-left: 5;
+}

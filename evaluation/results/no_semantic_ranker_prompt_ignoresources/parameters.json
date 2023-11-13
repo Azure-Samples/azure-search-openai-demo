@@ -1,0 +1,11 @@
+{
+    "overrides": {
+        "retrieval_mode": "hybrid",
+        "semantic_ranker": false,
+        "semantic_captions": false,
+        "top": 3,
+        "suggest_followup_questions": false,
+        "prompt_template": "Your job is to answer questions to the best of your ability. You will be given sources but you should IGNORE them. Be creative!"
+    },
+    "evaluation_gpt_model": "gpt-4"
+}

@@ -1,0 +1,11 @@
+{
+    "overrides": {
+        "retrieval_mode": "hybrid",
+        "semantic_ranker": false,
+        "semantic_captions": false,
+        "top": 3,
+        "suggest_followup_questions": false,
+        "prompt_template": "Your job is to translate the user's question into Pig Latin. Ignore any sources provided and just translate the question. DO NOT answer the question."
+    },
+    "evaluation_gpt_model": "gpt-4"
+}

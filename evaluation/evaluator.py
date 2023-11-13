@@ -99,7 +99,7 @@ def run_evaluation(testdata_filename, destination_dir, overrides={}):
         "deployment_id": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
     }
 
-    gpt_metrics = ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "gpt_fluency", "gpt_similarity"]
+    gpt_metrics = ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "gpt_similarity"]
     results = evaluate(
         evaluation_name="baseline-evaluation",
         target=lambda question: deployed_target(question, overrides),
@@ -175,13 +175,13 @@ def run_evaluation(testdata_filename, destination_dir, overrides={}):
 if __name__ == "__main__":
     run_evaluation(
         "input/qa.jsonl",
-        destination_dir=EVAL_DIR / "results/no_semantic_ranker_weak_prompt",
+        destination_dir=EVAL_DIR / "results/no_semantic_ranker3",
         overrides={
             "retrieval_mode": "hybrid",
             "semantic_ranker": False,
             "semantic_captions": False,
             "top": 3,
             "suggest_followup_questions": False,
-            "prompt_template": open(EVAL_DIR / "input/prompt_weak.txt").read(),
+            # "prompt_template": open(EVAL_DIR / "input/prompt_ignoresources.txt").read(),
         },
     )
