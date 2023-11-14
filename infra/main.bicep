@@ -58,8 +58,6 @@ param formRecognizerResourceGroupLocation string = location
 
 param formRecognizerSkuName string = 'S0'
 
-param vnetName string = 'openai-vnet'
-
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
@@ -407,7 +405,7 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     location: location
     tags: tags
     resourceToken: resourceToken
-    vnetName: vnetName
+    vnetName: '${abbrs.virtualNetworks}${resourceToken}'
     appServicePlanId: appServicePlan.outputs.id
     appServicePlanName: appServicePlan.outputs.name
     storageAccountId: storage.outputs.id

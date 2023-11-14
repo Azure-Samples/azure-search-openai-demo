@@ -1,17 +1,40 @@
+metadata description = 'Sets up private networking for all resources, using VNet, private endpoints, and DNS zones.'
+
+@description('The name of the VNet to create')
 param vnetName string
+
+@description('The location to create the VNet and private endpoints')
 param location string = resourceGroup().location
+
+@description('The tags to apply to all resources')
 param tags object = {}
 
+@description('The ID of an existing App Service Plan to connect to the VNet')
 param appServicePlanId string
+
+@description('The name of an existing App Service Plan to connect to the VNet')
 param appServicePlanName string
+
+@description('The ID of an existing Storage Account to connect to the VNet')
 param storageAccountId string
+
+@description('The ID of an existing Search Service to connect to the VNet')
 param searchServiceId string
+
+@description('The ID of an existing Open AI resource to connect to the VNet')
 param openAiId string
+
+@description('The ID of an existing Form Recognizer resource to connect to the VNet')
 param formRecognizerId string
+
+@description('The name of an existing Search Service to connect to the VNet')
 param searchServiceName string
+
+@description('A unique token to append to the end of all resource names')
 param resourceToken string
 
 var environmentData = environment()
+var abbrs = loadJsonContent('abbreviations.json')
 
 module vnet './core/networking/vnet.bicep' = {
   name: vnetName
@@ -23,7 +46,6 @@ module vnet './core/networking/vnet.bicep' = {
     appServicePlanName: appServicePlanName
   }
 }
-
 
 // DNSs Zones
 
@@ -39,7 +61,7 @@ module blobDnsZone './core/networking/private-dns-zones.bicep' = {
 module documentsDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'documents-dnzones'
   params: {
-    dnsZoneName: 'privatelink.documents.azure.com' 
+    dnsZoneName: 'privatelink.documents.azure.com'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
@@ -48,7 +70,7 @@ module documentsDnsZone './core/networking/private-dns-zones.bicep' = {
 module vaultDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'vault-dnzones'
   params: {
-    dnsZoneName: 'privatelink.vaultcore.azure.net' 
+    dnsZoneName: 'privatelink.vaultcore.azure.net'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
@@ -57,7 +79,7 @@ module vaultDnsZone './core/networking/private-dns-zones.bicep' = {
 module websitesDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'websites-dnzones'
   params: {
-    dnsZoneName: 'privatelink.azurewebsites.net' 
+    dnsZoneName: 'privatelink.azurewebsites.net'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
@@ -66,7 +88,7 @@ module websitesDnsZone './core/networking/private-dns-zones.bicep' = {
 module cognitiveservicesDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'cognitiveservices-dnzones'
   params: {
-    dnsZoneName: 'privatelink.cognitiveservices.azure.com' 
+    dnsZoneName: 'privatelink.cognitiveservices.azure.com'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
@@ -75,80 +97,79 @@ module cognitiveservicesDnsZone './core/networking/private-dns-zones.bicep' = {
 module openaiDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'openai-dnzones'
   params: {
-    dnsZoneName: 'privatelink.openai.azure.com' 
+    dnsZoneName: 'privatelink.openai.azure.com'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
 }
 
-module searchDnsZone './core/networking/private-dns-zones.bicep' =  {
+module searchDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'searchs-dnzones'
   params: {
-    dnsZoneName: 'privatelink.search.windows.net' 
+    dnsZoneName: 'privatelink.search.windows.net'
     tags: tags
     virtualNetworkName: vnet.outputs.name
   }
 }
 
-
-module storagepe './core/networking/private-endpoint.bicep' = {
-  name: 'storagepe'
+module storagePrivateEndpoint './core/networking/private-endpoint.bicep' = {
+  name: 'storageprivateendpoint'
   params: {
     location: location
-    name:'stragpe0${resourceToken}'
+    name: '${abbrs.storageStorageAccounts}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
     subnetId: vnet.outputs.aiSubId
     serviceId: storageAccountId
-    groupIds: ['blob']
+    groupIds: [ 'blob' ]
     dnsZoneId: blobDnsZone.outputs.id
   }
 }
 
-module openAiPe './core/networking/private-endpoint.bicep' = {
-  name: 'openAiPe'
+module openAiPrivateEndpoint './core/networking/private-endpoint.bicep' = {
+  name: 'openaiprivateendpoint'
   params: {
     location: location
-    name: 'openAiPe${resourceToken}'
+    name: '${abbrs.cognitiveServicesAccounts}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
     subnetId: vnet.outputs.aiSubId
     serviceId: openAiId
-    groupIds: ['account']
+    groupIds: [ 'account' ]
     dnsZoneId: openaiDnsZone.outputs.id
   }
 }
 
-module formRecognizerPe './core/networking/private-endpoint.bicep' = {
-  name: 'formRecognizerPe'
+module formRecognizerPrivateEndpoint './core/networking/private-endpoint.bicep' = {
+  name: 'formrecognizerprivateendpoint'
   params: {
     location: location
-    name: 'formRecognizerPe${resourceToken}'
+    name: '${abbrs.cognitiveServicesFormRecognizer}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
     subnetId: vnet.outputs.aiSubId
     serviceId: formRecognizerId
-    groupIds: ['account']
+    groupIds: [ 'account' ]
     dnsZoneId: cognitiveservicesDnsZone.outputs.id
   }
 }
 
-module searchStoragePrivatelink 'core/search/search-private-link.bicep' = {
-  name: 'searchStoragePrivatelink'
+module searchStoragePrivateLink 'core/search/search-private-link.bicep' = {
+  name: 'searchstorageprivatelink'
   params: {
-   name: '${searchServiceName}-storagelink'
-   searchName: searchServiceName
-   resourceId: storageAccountId
-   groupId: 'blob'
+    name: '${abbrs.searchSearchServices}${abbrs.privateLink}${abbrs.storageStorageAccounts}${resourceToken}'
+    searchName: searchServiceName
+    resourceId: storageAccountId
+    groupId: 'blob'
   }
 }
 
-module searchPe './core/networking/private-endpoint.bicep' = {
-  name: 'searchPe'
+module searchPrivateEndpoint './core/networking/private-endpoint.bicep' = {
+  name: 'searchprivateendpoint'
   params: {
     location: location
-    name: 'searchPe${resourceToken}'
+    name: '${abbrs.searchSearchServices}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
     subnetId: vnet.outputs.aiSubId
     serviceId: searchServiceId
-    groupIds: ['searchService']
+    groupIds: [ 'searchService' ]
     dnsZoneId: searchDnsZone.outputs.id
   }
 }

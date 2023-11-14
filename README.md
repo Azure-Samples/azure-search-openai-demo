@@ -259,35 +259,42 @@ To then limit access to a specific set of users or groups, you can follow the st
 
 By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./LoginAndAclSetup.md).
 
-### Restricting network traffic
+### Enabling private endpoints
 
-By default, this application will allow connections from any IP address. The backend resources like Cognitive Search and Open AI are protected by API security. The web application does not have any authentication mechanism unless [it is explicitly configured](#enabling-authentication) and will allow any IP address to connect by default.
-To restrict access of the web application, the search endpoint, Azure Open AI, Azure Storage and the Cognitive Service Form Recognizer to an IP or network address, set the `ALLOWED_IP` environment variable.
+By default, the deployed application will allow connections from any IP address. To enable a [virtual network (VNet)](https://learn.microsoft.com/data-integration/vnet/what-is) for the resources and [private endpoint](https://docs.microsoft.com/azure/private-link/private-endpoint-overview) for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
 
-For example, to allow only the IP address `43.133.5.124` to connect:
+1. Run `azd env set AZURE_USE_PRIVATE_ENDPOINT true`
+1. Set `ALLOWED_IP` to the IP address that is running the `azd` commands:
 
 ```console
 azd env set ALLOWED_IP 43.133.5.124
 ```
 
-You can also use CIDR notation to specify an IP address range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network)
+You can also use CIDR notation to specify an IP address range, for example to allow the IP addresses 43.133.5.0-43.133.5.255 (the /24 network):
 
 ```console
 azd env set ALLOWED_IP 43.133.5.0/24
 ```
 
-Please note that the IP address configured will need to include the one you run `azd up` from, since deployment connects to the web application and the `prepdocs.py` script connects to the Cognitive Search index, Storage API, and Form Recognizer APIs.
+<details>
+<summary>How can I find my IP address?</summary>
 
-### Enabling private endpoints
+On Windows:
 
-To enable a [virtual network (VNet)](https://learn.microsoft.com/data-integration/vnet/what-is) for the backend and [private endpoint](https://docs.microsoft.com/azure/private-link/private-endpoint-overview) for the web app, set the `AZURE_USE_PRIVATE_ENDPOINT` variable to true before running `azd up`
+```powershell
+Invoke-WebRequest -uri http://ifconfig.me/ip).Content
+```
 
-1. Run `azd env set AZURE_USE_PRIVATE_ENDPOINT true`
+On Linux/Mac:
+
+```bash
+curl -s http://ifconfig.me/ip
+```
+</details>
+
 1. Run `azd up`
 
-Enabling private endpoints will disable all public network access by default, meaning that you can run `azd provision` but not `azd deploy` unless you are on a machine that is connected to the VNet.
-
-You can optionally set the `ALLOWED_IP` variable which will **enable** public network access, but only to the IP range specified in the environment variable. [(See "Restricting network traffic".)](#restricting-network-traffic)
+If you find you are able to run `azd provision` but not able to run the prepdocs script or code deployment step, then you may have mis-configured the allowed IP address. Confirm that the allowed IP matches the one that is running the command, and try again.
 
 ### Enabling CORS for an alternate frontend
 

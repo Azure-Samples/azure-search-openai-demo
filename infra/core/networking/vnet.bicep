@@ -1,7 +1,18 @@
+metadata description = 'Creates a virtual network with 3 subnets (for AI, Azure Bastion, App Service).'
+
+@description('The location for the VNet')
 param location string
+
+@description('The name of the VNet')
 param name string
+
+@description('The tags for the VNet')
 param tags object = {}
+
+@description('The name of an existing App Service Plan')
 param appServicePlanName string
+
+@description('The ID of an existing App Service Plan')
 param appServicePlanId string
 
 var addressPrefix = '10.0.0.0/16'

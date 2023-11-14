@@ -1,9 +1,24 @@
+metadata description = 'Create a private endpoint for a given sub-resource, subnet, and private DNS zone group'
+
+@description('The location for the private endpoint')
 param location string
+
+@description('The name of the private endpoint')
 param name string
+
+@description('The tags for the private endpoint')
 param tags object = {}
+
+@description('The ID of the resource to connect to')
 param serviceId string
+
+@description('The ID of the subnet to connect to')
 param subnetId string
+
+@description('The group ID of the sub-resource to connect to')
 param groupIds array = []
+
+@description('The ID of the private DNS zone to connect to')
 param dnsZoneId string
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
@@ -16,7 +31,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
     }
     privateLinkServiceConnections: [
       {
-        name: 'privatelinkServiceonnection'
+        name: 'privateLinkServiceConnection'
         properties: {
           privateLinkServiceId: serviceId
           groupIds: groupIds
@@ -42,3 +57,4 @@ resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 }
 
 output name string = privateEndpoint.name
+output id string = privateEndpoint.id
