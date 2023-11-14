@@ -31,6 +31,7 @@ const Chat = () => {
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
+    const lastContextIndexRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,8 +90,9 @@ const Chat = () => {
 
     const client = useLogin ? useMsal().instance : undefined;
 
-    const makeApiRequest = async (question: string) => {
+    const makeApiRequest = async (question: string, contextIndex: string) => {
         lastQuestionRef.current = question;
+        lastContextIndexRef.current = contextIndex;
 
         error && setError(undefined);
         setIsLoading(true);
@@ -106,6 +108,7 @@ const Chat = () => {
             ]);
 
             const request: ChatAppRequest = {
+                index: contextIndex,
                 messages: [...messages, { content: question, role: "user" }],
                 stream: shouldStream,
                 context: {
@@ -148,6 +151,7 @@ const Chat = () => {
 
     const clearChat = () => {
         lastQuestionRef.current = "";
+        lastContextIndexRef.current = "";
         error && setError(undefined);
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
@@ -200,8 +204,8 @@ const Chat = () => {
         setUseGroupsSecurityFilter(!!checked);
     };
 
-    const onExampleClicked = (example: string) => {
-        makeApiRequest(example);
+    const onExampleClicked = (example: string, contextIndex: string) => {
+        makeApiRequest(example, contextIndex);
     };
 
     const onShowCitation = (citation: string, index: number) => {
@@ -236,9 +240,10 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
+                            <h1 className={styles.chatEmptyStateTitle}>Chat with your enterprise data</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} />
+
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -255,7 +260,7 @@ const Chat = () => {
                                                 onCitationClicked={c => onShowCitation(c, index)}
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                onFollowupQuestionClicked={q => makeApiRequest(q, lastContextIndexRef.current)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
                                         </div>
@@ -274,7 +279,7 @@ const Chat = () => {
                                                 onCitationClicked={c => onShowCitation(c, index)}
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                onFollowupQuestionClicked={q => { makeApiRequest(q, lastContextIndexRef.current) }}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
                                         </div>
@@ -292,7 +297,7 @@ const Chat = () => {
                                 <>
                                     <UserChatMessage message={lastQuestionRef.current} />
                                     <div className={styles.chatMessageGptMinWidth}>
-                                        <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />
+                                        <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current, lastContextIndexRef.current)} />
                                     </div>
                                 </>
                             ) : null}
@@ -303,9 +308,9 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Type a new question (e.g. does azure support ML on on-prem?)"
                             disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
+                            onSend={(question, contextIndex) => makeApiRequest(question, contextIndex)}
                         />
                     </div>
                 </div>

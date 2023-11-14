@@ -5,19 +5,21 @@ import styles from "./Example.module.css";
 export type ExampleModel = {
     text: string;
     value: string;
+    contextIndex: string
 };
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
+        text: "How to auto scale VMs on AWS?",
+        value: "How to auto scale VMs on AWS?",
+        contextIndex: "TBD"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    { text: "How to setup global tables in DynamoDB", value: "How to setup global tables in DynamoDB", contextIndex: "TBD" },
+    { text: "What are the best practices to setup a cloudfront?", value: "What are the best practices to setup a cloudfront?", contextIndex: "TBD" }
 ];
 
 interface Props {
-    onExampleClicked: (value: string) => void;
+    onExampleClicked: (value: string, contextIndex: string) => void;
 }
 
 export const ExampleList = ({ onExampleClicked }: Props) => {
@@ -25,7 +27,7 @@ export const ExampleList = ({ onExampleClicked }: Props) => {
         <ul className={styles.examplesNavList}>
             {EXAMPLES.map((x, i) => (
                 <li key={i}>
-                    <Example text={x.text} value={x.value} onClick={onExampleClicked} />
+                    <Example text={x.text} value={x.value} contextIndex={x.contextIndex} onClick={onExampleClicked} />
                 </li>
             ))}
         </ul>

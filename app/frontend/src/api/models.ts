@@ -55,4 +55,5 @@ export type ChatAppRequest = {
     context?: ChatAppRequestContext;
     stream?: boolean;
     session_state: any;
+    index: string
 };

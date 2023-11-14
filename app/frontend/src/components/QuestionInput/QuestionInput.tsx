@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Stack, TextField } from "@fluentui/react";
-import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
+import { Stack, TextField, Dropdown, IDropdownOption } from "@fluentui/react";
+import { Button, Tooltip, Option } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
-
 import styles from "./QuestionInput.module.css";
 
 interface Props {
-    onSend: (question: string) => void;
+    onSend: (question: string, contextIndex: string) => void;
     disabled: boolean;
     placeholder?: string;
     clearOnSend?: boolean;
@@ -14,13 +13,16 @@ interface Props {
 
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
     const [question, setQuestion] = useState<string>("");
+    const [contextIndex, setContextIndex] = useState<string>("");
+
+    const contextOptions = [{ id: 1, name: "Red" }, { id: 2, name: "Blue" }, { id: 3, name: "Green" }]
 
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
             return;
         }
 
-        onSend(question);
+        onSend(question, contextIndex);
 
         if (clearOnSend) {
             setQuestion("");
@@ -44,23 +46,37 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
 
     const sendQuestionDisabled = disabled || !question.trim();
 
+
+    const onContextChange = (_ev, option, index?: number | undefined) => {
+        setContextIndex(option?.data);
+    };
+
     return (
-        <Stack horizontal className={styles.questionInputContainer}>
-            <TextField
-                className={styles.questionInputTextArea}
-                placeholder={placeholder}
-                multiline
-                resizable={false}
-                borderless
-                value={question}
-                onChange={onQuestionChange}
-                onKeyDown={onEnterPress}
+        <div>
+            <Dropdown
+                required
+                label="Context"
+                placeholder="Select context"
+                onChange={onContextChange}
+                options={[{ key: 'index_1', text: 'Red', data: 'red' }, { key: 'index_2', text: 'Blue', data: 'Blue' }]}
             />
-            <div className={styles.questionInputButtonsContainer}>
-                <Tooltip content="Ask question button" relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
-                </Tooltip>
-            </div>
-        </Stack>
+            <Stack horizontal className={styles.questionInputContainer}>
+                <TextField
+                    className={styles.questionInputTextArea}
+                    placeholder={placeholder}
+                    multiline
+                    resizable={false}
+                    borderless
+                    value={question}
+                    onChange={onQuestionChange}
+                    onKeyDown={onEnterPress}
+                />
+                <div className={styles.questionInputButtonsContainer}>
+                    <Tooltip content="Ask question button" relationship="label">
+                        <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+                    </Tooltip>
+                </div>
+            </Stack>
+        </div>
     );
 };
