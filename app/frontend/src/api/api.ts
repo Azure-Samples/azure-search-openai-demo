@@ -43,3 +43,10 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
 }
+
+export function getContextIndexData( idToken: string | undefined): Promise<Response> {
+    return fetch(`${BACKEND_URI}/mapping`, {
+        method: "GET",
+        headers: getHeaders(idToken)
+    });
+}

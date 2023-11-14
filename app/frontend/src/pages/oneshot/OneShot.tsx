@@ -49,6 +49,7 @@ export function Component(): JSX.Element {
 
         try {
             const request: ChatAppRequest = {
+                index: "", //TBD
                 messages: [
                     {
                         content: question,

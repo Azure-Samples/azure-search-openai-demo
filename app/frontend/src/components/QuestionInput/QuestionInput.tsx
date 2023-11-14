@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Stack, TextField, Dropdown, IDropdownOption } from "@fluentui/react";
 import { Button, Tooltip, Option } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 import styles from "./QuestionInput.module.css";
+import { getContextIndexData } from "../../api";
+import { getToken } from "../../authConfig";
+import { useLogin } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
 
 interface Props {
     onSend: (question: string, contextIndex: string) => void;
@@ -16,6 +20,21 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
     const [contextIndex, setContextIndex] = useState<string>("");
 
     const contextOptions = [{ id: 1, name: "Red" }, { id: 2, name: "Blue" }, { id: 3, name: "Green" }]
+
+    const client = useLogin ? useMsal().instance : undefined;
+
+
+    const getContextIndexOptions = async () => {
+        const token = client ? await getToken(client) : undefined;
+
+        const responseData = await getContextIndexData(token?.accessToken)
+        console.log(responseData.json());
+
+    }
+
+    useEffect(() => {
+        getContextIndexOptions();
+    }, [])
 
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
@@ -47,7 +66,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
     const sendQuestionDisabled = disabled || !question.trim();
 
 
-    const onContextChange = (_ev, option, index?: number | undefined) => {
+    const onContextChange = (d: any, option: any) => {
         setContextIndex(option?.data);
     };
 
