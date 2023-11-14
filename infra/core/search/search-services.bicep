@@ -26,8 +26,8 @@ param replicaCount int = 1
   'standard'
 ])
 param semanticSearch string = 'disabled'
-@allowed([ 'Enabled', 'Disabled' ])
-param publicNetworkAccess string = 'Enabled'
+@allowed([ 'enabled', 'disabled' ])
+param publicNetworkAccess string = 'enabled'
 
 param allowedIpRules array = []
 param networkRuleSet object = empty(allowedIpRules) ? {
