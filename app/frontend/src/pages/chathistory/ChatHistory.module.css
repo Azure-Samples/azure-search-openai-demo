@@ -129,3 +129,7 @@
     background-color: blue;
     width: 100px; /* Adjust the width as needed */
 }
+
+.blurred {
+    filter: blur(10px);
+}

@@ -38,26 +38,29 @@ const ChatHistory = () => {
 
     return (
         <>
-            <div className={styles.chatHistory}>
-                {sessions.map((session, index) => (
-                    <button key={index} onClick={handleClickOnChatSession.bind(this, session)}
-                            className={styles.chatSessions}>
-                        <text style={{fontSize: "40px", alignSelf: "center"}}> {session.name} </text>
+            <div className={`content ${showModal ? styles.blurred : ''}`} >
+                <div className={styles.chatHistory}>
+                    {sessions.map((session, index) => (
+                        <button key={index} onClick={handleClickOnChatSession.bind(this, session)}
+                                className={styles.chatSessions} disabled={showModal}>
+                            <text style={{fontSize: "40px", alignSelf: "center"}}> {session.name} </text>
+                        </button>
+                    ))}
+                    <button type="submit"
+                            className={styles.chatSessionButton}
+                            onClick={handleShowModal}>
+                        <span className={styles.buttonContent}> + </span>
                     </button>
-                ))}
-                <button type="submit"
-                        className={styles.chatSessionButton}
-                        onClick={handleShowModal}>
-                    <span className={styles.buttonContent}> + </span>
-                </button>
 
+                </div>
             </div>
-
+            <div>
                 <ChatHistorySessionModal
                     show={showModal}
                     handleClose={handleCloseModal}
                     handleCreateSession={handleCreateSession}
                 />
+            </div>
         </>
     );
 };
