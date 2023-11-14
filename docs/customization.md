@@ -33,7 +33,7 @@ The chat tab uses the approach programmed in [chatreadretrieveread.py](https://g
 
 The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Change that to match your data.
 
-### Ask approach
+#### Ask approach
 
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
@@ -41,6 +41,33 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 2. It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
 
 The `system_chat_template` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Change that to match your data.
+
+#### Making settings overrides permanent
+
+The UI provides a "Developer Settings" menu for customizing the approaches, like disabling semantic ranker or using vector search.
+Those settings are passed in the "context" field of the request to the backend, and are not saved permanently.
+However, if you find a setting that you do want to make permanent, there are two approaches:
+
+1. Change the defaults in the frontend. You'll find the defaults in `Chat.tsx` and `OneShot.tsx` (for Ask). For example, this line of code sets the default retrieval mode to Hybrid:
+
+```typescript
+const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
+```
+
+You can change the default to Text by changing the code to:
+
+```typescript
+const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Text);
+```
+
+2. Change the overrides in the backend. Each of the approaches has a `run` method that takes a `context` parameter, and the first line of code extracts the overrides from that `context`. That's where you can override any of the settings. For example, to change the retrieval mode to text:
+
+```python
+overrides = context.get("overrides", {})
+overrides["retrieval_mode"] = "text"
+```
+
+By changing the setting on the backend, you can safely remove the Developer Settings UI from the frontend, if you don't wish to expose that to your users.
 
 ## Improving answer quality
 
