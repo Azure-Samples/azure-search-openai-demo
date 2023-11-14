@@ -12,13 +12,13 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-azure-ai-formrecognizer==3.3.1
+azure-ai-formrecognizer==3.3.2
     # via -r requirements.in
 azure-common==1.1.28
     # via
     #   azure-ai-formrecognizer
     #   azure-search-documents
-azure-core==1.29.4
+azure-core==1.29.5
     # via
     #   azure-ai-formrecognizer
     #   azure-identity
@@ -30,11 +30,11 @@ azure-identity==1.15.0
     # via -r requirements.in
 azure-search-documents==11.4.0b6
     # via -r requirements.in
-azure-storage-blob==12.18.3
+azure-storage-blob==12.19.0
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
-azure-storage-file-datalake==12.13.2
+azure-storage-file-datalake==12.14.0
     # via -r requirements.in
 certifi==2023.7.22
     # via
@@ -42,11 +42,11 @@ certifi==2023.7.22
     #   requests
 cffi==1.16.0
     # via cryptography
-charset-normalizer==3.3.0
+charset-normalizer==3.3.2
     # via
     #   aiohttp
     #   requests
-cryptography==41.0.4
+cryptography==41.0.5
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -80,7 +80,7 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-numpy==1.26.0
+numpy==1.26.1
     # via
     #   openai
     #   pandas
@@ -91,7 +91,7 @@ openai[datalib]==0.28.1
     # via -r requirements.in
 openpyxl==3.1.2
     # via openai
-pandas==2.1.1
+pandas==2.1.2
     # via openai
 pandas-stubs==2.1.1.230928
     # via openai
@@ -107,7 +107,7 @@ python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
     # via pandas
-regex==2023.8.8
+regex==2023.10.3
     # via tiktoken
 requests==2.31.0
     # via
