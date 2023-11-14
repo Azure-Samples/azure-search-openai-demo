@@ -110,29 +110,29 @@ async def mapping():
     mapping = request_json.get("mapping", {})
     logging.info("request_json")
     logging.info(mapping)
-    
+
     # Create a BlobServiceClient object
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     try:
-       # Fetch the blob client
-       blob = blob_container_client.get_blob_client(path)
+        # Fetch the blob client
+        blob = blob_container_client.get_blob_client(path)
 
-       # Fetch the index mapping from storage blob
-       downloader = await blob.download_blob(max_concurrency=1, encoding='UTF-8')
-       blob_text = await downloader.readall()
-       
-       # Convert the blob contents to json
-       blob_json = json.loads(blob_text)
-       logging.info("Blob contents: %s", blob_json)
+        # Fetch the index mapping from storage blob
+        downloader = await blob.download_blob(max_concurrency=1, encoding='UTF-8')
+        blob_text = await downloader.readall()
 
-       # Update the index mapping with the new mapping
-       blob_json.update(mapping)
-       logging.info("Updated mapping: %s", blob_json)
+        # Convert the blob contents to json
+        blob_json = json.loads(blob_text)
+        logging.info("Blob contents: %s", blob_json)
 
-       # Update the index mapping with the new mapping
-       await blob.upload_blob(data=json.dumps(blob_json), overwrite=True)
-       logging.info("Successfully uploaded mapping.json")
-       return jsonify({"success": "Successfully uploaded mapping.json"}), 201
+        # Update the index mapping with the new mapping
+        blob_json.update(mapping)
+        logging.info("Updated mapping: %s", blob_json)
+
+        # Update the index mapping with the new mapping
+        await blob.upload_blob(data=json.dumps(blob_json), overwrite=True)
+        logging.info("Successfully uploaded mapping.json")
+        return jsonify({"success": "Successfully uploaded mapping.json"}), 201
     except Exception as error:
         logging.exception("Exception occured in /mapping: %s", error)
         abort(500)
@@ -204,6 +204,7 @@ async def chat():
         logging.exception("Exception in /chat: %s", error)
         return jsonify(error_dict(error)), 500
 
+
 @bp.route("/mapping", methods=["GET"])
 async def mappings():
     path = "mapping.json"
@@ -218,10 +219,11 @@ async def mappings():
         blob = await blob_client.download_blob(blob=path)
         index_mapping_bin = await blob.readall()
         index_mapping_json = json.loads(index_mapping_bin)
-        return index_mapping_json
+        return jsonify(index_mapping_json)
     except Exception as error:
         logging.exception("Exception in GET /mapping: %s", error)
         return jsonify(error_dict(error)), 500
+
 
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
@@ -327,7 +329,7 @@ async def setup_clients():
             index_name=index_name,
             credential=azure_credential,
         )
-        current_app.config[config_ask_approach_for_index_name ] = RetrieveThenReadApproach(
+        current_app.config[config_ask_approach_for_index_name] = RetrieveThenReadApproach(
             search_client,
             OPENAI_HOST,
             AZURE_OPENAI_CHATGPT_DEPLOYMENT,
