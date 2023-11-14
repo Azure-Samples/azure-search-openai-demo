@@ -40,40 +40,28 @@ param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
 param allowInboundNetworkRange string = ''
 
-var coreProperties = {
-  serverFarmId: appServicePlanId
-  siteConfig: {
-    linuxFxVersion: linuxFxVersion
-    alwaysOn: alwaysOn
-    ftpsState: ftpsState
-    appCommandLine: appCommandLine
-    numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
-    minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
-    minTlsVersion: '1.2'
-    use32BitWorkerProcess: use32BitWorkerProcess
-    functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
-    healthCheckPath: healthCheckPath
-    cors: {
-      allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
-    }
+var coreConfig = {
+  linuxFxVersion: linuxFxVersion
+  alwaysOn: alwaysOn
+  ftpsState: ftpsState
+  appCommandLine: appCommandLine
+  numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
+  minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
+  minTlsVersion: '1.2'
+  use32BitWorkerProcess: use32BitWorkerProcess
+  functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
+  healthCheckPath: healthCheckPath
+  cors: {
+    allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
   }
-  clientAffinityEnabled: clientAffinityEnabled
-  httpsOnly: true
-  vnetRouteAllEnabled: useVnet
 }
 
-var appServiceProperties = union(
-  !empty(privateEndpointSubnetId) ? {
-      virtualNetworkSubnetId: privateEndpointSubnetId
-  } : {},
-  coreProperties
-)
 
-var appServicePropertiesWithAcls = union(
+var coreConfigWithNetworkRules = union(
   !empty(allowInboundNetworkRange) ? {
     ipSecurityRestrictions: [
         {
-            ipAddress: allowInboundNetworkRange
+            ipAddress: '${allowInboundNetworkRange}/32'
             action: 'Allow'
             tag: 'Default'
             priority: 100
@@ -88,15 +76,31 @@ var appServicePropertiesWithAcls = union(
     ]
     ipSecurityRestrictionsDefaultAction: 'Deny'
   } : {},
-  appServiceProperties
+  coreConfig
 )
+
+var coreProperties = {
+  serverFarmId: appServicePlanId
+  siteConfig: coreConfigWithNetworkRules
+  clientAffinityEnabled: clientAffinityEnabled
+  httpsOnly: true
+  vnetRouteAllEnabled: useVnet
+}
+
+var appServiceProperties = union(
+  !empty(privateEndpointSubnetId) ? {
+      virtualNetworkSubnetId: privateEndpointSubnetId
+  } : {},
+  coreProperties
+)
+
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
   tags: tags
   kind: kind
-  properties: appServicePropertiesWithAcls
+  properties: appServiceProperties
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
 
   resource configLogs 'config' = {
