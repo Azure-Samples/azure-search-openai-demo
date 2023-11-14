@@ -213,12 +213,12 @@ async def mappings():
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     try:
         # Fetch the blob client
-        blob_client = blob_container_client.get_blob_client(path)
+        blob = blob_container_client.get_blob_client(path)
 
-        # Fetch the index mapping from storage blob
-        blob = await blob_client.download_blob(blob=path)
-        index_mapping_bin = await blob.readall()
-        index_mapping_json = json.loads(index_mapping_bin)
+       # Fetch the index mapping from storage blob
+        downloader = await blob.download_blob(max_concurrency=1, encoding='UTF-8')
+        blob_text = await downloader.readall()
+        index_mapping_json = json.loads(blob_text)
         return jsonify(index_mapping_json)
     except Exception as error:
         logging.exception("Exception in GET /mapping: %s", error)
