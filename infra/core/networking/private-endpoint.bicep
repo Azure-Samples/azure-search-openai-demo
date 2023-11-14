@@ -9,7 +9,7 @@ param dnsZoneId string
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
   name: name
   location: location
-  tags: tags  
+  tags: tags
   properties: {
     subnet: {
       id: subnetId
@@ -22,18 +22,18 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
           groupIds: groupIds
         }
       }
-    ]    
+    ]
   }
 }
 
 resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
   parent: privateEndpoint
   name: '${name}-group'
-  properties:{
-    privateDnsZoneConfigs:[
+  properties: {
+    privateDnsZoneConfigs: [
       {
-        name:'config1'
-        properties:{
+        name: 'config1'
+        properties: {
           privateDnsZoneId: dnsZoneId
         }
       }

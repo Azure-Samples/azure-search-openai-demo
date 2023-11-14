@@ -10,23 +10,23 @@ var subnets = [
   {
     name: 'ai-subnet'
     properties: {
-      addressPrefix:'10.0.1.0/24'
+      addressPrefix: '10.0.1.0/24'
       privateEndpointNetworkPolicies: 'Enabled'
-      privateLinkServiceNetworkPolicies: 'Enabled'      
+      privateLinkServiceNetworkPolicies: 'Enabled'
     }
   }
   {
     name: 'AzureBastionSubnet'
     properties: {
-      addressPrefix:'10.0.2.0/24'
+      addressPrefix: '10.0.2.0/24'
       privateEndpointNetworkPolicies: 'Enabled'
-      privateLinkServiceNetworkPolicies: 'Enabled'      
+      privateLinkServiceNetworkPolicies: 'Enabled'
     }
   }
   {
     name: 'app-int-subnet'
     properties: {
-      addressPrefix:'10.0.3.0/24'
+      addressPrefix: '10.0.3.0/24'
       privateEndpointNetworkPolicies: 'Enabled'
       privateLinkServiceNetworkPolicies: 'Enabled'
       delegations: [
@@ -37,9 +37,9 @@ var subnets = [
             serviceName: 'Microsoft.Web/serverFarms'
           }
         }
-      ]   
+      ]
     }
-  }  
+  }
 ]
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
@@ -56,14 +56,13 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
   }
 }
 
-output subnets array = [for (name, i) in subnets :{
-  subnets : vnet.properties.subnets[i]
+output subnets array = [for (name, i) in subnets: {
+  subnets: vnet.properties.subnets[i]
 }]
 
-output subnetids array = [for (name, i) in subnets :{
-  subnets : vnet.properties.subnets[i].id
+output subnetids array = [for (name, i) in subnets: {
+  subnets: vnet.properties.subnets[i].id
 }]
-
 
 output id string = vnet.id
 output name string = vnet.name

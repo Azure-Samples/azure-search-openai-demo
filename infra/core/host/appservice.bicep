@@ -56,23 +56,22 @@ var coreConfig = {
   }
 }
 
-
 var coreConfigWithNetworkRules = union(
   !empty(allowInboundNetworkRange) ? {
     ipSecurityRestrictions: [
-        {
-            ipAddress: '${allowInboundNetworkRange}/32'
-            action: 'Allow'
-            tag: 'Default'
-            priority: 100
-            description: 'Allow specified network range'
-        },{
-            ipAddress: 'Any'
-            action: 'Deny'
-            priority: 2147483647
-            name: 'Deny all'
-            description: 'Deny all access'
-        }
+      {
+        ipAddress: '${allowInboundNetworkRange}/32'
+        action: 'Allow'
+        tag: 'Default'
+        priority: 100
+        description: 'Allow specified network range'
+      }, {
+        ipAddress: 'Any'
+        action: 'Deny'
+        priority: 2147483647
+        name: 'Deny all'
+        description: 'Deny all access'
+      }
     ]
     ipSecurityRestrictionsDefaultAction: 'Deny'
   } : {},
@@ -89,11 +88,10 @@ var coreProperties = {
 
 var appServiceProperties = union(
   !empty(privateEndpointSubnetId) ? {
-      virtualNetworkSubnetId: privateEndpointSubnetId
+    virtualNetworkSubnetId: privateEndpointSubnetId
   } : {},
   coreProperties
 )
-
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
@@ -137,7 +135,7 @@ module config 'appservice-appsettings.bicep' = if (!empty(appSettings)) {
         SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
         ENABLE_ORYX_BUILD: string(enableOryxBuild)
       },
-      runtimeName == 'python' && appCommandLine == '' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
+      runtimeName == 'python' && appCommandLine == '' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true' } : {},
       !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
       !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
   }

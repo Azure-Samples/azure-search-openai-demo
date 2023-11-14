@@ -31,7 +31,7 @@ param networkAcls object = empty(allowedIpRules) ? {
   bypass: 'AzureServices'
   ipRules: allowedIpRules
   defaultAction: 'Deny'
-} 
+}
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: name

@@ -26,7 +26,7 @@ param replicaCount int = 1
   'standard'
 ])
 param semanticSearch string = 'disabled'
-@allowed(['Enabled', 'Disabled'])
+@allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 
 param allowedIpRules array = []
@@ -36,7 +36,7 @@ param networkRuleSet object = empty(allowedIpRules) ? {
 } : {
   ipRules: allowedIpRules
   defaultAction: 'Deny'
-} 
+}
 
 resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   name: name

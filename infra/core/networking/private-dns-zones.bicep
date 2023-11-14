@@ -9,7 +9,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
 resource dnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: dnsZoneName
   location: 'global'
-  tags: tags 
+  tags: tags
   dependsOn: [
     vnet
   ]
@@ -22,12 +22,11 @@ resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLin
   tags: tags
   properties: {
     virtualNetwork: {
-      id:vnet.id
+      id: vnet.id
     }
     registrationEnabled: false
   }
 }
-
 
 output privateDnsZoneName string = dnsZone.name
 output id string = dnsZone.id

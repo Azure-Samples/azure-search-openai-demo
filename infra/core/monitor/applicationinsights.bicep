@@ -17,7 +17,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-module applicationInsightsDashboard 'applicationinsights-dashboard.bicep' =  if (includeDashboard) {
+module applicationInsightsDashboard 'applicationinsights-dashboard.bicep' = if (includeDashboard) {
   name: 'application-insights-dashboard'
   params: {
     name: dashboardName

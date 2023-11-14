@@ -21,7 +21,7 @@ param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
 param searchServiceLocation string = ''
 // The free tier does not support managed identity (required) or semantic search (optional)
-@allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
+@allowed([ 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
@@ -33,13 +33,13 @@ param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
-@allowed(['azure', 'openai'])
+@allowed([ 'azure', 'openai' ])
 param openAiHost string // Set in main.parameters.json
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus','australiaeast'])
+@allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast' ])
 @metadata({
   azd: {
     type: 'location'
@@ -117,7 +117,7 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
 }
 
 var publicNetworkAccess = (usePrivateEndpoint && allowedIp == '') ? 'Disabled' : 'Enabled'
-var allowedIpRules = (allowedIp != '') ? [{value: allowedIp}] : []
+var allowedIpRules = (allowedIp != '') ? [ { value: allowedIp } ] : []
 
 // Monitor application with Azure Monitor
 module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights) {
@@ -162,7 +162,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: [ allowedOrigin ]
     allowInboundNetworkRange: allowedIp
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
@@ -402,7 +402,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
 
 module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
   name: 'networks'
-  scope:  resourceGroup
+  scope: resourceGroup
   params: {
     location: location
     tags: tags
@@ -411,7 +411,7 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     appServicePlanId: appServicePlan.outputs.id
     appServicePlanName: appServicePlan.outputs.name
     storageAccountId: storage.outputs.id
-    searchServiceId: searchService.outputs.id 
+    searchServiceId: searchService.outputs.id
     searchServiceName: searchService.outputs.name
     openAiId: openAi.outputs.id
     formRecognizerId: formRecognizer.outputs.id

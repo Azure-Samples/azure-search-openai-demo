@@ -11,12 +11,11 @@ resource sharedPrivateLinkResources 'Microsoft.Search/searchServices/sharedPriva
   name: name
   parent: search
   properties: {
-      groupId: groupId
-      status: 'Approved'
-      provisioningState: 'Succeeded'
-      requestMessage: 'automatically created by the system'
-      privateLinkResourceId: resourceId
-      
+    groupId: groupId
+    status: 'Approved'
+    provisioningState: 'Succeeded'
+    requestMessage: 'automatically created by the system'
+    privateLinkResourceId: resourceId
   }
 }
 
