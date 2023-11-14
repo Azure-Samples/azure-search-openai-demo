@@ -205,7 +205,7 @@ async def chat():
         return jsonify(error_dict(error)), 500
 
 @bp.route("/mapping", methods=["GET"])
-async def mapping():
+async def mappings():
     path = "mapping.json"
 
     # Create a BlobServiceClient object
