@@ -1,4 +1,4 @@
- #!/bin/sh
+#!/bin/sh
 
 . ./scripts/loadenv.sh
 
@@ -30,3 +30,11 @@ $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
 --formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
 --tenantid "$AZURE_TENANT_ID" --openaihost "$OPENAI_HOST" \
 --openaikey "$OPENAI_API_KEY" -v
+
+
+
+payload='{"mapping":{''"'$1'"'':''"'$2'"''}}'
+#payload='{"mapping":{"index1": "aws"}}'
+echo $payload
+
+curl -X POST --location 'https://app-backend-4jbv26hr6ymio.azurewebsites.net/mapping' --header 'Content-Type: application/json' --data $payload
