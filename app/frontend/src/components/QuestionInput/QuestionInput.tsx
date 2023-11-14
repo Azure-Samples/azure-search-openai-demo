@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Stack, TextField, Dropdown, IDropdownOption } from "@fluentui/react";
-import { Button, Tooltip, Option } from "@fluentui/react-components";
+import { Stack, TextField, Dropdown } from "@fluentui/react";
+import { Button, Tooltip } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 import styles from "./QuestionInput.module.css";
 import { getContextIndexData } from "../../api";
@@ -15,11 +15,19 @@ interface Props {
     clearOnSend?: boolean;
 }
 
+interface ContextOptions {
+    key: string;
+    text: string;
+    data: string;
+}
+
+
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
     const [question, setQuestion] = useState<string>("");
     const [contextIndex, setContextIndex] = useState<string>("");
+    const [contextOptions, setContextOptions] = useState<ContextOptions[]>([]);
 
-    const contextOptions = [{ id: 1, name: "Red" }, { id: 2, name: "Blue" }, { id: 3, name: "Green" }]
+    // const contextOptions = [{ id: 1, name: "Red" }, { id: 2, name: "Blue" }, { id: 3, name: "Green" }]
 
     const client = useLogin ? useMsal().instance : undefined;
 
@@ -28,7 +36,14 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         const token = client ? await getToken(client) : undefined;
 
         const responseData = await getContextIndexData(token?.accessToken)
-        console.log(responseData.json());
+
+        let contextResponse = responseData?.json()
+        console.log(contextResponse)
+
+        const dummy: { [key: string]: string } = { "index3": "famous-speeches", "index4": "aws", "index1": "aws", "index2": "nasa-e-book" }
+
+        const optionsData: ContextOptions[] = Object.keys(dummy).map((k: string) => ({ key: k, text: dummy[k], data: dummy[k] }))
+        setContextOptions(optionsData)
 
     }
 
@@ -67,7 +82,8 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
 
 
     const onContextChange = (d: any, option: any) => {
-        setContextIndex(option?.data);
+        console.log(option?.key)
+        setContextIndex(option?.key);
     };
 
     return (
@@ -77,7 +93,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
                 label="Context"
                 placeholder="Select context"
                 onChange={onContextChange}
-                options={[{ key: 'index_1', text: 'Red', data: 'red' }, { key: 'index_2', text: 'Blue', data: 'Blue' }]}
+                options={contextOptions}
             />
             <Stack horizontal className={styles.questionInputContainer}>
                 <TextField
