@@ -321,9 +321,9 @@ async def setup_clients():
     # or some derivative, here we include several for exploration purposes
 
     # Array of index_names to be stored. storing placeholders for now.
-    index_name_list = ["index1", "index2" "index3", "index4"]
+    index_name_list = ["index1", "index2", "index3", "index4", "index5", "index6", "index7", "index8"]
     for index_name in index_name_list:
-        config_ask_approach_for_index_name = CONFIG_CHAT_APPROACH + index_name
+        config_ask_approach_for_index_name = CONFIG_ASK_APPROACH + index_name
         search_client = SearchClient(
             endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
             index_name=index_name,
@@ -362,6 +362,9 @@ async def setup_clients():
             AZURE_SEARCH_QUERY_LANGUAGE,
             AZURE_SEARCH_QUERY_SPELLER,
         )
+
+    logging.info("Printing current app config")
+    logging.info(current_app.config)
 
 
 def create_app():

@@ -22,7 +22,7 @@ if [ -n "$AZURE_SEARCH_ANALYZER_NAME" ]; then
 fi
 
 ./scripts/.venv/bin/python ./scripts/prepdocs.py \
-'./data/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
+'./data/'$2'/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
 $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
 --container "$AZURE_STORAGE_CONTAINER" --searchservice "$AZURE_SEARCH_SERVICE" \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" \
