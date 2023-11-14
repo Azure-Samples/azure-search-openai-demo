@@ -44,8 +44,8 @@ export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
 }
 
-export function getContextIndexData( idToken: string | undefined): Promise<Response> {
-    return fetch(`${BACKEND_URI}/mapping`, {
+export async function getContextIndexData( idToken: string | undefined): Promise<Response> {
+    return await fetch(`${BACKEND_URI}/mapping`, {
         method: "GET",
         headers: getHeaders(idToken)
     });

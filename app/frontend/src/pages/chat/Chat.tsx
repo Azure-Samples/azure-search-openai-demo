@@ -92,7 +92,12 @@ const Chat = () => {
 
     const makeApiRequest = async (question: string, contextIndex: string) => {
         lastQuestionRef.current = question;
-        lastContextIndexRef.current = contextIndex;
+        let isContextChanged = false
+        if (lastContextIndexRef.current !== contextIndex) {
+            console.log("context changed")
+            lastContextIndexRef.current = contextIndex;
+            isContextChanged = true
+        }
 
         error && setError(undefined);
         setIsLoading(true);
@@ -109,7 +114,7 @@ const Chat = () => {
 
             const request: ChatAppRequest = {
                 index: contextIndex,
-                messages: [...messages, { content: question, role: "user" }],
+                messages: isContextChanged ? [{ content: question, role: "user" }] : [...messages, { content: question, role: "user" }],
                 stream: shouldStream,
                 context: {
                     overrides: {
