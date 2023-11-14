@@ -27,7 +27,7 @@ class BlobManager:
 
     async def upload_blob(self, file: File):
         async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential
+            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
         ) as service_client, service_client.get_container_client(self.container) as container_client:
             if not await container_client.exists():
                 await container_client.create_container()
