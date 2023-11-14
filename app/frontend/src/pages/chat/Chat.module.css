@@ -113,3 +113,16 @@
     margin-right: 20px;
     margin-bottom: 20px;
 }
+
+.buttonContainer {
+    display: flex;
+    gap: 10px; /* Adjust the spacing value as needed */
+}
+
+.helperButton {
+    padding: 15px 20px; /* Adjust padding as needed */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}

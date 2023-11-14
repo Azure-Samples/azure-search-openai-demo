@@ -17,6 +17,7 @@ import { SaveChatButton } from "../../components/SaveChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import {Button} from "react-bootstrap";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -310,6 +311,11 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
+                        <div className={styles.buttonContainer} >
+                            <Button className={styles.helperButton}> upload background information </Button>
+                            <Button className={styles.helperButton}> upload additional information </Button>
+                            <Button className={styles.helperButton}> generate island of agreement </Button>
+                        </div>
                         <QuestionInput
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
