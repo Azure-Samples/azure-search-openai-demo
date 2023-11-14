@@ -79,5 +79,5 @@ output id string = vnet.id
 output name string = vnet.name
 
 output aiSubId string = vnet.properties.subnets[0].id
-output bastionSubId string = vnet.properties.subnets[1].id
 output appIntSubId string = vnet.properties.subnets[2].id
+output bastionSubId string = vnet.properties.subnets[1].id
