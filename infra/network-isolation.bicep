@@ -42,8 +42,41 @@ module vnet './core/networking/vnet.bicep' = {
     name: vnetName
     location: location
     tags: tags
-    appServicePlanId: appServicePlanId
-    appServicePlanName: appServicePlanName
+    subnets: [
+      {
+        name: 'backend-subnet'
+        properties: {
+          addressPrefix: '10.0.1.0/24'
+          privateEndpointNetworkPolicies: 'Enabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
+        }
+      }
+      {
+        name: 'AzureBastionSubnet'
+        properties: {
+          addressPrefix: '10.0.2.0/24'
+          privateEndpointNetworkPolicies: 'Enabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
+        }
+      }
+      {
+        name: 'app-int-subnet'
+        properties: {
+          addressPrefix: '10.0.3.0/24'
+          privateEndpointNetworkPolicies: 'Enabled'
+          privateLinkServiceNetworkPolicies: 'Enabled'
+          delegations: [
+            {
+              id: appServicePlanId
+              name: appServicePlanName
+              properties: {
+                serviceName: 'Microsoft.Web/serverFarms'
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }
 
@@ -118,7 +151,7 @@ module storagePrivateEndpoint './core/networking/private-endpoint.bicep' = {
     location: location
     name: '${abbrs.storageStorageAccounts}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.aiSubId
+    subnetId: vnet.outputs.vnet_subnets[0].id
     serviceId: storageAccountId
     groupIds: [ 'blob' ]
     dnsZoneId: blobDnsZone.outputs.id
@@ -131,7 +164,7 @@ module openAiPrivateEndpoint './core/networking/private-endpoint.bicep' = {
     location: location
     name: '${abbrs.cognitiveServicesAccounts}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.aiSubId
+    subnetId: vnet.outputs.vnet_subnets[0].id
     serviceId: openAiId
     groupIds: [ 'account' ]
     dnsZoneId: openaiDnsZone.outputs.id
@@ -144,7 +177,7 @@ module formRecognizerPrivateEndpoint './core/networking/private-endpoint.bicep' 
     location: location
     name: '${abbrs.cognitiveServicesFormRecognizer}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.aiSubId
+    subnetId: vnet.outputs.vnet_subnets[0].id
     serviceId: formRecognizerId
     groupIds: [ 'account' ]
     dnsZoneId: cognitiveservicesDnsZone.outputs.id
@@ -167,12 +200,12 @@ module searchPrivateEndpoint './core/networking/private-endpoint.bicep' = {
     location: location
     name: '${abbrs.searchSearchServices}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.aiSubId
+    subnetId: vnet.outputs.vnet_subnets[0].id
     serviceId: searchServiceId
     groupIds: [ 'searchService' ]
     dnsZoneId: searchDnsZone.outputs.id
   }
 }
 
-output appSubnetId string = vnet.outputs.appIntSubId
+output appSubnetId string = vnet.outputs.vnet_subnets[2].id
 output vnetName string = vnet.outputs.name
