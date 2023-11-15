@@ -8,7 +8,7 @@ languages:
 - azdeveloper
 products:
 - azure-openai
-- azure-ai-search
+- azure-cognitive-search
 - azure-app-service
 - azure
 page_type: sample
