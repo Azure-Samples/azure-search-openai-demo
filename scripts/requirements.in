@@ -4,6 +4,6 @@ azure-search-documents==11.4.0b6
 azure-ai-formrecognizer
 azure-storage-blob
 azure-storage-file-datalake
-openai[datalib]
+openai[datalib]==0.28.1
 tiktoken
 tenacity

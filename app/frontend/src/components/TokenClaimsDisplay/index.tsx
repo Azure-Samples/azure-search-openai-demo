@@ -1,1 +1,1 @@
-export * from './TokenClaimsDisplay'
+export * from "./TokenClaimsDisplay";
