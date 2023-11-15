@@ -10,14 +10,14 @@ The `scripts/prepdocs.py` script is responsible for both uploading and indexing 
 
 The script uses the following steps to index documents:
 
-1. If it doesn't yet exist, create a new index in Azure Cognitive Search.
+1. If it doesn't yet exist, create a new index in Azure AI Search.
 2. Upload the PDFs to Azure Blob Storage.
 3. Split the PDFs into chunks of text.
-4. Upload the chunks to Azure Cognitive Search. If using vectors (the default), also compute the embeddings and upload those alongside the text.
+4. Upload the chunks to Azure AI Search. If using vectors (the default), also compute the embeddings and upload those alongside the text.
 
 ### Chunking
 
-We're often asked why we need to break up the PDFs into chunks when Azure Cognitive Search supports searching large documents.
+We're often asked why we need to break up the PDFs into chunks when Azure AI Search supports searching large documents.
 
 Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
