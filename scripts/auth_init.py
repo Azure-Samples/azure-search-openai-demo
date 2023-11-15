@@ -18,6 +18,8 @@ from auth_common import (
 async def create_application(auth_headers: Dict[str, str], app_payload: object) -> Tuple[str, str]:
     async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
         async with session.post("https://graph.microsoft.com/v1.0/applications", json=app_payload) as response:
+            if response.status != 201:
+                raise Exception(await response.json())
             response_json = await response.json()
             object_id = response_json["id"]
             client_id = response_json["appId"]
@@ -147,7 +149,7 @@ async def main():
         exit(0)
 
     print("Setting up authentication...")
-    credential = AzureDeveloperCliCredential()
+    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID"))
     auth_headers = await get_auth_headers(credential)
 
     server_object_id, server_app_id, _ = await create_or_update_application_with_secret(
