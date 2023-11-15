@@ -17,7 +17,9 @@ import { SaveChatButton } from "../../components/SaveChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
-import {Button} from "react-bootstrap";
+import { HelperButtons } from "../../components/HelperButtons";
+import { RequestType } from "../../api";
+import { Button } from "react-bootstrap";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -91,7 +93,7 @@ const Chat = () => {
 
     const client = useLogin ? useMsal().instance : undefined;
 
-    const makeApiRequest = async (question: string) => {
+    const makeApiRequest = async (question: string, requestType: RequestType = "question") => {
         lastQuestionRef.current = question;
 
         error && setError(undefined);
@@ -107,25 +109,41 @@ const Chat = () => {
                 { content: a[1].choices[0].message.content, role: "assistant" }
             ]);
 
-            const request: ChatAppRequest = {
-                messages: [...messages, { content: question, role: "user" }],
-                stream: shouldStream,
-                context: {
-                    overrides: {
-                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
-                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
-                        top: retrieveCount,
-                        retrieval_mode: retrievalMode,
-                        semantic_ranker: useSemanticRanker,
-                        semantic_captions: useSemanticCaptions,
-                        suggest_followup_questions: useSuggestFollowupQuestions,
-                        use_oid_security_filter: useOidSecurityFilter,
-                        use_groups_security_filter: useGroupsSecurityFilter
-                    }
-                },
-                // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
-            };
+            let request: ChatAppRequest | null = null;
+            switch (requestType) {
+                case "question":
+                    request = {
+                        messages: [...messages, { content: question, role: "user" }],
+                        stream: shouldStream,
+                        context: {
+                            overrides: {
+                                prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+                                exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
+                                top: retrieveCount,
+                                retrieval_mode: retrievalMode,
+                                semantic_ranker: useSemanticRanker,
+                                semantic_captions: useSemanticCaptions,
+                                suggest_followup_questions: useSuggestFollowupQuestions,
+                                use_oid_security_filter: useOidSecurityFilter,
+                                use_groups_security_filter: useGroupsSecurityFilter
+                            }
+                        },
+                        // ChatAppProtocol: Client must pass on any session state received from the server
+                        session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
+                    };
+                    break;
+                case "upload_background":
+                    break;
+                case "upload_additional":
+                    break;
+                case "generate_iog":
+                    break;
+            }
+            console.log(request);
+
+            if (request == null) {
+                return;
+            }
 
             const response = await chatApi(request, token?.accessToken);
             if (!response.body) {
@@ -161,9 +179,8 @@ const Chat = () => {
 
     const saveChat = () => {
         // save messages to backend server
-
         // bring to chat session history page
-    }
+    };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
@@ -311,11 +328,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <div className={styles.buttonContainer} >
-                            <Button className={styles.helperButton}> upload background information </Button>
-                            <Button className={styles.helperButton}> upload additional information </Button>
-                            <Button className={styles.helperButton}> generate island of agreement </Button>
-                        </div>
+                        <HelperButtons onRequest={makeApiRequest} />
                         <QuestionInput
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"

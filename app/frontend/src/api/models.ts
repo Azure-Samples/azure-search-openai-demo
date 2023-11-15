@@ -56,3 +56,5 @@ export type ChatAppRequest = {
     stream?: boolean;
     session_state: any;
 };
+
+export type RequestType = "question" | "upload_background" | "upload_additional" | "generate_iog";

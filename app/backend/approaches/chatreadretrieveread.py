@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 import re
@@ -27,13 +28,13 @@ class ChatReadRetrieveReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-    system_message_chat_conversation = """Assistant helps the frontline negotiator with constructing island of agreement table, and questions about the frontline negotiation handbook. Be brief in your answers.
-Incorporate the facts from the handbook and careful reasoning. If there isn't enough information below, say you don't know. If asking a clarifying question to the user would help, ask the question.
-For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
-Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
-{follow_up_questions_prompt}
-{injected_prompt}
-"""
+#     system_message_chat_conversation = """Assistant helps the frontline negotiator with constructing island of agreement table, and questions about the frontline negotiation handbook. Be brief in your answers.
+# Incorporate the facts from the handbook and careful reasoning. If there isn't enough information below, say you don't know. If asking a clarifying question to the user would help, ask the question.
+# For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
+# Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
+# {follow_up_questions_prompt}
+# {injected_prompt}
+# """
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
@@ -83,6 +84,10 @@ If you cannot generate a search query, return just the number 0.
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        print(os.getcwd())
+        with open('./system.txt', 'r') as file:
+            self.system_message_chat_conversation = file.read()
+        
 
     async def run_until_final_call(
         self,
