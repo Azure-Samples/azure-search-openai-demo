@@ -23,13 +23,13 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "docIntelligenceServiceName": {
-      "value": "${AZURE_DOCINTELLIGENCE_SERVICE}"
+    "formRecognizerServiceName": {
+      "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
     },
-    "docIntelligenceResourceGroupName": {
-      "value": "${AZURE_DOCINTELLIGENCE_RESOURCE_GROUP}"
+    "formRecognizerResourceGroupName": {
+      "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
     },
-    "docIntelligenceSkuName": {
+    "formRecognizerSkuName": {
       "value": "S0"
     },
     "searchIndexName": {

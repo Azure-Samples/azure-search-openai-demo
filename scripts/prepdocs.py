@@ -40,12 +40,19 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
     if args.localpdfparser:
         pdf_parser = LocalPdfParser()
     else:
-        if args.verbose:
-            print(f"Extracting text from '{filename}' using Azure Form Recognizer")
-        form_recognizer_client = DocumentAnalysisClient(
-            endpoint=f"https://{args.docintelligenceservice}.cognitiveservices.azure.com/",
-            credential=docintelligence_creds,
-            headers={"x-ms-useragent": "azure-search-chat-demo/1.0.0"},
+        # check if Azure Form Recognizer credentials are provided
+        if args.formrecognizerservice is None:
+            print(
+                "Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser."
+            )
+            exit(1)
+        formrecognizer_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+            credential if is_key_empty(args.formrecognizerkey) else AzureKeyCredential(args.formrecognizerkey)
+        )
+        pdf_parser = DocumentAnalysisPdfParser(
+            endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/",
+            credential=formrecognizer_creds,
+            verbose=args.verbose,
         )
 
     use_vectors = not args.novectors
@@ -224,12 +231,12 @@ if __name__ == "__main__":
         help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
-        "--docintelligenceservice",
+        "--formrecognizerservice",
         required=False,
         help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)",
     )
     parser.add_argument(
-        "--docintelligencekey",
+        "--formrecognizerkey",
         required=False,
         help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
