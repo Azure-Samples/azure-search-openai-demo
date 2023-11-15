@@ -67,7 +67,7 @@ param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
 // Used for the optional login and document level access control system
-param useAuthentication bool = false
+param useAuthentication bool = true
 param serverAppId string = ''
 @secure()
 param serverAppSecret string = ''

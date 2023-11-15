@@ -81,7 +81,7 @@
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
     },
     "useAuthentication": {
-      "value": "${AZURE_USE_AUTHENTICATION=false}"
+      "value": "${AZURE_USE_AUTHENTICATION=true}"
     },
     "serverAppId": {
       "value": "${AZURE_SERVER_APP_ID}"

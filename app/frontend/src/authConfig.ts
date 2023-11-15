@@ -82,7 +82,8 @@ if (isDev) {
     authSetup = await fetchAuthSetup();
 }
 
-export const useLogin = authSetup.useLogin;
+// TODO: Remove this hard-coded value after demo
+export const useLogin = true;
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
