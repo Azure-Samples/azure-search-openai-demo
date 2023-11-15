@@ -93,7 +93,7 @@ const Chat = () => {
 
     const client = useLogin ? useMsal().instance : undefined;
 
-    const makeApiRequest = async (question: string, requestType: RequestType = "question") => {
+    const makeApiRequest = async (question: string, requestType: RequestType = "question", requestContent: string = "placeholder") => {
         lastQuestionRef.current = question;
 
         error && setError(undefined);
@@ -108,42 +108,51 @@ const Chat = () => {
                 { content: a[0], role: "user" },
                 { content: a[1].choices[0].message.content, role: "assistant" }
             ]);
-
-            let request: ChatAppRequest | null = null;
+            let prompt = "";
+            let content: string = "";
             switch (requestType) {
                 case "question":
-                    request = {
-                        messages: [...messages, { content: question, role: "user" }],
-                        stream: shouldStream,
-                        context: {
-                            overrides: {
-                                prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
-                                exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
-                                top: retrieveCount,
-                                retrieval_mode: retrievalMode,
-                                semantic_ranker: useSemanticRanker,
-                                semantic_captions: useSemanticCaptions,
-                                suggest_followup_questions: useSuggestFollowupQuestions,
-                                use_oid_security_filter: useOidSecurityFilter,
-                                use_groups_security_filter: useGroupsSecurityFilter
-                            }
-                        },
-                        // ChatAppProtocol: Client must pass on any session state received from the server
-                        session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
-                    };
+                    content = question;
                     break;
                 case "upload_background":
+                    prompt =
+                        'This is a piece of background information about the negotiation. I request that you wait until all background and additional information have been provided before generating the island of agreement. In the meantime, please respond with "Received the background information. You may proceed to provide more information or request to generate the Island of Agreement."';
+                    content = prompt + requestContent;
                     break;
                 case "upload_additional":
+                    prompt =
+                        'This is a piece of additional information about the negotiation. I request that you wait until all background and additional information have been provided before generating the island of agreement. In the meantime, please respond with "Received the additional information. You may proceed to provide more information or request to generate the Island of Agreement."';
+                    content = prompt + requestContent;
                     break;
                 case "generate_iog":
+                    content =
+                        "Based on the above definition about the island of agreement and the example, " +
+                        "generate an Island of Agreement Table in tabular format which displays contested facts, agreed facts, " +
+                        "convergent norms, and divergent norms among different stakeholders in the negotiation process. " +
+                        "For each category, list the items in the order of importance.";
                     break;
             }
-            console.log(request);
+            console.log("content: " + content);
 
-            if (request == null) {
-                return;
-            }
+            const request: ChatAppRequest = {
+                messages: [...messages, { content: content, role: "user" }],
+                stream: shouldStream,
+                context: {
+                    overrides: {
+                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
+                        top: retrieveCount,
+                        retrieval_mode: retrievalMode,
+                        semantic_ranker: useSemanticRanker,
+                        semantic_captions: useSemanticCaptions,
+                        suggest_followup_questions: useSuggestFollowupQuestions,
+                        use_oid_security_filter: useOidSecurityFilter,
+                        use_groups_security_filter: useGroupsSecurityFilter
+                    }
+                },
+                // ChatAppProtocol: Client must pass on any session state received from the server
+                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
+            };
 
             const response = await chatApi(request, token?.accessToken);
             if (!response.body) {
@@ -328,7 +337,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <HelperButtons onRequest={makeApiRequest} />
+                        <HelperButtons onRequest={(question, requestType) => makeApiRequest(question, requestType)} />
                         <QuestionInput
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
