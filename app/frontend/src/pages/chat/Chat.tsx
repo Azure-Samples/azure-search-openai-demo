@@ -13,9 +13,11 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { SaveChatButton } from "../../components/SaveChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import {Button} from "react-bootstrap";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -157,6 +159,12 @@ const Chat = () => {
         setIsStreaming(false);
     };
 
+    const saveChat = () => {
+        // save messages to backend server
+
+        // bring to chat session history page
+    }
+
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
 
@@ -229,7 +237,9 @@ const Chat = () => {
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                <SaveChatButton className={styles.commandButton} onClick={saveChat} disabled={isLoading} />
+                {/* Consider comment out this line */}
+                {/* <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />*/}
             </div>
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
@@ -301,6 +311,11 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
+                        <div className={styles.buttonContainer} >
+                            <Button className={styles.helperButton}> upload background information </Button>
+                            <Button className={styles.helperButton}> upload additional information </Button>
+                            <Button className={styles.helperButton}> generate island of agreement </Button>
+                        </div>
                         <QuestionInput
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"

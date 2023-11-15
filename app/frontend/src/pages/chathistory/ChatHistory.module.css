@@ -1,0 +1,135 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header {
+    background-color: #222222;
+    color: #f2f2f2;
+}
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-right: 12px;
+    margin-left: 12px;
+}
+
+.headerTitleContainer {
+    display: flex;
+    align-items: center;
+    margin-right: 40px;
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+.headerLogo {
+    height: 40px;
+}
+
+.headerTitle {
+    margin-left: 12px;
+    font-weight: 600;
+}
+
+.headerNavList {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+
+.headerNavPageLink {
+    color: #f2f2f2;
+    text-decoration: none;
+    opacity: 0.75;
+
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: 500ms;
+    transition-property: opacity;
+}
+
+.headerNavPageLink:hover {
+    opacity: 1;
+}
+
+.headerNavPageLinkActive {
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+.headerNavLeftMargin {
+    margin-left: 20px;
+}
+
+.headerRightText {
+    font-weight: normal;
+    margin-left: 40px;
+}
+
+.microsoftLogo {
+    height: 23px;
+    font-weight: 600;
+}
+
+.githubLogo {
+    height: 20px;
+}
+
+.chatHistory{
+    display: flex;
+    height: 100vh;
+    flex-direction: column; /* Messages will be stacked vertically */
+    flex-grow: 1; /* Allow the messages to take up the remaining space */
+    overflow-y: auto; /* Enable vertical scrolling if necessary */
+    background-color: #f7f7f7;
+    align-items: center;
+}
+
+.chatSessions{
+    margin: 20px;
+    max-height: calc(100vh - 100px);
+    width: 40vw;
+    background-color: #222222;
+    /*color: #e3e3e3;*/
+    color: #f0f0f0;
+    border-radius: 20px;
+    /*align-items: center;*/
+}
+
+.chatSessionButton{
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px; /* Set the desired width */
+    height: 50px; /* Set the same height to make it a circle */
+    border-radius: 50%; /* Make it circular by setting border-radius to 50% */
+    background-color: #000000; /* Set the background color */
+    color: #fff; /* Set the text color */
+    border: none; /* Remove borders */
+    cursor: pointer; /* Add a pointer cursor on hover */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px; /* Adjust font size as needed */
+}
+
+.buttonContent {
+    display: inline-flex;
+    align-items: center; /* Center the content horizontally */
+    justify-content: center; /* Center the content vertically */
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: blue;
+    width: 100px; /* Adjust the width as needed */
+}
+
+.blurred {
+    filter: blur(10px);
+}
