@@ -17,7 +17,7 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+        "You are an intelligent assistant helping IT recruiters and potential employers with their questions in regards to my resume, technical experience and background information. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "For tabular information return it as an html table. Do not return markdown format. "
@@ -27,15 +27,19 @@ class RetrieveThenReadApproach(Approach):
 
     # shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+'What security products or projects have you contributed to?'
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+info1.txt: Azure Security Automation. One of my significant contributions was to an Azure Security Automation Project at 76 Software Engineering
+Group. I played a pivotal role in automating security-related tasks using PowerShell and Azure CLI.
+info2.pdf: Security-First DevSecOps Integration.
+info3.pdf: Open Source Security Contributions.I actively contributed to open-source projects in GitHub, focused on security and
+automation. I enhanced existing code and created new ones that have been utilized by the community.
+info4.pdf: Azure Role-Based Access Control (RBAC) Enhancement.I took the lead in refining and expanding RBAC policies, ensuring that users and applications only had the minimum required permissions.
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "My contributions to security products and projects have spanned client onboarding, automation,
+access control, documentation, open-source collaboration, and DevSecOps integration [info1.txt] These experiences
+have provided me with a holistic understanding of security's multifaceted nature [info2.pdf][info4.pdf]."
 
     def __init__(
         self,

@@ -9,11 +9,11 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
+        text: "Highlight a significant project in cloud engineering that you've worked on?",
+        value: "Highlight a significant project in cloud engineering that you've worked on?"
     },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
+    { text: "What inspired your career choice in cloud engineering?", value: "What inspired your career choice in cloud engineering and IT?" },
+    { text: "Share an example of successful collaboration with cross-functional teams?", value: "Share an example of successful collaboration with cross-functional teams?" }
 ];
 
 interface Props {

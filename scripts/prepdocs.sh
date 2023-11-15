@@ -30,3 +30,4 @@ $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
 --formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
 --tenantid "$AZURE_TENANT_ID" --openaihost "$OPENAI_HOST" \
 --openaikey "$OPENAI_API_KEY" -v
+--removeall
