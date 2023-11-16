@@ -23,9 +23,9 @@ class ChatReadRetrieveReadApproach(Approach):
     NO_RESPONSE = "0"
 
     """
-    A multi-step approach that first uses ChatGPT to turn the user's question into a search query,
+    A multi-step approach that first uses OpenAI to turn the user's question into a search query,
     then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,
-    original user question, and search results to ChatGPT to generate a response.
+    original user question, and search results to OpenAI to generate a response.
     """
     system_message_chat_conversation = """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
