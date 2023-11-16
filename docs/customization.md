@@ -38,7 +38,7 @@ The `system_message_chat_conversation` variable is currently tailored to the sam
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
 1. It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
-2. It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
+2. It then combines the search results and user question, and asks OpenAI ChatCompletion API to answer the question based on the sources.
 
 The `system_chat_template` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Change that to match your data.
 
@@ -79,9 +79,9 @@ If you notice any answers that aren't as good as you'd like, here's a process fo
 
 The first step is to identify where the problem is occurring. For example, if using the Chat tab, the problem could be:
 
-1. ChatGPT is not generating a good search query based on the user question
+1. GPT model is not generating a good search query based on the user question
 2. Azure AI Search is not returning good search results for the query
-3. ChatGPT is not generating a good answer based on the search results and user question
+3. GPT model is not generating a good answer based on the search results and user question
 
 You can look at the "Thought process" tab in the chat app to see each of those steps,
 and determine which one is the problem.
