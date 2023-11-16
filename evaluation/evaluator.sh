@@ -15,7 +15,7 @@ echo 'Creating python virtual environment "evaluation/.venv"'
 python3 -m venv evaluation/.venv
 
 echo 'Installing dependencies from "requirements.txt" into virtual environment'
-./evaluation/.venv/bin/python -m pip install -r evaluation/requirements.txt
+./evaluation/.venv/bin/python -m pip --quiet install -r evaluation/requirements.txt
 
 echo 'Running "evaluator.py"'
-python3 ./evaluation/evaluator.py
+./evaluation/.venv/bin/python ./evaluation/evaluator.py

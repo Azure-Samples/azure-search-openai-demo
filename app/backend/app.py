@@ -288,6 +288,15 @@ async def setup_clients():
     )
 
 
+@bp.after_app_serving
+async def cleanup_clients():
+    # Clean up clients
+    await current_app.config[CONFIG_CREDENTIAL].close()
+    await current_app.config[CONFIG_CREDENTIAL].close()
+    await current_app.config[CONFIG_SEARCH_CLIENT].close()
+    await current_app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
+
+
 def create_app():
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         configure_azure_monitor()

@@ -1,30 +1,27 @@
-import asyncio
 import json
 import logging
 import os
 import re
+import sys
 from pathlib import Path
 
 import urllib3
 from azure.ai.generative.evaluate import evaluate
 from azure.identity import AzureDeveloperCliCredential
 
-logging.basicConfig(level=logging.DEBUG)
-
 EVAL_DIR = Path(__file__).parent.absolute()
 # TODO: multi-turn conversation history in the future
 
 
-def deployed_target(question, overrides={}):
+def deployed_target(target_url, question, overrides={}):
     http = urllib3.PoolManager()
-    url = "https://app-backend-j25rgqsibtmlo.azurewebsites.net/chat"
     headers = {"Content-Type": "application/json"}
     body = {
         "messages": [{"content": question, "role": "user"}],
         "stream": False,
         "context": {"overrides": overrides},
     }
-    r = http.request("POST", url, headers=headers, body=json.dumps(body))
+    r = http.request("POST", target_url, headers=headers, body=json.dumps(body))
     # todo: add context without filenames? needed?
     try:
         response_dict = json.loads(r.data.decode("utf-8"))
@@ -35,7 +32,6 @@ def deployed_target(question, overrides={}):
         }
     except Exception as e:
         logging.error(e)
-        print(r.data.decode("utf-8"))
         return {
             "question": question,
             "answer": "ERROR",
@@ -43,9 +39,7 @@ def deployed_target(question, overrides={}):
         }
 
 
-async def send_chat_request(question) -> dict:
-    import sys
-
+async def local_target(question, overrides) -> dict:
     sys.path.append("app/backend")
     import app  # noqa
 
@@ -55,29 +49,17 @@ async def send_chat_request(question) -> dict:
         response = await test_client.post(
             "/chat",
             json={
-                "history": [{"user": question}],
-                "approach": "rrr",
-                "overrides": {
-                    "retrieval_mode": "hybrid",
-                    "semantic_ranker": True,
-                    "semantic_captions": False,
-                    "top": 3,
-                    "suggest_followup_questions": False,
-                    "temperature": 0.0,
-                },
+                "messages": [{"content": question, "role": "user"}],
+                "stream": False,
+                "context": {"overrides": overrides},
             },
         )
         response_dict = await response.get_json()
-        return response_dict
-
-
-def local_target(question):
-    response_dict = asyncio.run(send_chat_request(question))
-    return {
-        "question": question,
-        "answer": response_dict["answer"],
-        "context": "\n\n".join(response_dict["data_points"]),
-    }
+        return {
+            "question": question,
+            "answer": response_dict["choices"][0]["message"]["content"],
+            "context": "\n\n".join(response_dict["choices"][0]["context"]["data_points"]),
+        }
 
 
 def load_jsonl(path):
@@ -85,7 +67,7 @@ def load_jsonl(path):
         return [json.loads(line) for line in f.readlines()]
 
 
-def run_evaluation(testdata_filename, destination_dir, overrides={}):
+def run_evaluation(testdata_filename, destination_dir, target_url=None, overrides={}):
     path = EVAL_DIR / testdata_filename
     data = load_jsonl(path)
 
@@ -99,10 +81,16 @@ def run_evaluation(testdata_filename, destination_dir, overrides={}):
         "deployment_id": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
     }
 
+    async def wrap_target(question):
+        if target_url:
+            return deployed_target(target_url, question, overrides)
+        else:
+            return await local_target(question, overrides)
+
     gpt_metrics = ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "gpt_similarity"]
     results = evaluate(
         evaluation_name="baseline-evaluation",
-        target=lambda question: deployed_target(question, overrides),
+        target=wrap_target,
         data=data,
         task_type="qa",
         metrics_list=gpt_metrics,
@@ -167,7 +155,8 @@ def run_evaluation(testdata_filename, destination_dir, overrides={}):
         parameters = {
             "overrides": overrides,
             "evaluation_gpt_model": gpt_model,
-            # "app_gpt_model" # cant do that with deployed
+            "app_gpt_model": "Unknown" if target_url else os.environ["AZURE_OPENAI_CHATGPT_MODEL"],
+            "target_url": target_url if target_url else "localhost/chat",
         }
         parameters_file.write(json.dumps(parameters, indent=4))
 
@@ -175,13 +164,14 @@ def run_evaluation(testdata_filename, destination_dir, overrides={}):
 if __name__ == "__main__":
     run_evaluation(
         "input/qa.jsonl",
-        destination_dir=EVAL_DIR / "results/no_semantic_ranker_prompt_christrim2",
+        destination_dir=EVAL_DIR / "results/no_semantic_ranker_chris3",
+        # target_url=f"{os.environ['BACKEND_URI']}/chat",
         overrides={
             "retrieval_mode": "hybrid",
             "semantic_ranker": False,
             "semantic_captions": False,
             "top": 3,
             "suggest_followup_questions": False,
-            "prompt_template": open(EVAL_DIR / "input/prompt_christrim.txt").read(),
+            "prompt_template": open(EVAL_DIR / "input/prompt_chris.txt").read(),
         },
     )

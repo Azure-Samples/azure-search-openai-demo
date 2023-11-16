@@ -1,3 +1,4 @@
 -r ../app/backend/requirements.txt
-azure-ai-generative[evaluate]
+azureml-metrics[generative-ai]>=0.0.33
+azure-ai-generative==1.0.0b1
 textual

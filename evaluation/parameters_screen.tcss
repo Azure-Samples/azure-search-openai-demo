@@ -1,0 +1,26 @@
+
+
+ParametersScreen {
+    align: center middle;
+}
+
+#dialog {
+    padding: 0 1;
+    width: 90%;
+    height: 90%;
+    border: thick $background 80%;
+    background: $surface;
+}
+
+#header {
+    height: 2;
+}
+
+#body {
+    height: 1fr;
+}
+
+#button {
+    margin-top: 1;
+    height: 3;
+}
