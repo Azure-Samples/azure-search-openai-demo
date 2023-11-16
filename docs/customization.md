@@ -79,9 +79,9 @@ If you notice any answers that aren't as good as you'd like, here's a process fo
 
 The first step is to identify where the problem is occurring. For example, if using the Chat tab, the problem could be:
 
-1. GPT model is not generating a good search query based on the user question
+1. ChatCompletion API is not generating a good search query based on the user question
 2. Azure AI Search is not returning good search results for the query
-3. GPT model is not generating a good answer based on the search results and user question
+3. ChatCompletion API is not generating a good answer based on the search results and user question
 
 You can look at the "Thought process" tab in the chat app to see each of those steps,
 and determine which one is the problem.
@@ -90,7 +90,7 @@ and determine which one is the problem.
 
 If the problem is with ChatGPT (steps 1 or 3 above), you can try changing the relevant prompt.
 
-Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved. ChatGPT can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
+Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved. The ChatCompletion API can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
 
 You can also try changing the ChatCompletion parameters, like temperature, to see if that improves results for your domain.
 
