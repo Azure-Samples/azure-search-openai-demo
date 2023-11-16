@@ -29,7 +29,7 @@ The chat tab uses the approach programmed in [chatreadretrieveread.py](https://g
 
 1. It uses the OpenAI ChatCompletion API to turn the user question into a good search query.
 2. It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).
-3. It then combines the search results and original user question, and asks ChatGPT API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
+3. It then combines the search results and original user question, and asks OpenAI ChatCompletion API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
 
 The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Change that to match your data.
 
