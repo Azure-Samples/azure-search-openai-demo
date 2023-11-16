@@ -65,6 +65,7 @@ param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
 
 param tenantId string = tenant().tenantId
+param authTenantId string = ''
 
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
@@ -181,7 +182,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_CLIENT_APP_ID: clientAppId
       AZURE_CLIENT_APP_SECRET: clientAppSecret
       AZURE_TENANT_ID: tenantId
-      AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${tenantId}/v2.0'
+      AZURE_AUTH_TENANT_ID: authTenantId
+      AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${authTenantId}/v2.0'
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }
@@ -385,6 +387,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
 
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenantId
+output AZURE_AUTH_TENANT_ID string = authTenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
 // Shared by all OpenAI deployments
