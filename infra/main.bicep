@@ -256,7 +256,7 @@ module searchService 'core/search/search-services.bicep' = {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
-    publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : 'disabled'
+    publicNetworkAccess: toLower(publicNetworkAccess) == 'enabled' ? 'enabled' : 'disabled'
     authOptions: {
       aadOrApiKey: {
         aadAuthFailureMode: 'http401WithBearerChallenge'
