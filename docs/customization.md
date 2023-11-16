@@ -86,7 +86,7 @@ The first step is to identify where the problem is occurring. For example, if us
 You can look at the "Thought process" tab in the chat app to see each of those steps,
 and determine which one is the problem.
 
-#### Improving ChatGPT results
+#### Improving OpenAI ChatCompletion results
 
 If the problem is with the ChatCompletion API calls (steps 1 or 3 above), you can try changing the relevant prompt.
 
