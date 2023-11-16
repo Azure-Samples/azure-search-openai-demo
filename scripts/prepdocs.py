@@ -175,22 +175,22 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--searchservice",
-        help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)",
+        help="Name of the Azure AI Search service where content should be indexed (must exist already)",
     )
     parser.add_argument(
         "--index",
-        help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)",
+        help="Name of the Azure AI Search index where content should be indexed (will be created if it doesn't exist)",
     )
     parser.add_argument(
         "--searchkey",
         required=False,
-        help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
         "--searchanalyzername",
         required=False,
         default="en.microsoft",
-        help="Optional. Name of the Azure Cognitive Search analyzer to use for the content field in the index",
+        help="Optional. Name of the Azure AI Search analyzer to use for the content field in the index",
     )
     parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")

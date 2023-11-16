@@ -221,7 +221,7 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
 
-    # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
+    # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
@@ -237,7 +237,7 @@ async def setup_clients():
         token_cache_path=TOKEN_CACHE_PATH,
     )
 
-    # Set up clients for Cognitive Search and Storage
+    # Set up clients for AI Search and Storage
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,

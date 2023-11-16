@@ -27,9 +27,9 @@ Typically, the primary backend code you'll want to customize is the `app/backend
 
 The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
 
-1. It uses the ChatGPT API to turn the user question into a good search query.
-2. It queries Azure Cognitive Search for search results for that query (optionally using the vector embeddings for that query).
-3. It then combines the search results and original user question, and asks ChatGPT API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
+1. It uses the OpenAI ChatCompletion API to turn the user question into a good search query.
+2. It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).
+3. It then combines the search results and original user question, and asks OpenAI ChatCompletion API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
 
 The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Change that to match your data.
 
@@ -37,8 +37,8 @@ The `system_message_chat_conversation` variable is currently tailored to the sam
 
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
-1. It queries Azure Cognitive Search for search results for the user question (optionally using the vector embeddings for that question).
-2. It then combines the search results and user question, and asks ChatGPT API to answer the question based on the sources.
+1. It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
+2. It then combines the search results and user question, and asks OpenAI ChatCompletion API to answer the question based on the sources.
 
 The `system_chat_template` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Change that to match your data.
 
@@ -79,24 +79,24 @@ If you notice any answers that aren't as good as you'd like, here's a process fo
 
 The first step is to identify where the problem is occurring. For example, if using the Chat tab, the problem could be:
 
-1. ChatGPT is not generating a good search query based on the user question
-2. Azure Cognitive Search is not returning good search results for the query
-3. ChatGPT is not generating a good answer based on the search results and user question
+1. OpenAI ChatCompletion API is not generating a good search query based on the user question
+2. Azure AI Search is not returning good search results for the query
+3. OpenAI ChatCompletion API is not generating a good answer based on the search results and user question
 
 You can look at the "Thought process" tab in the chat app to see each of those steps,
 and determine which one is the problem.
 
-#### Improving ChatGPT results
+#### Improving OpenAI ChatCompletion results
 
-If the problem is with ChatGPT (steps 1 or 3 above), you can try changing the relevant prompt.
+If the problem is with the ChatCompletion API calls (steps 1 or 3 above), you can try changing the relevant prompt.
 
-Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved. ChatGPT can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
+Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved. The ChatCompletion API can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
 
-You can also try changing the ChatGPT parameters, like temperature, to see if that improves results for your domain.
+You can also try changing the ChatCompletion parameters, like temperature, to see if that improves results for your domain.
 
-#### Improving Azure Cognitive Search results
+#### Improving Azure AI Search results
 
-If the problem is with Azure Cognitive Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however.
+If the problem is with Azure AI Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however.
 
 ##### Configuring parameters in the app
 
@@ -107,7 +107,7 @@ You can change many of the search parameters in the "Developer settings" in the 
 #### Configuring parameters in the Azure Portal
 
 You may find it easier to experiment with search options with the index explorer in the Azure Portal.
-Open up the Azure Cognitive Search resource, select the Indexes tab, and select the index there.
+Open up the Azure AI Search resource, select the Indexes tab, and select the index there.
 
 Then use the JSON view of the search explorer, and make sure you specify the same options you're using in the app. For example, this query represents a search with semantic ranker configured:
 
