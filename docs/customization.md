@@ -92,7 +92,7 @@ If the problem is with ChatGPT (steps 1 or 3 above), you can try changing the re
 
 Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved. ChatGPT can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
 
-You can also try changing the ChatGPT parameters, like temperature, to see if that improves results for your domain.
+You can also try changing the ChatCompletion parameters, like temperature, to see if that improves results for your domain.
 
 #### Improving Azure AI Search results
 
