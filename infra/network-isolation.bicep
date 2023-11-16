@@ -100,15 +100,6 @@ module documentsDnsZone './core/networking/private-dns-zones.bicep' = {
   }
 }
 
-module vaultDnsZone './core/networking/private-dns-zones.bicep' = {
-  name: 'vault-dnzones'
-  params: {
-    dnsZoneName: 'privatelink.vaultcore.azure.net'
-    tags: tags
-    virtualNetworkName: vnet.outputs.name
-  }
-}
-
 module websitesDnsZone './core/networking/private-dns-zones.bicep' = {
   name: 'websites-dnzones'
   params: {
@@ -151,7 +142,7 @@ module storagePrivateEndpoint './core/networking/private-endpoint.bicep' = {
     location: location
     name: '${abbrs.storageStorageAccounts}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.vnet_subnets[0].id
+    subnetId: vnet.outputs.vnetSubnets[0].id
     serviceId: storageAccountId
     groupIds: [ 'blob' ]
     dnsZoneId: blobDnsZone.outputs.id
@@ -164,7 +155,7 @@ module openAiPrivateEndpoint './core/networking/private-endpoint.bicep' = {
     location: location
     name: '${abbrs.cognitiveServicesAccounts}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.vnet_subnets[0].id
+    subnetId: vnet.outputs.vnetSubnets[0].id
     serviceId: openAiId
     groupIds: [ 'account' ]
     dnsZoneId: openaiDnsZone.outputs.id
@@ -177,7 +168,7 @@ module formRecognizerPrivateEndpoint './core/networking/private-endpoint.bicep' 
     location: location
     name: '${abbrs.cognitiveServicesFormRecognizer}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.vnet_subnets[0].id
+    subnetId: vnet.outputs.vnetSubnets[0].id
     serviceId: formRecognizerId
     groupIds: [ 'account' ]
     dnsZoneId: cognitiveservicesDnsZone.outputs.id
@@ -200,12 +191,12 @@ module searchPrivateEndpoint './core/networking/private-endpoint.bicep' = {
     location: location
     name: '${abbrs.searchSearchServices}${abbrs.privateEndpoint}${resourceToken}'
     tags: tags
-    subnetId: vnet.outputs.vnet_subnets[0].id
+    subnetId: vnet.outputs.vnetSubnets[0].id
     serviceId: searchServiceId
     groupIds: [ 'searchService' ]
     dnsZoneId: searchDnsZone.outputs.id
   }
 }
 
-output appSubnetId string = vnet.outputs.vnet_subnets[2].id
+output appSubnetId string = vnet.outputs.vnetSubnets[2].id
 output vnetName string = vnet.outputs.name

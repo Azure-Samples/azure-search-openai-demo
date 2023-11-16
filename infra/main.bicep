@@ -76,6 +76,7 @@ param clientAppId string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
+@description('IP or Subnet that is allowed access via the public network, must be used with usePrivateEndpoint')
 param allowedIp string = '' // For single host specific rules
 
 @description('Id of the user or app to assign application roles')

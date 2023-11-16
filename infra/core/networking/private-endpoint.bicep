@@ -39,22 +39,21 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
       }
     ]
   }
-}
-
-resource privateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  parent: privateEndpoint
-  name: '${name}-group'
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'config1'
-        properties: {
-          privateDnsZoneId: dnsZoneId
+  resource privateDnsZoneGroup 'privateDnsZoneGroups' = {
+    name: '${name}-group'
+    properties: {
+      privateDnsZoneConfigs: [
+        {
+          name: 'config1'
+          properties: {
+            privateDnsZoneId: dnsZoneId
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 }
 
+output fqdn string = privateEndpoint.properties.customDnsConfigs[0].fqdn
 output name string = privateEndpoint.name
 output id string = privateEndpoint.id
