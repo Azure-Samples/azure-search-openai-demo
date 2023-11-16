@@ -20,6 +20,8 @@ urlFragment: azure-search-openai-demo
 > [!IMPORTANT]  
 > As of November 15, 2023, Azure Cognitive Search has been renamed to Azure AI Search.
 
+### Announcing [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one in [**Python**](https://aka.ms/azai/py/code). Learn more at  https://aka.ms/azai. 
+
 ## Table of Contents
 
 - [Features](#features)
