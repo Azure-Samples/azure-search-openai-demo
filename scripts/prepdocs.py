@@ -202,11 +202,6 @@ if __name__ == "__main__":
         "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)"
     )
     parser.add_argument(
-        "--gptdeployment",
-        help="Name of the Azure OpenAI model deployment for a chat model",
-    )
-    parser.add_argument("--gptmodelname", help="Name of the Azure OpenAI chat model ('gpt-4' recommended)")
-    parser.add_argument(
         "--novectors",
         action="store_true",
         help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)",
@@ -255,9 +250,7 @@ if __name__ == "__main__":
         if args.tenantid is None
         else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     )
-    #     generate_test_qa_data(
-    #    openai, args.gptdeployment, args.gptmodelname, search_creds, args.searchservice, args.index, filename=None
-    # )
+
     file_strategy = setup_file_strategy(azd_credential, args)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(file_strategy, azd_credential, args))
