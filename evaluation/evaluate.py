@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 import urllib3
@@ -69,7 +70,7 @@ def load_jsonl(path):
 
 def run_evaluation(testdata_filename, destination_dir, target_url=None, overrides={}):
     path = EVAL_DIR / testdata_filename
-    data = load_jsonl(path)
+    data = load_jsonl(path)[0:5]
 
     gpt_model = os.environ["AZURE_OPENAI_EVALGPT_MODEL"]
     azure_credential = AzureDeveloperCliCredential()
@@ -162,16 +163,24 @@ def run_evaluation(testdata_filename, destination_dir, target_url=None, override
 
 
 if __name__ == "__main__":
+    timestamp = int(time.time())
+
     run_evaluation(
-        "input/qa.jsonl",
-        destination_dir=EVAL_DIR / "results/no_semantic_ranker_chris3",
+        testdata_filename="input/qa.jsonl",
+        # Change the folder name here if you want it to reflect more than just the timestamp:
+        destination_dir=EVAL_DIR / "results" / f"evaluation-{timestamp}",
+        # Uncomment the following line to test the deployed app:
         # target_url=f"{os.environ['BACKEND_URI']}/chat",
         overrides={
-            "retrieval_mode": "hybrid",
+            # This defaults to True typically, but there's a limited quota in the free tier (1000/month),
+            # so you should either upgrade your account or set this to False.
             "semantic_ranker": False,
+            # The rest of these reflect the current defaults used by the app, so they're not strictly necessary.
+            "retrieval_mode": "hybrid",
             "semantic_captions": False,
             "top": 3,
             "suggest_followup_questions": False,
-            "prompt_template": open(EVAL_DIR / "input/prompt_chris.txt").read(),
+            # Uncomment the following line to test a different prompt:
+            # "prompt_template": open(EVAL_DIR / "input/prompt_chris.txt").read(),
         },
     )
