@@ -11,7 +11,6 @@ from azure.ai.generative.evaluate import evaluate
 from azure.identity import AzureDeveloperCliCredential
 
 EVAL_DIR = Path(__file__).parent.absolute()
-# TODO: multi-turn conversation history in the future
 
 
 def deployed_target(target_url, question, overrides={}):
@@ -23,7 +22,6 @@ def deployed_target(target_url, question, overrides={}):
         "context": {"overrides": overrides},
     }
     r = http.request("POST", target_url, headers=headers, body=json.dumps(body))
-    # todo: add context without filenames? needed?
     try:
         response_dict = json.loads(r.data.decode("utf-8"))
         return {

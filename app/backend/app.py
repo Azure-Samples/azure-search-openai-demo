@@ -289,8 +289,7 @@ async def setup_clients():
 
 
 @bp.after_app_serving
-async def cleanup_clients():
-    # Clean up clients
+async def close_clients():
     await current_app.config[CONFIG_CREDENTIAL].close()
     await current_app.config[CONFIG_CREDENTIAL].close()
     await current_app.config[CONFIG_SEARCH_CLIENT].close()
