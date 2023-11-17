@@ -64,7 +64,7 @@ pip install chatapp-evaltools
 To view a summary across all the runs, use the `summary` command with the path to the results folder:
 
 ```bash
-chatapp-evaltools summary results
+chatapp-evaltools summary evaluation/results
 ```
 
 This will display an interactive table with the results for each run, like this:
@@ -79,7 +79,7 @@ A modal will appear with the parameters, including any prompt override.
 To compare the answers generated for each question across 2 runs, use the `compare` command with 2 paths:
 
 ```bash
-chatapp-evaltools diff results/no_semantic_ranker_prompt_chris1 results/no_semantic_ranker1
+chatapp-evaltools diff evaluation/results/no_semantic_ranker1 evaluation/results/no_semantic_ranker2
 ```
 
 This will display each question, one at a time, with the two generated answers in scrollable panes,
