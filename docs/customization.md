@@ -108,3 +108,7 @@ You can also use the `highlight` parameter to see what text is being matched in 
 ![Screenshot of search explorer with highlighted results](../images/highlighting.png)
 
 The search explorer works well for testing text, but is harder to use with vectors, since you'd also need to compute the vector embedding and send it in. It is probably easier to use the app frontend for testing vectors/hybrid search.
+
+#### Evaluating answer quality
+
+Once you've made changes to the prompts or settings, you'll want to rigorously evaluate the results to see if they've improved. See the [evaluation guide](evaluation.md) for more details.
