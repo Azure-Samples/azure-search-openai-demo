@@ -45,8 +45,6 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
 
-    const [lastAnswer, setLastAnswer] = useState<ChatAppResponse | undefined>(undefined);
-
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
@@ -68,11 +66,11 @@ const Chat = () => {
             });
         };
 
-        async function* asyncWordGenerator(str: string, delay: number) {
+        async function* asyncWordGenerator(str: string, delayBetweenWordsInMs: number) {
             const words = str.split(' ');
             for (const word of words) {
                 // Wait for the delay, then yield the word
-                await new Promise(resolve => setTimeout(resolve, delay));
+                await new Promise(resolve => setTimeout(resolve, delayBetweenWordsInMs));
                 yield word;
             }
         }
@@ -85,11 +83,11 @@ const Chat = () => {
                     askResponse = event;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
-                    setIsWritingWords(true);
                     const sentence = event["choices"][0]["delta"]["content"];
-                    const delay = 33
+                    const delayBetweenWordsInMs = 33
                     let isFirst = true;
-                    for await (let word of asyncWordGenerator(sentence, delay)) {
+                    setIsWritingWords(true);
+                    for await (let word of asyncWordGenerator(sentence, delayBetweenWordsInMs)) {
                         if (!isFirst) {
                             word = " " + word;
                         }
