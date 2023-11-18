@@ -214,7 +214,10 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
           name: embeddingModelName
           version: '2'
         }
-        capacity: embeddingDeploymentCapacity
+        sku: {
+          name: 'Standard'
+          capacity: embeddingDeploymentCapacity
+        }
       }
     ]
   }
