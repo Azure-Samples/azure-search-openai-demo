@@ -1,6 +1,6 @@
 ---
 name: ChatGPT + Enterprise data
-description: Chat with your data using OpenAI and Cognitive Search.
+description: Chat with your data using OpenAI and AI Search.
 languages:
 - python
 - typescript
@@ -15,7 +15,12 @@ page_type: sample
 urlFragment: azure-search-openai-demo
 ---
 
-# ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
+# ChatGPT + Enterprise data with Azure OpenAI and AI Search
+
+> [!IMPORTANT]  
+> As of November 15, 2023, Azure Cognitive Search has been renamed to Azure AI Search.
+
+### Announcing [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one in [**Python**](https://aka.ms/azai/py/code). Learn more at  https://aka.ms/azai. 
 
 ## Table of Contents
 
@@ -47,7 +52,7 @@ urlFragment: azure-search-openai-demo
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
-This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure Cognitive Search for data indexing and retrieval.
+This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure AI Search for data indexing and retrieval.
 
 The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
 
@@ -57,7 +62,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 * Chat and Q&A interfaces
 * Explores various options to help users evaluate the trustworthiness of responses with citations, tracking of source content, etc.
-* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (Cognitive Search)
+* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (AI Search)
 * Settings directly in the UX to tweak the behavior and experiment with options
 * Optional performance tracing and monitoring with Application Insights
 
@@ -82,12 +87,12 @@ However, you can try the [Azure pricing calculator](https://azure.com/e/8ffbe5b1
 
 - Azure App Service: Basic Tier with 1 CPU core, 1.75 GB RAM. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/app-service/linux/)
 - Azure OpenAI: Standard tier, ChatGPT and Ada models. Pricing per 1K tokens used, and at least 1K tokens are used per question. [Pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/)
-- Form Recognizer: SO (Standard) tier using pre-built layout. Pricing per document page, sample documents have 261 pages total. [Pricing](https://azure.microsoft.com/pricing/details/form-recognizer/)
-- Azure Cognitive Search: Standard tier, 1 replica, free level of semantic search. Pricing per hour.[Pricing](https://azure.microsoft.com/pricing/details/search/)
+- Azure AI Document Intelligence: SO (Standard) tier using pre-built layout. Pricing per document page, sample documents have 261 pages total. [Pricing](https://azure.microsoft.com/pricing/details/form-recognizer/)
+- Azure AI Search: Standard tier, 1 replica, free level of semantic search. Pricing per hour.[Pricing](https://azure.microsoft.com/pricing/details/search/)
 - Azure Blob Storage: Standard tier with ZRS (Zone-redundant storage). Pricing per storage and read operations. [Pricing](https://azure.microsoft.com/pricing/details/storage/blobs/)
 - Azure Monitor: Pay-as-you-go tier. Costs based on data ingested. [Pricing](https://azure.microsoft.com/pricing/details/monitor/)
 
-To reduce costs, you can switch to free SKUs for Azure App Service and Form Recognizer by changing the parameters file under the `infra` folder. There are some limits to consider; for example, the free Form Recognizer resource only analyzes the first 2 pages of each document. You can also reduce costs associated with the Form Recognizer by reducing the number of documents in the `data` folder, or by removing the postprovision hook in `azure.yaml` that runs the `prepdocs.py` script.
+To reduce costs, you can switch to free SKUs for Azure App Service and Azure AI Document Intelligence by changing the parameters file under the `infra` folder. There are some limits to consider; for example, the free Azure AI Document Intelligence resource only analyzes the first 2 pages of each document. You can also reduce costs associated with the Azure AI Document Intelligence by reducing the number of documents in the `data` folder, or by removing the postprovision hook in `azure.yaml` that runs the `prepdocs.py` script.
 
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
@@ -140,7 +145,7 @@ Then bring down the project code:
 Execute the following command, if you don't have any pre-existing Azure services and want to start from a fresh deployment.
 
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
-    * **Important**: Beware that the resources created by this command will incur immediate costs, primarily from the Cognitive Search resource. These resources may accrue costs even if you interrupt the command before it is fully executed. You can run `azd down` or delete the resources manually to avoid unnecessary spending.
+    * **Important**: Beware that the resources created by this command will incur immediate costs, primarily from the AI Search resource. These resources may accrue costs even if you interrupt the command before it is fully executed. You can run `azd down` or delete the resources manually to avoid unnecessary spending.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
 It will look like the following:
@@ -183,9 +188,9 @@ Do *not* check your key into source control.
 When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, you can select any location as it will not be used.
 
 
-#### Existing Azure Cognitive Search resource
+#### Existing Azure AI Search resource
 
-1. Run `azd env set AZURE_SEARCH_SERVICE {Name of existing Azure Cognitive Search service}`
+1. Run `azd env set AZURE_SEARCH_SERVICE {Name of existing Azure AI Search service}`
 1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
 1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
   then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
@@ -200,7 +205,7 @@ You can also customize the search service (new or existing) for non-English sear
 
 #### Other existing Azure resources
 
-You can also use existing Form Recognizer and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+You can also use existing Azure AI Document Intelligence and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
 
 #### Provision remaining resources
 
@@ -301,8 +306,8 @@ to production. Read through our [productionizing guide](docs/productionizing.md)
 
 ## Resources
 
-* [Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and Cognitive Search](https://aka.ms/entgptsearchblog)
-* [Azure Cognitive Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
+* [Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and AI Search](https://aka.ms/entgptsearchblog)
+* [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
 * [Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
 * [Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
 
@@ -350,7 +355,7 @@ Technology comparison:
 | --- | --- | --- |
 | Frontend | React | React |
 | Backend | Python (Quart) | Python (Flask) |
-| Vector DB | Azure Cognitive Search | Azure Cognitive Search |
+| Vector DB | Azure AI Search | Azure AI Search |
 | Deployment | Azure Developer CLI (azd) | Azure Portal, az, azd |
 
 </details>
@@ -368,7 +373,7 @@ The `azd up` command comes from the [Azure Developer CLI](https://learn.microsof
 
 The `azd up` command uses the `azure.yaml` file combined with the infrastructure-as-code `.bicep` files in the `infra/` folder. The `azure.yaml` file for this project declares several "hooks" for the prepackage step and postprovision steps. The `up` command first runs the `prepackage` hook which installs Node dependencies and builds the React.JS-based JavaScript files. It then packages all the code (both frontend and backend) into a zip file which it will deploy later.
 
-Next, it provisions the resources based on `main.bicep` and `main.parameters.json`. At that point, since there is no default value for the OpenAI resource location, it asks you to pick a location from a short list of available regions. Then it will send requests to Azure to provision all the required resources. With everything provisioned, it runs the `postprovision` hook to process the local data and add it to an Azure Cognitive Search index.
+Next, it provisions the resources based on `main.bicep` and `main.parameters.json`. At that point, since there is no default value for the OpenAI resource location, it asks you to pick a location from a short list of available regions. Then it will send requests to Azure to provision all the required resources. With everything provisioned, it runs the `postprovision` hook to process the local data and add it to an Azure AI Search index.
 
 Finally, it looks at `azure.yaml` to determine the Azure host (appservice, in this case) and uploads the zip to Azure App Service. The `azd up` command is now complete, but it may take another 5-10 minutes for the App Service app to be fully available and working, especially for the initial deploy.
 

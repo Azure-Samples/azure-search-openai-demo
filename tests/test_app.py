@@ -3,6 +3,7 @@ import logging
 import os
 from unittest import mock
 
+import openai
 import pytest
 import quart.testing.app
 
@@ -60,6 +61,25 @@ async def test_ask_handle_exception(client, monkeypatch, snapshot, caplog):
     assert response.status_code == 500
     result = await response.get_json()
     assert "Exception in /ask: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(
+            side_effect=openai.error.InvalidRequestError("The response was filtered", "prompt", code="content_filter")
+        ),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+    )
+    assert response.status_code == 400
+    result = await response.get_json()
+    assert "Exception in /ask: The response was filtered" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -179,6 +199,25 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 
 
 @pytest.mark.asyncio
+async def test_chat_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        mock.Mock(
+            side_effect=openai.error.InvalidRequestError("The response was filtered", "prompt", code="content_filter")
+        ),
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+    )
+    assert response.status_code == 400
+    result = await response.get_json()
+    assert "Exception in /chat: The response was filtered" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
         "openai.ChatCompletion.acreate", mock.Mock(side_effect=ZeroDivisionError("something bad happened"))
@@ -190,6 +229,25 @@ async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, ca
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: something bad happened" in caplog.text
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "openai.ChatCompletion.acreate",
+        mock.Mock(
+            side_effect=openai.error.InvalidRequestError("The response was filtered", "prompt", code="content_filter")
+        ),
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}], "stream": True},
+    )
+    assert response.status_code == 200
+    assert "Exception while generating response stream: The response was filtered" in caplog.text
     result = await response.get_data()
     snapshot.assert_match(result, "result.jsonlines")
 

@@ -40,10 +40,10 @@ def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStra
     if args.localpdfparser:
         pdf_parser = LocalPdfParser()
     else:
-        # check if Azure Form Recognizer credentials are provided
+        # check if Azure Document Intelligence credentials are provided
         if args.formrecognizerservice is None:
             print(
-                "Error: Azure Form Recognizer service is not provided. Please provide formrecognizerservice or use --localpdfparser for local pypdf parser."
+                "Error: Azure Document Intelligence service is not provided. Please provide --formrecognizerservice or use --localpdfparser for local pypdf parser."
             )
             exit(1)
         formrecognizer_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
@@ -175,22 +175,22 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--searchservice",
-        help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)",
+        help="Name of the Azure AI Search service where content should be indexed (must exist already)",
     )
     parser.add_argument(
         "--index",
-        help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)",
+        help="Name of the Azure AI Search index where content should be indexed (will be created if it doesn't exist)",
     )
     parser.add_argument(
         "--searchkey",
         required=False,
-        help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
         "--searchanalyzername",
         required=False,
         default="en.microsoft",
-        help="Optional. Name of the Azure Cognitive Search analyzer to use for the content field in the index",
+        help="Optional. Name of the Azure AI Search analyzer to use for the content field in the index",
     )
     parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
     parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
@@ -228,17 +228,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--localpdfparser",
         action="store_true",
-        help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Form Recognizer service to extract text, tables and layout from the documents",
+        help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Document Intelligence service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
         "--formrecognizerservice",
         required=False,
-        help="Optional. Name of the Azure Form Recognizer service which will be used to extract text, tables and layout from the documents (must exist already)",
+        help="Optional. Name of the Azure Document Intelligence service which will be used to extract text, tables and layout from the documents (must exist already)",
     )
     parser.add_argument(
         "--formrecognizerkey",
         required=False,
-        help="Optional. Use this Azure Form Recognizer account key instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Optional. Use this Azure Document Intelligence account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
 
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")

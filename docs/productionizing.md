@@ -16,7 +16,7 @@ to production. Here are some things to consider:
 * **Azure Storage**: The default storage account uses the `Standard_LRS` SKU.
   To improve your resiliency, we recommend using `Standard_ZRS` for production deployments,
   which you can specify using the `sku` property under the `storage` module in `infra/main.bicep`.
-* **Azure Cognitive Search**: The default search service uses the `Standard` SKU
+* **Azure AI Search**: The default search service uses the `Standard` SKU
   with the free semantic search option, which gives you 1000 free queries a month.
   Assuming your app will experience more than 1000 questions, you should either change `semanticSearch`
   to "standard" or disable semantic search entirely in the `/app/backend/approaches` files.
@@ -66,7 +66,7 @@ Open the locust UI at http://localhost:8089/, the URI displayed in the terminal.
 
 Start a new test with the URI of your website, e.g. `https://my-chat-app.azurewebsites.net`.
 Do *not* end the URI with a slash. You can start by pointing at your localhost if you're concerned
-more about load on OpenAI/Cognitive Search than the host platform.
+more about load on OpenAI/AI Search than the host platform.
 
 For the number of users and spawn rate, we recommend starting with 20 users and 1 users/second.
 From there, you can keep increasing the number of users to simulate your expected load.
