@@ -40,7 +40,7 @@ def deployed_target(target_url, question, overrides={}):
 
 async def local_target(question, overrides) -> dict:
     sys.path.append("app/backend")
-    import app  # noqa
+    import app  # type: ignore
 
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
@@ -68,7 +68,7 @@ def load_jsonl(path):
 
 def run_evaluation(testdata_filename, destination_dir, target_url=None, overrides={}):
     path = EVAL_DIR / testdata_filename
-    data = load_jsonl(path)[0:5]
+    data = load_jsonl(path)
 
     gpt_model = os.environ["AZURE_OPENAI_EVALGPT_MODEL"]
     azure_credential = AzureDeveloperCliCredential()
@@ -161,6 +161,8 @@ def run_evaluation(testdata_filename, destination_dir, target_url=None, override
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.WARNING)
+
     timestamp = int(time.time())
 
     run_evaluation(

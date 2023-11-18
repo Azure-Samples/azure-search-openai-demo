@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from typing import Dict, List
 
 from azure.ai.generative.synthetic.qa import QADataGenerator, QAType
 from azure.identity import AzureDeveloperCliCredential
@@ -27,7 +28,7 @@ def generate_test_qa_data(num_questions_total: int, num_questions_per_source: in
         credential=azure_credential,
     )
     r = search_client.search("", top=1000)
-    qa = []
+    qa: List[Dict] = []
     for doc in r:
         if len(qa) > num_questions_total:
             break

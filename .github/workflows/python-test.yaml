@@ -45,6 +45,8 @@ jobs:
             python3 -m mypy .
             cd ../app/
             python3 -m mypy .
+            cd ../evaluation/
+            python3 -m mypy .
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests

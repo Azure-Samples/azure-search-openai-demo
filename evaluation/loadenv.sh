@@ -15,4 +15,4 @@ echo 'Creating python virtual environment "evaluation/.venv"'
 python3 -m venv evaluation/.venv
 
 echo 'Installing dependencies from "requirements.txt" into virtual environment'
-./evaluation/.venv/bin/python -m pip --quiet install -r evaluation/requirements.txt
+./evaluation/.venv/bin/python -m pip --disable-pip-version-check --quiet install -r evaluation/requirements.txt
