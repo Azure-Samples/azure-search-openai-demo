@@ -117,7 +117,6 @@ module monitoring './core/monitor/monitoring.bicep' = if (useApplicationInsights
     location: location
     tags: tags
     applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
-    includeDashboard: false
     logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
   }
 }
