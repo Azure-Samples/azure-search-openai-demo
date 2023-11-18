@@ -165,6 +165,7 @@ async def chat():
         else:
             response = await make_response(format_as_ndjson(result))
             response.timeout = None  # type: ignore
+            response.mimetype = "application/json-lines"
             return response
     except Exception as error:
         return error_response(error, "/chat")
