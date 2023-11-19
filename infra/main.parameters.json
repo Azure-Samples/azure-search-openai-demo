@@ -63,7 +63,7 @@
       "value": "${OPENAI_HOST=openai}"
     },
     "openAiApiKey": {
-      "value": "${OPENAI_API_KEY=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}"
+      "value": "${OPENAI_API_KEY="
     },
     "openAiApiOrganization": {
       "value": "${OPENAI_ORGANIZATION=org-pGh89P1RXfQ4I6I0MuWLsGzr}"
