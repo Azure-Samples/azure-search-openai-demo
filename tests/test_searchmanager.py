@@ -3,6 +3,7 @@ import io
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
 
 from scripts.prepdocslib.listfilestrategy import File
 from scripts.prepdocslib.searchmanager import SearchManager, Section
@@ -10,8 +11,85 @@ from scripts.prepdocslib.strategy import SearchInfo
 from scripts.prepdocslib.textsplitter import SplitPage
 
 
+@pytest.fixture
+def search_info():
+    return SearchInfo(
+        endpoint="https://testsearchclient.blob.core.windows.net",
+        credential=AzureKeyCredential("test"),
+        index_name="test",
+        verbose=True,
+    )
+
+
 @pytest.mark.asyncio
-async def test_update_content(monkeypatch):
+async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    manager = SearchManager(
+        search_info,
+    )
+    await manager.create_index()
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+    assert len(indexes[0].fields) == 6
+
+
+@pytest.mark.asyncio
+async def test_create_index_does_exist(monkeypatch, search_info):
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        yield "test"
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    manager = SearchManager(
+        search_info,
+    )
+    await manager.create_index()
+    assert len(indexes) == 0, "It should not have created a new index"
+
+
+@pytest.mark.asyncio
+async def test_create_index_acls(monkeypatch, search_info):
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    manager = SearchManager(
+        search_info,
+        use_acls=True,
+    )
+    await manager.create_index()
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+    assert len(indexes[0].fields) == 8
+
+
+@pytest.mark.asyncio
+async def test_update_content(monkeypatch, search_info):
     async def mock_upload_documents(self, documents):
         assert len(documents) == 1
         assert documents[0]["id"] == "file-foo_pdf-666F6F2E706466-page-0"
@@ -23,12 +101,7 @@ async def test_update_content(monkeypatch):
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
 
     manager = SearchManager(
-        SearchInfo(
-            endpoint="https://testsearchclient.blob.core.windows.net",
-            credential=AzureKeyCredential("test"),
-            index_name="test",
-            verbose=True,
-        )
+        search_info,
     )
 
     test_io = io.BytesIO(b"test content")
@@ -50,7 +123,7 @@ async def test_update_content(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_update_content_many(monkeypatch):
+async def test_update_content_many(monkeypatch, search_info):
     ids = []
 
     async def mock_upload_documents(self, documents):
@@ -59,12 +132,7 @@ async def test_update_content_many(monkeypatch):
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
 
     manager = SearchManager(
-        SearchInfo(
-            endpoint="https://testsearchclient.blob.core.windows.net",
-            credential=AzureKeyCredential("test"),
-            index_name="test",
-            verbose=True,
-        )
+        search_info,
     )
 
     # create 1500 sections for 500 pages
