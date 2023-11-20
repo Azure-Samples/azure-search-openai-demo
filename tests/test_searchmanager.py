@@ -225,3 +225,60 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
         -0.009327292,
         -0.0028842222,
     ]
+
+
+@pytest.mark.asyncio
+async def test_remove_content(monkeypatch, search_info):
+    class AsyncSearchResultsIterator:
+        def __init__(self):
+            self.results = [
+                {
+                    "@search.score": 1,
+                    "id": "file-foo_pdf-666F6F2E706466-page-0",
+                    "content": "test content",
+                    "category": "test",
+                    "sourcepage": "foo.pdf#page=1",
+                    "sourcefile": "foo.pdf",
+                }
+            ]
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            if len(self.results) == 0:
+                raise StopAsyncIteration
+            return self.results.pop()
+
+        async def get_count(self):
+            return len(self.results)
+
+    search_results = AsyncSearchResultsIterator()
+
+    searched_filters = []
+
+    async def mock_search(self, *args, **kwargs):
+        self.filter = kwargs.get("filter")
+        searched_filters.append(self.filter)
+        return search_results
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    deleted_documents = []
+
+    async def mock_delete_documents(self, documents):
+        deleted_documents.extend(documents)
+        return documents
+
+    monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
+
+    manager = SearchManager(
+        search_info,
+    )
+    print(manager.search_info.index_name)
+    await manager.remove_content("foo.pdf")
+
+    assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"
+    assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
+    assert len(deleted_documents) == 1, "It should have deleted one document"
+    assert deleted_documents[0]["id"] == "file-foo_pdf-666F6F2E706466-page-0"
