@@ -1,0 +1,24 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: setup-azd@0 
+    displayName: Install azd
+
+  - pwsh: |
+      $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+      
+      azd auth login `
+        --client-id "$($info.clientId)" `
+        --client-secret "$($info.clientSecret)" `
+        --tenant-id "$($info.tenantId)"
+    displayName: azd login
+    env:
+      AZURE_CREDENTIALS: $(AZURE_CREDENTIALS)
+
+  - pwsh: |
+      azd up
+    displayName: run Application
