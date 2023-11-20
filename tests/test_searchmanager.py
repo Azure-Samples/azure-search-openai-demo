@@ -275,7 +275,7 @@ async def test_remove_content(monkeypatch, search_info):
     manager = SearchManager(
         search_info,
     )
-    print(manager.search_info.index_name)
+
     await manager.remove_content("foo.pdf")
 
     assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"
