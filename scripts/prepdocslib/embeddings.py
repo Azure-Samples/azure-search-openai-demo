@@ -42,7 +42,7 @@ class OpenAIEmbeddings(ABC):
 
     def before_retry_sleep(self, retry_state):
         if self.verbose:
-            print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+            print("\tRate limited on the OpenAI embeddings API, sleeping before retrying...")
 
     def calculate_token_length(self, text: str):
         encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
@@ -80,6 +80,8 @@ class OpenAIEmbeddings(ABC):
         return batches
 
     async def create_embedding_batch(self, texts: List[str]) -> List[List[float]]:
+        if self.verbose:
+            print(f"Generating embeddings for {len(texts)} sections in batches...")
         batches = self.split_text_into_batches(texts)
         embeddings = []
         for batch in batches:
@@ -94,7 +96,7 @@ class OpenAIEmbeddings(ABC):
                     emb_response = await openai.Embedding.acreate(**emb_args, input=batch.texts)
                     embeddings.extend([data["embedding"] for data in emb_response["data"]])
                     if self.verbose:
-                        print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
+                        print(f"\tBatch Completed. Batch size: {len(batch.texts)} Token count: {batch.token_length}")
 
         return embeddings
 

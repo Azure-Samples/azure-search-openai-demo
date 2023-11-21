@@ -55,7 +55,7 @@ class SearchManager:
 
     async def create_index(self):
         if self.search_info.verbose:
-            print(f"Ensuring search index {self.search_info.index_name} exists")
+            print(f"Ensuring search index '{self.search_info.index_name}' exists...")
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
@@ -111,11 +111,11 @@ class SearchManager:
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
                 if self.search_info.verbose:
-                    print(f"Creating {self.search_info.index_name} search index")
+                    print(f"\tCreating '{self.search_info.index_name}' search index")
                 await search_index_client.create_index(index)
             else:
                 if self.search_info.verbose:
-                    print(f"Search index {self.search_info.index_name} already exists")
+                    print(f"\tSearch index '{self.search_info.index_name}' already exists")
 
     async def update_content(self, sections: List[Section]):
         MAX_BATCH_SIZE = 1000
@@ -146,11 +146,18 @@ class SearchManager:
                 # Remove any existing documents with the same sourcefile before uploading new ones
                 # that ensures we don't have outdated documents in the index
                 await self.remove_content(path=batch[0].content.filename())
+                if self.search_info.verbose:
+                    print(
+                        f"Uploading {len(documents)} sections from '{batch[0].content.filename()}' to search index '{self.search_info.index_name}'"
+                    )
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: Optional[str] = None):
         if self.search_info.verbose:
-            print(f"\tRemoving sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
+            print(
+                f"Potentially removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'..."
+            )
+        total_removed = 0
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
@@ -160,7 +167,8 @@ class SearchManager:
                 removed_docs = await search_client.delete_documents(
                     documents=[{"id": document["id"]} async for document in result]
                 )
-                if self.search_info.verbose:
-                    print(f"\tRemoved {len(removed_docs)} sections from index")
+                total_removed += len(removed_docs)
                 # It can take a few seconds for search results to reflect changes, so wait a bit
                 await asyncio.sleep(2)
+        if self.search_info.verbose:
+            print(f"\tRemoved {total_removed} sections from index")

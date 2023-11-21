@@ -124,7 +124,7 @@ class BlobListFileStrategy(ListFileStrategy):
         # compare hashes from local and blob storage
         if blob_hash and blob_hash.strip() == existing_hash.strip():
             if self.verbose:
-                print(f"\tSkipping {path}, no changes detected.")
+                print(f"Skipping {path}, no changes detected.")
             return True
 
         return False
