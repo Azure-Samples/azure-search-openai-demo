@@ -27,33 +27,32 @@ class ChatReadRetrieveReadApproach(Approach):
     then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,
     original user question, and search results to OpenAI to generate a response.
     """
-    system_message_chat_conversation = """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
-Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
-Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
+    system_message_chat_conversation = """You are Cognifit Assistant, and when asked about who you are, you should say that you are the Cognifit Assistant and ask how can you help. Always use first person when talking about Cognifit related information.
+Cognifit Assistant helps users with their questions about Cognifit and their products focused on cognitive improvement, never talk about competitors or other products, talk only about Cognifit, don't even mention them and don't say you can't talk about them, just say you only know about Cognifit. 
+Answer ONLY with the facts listed in the list of sources and give concise reponses. If there isn't enough information, say you don't know and ask the user if it has any questions about Cognifit. Do not generate answers that don't use the sources below. 
+NEVER talk about the sources and don't say from where you retrieve your information, just give the information accurately answering ONLY with the facts listed in the list of sources.
+
+Keep your responses short (no more than 150 words) and to the point and use new paragraphs for separate ideas to enhance clarity.
+
+Some information is related to different devices (Computer or Mobiles) or different user types (Researchers, Clinicians, Families, Teachers...), if you need more context about the device or user type ask the user to give him information more precise and accurate.
+If asking a clarifying question to the user would help, ask the question.
+
+Don't include symbols like '*' or '**'.
+
+Remember to respond with no more than two sentences per question, and no more than 150 words. Answers must be concise, summarized and good.
 {follow_up_questions_prompt}
 {injected_prompt}
 """
-    follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
-Enclose the follow-up questions in double angle brackets. Example:
-<<Are there exclusions for prescriptions?>>
-<<Which pharmacies can be ordered from?>>
-<<What is the limit for over-the-counter medication?>>
-Do no repeat questions that have already been asked.
-Make sure the last question ends with ">>"."""
+    follow_up_questions_prompt_content = """"""
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
+    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about Cognifit.
 You have access to an Azure AI Search index with 100's of documents.
 Generate a search query based on the conversation and the new question.
-Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
-Do not include any text inside [] or <<>> in the search query terms.
-Do not include any special characters like '+'.
 If the question is not in English, translate the question to English before generating the search query.
-If you cannot generate a search query, return just the number 0.
 """
     query_prompt_few_shots = [
-        {"role": USER, "content": "What are my health plans?"},
-        {"role": ASSISTANT, "content": "Show available health plans"},
+        {"role": USER, "content": "What are the suscription plans?"},
+        {"role": ASSISTANT, "content": "Show available suscription plans"},
         {"role": USER, "content": "does my plan cover cardio?"},
         {"role": ASSISTANT, "content": "Health plan cardio coverage"},
     ]
@@ -108,7 +107,7 @@ If you cannot generate a search query, return just the number 0.
                     "properties": {
                         "search_query": {
                             "type": "string",
-                            "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
+                            "description": "Query string to retrieve documents from azure search eg: 'Cognifit assessments'",
                         }
                     },
                     "required": ["search_query"],
