@@ -21,7 +21,7 @@ param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
 param searchServiceLocation string = ''
 // The free tier does not support managed identity (required) or semantic search (optional)
-@allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
+@allowed([ 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
@@ -33,13 +33,13 @@ param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
-@allowed(['azure', 'openai'])
+@allowed([ 'azure', 'openai' ])
 param openAiHost string // Set in main.parameters.json
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
+@allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral' ])
 @metadata({
   azd: {
     type: 'location'
@@ -60,7 +60,7 @@ param formRecognizerSkuName string = 'S0'
 
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
-param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+param chatGptModelName string = 'gpt-4'
 param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
@@ -152,7 +152,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: [ allowedOrigin ]
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
