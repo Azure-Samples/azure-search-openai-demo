@@ -27,7 +27,7 @@ If needed, you can modify the chunking algorithm in `scripts/prepdocslib/textspl
 
 To upload more PDFs, put them in the data/ folder and run `./scripts/prepdocs.sh` or `./scripts/prepdocs.ps1`.
 
-The script checks existing docs by comapring the hash of the local file to the hash of the file in the blob storage. If the hash is different, it will upload the new file to blob storage and update the index. If the hash is the same, it will skip the file.
+The script checks existing docs by comparing the hash of the local file to the hash of the file in the blob storage. If the hash is different, it will upload the new file to blob storage and update the index. If the hash is the same, it will skip the file.
 
 ## Removing documents
 
