@@ -28,7 +28,7 @@ azure-core==1.29.4
     #   msrest
 azure-identity==1.14.0
     # via -r requirements.in
-azure-search-documents==11.4.0b6
+azure-search-documents==11.4.0b11
     # via -r requirements.in
 azure-storage-blob==12.18.2
     # via

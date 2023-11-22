@@ -1,5 +1,7 @@
 import asyncio
+import datetime
 import os
+import random
 import subprocess
 from typing import Any, Dict, Tuple
 
@@ -23,6 +25,14 @@ async def create_application(auth_headers: Dict[str, str], app_payload: object) 
             response_json = await response.json()
             object_id = response_json["id"]
             client_id = response_json["appId"]
+
+        async with session.post(
+            "https://graph.microsoft.com/v1.0/servicePrincipals",
+            json={"appId": client_id, "displayName": app_payload["displayName"]},
+        ) as response:
+            if response.status != 201:
+                raise Exception(await response.json())
+            print(await response.json())
 
     return object_id, client_id
 
@@ -71,9 +81,15 @@ def update_azd_env(name, val):
     subprocess.run(f"azd env set {name} {val}", shell=True)
 
 
-def create_server_app_initial_payload():
+def random_app_identifier():
+    rand = random.Random()
+    rand.seed(datetime.datetime.now().timestamp())
+    return rand.randint(1000, 100000)
+
+
+def create_server_app_initial_payload(identifier: int):
     return {
-        "displayName": "Azure Search OpenAI Demo Server App",
+        "displayName": f"Azure Search OpenAI Chat Server App {identifier}",
         "signInAudience": "AzureADandPersonalMicrosoftAccount",
     }
 
@@ -85,10 +101,10 @@ def create_server_app_permission_setup_payload(server_app_id: str):
             "oauth2PermissionScopes": [
                 {
                     "id": "7b207263-0c4a-4127-a6fe-38ea8c8cd1a7",
-                    "adminConsentDisplayName": "Access Azure Search OpenAI Demo API",
-                    "adminConsentDescription": "Allows the app to access Azure Search OpenAI Demo API as the signed-in user.",
-                    "userConsentDisplayName": "Access Azure Search OpenAI Demo API",
-                    "userConsentDescription": "Allow the app to access Azure Search OpenAI Demo API on your behalf",
+                    "adminConsentDisplayName": "Access Azure Search OpenAI Chat API",
+                    "adminConsentDescription": "Allows the app to access Azure Search OpenAI Chat API as the signed-in user.",
+                    "userConsentDisplayName": "Access Azure Search OpenAI Chat API",
+                    "userConsentDescription": "Allow the app to access Azure Search OpenAI Chat API on your behalf",
                     "isEnabled": True,
                     "value": "access_as_user",
                     "type": "User",
@@ -106,9 +122,9 @@ def create_server_app_permission_setup_payload(server_app_id: str):
     }
 
 
-def create_client_app_payload(server_app_id: str, server_app_permission_setup_payload: Dict[str, Any]):
+def create_client_app_payload(server_app_id: str, server_app_permission_setup_payload: Dict[str, Any], identifier: int):
     return {
-        "displayName": "Azure Search OpenAI Demo Client App",
+        "displayName": f"Azure Search OpenAI Chat Client App {identifier}",
         "signInAudience": "AzureADandPersonalMicrosoftAccount",
         "web": {
             "redirectUris": ["http://localhost:50505/.auth/login/aad/callback"],
@@ -145,34 +161,36 @@ def create_server_app_known_client_application_payload(client_app_id: str):
 
 async def main():
     if not test_authentication_enabled():
-        print("Not setting up authentication...")
+        print("Not setting up authentication.")
         exit(0)
 
     print("Setting up authentication...")
     credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID"))
     auth_headers = await get_auth_headers(credential)
 
+    app_identifier = random_app_identifier()
     server_object_id, server_app_id, _ = await create_or_update_application_with_secret(
         auth_headers,
         app_id_env_var="AZURE_SERVER_APP_ID",
         app_secret_env_var="AZURE_SERVER_APP_SECRET",
-        app_payload=create_server_app_initial_payload(),
+        app_payload=create_server_app_initial_payload(app_identifier),
     )
-    print("Setup server application permissions...")
+    print("Setting up server application permissions...")
     server_app_permission_payload = create_server_app_permission_setup_payload(server_app_id)
     await update_application(auth_headers, object_id=server_object_id, app_payload=server_app_permission_payload)
     _, client_app_id, _ = await create_or_update_application_with_secret(
         auth_headers,
         app_id_env_var="AZURE_CLIENT_APP_ID",
         app_secret_env_var="AZURE_CLIENT_APP_SECRET",
-        app_payload=create_client_app_payload(server_app_id, server_app_permission_payload),
+        app_payload=create_client_app_payload(server_app_id, server_app_permission_payload, app_identifier),
     )
-    print("Setup server known client applications...")
+    print("Setting up server known client applications...")
     await update_application(
         auth_headers,
         object_id=server_object_id,
         app_payload=create_server_app_known_client_application_payload(client_app_id),
     )
+    print("Authentication setup complete.")
 
 
 if __name__ == "__main__":

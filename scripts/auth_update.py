@@ -13,7 +13,7 @@ from auth_common import (
 
 async def main():
     if not test_authentication_enabled():
-        print("Not updating authentication...")
+        print("Not updating authentication.")
         exit(0)
 
     credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID"))
@@ -24,7 +24,7 @@ async def main():
     if client_app_id:
         client_object_id = await get_application(auth_headers, client_app_id)
         if client_object_id:
-            print("Updating authentication...")
+            print("Updating client application redirect URIs...")
             # Redirect URIs need to be relative to the deployed application
             payload = {
                 "publicClient": {"redirectUris": []},
@@ -41,6 +41,7 @@ async def main():
                 },
             }
             await update_application(auth_headers, client_object_id, payload)
+            print("Application update complete.")
 
 
 if __name__ == "__main__":

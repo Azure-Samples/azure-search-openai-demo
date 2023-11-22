@@ -35,6 +35,9 @@ param use32BitWorkerProcess bool = false
 param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
 
+var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
+var allMsftAllowedOrigins = !(empty(appSettings.AZURE_CLIENT_APP_ID)) ? union(msftAllowedOrigins, ['https://login.microsoftonline.com/']) : msftAllowedOrigins
+
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
@@ -54,7 +57,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
       healthCheckPath: healthCheckPath
       cors: {
-        allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
+        allowedOrigins: union(allMsftAllowedOrigins, allowedOrigins)
       }
     }
     clientAffinityEnabled: clientAffinityEnabled

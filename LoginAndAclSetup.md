@@ -30,6 +30,14 @@ This guide demonstrates how to add an optional login and document level access c
 
 Two Azure AD apps must be registered in order to make the optional login and document level access control system work correctly. One app is for the client UI. The client UI is implemented as a [single page application](https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration). The other app is for the API server. The API server uses a [confidential client](https://learn.microsoft.com/azure/active-directory/develop/msal-client-applications) to call the [Microsoft Graph API](https://learn.microsoft.com/graph/use-the-api).
 
+### Automatic Setup
+
+The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
+
+1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
+1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
+2. Run `azd up` to deploy the app.
+
 ### Manual Setup
 
 The following instructions explain how to setup the two apps using the Azure Portal.
@@ -40,7 +48,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Select the Azure AD Service.
 * In the left hand menu, select **Application Registrations**.
 * Select **New Registration**.
-  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo API`.
+  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Chat API`.
   * Under **Supported account types**, select **Accounts in this organizational directory only**.
 * Select **Register** to create the application
 * In the app's registration screen, find the **Application (client) ID**.
@@ -48,7 +56,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Azure Active Directory (Azure AD) supports three types of credentials to authenticate an app using the [client credentials](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow): passwords (app secrets), certificates, and federated identity credentials. For a higher level of security, either [certificates](https://learn.microsoft.com/azure/active-directory/develop/howto-create-self-signed-certificate) or federated identity credentials are recommended. This sample currently uses an app secret for ease of provisioning.
 * Select **Certificates & secrets** in the left hand menu.
 * In the **Client secrets** section, select **New client secret**.
-  * Type a description, for example `Azure Search OpenAI Demo Key`.
+  * Type a description, for example `Azure Search OpenAI Chat Key`.
   * Select one of the available key durations.
   * The generated key value will be displayed after you select **Add**.
   * Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
@@ -64,10 +72,10 @@ The following instructions explain how to setup the two apps using the Azure Por
   * Fill in the values as indicated:
     * For **Scope name**, use **access_as_user**.
     * For **Who can consent?**, select **Admins and users**.
-    * For **Admin consent display name**, type **Access Azure Search OpenAI Demo API**.
-    * For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Demo API as the signed-in user.**.
-    * For **User consent display name**, type **Access Azure Search OpenAI Demo API**.
-    * For **User consent description**, type **Allow the app to access Azure Search OpenAI Demo API on your behalf**.
+    * For **Admin consent display name**, type **Access Azure Search OpenAI Chat API**.
+    * For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Chat API as the signed-in user.**.
+    * For **User consent display name**, type **Access Azure Search OpenAI Chat API**.
+    * For **User consent description**, type **Allow the app to access Azure Search OpenAI Chat API on your behalf**.
     * Leave **State** set to **Enabled**.
     * Select **Add scope** at the bottom to save the scope.
 * (Optional) Enable group claims. Include which Azure AD groups the user is part of as part of the login in the [optional claims](https://learn.microsoft.com/azure/active-directory/develop/optional-claims). The groups are used for [optional security filtering](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) in the search results.
@@ -83,7 +91,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Select the Azure AD Service.
 * In the left hand menu, select **Application Registrations**.
 * Select **New Registration**.
-  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo Web App`.
+  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Chat Web App`.
   * Under **Supported account types**, select **Accounts in this organizational directory only**.
   * Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
     * If you are running the sample locally, use `http://localhost:50505/redirect`.
@@ -97,7 +105,7 @@ The following instructions explain how to setup the two apps using the Azure Por
   * Select **Save**
 * In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram) to work.
   * Select **Add a permission**, and then **My APIs**.
-  * In the list of applications, select your server application **Azure Search OpenAI Demo API**
+  * In the list of applications, select your server application **Azure Search OpenAI Chat API**
   * Ensure **Delegated permissions** is selected.
   * In the **Select permissions** section, select the **access_as_user** permission
   * Select **Add permissions**.
@@ -185,7 +193,7 @@ The following environment variables are used to setup the optional login and doc
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
 * `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
-* `AZURE_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. This is set automatically by `azd up`.
+* `AZURE_AUTH_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control.
 * `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 * `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 * `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.

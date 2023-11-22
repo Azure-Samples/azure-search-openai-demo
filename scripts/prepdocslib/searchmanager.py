@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from azure.search.documents.indexes.models import (
     HnswParameters,
+    HnswVectorSearchAlgorithmConfiguration,
     PrioritizedFields,
     SearchableField,
     SearchField,
@@ -14,7 +15,8 @@ from azure.search.documents.indexes.models import (
     SemanticSettings,
     SimpleField,
     VectorSearch,
-    VectorSearchAlgorithmConfiguration,
+    VectorSearchAlgorithmKind,
+    VectorSearchProfile,
 )
 
 from .blobmanager import BlobManager
@@ -70,7 +72,7 @@ class SearchManager:
                     sortable=False,
                     facetable=False,
                     vector_search_dimensions=1536,
-                    vector_search_configuration="default",
+                    vector_search_profile="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
@@ -102,11 +104,19 @@ class SearchManager:
                     ]
                 ),
                 vector_search=VectorSearch(
-                    algorithm_configurations=[
-                        VectorSearchAlgorithmConfiguration(
-                            name="default", kind="hnsw", hnsw_parameters=HnswParameters(metric="cosine")
+                    algorithms=[
+                        HnswVectorSearchAlgorithmConfiguration(
+                            name="hnsw_config",
+                            kind=VectorSearchAlgorithmKind.HNSW,
+                            parameters=HnswParameters(metric="cosine"),
                         )
-                    ]
+                    ],
+                    profiles=[
+                        VectorSearchProfile(
+                            name="embedding_config",
+                            algorithm="hnsw_config",
+                        ),
+                    ],
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
