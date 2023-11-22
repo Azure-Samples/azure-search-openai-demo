@@ -16,6 +16,7 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import TheBottleLogo from "../../assets/thebottle_logo.png";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -235,7 +236,8 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(255, 255, 255, 1)"} aria-hidden="true" aria-label="Chat logo" />
+                            <img src="{TheBottleLogo}"></img>
+                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(0, 0, 0, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>Chat with „The Bottle“</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Fragen Sie etwas oder probieren Sie ein Beispiel aus</h2>
                             <ExampleList onExampleClicked={onExampleClicked} />
