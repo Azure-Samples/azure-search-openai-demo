@@ -17,7 +17,7 @@ from auth_common import (
 )
 
 
-async def create_application(auth_headers: Dict[str, str], app_payload: object) -> Tuple[str, str]:
+async def create_application(auth_headers: Dict[str, str], app_payload: Dict[str, Any]) -> Tuple[str, str]:
     async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
         async with session.post("https://graph.microsoft.com/v1.0/applications", json=app_payload) as response:
             if response.status != 201:
@@ -32,7 +32,6 @@ async def create_application(auth_headers: Dict[str, str], app_payload: object) 
         ) as response:
             if response.status != 201:
                 raise Exception(await response.json())
-            print(await response.json())
 
     return object_id, client_id
 
@@ -90,7 +89,7 @@ def random_app_identifier():
 def create_server_app_initial_payload(identifier: int):
     return {
         "displayName": f"Azure Search OpenAI Chat Server App {identifier}",
-        "signInAudience": "AzureADandPersonalMicrosoftAccount",
+        "signInAudience": "AzureADMyOrg",
     }
 
 
@@ -125,7 +124,7 @@ def create_server_app_permission_setup_payload(server_app_id: str):
 def create_client_app_payload(server_app_id: str, server_app_permission_setup_payload: Dict[str, Any], identifier: int):
     return {
         "displayName": f"Azure Search OpenAI Chat Client App {identifier}",
-        "signInAudience": "AzureADandPersonalMicrosoftAccount",
+        "signInAudience": "AzureADMyOrg",
         "web": {
             "redirectUris": ["http://localhost:50505/.auth/login/aad/callback"],
             "implicitGrantSettings": {"enableIdTokenIssuance": True},
