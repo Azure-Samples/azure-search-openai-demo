@@ -91,20 +91,18 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       allow: false
     }
   }
-}
 
-module config 'appservice-appsettings.bicep' = if (!empty(appSettings)) {
-  name: '${name}-appSettings'
-  params: {
-    name: appService.name
-    appSettings: union(appSettings,
-      {
-        SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
-        ENABLE_ORYX_BUILD: string(enableOryxBuild)
-      },
-      runtimeName == 'python' && appCommandLine == '' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
-      !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
-      !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
+  resource configAppSettings 'config' = if (!(empty(appSettings))) {
+    name: 'appsettings'
+    properties: union(appSettings,
+        {
+          SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
+          ENABLE_ORYX_BUILD: string(enableOryxBuild)
+        },
+        runtimeName == 'python' && appCommandLine == '' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
+        !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
+        !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {}
+    )
   }
 
   resource configAuth 'config' = if (!(empty(appSettings.AZURE_CLIENT_APP_ID))) {
