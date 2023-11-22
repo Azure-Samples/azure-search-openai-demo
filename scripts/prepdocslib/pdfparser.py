@@ -73,7 +73,7 @@ class DocumentAnalysisPdfParser(PdfParser):
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         if self.verbose:
-            print(f"Extracting text from '{content.name}' using Azure Form Recognizer")
+            print(f"Extracting text from '{content.name}' using Azure Document Intelligence")
 
         async with DocumentAnalysisClient(
             endpoint=self.endpoint, credential=self.credential, headers={"x-ms-useragent": USER_AGENT}
