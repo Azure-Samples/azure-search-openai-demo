@@ -122,10 +122,10 @@ class SearchManager:
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
         async with self.search_info.create_search_client() as search_client:
-            for batch in section_batches:
+            for batch_index, batch in enumerate(section_batches):
                 documents = [
                     {
-                        "id": f"{section.content.filename_to_id()}-page-{i}",
+                        "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
                         "content": section.split_page.text,
                         "category": section.category,
                         "sourcepage": BlobManager.sourcepage_from_file_page(
@@ -134,7 +134,7 @@ class SearchManager:
                         "sourcefile": section.content.filename(),
                         **section.content.acls,
                     }
-                    for i, section in enumerate(batch)
+                    for section_index, section in enumerate(batch)
                 ]
                 if self.embeddings:
                     embeddings = await self.embeddings.create_embeddings(
