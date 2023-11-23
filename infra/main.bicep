@@ -37,9 +37,9 @@ param storageSkuName string // Set in main.parameters.json
 param openAiHost string // Set in main.parameters.json
 
 param openAiServiceName string = ''
-param openAiResourceGroupName string = ''
+param openAiResourceGroupName string = 'westeurope'
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
+@allowed(['canadaeast','westeurope', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
 @metadata({
   azd: {
     type: 'location'

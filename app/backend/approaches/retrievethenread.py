@@ -17,9 +17,9 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-        "You are an intelligent assistant helping the companys employees with sales and matching bids and contracts with the correct people. "
+        "You are an intelligent assistant helping the company's employees with sales and matching bids and contracts with the correct people."
         + "You have access to CVs"
-        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
+        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'."
         + "Answer the following question using only the data provided in the sources below. "
         + "For tabular information return it as an html table. Do not return markdown format. "
         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
