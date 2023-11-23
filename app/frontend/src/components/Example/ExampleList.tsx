@@ -8,12 +8,9 @@ export type ExampleModel = {
 };
 
 const EXAMPLES: ExampleModel[] = [
-    {
-        text: "What is Cognifit?",
-        value: "What is Cognifit?"
-    },
-    { text: "How can I train my cognitive skills?", value: "How can I train my cognitive skills?" },
-    { text: "How can I subscribe?", value: "How can I subscribe?" }
+    { text: "About Cognifit", value: ">>Hello&AboutCognifit<<" },
+    { text: "I have a problem", value: ">>Hello&Problem<<" },
+    { text: "I want to integrate", value: ">>Hello&Integration<<" }
 ];
 
 interface Props {
