@@ -298,12 +298,15 @@ async def setup_clients():
 
 
 def create_app():
-    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
-        configure_azure_monitor()
-        AioHttpClientInstrumentor().instrument()
     app = Quart(__name__)
     app.register_blueprint(bp)
-    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+
+    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+        configure_azure_monitor()
+        # This tracks HTTP requests made by aiohttp:
+        AioHttpClientInstrumentor().instrument()
+        # This middleware tracks app route requests:
+        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely

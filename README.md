@@ -252,6 +252,12 @@ To inspect the performance of chat requests, use the "Drill into Samples" button
 
 To see any exceptions and server errors, navigate to the "Investigate -> Failures" blade and use the filtering tools to locate a specific exception. You can see Python stack traces on the right-hand side.
 
+You can also see chart summaries on a dashboard by running the following command:
+
+```shell
+azd monitor
+```
+
 ### Enabling authentication
 
 By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data.  You can require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
