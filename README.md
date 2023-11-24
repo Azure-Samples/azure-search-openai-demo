@@ -17,10 +17,10 @@ urlFragment: azure-search-openai-demo
 
 # ChatGPT + Enterprise data with Azure OpenAI and AI Search
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > As of November 15, 2023, Azure Cognitive Search has been renamed to Azure AI Search.
 
-### Announcing [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one in [**Python**](https://aka.ms/azai/py/code). Learn more at  https://aka.ms/azai. 
+### Announcing [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one in [**Python**](https://aka.ms/azai/py/code). Learn more at  https://aka.ms/azai.
 
 ## Table of Contents
 
@@ -37,12 +37,13 @@ urlFragment: azure-search-openai-demo
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
-  - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
   - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
+- [Monitoring with Application Insights](#monitoring-with-application-insights)
+- [Customizing the UI and data](#customizing-the-ui-and-data)
 - [Productionizing](#productionizing)
 - [Resources](#resources)
   - [Note](#note)
@@ -64,7 +65,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * Explores various options to help users evaluate the trustworthiness of responses with citations, tracking of source content, etc.
 * Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (AI Search)
 * Settings directly in the UX to tweak the behavior and experiment with options
-* Optional performance tracing and monitoring with Application Insights
+* Performance tracing and monitoring with Application Insights
 
 ![Chat screen](docs/chatscreen.png)
 
@@ -238,26 +239,6 @@ either you or they can follow these steps:
 
 ## Enabling optional features
 
-### Enabling Application Insights
-
-To enable Application Insights and the tracing of each request, along with the logging of errors, set the `AZURE_USE_APPLICATION_INSIGHTS` variable to true before running `azd up`
-
-1. Run `azd env set AZURE_USE_APPLICATION_INSIGHTS true`
-1. Run `azd up`
-
-To see the performance data, go to the Application Insights resource in your resource group, click on the "Investigate -> Performance" blade and navigate to any HTTP request to see the timing data.
-To inspect the performance of chat requests, use the "Drill into Samples" button to see end-to-end traces of all the API calls made for any chat request:
-
-![Tracing screenshot](docs/transaction-tracing.png)
-
-To see any exceptions and server errors, navigate to the "Investigate -> Failures" blade and use the filtering tools to locate a specific exception. You can see Python stack traces on the right-hand side.
-
-You can also see chart summaries on a dashboard by running the following command:
-
-```shell
-azd monitor
-```
-
 ### Enabling authentication
 
 By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data.  You can require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
@@ -299,6 +280,23 @@ Once in the web app:
 * Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
 * Explore citations and sources
 * Click on "settings" to try different options, tweak prompts, etc.
+
+## Monitoring with Application Insights
+
+By default, deployed apps use Application Insights for the tracing of each request, along with the logging of errors.
+
+To see the performance data, go to the Application Insights resource in your resource group, click on the "Investigate -> Performance" blade and navigate to any HTTP request to see the timing data.
+To inspect the performance of chat requests, use the "Drill into Samples" button to see end-to-end traces of all the API calls made for any chat request:
+
+![Tracing screenshot](docs/transaction-tracing.png)
+
+To see any exceptions and server errors, navigate to the "Investigate -> Failures" blade and use the filtering tools to locate a specific exception. You can see Python stack traces on the right-hand side.
+
+You can also see chart summaries on a dashboard by running the following command:
+
+```shell
+azd monitor
+```
 
 ## Customizing the UI and data
 
