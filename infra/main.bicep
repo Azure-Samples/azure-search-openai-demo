@@ -122,7 +122,7 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
 }
 
 
-module applicationInsightsDashboard 'backend-dashboard.bicep' = {
+module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicationInsights) {
   name: 'application-insights-dashboard'
   scope: resourceGroup
   params: {
