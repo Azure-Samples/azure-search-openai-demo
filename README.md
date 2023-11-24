@@ -37,12 +37,13 @@ urlFragment: azure-search-openai-demo
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
-  - [Enabling Application Insights](#enabling-application-insights)
   - [Enabling authentication](#enabling-authentication)
   - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
   - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
+- [Monitoring with Application Insights](#monitoring-with-application-insights)
+- [Customizing the UI and data](#customizing-the-ui-and-data)
 - [Productionizing](#productionizing)
 - [Resources](#resources)
   - [Note](#note)
@@ -280,8 +281,7 @@ Once in the web app:
 * Explore citations and sources
 * Click on "settings" to try different options, tweak prompts, etc.
 
-
-### Monitoring with Application Insights
+## Monitoring with Application Insights
 
 By default, deployed apps use Application Insights for the tracing of each request, along with the logging of errors.
 
