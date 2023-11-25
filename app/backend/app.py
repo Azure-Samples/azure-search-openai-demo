@@ -238,7 +238,6 @@ async def setup_clients():
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
         token_cache_path=TOKEN_CACHE_PATH,
-        deployed_to_azure=os.getenv("WEBSITE_HOSTNAME") is not None,
     )
 
     # Set up clients for AI Search and Storage

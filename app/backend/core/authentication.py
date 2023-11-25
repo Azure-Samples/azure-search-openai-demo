@@ -34,7 +34,6 @@ class AuthenticationHelper:
         tenant_id: Optional[str],
         require_access_control: bool = False,
         token_cache_path: Optional[str] = None,
-        deployed_to_azure: bool = False,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -59,7 +58,6 @@ class AuthenticationHelper:
                 authority=self.authority,
                 client_credential=server_app_secret,
                 token_cache=PersistedTokenCache(persistence),
-                azure_region=ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY if deployed_to_azure else None,
             )
         else:
             self.require_access_control = False
