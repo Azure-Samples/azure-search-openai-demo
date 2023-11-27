@@ -91,7 +91,7 @@ hypercorn==0.15.0
     # via quart
 hyperframe==6.0.1
     # via h2
-idna==3.4
+idna==3.6
     # via
     #   requests
     #   yarl
