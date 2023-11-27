@@ -13,7 +13,7 @@ async-timeout==4.0.3
 attrs==23.1.0
     # via aiohttp
 azure-ai-formrecognizer==3.3.2
-    # via -r requirements.in
+    # via -r scripts/requirements.in
 azure-common==1.1.28
     # via
     #   azure-ai-formrecognizer
@@ -27,15 +27,15 @@ azure-core==1.29.5
     #   azure-storage-file-datalake
     #   msrest
 azure-identity==1.15.0
-    # via -r requirements.in
+    # via -r scripts/requirements.in
 azure-search-documents==11.4.0b6
-    # via -r requirements.in
+    # via -r scripts/requirements.in
 azure-storage-blob==12.19.0
     # via
-    #   -r requirements.in
+    #   -r scripts/requirements.in
     #   azure-storage-file-datalake
 azure-storage-file-datalake==12.14.0
-    # via -r requirements.in
+    # via -r scripts/requirements.in
 certifi==2023.7.22
     # via
     #   msrest
@@ -88,7 +88,9 @@ numpy==1.26.1
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==0.28.1
-    # via -r requirements.in
+    # via
+    #   -r scripts/requirements.in
+    #   openai
 openpyxl==3.1.2
     # via openai
 pandas==2.1.2
@@ -100,9 +102,11 @@ portalocker==2.8.2
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
-pypdf==3.17.0
-    # via -r requirements.in
+    # via
+    #   msal
+    #   pyjwt
+pypdf==3.17.1
+    # via -r scripts/requirements.in
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
@@ -125,9 +129,9 @@ six==1.16.0
     #   isodate
     #   python-dateutil
 tenacity==8.2.3
-    # via -r requirements.in
+    # via -r scripts/requirements.in
 tiktoken==0.5.1
-    # via -r requirements.in
+    # via -r scripts/requirements.in
 tqdm==4.66.1
     # via openai
 types-pytz==2023.3.1.1
