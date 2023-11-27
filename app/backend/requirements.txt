@@ -35,7 +35,7 @@ azure-identity==1.15.0
     # via -r requirements.in
 azure-monitor-opentelemetry==1.1.0
     # via -r requirements.in
-azure-monitor-opentelemetry-exporter==1.0.0b18
+azure-monitor-opentelemetry-exporter==1.0.0b19
     # via azure-monitor-opentelemetry
 azure-search-documents==11.4.0b6
     # via -r requirements.in
