@@ -6,7 +6,7 @@ from typing import Any, AsyncGenerator, Optional, Union
 import aiohttp
 import openai
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.models import QueryType, RawVectorQuery
+from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
@@ -143,7 +143,7 @@ If you cannot generate a search query, return just the number 0.
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         # If retrieval mode includes vectors, compute an embedding for the query
-        vectors = []
+        vectors: list[VectorQuery] = []
         if has_vector:
             embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
             embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=query_text)
