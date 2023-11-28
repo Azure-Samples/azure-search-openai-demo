@@ -92,6 +92,8 @@ var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
 
+var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
+
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
@@ -197,8 +199,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_CLIENT_APP_ID: clientAppId
       AZURE_CLIENT_APP_SECRET: clientAppSecret
       AZURE_TENANT_ID: tenantId
-      AZURE_AUTH_TENANT_ID: authTenantId
-      AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${authTenantId}/v2.0'
+      AZURE_AUTH_TENANT_ID: tenantIdForAuth
+      AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }

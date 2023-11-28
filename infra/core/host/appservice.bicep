@@ -107,19 +107,6 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     }
   }
 
-  resource configAppSettings 'config' = if (!(empty(appSettings))) {
-    name: 'appsettings'
-    properties: union(appSettings,
-        {
-          SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
-          ENABLE_ORYX_BUILD: string(enableOryxBuild)
-        },
-        runtimeName == 'python' && appCommandLine == '' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
-        !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
-        !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {}
-    )
-  }
-
   resource configAuth 'config' = if (!(empty(appSettings.AZURE_CLIENT_APP_ID))) {
     name: 'authsettingsV2'
     properties: {
