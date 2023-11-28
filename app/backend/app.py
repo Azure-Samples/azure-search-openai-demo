@@ -13,6 +13,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -121,8 +122,8 @@ async def ask():
     request_json = await request.get_json()
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
+        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         approach = current_app.config[CONFIG_ASK_APPROACH]
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
@@ -151,8 +152,8 @@ async def chat():
     request_json = await request.get_json()
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
+        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         approach = current_app.config[CONFIG_CHAT_APPROACH]
         result = await approach.run(
             request_json["messages"],
@@ -230,8 +231,24 @@ async def setup_clients():
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
+    # Set up clients for AI Search and Storage
+    search_client = SearchClient(
+        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        index_name=AZURE_SEARCH_INDEX,
+        credential=azure_credential,
+    )
+    search_index_client = SearchIndexClient(
+        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        credential=azure_credential,
+    )
+    blob_client = BlobServiceClient(
+        account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
+    )
+    blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
+        search_index=await search_index_client.get_index(AZURE_SEARCH_INDEX),
         use_authentication=AZURE_USE_AUTHENTICATION,
         server_app_id=AZURE_SERVER_APP_ID,
         server_app_secret=AZURE_SERVER_APP_SECRET,
@@ -239,17 +256,6 @@ async def setup_clients():
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
     )
-
-    # Set up clients for AI Search and Storage
-    search_client = SearchClient(
-        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-        index_name=AZURE_SEARCH_INDEX,
-        credential=azure_credential,
-    )
-    blob_client = BlobServiceClient(
-        account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
-    )
-    blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
     if OPENAI_HOST == "azure":

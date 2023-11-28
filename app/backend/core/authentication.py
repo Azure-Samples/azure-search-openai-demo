@@ -5,6 +5,7 @@ import logging
 from typing import Any, Optional
 
 import aiohttp
+from azure.search.documents.indexes.models import SearchIndex
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
 
@@ -21,6 +22,7 @@ class AuthenticationHelper:
 
     def __init__(
         self,
+        search_index: SearchIndex,
         use_authentication: bool,
         server_app_id: Optional[str],
         server_app_secret: Optional[str],
@@ -40,8 +42,11 @@ class AuthenticationHelper:
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
+            field_names = [field.name for field in search_index.fields]
+            self.has_auth_fields = "oids" in field_names and "groups" in field_names
         else:
             self.require_access_control = False
+            self.has_auth_fields = False
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
@@ -167,6 +172,10 @@ class AuthenticationHelper:
     async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str, Any]:
         if not self.use_authentication:
             return {}
+        if not self.has_auth_fields:
+            raise AuthError(
+                error="oids and groups must be defined in the search index to use authentication", status_code=400
+            )
         try:
             # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
             # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
