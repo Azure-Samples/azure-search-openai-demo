@@ -5,16 +5,16 @@ videos = {
     "1": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ],
             "malePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ]
         },
         "maleBot": {
@@ -35,16 +35,16 @@ videos = {
     "2": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ],
             "malePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ]
         },
         "maleBot": {
@@ -65,16 +65,16 @@ videos = {
     "3": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ],
             "malePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ]
         },
         "maleBot": {
@@ -95,16 +95,16 @@ videos = {
     "4": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ],
             "malePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ]
         },
         "maleBot": {
@@ -125,16 +125,16 @@ videos = {
     "5": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ],
             "malePatient": [
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
-                "https://player.vimeo.com/video/886020323",
+                "https://player.vimeo.com/video/889224838",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
+                "https://player.vimeo.com/video/889220943",
             ]
         },
         "maleBot": {
