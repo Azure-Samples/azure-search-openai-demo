@@ -2,7 +2,7 @@ from typing import Any, AsyncGenerator, Optional, Union
 
 import openai
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.models import QueryType
+from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
@@ -78,12 +78,12 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         filter = self.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
+        vectors: list[VectorQuery] = []
         if has_vector:
             embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
             embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=q)
             query_vector = embedding["data"][0]["embedding"]
-        else:
-            query_vector = None
+            vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         query_text = q if has_text else ""
@@ -99,18 +99,14 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 semantic_configuration_name="default",
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                vector=query_vector,
-                top_k=50 if query_vector else None,
-                vector_fields="embedding" if query_vector else None,
+                vector_queries=vectors,
             )
         else:
             r = await self.search_client.search(
                 query_text,
                 filter=filter,
                 top=top,
-                vector=query_vector,
-                top_k=50 if query_vector else None,
-                vector_fields="embedding" if query_vector else None,
+                vector_queries=vectors,
             )
         if use_semantic_captions:
             results = [
