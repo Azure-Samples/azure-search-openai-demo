@@ -60,6 +60,10 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
+colorama==0.4.6
+    # via
+    #   click
+    #   tqdm
 cryptography==41.0.5
     # via
     #   azure-identity
@@ -70,6 +74,8 @@ deprecated==1.2.14
     # via opentelemetry-api
 et-xmlfile==1.1.0
     # via openpyxl
+exceptiongroup==1.2.0
+    # via taskgroup
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.0
@@ -121,9 +127,7 @@ msal==1.25.0
     #   azure-identity
     #   msal-extensions
 msal-extensions==1.0.0
-    # via
-    #   -r requirements.in
-    #   azure-identity
+    # via azure-identity
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
 multidict==6.0.4
@@ -247,6 +251,8 @@ python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
     # via pandas
+pywin32==306
+    # via portalocker
 quart==0.19.3
     # via
     #   -r requirements.in
@@ -270,17 +276,23 @@ six==1.16.0
     #   azure-core
     #   isodate
     #   python-dateutil
+taskgroup==0.0.0a4
+    # via hypercorn
 tiktoken==0.5.1
     # via -r requirements.in
+tomli==2.0.1
+    # via hypercorn
 tqdm==4.66.1
     # via openai
 types-pytz==2023.3.1.1
     # via pandas-stubs
 typing-extensions==4.8.0
     # via
+    #   asgiref
     #   azure-core
     #   azure-storage-blob
     #   opentelemetry-sdk
+    #   uvicorn
 tzdata==2023.3
     # via pandas
 urllib3==2.0.7

@@ -26,7 +26,6 @@ python_version = 3.9
 
 [[tool.mypy.overrides]]
 module = [
-    "msal.*",
-    "msal_extensions.*",
+    "msal.*"
 ]
 ignore_missing_imports = true

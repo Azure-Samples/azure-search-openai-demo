@@ -12,4 +12,3 @@ opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 msal
-msal-extensions

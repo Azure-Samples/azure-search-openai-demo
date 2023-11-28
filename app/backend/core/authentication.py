@@ -2,17 +2,11 @@
 
 import json
 import logging
-import os
-from tempfile import TemporaryDirectory
 from typing import Any, Optional
 
 import aiohttp
 from msal import ConfidentialClientApplication
-from msal_extensions import (
-    FilePersistence,
-    PersistedTokenCache,
-    build_encrypted_persistence,
-)
+from msal.token_cache import TokenCache
 
 
 # AuthError is raised when the authentication token sent by the client UI cannot be parsed or there is an authentication error accessing the graph API
@@ -33,7 +27,6 @@ class AuthenticationHelper:
         client_app_id: Optional[str],
         tenant_id: Optional[str],
         require_access_control: bool = False,
-        token_cache_path: Optional[str] = None,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -44,20 +37,8 @@ class AuthenticationHelper:
 
         if self.use_authentication:
             self.require_access_control = require_access_control
-            self.token_cache_path = token_cache_path
-            if not self.token_cache_path:
-                self.temporary_directory = TemporaryDirectory()
-                self.token_cache_path = os.path.join(self.temporary_directory.name, "token_cache.bin")
-            try:
-                persistence = build_encrypted_persistence(location=self.token_cache_path)
-            except Exception:
-                logging.exception("Encryption unavailable. Opting in to plain text.")
-                persistence = FilePersistence(location=self.token_cache_path)
             self.confidential_client = ConfidentialClientApplication(
-                server_app_id,
-                authority=self.authority,
-                client_credential=server_app_secret,
-                token_cache=PersistedTokenCache(persistence),
+                server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
             self.require_access_control = False
