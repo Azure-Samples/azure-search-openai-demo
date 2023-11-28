@@ -168,9 +168,7 @@ If you cannot generate a search query, return just the number 0.
                 vector_queries=vectors,
             )
         else:
-            r = await self.search_client.search(
-                query_text, filter=filter, top=top, vector_queries=vectors, vector_filter_mode="preFilter"
-            )
+            r = await self.search_client.search(query_text, filter=filter, top=top, vector_queries=vectors)
         if use_semantic_captions:
             results = [
                 doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))

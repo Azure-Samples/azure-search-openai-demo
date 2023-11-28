@@ -107,7 +107,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 filter=filter,
                 top=top,
                 vector_queries=vectors,
-                vector_filter_mode="preFilter",
             )
         if use_semantic_captions:
             results = [
