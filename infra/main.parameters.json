@@ -78,7 +78,7 @@
       "value": "${OPENAI_ORGANIZATION}"
     },
     "useApplicationInsights": {
-      "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
+      "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
     },
     "useAuthentication": {
       "value": "${AZURE_USE_AUTHENTICATION=false}"

@@ -68,6 +68,18 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
 
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
 
+  resource configAppSettings 'config' = {
+    name: 'appsettings'
+    properties: union(appSettings,
+      {
+        SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
+        ENABLE_ORYX_BUILD: string(enableOryxBuild)
+      },
+      runtimeName == 'python' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
+      !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
+      !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
+  }
+
   resource configLogs 'config' = {
     name: 'logs'
     properties: {
@@ -76,6 +88,9 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       failedRequestsTracing: { enabled: true }
       httpLogs: { fileSystem: { enabled: true, retentionInDays: 1, retentionInMb: 35 } }
     }
+    dependsOn: [
+      configAppSettings
+    ]
   }
 
   resource basicPublishingCredentialsPoliciesFtp 'basicPublishingCredentialsPolicies' = {
