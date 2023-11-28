@@ -34,6 +34,7 @@ const Chat = () => {
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isWritingWords, setIsWritingWords] = useState<boolean>(false);
     const [isStreaming, setIsStreaming] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
 
@@ -43,6 +44,8 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+
+    const [lastAnswer, setLastAnswer] = useState<ChatAppResponse | undefined>(undefined);
 
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
@@ -64,6 +67,16 @@ const Chat = () => {
                 }, 33);
             });
         };
+
+        async function* asyncWordGenerator(str: string, delay: number) {
+            const words = str.split(' ');
+            for (const word of words) {
+                // Wait for the delay, then yield the word
+                await new Promise(resolve => setTimeout(resolve, delay));
+                yield word;
+            }
+        }
+
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
@@ -72,7 +85,18 @@ const Chat = () => {
                     askResponse = event;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
-                    await updateState(event["choices"][0]["delta"]["content"]);
+                    setIsWritingWords(true);
+                    const sentence = event["choices"][0]["delta"]["content"];
+                    const delay = 33
+                    let isFirst = true;
+                    for await (let word of asyncWordGenerator(sentence, delay)) {
+                        if (!isFirst) {
+                            word = " " + word;
+                        }
+                        await updateState(word);
+                        isFirst = false;
+                    }
+                    setIsWritingWords(false);
                 }
             }
         } finally {
@@ -305,7 +329,7 @@ const Chat = () => {
                         <QuestionInput
                             clearOnSend
                             placeholder="כיצד אני יכול לעזור לך?"
-                            disabled={isLoading}
+                            disabled={isLoading || isWritingWords}
                             onSend={question => makeApiRequest(question)}
                         />
                     </div>
