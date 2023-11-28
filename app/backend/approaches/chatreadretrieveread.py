@@ -166,7 +166,6 @@ If you cannot generate a search query, return just the number 0.
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
                 vector_queries=vectors,
-                vector_filter_mode="preFilter",
             )
         else:
             r = await self.search_client.search(

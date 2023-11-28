@@ -100,7 +100,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
                 vector_queries=vectors,
-                vector_filter_mode="preFilter",
             )
         else:
             r = await self.search_client.search(
