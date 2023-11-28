@@ -9,6 +9,7 @@ from typing import AsyncGenerator
 
 import aiohttp
 import openai
+from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
@@ -39,8 +40,16 @@ CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
+ERROR_MESSAGE = """The app encountered an error processing your request.
+If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
+Error type: {error_type}
+"""
+ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
 
 bp = Blueprint("routes", __name__, static_folder="static")
+# Fix Windows registry issue with mimetypes
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
 
 
 @bp.route("/")
@@ -69,9 +78,18 @@ async def assets(path):
 # *** NOTE *** this assumes that the content files are public, or at least that all users of the app
 # can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
-async def content_file(path):
+async def content_file(path: str):
+    # Remove page number from path, filename-1.txt -> filename.txt
+    if path.find("#page=") > 0:
+        path_parts = path.rsplit("#page=", 1)
+        path = path_parts[0]
+    logging.info("Opening file %s at page %s", path)
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
-    blob = await blob_container_client.get_blob_client(path).download_blob()
+    try:
+        blob = await blob_container_client.get_blob_client(path).download_blob()
+    except ResourceNotFoundError:
+        logging.exception("Path not found: %s", path)
+        abort(404)
     if not blob.properties or not blob.properties.has_key("content_settings"):
         abort(404)
     mime_type = blob.properties["content_settings"]["content_type"]
@@ -81,6 +99,19 @@ async def content_file(path):
     await blob.readinto(blob_file)
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
+
+
+def error_dict(error: Exception) -> dict:
+    if isinstance(error, openai.error.InvalidRequestError) and error.code == "content_filter":
+        return {"error": ERROR_MESSAGE_FILTER}
+    return {"error": ERROR_MESSAGE.format(error_type=type(error))}
+
+
+def error_response(error: Exception, route: str, status_code: int = 500):
+    logging.exception("Exception in %s: %s", route, error)
+    if isinstance(error, openai.error.InvalidRequestError) and error.code == "content_filter":
+        status_code = 400
+    return jsonify(error_dict(error)), status_code
 
 
 @bp.route("/ask", methods=["POST"])
@@ -100,14 +131,17 @@ async def ask():
                 request_json["messages"], context=context, session_state=request_json.get("session_state")
             )
         return jsonify(r)
-    except Exception as e:
-        logging.exception("Exception in /ask")
-        return jsonify({"error": str(e)}), 500
+    except Exception as error:
+        return error_response(error, "/ask")
 
 
 async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
-    async for event in r:
-        yield json.dumps(event, ensure_ascii=False) + "\n"
+    try:
+        async for event in r:
+            yield json.dumps(event, ensure_ascii=False) + "\n"
+    except Exception as e:
+        logging.exception("Exception while generating response stream: %s", e)
+        yield json.dumps(error_dict(e))
 
 
 @bp.route("/chat", methods=["POST"])
@@ -131,10 +165,10 @@ async def chat():
         else:
             response = await make_response(format_as_ndjson(result))
             response.timeout = None  # type: ignore
+            response.mimetype = "application/json-lines"
             return response
-    except Exception as e:
-        logging.exception("Exception in /chat")
-        return jsonify({"error": str(e)}), 500
+    except Exception as error:
+        return error_response(error, "/chat")
 
 
 # Send MSAL.js settings to the client UI
@@ -188,7 +222,7 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
 
-    # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
+    # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
@@ -204,7 +238,7 @@ async def setup_clients():
         token_cache_path=TOKEN_CACHE_PATH,
     )
 
-    # Set up clients for Cognitive Search and Storage
+    # Set up clients for AI Search and Storage
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,
@@ -264,12 +298,15 @@ async def setup_clients():
 
 
 def create_app():
-    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
-        configure_azure_monitor()
-        AioHttpClientInstrumentor().instrument()
     app = Quart(__name__)
     app.register_blueprint(bp)
-    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+
+    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+        configure_azure_monitor()
+        # This tracks HTTP requests made by aiohttp:
+        AioHttpClientInstrumentor().instrument()
+        # This middleware tracks app route requests:
+        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely

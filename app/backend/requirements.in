@@ -1,11 +1,11 @@
 azure-identity
 quart
 quart-cors
-openai[datalib]
+openai[datalib]==0.28.1
 tiktoken
-azure-search-documents==11.4.0b6
+azure-search-documents==11.4.0b11
 azure-storage-blob
-uvicorn[standard]
+uvicorn
 aiohttp
 azure-monitor-opentelemetry
 opentelemetry-instrumentation-asgi

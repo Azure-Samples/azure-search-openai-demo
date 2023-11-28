@@ -108,8 +108,18 @@ playwright install --with-deps
 Run the tests:
 
 ```
-python3 -m pytest tests/e2e.py
+python3 -m pytest tests/e2e.py --tracing=retain-on-failure
 ```
+
+When a failure happens, the trace zip will be saved in the test-results folder.
+You can view that using the Playwright CLI:
+
+```
+playwright show-trace test-results/<trace-zip>
+```
+
+You can also use the online trace viewer at https://trace.playwright.dev/
+
 
 ## <a name="style"></a> Code Style
 
@@ -135,3 +145,5 @@ Run `black` to format a file:
 ```
 python3 -m black <path-to-file>
 ```
+
+If you followed the steps above to install the pre-commit hooks, then you can just wait for those hooks to run `ruff` and `black` for you.

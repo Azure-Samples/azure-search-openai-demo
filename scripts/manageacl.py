@@ -174,17 +174,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--search-service",
         required=True,
-        help="Name of the Azure Cognitive Search service where content should be indexed (must exist already)",
+        help="Name of the Azure AI Search service where content should be indexed (must exist already)",
     )
     parser.add_argument(
         "--index",
         required=True,
-        help="Name of the Azure Cognitive Search index where content should be indexed (will be created if it doesn't exist)",
+        help="Name of the Azure AI Search index where content should be indexed (will be created if it doesn't exist)",
     )
     parser.add_argument(
         "--search-key",
         required=False,
-        help="Optional. Use this Azure Cognitive Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument("--acl-type", required=False, choices=["oids", "groups"], help="Optional. Type of ACL")
     parser.add_argument(

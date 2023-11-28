@@ -1,7 +1,9 @@
 import json
+import logging
 import os
 from unittest import mock
 
+import openai
 import pytest
 import quart.testing.app
 
@@ -43,6 +45,42 @@ async def test_ask_request_must_be_json(client):
     assert response.status_code == 415
     result = await response.get_json()
     assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_ask_handle_exception(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert "Exception in /ask: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(
+            side_effect=openai.error.InvalidRequestError("The response was filtered", "prompt", code="content_filter")
+        ),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+    )
+    assert response.status_code == 400
+    result = await response.get_json()
+    assert "Exception in /ask: The response was filtered" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
@@ -141,6 +179,77 @@ async def test_chat_request_must_be_json(client):
     assert response.status_code == 415
     result = await response.get_json()
     assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert "Exception in /chat: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        mock.Mock(
+            side_effect=openai.error.InvalidRequestError("The response was filtered", "prompt", code="content_filter")
+        ),
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+    )
+    assert response.status_code == 400
+    result = await response.get_json()
+    assert "Exception in /chat: The response was filtered" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "openai.ChatCompletion.acreate", mock.Mock(side_effect=ZeroDivisionError("something bad happened"))
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}], "stream": True},
+    )
+    assert response.status_code == 200
+    assert "Exception while generating response stream: something bad happened" in caplog.text
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
+async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "openai.ChatCompletion.acreate",
+        mock.Mock(
+            side_effect=openai.error.InvalidRequestError("The response was filtered", "prompt", code="content_filter")
+        ),
+    )
+
+    response = await client.post(
+        "/chat",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}], "stream": True},
+    )
+    assert response.status_code == 200
+    assert "Exception while generating response stream: The response was filtered" in caplog.text
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
 
 
 @pytest.mark.asyncio
@@ -326,19 +435,55 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_ask_session_state_persists(client, snapshot):
+async def test_chat_with_history(client, snapshot):
     response = await client.post(
-        "/ask",
+        "/chat",
         json={
-            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "messages": [
+                {"content": "What happens in a performance review?", "role": "user"},
+                {
+                    "content": "During a performance review, employees will receive feedback on their performance over the past year, including both successes and areas for improvement. The feedback will be provided by the employee's supervisor and is intended to help the employee develop and grow in their role [employee_handbook-3.pdf]. The review is a two-way dialogue between the employee and their manager, so employees are encouraged to be honest and open during the process [employee_handbook-3.pdf]. The employee will also have the opportunity to discuss their goals and objectives for the upcoming year [employee_handbook-3.pdf]. A written summary of the performance review will be provided to the employee, which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                    "role": "assistant",
+                },
+                {"content": "Is dental covered?", "role": "user"},
+            ],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
-            "session_state": {"conversation_id": 1234},
         },
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["choices"][0]["context"]["thoughts"].find("performance review") != -1
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_with_long_history(client, snapshot, caplog):
+    """This test makes sure that the history is truncated to max tokens minus 1024."""
+    caplog.set_level(logging.DEBUG)
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [
+                {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
+                {
+                    "role": "assistant",
+                    "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]"
+                    * 150,
+                },  # 3900 tokens
+                {"role": "user", "content": "What does a product manager do?"},  # 10 tokens
+            ],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
+    assert result["choices"][0]["context"]["thoughts"].find("Is there a dress code?") == -1
+    assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -351,7 +496,6 @@ async def test_chat_session_state_persists(client, snapshot):
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
-            "stream": False,
             "session_state": {"conversation_id": 1234},
         },
     )
@@ -379,6 +523,41 @@ async def test_chat_stream_session_state_persists(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_followup(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"suggest_followup_questions": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["choices"][0]["context"]["followup_questions"][0] == "What is the capital of Spain?"
+
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_followup(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "stream": True,
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"suggest_followup_questions": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
 async def test_format_as_ndjson():
     async def gen():
         yield {"a": "I ❤️ 🐍"}
@@ -386,3 +565,24 @@ async def test_format_as_ndjson():
 
     result = [line async for line in app.format_as_ndjson(gen())]
     assert result == ['{"a": "I ❤️ 🐍"}\n', '{"b": "Newlines inside \\n strings are fine"}\n']
+
+
+@pytest.mark.asyncio
+async def test_format_as_ndjson_error(caplog):
+    async def gen():
+        if False:
+            yield {"a": "I ❤️ 🐍"}
+        raise ZeroDivisionError("something bad happened")
+
+    result = [line async for line in app.format_as_ndjson(gen())]
+    assert "Exception while generating response stream: something bad happened\n" in caplog.text
+    assert result == [
+        '{"error": "The app encountered an error processing your request.\\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\\nError type: <class \'ZeroDivisionError\'>\\n"}'
+    ]
+
+
+def test_error_dict(caplog):
+    error = app.error_dict(Exception("test"))
+    assert error == {
+        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\nError type: <class 'Exception'>\n"
+    }

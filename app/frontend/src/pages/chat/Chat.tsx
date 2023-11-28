@@ -52,12 +52,9 @@ const Chat = () => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: ChatAppResponse = { ...askResponse,
-                        choices: [{ ...askResponse.choices[0],
-                                    message: { content: answer,
-                                        role: askResponse.choices[0].message.role
-                                    } }
-                                ]
+                    const latestResponse: ChatAppResponse = {
+                        ...askResponse,
+                        choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
@@ -73,17 +70,19 @@ const Chat = () => {
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
                     await updateState(event["choices"][0]["delta"]["content"]);
+                } else if (event["choices"] && event["choices"][0]["context"]) {
+                    // Update context with new keys from latest event
+                    askResponse.choices[0].context = { ...askResponse.choices[0].context, ...event["choices"][0]["context"] };
+                } else if (event["error"]) {
+                    throw Error(event["error"]);
                 }
             }
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: ChatAppResponse = { ...askResponse,
-            choices: [{ ...askResponse.choices[0],
-                        message: { content: answer,
-                            role: askResponse.choices[0].message.role
-                        } }
-                    ]
+        const fullResponse: ChatAppResponse = {
+            ...askResponse,
+            choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
         };
         return fullResponse;
     };
@@ -101,10 +100,10 @@ const Chat = () => {
         const token = client ? await getToken(client) : undefined;
 
         try {
-            const messages: ResponseMessage[] = answers.flatMap(a => ([
+            const messages: ResponseMessage[] = answers.flatMap(a => [
                 { content: a[0], role: "user" },
-                { content: a[1].choices[0].message.content, role: "bot" }
-            ]));
+                { content: a[1].choices[0].message.content, role: "assistant" }
+            ]);
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: question, role: "user" }],

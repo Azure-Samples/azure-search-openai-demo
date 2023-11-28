@@ -1,1 +1,1 @@
-export * from "./LoginButton"
+export * from "./LoginButton";
