@@ -14,7 +14,15 @@ import app
 def fake_response(http_code):
     return Response(http_code, request=Request(method="get", url="https://foo.bar/"))
 
-filtered_response=BadRequestError(message="Filtered response", body="Bad request", response=Response(400, request=Request(method="get", url="https://foo.bar/"), json={"error": {"code": "content_filter"}}))
+
+filtered_response = BadRequestError(
+    message="Filtered response",
+    body="Bad request",
+    response=Response(
+        400, request=Request(method="get", url="https://foo.bar/"), json={"error": {"code": "content_filter"}}
+    ),
+)
+
 
 @pytest.mark.asyncio
 async def test_missing_env_vars():
@@ -74,9 +82,7 @@ async def test_ask_handle_exception(client, monkeypatch, snapshot, caplog):
 async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
         "approaches.retrievethenread.RetrieveThenReadApproach.run",
-        mock.Mock(
-            side_effect=filtered_response
-        ),
+        mock.Mock(side_effect=filtered_response),
     )
 
     response = await client.post(
@@ -208,9 +214,7 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 async def test_chat_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
         "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
-        mock.Mock(
-            side_effect=filtered_response
-        ),
+        mock.Mock(side_effect=filtered_response),
     )
 
     response = await client.post(
@@ -243,9 +247,7 @@ async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, ca
 async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
         "openai.ChatCompletion.acreate",
-        mock.Mock(
-            side_effect=filtered_response
-        ),
+        mock.Mock(side_effect=filtered_response),
     )
 
     response = await client.post(

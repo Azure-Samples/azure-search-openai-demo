@@ -36,7 +36,7 @@ class OpenAIEmbeddings(ABC):
         self.open_ai_model_name = open_ai_model_name
         self.disable_batch = disable_batch
         self.verbose = verbose
-    
+
     async def create_client(self) -> AsyncOpenAI:
         raise NotImplementedError
 
@@ -144,7 +144,8 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
             azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
             azure_deployment=self.open_ai_deployment,
             api_key=await self.wrap_credential(),
-            api_version="2023-05-15")
+            api_version="2023-05-15",
+        )
 
     async def wrap_credential(self) -> str:
         if isinstance(self.credential, AzureKeyCredential):
@@ -178,6 +179,4 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
         self.organization = organization
 
     async def create_client(self) -> AsyncOpenAI:
-        return AsyncOpenAI(
-            api_key=self.credential,
-            organization=self.organization)
+        return AsyncOpenAI(api_key=self.credential, organization=self.organization)

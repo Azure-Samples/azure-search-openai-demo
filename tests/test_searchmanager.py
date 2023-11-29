@@ -201,20 +201,19 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
             )
         )
 
-
     documents_uploaded = []
 
     async def mock_upload_documents(self, documents):
         documents_uploaded.extend(documents)
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
-    embeddings=AzureOpenAIEmbeddingService(
-            open_ai_service="x",
-            open_ai_deployment="x",
-            open_ai_model_name="text-ada-003",
-            credential=AzureKeyCredential("test"),
-            disable_batch=True,
-        )
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name="text-ada-003",
+        credential=AzureKeyCredential("test"),
+        disable_batch=True,
+    )
     monkeypatch.setattr(embeddings, "create_client", mock_create_client)
     manager = SearchManager(
         search_info,

@@ -39,6 +39,7 @@ def mock_openai_embedding(monkeypatch):
 
     return patch
 
+
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
@@ -93,11 +94,13 @@ def mock_openai_chatcompletion(monkeypatch):
             return ChatCompletion(
                 object="chat.completion",
                 choices=[
-                    Choice(message=ChatCompletionMessage(role="assistant", content=answer), finish_reason='stop', index=0)
+                    Choice(
+                        message=ChatCompletionMessage(role="assistant", content=answer), finish_reason="stop", index=0
+                    )
                 ],
-                id='test-123',
+                id="test-123",
                 created=0,
-                model='test-model',
+                model="test-model",
             )
 
     def patch(openai_client):
