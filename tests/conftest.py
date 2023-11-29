@@ -61,9 +61,17 @@ def mock_openai_embedding(monkeypatch):
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
         def __init__(self, answer: str):
+            chunk_id = "test-id"
+            model = "gpt-35-turbo"
             self.responses = [
-                {"object": "chat.completion.chunk", "choices": []},
-                {"object": "chat.completion.chunk", "choices": [{"delta": {"role": "assistant"}}]},
+                {"object": "chat.completion.chunk", "choices": [], "id": chunk_id, "model": model, "created": 1},
+                {
+                    "object": "chat.completion.chunk",
+                    "choices": [{"delta": {"role": "assistant"}, "index": 0, "finish_reason": None}],
+                    "id": chunk_id,
+                    "model": model,
+                    "created": 1,
+                },
             ]
             # Split at << to simulate chunked responses
             if answer.find("<<") > -1:
@@ -71,20 +79,37 @@ def mock_openai_chatcompletion(monkeypatch):
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"role": "assistant", "content": parts[0] + "<<"}}],
+                        "choices": [
+                            {
+                                "delta": {"role": "assistant", "content": parts[0] + "<<"},
+                                "index": 0,
+                                "finish_reason": None,
+                            }
+                        ],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"role": "assistant", "content": parts[1]}}],
+                        "choices": [
+                            {"delta": {"role": "assistant", "content": parts[1]}, "index": 0, "finish_reason": None}
+                        ],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
             else:
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"content": answer}}],
+                        "choices": [{"delta": {"content": answer}, "index": 0, "finish_reason": None}],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
 
@@ -93,7 +118,7 @@ def mock_openai_chatcompletion(monkeypatch):
 
         async def __anext__(self):
             if self.responses:
-                return ChatCompletionChunk.construct(self.responses.pop(0))
+                return ChatCompletionChunk.model_validate(self.responses.pop(0))
             else:
                 raise StopAsyncIteration
 
