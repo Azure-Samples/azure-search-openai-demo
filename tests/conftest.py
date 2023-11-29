@@ -4,16 +4,19 @@ import os
 from collections import namedtuple
 from unittest import mock
 
-from openai.types.chat.chat_completion import ChatCompletion, Choice, ChatCompletionMessage
 import aiohttp
 import azure.storage.filedatalake
 import azure.storage.filedatalake.aio
 import msal
-import openai
 import pytest
 import pytest_asyncio
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.aio import SearchClient
+from openai.types.chat.chat_completion import (
+    ChatCompletion,
+    ChatCompletionMessage,
+    Choice,
+)
 
 import app
 from core.authentication import AuthenticationHelper

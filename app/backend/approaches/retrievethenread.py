@@ -1,10 +1,9 @@
 from typing import Any, AsyncGenerator, Optional, Union
 
-import openai
-from openai import AsyncOpenAI, AsyncAzureOpenAI
-from openai.types.chat import ChatCompletion
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
+from openai import AsyncAzureOpenAI, AsyncOpenAI
+from openai.types.chat import ChatCompletion
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder

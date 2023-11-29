@@ -3,10 +3,10 @@ import logging
 import re
 from typing import Any, AsyncGenerator, Coroutine, Optional, Union
 
-from openai import AsyncOpenAI, AsyncAzureOpenAI, AsyncStream
-from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
+from openai import AsyncAzureOpenAI, AsyncOpenAI, AsyncStream
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder

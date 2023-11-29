@@ -3,10 +3,10 @@ import logging
 import os
 from unittest import mock
 
-from openai import BadRequestError
-from httpx import Response, Request
 import pytest
 import quart.testing.app
+from httpx import Request, Response
+from openai import BadRequestError
 
 import app
 

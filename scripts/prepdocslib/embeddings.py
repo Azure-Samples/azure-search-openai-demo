@@ -2,10 +2,10 @@ import time
 from abc import ABC
 from typing import List, Optional, Union
 
-from openai import AsyncOpenAI, AsyncAzureOpenAI, RateLimitError
 import tiktoken
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError
 from tenacity import (
     AsyncRetrying,
     retry_if_exception_type,

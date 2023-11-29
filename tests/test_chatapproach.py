@@ -1,7 +1,8 @@
 import json
 
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from openai.types.chat import ChatCompletion
+
+from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 
 
 def test_get_search_query():

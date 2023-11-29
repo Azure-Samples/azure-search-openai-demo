@@ -6,15 +6,15 @@ import os
 from pathlib import Path
 from typing import AsyncGenerator
 
-from openai import AsyncOpenAI, AsyncAzureOpenAI, BadRequestError
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
+from openai import AsyncAzureOpenAI, AsyncOpenAI, BadRequestError
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from quart import (
     Blueprint,
     Quart,
