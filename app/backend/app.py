@@ -233,6 +233,9 @@ async def setup_clients():
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
+    openai_chat_client: AsyncOpenAI
+    openai_embeddings_client: AsyncOpenAI
+
     if OPENAI_HOST == "azure":
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
         # Store on app.config for later use inside requests

@@ -3,7 +3,6 @@ from typing import Any, AsyncGenerator, Optional, Union
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletion
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
@@ -130,13 +129,15 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("user", self.question)
 
         messages = message_builder.messages
-        chat_completion = (await self.openai_chat_client.chat.completions.create(
-            model=self.chatgpt_model,
-            messages=messages, # type: ignore
-            temperature=overrides.get("temperature") or 0.3,
-            max_tokens=1024,
-            n=1,
-        )).model_dump()
+        chat_completion = (
+            await self.openai_chat_client.chat.completions.create(
+                model=self.chatgpt_model,
+                messages=messages,  # type: ignore
+                temperature=overrides.get("temperature") or 0.3,
+                max_tokens=1024,
+                n=1,
+            )
+        ).model_dump()
 
         extra_info = {
             "data_points": results,

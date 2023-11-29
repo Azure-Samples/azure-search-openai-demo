@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Any, AsyncGenerator, Coroutine, Optional, Union
+from typing import Any, AsyncGenerator, Coroutine, Literal, Optional, Union, overload
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
@@ -83,6 +83,26 @@ If you cannot generate a search query, return just the number 0.
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
+    @overload
+    async def run_until_final_call(
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: Literal[False],
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]:
+        ...
+
+    @overload
+    async def run_until_final_call(
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: Literal[True],
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, AsyncStream[ChatCompletionChunk]]]:
+        ...
+
     async def run_until_final_call(
         self,
         history: list[dict[str, str]],
@@ -127,8 +147,8 @@ If you cannot generate a search query, return just the number 0.
         )
 
         chat_completion: ChatCompletion = await self.openai_chat_client.chat.completions.create(
+            messages=messages,  # type: ignore
             model=self.chatgpt_model,
-            messages=messages,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
@@ -143,7 +163,9 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding = await self.openai_embeddings_client.embeddings.create(model=self.embedding_model, input=query_text)
+            embedding = await self.openai_embeddings_client.embeddings.create(
+                model=self.embedding_model, input=query_text
+            )
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -214,7 +236,7 @@ If you cannot generate a search query, return just the number 0.
 
         chat_coroutine = self.openai_chat_client.chat.completions.create(
             model=self.chatgpt_model,
-            messages=messages,
+            messages=messages,  # type: ignore
             temperature=overrides.get("temperature") or 0.7,
             max_tokens=response_token_limit,
             n=1,
@@ -232,7 +254,8 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=False
         )
-        chat_resp = (await chat_coroutine).model_dump()
+        chat_completion_response: ChatCompletion = await chat_coroutine
+        chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
         chat_resp["choices"][0]["context"] = extra_info
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])
@@ -266,9 +289,9 @@ If you cannot generate a search query, return just the number 0.
 
         followup_questions_started = False
         followup_content = ""
-        async for event in await chat_coroutine:
+        async for event_chunk in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
-            event = event.model_dump() # Convert pydantic model to dict
+            event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = event["choices"][0]["delta"].get("content", "")
