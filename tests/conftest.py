@@ -4,6 +4,7 @@ import os
 from collections import namedtuple
 from unittest import mock
 
+from openai.types.chat import ChatCompletion
 import aiohttp
 import azure.storage.filedatalake
 import azure.storage.filedatalake.aio
@@ -34,7 +35,7 @@ def mock_openai_embedding(monkeypatch):
             assert kwargs.get("deployment_id") is not None
         return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
 
-    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+    monkeypatch.setattr(openai.embeddings, "create", mock_acreate)
 
 
 @pytest.fixture
@@ -92,11 +93,11 @@ def mock_openai_chatcompletion(monkeypatch):
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:
-            return openai.util.convert_to_openai_object(
+            return ChatCompletion.model_validate(
                 {"object": "chat.completion", "choices": [{"message": {"role": "assistant", "content": answer}}]}
             )
 
-    monkeypatch.setattr(openai.ChatCompletion, "acreate", mock_acreate)
+    monkeypatch.setattr(openai.chat.completions, "create", mock_acreate)
 
 
 @pytest.fixture
