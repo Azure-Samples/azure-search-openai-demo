@@ -16,6 +16,9 @@ class AuthError(Exception):
         self.error = error
         self.status_code = status_code
 
+    def __str__(self) -> str:
+        return self.error
+
 
 class AuthenticationHelper:
     scope: str = "https://graph.microsoft.com/.default"
@@ -119,6 +122,11 @@ class AuthenticationHelper:
         use_oid_security_filter = self.require_access_control or overrides.get("use_oid_security_filter")
         use_groups_security_filter = self.require_access_control or overrides.get("use_groups_security_filter")
 
+        if use_oid_security_filter or use_oid_security_filter and not self.has_auth_fields:
+            raise AuthError(
+                error="oids and groups must be defined in the search index to use authentication", status_code=400
+            )
+
         oid_security_filter = (
             "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid") or "") if use_oid_security_filter else None
         )
@@ -172,10 +180,6 @@ class AuthenticationHelper:
     async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str, Any]:
         if not self.use_authentication:
             return {}
-        if not self.has_auth_fields:
-            raise AuthError(
-                error="oids and groups must be defined in the search index to use authentication", status_code=400
-            )
         try:
             # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
             # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information

@@ -22,6 +22,9 @@ param kind string = 'app,linux'
 
 // Microsoft.Web/sites/config
 param allowedOrigins array = []
+param additionalScopes array = []
+param additionalAllowedAudiences array = []
+param allowedApplications array = []
 param alwaysOn bool = true
 param appCommandLine string = ''
 @secure()
@@ -39,6 +42,12 @@ param healthCheckPath string = ''
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
 var allMsftAllowedOrigins = !(empty(appSettings.AZURE_CLIENT_APP_ID)) ? union(msftAllowedOrigins, ['https://login.microsoftonline.com/']) : msftAllowedOrigins
+
+var requiredScopes = ['openid', 'profile', 'email', 'offline_access', 'api://${appSettings.AZURE_SERVER_APP_ID}/access_as_user']
+var scopes = join(union(requiredScopes, additionalScopes), ' ')
+
+var requiredAudiences = ['api://${appSettings.AZURE_SERVER_APP_ID}']
+var allowedAudiences = union(requiredAudiences, additionalAllowedAudiences)
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
@@ -124,12 +133,12 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
             openIdIssuer: appSettings.AZURE_AUTHENTICATION_ISSUER_URI
           }
           login: {
-            loginParameters: ['scope=openid profile email offline_access api://${appSettings.AZURE_SERVER_APP_ID}/access_as_user']
+            loginParameters: ['scope=${scopes}']
           }
           validation: {
-            allowedAudiences: ['api://${appSettings.AZURE_SERVER_APP_ID}']
+            allowedAudiences: allowedAudiences
             defaultAuthorizationPolicy: {
-              allowedApplications: []
+              allowedApplications: allowedApplications
             }
           }
         }

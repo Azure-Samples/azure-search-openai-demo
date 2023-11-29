@@ -7,6 +7,7 @@ param customSubDomainName string = name
 param deployments array = []
 param kind string = 'OpenAI'
 param publicNetworkAccess string = 'Enabled'
+param networkAcls object = { defaultAction: 'allow' }
 param sku object = {
   name: 'S0'
 }
@@ -19,6 +20,7 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    networkAcls: networkAcls
   }
   sku: sku
 }

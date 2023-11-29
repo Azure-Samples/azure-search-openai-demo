@@ -164,7 +164,7 @@ async def main():
         exit(0)
 
     print("Setting up authentication...")
-    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID"))
+    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID", os.getenv("AZURE_TENANT_ID")))
     auth_headers = await get_auth_headers(credential)
 
     app_identifier = random_app_identifier()

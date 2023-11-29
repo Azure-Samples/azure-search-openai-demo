@@ -16,7 +16,7 @@ async def main():
         print("Not updating authentication.")
         exit(0)
 
-    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID"))
+    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID", os.getenv("AZURE_TENANT_ID")))
     auth_headers = await get_auth_headers(credential)
 
     uri = os.getenv("BACKEND_URI")
