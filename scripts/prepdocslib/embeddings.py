@@ -92,7 +92,7 @@ class OpenAIEmbeddings(ABC):
             ):
                 with attempt:
                     emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
-                    embeddings.extend([data["embedding"] for data in emb_response["data"]])
+                    embeddings.extend([data.embedding for data in emb_response.data])
                     if self.verbose:
                         print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
 
@@ -109,7 +109,7 @@ class OpenAIEmbeddings(ABC):
             with attempt:
                 emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text)
 
-        return emb_response["data"][0]["embedding"]
+        return emb_response.data[0].embedding
 
     async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
         if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
