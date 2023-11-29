@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 from unittest import mock
 
-from openai.types.chat import ChatCompletion
+from openai.types.chat.chat_completion import ChatCompletion, Choice, ChatCompletionMessage
 import aiohttp
 import azure.storage.filedatalake
 import azure.storage.filedatalake.aio
@@ -29,14 +29,12 @@ class MockAzureCredential(AsyncTokenCredential):
 @pytest.fixture
 def mock_openai_embedding(monkeypatch):
     async def mock_acreate(*args, **kwargs):
-        if openai.api_type == "openai":
-            assert kwargs.get("deployment_id") is None
-        else:
-            assert kwargs.get("deployment_id") is not None
         return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
 
-    monkeypatch.setattr(openai.embeddings, "create", mock_acreate)
+    def patch(openai_client):
+        monkeypatch.setattr(openai_client.embeddings, "create", mock_acreate)
 
+    return patch
 
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
@@ -79,10 +77,6 @@ def mock_openai_chatcompletion(monkeypatch):
                 raise StopAsyncIteration
 
     async def mock_acreate(*args, **kwargs):
-        if openai.api_type == "openai":
-            assert kwargs.get("deployment_id") is None
-        else:
-            assert kwargs.get("deployment_id") is not None
         messages = kwargs["messages"]
         if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
@@ -93,11 +87,20 @@ def mock_openai_chatcompletion(monkeypatch):
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:
-            return ChatCompletion.model_validate(
-                {"object": "chat.completion", "choices": [{"message": {"role": "assistant", "content": answer}}]}
+            return ChatCompletion(
+                object="chat.completion",
+                choices=[
+                    Choice(message=ChatCompletionMessage(role="assistant", content=answer), finish_reason='stop', index=0)
+                ],
+                id='test-123',
+                created=0,
+                model='test-model',
             )
 
-    monkeypatch.setattr(openai.chat.completions, "create", mock_acreate)
+    def patch(openai_client):
+        monkeypatch.setattr(openai_client.chat.completions, "create", mock_acreate)
+
+    return patch
 
 
 @pytest.fixture
@@ -210,7 +213,8 @@ async def client(monkeypatch, mock_env, mock_openai_chatcompletion, mock_openai_
 
     async with quart_app.test_app() as test_app:
         quart_app.config.update({"TESTING": True})
-
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CHAT_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_EMBEDDINGS_CLIENT])
         yield test_app.test_client()
 
 
@@ -238,6 +242,8 @@ async def auth_client(
 
         async with quart_app.test_app() as test_app:
             quart_app.config.update({"TESTING": True})
+            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CHAT_CLIENT])
+            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_EMBEDDINGS_CLIENT])
             client = test_app.test_client()
             client.config = quart_app.config
 

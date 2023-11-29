@@ -32,13 +32,13 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
 
-CONFIG_OPENAI_TOKEN = "openai_token"
-CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACH = "ask_approach"
 CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
+CONFIG_OPENAI_CHAT_CLIENT = "openai_chat_client"
+CONFIG_OPENAI_EMBEDDINGS_CLIENT = "openai_embeddings_client"
 ERROR_MESSAGE = """The app encountered an error processing your request.
 If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
 Error type: {error_type}
@@ -236,20 +236,29 @@ async def setup_clients():
     if OPENAI_HOST == "azure":
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
         # Store on app.config for later use inside requests
-        openai_client = AsyncAzureOpenAI(
+        openai_chat_client = AsyncAzureOpenAI(
             api_version="2023-07-01-preview",
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
             organization=OPENAI_ORGANIZATION,
             azure_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         )
+        openai_embeddings_client = AsyncAzureOpenAI(
+            api_version="2023-07-01-preview",
+            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_ad_token_provider=token_provider,
+            organization=OPENAI_ORGANIZATION,
+            azure_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        )
     else:
-        openai_client = AsyncOpenAI(
+        openai_chat_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
         )
+        openai_embeddings_client = openai_chat_client
 
-    current_app.config[CONFIG_CREDENTIAL] = azure_credential
+    current_app.config[CONFIG_OPENAI_CHAT_CLIENT] = openai_chat_client
+    current_app.config[CONFIG_OPENAI_EMBEDDINGS_CLIENT] = openai_embeddings_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
@@ -258,7 +267,8 @@ async def setup_clients():
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client,
-        openai_client,
+        openai_chat_client,
+        openai_embeddings_client,
         OPENAI_CHATGPT_MODEL,
         AZURE_OPENAI_EMB_DEPLOYMENT,
         OPENAI_EMB_MODEL,
@@ -270,7 +280,8 @@ async def setup_clients():
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client,
-        openai_client,
+        openai_chat_client,
+        openai_embeddings_client,
         OPENAI_CHATGPT_MODEL,
         AZURE_OPENAI_EMB_DEPLOYMENT,
         OPENAI_EMB_MODEL,

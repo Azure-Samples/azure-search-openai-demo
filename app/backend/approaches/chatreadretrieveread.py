@@ -3,8 +3,8 @@ import logging
 import re
 from typing import Any, AsyncGenerator, Coroutine, Optional, Union
 
-from openai import AsyncOpenAI, AsyncAzureOpenAI
-from openai.types.chat import ChatCompletion
+from openai import AsyncOpenAI, AsyncAzureOpenAI, AsyncStream
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 
@@ -61,7 +61,8 @@ If you cannot generate a search query, return just the number 0.
     def __init__(
         self,
         search_client: SearchClient,
-        openai_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
+        openai_chat_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
+        openai_embeddings_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
         chatgpt_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
@@ -71,7 +72,8 @@ If you cannot generate a search query, return just the number 0.
         query_speller: str,
     ):
         self.search_client = search_client
-        self.openai_client = openai_client
+        self.openai_chat_client = openai_chat_client
+        self.openai_embeddings_client = openai_embeddings_client
         self.chatgpt_model = chatgpt_model
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
@@ -87,7 +89,7 @@ If you cannot generate a search query, return just the number 0.
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]:
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion | AsyncStream[ChatCompletionChunk]]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -124,7 +126,7 @@ If you cannot generate a search query, return just the number 0.
             few_shots=self.query_prompt_few_shots,
         )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+        chat_completion: ChatCompletion = await self.openai_chat_client.chat.completions.create(
             model=self.chatgpt_model,
             messages=messages,
             temperature=0.0,
@@ -141,7 +143,7 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding = await self.openai_client.embeddings.create(model=self.embedding_model, input=query_text)
+            embedding = await self.openai_embeddings_client.embeddings.create(model=self.embedding_model, input=query_text)
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -210,7 +212,7 @@ If you cannot generate a search query, return just the number 0.
             + msg_to_display.replace("\n", "<br>"),
         }
 
-        chat_coroutine = self.openai_client.chat.completions.create(
+        chat_coroutine = self.openai_chat_client.chat.completions.create(
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,
@@ -230,7 +232,7 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=False
         )
-        chat_resp = dict(await chat_coroutine)
+        chat_resp = (await chat_coroutine).model_dump()
         chat_resp["choices"][0]["context"] = extra_info
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])
@@ -266,6 +268,7 @@ If you cannot generate a search query, return just the number 0.
         followup_content = ""
         async for event in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
+            event = event.model_dump() # Convert pydantic model to dict
             if event["choices"]:
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = event["choices"][0]["delta"].get("content", "")
