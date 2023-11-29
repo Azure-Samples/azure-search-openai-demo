@@ -132,7 +132,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         messages = message_builder.messages
         chat_completion: ChatCompletion = await self.openai_chat_client.chat.completions.create(
             model=self.chatgpt_model,
-            messages=messages,
+            messages=messages, # type: ignore
             temperature=overrides.get("temperature") or 0.3,
             max_tokens=1024,
             n=1,

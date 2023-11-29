@@ -315,7 +315,7 @@ If you cannot generate a search query, return just the number 0.
         user_content: str,
         max_tokens: int,
         few_shots=[],
-    ) -> list:
+    ) -> list[dict[str, str]]:
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
