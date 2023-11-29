@@ -62,9 +62,9 @@ If you cannot generate a search query, return just the number 0.
         self,
         *,
         search_client: SearchClient,
-        openai_chat_client: AsyncOpenAI,
-        openai_embeddings_client: AsyncOpenAI,
+        openai_client: AsyncOpenAI,
         chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
@@ -73,9 +73,9 @@ If you cannot generate a search query, return just the number 0.
         query_speller: str,
     ):
         self.search_client = search_client
-        self.openai_chat_client = openai_chat_client
-        self.openai_embeddings_client = openai_embeddings_client
+        self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
@@ -116,7 +116,6 @@ If you cannot generate a search query, return just the number 0.
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
-
         original_user_query = history[-1]["content"]
         user_query_request = "Generate search query for: " + original_user_query
 
@@ -146,10 +145,10 @@ If you cannot generate a search query, return just the number 0.
             max_tokens=self.chatgpt_token_limit - len(user_query_request),
             few_shots=self.query_prompt_few_shots,
         )
-
-        chat_completion: ChatCompletion = await self.openai_chat_client.chat.completions.create(
+        chatgpt_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
+        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=messages,  # type: ignore
-            model=self.chatgpt_model,
+            model=chatgpt_model,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
@@ -164,9 +163,8 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding = await self.openai_embeddings_client.embeddings.create(
-                model=self.embedding_model, input=query_text
-            )
+            embedding_model = self.embedding_deployment if self.embedding_deployment else self.embedding_model
+            embedding = await self.openai_client.embeddings.create(model=embedding_model, input=query_text)
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -235,8 +233,8 @@ If you cannot generate a search query, return just the number 0.
             + msg_to_display.replace("\n", "<br>"),
         }
 
-        chat_coroutine = self.openai_chat_client.chat.completions.create(
-            model=self.chatgpt_model,
+        chat_coroutine = self.openai_client.chat.completions.create(
+            model=chatgpt_model,
             messages=messages,  # type: ignore
             temperature=overrides.get("temperature") or 0.7,
             max_tokens=response_token_limit,

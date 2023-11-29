@@ -41,9 +41,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self,
         *,
         search_client: SearchClient,
-        openai_chat_client: AsyncOpenAI,
-        openai_embeddings_client: AsyncOpenAI,
+        openai_client: AsyncOpenAI,
         chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
@@ -52,10 +52,10 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         query_speller: str,
     ):
         self.search_client = search_client
-        self.openai_chat_client = openai_chat_client
-        self.openai_embeddings_client = openai_embeddings_client
+        self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
@@ -77,11 +77,12 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
-
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding = await self.openai_embeddings_client.embeddings.create(model=self.embedding_model, input=q)
+            # Azure Open AI takes the deployment name as the model name
+            embedding_model = self.embedding_deployment if self.embedding_deployment else self.embedding_model
+            embedding = await self.openai_client.embeddings.create(model=embedding_model, input=q)
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -130,9 +131,11 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("user", self.question)
 
         messages = message_builder.messages
+        # Azure Open AI takes the deployment name as the model name
+        chat_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
         chat_completion = (
-            await self.openai_chat_client.chat.completions.create(
-                model=self.chatgpt_model,
+            await self.openai_client.chat.completions.create(
+                model=chat_model,
                 messages=messages,  # type: ignore
                 temperature=overrides.get("temperature") or 0.3,
                 max_tokens=1024,

@@ -233,35 +233,25 @@ async def setup_clients():
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
-    openai_chat_client: AsyncOpenAI
-    openai_embeddings_client: AsyncOpenAI
+    openai_client: AsyncOpenAI
 
     if OPENAI_HOST == "azure":
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
         # Store on app.config for later use inside requests
-        openai_chat_client = AsyncAzureOpenAI(
+        openai_client = AsyncAzureOpenAI(
             api_version="2023-07-01-preview",
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
             organization=OPENAI_ORGANIZATION,
-            azure_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        )
-        openai_embeddings_client = AsyncAzureOpenAI(
-            api_version="2023-07-01-preview",
-            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
-            azure_ad_token_provider=token_provider,
-            organization=OPENAI_ORGANIZATION,
-            azure_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         )
     else:
-        openai_chat_client = AsyncOpenAI(
+        openai_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
         )
-        openai_embeddings_client = openai_chat_client
 
-    current_app.config[CONFIG_OPENAI_CHAT_CLIENT] = openai_chat_client
-    current_app.config[CONFIG_OPENAI_EMBEDDINGS_CLIENT] = openai_embeddings_client
+    current_app.config[CONFIG_OPENAI_CHAT_CLIENT] = openai_client
+    current_app.config[CONFIG_OPENAI_EMBEDDINGS_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
@@ -270,11 +260,11 @@ async def setup_clients():
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client=search_client,
-        openai_chat_client=openai_chat_client,
-        openai_embeddings_client=openai_embeddings_client,
+        openai_client=openai_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
-        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -283,11 +273,11 @@ async def setup_clients():
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
-        openai_chat_client=openai_chat_client,
-        openai_embeddings_client=openai_embeddings_client,
+        openai_client=openai_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
-        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
