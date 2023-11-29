@@ -215,7 +215,7 @@ If you cannot generate a search query, return just the number 0.
             + msg_to_display.replace("\n", "<br>"),
         }
 
-        chat_coroutine = self.openai_client.chat.completions.acreate(
+        chat_coroutine = self.openai_client.chat.completions.create(
             **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
@@ -342,13 +342,13 @@ If you cannot generate a search query, return just the number 0.
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
-        if function_call := response_message.get("function_call"):
-            if function_call["name"] == "search_sources":
-                arg = json.loads(function_call["arguments"])
+        if function_call := response_message.function_call:
+            if function_call.name == "search_sources":
+                arg = json.loads(function_call.arguments)
                 search_query = arg.get("search_query", self.NO_RESPONSE)
                 if search_query != self.NO_RESPONSE:
                     return search_query
-        elif query_text := response_message.get("content"):
+        elif query_text := response_message.content:
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
         return user_query
