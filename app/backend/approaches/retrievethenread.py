@@ -130,13 +130,12 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("assistant", self.answer)
         message_builder.insert_message("user", self.question)
 
-        messages = message_builder.messages
         # Azure Open AI takes the deployment name as the model name
         chat_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
         chat_completion = (
             await self.openai_client.chat.completions.create(
                 model=chat_model,
-                messages=messages,  # type: ignore
+                messages=message_builder.messages,
                 temperature=overrides.get("temperature") or 0.3,
                 max_tokens=1024,
                 n=1,
@@ -146,7 +145,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         extra_info = {
             "data_points": results,
             "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
-            + "\n\n".join([str(message) for message in messages]),
+            + "\n\n".join([str(message) for message in message_builder.messages]),
         }
         chat_completion["choices"][0]["context"] = extra_info
         chat_completion["choices"][0]["session_state"] = session_state

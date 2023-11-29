@@ -6,7 +6,11 @@ from typing import Any, AsyncGenerator, Coroutine, Literal, Optional, Union, ove
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 from openai import AsyncOpenAI, AsyncStream
-from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+)
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
@@ -147,7 +151,7 @@ If you cannot generate a search query, return just the number 0.
         )
         chatgpt_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=messages,  # type: ignore
+            messages=messages, # type: ignore
             model=chatgpt_model,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
@@ -235,7 +239,7 @@ If you cannot generate a search query, return just the number 0.
 
         chat_coroutine = self.openai_client.chat.completions.create(
             model=chatgpt_model,
-            messages=messages,  # type: ignore
+            messages=messages,
             temperature=overrides.get("temperature") or 0.7,
             max_tokens=response_token_limit,
             n=1,
@@ -337,7 +341,7 @@ If you cannot generate a search query, return just the number 0.
         user_content: str,
         max_tokens: int,
         few_shots=[],
-    ) -> list[dict[str, str]]:
+    ) -> list[ChatCompletionMessageParam]:
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
@@ -347,7 +351,7 @@ If you cannot generate a search query, return just the number 0.
         append_index = len(few_shots) + 1
 
         message_builder.insert_message(self.USER, user_content, index=append_index)
-        total_token_count = message_builder.count_tokens_for_message(message_builder.messages[-1])
+        total_token_count = message_builder.count_tokens_for_message(dict(message_builder.messages[-1])) # type: ignore
 
         newest_to_oldest = list(reversed(history[:-1]))
         for message in newest_to_oldest:
