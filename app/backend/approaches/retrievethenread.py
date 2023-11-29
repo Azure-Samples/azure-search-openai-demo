@@ -43,7 +43,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self,
         search_client: SearchClient,
         openai_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
-        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
@@ -54,7 +53,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
     ):
         self.search_client = search_client
         self.openai_client = openai_client
-        self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
@@ -82,10 +80,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding_args = {}
-            if isinstance(self.openai_client, openai.AsyncAzureOpenAI):
-                embedding_args = {"deployment_id": self.embedding_deployment}
-            embedding = await self.openai_client.embeddings.create(**embedding_args, model=self.embedding_model, input=q)
+            embedding = await self.openai_client.embeddings.create(model=self.embedding_model, input=q)
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -134,11 +129,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("user", self.question)
 
         messages = message_builder.messages
-        chatgpt_args = {}
-        if isinstance(self.openai_client, openai.AsyncAzureOpenAI):
-            chatgpt_args = {"deployment_id": self.chatgpt_deployment}
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.3,

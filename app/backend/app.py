@@ -241,6 +241,7 @@ async def setup_clients():
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
             organization=OPENAI_ORGANIZATION,
+            azure_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         )
     else:
         openai_client = AsyncOpenAI(
@@ -258,7 +259,6 @@ async def setup_clients():
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client,
         openai_client,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         OPENAI_CHATGPT_MODEL,
         AZURE_OPENAI_EMB_DEPLOYMENT,
         OPENAI_EMB_MODEL,
@@ -271,7 +271,6 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client,
         openai_client,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         OPENAI_CHATGPT_MODEL,
         AZURE_OPENAI_EMB_DEPLOYMENT,
         OPENAI_EMB_MODEL,

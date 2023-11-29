@@ -62,7 +62,6 @@ If you cannot generate a search query, return just the number 0.
         self,
         search_client: SearchClient,
         openai_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
-        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
@@ -73,7 +72,6 @@ If you cannot generate a search query, return just the number 0.
     ):
         self.search_client = search_client
         self.openai_client = openai_client
-        self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
@@ -126,9 +124,7 @@ If you cannot generate a search query, return just the number 0.
             few_shots=self.query_prompt_few_shots,
         )
 
-        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if isinstance(self.openai_client, AsyncAzureOpenAI) else {}
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=0.0,
@@ -145,8 +141,7 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding_args = {"deployment_id": self.embedding_deployment} if isinstance(self.openai_client, AsyncAzureOpenAI) else {}
-            embedding = await self.openai_client.embeddings.create(**embedding_args, model=self.embedding_model, input=query_text)
+            embedding = await self.openai_client.embeddings.create(model=self.embedding_model, input=query_text)
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -216,7 +211,6 @@ If you cannot generate a search query, return just the number 0.
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(
-            **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,
