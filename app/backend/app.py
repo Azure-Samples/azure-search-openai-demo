@@ -11,7 +11,7 @@ from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
-from openai import AsyncAzureOpenAI, AsyncOpenAI, BadRequestError
+from openai import APIError, AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
@@ -101,14 +101,14 @@ async def content_file(path: str):
 
 
 def error_dict(error: Exception) -> dict:
-    if isinstance(error, BadRequestError) and error.code == "content_filter":
+    if isinstance(error, APIError) and error.code == "content_filter":
         return {"error": ERROR_MESSAGE_FILTER}
     return {"error": ERROR_MESSAGE.format(error_type=type(error))}
 
 
 def error_response(error: Exception, route: str, status_code: int = 500):
     logging.exception("Exception in %s: %s", route, error)
-    if isinstance(error, BadRequestError) and error.code == "content_filter":
+    if isinstance(error, APIError) and error.code == "content_filter":
         status_code = 400
     return jsonify(error_dict(error)), status_code
 

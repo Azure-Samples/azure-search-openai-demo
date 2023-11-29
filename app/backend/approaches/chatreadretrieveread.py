@@ -295,7 +295,7 @@ If you cannot generate a search query, return just the number 0.
             if event["choices"]:
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = event["choices"][0]["delta"].get("content", "")
-                if overrides.get("suggest_followup_questions") and "<<" in content:
+                if overrides.get("suggest_followup_questions") and content and "<<" in content:
                     followup_questions_started = True
                     earlier_content = content[: content.index("<<")]
                     if earlier_content:

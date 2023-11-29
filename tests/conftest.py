@@ -12,11 +12,13 @@ import pytest
 import pytest_asyncio
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.aio import SearchClient
+from openai.types import CreateEmbeddingResponse, Embedding
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from openai.types.chat.chat_completion import (
-    ChatCompletion,
     ChatCompletionMessage,
     Choice,
 )
+from openai.types.create_embedding_response import Usage
 
 import app
 from core.authentication import AuthenticationHelper
@@ -32,7 +34,22 @@ class MockAzureCredential(AsyncTokenCredential):
 @pytest.fixture
 def mock_openai_embedding(monkeypatch):
     async def mock_acreate(*args, **kwargs):
-        return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
+        return CreateEmbeddingResponse(
+            object="list",
+            data=[
+                Embedding(
+                    embedding=[
+                        0.0023064255,
+                        -0.009327292,
+                        -0.0028842222,
+                    ],
+                    index=0,
+                    object="embedding",
+                )
+            ],
+            model="text-embedding-ada-002",
+            usage=Usage(prompt_tokens=8, total_tokens=8),
+        )
 
     def patch(openai_client):
         monkeypatch.setattr(openai_client.embeddings, "create", mock_acreate)
@@ -76,7 +93,7 @@ def mock_openai_chatcompletion(monkeypatch):
 
         async def __anext__(self):
             if self.responses:
-                return self.responses.pop(0)
+                return ChatCompletionChunk.construct(self.responses.pop(0))
             else:
                 raise StopAsyncIteration
 
