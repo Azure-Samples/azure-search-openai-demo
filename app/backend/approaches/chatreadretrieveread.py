@@ -60,6 +60,7 @@ If you cannot generate a search query, return just the number 0.
 
     def __init__(
         self,
+        *,
         search_client: SearchClient,
         openai_chat_client: AsyncOpenAI,
         openai_embeddings_client: AsyncOpenAI,

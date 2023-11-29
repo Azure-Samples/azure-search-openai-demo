@@ -39,6 +39,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
     def __init__(
         self,
+        *,
         search_client: SearchClient,
         openai_chat_client: AsyncOpenAI,
         openai_embeddings_client: AsyncOpenAI,

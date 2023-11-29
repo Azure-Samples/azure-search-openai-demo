@@ -269,29 +269,29 @@ async def setup_clients():
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
-        search_client,
-        openai_chat_client,
-        openai_embeddings_client,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
+        search_client=search_client,
+        openai_chat_client=openai_chat_client,
+        openai_embeddings_client=openai_embeddings_client,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
-        search_client,
-        openai_chat_client,
-        openai_embeddings_client,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
+        search_client=search_client,
+        openai_chat_client=openai_chat_client,
+        openai_embeddings_client=openai_embeddings_client,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
 
