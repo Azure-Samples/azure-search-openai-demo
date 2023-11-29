@@ -60,7 +60,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==41.0.5
+cryptography==41.0.6
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -138,7 +138,9 @@ numpy==1.26.1
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==0.28.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai
 openpyxl==3.1.2
     # via openai
 opentelemetry-api==1.21.0
@@ -242,7 +244,9 @@ priority==2.0.0
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
