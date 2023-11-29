@@ -46,9 +46,9 @@ urlFragment: azure-search-openai-demo
 - [Customizing the UI and data](#customizing-the-ui-and-data)
 - [Productionizing](#productionizing)
 - [Resources](#resources)
-  - [Note](#note)
   - [FAQ](#faq)
   - [Troubleshooting](#troubleshooting)
+  - [Getting help](#getting-help)
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
@@ -68,6 +68,8 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * Performance tracing and monitoring with Application Insights
 
 ![Chat screen](docs/chatscreen.png)
+
+[📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
 
 ## Azure account requirements
 
@@ -310,10 +312,12 @@ to production. Read through our [productionizing guide](docs/productionizing.md)
 
 ## Resources
 
-* [Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and AI Search](https://aka.ms/entgptsearchblog)
-* [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
-* [Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
-* [Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
+* [📖 Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and AI Search](https://aka.ms/entgptsearchblog)
+* [📖 Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
+* [📖 Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
+* [📖 Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
+* [📖 Access Control in Generative AI applications with Azure Cognitive Search](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/access-control-in-generative-ai-applications-with-azure/ba-p/3956408)
+* [📺 Quickly build and deploy OpenAI apps on Azure, infused with your own data](https://www.youtube.com/watch?v=j8i-OM5kwiY)
 
 ## Clean up
 
@@ -325,9 +329,6 @@ To clean up all the resources created by this sample:
 
 The resource group and all the resources will be deleted.
 
-### Note
-
->Note: The PDF documents used in this demo contain information generated using a language model (Azure OpenAI Service). The information contained in these documents is only for demonstration purposes and does not reflect the opinions or beliefs of Microsoft. Microsoft makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the information contained in this document. All rights reserved to Microsoft.
 
 ### FAQ
 
@@ -430,3 +431,16 @@ Here are the most common failure scenarios and solutions:
 1. You see `CERTIFICATE_VERIFY_FAILED` when the `prepdocs.py` script runs. That's typically due to incorrect SSL certificates setup on your machine. Try the suggestions in this [StackOverflow answer](https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394).
 
 1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult these [tips for debugging App Service app deployments](http://blog.pamelafox.org/2023/06/tips-for-debugging-flask-deployments-to.html) or watch [this video about downloading App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54). Please file an issue if the logs don't help you resolve the error.
+
+### Getting help
+
+This is a sample built to demonstrate the capabilities of modern Generative AI apps and how they can be built in Azure.
+For help with deploying this sample, please post in [GitHub Discussions](/discussions). If you're a Microsoft employee, you can also post in [our Teams channel](https://teams.microsoft.com/l/channel/19%3Ac7853529a79d463e881976b33c0539ba%40thread.tacv2/azure-search-openai-demo?groupId=a6c8ef6b-46f0-44bd-8d49-49e3b6eb3509&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47).
+If you believe you've run into a bug with this sample, please post in [GitHub Issues](/issues).
+
+This repository is supported by the maintainers, _not_ by Microsoft Support, so please use the support mechanisms described above,
+and we will do our best to help you out.
+
+### Note
+
+>Note: The PDF documents used in this demo contain information generated using a language model (Azure OpenAI Service). The information contained in these documents is only for demonstration purposes and does not reflect the opinions or beliefs of Microsoft. Microsoft makes no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the information contained in this document. All rights reserved to Microsoft.
