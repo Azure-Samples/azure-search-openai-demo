@@ -9,6 +9,7 @@ uvicorn
 aiohttp
 azure-monitor-opentelemetry
 opentelemetry-instrumentation-asgi
+opentelemetry-instrumentation-httpx
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 msal

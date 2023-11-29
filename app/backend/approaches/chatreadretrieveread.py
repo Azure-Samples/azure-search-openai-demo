@@ -3,8 +3,6 @@ import logging
 import re
 from typing import Any, AsyncGenerator, Coroutine, Optional, Union
 
-import aiohttp
-import openai
 from openai import AsyncOpenAI, AsyncAzureOpenAI
 from openai.types.chat import ChatCompletion
 from azure.search.documents.aio import SearchClient
