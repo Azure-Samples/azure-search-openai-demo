@@ -2,7 +2,7 @@ from typing import Any, AsyncGenerator, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
-from openai import AsyncAzureOpenAI, AsyncOpenAI
+from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion
 
 from approaches.approach import Approach
@@ -41,8 +41,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
     def __init__(
         self,
         search_client: SearchClient,
-        openai_chat_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
-        openai_embeddings_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
+        openai_chat_client: AsyncOpenAI,
+        openai_embeddings_client: AsyncOpenAI,
         chatgpt_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,

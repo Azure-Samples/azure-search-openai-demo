@@ -5,7 +5,7 @@ from typing import Any, AsyncGenerator, Coroutine, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
-from openai import AsyncAzureOpenAI, AsyncOpenAI, AsyncStream
+from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 from approaches.approach import Approach
@@ -61,8 +61,8 @@ If you cannot generate a search query, return just the number 0.
     def __init__(
         self,
         search_client: SearchClient,
-        openai_chat_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
-        openai_embeddings_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
+        openai_chat_client: AsyncOpenAI,
+        openai_embeddings_client: AsyncOpenAI,
         chatgpt_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
@@ -89,7 +89,7 @@ If you cannot generate a search query, return just the number 0.
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion | AsyncStream[ChatCompletionChunk]]]:
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
