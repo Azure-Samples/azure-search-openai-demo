@@ -1,10 +1,12 @@
 import json
 import logging
 import re
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Coroutine, Optional, Union
 
 import aiohttp
 import openai
+from openai import AsyncOpenAI, AsyncAzureOpenAI
+from openai.types.chat import ChatCompletion
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 
@@ -61,7 +63,7 @@ If you cannot generate a search query, return just the number 0.
     def __init__(
         self,
         search_client: SearchClient,
-        openai_host: str,
+        openai_client: Union[AsyncOpenAI, AsyncAzureOpenAI],
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -72,7 +74,7 @@ If you cannot generate a search query, return just the number 0.
         query_speller: str,
     ):
         self.search_client = search_client
-        self.openai_host = openai_host
+        self.openai_client = openai_client
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
         self.embedding_deployment = embedding_deployment
@@ -89,7 +91,7 @@ If you cannot generate a search query, return just the number 0.
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple:
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -126,8 +128,8 @@ If you cannot generate a search query, return just the number 0.
             few_shots=self.query_prompt_few_shots,
         )
 
-        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
-        chat_completion = await openai.ChatCompletion.acreate(
+        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if isinstance(self.openai_client, AsyncAzureOpenAI) else {}
+        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
@@ -145,9 +147,9 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
-            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=query_text)
-            query_vector = embedding["data"][0]["embedding"]
+            embedding_args = {"deployment_id": self.embedding_deployment} if isinstance(self.openai_client, AsyncAzureOpenAI) else {}
+            embedding = await self.openai_client.embeddings.create(**embedding_args, model=self.embedding_model, input=query_text)
+            query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
@@ -215,7 +217,7 @@ If you cannot generate a search query, return just the number 0.
             + msg_to_display.replace("\n", "<br>"),
         }
 
-        chat_coroutine = openai.ChatCompletion.acreate(
+        chat_coroutine = self.openai_client.chat.completions.acreate(
             **chatgpt_args,
             model=self.chatgpt_model,
             messages=messages,
@@ -306,11 +308,7 @@ If you cannot generate a search query, return just the number 0.
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         if stream is False:
-            # Workaround for: https://github.com/openai/openai-python/issues/371
-            async with aiohttp.ClientSession() as s:
-                openai.aiosession.set(s)
-                response = await self.run_without_streaming(messages, overrides, auth_claims, session_state)
-            return response
+            return await self.run_without_streaming(messages, overrides, auth_claims, session_state)
         else:
             return self.run_with_streaming(messages, overrides, auth_claims, session_state)
 
@@ -344,8 +342,8 @@ If you cannot generate a search query, return just the number 0.
             total_token_count += potential_message_count
         return message_builder.messages
 
-    def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
-        response_message = chat_completion["choices"][0]["message"]
+    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
+        response_message = chat_completion.choices[0].message
         if function_call := response_message.get("function_call"):
             if function_call["name"] == "search_sources":
                 arg = json.loads(function_call["arguments"])
