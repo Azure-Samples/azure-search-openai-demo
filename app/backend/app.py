@@ -242,7 +242,6 @@ async def setup_clients():
             api_version="2023-07-01-preview",
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
-            organization=OPENAI_ORGANIZATION,
         )
     else:
         openai_client = AsyncOpenAI(
