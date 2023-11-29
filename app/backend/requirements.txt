@@ -66,7 +66,7 @@ deprecated==1.2.14
     # via opentelemetry-api
 et-xmlfile==1.1.0
     # via openpyxl
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.0
     # via quart
@@ -134,9 +134,7 @@ numpy==1.26.2
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==0.28.1
-    # via
-    #   -r requirements.in
-    #   openai
+    # via -r requirements.in
 openpyxl==3.1.2
     # via openai
 opentelemetry-api==1.21.0
@@ -240,9 +238,7 @@ priority==2.0.0
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
