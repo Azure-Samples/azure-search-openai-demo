@@ -17,7 +17,7 @@ class AuthError(Exception):
         self.status_code = status_code
 
     def __str__(self) -> str:
-        return self.error
+        return self.error or ""
 
 
 class AuthenticationHelper:
@@ -92,15 +92,11 @@ class AuthenticationHelper:
             parts = auth.split()
 
             if parts[0].lower() != "bearer":
-                raise AuthError(
-                    {"code": "invalid_header", "description": "Authorization header must start with Bearer"}, 401
-                )
+                raise AuthError(error="Authorization header must start with Bearer", status_code=401)
             elif len(parts) == 1:
-                raise AuthError({"code": "invalid_header", "description": "Token not found"}, 401)
+                raise AuthError(error="Token not found", status_code=401)
             elif len(parts) > 2:
-                raise AuthError(
-                    {"code": "invalid_header", "description": "Authorization header must be Bearer token"}, 401
-                )
+                raise AuthError(error="Authorization header must be Bearer token", status_code=401)
 
             token = parts[1]
             return token
@@ -111,9 +107,7 @@ class AuthenticationHelper:
         if token:
             return token
 
-        raise AuthError(
-            {"code": "authorization_header_missing", "description": "Authorization header is expected"}, 401
-        )
+        raise AuthError(error="Authorization header is expected", status_code=401)
 
     def build_security_filters(self, overrides: dict[str, Any], auth_claims: dict[str, Any]):
         # Build different permutations of the oid or groups security filter using OData filters
