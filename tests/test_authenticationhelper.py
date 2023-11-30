@@ -11,7 +11,6 @@ def create_authentication_helper(require_access_control: bool = False):
         client_app_id="CLIENT_APP",
         tenant_id="TENANT_ID",
         require_access_control=require_access_control,
-        token_cache_path=None,
     )
 
 
