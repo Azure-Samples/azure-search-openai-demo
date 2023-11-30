@@ -4,6 +4,7 @@
 
 - [Requirements](#requirements)
 - [Setting up Azure AD Apps](#setting-up-azure-ad-apps)
+  - [Automatic Setup](#automatic-setup)
   - [Manual Setup](#manual-setup)
     - [Server App](#server-app)
     - [Client App](#client-app)
@@ -15,6 +16,7 @@
   - [Azure Data Lake Storage Gen2 Prep Docs](#azure-data-lake-storage-gen2-prep-docs)
   - [Manually managing Document Level Access Control](#manually-managing-document-level-access-control)
 - [Environment Variables Reference](#environment-variables-reference)
+  - [Authentication Behavior by Environment](#authentication-behavior-by-environment)
 
 This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Azure Active Directory (Azure AD) groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
@@ -35,6 +37,7 @@ Two Azure AD apps must be registered in order to make the optional login and doc
 The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
 
 1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
+1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`.
 1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
 2. Run `azd up` to deploy the app.
 
@@ -190,6 +193,7 @@ The script supports the following commands. Note that the syntax is the same reg
 The following environment variables are used to setup the optional login and document level access control:
 
 * `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
+* `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Azure AD based login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
 * `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
@@ -197,3 +201,16 @@ The following environment variables are used to setup the optional login and doc
 * `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 * `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 * `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
+
+### Authentication behavior by environment
+
+The following table describes the impact of the `AZURE_USE_AUTHETNICATION` and `AZURE_ENFORCE_ACCESS_CONTROL` variables depending on the environment you are deploying the application in:
+
+| AZURE_USE_AUTHENTICATION | AZURE_ENFORCE_ACCESS_CONTROL | Environment | Default Behavior |
+|-|-|-|-|
+| True | False | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
+| True | True | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User must use access control |
+| True | False | Local or Codespaces | Do not use integrated auth <br /> Can use app without login <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
+| True | True | Local or Codespaces | Do not use integrated auth <br /> Cannot use app without login <br /> Behavior is chat box is greyed out with default “Please login message” <br /> User must use login button to make chat box usable <br /> User must use access control when logged in |
+| False | False | All | No login or access control |
+| False | True | All | Invalid setting |
