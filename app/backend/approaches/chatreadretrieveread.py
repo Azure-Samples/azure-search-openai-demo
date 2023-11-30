@@ -151,7 +151,7 @@ If you cannot generate a search query, return just the number 0.
         )
         chatgpt_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=messages, # type: ignore
+            messages=messages,  # type: ignore
             model=chatgpt_model,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
@@ -351,7 +351,7 @@ If you cannot generate a search query, return just the number 0.
         append_index = len(few_shots) + 1
 
         message_builder.insert_message(self.USER, user_content, index=append_index)
-        total_token_count = message_builder.count_tokens_for_message(dict(message_builder.messages[-1])) # type: ignore
+        total_token_count = message_builder.count_tokens_for_message(dict(message_builder.messages[-1]))  # type: ignore
 
         newest_to_oldest = list(reversed(history[:-1]))
         for message in newest_to_oldest:
