@@ -41,7 +41,7 @@ param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
-var allMsftAllowedOrigins = !(empty(appSettings.AZURE_CLIENT_APP_ID)) ? union(msftAllowedOrigins, ['https://login.microsoftonline.com/']) : msftAllowedOrigins
+var allMsftAllowedOrigins = !(empty(appSettings.AZURE_CLIENT_APP_ID)) ? union(msftAllowedOrigins, [environment().authentication.loginEndpoint]) : msftAllowedOrigins
 
 var requiredScopes = ['openid', 'profile', 'email', 'offline_access', 'api://${appSettings.AZURE_SERVER_APP_ID}/access_as_user']
 var scopes = join(union(requiredScopes, additionalScopes), ' ')

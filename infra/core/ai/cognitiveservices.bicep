@@ -9,7 +9,6 @@ param kind string = 'OpenAI'
 
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
-param networkAcls object = { defaultAction: 'allow' }
 param sku object = {
   name: 'S0'
 }
