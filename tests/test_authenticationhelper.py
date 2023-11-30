@@ -1,10 +1,12 @@
 import pytest
+from conftest import MockSearchIndex
 
 from core.authentication import AuthenticationHelper, AuthError
 
 
 def create_authentication_helper(require_access_control: bool = False):
     return AuthenticationHelper(
+        search_index=MockSearchIndex,
         use_authentication=True,
         server_app_id="SERVER_APP",
         server_app_secret="SERVER_SECRET",

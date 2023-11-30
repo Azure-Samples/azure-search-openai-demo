@@ -39,17 +39,16 @@ class AuthenticationHelper:
         self.client_app_id = client_app_id
         self.tenant_id = tenant_id
         self.authority = f"https://login.microsoftonline.com/{tenant_id}"
+        field_names = [field.name for field in search_index.fields]
+        self.has_auth_fields = "oids" in field_names and "groups" in field_names
 
         if self.use_authentication:
             self.require_access_control = require_access_control
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
-            field_names = [field.name for field in search_index.fields]
-            self.has_auth_fields = "oids" in field_names and "groups" in field_names
         else:
             self.require_access_control = False
-            self.has_auth_fields = False
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
@@ -116,7 +115,7 @@ class AuthenticationHelper:
         use_oid_security_filter = self.require_access_control or overrides.get("use_oid_security_filter")
         use_groups_security_filter = self.require_access_control or overrides.get("use_groups_security_filter")
 
-        if use_oid_security_filter or use_oid_security_filter and not self.has_auth_fields:
+        if (use_oid_security_filter or use_oid_security_filter) and not self.has_auth_fields:
             raise AuthError(
                 error="oids and groups must be defined in the search index to use authentication", status_code=400
             )

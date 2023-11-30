@@ -13,11 +13,21 @@ import pytest
 import pytest_asyncio
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.models import SearchField, SearchIndex
 
 import app
 from core.authentication import AuthenticationHelper
 
 MockToken = namedtuple("MockToken", ["token", "expires_on"])
+
+MockSearchIndex = SearchIndex(
+    name="test",
+    fields=[
+        SearchField(name="oids", type="Collection(Edm.String)"),
+        SearchField(name="groups", type="Collection(Edm.String)"),
+    ],
+)
 
 
 class MockAzureCredential(AsyncTokenCredential):
@@ -135,6 +145,11 @@ def mock_acs_search(monkeypatch):
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
+    async def mock_get_index(*args, **kwargs):
+        return MockSearchIndex
+
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+
 
 @pytest.fixture
 def mock_acs_search_filter(monkeypatch):
@@ -153,6 +168,11 @@ def mock_acs_search_filter(monkeypatch):
         return AsyncSearchResultsIterator()
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    async def mock_get_index(*args, **kwargs):
+        return MockSearchIndex
+
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
 
 
 envs = [
