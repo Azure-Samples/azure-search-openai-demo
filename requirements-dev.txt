@@ -6,7 +6,7 @@ pytest
 pytest-asyncio
 pytest-snapshot
 coverage
-playwright==1.39.0
+playwright
 pytest-cov
 pytest-playwright
 pre-commit

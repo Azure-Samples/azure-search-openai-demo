@@ -2,7 +2,7 @@ from typing import Any, AsyncGenerator, Optional, Union
 
 import openai
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.models import QueryType, RawVectorQuery
+from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
 
 from approaches.approach import Approach
 from core.authentication import AuthenticationHelper
@@ -81,7 +81,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         filter = self.build_filter(overrides, auth_claims)
 
         # If retrieval mode includes vectors, compute an embedding for the query
-        vectors = []
+        vectors: list[VectorQuery] = []
         if has_vector:
             embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
             embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=q)
@@ -103,11 +103,13 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
                 vector_queries=vectors,
-                vector_filter_mode="preFilter",
             )
         else:
             r = await self.search_client.search(
-                query_text, filter=filter, top=top, vector_queries=vectors, vector_filter_mode="preFilter"
+                query_text,
+                filter=filter,
+                top=top,
+                vector_queries=vectors,
             )
         if use_semantic_captions:
             results = [
