@@ -102,6 +102,15 @@ def mock_openai_chatcompletion(monkeypatch):
                         "created": 1,
                     }
                 )
+                self.responses.append(
+                    {
+                        "object": "chat.completion.chunk",
+                        "choices": [{"delta": {"role": None, "content": None}, "index": 0, "finish_reason": "stop"}],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
+                    }
+                )
             else:
                 self.responses.append(
                     {

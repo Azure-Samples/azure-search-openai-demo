@@ -297,7 +297,8 @@ If you cannot generate a search query, return just the number 0.
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
                 # if event contains << and not >>, it is start of follow-up question, truncate
-                content = event["choices"][0]["delta"].get("content", "")
+                content = event["choices"][0]["delta"].get("content")
+                content = content or ""  # content may either not exist in delta, or explicitly be None
                 if overrides.get("suggest_followup_questions") and content and "<<" in content:
                     followup_questions_started = True
                     earlier_content = content[: content.index("<<")]
