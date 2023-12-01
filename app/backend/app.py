@@ -37,8 +37,7 @@ CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
-CONFIG_OPENAI_CHAT_CLIENT = "openai_chat_client"
-CONFIG_OPENAI_EMBEDDINGS_CLIENT = "openai_embeddings_client"
+CONFIG_OPENAI_CLIENT = "openai_client"
 ERROR_MESSAGE = """The app encountered an error processing your request.
 If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
 Error type: {error_type}
@@ -249,8 +248,7 @@ async def setup_clients():
             organization=OPENAI_ORGANIZATION,
         )
 
-    current_app.config[CONFIG_OPENAI_CHAT_CLIENT] = openai_client
-    current_app.config[CONFIG_OPENAI_EMBEDDINGS_CLIENT] = openai_client
+    current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper

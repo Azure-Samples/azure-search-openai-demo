@@ -270,8 +270,8 @@ async def client(monkeypatch, mock_env, mock_openai_chatcompletion, mock_openai_
 
     async with quart_app.test_app() as test_app:
         quart_app.config.update({"TESTING": True})
-        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CHAT_CLIENT])
-        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_EMBEDDINGS_CLIENT])
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
 
 
@@ -299,8 +299,8 @@ async def auth_client(
 
         async with quart_app.test_app() as test_app:
             quart_app.config.update({"TESTING": True})
-            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CHAT_CLIENT])
-            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_EMBEDDINGS_CLIENT])
+            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
             client = test_app.test_client()
             client.config = quart_app.config
 
