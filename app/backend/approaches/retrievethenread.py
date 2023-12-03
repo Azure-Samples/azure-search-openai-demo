@@ -46,8 +46,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,
-        query_language: str,
-        query_speller: str,
     ):
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
@@ -56,8 +54,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
-        self.query_language = query_language
-        self.query_speller = query_speller
 
     async def run(
         self,

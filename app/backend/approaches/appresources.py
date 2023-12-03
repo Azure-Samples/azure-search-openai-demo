@@ -19,8 +19,6 @@ class AppResources:
         embedding_model: str,
         sourcepage_field: str,
         content_field: str,
-        query_language: str,
-        query_speller: str,
     ):
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
@@ -29,6 +27,4 @@ class AppResources:
         self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
-        self.query_language = query_language
-        self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
