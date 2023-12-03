@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath
+from approaches.flow.shared_states import State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
@@ -22,14 +22,11 @@ async def get_improvement(request_context: RequestContext):
         prefix = "אני {understand}, עם זאת חשוב לציין שחלק מהאנשים לא חווים שיפור מיד בסוף התרגול אלא מאוחר יותר, ויתכן {feel} שיפור בהמשך ".format(understand = "מבין" if is_bot_male else "מבינה", feel = "שתחוש" if is_patient_male else "שתחושי")
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} ללא שיפור/שיפור מועט/שיפור גדול".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-    if request_context.get_var(VariableIspPath) == "1":
-        request_context.set_next_state(StateGetIsConnectedToCurrent)
-        return request_context.write_chat_message(prefix + """
+    
+    request_context.set_next_state(StateGetIsConnectedToCurrent)
+    return request_context.write_chat_message(prefix + """
 עד כמה {feel_current} לכאן ועכשיו, ולהכיר בעובדה שגם אם קרה אירוע קשה, אותו אירוע נגמר?
 כלל לא/במידה מועטה/במידה מתונה/במידה רבה/במידה רבה מאד""".format(feel_current = "אתה מרגיש שאתה מסוגל להיות מחובר" if is_patient_male else "את מרגישה שאת מסוגלת להיות מחוברת"))
-    else:
-        request_context.save_to_var(VariableExitText, prefix)
-        request_context.set_next_state(StateExit)
 States[StateGetImprovement] = State(run=get_improvement)
 
 async def get_is_connected_to_current(request_context: RequestContext):
@@ -37,7 +34,7 @@ async def get_is_connected_to_current(request_context: RequestContext):
     is_bot_male = request_context.get_var(VariableIsBotMale)
     is_connected = request_context.history[-1]["content"]
     if is_connected == "כלל לא":
-        exitText = "אני {understand}, ורוצה להזכיר לך {that_you_here} איתי כאן ועכשיו. בנוסף חשוב לי לציין שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך".format(
+        exit_text = "אני {understand}, ורוצה להזכיר לך {that_you_here} איתי כאן ועכשיו. בנוסף חשוב לי לציין שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך".format(
             understand = "מבין" if is_bot_male else "מבינה",
             that_you_here = "שאתה נמצא" if is_bot_male else "שאת נמצאת"
         )
@@ -47,18 +44,8 @@ async def get_is_connected_to_current(request_context: RequestContext):
             that_you_succeeding = "אתה מצליח" if is_patient_male else "את מצליחה")
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כלל לא/במידה מועטה/במידה מתונה/במידה רבה/במידה רבה מאד".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-    exit_text += """לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה שתיארת שיפור בעקבות התרגול ולעודד אותך לעשות שימוש בתרגול שעשינו אם {will_feel} שוב מצוקה. בנוסף אני רוצה לציין כי {you_might} לחוות בהמשך כל מיני קשיים, שהם טבעיים ונורמליים כמו תמונות של מה שקרה או {that_you_afraid} שיקרה, קושי בשינה, ומספר רגשות כמו מצוקה, פחד או כעס. אם {experience} אותם, מומלץ לך להשתמש בתרגול שעשינו.
-אם {you_notice} לב שהתגובות האלה לא פוחתות, או נמשכות יותר מ 2-3 ימים, אני מעודד אותך לפנות לאחד מהגופים הבאים, שיוכלו לעזור לך להתמודד עם התגובות האלו:
-טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)
-אני מקווה שסייעתי לך {wish} לך הקלה משמעותית נוספת במצבך""".format(
-        will_feel = "תחוש" if is_patient_male else "תחושי",
-        you_might = "אתה עלול" if is_patient_male else "את עלולה",
-        that_you_afraid = "שאתה חושש" if is_patient_male else "שאת חוששת",
-        experience = "תחווה" if is_patient_male else "תחווי",
-        you_notice = "אתה שם" if is_patient_male else "את שמה",
-        wish = "ומאחל" if is_bot_male else "ומאחלת" 
-)
+    exit_text += """
+""" + get_exit_text(request_context)
     request_context.save_to_var(VariableExitText, exit_text)
     request_context.set_next_state(StateExit)
 States[StateGetIsConnectedToCurrent] = State(run=get_is_connected_to_current)

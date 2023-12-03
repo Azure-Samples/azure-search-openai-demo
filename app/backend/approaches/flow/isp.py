@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import State, StateExit, StateExitOnDistressIncreased, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariableNextVideoPrefix, VariableVideoIndex, VariableWasDistressLevelIncreased
+from approaches.flow.shared_states import State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariableNextVideoPrefix, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
@@ -9,6 +9,7 @@ StateNextVideo = "NEXT_VIDEO"
 
 async def start_isp(request_context: RequestContext):
     isp_path = request_context.get_var(VariableIspPath)
+    request_context.save_to_var(VariableSumDistressLevel, 0)
     request_context.save_to_var(VariableVideoIndex, 0)
     request_context.save_to_var(VariableWasDistressLevelIncreased, False)
     request_context.set_next_state(StateAskForDistressAfterVideo)
@@ -49,47 +50,61 @@ async def get_distress_level_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
     is_bot_male = request_context.get_var(VariableIsBotMale)
     prevDistress = request_context.get_var(VariableDistressLevel)
+    isp_path = request_context.get_var(VariableIspPath)
     is_distress_decreased = distress > prevDistress
     request_context.save_to_var(VariableDistressLevel, distress)
     was_distress_level_increased_before = request_context.get_var(VariableWasDistressLevelIncreased)
     request_context.save_to_var(VariableWasDistressLevelIncreased, is_distress_decreased)
+    request_context.save_to_var(VariableSumDistressLevel, request_context.get_var(VariableSumDistressLevel) + distress)
 
     if was_distress_level_increased_before and distress > prevDistress:
-        request_context.save_to_var(VariableExitText, """לאנשים שונים בזמנים שונים מתאימות התערבויות שונות. כיוון שאני מתרשם שקשה לך כעת אני {suggest} שנסיים.
-לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה שיש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון:
-טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)""".format(
-            suggest = "מציע" if is_bot_male else "מציעה"))
-        request_context.set_next_state(StateExit)
+        request_context.save_to_var(VariableWasDistressLevelIncreasedTwice, True)
+        if isp_path == "1":
+            request_context.set_next_state(StateStartPositiveCognition)
+        else:
+            request_context.save_to_var(VariableExitText, """לאנשים שונים בזמנים שונים מתאימות התערבויות שונות. כיוון שאני מתרשם שקשה לך כעת אני {suggest} שנתקדם לקראת סיום התרגול.
+    לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה שיש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון:
+    טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
+    טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)""".format(
+                suggest = "מציע" if is_bot_male else "מציעה"))
+            request_context.set_next_state(StateExit)
         return
+
+    request_context.save_to_var(VariableWasDistressLevelIncreasedTwice, False)
 
     video_index = request_context.get_var(VariableVideoIndex)
     if video_index == 7:
+        request_context.save_to_var(VariableIsUserExited, False)
         request_context.set_next_state(StateStartPositiveCognition)
         return
 
     ready_to_continue = "האם {you_ready} להמשיך לתרגל?".format(you_ready = "אתה מוכן" if is_male else "את מוכנה")
+    request_context.set_next_state(StateGetIfToContinueAfterVideo)
     if distress < prevDistress:
-        request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""אני שמח {that_you} חווה שיפור, מיד נוכל להמשיך לתרגל אם {want}. {ready_to_continue}""".format(
             that_you = "שאתה" if is_male else "שאת", ready_to_continue = ready_to_continue, want = "תרצה" if is_male else "תרצי"))
     elif distress == prevDistress:
-        request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""חלק מהאנשים חווים שיפור אחרי תרגול נוסף. האם {want} להמשיך לתרגל?""".format(want = "תרצה" if is_male else "תרצי"))
     else:
-        request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""אני מבין שקשה לך. {ready_to_continue}""".format(ready_to_continue = ready_to_continue))
 States[StateGetDistressAfterVideo] = State(run=get_distress_level_after_video)
 
 async def get_if_to_continue_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
-    if request_context.history[-1]["content"] == "כן":
+    was_distress_level_increased = request_context.get_var(VariableWasDistressLevelIncreased)
+    isp_path = request_context.get_var(VariableIspPath)
+    user_continued = request_context.history[-1]["content"] == "כן"
+    request_context.save_to_var(VariableIsUserExited, not user_continued)
+    if user_continued:
         request_context.save_to_var(VariableNextVideoPrefix, "")
         request_context.set_next_state(StateNextVideo)
-    elif request_context.history[-1]["content"] == "לא":
-        request_context.set_next_state(StateExitOnDistressIncreased)
-    else:
+    elif request_context.history[-1]["content"] != "לא":
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כן/לא".format("הקלד" if is_male else "הקלידי"))
+    elif was_distress_level_increased and isp_path != "1":
+        request_context.save_to_var(VariableExitText, get_exit_text(request_context))
+        request_context.set_next_state(StateExit)
+    else:
+        request_context.set_next_state(StateStartPositiveCognition)
 States[StateGetIfToContinueAfterVideo] = State(run=get_if_to_continue_after_video)
 
 async def next_video(request_context: RequestContext):
