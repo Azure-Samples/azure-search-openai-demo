@@ -1,7 +1,6 @@
 from typing import Any, AsyncGenerator, Optional, Union
 
 import openai
-from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import Approach
@@ -40,7 +39,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
     def __init__(
         self,
-        search_client: SearchClient,
         openai_host: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
@@ -51,7 +49,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         query_language: str,
         query_speller: str,
     ):
-        self.search_client = search_client
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
@@ -89,30 +86,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         query_text = q if has_text else ""
 
-        # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
-        if overrides.get("semantic_ranker") and has_text:
-            r = await self.search_client.search(
-                query_text,
-                filter=filter,
-                query_type=QueryType.SEMANTIC,
-                query_language=self.query_language,
-                query_speller=self.query_speller,
-                semantic_configuration_name="default",
-                top=top,
-                query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                vector=query_vector,
-                top_k=50 if query_vector else None,
-                vector_fields="embedding" if query_vector else None,
-            )
-        else:
-            r = await self.search_client.search(
-                query_text,
-                filter=filter,
-                top=top,
-                vector=query_vector,
-                top_k=50 if query_vector else None,
-                vector_fields="embedding" if query_vector else None,
-            )
         if use_semantic_captions:
             results = [
                 doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))

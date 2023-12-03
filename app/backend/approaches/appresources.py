@@ -4,7 +4,6 @@ import logging
 from typing import Optional
 
 import openai
-from azure.search.documents.aio import SearchClient
 
 from core.modelhelper import get_token_limit
 
@@ -13,7 +12,6 @@ use_RAG = False
 class AppResources:
     def __init__(
         self,
-        search_client: SearchClient,
         openai_host: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
@@ -24,7 +22,6 @@ class AppResources:
         query_language: str,
         query_speller: str,
     ):
-        self.search_client = search_client
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
