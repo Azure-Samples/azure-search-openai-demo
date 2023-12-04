@@ -66,7 +66,7 @@ deprecated==1.2.14
     # via opentelemetry-api
 et-xmlfile==1.1.0
     # via openpyxl
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.0
     # via quart
@@ -91,7 +91,7 @@ idna==3.6
     # via
     #   requests
     #   yarl
-importlib-metadata==6.8.0
+importlib-metadata==7.0.0
     # via opentelemetry-api
 isodate==0.6.1
     # via
@@ -266,7 +266,7 @@ six==1.16.0
     #   azure-core
     #   isodate
     #   python-dateutil
-tiktoken==0.5.1
+tiktoken==0.5.2
     # via -r requirements.in
 tqdm==4.66.1
     # via openai
