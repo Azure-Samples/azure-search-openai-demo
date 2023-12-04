@@ -9,6 +9,9 @@ from typing import AsyncGenerator
 
 import aiohttp
 import openai
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables.aio import TableServiceClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.storage.blob.aio import BlobServiceClient
@@ -37,6 +40,7 @@ CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACH = "ask_approach"
 CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
+CONFIG_TABLE_STORAGE_CLIENT = "table_storage_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 
 bp = Blueprint("routes", __name__, static_folder="static")
@@ -117,6 +121,8 @@ async def chat():
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    context["client_ip"] = request.remote_addr
+    context["session_user_id"] = request.headers.get("Session-User-Id", None)
     try:
         approach = current_app.config[CONFIG_CHAT_APPROACH]
         result = await approach.run(
@@ -182,11 +188,13 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
+    AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
+
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True, exclude_cli_credential=True)
 
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
@@ -202,6 +210,16 @@ async def setup_clients():
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+    logging.info(AZURE_TENANT_ID)
+
+    table_service_client = TableServiceClient(f"https://{AZURE_STORAGE_ACCOUNT}.table.core.windows.net", credential=azure_credential)
+
+    table_client = table_service_client.get_table_client("UserTable")
+
+    try:
+        await table_client.create_table()
+    except ResourceExistsError:
+        logging.info("Table 'UserTable' already exists")
 
     # Used by the OpenAI SDK
     if OPENAI_HOST == "azure":
@@ -219,11 +237,13 @@ async def setup_clients():
 
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    current_app.config[CONFIG_TABLE_STORAGE_CLIENT] = table_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
+        table_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         OPENAI_CHATGPT_MODEL,
@@ -234,6 +254,7 @@ async def setup_clients():
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(AppResources(
+        table_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         OPENAI_CHATGPT_MODEL,

@@ -267,6 +267,16 @@ module storageRoleUser 'core/security/role.bicep' = {
   }
 }
 
+module storageTablesContributorRoleUser 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-tables-contributor-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+    principalType: 'User'
+  }
+}
+
 module storageContribRoleUser 'core/security/role.bicep' = {
   scope: storageResourceGroup
   name: 'storage-contribrole-user'
@@ -277,6 +287,15 @@ module storageContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
+module storageAccountContribRoleUser 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-account-contribrole-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: '17d1049b-9a84-46fb-8f53-869881c3d3ab'
+    principalType: 'User'
+  }
+}
 
 // SYSTEM IDENTITIES
 module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
@@ -295,6 +314,26 @@ module storageRoleBackend 'core/security/role.bicep' = {
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module storageAccountContribRoleBackend 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-account-contribrole-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: '17d1049b-9a84-46fb-8f53-869881c3d3ab'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module storageTablesContributorRoleBackend 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-tables-contributor-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
     principalType: 'ServicePrincipal'
   }
 }

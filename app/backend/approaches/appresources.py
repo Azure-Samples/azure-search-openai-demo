@@ -4,6 +4,7 @@ import logging
 from typing import Optional
 
 import openai
+from azure.data.tables.aio import TableClient
 
 from core.modelhelper import get_token_limit
 
@@ -12,6 +13,7 @@ use_RAG = False
 class AppResources:
     def __init__(
         self,
+        table_client: TableClient,
         openai_host: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,
@@ -20,6 +22,7 @@ class AppResources:
         sourcepage_field: str,
         content_field: str,
     ):
+        self.table_client = table_client 
         self.openai_host = openai_host
         self.chatgpt_deployment = chatgpt_deployment
         self.chatgpt_model = chatgpt_model
