@@ -7,12 +7,21 @@
                 ],
                 "thoughts": "Searched for:<br>capital of France<br><br>Conversations:<br>{'role': 'system', 'content': 'You are a cat.'}<br><br>{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
             },
+            "finish_reason": "stop",
+            "index": 0,
             "message": {
                 "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
-                "role": "assistant"
+                "function_call": null,
+                "role": "assistant",
+                "tool_calls": null
             },
             "session_state": null
         }
     ],
-    "object": "chat.completion"
+    "created": 0,
+    "id": "test-123",
+    "model": "test-model",
+    "object": "chat.completion",
+    "system_fingerprint": null,
+    "usage": null
 }

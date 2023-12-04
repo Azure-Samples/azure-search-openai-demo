@@ -1,12 +1,16 @@
 import json
 import logging
 import re
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Coroutine, Literal, Optional, Union, overload
 
-import aiohttp
-import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
+from openai import AsyncOpenAI, AsyncStream
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+)
 
 from approaches.approach import Approach
 from core.authentication import AuthenticationHelper
@@ -61,11 +65,12 @@ If you cannot generate a search query, return just the number 0.
 
     def __init__(
         self,
+        *,
         search_client: SearchClient,
         auth_helper: AuthenticationHelper,
-        openai_host: str,
-        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
+        openai_client: AsyncOpenAI,
         chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         sourcepage_field: str,
@@ -75,9 +80,9 @@ If you cannot generate a search query, return just the number 0.
     ):
         super().__init__(auth_helper)
         self.search_client = search_client
-        self.openai_host = openai_host
-        self.chatgpt_deployment = chatgpt_deployment
+        self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.sourcepage_field = sourcepage_field
@@ -86,19 +91,38 @@ If you cannot generate a search query, return just the number 0.
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
+    @overload
+    async def run_until_final_call(
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: Literal[False],
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]:
+        ...
+
+    @overload
+    async def run_until_final_call(
+        self,
+        history: list[dict[str, str]],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: Literal[True],
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, AsyncStream[ChatCompletionChunk]]]:
+        ...
+
     async def run_until_final_call(
         self,
         history: list[dict[str, str]],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple:
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
-
         original_user_query = history[-1]["content"]
         user_query_request = "Generate search query for: " + original_user_query
 
@@ -128,12 +152,10 @@ If you cannot generate a search query, return just the number 0.
             max_tokens=self.chatgpt_token_limit - len(user_query_request),
             few_shots=self.query_prompt_few_shots,
         )
-
-        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
-        chat_completion = await openai.ChatCompletion.acreate(
-            **chatgpt_args,
-            model=self.chatgpt_model,
-            messages=messages,
+        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+            messages=messages,  # type: ignore
+            # Azure Open AI takes the deployment name as the model name
+            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
@@ -148,9 +170,12 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
-            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=query_text)
-            query_vector = embedding["data"][0]["embedding"]
+            embedding = await self.openai_client.embeddings.create(
+                # Azure Open AI takes the deployment name as the model name
+                model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
+                input=query_text,
+            )
+            query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
@@ -218,9 +243,9 @@ If you cannot generate a search query, return just the number 0.
             + msg_to_display.replace("\n", "<br>"),
         }
 
-        chat_coroutine = openai.ChatCompletion.acreate(
-            **chatgpt_args,
-            model=self.chatgpt_model,
+        chat_coroutine = self.openai_client.chat.completions.create(
+            # Azure Open AI takes the deployment name as the model name
+            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,
             max_tokens=response_token_limit,
@@ -239,7 +264,8 @@ If you cannot generate a search query, return just the number 0.
         extra_info, chat_coroutine = await self.run_until_final_call(
             history, overrides, auth_claims, should_stream=False
         )
-        chat_resp = dict(await chat_coroutine)
+        chat_completion_response: ChatCompletion = await chat_coroutine
+        chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
         chat_resp["choices"][0]["context"] = extra_info
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])
@@ -273,11 +299,13 @@ If you cannot generate a search query, return just the number 0.
 
         followup_questions_started = False
         followup_content = ""
-        async for event in await chat_coroutine:
+        async for event_chunk in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
+            event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
                 # if event contains << and not >>, it is start of follow-up question, truncate
-                content = event["choices"][0]["delta"].get("content", "")
+                content = event["choices"][0]["delta"].get("content")
+                content = content or ""  # content may either not exist in delta, or explicitly be None
                 if overrides.get("suggest_followup_questions") and "<<" in content:
                     followup_questions_started = True
                     earlier_content = content[: content.index("<<")]
@@ -309,11 +337,7 @@ If you cannot generate a search query, return just the number 0.
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         if stream is False:
-            # Workaround for: https://github.com/openai/openai-python/issues/371
-            async with aiohttp.ClientSession() as s:
-                openai.aiosession.set(s)
-                response = await self.run_without_streaming(messages, overrides, auth_claims, session_state)
-            return response
+            return await self.run_without_streaming(messages, overrides, auth_claims, session_state)
         else:
             return self.run_with_streaming(messages, overrides, auth_claims, session_state)
 
@@ -325,7 +349,7 @@ If you cannot generate a search query, return just the number 0.
         user_content: str,
         max_tokens: int,
         few_shots=[],
-    ) -> list:
+    ) -> list[ChatCompletionMessageParam]:
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
@@ -335,7 +359,7 @@ If you cannot generate a search query, return just the number 0.
         append_index = len(few_shots) + 1
 
         message_builder.insert_message(self.USER, user_content, index=append_index)
-        total_token_count = message_builder.count_tokens_for_message(message_builder.messages[-1])
+        total_token_count = message_builder.count_tokens_for_message(dict(message_builder.messages[-1]))  # type: ignore
 
         newest_to_oldest = list(reversed(history[:-1]))
         for message in newest_to_oldest:
@@ -347,15 +371,15 @@ If you cannot generate a search query, return just the number 0.
             total_token_count += potential_message_count
         return message_builder.messages
 
-    def get_search_query(self, chat_completion: dict[str, Any], user_query: str):
-        response_message = chat_completion["choices"][0]["message"]
-        if function_call := response_message.get("function_call"):
-            if function_call["name"] == "search_sources":
-                arg = json.loads(function_call["arguments"])
+    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
+        response_message = chat_completion.choices[0].message
+        if function_call := response_message.function_call:
+            if function_call.name == "search_sources":
+                arg = json.loads(function_call.arguments)
                 search_query = arg.get("search_query", self.NO_RESPONSE)
                 if search_query != self.NO_RESPONSE:
                     return search_query
-        elif query_text := response_message.get("content"):
+        elif query_text := response_message.content:
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
         return user_query
