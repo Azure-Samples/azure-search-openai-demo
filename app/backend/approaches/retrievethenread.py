@@ -44,8 +44,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         sourcepage_field: str,
         content_field: str,
         query_language: str,
@@ -80,9 +80,11 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            # Azure Open AI takes the deployment name as the model name
-            embedding_model = self.embedding_deployment if self.embedding_deployment else self.embedding_model
-            embedding = await self.openai_client.embeddings.create(model=embedding_model, input=q)
+            embedding = await self.openai_client.embeddings.create(
+                # Azure Open AI takes the deployment name as the model name
+                model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
+                input=q,
+            )
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -130,11 +132,10 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("assistant", self.answer)
         message_builder.insert_message("user", self.question)
 
-        # Azure Open AI takes the deployment name as the model name
-        chat_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
         chat_completion = (
             await self.openai_client.chat.completions.create(
-                model=chat_model,
+                # Azure Open AI takes the deployment name as the model name
+                model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
                 messages=message_builder.messages,
                 temperature=overrides.get("temperature") or 0.3,
                 max_tokens=1024,

@@ -149,10 +149,10 @@ If you cannot generate a search query, return just the number 0.
             max_tokens=self.chatgpt_token_limit - len(user_query_request),
             few_shots=self.query_prompt_few_shots,
         )
-        chatgpt_model = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=messages,  # type: ignore
-            model=chatgpt_model,
+            # Azure Open AI takes the deployment name as the model name
+            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
@@ -167,8 +167,11 @@ If you cannot generate a search query, return just the number 0.
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding_model = self.embedding_deployment if self.embedding_deployment else self.embedding_model
-            embedding = await self.openai_client.embeddings.create(model=embedding_model, input=query_text)
+            embedding = await self.openai_client.embeddings.create(
+                # Azure Open AI takes the deployment name as the model name
+                model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
+                input=query_text,
+            )
             query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
@@ -238,7 +241,8 @@ If you cannot generate a search query, return just the number 0.
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(
-            model=chatgpt_model,
+            # Azure Open AI takes the deployment name as the model name
+            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature") or 0.7,
             max_tokens=response_token_limit,
