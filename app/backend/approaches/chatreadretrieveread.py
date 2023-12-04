@@ -101,7 +101,7 @@ class ChatReadRetrieveReadApproach(Approach):
         auth_claims = context.get("auth_claims", {})
         if session_state is None:
             session_state = { "machineState": FirstState, "vars": {} }
-        request_context = RequestContext(self.app_resources, session_state, messages, overrides, auth_claims, stream)
+        request_context = RequestContext(self.app_resources, session_state, messages, overrides, auth_claims, stream, context["client_ip"], context["session_user_id"])
         if stream is False:
             # Workaround for: https://github.com/openai/openai-python/issues/371
             async with aiohttp.ClientSession() as s:

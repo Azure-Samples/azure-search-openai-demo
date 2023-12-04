@@ -10,7 +10,9 @@ class RequestContext:
         history: list[dict[str, str]],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
-        should_stream: bool
+        should_stream: bool,
+        client_ip: str,
+        session_user_id: str
     ):
         self.app_resources = app_resources
         self.session_state = session_state
@@ -19,6 +21,8 @@ class RequestContext:
         self.auth_claims = auth_claims
         self.should_stream = should_stream
         self.extra_info = None
+        self.client_ip = client_ip
+        self.session_user_id = session_user_id
     
     def set_response_extra_info(self, extra_info: dict[str, str]):
         if self.has_extra_info():

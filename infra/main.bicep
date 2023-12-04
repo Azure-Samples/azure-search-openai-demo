@@ -304,6 +304,16 @@ module storageRoleUser 'core/security/role.bicep' = {
   }
 }
 
+module storageTablesContributorRoleUser 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-tables-contributor-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+    principalType: 'User'
+  }
+}
+
 module storageContribRoleUser 'core/security/role.bicep' = {
   scope: storageResourceGroup
   name: 'storage-contribrole-user'

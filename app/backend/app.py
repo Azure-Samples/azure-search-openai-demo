@@ -32,12 +32,14 @@ from approaches.appresources import AppResources
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
+from azure.data.tables import TableServiceClient
 
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACH = "ask_approach"
 CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
+CONFIG_TABLE_STORAGE_CLIENT = "table_storage_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
 
@@ -119,6 +121,8 @@ async def chat():
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    context["client_ip"] = request.remote_addr
+    context["session_user_id"] = request.headers.get("sessionUserId", None)
     try:
         approach = current_app.config[CONFIG_CHAT_APPROACH]
         result = await approach.run(
@@ -216,6 +220,8 @@ async def setup_clients():
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
+    table_client = TableServiceClient(f"https://{AZURE_STORAGE_ACCOUNT}.table.core.windows.net", credential=azure_credential)
+
     # Used by the OpenAI SDK
     if OPENAI_HOST == "azure":
         openai.api_type = "azure_ad"
@@ -233,12 +239,14 @@ async def setup_clients():
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    current_app.config[CONFIG_TABLE_STORAGE_CLIENT] = table_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client,
+        table_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         OPENAI_CHATGPT_MODEL,
@@ -252,6 +260,7 @@ async def setup_clients():
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(AppResources(
         search_client,
+        table_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         OPENAI_CHATGPT_MODEL,

@@ -2,10 +2,13 @@ const BACKEND_URI = "";
 
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest } from "./models";
 import { useLogin } from "../authConfig";
+import Cookies from "js-cookie";
+import { v4 as uuidv4 } from 'uuid';
 
 function getHeaders(idToken: string | undefined): Record<string, string> {
     var headers : Record<string, string> = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Session-User-Id": getSessionUserId()
     };
     // If using login, add the id token of the logged in account as the authorization
     if (useLogin) {
@@ -38,6 +41,16 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
         headers: getHeaders(idToken),
         body: JSON.stringify(request)
     });
+}
+
+function getSessionUserId(): string {
+    const sessionUserIdKey = 'sessionUserId';
+    if (Cookies.get(sessionUserIdKey) !== undefined) {
+        const farFutureDate = new Date(new Date().getFullYear() + 10, 0, 1);
+        Cookies.set(sessionUserIdKey, uuidv4(), { expires: farFutureDate });
+    }
+
+    return Cookies.get(sessionUserIdKey)!!;
 }
 
 export function getCitationFilePath(citation: string): string {
