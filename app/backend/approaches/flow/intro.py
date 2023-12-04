@@ -1,3 +1,5 @@
+import asyncio
+
 from approaches.flow.shared_states import State, StateExit, States, StateStartIntro, StateStartPreperation, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
@@ -10,24 +12,21 @@ StateGetBotGender = "GET_BOT_GENDER"
 StateGetName = "Get_NAME"
 StateGetPatientGender = "GET_PATIENT_GENDER"
 
-def start_intro(request_context: RequestContext):
-    table_name = "UsersTable"
-    table_client = request_context.app_resources.table_client.create_table_if_not_exists(table_name=table_name)
+async def start_intro(request_context: RequestContext):
     
     partition_key = "DefaultPartition"
     row_key = request_context.session_user_id
-
-    try: 
-        table_client.get_entity(partition_key=partition_key, row_key=row_key)
-        request_context.set_next_state(StateGetIfToContinue)
+    try:
+        await request_context.app_resources.table_client.get_entity(partition_key=partition_key, row_key=row_key)
+        request_context.set_next_state(StateUserAlreadyParticipated)
         return request_context.write_chat_message("""השתתפותך כבר רשומה.""")
     except ResourceNotFoundError:
         entity = {
             "PartitionKey": partition_key,
             "RowKey": row_key,
-            "ClientIP": request_context.client_p
+            "ClientIP": request_context.client_ip
         }
-        table_client.create_entity(entity=entity)
+        await request_context.app_resources.table_client.create_entity(entity=entity)
 
     request_context.set_next_state(StateGetIfToContinue)
     return request_context.write_chat_message("""ברוכים הבאים לכלי סיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. הכלים והידע שכלי זה עושה בהם שימוש מבוססים על פרוטוקול ISP (Immediate Support Protocol)  שנמצא יעיל מחקרית לצמצום רמות חרדה אחרי אירוע טראומטי.  הכלי הוא דיגיטלי ואיננו כולל מעורבות אנושית בפעילותו השוטפת. הטכנולוגיה נועדה להנגיש באופן מסודר ומובנה את התהליך לתמיכה מיידית להרגעה וטיפול עצמי.  
@@ -55,7 +54,7 @@ States[StateGetIfToContinue] = State(run=get_if_to_continue)
 
 def user_already_participated(request_context: RequestContext):
     return request_context.write_chat_message("""השתתפותך כבר רשומה.""")
-States[StateGetIfToContinue] = State(run=user_already_participated)
+States[StateUserAlreadyParticipated] = State(run=user_already_participated)
 
 async def get_age(request_context: RequestContext):
     ageMsg = request_context.history[-1]["content"]

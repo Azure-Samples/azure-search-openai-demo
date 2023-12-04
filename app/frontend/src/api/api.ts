@@ -45,7 +45,7 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 
 function getSessionUserId(): string {
     const sessionUserIdKey = 'sessionUserId';
-    if (Cookies.get(sessionUserIdKey) !== undefined) {
+    if (Cookies.get(sessionUserIdKey) === undefined) {
         const farFutureDate = new Date(new Date().getFullYear() + 10, 0, 1);
         Cookies.set(sessionUserIdKey, uuidv4(), { expires: farFutureDate });
     }

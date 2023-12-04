@@ -1,8 +1,7 @@
 from typing import Any, AsyncGenerator, Optional, Union
 
-from azure.data.tables import TableServiceClient
-
 import openai
+from azure.data.tables.aio import TableClient
 from azure.search.documents.models import QueryType
 
 from approaches.approach import Approach
@@ -41,7 +40,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
     def __init__(
         self,
-        table_client: TableServiceClient,
+        table_client: TableClient,
         openai_host: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         chatgpt_model: str,

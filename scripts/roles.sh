@@ -13,7 +13,9 @@ roles=(
     "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1"
     "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
     "1407120a-92aa-4202-b7e9-c0e197c71c8f"
-    "8ebe5a00-799e-43f5-93ac-243d3dce84a7"
+    "8ebe5a00-799e-43f5-93ac-243d3dce84a7",
+    "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3",
+    "17d1049b-9a84-46fb-8f53-869881c3d3ab"
 )
 
 if [ -z "$AZURE_RESOURCE_GROUP" ]; then

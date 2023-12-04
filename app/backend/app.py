@@ -9,6 +9,9 @@ from typing import AsyncGenerator
 
 import aiohttp
 import openai
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import ResourceExistsError
+from azure.data.tables.aio import TableServiceClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.storage.blob.aio import BlobServiceClient
@@ -31,7 +34,6 @@ from approaches.appresources import AppResources
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
-from azure.data.tables import TableServiceClient
 
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
@@ -120,7 +122,7 @@ async def chat():
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     context["client_ip"] = request.remote_addr
-    context["session_user_id"] = request.headers.get("sessionUserId", None)
+    context["session_user_id"] = request.headers.get("Session-User-Id", None)
     try:
         approach = current_app.config[CONFIG_CHAT_APPROACH]
         result = await approach.run(
@@ -186,11 +188,13 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
+    AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
+
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True, exclude_cli_credential=True)
 
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
@@ -206,8 +210,16 @@ async def setup_clients():
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+    logging.info(AZURE_TENANT_ID)
 
-    table_client = TableServiceClient(f"https://{AZURE_STORAGE_ACCOUNT}.table.core.windows.net", credential=azure_credential)
+    table_service_client = TableServiceClient(f"https://{AZURE_STORAGE_ACCOUNT}.table.core.windows.net", credential=azure_credential)
+
+    table_client = table_service_client.get_table_client("UserTable")
+
+    try:
+        await table_client.create_table()
+    except ResourceExistsError:
+        logging.info("Table 'UserTable' already exists")
 
     # Used by the OpenAI SDK
     if OPENAI_HOST == "azure":
