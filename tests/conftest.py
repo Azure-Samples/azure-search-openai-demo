@@ -8,11 +8,17 @@ import aiohttp
 import azure.storage.filedatalake
 import azure.storage.filedatalake.aio
 import msal
-import openai
 import pytest
 import pytest_asyncio
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.aio import SearchClient
+from openai.types import CreateEmbeddingResponse, Embedding
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai.types.chat.chat_completion import (
+    ChatCompletionMessage,
+    Choice,
+)
+from openai.types.create_embedding_response import Usage
 
 import app
 from core.authentication import AuthenticationHelper
@@ -28,22 +34,44 @@ class MockAzureCredential(AsyncTokenCredential):
 @pytest.fixture
 def mock_openai_embedding(monkeypatch):
     async def mock_acreate(*args, **kwargs):
-        if openai.api_type == "openai":
-            assert kwargs.get("deployment_id") is None
-        else:
-            assert kwargs.get("deployment_id") is not None
-        return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
+        return CreateEmbeddingResponse(
+            object="list",
+            data=[
+                Embedding(
+                    embedding=[
+                        0.0023064255,
+                        -0.009327292,
+                        -0.0028842222,
+                    ],
+                    index=0,
+                    object="embedding",
+                )
+            ],
+            model="text-embedding-ada-002",
+            usage=Usage(prompt_tokens=8, total_tokens=8),
+        )
 
-    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+    def patch(openai_client):
+        monkeypatch.setattr(openai_client.embeddings, "create", mock_acreate)
+
+    return patch
 
 
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
         def __init__(self, answer: str):
+            chunk_id = "test-id"
+            model = "gpt-35-turbo"
             self.responses = [
-                {"object": "chat.completion.chunk", "choices": []},
-                {"object": "chat.completion.chunk", "choices": [{"delta": {"role": "assistant"}}]},
+                {"object": "chat.completion.chunk", "choices": [], "id": chunk_id, "model": model, "created": 1},
+                {
+                    "object": "chat.completion.chunk",
+                    "choices": [{"delta": {"role": "assistant"}, "index": 0, "finish_reason": None}],
+                    "id": chunk_id,
+                    "model": model,
+                    "created": 1,
+                },
             ]
             # Split at << to simulate chunked responses
             if answer.find("<<") > -1:
@@ -51,20 +79,46 @@ def mock_openai_chatcompletion(monkeypatch):
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"role": "assistant", "content": parts[0] + "<<"}}],
+                        "choices": [
+                            {
+                                "delta": {"role": "assistant", "content": parts[0] + "<<"},
+                                "index": 0,
+                                "finish_reason": None,
+                            }
+                        ],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"role": "assistant", "content": parts[1]}}],
+                        "choices": [
+                            {"delta": {"role": "assistant", "content": parts[1]}, "index": 0, "finish_reason": None}
+                        ],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
+                    }
+                )
+                self.responses.append(
+                    {
+                        "object": "chat.completion.chunk",
+                        "choices": [{"delta": {"role": None, "content": None}, "index": 0, "finish_reason": "stop"}],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
             else:
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"content": answer}}],
+                        "choices": [{"delta": {"content": answer}, "index": 0, "finish_reason": None}],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
 
@@ -73,15 +127,11 @@ def mock_openai_chatcompletion(monkeypatch):
 
         async def __anext__(self):
             if self.responses:
-                return self.responses.pop(0)
+                return ChatCompletionChunk.model_validate(self.responses.pop(0))
             else:
                 raise StopAsyncIteration
 
     async def mock_acreate(*args, **kwargs):
-        if openai.api_type == "openai":
-            assert kwargs.get("deployment_id") is None
-        else:
-            assert kwargs.get("deployment_id") is not None
         messages = kwargs["messages"]
         if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
@@ -92,11 +142,22 @@ def mock_openai_chatcompletion(monkeypatch):
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:
-            return openai.util.convert_to_openai_object(
-                {"object": "chat.completion", "choices": [{"message": {"role": "assistant", "content": answer}}]}
+            return ChatCompletion(
+                object="chat.completion",
+                choices=[
+                    Choice(
+                        message=ChatCompletionMessage(role="assistant", content=answer), finish_reason="stop", index=0
+                    )
+                ],
+                id="test-123",
+                created=0,
+                model="test-model",
             )
 
-    monkeypatch.setattr(openai.ChatCompletion, "acreate", mock_acreate)
+    def patch(openai_client):
+        monkeypatch.setattr(openai_client.chat.completions, "create", mock_acreate)
+
+    return patch
 
 
 @pytest.fixture
@@ -209,7 +270,8 @@ async def client(monkeypatch, mock_env, mock_openai_chatcompletion, mock_openai_
 
     async with quart_app.test_app() as test_app:
         quart_app.config.update({"TESTING": True})
-
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
 
 
@@ -237,6 +299,8 @@ async def auth_client(
 
         async with quart_app.test_app() as test_app:
             quart_app.config.update({"TESTING": True})
+            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
             client = test_app.test_client()
             client.config = quart_app.config
 

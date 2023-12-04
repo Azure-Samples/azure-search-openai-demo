@@ -1,8 +1,8 @@
 from typing import Any, AsyncGenerator, Optional, Union
 
-import openai
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
+from openai import AsyncOpenAI
 
 from approaches.approach import Approach
 from core.messagebuilder import MessageBuilder
@@ -39,22 +39,23 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
     def __init__(
         self,
+        *,
         search_client: SearchClient,
-        openai_host: str,
-        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
+        openai_client: AsyncOpenAI,
         chatgpt_model: str,
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_model: str,
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         sourcepage_field: str,
         content_field: str,
         query_language: str,
         query_speller: str,
     ):
         self.search_client = search_client
-        self.openai_host = openai_host
-        self.chatgpt_deployment = chatgpt_deployment
+        self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
@@ -76,13 +77,15 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
-
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding_args = {"deployment_id": self.embedding_deployment} if self.openai_host == "azure" else {}
-            embedding = await openai.Embedding.acreate(**embedding_args, model=self.embedding_model, input=q)
-            query_vector = embedding["data"][0]["embedding"]
+            embedding = await self.openai_client.embeddings.create(
+                # Azure Open AI takes the deployment name as the model name
+                model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
+                input=q,
+            )
+            query_vector = embedding.data[0].embedding
             vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
@@ -129,22 +132,22 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("assistant", self.answer)
         message_builder.insert_message("user", self.question)
 
-        messages = message_builder.messages
-        chatgpt_args = {"deployment_id": self.chatgpt_deployment} if self.openai_host == "azure" else {}
-        chat_completion = await openai.ChatCompletion.acreate(
-            **chatgpt_args,
-            model=self.chatgpt_model,
-            messages=messages,
-            temperature=overrides.get("temperature") or 0.3,
-            max_tokens=1024,
-            n=1,
-        )
+        chat_completion = (
+            await self.openai_client.chat.completions.create(
+                # Azure Open AI takes the deployment name as the model name
+                model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+                messages=message_builder.messages,
+                temperature=overrides.get("temperature") or 0.3,
+                max_tokens=1024,
+                n=1,
+            )
+        ).model_dump()
 
         extra_info = {
             "data_points": results,
             "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
-            + "\n\n".join([str(message) for message in messages]),
+            + "\n\n".join([str(message) for message in message_builder.messages]),
         }
-        chat_completion.choices[0]["context"] = extra_info
-        chat_completion.choices[0]["session_state"] = session_state
+        chat_completion["choices"][0]["context"] = extra_info
+        chat_completion["choices"][0]["session_state"] = session_state
         return chat_completion

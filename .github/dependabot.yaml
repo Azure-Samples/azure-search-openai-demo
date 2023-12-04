@@ -32,4 +32,3 @@ updates:
           - "*"
     ignore:
       - dependency-name: azure-search-documents
-      - dependency-name: openai[datalib]
