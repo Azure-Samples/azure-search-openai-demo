@@ -24,7 +24,7 @@ async def main():
     if client_app_id:
         client_object_id = await get_application(auth_headers, client_app_id)
         if client_object_id:
-            print("Updating client application redirect URIs...")
+            print(f"Updating redirect URIs for client app ID {client_app_id}...")
             # Redirect URIs need to be relative to the deployed application
             payload = {
                 "publicClient": {"redirectUris": []},
@@ -41,7 +41,7 @@ async def main():
                 },
             }
             await update_application(auth_headers, client_object_id, payload)
-            print("Application update complete.")
+            print(f"Application update for client app id {client_app_id} complete.")
 
 
 if __name__ == "__main__":

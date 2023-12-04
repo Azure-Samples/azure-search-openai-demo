@@ -21,6 +21,10 @@ if [ -n "$AZURE_SEARCH_ANALYZER_NAME" ]; then
   searchAnalyzerNameArg="--searchanalyzername $AZURE_SEARCH_ANALYZER_NAME"
 fi
 
+if [ -n "$AZURE_USE_AUTHENTICATION" ]; then
+  aclArg="--useacls"
+fi
+
 ./scripts/.venv/bin/python ./scripts/prepdocs.py \
 './data/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
 $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \

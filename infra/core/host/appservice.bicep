@@ -46,7 +46,9 @@ param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
-var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [environment().authentication.loginEndpoint]) : msftAllowedOrigins
+var loginEndpoint = environment().authentication.loginEndpoint
+var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
+var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [loginEndpointFixed]) : msftAllowedOrigins
 
 var requiredScopes = ['openid', 'profile', 'email', 'offline_access', 'api://${serverAppId}/access_as_user']
 var requiredAudiences = ['api://${serverAppId}']

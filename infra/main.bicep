@@ -401,12 +401,26 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
+// Used to issue search queries
+// https://learn.microsoft.com/azure/search/search-security-rbac
 module searchRoleBackend 'core/security/role.bicep' = {
   scope: searchServiceResourceGroup
   name: 'search-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Used to read index definitions (required when using authentication)
+// https://learn.microsoft.com/azure/search/search-security-rbac
+module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthentication) {
+  scope: searchServiceResourceGroup
+  name: 'search-reader-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
     principalType: 'ServicePrincipal'
   }
 }
