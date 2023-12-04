@@ -135,30 +135,6 @@ If you cannot generate a search query, return just the number 0.
             if not has_text:
                 query_text = None
 
-            # Use semantic L2 reranker if requested and if retrieval mode is text or hybrid (vectors + text)
-            if request_context.overrides.get("semantic_ranker") and has_text:
-                r = await request_context.app_resources.search_client.search(
-                    query_text,
-                    filter=filter,
-                    query_type=QueryType.SEMANTIC,
-                    query_language=request_context.app_resources.query_language,
-                    query_speller=request_context.app_resources.query_speller,
-                    semantic_configuration_name="default",
-                    top=top,
-                    query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                    vector=query_vector,
-                    top_k=50 if query_vector else None,
-                    vector_fields="embedding" if query_vector else None,
-                )
-            else:
-                r = await request_context.app_resources.search_client.search(
-                    query_text,
-                    filter=filter,
-                    top=top,
-                    vector=query_vector,
-                    top_k=50 if query_vector else None,
-                    vector_fields="embedding" if query_vector else None,
-                )
             if use_semantic_captions:
                 results = [
                     doc[request_context.app_resources.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
@@ -173,8 +149,6 @@ If you cannot generate a search query, return just the number 0.
         follow_up_questions_prompt = (
             request_context.app_resources.follow_up_questions_prompt_content if request_context.overrides.get("suggest_followup_questions") else ""
         )
-
-        # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         prompt_override = request_context.overrides.get("prompt_template")
