@@ -236,7 +236,7 @@ async def test_chat_handle_exception_contentsafety(client, monkeypatch, snapshot
 
 @pytest.mark.asyncio
 async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, caplog):
-    chat_client = client.app.config[app.CONFIG_OPENAI_CHAT_CLIENT]
+    chat_client = client.app.config[app.CONFIG_OPENAI_CLIENT]
     monkeypatch.setattr(
         chat_client.chat.completions, "create", mock.Mock(side_effect=ZeroDivisionError("something bad happened"))
     )
@@ -253,7 +253,7 @@ async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, ca
 
 @pytest.mark.asyncio
 async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch, snapshot, caplog):
-    chat_client = client.app.config[app.CONFIG_OPENAI_CHAT_CLIENT]
+    chat_client = client.app.config[app.CONFIG_OPENAI_CLIENT]
     monkeypatch.setattr(chat_client.chat.completions, "create", mock.Mock(side_effect=filtered_response))
 
     response = await client.post(
