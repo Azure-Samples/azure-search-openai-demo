@@ -204,7 +204,7 @@ The following environment variables are used to setup the optional login and doc
 
 ### Authentication behavior by environment
 
-The following table describes the impact of the `AZURE_USE_AUTHETNICATION` and `AZURE_ENFORCE_ACCESS_CONTROL` variables depending on the environment you are deploying the application in:
+The following table describes the impact of the `AZURE_USE_AUTHENTICATION` and `AZURE_ENFORCE_ACCESS_CONTROL` variables depending on the environment you are deploying the application in:
 
 | AZURE_USE_AUTHENTICATION | AZURE_ENFORCE_ACCESS_CONTROL | Environment | Default Behavior |
 |-|-|-|-|
