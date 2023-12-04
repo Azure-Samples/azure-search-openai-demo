@@ -15,16 +15,6 @@ param resourceGroupName string = ''
 
 param applicationInsightsName string = ''
 
-param searchServiceName string = ''
-param searchServiceResourceGroupName string = ''
-param searchServiceLocation string = ''
-// The free tier does not support managed identity (required) or semantic search (optional)
-@allowed(['basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
-param searchServiceSkuName string // Set in main.parameters.json
-param searchIndexName string // Set in main.parameters.json
-param searchQueryLanguage string // Set in main.parameters.json
-param searchQuerySpeller string // Set in main.parameters.json
-
 param storageAccountName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
@@ -99,10 +89,6 @@ resource formRecognizerResourceGroup 'Microsoft.Resources/resourceGroups@2021-04
   name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup.name
 }
 
-resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
-  name: !empty(searchServiceResourceGroupName) ? searchServiceResourceGroupName : resourceGroup.name
-}
-
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
@@ -152,10 +138,6 @@ module backend 'core/host/appservice.bicep' = {
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
-      AZURE_SEARCH_INDEX: searchIndexName
-      AZURE_SEARCH_SERVICE: searchService.outputs.name
-      AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
-      AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
@@ -227,25 +209,6 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
     sku: {
       name: formRecognizerSkuName
     }
-  }
-}
-
-module searchService 'core/search/search-services.bicep' = {
-  name: 'search-service'
-  scope: searchServiceResourceGroup
-  params: {
-    name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
-    location: !empty(searchServiceLocation) ? searchServiceLocation : location
-    tags: tags
-    authOptions: {
-      aadOrApiKey: {
-        aadAuthFailureMode: 'http401WithBearerChallenge'
-      }
-    }
-    sku: {
-      name: searchServiceSkuName
-    }
-    semanticSearch: 'free'
   }
 }
 
@@ -324,35 +287,6 @@ module storageContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchRoleUser 'core/security/role.bicep' = {
-  scope: searchServiceResourceGroup
-  name: 'search-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
-    principalType: 'User'
-  }
-}
-
-module searchContribRoleUser 'core/security/role.bicep' = {
-  scope: searchServiceResourceGroup
-  name: 'search-contrib-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
-    principalType: 'User'
-  }
-}
-
-module searchSvcContribRoleUser 'core/security/role.bicep' = {
-  scope: searchServiceResourceGroup
-  name: 'search-svccontrib-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
-    principalType: 'User'
-  }
-}
 
 // SYSTEM IDENTITIES
 module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
@@ -371,16 +305,6 @@ module storageRoleBackend 'core/security/role.bicep' = {
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
-    principalType: 'ServicePrincipal'
-  }
-}
-
-module searchRoleBackend 'core/security/role.bicep' = {
-  scope: searchServiceResourceGroup
-  name: 'search-role-backend'
-  params: {
-    principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
     principalType: 'ServicePrincipal'
   }
 }
@@ -404,10 +328,6 @@ output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganiza
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
-
-output AZURE_SEARCH_INDEX string = searchIndexName
-output AZURE_SEARCH_SERVICE string = searchService.outputs.name
-output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName

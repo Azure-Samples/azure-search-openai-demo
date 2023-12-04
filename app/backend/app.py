@@ -11,7 +11,6 @@ import aiohttp
 import openai
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -41,7 +40,6 @@ CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_TABLE_STORAGE_CLIENT = "table_storage_client"
 CONFIG_AUTH_CLIENT = "auth_client"
-CONFIG_SEARCH_CLIENT = "search_client"
 
 bp = Blueprint("routes", __name__, static_folder="static")
 
@@ -167,8 +165,6 @@ async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
-    AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
-    AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
@@ -190,9 +186,6 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
-    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
-    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
-
     # Use the current user identity to authenticate with Azure OpenAI, Cognitive Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
@@ -209,12 +202,6 @@ async def setup_clients():
         token_cache_path=TOKEN_CACHE_PATH,
     )
 
-    # Set up clients for Cognitive Search and Storage
-    search_client = SearchClient(
-        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-        index_name=AZURE_SEARCH_INDEX,
-        credential=azure_credential,
-    )
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
@@ -237,7 +224,6 @@ async def setup_clients():
         openai.organization = OPENAI_ORGANIZATION
 
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
-    current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_TABLE_STORAGE_CLIENT] = table_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
@@ -245,7 +231,6 @@ async def setup_clients():
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
-        search_client,
         table_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -254,12 +239,9 @@ async def setup_clients():
         OPENAI_EMB_MODEL,
         KB_FIELDS_SOURCEPAGE,
         KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(AppResources(
-        search_client,
         table_client,
         OPENAI_HOST,
         AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -268,8 +250,6 @@ async def setup_clients():
         OPENAI_EMB_MODEL,
         KB_FIELDS_SOURCEPAGE,
         KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
     ))
 
 

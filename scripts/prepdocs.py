@@ -14,22 +14,6 @@ import tiktoken
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import AzureDeveloperCliCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import (
-    HnswParameters,
-    PrioritizedFields,
-    SearchableField,
-    SearchField,
-    SearchFieldDataType,
-    SearchIndex,
-    SemanticConfiguration,
-    SemanticField,
-    SemanticSettings,
-    SimpleField,
-    VectorSearch,
-    VectorSearchAlgorithmConfiguration,
-)
 from azure.storage.blob import BlobServiceClient
 from azure.storage.filedatalake import (
     DataLakeServiceClient,
@@ -337,68 +321,6 @@ def compute_embedding_in_batch(texts):
     return [data.embedding for data in emb_response.data]
 
 
-def create_search_index():
-    if args.verbose:
-        print(f"Ensuring search index {args.index} exists")
-    index_client = SearchIndexClient(
-        endpoint=f"https://{args.searchservice}.search.windows.net/", credential=search_creds
-    )
-    fields = [
-        SimpleField(name="id", type="Edm.String", key=True),
-        SearchableField(name="content", type="Edm.String", analyzer_name=args.searchanalyzername),
-        SearchField(
-            name="embedding",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-            hidden=False,
-            searchable=True,
-            filterable=False,
-            sortable=False,
-            facetable=False,
-            vector_search_dimensions=1536,
-            vector_search_configuration="default",
-        ),
-        SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-        SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
-        SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True),
-    ]
-    if args.useacls:
-        fields.append(
-            SimpleField(name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True)
-        )
-        fields.append(
-            SimpleField(name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True)
-        )
-
-    if args.index not in index_client.list_index_names():
-        index = SearchIndex(
-            name=args.index,
-            fields=fields,
-            semantic_settings=SemanticSettings(
-                configurations=[
-                    SemanticConfiguration(
-                        name="default",
-                        prioritized_fields=PrioritizedFields(
-                            title_field=None, prioritized_content_fields=[SemanticField(field_name="content")]
-                        ),
-                    )
-                ]
-            ),
-            vector_search=VectorSearch(
-                algorithm_configurations=[
-                    VectorSearchAlgorithmConfiguration(
-                        name="default", kind="hnsw", hnsw_parameters=HnswParameters(metric="cosine")
-                    )
-                ]
-            ),
-        )
-        if args.verbose:
-            print(f"Creating {args.index} search index")
-        index_client.create_index(index)
-    else:
-        if args.verbose:
-            print(f"Search index {args.index} already exists")
-
-
 def update_embeddings_in_batch(sections):
     batch_queue: list = []
     copy_s = []
@@ -434,49 +356,7 @@ def update_embeddings_in_batch(sections):
         yield s
 
 
-def index_sections(filename, sections, acls=None):
-    if args.verbose:
-        print(f"Indexing sections from '{filename}' into search index '{args.index}'")
-    search_client = SearchClient(
-        endpoint=f"https://{args.searchservice}.search.windows.net/", index_name=args.index, credential=search_creds
-    )
-    i = 0
-    batch = []
-    for s in sections:
-        if acls:
-            s.update(acls)
-        batch.append(s)
-        i += 1
-        if i % 1000 == 0:
-            results = search_client.upload_documents(documents=batch)
-            succeeded = sum([1 for r in results if r.succeeded])
-            if args.verbose:
-                print(f"\tIndexed {len(results)} sections, {succeeded} succeeded")
-            batch = []
 
-    if len(batch) > 0:
-        results = search_client.upload_documents(documents=batch)
-        succeeded = sum([1 for r in results if r.succeeded])
-        if args.verbose:
-            print(f"\tIndexed {len(results)} sections, {succeeded} succeeded")
-
-
-def remove_from_index(filename):
-    if args.verbose:
-        print(f"Removing sections from '{filename or '<all>'}' from search index '{args.index}'")
-    search_client = SearchClient(
-        endpoint=f"https://{args.searchservice}.search.windows.net/", index_name=args.index, credential=search_creds
-    )
-    while True:
-        filter = None if filename is None else f"sourcefile eq '{os.path.basename(filename)}'"
-        r = search_client.search("", filter=filter, top=1000, include_total_count=True)
-        if r.get_count() == 0:
-            break
-        removed_docs = search_client.delete_documents(documents=[{"id": d["id"]} for d in r])
-        if args.verbose:
-            print(f"\tRemoved {len(removed_docs)} sections from index")
-        # It can take a few seconds for search results to reflect changes, so wait a bit
-        time.sleep(2)
 
 
 def refresh_openai_token():
@@ -509,7 +389,6 @@ def read_files(
             print(f"Processing '{filename}'")
         if args.remove:
             remove_blobs(filename)
-            remove_from_index(filename)
         else:
             if os.path.isdir(filename):
                 read_files(filename + "/*", use_vectors, vectors_batch_support)
@@ -527,7 +406,6 @@ def read_files(
                 )
                 if use_vectors and vectors_batch_support:
                     sections = update_embeddings_in_batch(sections)
-                index_sections(os.path.basename(filename), sections)
             except Exception as e:
                 print(f"\tGot an error while reading {filename} -> {e} --> skipping file")
 
@@ -547,7 +425,6 @@ def read_adls_gen2_files(
         if not path.is_directory:
             if args.remove:
                 remove_blobs(path.name)
-                remove_from_index(path.name)
             else:
                 temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path.name))
                 try:
@@ -588,7 +465,6 @@ def read_adls_gen2_files(
                     )
                     if use_vectors and vectors_batch_support:
                         sections = update_embeddings_in_batch(sections)
-                    index_sections(os.path.basename(path.name), sections, acls)
                 except Exception as e:
                     print(f"\tGot an error while reading {path.name} -> {e} --> skipping file")
                 finally:
@@ -759,10 +635,7 @@ if __name__ == "__main__":
 
     if args.removeall:
         remove_blobs(None)
-        remove_from_index(None)
     else:
-        if not args.remove:
-            create_search_index()
 
         print("Processing files...")
         if not args.datalakestorageaccount:
