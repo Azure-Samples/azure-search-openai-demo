@@ -93,6 +93,7 @@ var resourceToken = toLower(uniqueString(subscription().id, environmentName, loc
 var tags = { 'azd-env-name': environmentName }
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
+var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -172,6 +173,10 @@ module backend 'core/host/appservice.bicep' = {
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     allowedOrigins: [allowedOrigin]
+    clientAppId: clientAppId
+    serverAppId: serverAppId
+    clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
+    authenticationIssuerUri: authenticationIssuerUri
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -200,7 +205,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_CLIENT_APP_SECRET: clientAppSecret
       AZURE_TENANT_ID: tenantId
       AZURE_AUTH_TENANT_ID: tenantIdForAuth
-      AZURE_AUTHENTICATION_ISSUER_URI: '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
+      AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
     }

@@ -39,15 +39,17 @@ param scmDoBuildDuringDeployment bool = false
 param use32BitWorkerProcess bool = false
 param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
+param clientAppId string = ''
+param serverAppId string = ''
+@secure()
+param clientSecretSettingName string = ''
+param authenticationIssuerUri string = ''
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
-var allMsftAllowedOrigins = !(empty(appSettings.AZURE_CLIENT_APP_ID)) ? union(msftAllowedOrigins, [environment().authentication.loginEndpoint]) : msftAllowedOrigins
+var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [environment().authentication.loginEndpoint]) : msftAllowedOrigins
 
-var requiredScopes = ['openid', 'profile', 'email', 'offline_access', 'api://${appSettings.AZURE_SERVER_APP_ID}/access_as_user']
-var scopes = join(union(requiredScopes, additionalScopes), ' ')
-
-var requiredAudiences = ['api://${appSettings.AZURE_SERVER_APP_ID}']
-var allowedAudiences = union(requiredAudiences, additionalAllowedAudiences)
+var requiredScopes = ['openid', 'profile', 'email', 'offline_access', 'api://${serverAppId}/access_as_user']
+var requiredAudiences = ['api://${serverAppId}']
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
@@ -116,7 +118,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     }
   }
 
-  resource configAuth 'config' = if (!(empty(appSettings.AZURE_CLIENT_APP_ID))) {
+  resource configAuth 'config' = if (!(empty(clientAppId))) {
     name: 'authsettingsV2'
     properties: {
       globalValidation: {
@@ -128,15 +130,15 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         azureActiveDirectory: {
           enabled: true
           registration: {
-            clientId: appSettings.AZURE_CLIENT_APP_ID
-            clientSecretSettingName: !empty(appSettings.AZURE_CLIENT_APP_SECRET) ? 'AZURE_CLIENT_APP_SECRET' : ''
-            openIdIssuer: appSettings.AZURE_AUTHENTICATION_ISSUER_URI
+            clientId: clientAppId
+            clientSecretSettingName: clientSecretSettingName
+            openIdIssuer: authenticationIssuerUri
           }
           login: {
-            loginParameters: ['scope=${scopes}']
+            loginParameters: ['scope=${join(union(requiredScopes, additionalScopes), ' ')}']
           }
           validation: {
-            allowedAudiences: allowedAudiences
+            allowedAudiences: union(requiredAudiences, additionalAllowedAudiences)
             defaultAuthorizationPolicy: {
               allowedApplications: allowedApplications
             }
