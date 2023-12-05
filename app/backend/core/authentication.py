@@ -25,7 +25,7 @@ class AuthenticationHelper:
 
     def __init__(
         self,
-        search_index: SearchIndex,
+        search_index: Optional[SearchIndex],
         use_authentication: bool,
         server_app_id: Optional[str],
         server_app_secret: Optional[str],
@@ -39,15 +39,16 @@ class AuthenticationHelper:
         self.client_app_id = client_app_id
         self.tenant_id = tenant_id
         self.authority = f"https://login.microsoftonline.com/{tenant_id}"
-        field_names = [field.name for field in search_index.fields]
-        self.has_auth_fields = "oids" in field_names and "groups" in field_names
 
         if self.use_authentication:
+            field_names = [field.name for field in search_index.fields] if search_index else []
+            self.has_auth_fields = "oids" in field_names and "groups" in field_names
             self.require_access_control = require_access_control
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
+            self.has_auth_fields = False
             self.require_access_control = False
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:

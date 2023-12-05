@@ -230,7 +230,7 @@ async def setup_clients():
 
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
-        search_index=await search_index_client.get_index(AZURE_SEARCH_INDEX),
+        search_index=(await search_index_client.get_index(AZURE_SEARCH_INDEX)) if AZURE_USE_AUTHENTICATION else None,
         use_authentication=AZURE_USE_AUTHENTICATION,
         server_app_id=AZURE_SERVER_APP_ID,
         server_app_secret=AZURE_SERVER_APP_SECRET,
