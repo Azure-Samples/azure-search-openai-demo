@@ -144,7 +144,7 @@ numpy==1.26.2
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.3.6
+openai[datalib]==1.3.7
     # via -r requirements.in
 opentelemetry-api==1.21.0
     # via
@@ -290,15 +290,12 @@ sniffio==1.3.0
     #   openai
 tiktoken==0.5.1
     # via -r requirements.in
-tomli==2.0.1
-    # via hypercorn
 tqdm==4.66.1
     # via openai
 types-pytz==2023.3.1.1
     # via pandas-stubs
 typing-extensions==4.8.0
     # via
-    #   asgiref
     #   azure-core
     #   azure-storage-blob
     #   openai
