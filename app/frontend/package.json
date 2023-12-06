@@ -23,7 +23,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
     "ndjson-readablestream": "^1.0.9",
-    "scheduler": "^0.23.0"
+    "scheduler": "^0.20.2"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
@@ -32,6 +32,6 @@
     "@vitejs/plugin-react": "^4.2.1",
     "prettier": "^3.1.0",
     "typescript": "^5.3.2",
-    "vite": "^5.0.6"
+    "vite": "^4.4.12"
   }
 }
