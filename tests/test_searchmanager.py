@@ -1,16 +1,31 @@
 import io
 
 import openai
+import openai.types
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
+from openai.types.create_embedding_response import Usage
 
 from scripts.prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from scripts.prepdocslib.listfilestrategy import File
 from scripts.prepdocslib.searchmanager import SearchManager, Section
 from scripts.prepdocslib.strategy import SearchInfo
 from scripts.prepdocslib.textsplitter import SplitPage
+
+
+class MockEmbeddingsClient:
+    def __init__(self, create_embedding_response: openai.types.CreateEmbeddingResponse):
+        self.create_embedding_response = create_embedding_response
+
+    async def create(self, *args, **kwargs) -> openai.types.CreateEmbeddingResponse:
+        return self.create_embedding_response
+
+
+class MockClient:
+    def __init__(self, embeddings_client):
+        self.embeddings = embeddings_client
 
 
 @pytest.fixture
@@ -163,26 +178,28 @@ async def test_update_content_many(monkeypatch, search_info):
 
 @pytest.mark.asyncio
 async def test_update_content_with_embeddings(monkeypatch, search_info):
-    async def mock_create(*args, **kwargs):
+    async def mock_create_client(*args, **kwargs):
         # From https://platform.openai.com/docs/api-reference/embeddings/create
-        return {
-            "object": "list",
-            "data": [
-                {
-                    "object": "embedding",
-                    "embedding": [
-                        0.0023064255,
-                        -0.009327292,
-                        -0.0028842222,
+        return MockClient(
+            embeddings_client=MockEmbeddingsClient(
+                create_embedding_response=openai.types.CreateEmbeddingResponse(
+                    object="list",
+                    data=[
+                        openai.types.Embedding(
+                            embedding=[
+                                0.0023064255,
+                                -0.009327292,
+                                -0.0028842222,
+                            ],
+                            index=0,
+                            object="embedding",
+                        )
                     ],
-                    "index": 0,
-                }
-            ],
-            "model": "text-embedding-ada-002",
-            "usage": {"prompt_tokens": 8, "total_tokens": 8},
-        }
-
-    monkeypatch.setattr(openai.Embedding, "acreate", mock_create)
+                    model="text-embedding-ada-002",
+                    usage=Usage(prompt_tokens=8, total_tokens=8),
+                )
+            )
+        )
 
     documents_uploaded = []
 
@@ -190,16 +207,17 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
         documents_uploaded.extend(documents)
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
-
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name="text-ada-003",
+        credential=AzureKeyCredential("test"),
+        disable_batch=True,
+    )
+    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
     manager = SearchManager(
         search_info,
-        embeddings=AzureOpenAIEmbeddingService(
-            open_ai_service="x",
-            open_ai_deployment="x",
-            open_ai_model_name="text-ada-003",
-            credential=AzureKeyCredential("test"),
-            disable_batch=True,
-        ),
+        embeddings=embeddings,
     )
 
     test_io = io.BytesIO(b"test content")

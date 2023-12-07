@@ -3,19 +3,18 @@ import json
 import logging
 import mimetypes
 import os
-import time
 from pathlib import Path
 from typing import AsyncGenerator
 
-import aiohttp
-import openai
 from azure.core.exceptions import ResourceNotFoundError
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
+from openai import APIError, AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from quart import (
     Blueprint,
     Quart,
@@ -33,13 +32,12 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
 
-CONFIG_OPENAI_TOKEN = "openai_token"
-CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACH = "ask_approach"
 CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_SEARCH_CLIENT = "search_client"
+CONFIG_OPENAI_CLIENT = "openai_client"
 ERROR_MESSAGE = """The app encountered an error processing your request.
 If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
 Error type: {error_type}
@@ -102,14 +100,14 @@ async def content_file(path: str):
 
 
 def error_dict(error: Exception) -> dict:
-    if isinstance(error, openai.error.InvalidRequestError) and error.code == "content_filter":
+    if isinstance(error, APIError) and error.code == "content_filter":
         return {"error": ERROR_MESSAGE_FILTER}
     return {"error": ERROR_MESSAGE.format(error_type=type(error))}
 
 
 def error_response(error: Exception, route: str, status_code: int = 500):
     logging.exception("Exception in %s: %s", route, error)
-    if isinstance(error, openai.error.InvalidRequestError) and error.code == "content_filter":
+    if isinstance(error, APIError) and error.code == "content_filter":
         status_code = 400
     return jsonify(error_dict(error)), status_code
 
@@ -124,12 +122,9 @@ async def ask():
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
         approach = current_app.config[CONFIG_ASK_APPROACH]
-        # Workaround for: https://github.com/openai/openai-python/issues/371
-        async with aiohttp.ClientSession() as s:
-            openai.aiosession.set(s)
-            r = await approach.run(
-                request_json["messages"], context=context, session_state=request_json.get("session_state")
-            )
+        r = await approach.run(
+            request_json["messages"], context=context, session_state=request_json.get("session_state")
+        )
         return jsonify(r)
     except Exception as error:
         return error_response(error, "/ask")
@@ -178,19 +173,6 @@ def auth_setup():
     return jsonify(auth_helper.get_auth_setup_for_client())
 
 
-@bp.before_request
-async def ensure_openai_token():
-    if openai.api_type != "azure_ad":
-        return
-    openai_token = current_app.config[CONFIG_OPENAI_TOKEN]
-    if openai_token.expires_on < time.time() + 60:
-        openai_token = await current_app.config[CONFIG_CREDENTIAL].get_token(
-            "https://cognitiveservices.azure.com/.default"
-        )
-        current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
-        openai.api_key = openai_token.token
-
-
 @bp.before_app_serving
 async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
@@ -204,8 +186,8 @@ async def setup_clients():
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
-    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
-    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
+    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == "azure" else None
+    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST == "azure" else None
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
@@ -250,20 +232,23 @@ async def setup_clients():
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
-    if OPENAI_HOST == "azure":
-        openai.api_type = "azure_ad"
-        openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-        openai.api_version = "2023-07-01-preview"
-        openai_token = await azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_key = openai_token.token
-        # Store on app.config for later use inside requests
-        current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
-    else:
-        openai.api_type = "openai"
-        openai.api_key = OPENAI_API_KEY
-        openai.organization = OPENAI_ORGANIZATION
+    openai_client: AsyncOpenAI
 
-    current_app.config[CONFIG_CREDENTIAL] = azure_credential
+    if OPENAI_HOST == "azure":
+        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
+        # Store on app.config for later use inside requests
+        openai_client = AsyncAzureOpenAI(
+            api_version="2023-07-01-preview",
+            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_ad_token_provider=token_provider,
+        )
+    else:
+        openai_client = AsyncOpenAI(
+            api_key=OPENAI_API_KEY,
+            organization=OPENAI_ORGANIZATION,
+        )
+
+    current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
@@ -271,29 +256,29 @@ async def setup_clients():
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
-        search_client,
-        OPENAI_HOST,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
+        search_client=search_client,
+        openai_client=openai_client,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
-        search_client,
-        OPENAI_HOST,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-        AZURE_SEARCH_QUERY_LANGUAGE,
-        AZURE_SEARCH_QUERY_SPELLER,
+        search_client=search_client,
+        openai_client=openai_client,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
 
@@ -305,6 +290,8 @@ def create_app():
         configure_azure_monitor()
         # This tracks HTTP requests made by aiohttp:
         AioHttpClientInstrumentor().instrument()
+        # This tracks HTTP requests made by httpx/openai:
+        HTTPXClientInstrumentor().instrument()
         # This middleware tracks app route requests:
         app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
