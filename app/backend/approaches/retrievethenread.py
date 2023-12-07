@@ -64,6 +64,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         stream: bool = False,  # Stream is not used in this approach
         session_state: Any = None,
         context: dict[str, Any] = {},
+        request_data: dict[str, Any] = {}
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         q = messages[-1]["content"]
         overrides = context.get("overrides", {})

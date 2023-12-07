@@ -10,6 +10,7 @@ class RequestContext:
         history: list[dict[str, str]],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
+        request_data: dict[str, Any],
         should_stream: bool,
         client_ip: str,
         session_user_id: str
@@ -19,6 +20,7 @@ class RequestContext:
         self.history = history
         self.overrides = overrides
         self.auth_claims = auth_claims
+        self.request_data = request_data
         self.should_stream = should_stream
         self.extra_info = None
         self.client_ip = client_ip

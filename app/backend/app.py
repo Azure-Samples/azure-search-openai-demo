@@ -94,13 +94,16 @@ async def ask():
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    request_data = {
+        "url": request.url
+    }
     try:
         approach = current_app.config[CONFIG_ASK_APPROACH]
         # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
             openai.aiosession.set(s)
             r = await approach.run(
-                request_json["messages"], context=context, session_state=request_json.get("session_state")
+                request_json["messages"], context=context, session_state=request_json.get("session_state"), request_data = request_data
             )
         return jsonify(r)
     except Exception as e:
@@ -123,6 +126,9 @@ async def chat():
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     context["client_ip"] = request.remote_addr
     context["session_user_id"] = request.headers.get("Session-User-Id", None)
+    request_data = {
+        "url": request.url
+    }
     try:
         approach = current_app.config[CONFIG_CHAT_APPROACH]
         result = await approach.run(
@@ -130,6 +136,7 @@ async def chat():
             stream=request_json.get("stream", False),
             context=context,
             session_state=request_json.get("session_state"),
+            request_data = request_data,
         )
         if isinstance(result, dict):
             return jsonify(result)

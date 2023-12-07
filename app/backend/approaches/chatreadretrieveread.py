@@ -95,13 +95,13 @@ class ChatReadRetrieveReadApproach(Approach):
             yield event
 
     async def run(
-        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
+        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}, request_data: dict[str, Any] = {}
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         if session_state is None:
             session_state = { "machineState": FirstState, "vars": {} }
-        request_context = RequestContext(self.app_resources, session_state, messages, overrides, auth_claims, stream, context["client_ip"], context["session_user_id"])
+        request_context = RequestContext(self.app_resources, session_state, messages, overrides, auth_claims, request_data, stream, context["client_ip"], context["session_user_id"])
         if stream is False:
             # Workaround for: https://github.com/openai/openai-python/issues/371
             async with aiohttp.ClientSession() as s:

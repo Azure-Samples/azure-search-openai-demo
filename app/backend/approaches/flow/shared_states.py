@@ -1,3 +1,4 @@
+from azure.data.tables import UpdateMode
 from typing import Callable
 
 from approaches.requestcontext import RequestContext
@@ -13,7 +14,7 @@ StateEndLoop = "END_LOOP"
 
 States = {}
 
-VariableReturnToState = "returnToState"
+VariableClientId = "clientId"
 VariableDistressLevel = "prefixByDistressLevel"
 VariableExitText = "exitText"
 VariableFirstDistressLevel = "firstDistressLevel"
@@ -23,10 +24,17 @@ VariableIspPath = "ispPath"
 VariableIsUserExited = "isUserExited"
 VariableNextVideoPrefix = "nextVideoPrefix"
 VariablePatientName = "patientName"
+VariableShouldSaveClientStatus = "shouldSaveClientStatus"
 VariableSumDistressLevel = "sumDistressLevel"
 VariableVideoIndex = "videoIndex"
 VariableWasDistressLevelIncreased = "wasDistressLevelIncreased"
 VariableWasDistressLevelIncreasedTwice = "wasDistressLevelIncreasedTwice"
+
+PartitionKey = "DefaultPartition"
+DemoClientId = "demo"
+ContactsText = """
+טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
+טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
 
 def get_exit_text(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
@@ -39,8 +47,7 @@ def get_exit_text(request_context: RequestContext):
     was_distress_level_increased_twice = request_context.get_var(VariableWasDistressLevelIncreasedTwice)
     video_index = request_context.get_var(VariableVideoIndex)
     contacts = """
-טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
+{contactsText}""".format(contactsText = ContactsText)
     if was_distress_level_increased_twice or (was_distress_level_increased and is_user_exited) or (first_distress <= last_distress):
         return """לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה שיש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון:{contacts}""".format(
             contacts = contacts)
@@ -69,21 +76,19 @@ class State:
         self.is_wait_for_user_input_before_state = is_wait_for_user_input_before_state
         self.run = run
 
-def exit_loop(request_context: RequestContext):
+async def start_exit_loop(request_context: RequestContext):
+    if request_context.get_var(VariableShouldSaveClientStatus):
+        entity = {
+            "PartitionKey": PartitionKey,
+            "RowKey": request_context.get_var(VariableClientId),
+            "Status": "finished"
+        }
+        await request_context.app_resources.table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity)
+
     request_context.set_next_state(StateEndLoop)
     return request_context.write_chat_message(request_context.get_var(VariableExitText))
-States[StateExit] = State(is_wait_for_user_input_before_state=False, run=exit_loop)
+States[StateExit] = State(is_wait_for_user_input_before_state=False, run=start_exit_loop)
 
-def end_loop(request_context: RequestContext):
-    # Just ignore input and redirect to other resources
-    return request_context.set_next_state(StateExit)
-States[StateEndLoop] = State(run=end_loop)
-
-async def ask_if_to_exit(request_context: RequestContext):
-    if request_context.history[-1]["content"] == "כן":
-        request_context.set_next_state(StateExit)
-    elif request_context.history[-1]["content"] == "לא":
-        request_context.set_next_state(request_context.get_var(VariableReturnToState))
-    else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד כן/לא")
-States[StateAskIfToExit] = State(run=ask_if_to_exit)
+def exit_loop(request_context: RequestContext):
+    return request_context.write_chat_message(request_context.get_var(VariableExitText))
+States[StateEndLoop] = State(run=exit_loop)
