@@ -1,17 +1,13 @@
-import { SetStateAction, useRef, useState } from "react";
-import { Checkbox, ChoiceGroup, IChoiceGroupOption, Panel, DefaultButton, Spinner, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
+import { useRef, useState } from "react";
 
-import styles from "./OneShot.module.css";
+import styles from "./Upload.module.css";
 
 import { askApi, ChatAppResponse, ChatAppRequest, RetrievalMode } from "../../api";
-import { Answer, AnswerError } from "../../components/Answer";
-import { QuestionInput } from "../../components/QuestionInput";
-import { ExampleList } from "../../components/Example";
-import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
-import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
+
+import { AnalysisPanelTabs } from "../../components/AnalysisPanel";
+
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
-import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { FileUploader } from "react-drag-drop-files";
 
 const fileTypes = ["PDF"];
@@ -99,10 +95,6 @@ export function Component(): JSX.Element {
         setRetrieveCount(parseInt(newValue || "3"));
     };
 
-    const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined, index?: number | undefined) => {
-        setRetrievalMode(option?.data || RetrievalMode.Hybrid);
-    };
-
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseSemanticRanker(!!checked);
     };
@@ -150,13 +142,10 @@ export function Component(): JSX.Element {
     };
 
     return (
-        <div className={styles.oneshotContainer}>
-            <FileUploader handleChange={handleFileChange} name="file" types={fileTypes} />
+        <div className={styles.uploadContainer}>
+            <FileUploader handleChange={handleFileChange} name="file" types={fileTypes} multiple />
         </div>
     );
 }
-
-
-
 
 Component.displayName = "Upload";
