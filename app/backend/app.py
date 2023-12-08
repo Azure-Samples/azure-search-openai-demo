@@ -175,6 +175,7 @@ async def upload():
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
         for file in uploaded_files:
+            print(f'uploaded file: {file.filename}')
             # Process each file as needed
             file.save(f'../../data/{file.filename}')  # Save the file
 
