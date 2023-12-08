@@ -168,6 +168,16 @@ async def chat():
         return error_response(error, "/chat")
 
 @bp.websocket('/ws')
+async def ws():
+    global file_size 
+    global total_file_size
+    while True:
+        percentage = 100*file_size/total_file_size
+        await websocket.send(percentage)
+        if file_size < 1:
+            break    
+    await websocket.send("done")
+    
 @bp.route("/upload", methods=["POST"])
 async def upload():
     request_files = await request.files
@@ -180,18 +190,19 @@ async def upload():
             
             success = True 
         
+        global file_size
+        global total_file_size
         file_size = uploaded_files[0].content_length
+        total_file_size = uploaded_files[0].content_length
 
         async def write_file():
-            nonlocal file_size
             with open(f'../../data/{file.filename}', 'wb') as f:
                 while True:
-                    chunk = await file.read_chunk(1024)
+                    chunk = await f.read(1024)
                     if not chunk:
                         break
                     f.write(chunk)
                     file_size -= len(chunk)
-                    await websocket.send(100*file_size/uploaded_files[0].content_length)
 
 
         await write_file()
