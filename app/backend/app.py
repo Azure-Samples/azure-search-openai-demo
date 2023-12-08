@@ -1,3 +1,4 @@
+import asyncio
 import io
 import json
 import logging
@@ -176,6 +177,8 @@ async def ws():
         try:
             percentage = 100*file_size/total_file_size
             await websocket.send(percentage)
+            # wait for 10 ms
+            await asyncio.sleep(0.05)
             if file_size < 1:
                 break    
         except:
@@ -201,7 +204,7 @@ async def upload():
         total_file_size = uploaded_files[0].content_length
 
         async def write_file():
-            with open(f'../../data/{file.filename}', 'wb') as f:
+            with open(f'../../data/{uploaded_files[0].filename}', 'wb') as f:
                 while True:
                     chunk = await f.read(1024)
                     if not chunk:
