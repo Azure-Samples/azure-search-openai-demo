@@ -168,7 +168,7 @@ async def chat():
 @bp.route("/upload", methods=["POST"])
 async def upload():
     request_files = await request.files
-    request_headers = await request.headers
+    request_headers = request.headers
     uploaded_files = request_files.getlist('file')
     print(2222,request_files,333,uploaded_files)
     print(444,request_headers)
