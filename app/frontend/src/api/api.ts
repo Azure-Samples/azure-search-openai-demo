@@ -45,6 +45,7 @@ export async function uploadFilesApi(request: UploadFilesRequest["files"], idTok
     const boundary = "abcd";
     // headers["Content-Length"] = size.toString();
     headers["Content-Type"] = "multipart/form-data; boundary=" + boundary;
+    headers["Transfer-Encoding"] = "chunked";
     return await fetch(`${BACKEND_URI}/upload`, {
         method: "POST",
         headers: headers,
