@@ -171,6 +171,8 @@ async def chat():
 async def ws():
     global file_size 
     global total_file_size
+    await websocket.send("Hello, world!")
+    websocket.send("Hello")
     while True:
         try:
             percentage = 100*file_size/total_file_size
