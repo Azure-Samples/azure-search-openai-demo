@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName
+from approaches.flow.shared_states import ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName
 from approaches.requestcontext import RequestContext
 
 StateGetDistressLevel = "GET_DISTRESS_LEVEL"
@@ -43,10 +43,10 @@ async def ask_if_to_continue_on_low_distress(request_context: RequestContext):
     if request_context.history[-1]["content"] == "כן":
         request_context.set_next_state(StateExit)
         request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. לעתים, גם אחרי שחווים אירוע מאיים או קשה, אין חווים תחושת קושי או מצוקה. אם {will_feel} בשלב כלשהו מצוקה {able} להשתמש בכלי זה או לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
-מרכז החוסן הארצי הטיפולי בטלפון  *5486 (פתוח בימים א-ה בין 8.00-20.00)
-ער"ן  טלפון 1201  או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה) ")""".format(
+{contactsText}""".format(
                 will_feel = "תחוש" if is_patient_male else "תחושי",
-                able = "תוכל" if is_patient_male else "תוכלי"))
+                able = "תוכל" if is_patient_male else "תוכלי",
+                contactsText = ContactsText))
     elif request_context.history[-1]["content"] == "לא":
         request_context.set_next_state(StateAskWhatAnnoying)
     else:

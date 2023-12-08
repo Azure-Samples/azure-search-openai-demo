@@ -32,9 +32,8 @@ VariableWasDistressLevelIncreasedTwice = "wasDistressLevelIncreasedTwice"
 
 PartitionKey = "DefaultPartition"
 DemoClientId = "demo"
-ContactsText = """
-טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
+ContactsText = """טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
+טלפון ער"ן  טלפון 1201 או ווטסאפ <a href="https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0">https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0</a> (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
 
 def get_exit_text(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
@@ -60,7 +59,7 @@ def get_exit_text(request_context: RequestContext):
         improvement_description = "שתיארת שיפור בעקבות התרגול ולעודד אותך לעשות שימוש בתרגול שעשינו"
 
     return """לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה {improvement_description} אם {will_feel} שוב מצוקה. בנוסף אני רוצה לציין כי {you_might} לחוות בהמשך כל מיני קשיים, שהם טבעיים ונורמליים כמו תמונות של מה שקרה או {that_you_afraid} שיקרה, קושי בשינה, ומספר רגשות כמו מצוקה, פחד או כעס. אם {experience} אותם, מומלץ לך להשתמש בתרגול שעשינו.
-אם {you_notice} לב שהתגובות האלה לא פוחתות, או נמשכות יותר מ 2-3 ימים, אני מעודד אותך לפנות לאחד מהגופים הבאים, שיוכלו לעזור לך להתמודד עם התגובות האלו:{contacts}
+אם {you_notice} לב שהתגובות האלה לא פוחתות, או נמשכות יותר מ 2-3 ימים, אני {encourage} אותך לפנות לאחד מהגופים הבאים, שיוכלו לעזור לך להתמודד עם התגובות האלו:{contacts}
 אני מקווה שסייעתי לך {wish} לך הקלה משמעותית נוספת במצבך""".format(
         improvement_description = improvement_description,
         will_feel = "תחוש" if is_patient_male else "תחושי",
@@ -68,6 +67,7 @@ def get_exit_text(request_context: RequestContext):
         that_you_afraid = "שאתה חושש" if is_patient_male else "שאת חוששת",
         experience = "תחווה" if is_patient_male else "תחווי",
         you_notice = "אתה שם" if is_patient_male else "את שמה",
+        encourage = "מעודד" if is_bot_male else "מעודדת",
         contacts = contacts,
         wish = "ומאחל" if is_bot_male else "ומאחלת")
 

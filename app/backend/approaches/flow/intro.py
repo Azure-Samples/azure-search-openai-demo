@@ -1,4 +1,5 @@
 import asyncio
+import re
 from azure.data.tables import UpdateMode
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
@@ -49,11 +50,12 @@ async def check_client_id(request_context: RequestContext):
         request_context.set_next_state(StateGetIfToContinue)
         return request_context.write_chat_message("""ברוכים הבאים לכלי סיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. הכלים והידע שכלי זה עושה בהם שימוש מבוססים על פרוטוקול ISP (Immediate Support Protocol)  שנמצא יעיל מחקרית לצמצום רמות חרדה אחרי אירוע טראומטי.  הכלי הוא דיגיטלי ואיננו כולל מעורבות אנושית בפעילותו השוטפת. הטכנולוגיה נועדה להנגיש באופן מסודר ומובנה את התהליך לתמיכה מיידית להרגעה וטיפול עצמי.  
 נא לאשר את תנאי השימוש: 
-כלי זה כעת בשלב מחקר ופיתוח של חוקרי אקדמיה. בשלב הזה הוא למבוגרים מעל גיל 18, דוברי עברית, ללא אבחנה של מחלה פסיכוטית ושלא חשים מסוכנים לעצמם או לאחרים. אם אתה מתמודד עם מחשבות אובדניות או חושש שתפגע בעצמך או באחר, נא פנה לאחד מגורמי התמיכה הבאים:   
+כלי זה כעת בשלב מחקר ופיתוח של חוקרי אקדמיה. בשלב הזה הוא למבוגרים מעל גיל 18, דוברי עברית, ללא אבחנה של מחלה פסיכוטית ושלא חשים מסוכנים לעצמם או לאחרים. אם אתה מתמודד עם מחשבות אובדניות או חושש שתפגע בעצמך או באחר, נא פנה לאחד מגורמי התמיכה הבאים:
+{contactsText}
 המידע והתרגולים שמוצעים כאן הם למידע כללי בלבד ולא מיועדים לטיפול רפואי או כל טיפול של מקצועות בריאות אחרים. המידע אינו מחליף ייעוץ מקצועי רפואי. השימוש במידע ובתרגולים כאן הוא באחריות המשתמש בלבד. תוכן בן השיח הדיגיטלי הוא לא תחליף לייעוץ, אבחון או טיפול רפואיים. האחריות על השימוש בתומך הדיגיטלי היא על המשתמש בלבד. 
 אני יודע שמידע שנאסף כאן נשמר על מנת לחקור את התחום של יעילות כלים דיגיטליים אחרי אירוע טראומטי לצמצום מתחים וכי שום מידע אישי מזהה לא יפורסם במסגרת פרסומים אקדמיים של המחקר.  
 ניתן ליצור קשר באימייל: asman@tauex.tau.ac.il
-האם ברצונך להמשיך? כן/לא""")
+האם ברצונך להמשיך? כן/לא""".format(contactsText = ContactsText))
         
     if entity["Status"] == "finished":
         request_context.save_to_var(VariableExitText, """השתתפותך כבר הסתיימה, תודה! יש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
@@ -69,9 +71,8 @@ async def get_if_to_continue(request_context: RequestContext):
     if request_context.history[-1]["content"] == "לא":
         request_context.set_next_state(StateExit)
         request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. 
-הרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה. יש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון   
-מרכז החוסן הארצי הטיפולי בטלפון  *5486 (פתוח בימים א-ה בין 8.00-20.00) 
-ער"ן  טלפון 1201  או ווטסאפ  https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)""")
+הרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה. יש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
+{contactsText}""".format(contactsText = ContactsText))
     elif request_context.history[-1]["content"] == "כן":
         client_id = request_context.get_var(VariableClientId)
         if request_context.get_var(VariableClientId) != DemoClientId:
@@ -101,18 +102,19 @@ async def get_age(request_context: RequestContext):
         return request_context.write_chat_message("שלום, האם היית מעדיפ/ה לשוחח עם בוט מטפל או מטפלת?")
     elif age > 0:
         request_context.set_next_state(StateExit)
-        request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. כרגע המערכת פתוחה לאנשים מעל גיל 18. היות שהרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה, אם אתה חווה מצוקה, אפשר לפנות לסיוע נפשי ולקבל כלים להתמודדות בגופים שונים כגון   
-מרכז החוסן הארצי הטיפולי בטלפון *5486 (פתוח בימים א-ה בין 8.00-20.00) 
-ער"ן  טלפון 1201  או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)""")
+        request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. כרגע המערכת פתוחה לאנשים מעל גיל 18. היות שהרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה, אם אתה חווה מצוקה, אפשר לפנות לסיוע נפשי ולקבל כלים להתמודדות בגופים שונים כגון
+{contactsText}""".format(contactsText = ContactsText))
     else:
         return request_context.write_chat_message("הגיל שהכנסת אינו חוקי, יש להכניס מספר בלבד")
 States[StateGetAge] = State(run=get_age)
 
 def get_bot_gender(request_context: RequestContext):
-    if request_context.history[-1]["content"] == "מטפל":
+    has_male = not(re.search("מטפל(?!ת)", request_context.history[-1]["content"]) is None)
+    has_female = "מטפלת" in request_context.history[-1]["content"]
+    if has_male and not has_female:
         is_male = True
         bot_name = "יואב"
-    elif request_context.history[-1]["content"] == "מטפלת":
+    elif has_female and not has_male:
         is_male = False
         bot_name = "גולדה"
     else:
@@ -131,9 +133,9 @@ async def get_name(request_context: RequestContext):
 States[StateGetName] = State(run=get_name)
 
 async def get_patient_gender(request_context: RequestContext):
-    if request_context.history[-1]["content"] == "גבר":
+    if request_context.history[-1]["content"].strip() in ("גבר", "לשון גבר", "פנה אלי בלשון גבר", "פנה אלי כגבר"):
         is_male = True
-    elif request_context.history[-1]["content"] == "אשה":
+    elif request_context.history[-1]["content"].strip() in ("אשה", "אישה", "לשון אשה", "לשון אישה", "פנה אלי בלשון אשה", "פנה אלי בלשון אישה", "פנה אלי כאשה", "פנה אלי כאישה"):
         is_male = False
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד/י גבר/אשה?")

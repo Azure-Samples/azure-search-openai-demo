@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariableNextVideoPrefix, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, get_exit_text
+from approaches.flow.shared_states import ContactsText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariableNextVideoPrefix, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
@@ -64,9 +64,9 @@ async def get_distress_level_after_video(request_context: RequestContext):
         else:
             request_context.save_to_var(VariableExitText, """לאנשים שונים בזמנים שונים מתאימות התערבויות שונות. כיוון שאני מתרשם שקשה לך כעת אני {suggest} שנתקדם לקראת סיום התרגול.
     לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה שיש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון:
-    טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-    טלפון ער"ן  טלפון 1201 או ווטסאפ https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0 (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)""".format(
-                suggest = "מציע" if is_bot_male else "מציעה"))
+    {contactsText}""".format(
+                suggest = "מציע" if is_bot_male else "מציעה",
+                contactsText = ContactsText))
             request_context.set_next_state(StateExit)
         return
 
@@ -81,8 +81,8 @@ async def get_distress_level_after_video(request_context: RequestContext):
     ready_to_continue = "האם {you_ready} להמשיך לתרגל?".format(you_ready = "אתה מוכן" if is_male else "את מוכנה")
     request_context.set_next_state(StateGetIfToContinueAfterVideo)
     if distress < prevDistress:
-        return request_context.write_chat_message("""אני שמח {that_you} חווה שיפור, מיד נוכל להמשיך לתרגל אם {want}. {ready_to_continue}""".format(
-            that_you = "שאתה" if is_male else "שאת", ready_to_continue = ready_to_continue, want = "תרצה" if is_male else "תרצי"))
+        return request_context.write_chat_message("""אני {happy} {that_you} חווה שיפור, מיד נוכל להמשיך לתרגל אם {want}. {ready_to_continue}""".format(
+            happy = "שמח" if is_bot_male else "שמחה", that_you = "שאתה" if is_male else "שאת", ready_to_continue = ready_to_continue, want = "תרצה" if is_male else "תרצי"))
     elif distress == prevDistress:
         return request_context.write_chat_message("""חלק מהאנשים חווים שיפור אחרי תרגול נוסף. האם {want} להמשיך לתרגל?""".format(want = "תרצה" if is_male else "תרצי"))
     else:
