@@ -33,6 +33,7 @@ from quart_cors import cors
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
+import aiofiles
 
 
 CONFIG_ASK_APPROACH = "ask_approach"
@@ -218,17 +219,19 @@ async def upload():
 
         async def write_file():
             nonlocal success
-            with open(f'../../data/{file.filename}', 'wb') as f:
+            global file_size 
+            global total_file_size
+            async with aiofiles.open(f'../../data/{file.filename}', 'wb') as f:
                 while True:
                     chunk = await file.read(1024)
                     if not chunk:
                         break
-                    f.write(chunk)
+                    await f.write(chunk)
                     file_size -= len(chunk)
                     success = True
 
 
-        await write_file()
+        asyncio.run(write_file())
 
         return jsonify({'success':success, 'message': 'File uploaded successfully'})
 
