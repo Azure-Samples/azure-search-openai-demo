@@ -227,7 +227,7 @@ async def upload():
         
 
     
-        async with aiofiles.open(f'../../data/{file.filename}', 'wb') as f:
+        async with asyncio.open(f'../../data/{file.filename}', 'wb') as f:
             loop = asyncio.get_event_loop()
             loop.run_until_complete(write_file(file, f))
             loop.close()
