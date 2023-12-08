@@ -126,7 +126,10 @@ export function Component(): JSX.Element {
 
     return (
         <div className={styles.uploadContainer}>
-            <FileUploader classes="file-uploader" handleChange={handleFileChange} name="file" types={fileTypes} multiple />
+            <form method="POST" encType="multipart/form-data" action="/upload">
+                <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple />
+                <button type="submit">Submit</button>
+            </form>
         </div>
     );
 }
