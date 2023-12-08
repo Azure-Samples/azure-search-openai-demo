@@ -168,23 +168,35 @@ async def chat():
     except Exception as error:
         return error_response(error, "/chat")
 
-@bp.websocket('/ws')
-async def ws():
-    global file_size 
-    global total_file_size
-    await websocket.send("Hello, world!")
+async def background_task():
     while True:
         try:
-            percentage = 100*file_size/total_file_size
-            await websocket.send(percentage)
+            await asyncio.sleep(0.1)
+            message = "This is a background message"
+            await websocket.send(message)
             # wait for 10 ms
-            await asyncio.sleep(0.05)
             if file_size < 1:
                 break    
         except:
             await websocket.send("Hello!")
             pass
     await websocket.send("done")
+        
+@bp.websocket('/ws')
+async def ws():
+    global file_size 
+    global total_file_size
+    background_task_instance = await asyncio.create_task(background_task())
+    try:
+        while True:
+            data = await websocket.receive()
+            # Handle received data if needed
+    except asyncio.CancelledError:
+        pass  # Ignore cancellation when the WebSocket connection is closed
+    finally:
+        # Cancel the background task when the WebSocket connection is closed
+        background_task_instance.cancel()
+    
     
 @bp.route("/upload", methods=["POST"])
 async def upload():
