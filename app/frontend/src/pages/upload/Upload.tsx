@@ -59,7 +59,7 @@ export function Component(): JSX.Element {
         $.ajax({
             url: `/upload`,
             type: "POST",
-            headers: { "Content-Type": "multipart/form-data" },
+            // headers: { "Content-Type": "multipart/form-data" },
             data: files,
             processData: false,
             contentType: false,
