@@ -58,5 +58,5 @@ export type ChatAppRequest = {
 };
 
 export type UploadFilesRequest = {
-    files: any[];
+    files: any;
 };

@@ -44,7 +44,7 @@ export async function uploadFilesApi(request: UploadFilesRequest, idToken: strin
     return await fetch(`${BACKEND_URI}/upload`, {
         method: "POST",
         headers: getHeaders(idToken),
-        body: JSON.stringify(request)
+        body: request.files
     });
 }
 
