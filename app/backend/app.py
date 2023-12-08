@@ -165,6 +165,20 @@ async def chat():
     except Exception as error:
         return error_response(error, "/chat")
 
+@bp.route("/upload", methods=["POST"])
+async def upload():
+    uploaded_files = await request.files.getlist("files")
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context = {}
+    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    try:
+        for file in uploaded_files:
+            # Process each file as needed
+            file.save(f'../../data/{file.filename}')  # Save the file
+
+        return jsonify({'success':True})
+    except Exception as error:
+        return error_response(error, "/upload")
 
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])

@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 import styles from "./Upload.module.css";
 
-import { askApi, ChatAppResponse, ChatAppRequest, RetrievalMode } from "../../api";
+import { askApi, ChatAppResponse, ChatAppRequest, RetrievalMode, uploadFilesApi, UploadFilesRequest } from "../../api";
 
 import { AnalysisPanelTabs } from "../../components/AnalysisPanel";
 
@@ -12,7 +12,7 @@ import { FileUploader } from "react-drag-drop-files";
 
 const fileTypes = ["PDF"];
 export function Component(): JSX.Element {
-    const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    // const [files, setFiles] = useState<any>(null);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
     const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
@@ -35,44 +35,21 @@ export function Component(): JSX.Element {
 
     const client = useLogin ? useMsal().instance : undefined;
 
-    const makeApiRequest = async (question: string) => {
-        lastQuestionRef.current = question;
-
+    const makeApiRequest = async (files: any) => {
         error && setError(undefined);
         setIsLoading(true);
-        setActiveCitation(undefined);
-        setActiveAnalysisPanelTab(undefined);
 
         const token = client ? await getToken(client) : undefined;
 
         try {
-            const request: ChatAppRequest = {
-                messages: [
-                    {
-                        content: question,
-                        role: "user"
-                    }
-                ],
-                context: {
-                    overrides: {
-                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
-                        prompt_template_prefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
-                        prompt_template_suffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
-                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
-                        top: retrieveCount,
-                        retrieval_mode: retrievalMode,
-                        semantic_ranker: useSemanticRanker,
-                        semantic_captions: useSemanticCaptions,
-                        use_oid_security_filter: useOidSecurityFilter,
-                        use_groups_security_filter: useGroupsSecurityFilter
-                    }
-                },
-                // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answer ? answer.choices[0].session_state : null
+            const request: UploadFilesRequest = {
+                files: files
             };
-            const result = await askApi(request, token?.accessToken);
-            setAnswer(result);
+            const result = await uploadFilesApi(request, token?.accessToken);
+            // setAnswer(result);
+            console.log(result);
         } catch (e) {
+            console.error(e);
             setError(e);
         } finally {
             setIsLoading(false);
@@ -107,10 +84,6 @@ export function Component(): JSX.Element {
         setExcludeCategory(newValue || "");
     };
 
-    const onExampleClicked = (example: string) => {
-        makeApiRequest(example);
-    };
-
     const onShowCitation = (citation: string) => {
         if (activeCitation === citation && activeAnalysisPanelTab === AnalysisPanelTabs.CitationTab) {
             setActiveAnalysisPanelTab(undefined);
@@ -136,9 +109,10 @@ export function Component(): JSX.Element {
         setUseGroupsSecurityFilter(!!checked);
     };
 
-    const [file, setFile] = useState(null);
-    const handleFileChange = (file: any) => {
-        setFile(file);
+    const handleFileChange = (files: any) => {
+        // setFiles(file);
+        console.log('files: ', files);
+        makeApiRequest(files);
     };
 
     return (

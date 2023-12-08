@@ -15,7 +15,7 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
-                    <Link to="/" className={styles.headerTitleContainer}>
+                    <Link to="/upload" className={styles.headerTitleContainer}>
                         <h3 className={styles.headerTitle}>Upload Documents</h3>
                     </Link>
                     <nav>

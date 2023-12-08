@@ -12,6 +12,7 @@ import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import { Link } from "react-router-dom";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -148,7 +149,7 @@ export function Component(): JSX.Element {
                 <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 <h1 className={styles.oneshotTitle}>Ask your data</h1>
                 <h2 className={styles.oneshotEmptyStateSubtitle}>
-                    Or <a href="#">Upload your documents</a>
+                    Or <Link to="/upload">Upload your documents</Link>
                 </h2>
                 <div className={styles.oneshotQuestionInput}>
                     <QuestionInput
