@@ -25,7 +25,7 @@ param networkAcls object = {
 }
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
-param sku object = { name: 'Standard_LRS' }
+param sku object = { name: 'Standard_ZRS' }
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: name
