@@ -26,6 +26,7 @@ from quart import (
     send_file,
     send_from_directory,
 )
+from flask import request as flask_request
 from quart_cors import cors
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
@@ -169,15 +170,15 @@ async def chat():
 def upload():
     # uploaded_files = request.files.getlist("file")
     # uploaded_files = request_files.getlist("file[]")
-    print(23,request.files)
+    print(23,flask_request.files)
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context = {}
     # context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        for file in request.files:
+        for file in flask_request.files:
             print(f'uploaded file: {file.filename}')
             # Process each file as needed
-            request.files[file].save(f'../../data/{file.filename}')  # Save the file
+            flask_request.files[file].save(f'../../data/{file.filename}')  # Save the file
 
         return jsonify({'success':True})
     except Exception as error:
