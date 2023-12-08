@@ -35,7 +35,7 @@ export function Component(): JSX.Element {
 
     const client = useLogin ? useMsal().instance : undefined;
 
-    const makeApiRequest = async (files: any, size: number) => {
+    const makeApiRequest = async (files: any) => {
         error && setError(undefined);
         setIsLoading(true);
 
@@ -45,7 +45,7 @@ export function Component(): JSX.Element {
             const request: UploadFilesRequest = {
                 files: files
             };
-            const result = await uploadFilesApi(request, token?.accessToken, size);
+            const result = await uploadFilesApi(request, token?.accessToken);
             // setAnswer(result);
             console.log(result);
         } catch (e) {
@@ -109,24 +109,15 @@ export function Component(): JSX.Element {
         setUseGroupsSecurityFilter(!!checked);
     };
 
-    const handleFileChange = (files: any) => {
-        if (!files || files.length === 0) {
-            console.error("No files selected");
-            return;
-        }
-        const formData = new FormData();
-        let size = 0;
-        for (let i = 0; i < files.length; i++) {
-            formData.append(`file${i}`, files[i], files[i].name);
-            // calculate size of each file
-            size += files[i].size;
-        }
-        makeApiRequest(formData, size);
+    const handleFilesSubmit = (e: any) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        makeApiRequest(formData);
     };
 
     return (
         <div className={styles.uploadContainer}>
-            <form method="POST" encType="multipart/form-data" action="/upload">
+            <form method="POST" encType="multipart/form-data" action="/upload" onSubmit={handleFilesSubmit}>
                 <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple />
                 <button type="submit">Submit</button>
             </form>
