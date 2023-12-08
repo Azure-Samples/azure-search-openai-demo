@@ -168,8 +168,8 @@ async def chat():
 @bp.route("/upload", methods=["POST"])
 async def upload():
     request_files = await request.files
-    uploaded_files = request_files.getlist("file")
-    print(2222,request_files,333,uploaded_files)
+    uploaded_files = request_files.getlist("file[]")
+    print(2222,request_files,333,uploaded_files,23,request_files.get('file','None'))
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context = {}
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
