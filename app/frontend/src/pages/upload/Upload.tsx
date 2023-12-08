@@ -111,13 +111,18 @@ export function Component(): JSX.Element {
 
     const handleFilesSubmit = (e: any) => {
         e.preventDefault();
-        const formData = new FormData(e.target);
+        const formData = new FormData();
+        const files = e.target.files;
+        for (let i = 0; i < files.length; i++) {
+            formData.append(`file${i}`, files[i], files[i].name);
+        }
+        console.log(formData);
         makeApiRequest(formData);
     };
 
     return (
         <div className={styles.uploadContainer}>
-            <form method="POST" encType="multipart/form-data" action="/upload" onSubmit={handleFilesSubmit}>
+            <form method="POST" encType="multipart/form-data" onSubmit={handleFilesSubmit}>
                 <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple />
                 <button type="submit">Submit</button>
             </form>
