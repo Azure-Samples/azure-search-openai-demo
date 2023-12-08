@@ -38,8 +38,5 @@ a {
 
 .file-uploader {
     margin-top: 100px;
-}
-
-.file-uploader > label {
     padding: 100px;
 }
