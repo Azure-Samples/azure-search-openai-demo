@@ -217,21 +217,17 @@ async def upload():
         file_size = file.content_length
         total_file_size = file.content_length
 
-        async def write_file():
-            nonlocal success
-            global file_size 
-            global total_file_size
-            async with aiofiles.open(f'../../data/{file.filename}', 'wb') as f:
-                while True:
-                    chunk = await file.read(1024)
-                    if not chunk:
-                        break
-                    await f.write(chunk)
-                    file_size -= len(chunk)
-                    success = True
+    
+        async with aiofiles.open(f'../../data/{file.filename}', 'wb') as f:
+            while True:
+                chunk = await file.read(1024)
+                if not chunk:
+                    break
+                await f.write(chunk)
+                file_size -= len(chunk)
+                success = True
 
 
-        await write_file()
 
         return jsonify({'success':success, 'message': 'File uploaded successfully'})
 
