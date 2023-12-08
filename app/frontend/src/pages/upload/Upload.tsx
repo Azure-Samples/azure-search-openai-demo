@@ -40,32 +40,22 @@ export function Component(): JSX.Element {
         error && setError(undefined);
         setIsLoading(true);
 
-        const token = client ? await getToken(client) : undefined;
-
-        // try {
-        //     const request: UploadFilesRequest = {
-        //         files: files
-        //     };
-        //     const result = await uploadFilesApi(request, token?.accessToken);
-        //     // setAnswer(result);
-        //     console.log(result);
-        // } catch (e) {
-        //     console.error(e);
-        //     setError(e);
-        // } finally {
-        //     setIsLoading(false);
-        // }
-
         $.ajax({
             url: `/upload`,
             type: "POST",
-            // headers: { "Content-Type": "multipart/form-data" },
             data: files,
             processData: false,
             contentType: false,
             success: function (data) {
                 console.log("success");
                 console.log(data);
+                setIsLoading(false);
+            },
+            error: function (e){
+                console.log("error");
+                console.log(e);
+                setIsLoading(false);
+                setError(e);
             }
         });
     };
@@ -126,7 +116,6 @@ export function Component(): JSX.Element {
     const handleFilesSubmit = (e: any) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        console.log(formData);
         makeApiRequest(formData);
     };
 
@@ -135,6 +124,7 @@ export function Component(): JSX.Element {
             <form method="POST" encType="multipart/form-data" onSubmit={handleFilesSubmit}>
                 <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple />
                 <button type="submit">Submit</button>
+                <progress id="progressBar" max="100" value="0"></progress>
             </form>
         </div>
     );

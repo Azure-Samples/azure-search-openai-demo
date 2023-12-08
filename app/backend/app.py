@@ -25,12 +25,14 @@ from quart import (
     request,
     send_file,
     send_from_directory,
+    websocket,
 )
 from quart_cors import cors
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
+
 
 CONFIG_ASK_APPROACH = "ask_approach"
 CONFIG_CHAT_APPROACH = "chat_approach"
@@ -48,7 +50,6 @@ bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
-
 
 @bp.route("/")
 async def index():
@@ -70,6 +71,7 @@ async def favicon():
 @bp.route("/assets/<path:path>")
 async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
+
 
 
 # Serve content files from blob storage from within the app to keep the example self-contained.
@@ -165,20 +167,37 @@ async def chat():
     except Exception as error:
         return error_response(error, "/chat")
 
+@bp.websocket('/ws')
 @bp.route("/upload", methods=["POST"])
 async def upload():
     request_files = await request.files
-    request_headers = request.headers
     uploaded_files = request_files.getlist('file')
-    print(2222,request_files,333,uploaded_files)
-    print(444,request_headers)
+    
     try:
         success = False
         for file in uploaded_files:
-            print(f'uploaded file: {file.filename}')
-            saved = await file.save(f'../../data/{file.filename}')  # Save the file
-            print(22,saved)
+            # saved = await file.save(f'../../data/{file.filename}')  # Save the file
+            
             success = True 
+        
+        file_size = uploaded_files[0].content_length
+
+        async def write_file():
+            nonlocal file_size
+            with open(f'../../data/{file.filename}', 'wb') as f:
+                while True:
+                    chunk = await file.read_chunk(1024)
+                    if not chunk:
+                        break
+                    f.write(chunk)
+                    file_size -= len(chunk)
+                    await websocket.send(100*file_size/uploaded_files[0].content_length)
+
+
+        await write_file()
+
+        return jsonify({'success':success, 'message': 'File uploaded successfully'})
+
             
         return jsonify({'success':success})
     except Exception as error:
