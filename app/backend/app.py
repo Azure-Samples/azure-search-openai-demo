@@ -173,8 +173,8 @@ async def upload():
     try:
         for file in uploaded_files:
             print(f'uploaded file: {file.filename}')
-            await file.save(f'../../data/{file.filename}')  # Save the file
-
+            saved = await file.save(f'../../data/{file.filename}')  # Save the file
+            print(22,saved)
         return jsonify({'success':True})
     except Exception as error:
         return error_response(error, "/upload")
