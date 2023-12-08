@@ -54,6 +54,10 @@ const router = createHashRouter([
                 lazy: () => import("./pages/oneshot/OneShot")
             },
             {
+                path: "upload",
+                lazy: () => import("./pages/upload/Upload")
+            },
+            {
                 path: "*",
                 lazy: () => import("./pages/NoPage")
             }

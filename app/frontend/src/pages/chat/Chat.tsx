@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
+import { Link } from "react-router-dom";
 
 import styles from "./Chat.module.css";
 
@@ -238,7 +239,7 @@ const Chat = () => {
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>
-                                Ask anything, try below example or <a href="#">upload your documents</a>
+                                Ask anything, try below example or <Link to="/upload">Upload your documents</Link>
                             </h2>
                             <ExampleList onExampleClicked={onExampleClicked} />
                         </div>
