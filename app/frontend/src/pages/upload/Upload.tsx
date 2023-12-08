@@ -111,11 +111,7 @@ export function Component(): JSX.Element {
 
     const handleFilesSubmit = (e: any) => {
         e.preventDefault();
-        const formData = new FormData();
-        const files = e.target.files;
-        for (let i = 0; i < files.length; i++) {
-            formData.append(`file${i}`, files[i], files[i].name);
-        }
+        const formData = new FormData(e.target);
         console.log(formData);
         makeApiRequest(formData);
     };
