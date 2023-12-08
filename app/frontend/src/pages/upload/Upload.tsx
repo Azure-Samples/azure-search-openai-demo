@@ -120,7 +120,6 @@ export function Component(): JSX.Element {
             formData.append(`file${i}`, files[i], files[i].name);
             // calculate size of each file
             size += files[i].size;
-            console.log(`file size: ${size}`);
         }
         makeApiRequest(formData, size);
     };
