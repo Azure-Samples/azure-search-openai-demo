@@ -2,6 +2,8 @@ import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
 
+import logo from "../../assets/logo.png";
+
 import styles from "./Layout.module.css";
 
 import { useLogin } from "../../authConfig";
@@ -14,7 +16,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>Upload Documents</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
@@ -29,20 +31,20 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
+                                <a href="https://example.com" target={"_blank"} title="Example.com link">
                                     <img
-                                        src={github}
-                                        alt="Github logo"
-                                        aria-label="Link to github repository"
+                                        src={logo}
+                                        alt="Logo"
+                                        aria-label="Link to example.com"
                                         width="20px"
                                         height="20px"
-                                        className={styles.githubLogo}
+                                        className={styles.logo}
                                     />
                                 </a>
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
+                    <h4 className={styles.headerRightText}>Powered by Example.com</h4>
                     {useLogin && <LoginButton />}
                 </div>
             </header>

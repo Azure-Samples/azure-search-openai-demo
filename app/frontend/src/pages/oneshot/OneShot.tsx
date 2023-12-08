@@ -147,6 +147,9 @@ export function Component(): JSX.Element {
             <div className={styles.oneshotTopSection}>
                 <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 <h1 className={styles.oneshotTitle}>Ask your data</h1>
+                <h2 className={styles.oneshotEmptyStateSubtitle}>
+                    Or <a href="#">Upload your documents</a>
+                </h2>
                 <div className={styles.oneshotQuestionInput}>
                     <QuestionInput
                         placeholder="Example: Does my plan cover annual eye exams?"
