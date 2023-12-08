@@ -174,9 +174,7 @@ async def upload():
     try:
         for name, file in uploaded_files:
             print(f'uploaded file: {file.filename}')
-            print(f'Processing {name}: {len(file.read())}')
-            # Process each file as needed
-            file.save(f'../../data/{file.filename}')  # Save the file
+            await file.save(f'../../data/{file.filename}')  # Save the file
 
         return jsonify({'success':True})
     except Exception as error:
