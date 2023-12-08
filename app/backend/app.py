@@ -26,7 +26,6 @@ from quart import (
     send_file,
     send_from_directory,
 )
-from flask import request as flask_request
 from quart_cors import cors
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
@@ -167,18 +166,18 @@ async def chat():
         return error_response(error, "/chat")
 
 @bp.route("/upload", methods=["POST"])
-def upload():
-    # uploaded_files = request.files.getlist("file")
-    # uploaded_files = request_files.getlist("file[]")
-    print(23,flask_request.files)
+async def upload():
+    request_files = await request.files
+    uploaded_files = request_files.items()
+    print(2222,request_files,333,uploaded_files)
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context = {}
-    # context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        for file in flask_request.files:
+        for file in uploaded_files:
             print(f'uploaded file: {file.filename}')
             # Process each file as needed
-            flask_request.files[file].save(f'../../data/{file.filename}')  # Save the file
+            file.save(f'../../data/{file.filename}')  # Save the file
 
         return jsonify({'success':True})
     except Exception as error:
