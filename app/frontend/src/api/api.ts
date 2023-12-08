@@ -41,9 +41,11 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 }
 
 export async function uploadFilesApi(request: UploadFilesRequest, idToken: string | undefined): Promise<Response> {
+    const headers = getHeaders(idToken);
+    headers["Content-Type"] = "multipart/form-data";
     return await fetch(`${BACKEND_URI}/upload`, {
         method: "POST",
-        headers: getHeaders(idToken),
+        headers: headers,
         body: request.files
     });
 }

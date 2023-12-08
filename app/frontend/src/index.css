@@ -38,5 +38,5 @@ a {
 
 .file-uploader {
     margin-top: 100px;
-    padding: 100px;
+    padding: 100px !important;
 }
