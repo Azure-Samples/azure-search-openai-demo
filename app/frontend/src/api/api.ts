@@ -3,7 +3,7 @@ const BACKEND_URI = "";
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, UploadFilesRequest } from "./models";
 import { useLogin } from "../authConfig";
 
-function getHeaders(idToken: string | undefined): Record<string, string> {
+function getHeaders(idToken: string | undefined): any {
     var headers: Record<string, string> = {
         "Content-Type": "application/json"
     };
@@ -42,9 +42,9 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 
 export async function uploadFilesApi(request: UploadFilesRequest["files"], idToken: string | undefined): Promise<Response> {
     const headers = getHeaders(idToken);
-    const contentLength = request.toString().length
+    const contentLength = request.toString().length;
     headers["Content-Length"] = contentLength.toString();
-    headers["Content-Type"] = "multipart/form-data";
+    headers["Content-Type"] = undefined;
     return await fetch(`${BACKEND_URI}/upload`, {
         method: "POST",
         headers: headers,
