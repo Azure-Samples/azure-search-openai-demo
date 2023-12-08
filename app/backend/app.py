@@ -172,10 +172,13 @@ async def ws():
     global file_size 
     global total_file_size
     while True:
-        percentage = 100*file_size/total_file_size
-        await websocket.send(percentage)
-        if file_size < 1:
-            break    
+        try:
+            percentage = 100*file_size/total_file_size
+            await websocket.send(percentage)
+            if file_size < 1:
+                break    
+        except:
+            pass
     await websocket.send("done")
     
 @bp.route("/upload", methods=["POST"])
