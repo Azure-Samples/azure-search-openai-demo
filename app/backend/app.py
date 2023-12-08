@@ -168,14 +168,19 @@ async def chat():
 @bp.route("/upload", methods=["POST"])
 async def upload():
     request_files = await request.files
+    request_headers = await request.headers
     uploaded_files = request_files.getlist('file')
     print(2222,request_files,333,uploaded_files)
+    print(444,request_headers)
     try:
+        success = False
         for file in uploaded_files:
             print(f'uploaded file: {file.filename}')
             saved = await file.save(f'../../data/{file.filename}')  # Save the file
             print(22,saved)
-        return jsonify({'success':True})
+            success = True 
+            
+        return jsonify({'success':success})
     except Exception as error:
         return error_response(error, "/upload")
 
