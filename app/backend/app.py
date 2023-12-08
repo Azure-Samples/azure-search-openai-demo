@@ -231,7 +231,7 @@ async def upload():
                     success = True
 
 
-        asyncio.run(write_file())
+        await write_file()
 
         return jsonify({'success':success, 'message': 'File uploaded successfully'})
 
