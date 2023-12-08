@@ -9,6 +9,7 @@ import { AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { FileUploader } from "react-drag-drop-files";
+import $ from "jquery";
 
 const fileTypes = ["PDF"];
 export function Component(): JSX.Element {
@@ -41,19 +42,32 @@ export function Component(): JSX.Element {
 
         const token = client ? await getToken(client) : undefined;
 
-        try {
-            const request: UploadFilesRequest = {
-                files: files
-            };
-            const result = await uploadFilesApi(request, token?.accessToken);
-            // setAnswer(result);
-            console.log(result);
-        } catch (e) {
-            console.error(e);
-            setError(e);
-        } finally {
-            setIsLoading(false);
-        }
+        // try {
+        //     const request: UploadFilesRequest = {
+        //         files: files
+        //     };
+        //     const result = await uploadFilesApi(request, token?.accessToken);
+        //     // setAnswer(result);
+        //     console.log(result);
+        // } catch (e) {
+        //     console.error(e);
+        //     setError(e);
+        // } finally {
+        //     setIsLoading(false);
+        // }
+
+        $.ajax({
+            url: `/upload`,
+            type: "POST",
+            headers: { "Content-Type": "multipart/form-data" },
+            data: files,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log("success");
+                console.log(data);
+            }
+        });
     };
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {

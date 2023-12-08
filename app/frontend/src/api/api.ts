@@ -2,6 +2,7 @@ const BACKEND_URI = "";
 
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, UploadFilesRequest } from "./models";
 import { useLogin } from "../authConfig";
+import $ from "jquery";
 
 function getHeaders(idToken: string | undefined): any {
     var headers: Record<string, string> = {
@@ -42,12 +43,24 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 
 export async function uploadFilesApi(request: UploadFilesRequest, idToken: string | undefined): Promise<Response> {
     const headers = getHeaders(idToken);
-    headers["Content-Type"] = undefined
+    headers["Content-Type"] = undefined;
     return await fetch(`${BACKEND_URI}/upload`, {
         method: "POST",
         headers: headers,
         body: request.files
     });
+    // return await $.ajax({
+    //     url: `${BACKEND_URI}/upload`,
+    //     type: "POST",
+    //     headers: headers,
+    //     data: request.files,
+    //     processData: false,
+    //     contentType: false,
+    //     success: function (data) {
+    //         console.log("success");
+    //         console.log(data);
+    //     }
+    // });
 }
 
 export function getCitationFilePath(citation: string): string {
