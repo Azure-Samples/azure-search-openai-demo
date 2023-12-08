@@ -168,8 +168,9 @@ async def chat():
 @bp.route("/upload", methods=["POST"])
 async def upload():
     request_files = await request.files
+    formdata = await request.form
     uploaded_files = request_files.items()
-    print(2222,request_files,333,uploaded_files)
+    print(2222,request_files,333,uploaded_files, 32,formdata)
     try:
         for name, file in uploaded_files:
             print(f'uploaded file: {file.filename}')
