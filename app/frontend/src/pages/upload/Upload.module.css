@@ -4,3 +4,9 @@
     flex-direction: column;
     align-items: center;
 }
+.uploadFileUploader {
+    margin-top: 100px;
+}
+.uploadFileUploader > label {
+    padding: 100px;
+}

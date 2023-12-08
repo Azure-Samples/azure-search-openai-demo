@@ -124,7 +124,7 @@ export function Component(): JSX.Element {
 
     return (
         <div className={styles.uploadContainer}>
-            <FileUploader handleChange={handleFileChange} name="files" types={fileTypes} multiple />
+            <FileUploader className={styles.uploadFileUploader} handleChange={handleFileChange} name="files" types={fileTypes} multiple />
         </div>
     );
 }
