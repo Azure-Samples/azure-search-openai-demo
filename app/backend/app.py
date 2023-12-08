@@ -205,24 +205,27 @@ async def upload():
     
     try:
         success = False
-        for file in uploaded_files:
+        # for file in uploaded_files:
             # saved = await file.save(f'../../data/{file.filename}')  # Save the file
             
-            success = True 
+            # success = True 
         
         global file_size
         global total_file_size
-        file_size = uploaded_files[0].content_length
-        total_file_size = uploaded_files[0].content_length
+        file = uploaded_files[0]
+        file_size = file.content_length
+        total_file_size = file.content_length
 
         async def write_file():
-            with open(f'../../data/{uploaded_files[0].filename}', 'wb') as f:
+            nonlocal success
+            with open(f'../../data/{file.filename}', 'wb') as f:
                 while True:
-                    chunk = await f.read(1024)
+                    chunk = await file.read(1024)
                     if not chunk:
                         break
                     f.write(chunk)
                     file_size -= len(chunk)
+                    success = True
 
 
         await write_file()
@@ -230,7 +233,6 @@ async def upload():
         return jsonify({'success':success, 'message': 'File uploaded successfully'})
 
             
-        return jsonify({'success':success})
     except Exception as error:
         return error_response(error, "/upload")
 
