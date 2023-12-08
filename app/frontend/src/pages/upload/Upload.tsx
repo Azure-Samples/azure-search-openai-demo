@@ -110,14 +110,21 @@ export function Component(): JSX.Element {
     };
 
     const handleFileChange = (files: any) => {
-        // setFiles(file);
+        if (!files || files.length === 0) {
+            console.error("No files selected");
+            return;
+        }
         console.log('files: ', files);
-        makeApiRequest(files);
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append(`file${i + 1}`,files[i], files[i].name)
+        }
+        makeApiRequest(formData);
     };
 
     return (
         <div className={styles.uploadContainer}>
-            <FileUploader handleChange={handleFileChange} name="file" types={fileTypes} multiple />
+            <FileUploader handleChange={handleFileChange} name="files" types={fileTypes} multiple />
         </div>
     );
 }
