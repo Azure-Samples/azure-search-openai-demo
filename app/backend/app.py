@@ -179,7 +179,7 @@ async def ws():
             if file_size < 1:
                 break    
         except:
-            websocket.send("Hello!")
+            await websocket.send("Hello!")
             pass
     await websocket.send("done")
     
