@@ -35,7 +35,7 @@ export function Component(): JSX.Element {
 
     const client = useLogin ? useMsal().instance : undefined;
 
-    const makeApiRequest = async (files: any) => {
+    const makeApiRequest = async (files: any, size: number) => {
         error && setError(undefined);
         setIsLoading(true);
 
@@ -45,7 +45,7 @@ export function Component(): JSX.Element {
             const request: UploadFilesRequest = {
                 files: files
             };
-            const result = await uploadFilesApi(request, token?.accessToken);
+            const result = await uploadFilesApi(request, token?.accessToken, size);
             // setAnswer(result);
             console.log(result);
         } catch (e) {
@@ -114,12 +114,14 @@ export function Component(): JSX.Element {
             console.error("No files selected");
             return;
         }
-        console.log('files: ', files);
         const formData = new FormData();
+        let size = 0;
         for (let i = 0; i < files.length; i++) {
-            formData.append(`file${i}`,files[i])
+            formData.append(`file${i}`, files[i]);
+            // calculate size of each file
+            size += files[i].size;
         }
-        makeApiRequest(formData);
+        makeApiRequest(formData, size);
     };
 
     return (

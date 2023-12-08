@@ -40,11 +40,11 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
     });
 }
 
-export async function uploadFilesApi(request: UploadFilesRequest["files"], idToken: string | undefined): Promise<Response> {
+export async function uploadFilesApi(request: UploadFilesRequest["files"], idToken: string | undefined, size:number): Promise<Response> {
     const headers = getHeaders(idToken);
     const contentLength = request.toString().length;
     const boundary = 'abcd'
-    headers["Content-Length"] = contentLength.toString();
+    headers["Content-Length"] = size.toString();
     headers["Content-Type"] = 'multipart/form-data; boundary=' + boundary;
     return await fetch(`${BACKEND_URI}/upload`, {
         method: "POST",
