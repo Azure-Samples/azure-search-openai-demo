@@ -58,7 +58,7 @@ echo ""
 cd ../backend
 
 port=80
-host=localhost
+host=0.0.0.0
 ./backend_env/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
