@@ -45,11 +45,11 @@ echo ""
 echo "Building frontend"
 echo ""
 
-# npm run build
-# if [ $? -ne 0 ]; then
-#     echo "Failed to build frontend"
-#     exit $?
-# fi
+npm run build
+if [ $? -ne 0 ]; then
+    echo "Failed to build frontend"
+    exit $?
+fi
 
 echo ""
 echo "Starting backend"

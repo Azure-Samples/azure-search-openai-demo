@@ -117,7 +117,7 @@ export function Component(): JSX.Element {
         console.log('files: ', files);
         const formData = new FormData();
         for (let i = 0; i < files.length; i++) {
-            formData.append(`file${i + 1}`,files[i], files[i].name)
+            formData.append(`file${i}`,files.item(i), files.item(i).name)
         }
         makeApiRequest(formData);
     };
