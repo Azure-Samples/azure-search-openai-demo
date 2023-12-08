@@ -216,16 +216,21 @@ async def upload():
         file = uploaded_files[0]
         file_size = file.content_length
         total_file_size = file.content_length
+        
+        async def write_file(file, f):
+            global file_size
+            chunk = await file.read(1024)
+            await f.write(chunk)
+            file_size -=len(chunk)
+            
+            
+        
 
     
         async with aiofiles.open(f'../../data/{file.filename}', 'wb') as f:
-            while True:
-                chunk = await file.read(1024)
-                if not chunk:
-                    break
-                await f.write(chunk)
-                file_size -= len(chunk)
-                success = True
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(write_file(file, f))
+            loop.close()
 
 
 
