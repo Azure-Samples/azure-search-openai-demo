@@ -117,7 +117,7 @@ export function Component(): JSX.Element {
         const formData = new FormData();
         let size = 0;
         for (let i = 0; i < files.length; i++) {
-            formData.append(`file${i}`, files[i]);
+            formData.append(`file${i}`, files[i], files[i].name);
             // calculate size of each file
             size += files[i].size;
             console.log(`file size: ${size}`);
