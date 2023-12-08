@@ -167,17 +167,17 @@ async def chat():
 
 @bp.route("/upload", methods=["POST"])
 def upload():
-    uploaded_files = request.files.getlist("file")
+    # uploaded_files = request.files.getlist("file")
     # uploaded_files = request_files.getlist("file[]")
-    print(2222,uploaded_files,23,request.files)
+    print(23,request.files)
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context = {}
     # context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        for file in uploaded_files:
+        for file in request.files:
             print(f'uploaded file: {file.filename}')
             # Process each file as needed
-            file.save(f'../../data/{file.filename}')  # Save the file
+            request.files[file].save(f'../../data/{file.filename}')  # Save the file
 
         return jsonify({'success':True})
     except Exception as error:
