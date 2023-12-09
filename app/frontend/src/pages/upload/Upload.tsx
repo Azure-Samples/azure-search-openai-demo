@@ -92,11 +92,17 @@ export function Component(): JSX.Element {
                 return xhr;
             },
             success: function (data) {
-                setIsLoading(false);
-                setFilesUploaded(true);
+                if (data.success) {
+                    setIsLoading(false);
+                    setFilesUploaded(true);
+                } else {
+                    setIsLoading(false);
+                    setFilesUploaded(false);
+                    setError("Something went wrong");
+                }
             },
             error: function (e) {
-                console.error(e)
+                console.error(e);
                 setIsLoading(false);
                 setError(e);
             }

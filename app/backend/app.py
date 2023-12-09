@@ -210,8 +210,6 @@ async def upload():
             success = True 
         
         return jsonify({'success':success, 'message': 'File uploaded successfully'})
-
-            
     except Exception as error:
         return error_response(error, "/upload")
 
