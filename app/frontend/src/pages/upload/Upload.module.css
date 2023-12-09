@@ -10,10 +10,10 @@
 }
 .uploadProgress {
     width: 100%;
-    background-color: #fff;
+    background-color: #b9b9b9;
 }
 .uploadBar {
     width: 1%;
-    height: 20px;
+    height: 25px;
     background-color: #2f341f;
 }
