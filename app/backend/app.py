@@ -33,7 +33,6 @@ from quart_cors import cors
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
-import aiofiles
 
 
 CONFIG_ASK_APPROACH = "ask_approach"
@@ -172,7 +171,7 @@ async def chat():
 async def background_task():
     while True:
         try:
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(1) # sleep for a little bit
             message = "This is a background message"
             await websocket.send(message)
             # wait for 10 ms
@@ -206,35 +205,10 @@ async def upload():
     
     try:
         success = False
-        # for file in uploaded_files:
-            # saved = await file.save(f'../../data/{file.filename}')  # Save the file
-            
-            # success = True 
+        for file in uploaded_files:
+            await file.save(f'../../data/{file.filename}')  # Save the file
+            success = True 
         
-        global file_size
-        global total_file_size
-        file = uploaded_files[0]
-        file_size = file.content_length
-        total_file_size = file.content_length
-        
-        async def write_file(file, f):
-            global file_size
-            chunk = await file.read(1024)
-            await f.write(chunk)
-            file_size -=len(chunk)
-            
-            
-        
-
-    
-        async with aiofiles.open(f'../../data/{file.filename}', 'wb') as f:
-            async for line in file:
-                chunk = await line.read(1024)
-                await f.write(chunk)
-                file_size -=len(chunk)
-
-
-
         return jsonify({'success':success, 'message': 'File uploaded successfully'})
 
             

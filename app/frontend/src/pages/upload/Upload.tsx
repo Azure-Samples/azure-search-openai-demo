@@ -13,19 +13,7 @@ import $ from "jquery";
 
 const fileTypes = ["PDF"];
 export function Component(): JSX.Element {
-    // const [files, setFiles] = useState<any>(null);
-    const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
-    const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
-    const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
-    const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
-    const [excludeCategory, setExcludeCategory] = useState<string>("");
-    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
-    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
-
-    const lastQuestionRef = useRef<string>("");
+    const barRef = useRef<HTMLDivElement>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
@@ -46,12 +34,28 @@ export function Component(): JSX.Element {
             data: files,
             processData: false,
             contentType: false,
+            // xhr for progress of this form upload
+            xhr: function () {
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener(
+                    "progress",
+                    function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = (evt.loaded / evt.total) * 100;
+                            console.log(percentComplete);
+                            barRef.current!.style.width = percentComplete + "%";
+                        }
+                    },
+                    false
+                );
+                return xhr;
+            },
             success: function (data) {
                 console.log("success");
                 console.log(data);
                 setIsLoading(false);
             },
-            error: function (e){
+            error: function (e) {
                 console.log("error");
                 console.log(e);
                 setIsLoading(false);
@@ -60,63 +64,24 @@ export function Component(): JSX.Element {
         });
     };
 
-    const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplate(newValue || "");
-    };
-
-    const onPromptTemplatePrefixChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplatePrefix(newValue || "");
-    };
-
-    const onPromptTemplateSuffixChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplateSuffix(newValue || "");
-    };
-
-    const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setRetrieveCount(parseInt(newValue || "3"));
-    };
-
-    const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseSemanticRanker(!!checked);
-    };
-
-    const onUseSemanticCaptionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseSemanticCaptions(!!checked);
-    };
-
-    const onExcludeCategoryChanged = (_ev?: React.FormEvent, newValue?: string) => {
-        setExcludeCategory(newValue || "");
-    };
-
-    const onShowCitation = (citation: string) => {
-        if (activeCitation === citation && activeAnalysisPanelTab === AnalysisPanelTabs.CitationTab) {
-            setActiveAnalysisPanelTab(undefined);
-        } else {
-            setActiveCitation(citation);
-            setActiveAnalysisPanelTab(AnalysisPanelTabs.CitationTab);
-        }
-    };
-
-    const onToggleTab = (tab: AnalysisPanelTabs) => {
-        if (activeAnalysisPanelTab === tab) {
-            setActiveAnalysisPanelTab(undefined);
-        } else {
-            setActiveAnalysisPanelTab(tab);
-        }
-    };
-
-    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseOidSecurityFilter(!!checked);
-    };
-
-    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseGroupsSecurityFilter(!!checked);
-    };
-
     const handleFilesSubmit = (e: any) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         makeApiRequest(formData);
+    };
+
+    const progressMove = () => {
+        const elem = barRef.current;
+        let width = 1;
+        const id = setInterval(frame, 50);
+        function frame() {
+            if (width >= 100) {
+                clearInterval(id);
+            } else {
+                width++;
+                elem!.style.width = width + "%";
+            }
+        }
     };
 
     return (
@@ -124,8 +89,10 @@ export function Component(): JSX.Element {
             <form method="POST" encType="multipart/form-data" onSubmit={handleFilesSubmit}>
                 <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple />
                 <button type="submit">Submit</button>
-                <progress id="progressBar" max="100" value="0"></progress>
             </form>
+            <div className={styles.uploadProgress} onClick={progressMove}>
+                <div className={styles.uploadBar} ref={barRef}></div>
+            </div>
         </div>
     );
 }

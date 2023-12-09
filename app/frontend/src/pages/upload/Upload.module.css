@@ -10,3 +10,13 @@
 .uploadFileUploader > label {
     padding: 100px;
 }
+.uploadProgress {
+    margin-top: 50px;
+    width: 100%;
+    background-color: #fff;
+}
+.uploadBar {
+    width: 1%;
+    height: 20px;
+    background-color: #98b04a;
+}
