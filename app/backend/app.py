@@ -6,6 +6,7 @@ import mimetypes
 import os
 from pathlib import Path
 from typing import AsyncGenerator
+import subprocess
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -168,25 +169,31 @@ async def chat():
     except Exception as error:
         return error_response(error, "/chat")
 
-async def background_task():
+async def index_documents_task():
+    # run bash script file
+    filename = 'prepdocs-test.sh'
+    result = subprocess.run(['bash',f'../../scripts/{filename}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = result.stdout.decode('utf-8')
+    print(output)
+    
+    i=0
     while True:
         try:
-            await asyncio.sleep(1) # sleep for a little bit
-            message = "This is a background message"
-            await websocket.send(message)
-            # wait for 10 ms
-            if file_size < 1:
+            i+=1
+            await asyncio.sleep(0.1) # sleep for a little bit
+            await websocket.send({'progress':i})
+            if i >= 100:
                 break    
         except:
-            await websocket.send("Hello!")
+            await websocket.send({"error":True})
             pass
-    await websocket.send("done")
+    await websocket.send({"progress":100})
         
 @bp.websocket('/ws')
 async def ws():
     global file_size 
     global total_file_size
-    background_task_instance = await asyncio.create_task(background_task())
+    background_task_instance = await asyncio.create_task(index_documents_task())
     try:
         while True:
             data = await websocket.receive()

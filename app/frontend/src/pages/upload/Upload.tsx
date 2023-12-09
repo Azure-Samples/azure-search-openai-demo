@@ -4,6 +4,8 @@ import styles from "./Upload.module.css";
 import { useDropzone } from "react-dropzone";
 import $ from "jquery";
 
+const WEBSOCKET_ENDPOINT = "ws://51.103.210.242/ws";
+
 const baseStyle = {
     flex: 1,
     display: "flex",
@@ -35,6 +37,11 @@ const rejectStyle = {
 export function Component(): JSX.Element {
     const barRef = useRef<HTMLDivElement>(null);
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [filesUploaded, setFilesUploaded] = useState<boolean>(false);
+    const [filesProcessed, setFilesProcessed] = useState<boolean>(false);
+    const [filesProcessing, setFilesProcessing] = useState<boolean>(false);
+    const [error, setError] = useState<unknown>();
 
     const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
         onDrop: acceptedFiles => {
@@ -61,10 +68,6 @@ export function Component(): JSX.Element {
         }),
         [isFocused, isDragAccept, isDragReject]
     );
-
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [filesUploaded, setFilesUploaded] = useState<boolean>(false);
-    const [error, setError] = useState<unknown>();
 
     const makeApiRequest = async (files: any) => {
         error && setError(undefined);
@@ -98,10 +101,32 @@ export function Component(): JSX.Element {
                 if (data.success) {
                     setIsLoading(false);
                     setFilesUploaded(true);
+                    setFilesProcessing(true);
                     barRef.current!.style.width = "100%";
+
+                    const webSocket = new WebSocket(WEBSOCKET_ENDPOINT);
+
+                    webSocket.onopen = function (event) {
+                        console.log("WebSocket connection opened");
+                    };
+
+                    webSocket.onmessage = function (evt) {
+                        var received_msg = evt.data;
+                        barRef.current!.style.width = `${received_msg.progress}%`;
+                        if (received_msg.progress == 100) {
+                            setFilesProcessed(true);
+                            setFilesProcessing(false);
+                        }
+                    };
+
+                    webSocket.onclose = function (event) {
+                        console.log("WebSocket connection closed");
+                    };
                 } else {
                     setIsLoading(false);
                     setFilesUploaded(false);
+                    setFilesProcessing(false);
+                    setFilesProcessed(false);
                     setError("Something went wrong");
                 }
             },
@@ -109,6 +134,8 @@ export function Component(): JSX.Element {
                 console.error(e);
                 setIsLoading(false);
                 setFilesUploaded(false);
+                setFilesProcessing(false);
+                setFilesProcessed(false);
                 setError(e);
             }
         });
@@ -136,7 +163,9 @@ export function Component(): JSX.Element {
                     {isLoading ? <p>Uploading...</p> : null}
                     {filesUploaded ? <p>Files uploaded!</p> : null}
                     {error ? <p>Something went wrong!</p> : null}
-                    {isLoading || filesUploaded ? (
+                    {filesProcessed ? <p>Files processed!</p> : null}
+                    {filesProcessing ? <p>Files processing...</p> : null}
+                    {isLoading || filesUploaded || filesProcessing || filesProcessed ? (
                         <div className={styles.uploadProgress}>
                             <div className={styles.uploadBar} ref={barRef}></div>
                         </div>
