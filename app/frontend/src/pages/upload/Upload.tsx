@@ -1,13 +1,6 @@
 import { useRef, useState, useMemo } from "react";
 
 import styles from "./Upload.module.css";
-
-import { askApi, ChatAppResponse, ChatAppRequest, RetrievalMode, uploadFilesApi, UploadFilesRequest } from "../../api";
-
-import { AnalysisPanelTabs } from "../../components/AnalysisPanel";
-
-import { useLogin, getToken } from "../../authConfig";
-import { useMsal } from "@azure/msal-react";
 import { useDropzone } from "react-dropzone";
 import $ from "jquery";
 
@@ -45,6 +38,12 @@ export function Component(): JSX.Element {
     const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
         onDrop: acceptedFiles => {
             setUploadedFiles(acceptedFiles);
+            const formData = new FormData();
+            acceptedFiles.forEach((file: any) => {
+                formData.append("file", file);
+            });
+            // make api request
+            makeApiRequest(formData);
         },
         accept: {
             "application/pdf": [".pdf"]
@@ -63,11 +62,13 @@ export function Component(): JSX.Element {
     );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [filesUploaded, setFilesUploaded] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
 
     const makeApiRequest = async (files: any) => {
         error && setError(undefined);
         setIsLoading(true);
+        setFilesUploaded(false);
 
         $.ajax({
             url: `/upload`,
@@ -83,7 +84,6 @@ export function Component(): JSX.Element {
                     function (evt) {
                         if (evt.lengthComputable) {
                             var percentComplete = (evt.loaded / evt.total) * 100;
-                            console.log(percentComplete);
                             barRef.current!.style.width = percentComplete + "%";
                         }
                     },
@@ -92,9 +92,8 @@ export function Component(): JSX.Element {
                 return xhr;
             },
             success: function (data) {
-                console.log("success");
-                console.log(data);
                 setIsLoading(false);
+                setFilesUploaded(true);
             },
             error: function (e) {
                 console.log("error");
@@ -129,7 +128,7 @@ export function Component(): JSX.Element {
         <div className={styles.uploadContainer}>
             <form method="POST" encType="multipart/form-data" onSubmit={handleFilesSubmit}>
                 {/* <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple /> */}
-                <div {...getRootProps({ style })}>
+                <div className={styles.uploadFiles} {...getRootProps({ style })}>
                     <input {...getInputProps()} name="file" />
                     <p>Drag and drop files here or click to browse.</p>
                     <ul>
@@ -137,12 +136,13 @@ export function Component(): JSX.Element {
                             <li key={file.name}>{file.name}</li>
                         ))}
                     </ul>
+                    {isLoading ? <p>Uploading...</p> : null}
+                    {filesUploaded ? <p>Files uploaded!</p> : null}
+                    <div className={styles.uploadProgress} onClick={progressMove}>
+                        <div className={styles.uploadBar} ref={barRef}></div>
+                    </div>
                 </div>
-                <button type="submit">Upload</button>
             </form>
-            <div className={styles.uploadProgress} onClick={progressMove}>
-                <div className={styles.uploadBar} ref={barRef}></div>
-            </div>
         </div>
     );
 }

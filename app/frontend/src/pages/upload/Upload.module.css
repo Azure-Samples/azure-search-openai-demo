@@ -5,19 +5,12 @@
     align-items: center;
 }
 .uploadFiles {
-    margin-top: 100px;
-    padding: 100px !important;
-}
-
-@media (max-width: 768px) {
-    .uploadFiles {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
+    margin: 20px;
+    margin-top: 80px;
 }
 .uploadProgress {
-    margin-top: 50px;
-    width: 350px;
+    margin-top: 20px;
+    width: 100%;
     background-color: #fff;
 }
 .uploadBar {
@@ -25,4 +18,3 @@
     height: 20px;
     background-color: #2f341f;
 }
-
