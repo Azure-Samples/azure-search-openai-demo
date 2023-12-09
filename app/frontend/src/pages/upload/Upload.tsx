@@ -12,7 +12,7 @@ const baseStyle = {
     padding: "20px",
     borderWidth: 2,
     borderRadius: 2,
-    borderColor: "#eeeeee",
+    borderColor: "gray",
     borderStyle: "dashed",
     backgroundColor: "#fafafa",
     color: "#bdbdbd",
@@ -21,11 +21,11 @@ const baseStyle = {
 };
 
 const focusedStyle = {
-    borderColor: "#2196f3"
+    borderColor: "gray"
 };
 
 const acceptStyle = {
-    borderColor: "#00e676"
+    borderColor: "black"
 };
 
 const rejectStyle = {
@@ -96,8 +96,7 @@ export function Component(): JSX.Element {
                 setFilesUploaded(true);
             },
             error: function (e) {
-                console.log("error");
-                console.log(e);
+                console.error(e)
                 setIsLoading(false);
                 setError(e);
             }
@@ -131,6 +130,7 @@ export function Component(): JSX.Element {
                 <div className={styles.uploadFiles} {...getRootProps({ style })}>
                     <input {...getInputProps()} name="file" />
                     <p>Drag and drop files here or click to browse.</p>
+                    <em>(Only *.pdf files will be accepted)</em>
                     <ul>
                         {uploadedFiles!.map(file => (
                             <li key={file.name}>{file.name}</li>
@@ -138,9 +138,12 @@ export function Component(): JSX.Element {
                     </ul>
                     {isLoading ? <p>Uploading...</p> : null}
                     {filesUploaded ? <p>Files uploaded!</p> : null}
-                    <div className={styles.uploadProgress} onClick={progressMove}>
-                        <div className={styles.uploadBar} ref={barRef}></div>
-                    </div>
+                    {error ? <p>Something went wrong!</p> : null}
+                    {isLoading || filesUploaded ? (
+                        <div className={styles.uploadProgress} onClick={progressMove}>
+                            <div className={styles.uploadBar} ref={barRef}></div>
+                        </div>
+                    ) : null}
                 </div>
             </form>
         </div>
