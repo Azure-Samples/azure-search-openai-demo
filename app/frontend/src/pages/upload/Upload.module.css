@@ -4,19 +4,25 @@
     flex-direction: column;
     align-items: center;
 }
-.uploadFileUploader {
+.uploadFiles {
     margin-top: 100px;
+    padding: 100px !important;
 }
-.uploadFileUploader > label {
-    padding: 100px;
+
+@media (max-width: 768px) {
+    .uploadFiles {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 }
 .uploadProgress {
     margin-top: 50px;
-    width: 100%;
+    width: 350px;
     background-color: #fff;
 }
 .uploadBar {
     width: 1%;
     height: 20px;
-    background-color: #98b04a;
+    background-color: #2f341f;
 }
+

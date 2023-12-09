@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 
 import styles from "./Upload.module.css";
 
@@ -8,21 +8,62 @@ import { AnalysisPanelTabs } from "../../components/AnalysisPanel";
 
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
-import { FileUploader } from "react-drag-drop-files";
+import { useDropzone } from "react-dropzone";
 import $ from "jquery";
 
-const fileTypes = ["PDF"];
+const baseStyle = {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "20px",
+    borderWidth: 2,
+    borderRadius: 2,
+    borderColor: "#eeeeee",
+    borderStyle: "dashed",
+    backgroundColor: "#fafafa",
+    color: "#bdbdbd",
+    outline: "none",
+    transition: "border .24s ease-in-out"
+};
+
+const focusedStyle = {
+    borderColor: "#2196f3"
+};
+
+const acceptStyle = {
+    borderColor: "#00e676"
+};
+
+const rejectStyle = {
+    borderColor: "#ff1744"
+};
 export function Component(): JSX.Element {
     const barRef = useRef<HTMLDivElement>(null);
+    const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+
+    const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
+        onDrop: acceptedFiles => {
+            setUploadedFiles(acceptedFiles);
+        },
+        accept: {
+            "application/pdf": [".pdf"]
+        },
+        multiple: true
+    });
+
+    const style = useMemo<any>(
+        () => ({
+            ...baseStyle,
+            ...(isFocused ? focusedStyle : {}),
+            ...(isDragAccept ? acceptStyle : {}),
+            ...(isDragReject ? rejectStyle : {})
+        }),
+        [isFocused, isDragAccept, isDragReject]
+    );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
-    const [answer, setAnswer] = useState<ChatAppResponse>();
-
-    const [activeCitation, setActiveCitation] = useState<string>();
-    const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
-
-    const client = useLogin ? useMsal().instance : undefined;
 
     const makeApiRequest = async (files: any) => {
         error && setError(undefined);
@@ -87,8 +128,17 @@ export function Component(): JSX.Element {
     return (
         <div className={styles.uploadContainer}>
             <form method="POST" encType="multipart/form-data" onSubmit={handleFilesSubmit}>
-                <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple />
-                <button type="submit">Submit</button>
+                {/* <FileUploader classes="file-uploader" name="file" types={fileTypes} multiple /> */}
+                <div {...getRootProps({ style })}>
+                    <input {...getInputProps()} name="file" />
+                    <p>Drag and drop files here or click to browse.</p>
+                    <ul>
+                        {uploadedFiles!.map(file => (
+                            <li key={file.name}>{file.name}</li>
+                        ))}
+                    </ul>
+                </div>
+                <button type="submit">Upload</button>
             </form>
             <div className={styles.uploadProgress} onClick={progressMove}>
                 <div className={styles.uploadBar} ref={barRef}></div>
