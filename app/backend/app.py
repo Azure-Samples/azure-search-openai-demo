@@ -181,13 +181,13 @@ async def index_documents_task():
         try:
             i+=1
             await asyncio.sleep(0.1) # sleep for a little bit
-            await websocket.send({'progress':i})
+            await websocket.send(json.dumps({'progress':i}))
             if i >= 100:
                 break    
         except:
-            await websocket.send({"error":True})
+            await websocket.send(json.dumps({"error":True}))
             pass
-    await websocket.send({"progress":100})
+    await websocket.send(json.dumps({"progress":100}))
         
 @bp.websocket('/ws')
 async def ws():

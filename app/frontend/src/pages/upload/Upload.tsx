@@ -111,7 +111,7 @@ export function Component(): JSX.Element {
                     };
 
                     webSocket.onmessage = function (evt) {
-                        var received_msg = evt.data;
+                        var received_msg = JSON.parse(evt.data);
                         barRef.current!.style.width = `${received_msg.progress}%`;
                         if (received_msg.progress == 100) {
                             setFilesProcessed(true);
