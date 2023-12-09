@@ -40,14 +40,14 @@ States[StateGetDistressLevel] = State(run=get_distress_level)
 
 async def ask_if_to_continue_on_low_distress(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
-    if request_context.history[-1]["content"] == "כן":
+    if request_context.history[-1]["content"].strip() in ("fi", "כן"):
         request_context.set_next_state(StateExit)
         request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. לעתים, גם אחרי שחווים אירוע מאיים או קשה, אין חווים תחושת קושי או מצוקה. אם {will_feel} בשלב כלשהו מצוקה {able} להשתמש בכלי זה או לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
 {contactsText}""".format(
                 will_feel = "תחוש" if is_patient_male else "תחושי",
                 able = "תוכל" if is_patient_male else "תוכלי",
                 contactsText = ContactsText))
-    elif request_context.history[-1]["content"] == "לא":
+    elif request_context.history[-1]["content"].strip() in ("kt", "לא"):
         request_context.set_next_state(StateAskWhatAnnoying)
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד כן/לא")
@@ -71,11 +71,12 @@ async def ask_what_annoying(request_context: RequestContext):
 4. אני {feel} חוסר שליטה לגבי איומים או מצבים קשים שעלולים לקרות בעתיד
 5. אני {concerned_and_feel} חוסר שליטה בנוגע לאנשים שיקרים לי.
 
-שים לב, ייתכן שיותר מתשובה אחת משקפת את {that_you_feel}. {select} את זו שמשקפת בצורה הכי מדוייקת את {that_you_feel}""".format(
+{notice}, ייתכן שיותר מתשובה אחת משקפת את {that_you_feel}. {select} את זו שמשקפת בצורה הכי מדוייקת את {that_you_feel}.""".format(
     feel = "מרגיש" if is_patient_male else "מרגישה",
     threatened = "מאויים" if is_patient_male else "מאויימת",
     guilty_or_accountable = "אשם או אחראי" if is_patient_male else "אשמה או אחראית",
     concerned_and_feel = "דואג וחש" if is_patient_male else "דואגת וחשה",
+    notice = "שים לב" if is_patient_male else "שימי לב",
     select = "בחר" if is_patient_male else "בחרי",
     that_you_feel = "מה שאתה מרגיש" if is_patient_male else "מה שאת מרגישה",
 ))

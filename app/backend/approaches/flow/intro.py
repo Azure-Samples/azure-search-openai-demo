@@ -18,6 +18,28 @@ StateGetBotGender = "GET_BOT_GENDER"
 StateGetName = "Get_NAME"
 StateGetPatientGender = "GET_PATIENT_GENDER"
 
+digits = ("אחת", "שתיים", "שלוש", "ארבע", "חמש", "שש", "שבע", "שמונה", "תשע")
+decades = ("עשרים", "שלושים", "ארבעים", "חמישים", "שישים", "שבעים", "שמונים", "תשעים")
+text_to_number = {
+    "שנה": 1,
+    "שנתיים": 2,
+    "עשר": 10,
+    "מאה": 100
+}
+digit_number = 0
+for digit in digits:
+    digit_number += 1
+    text_to_number[digit] = digit_number
+    text_to_number[digit + " עשרה"] = digit_number + 10
+decade_number = 1
+for decade in decades:
+    decade_number += 1
+    text_to_number[decade] = decade_number * 10
+    digit_number = 0
+    for digit in digits:
+        digit_number += 1
+        text_to_number[decade + "ו" + digit] = decade_number * 10 + digit_number
+
 def start_intro(request_context: RequestContext):
     parsed_url = urlparse(request_context.request_data["url"])
     query = parse_qs(parsed_url.query)
@@ -68,12 +90,12 @@ async def check_client_id(request_context: RequestContext):
 States[StateCheckClientId] = State(is_wait_for_user_input_before_state=False, run=check_client_id)
 
 async def get_if_to_continue(request_context: RequestContext):
-    if request_context.history[-1]["content"] == "לא":
+    if request_context.history[-1]["content"].strip() in ("kt", "לא", "ממש לא", "אין מצב", "די", "מספיק"):
         request_context.set_next_state(StateExit)
         request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. 
 הרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה. יש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
 {contactsText}""".format(contactsText = ContactsText))
-    elif request_context.history[-1]["content"] == "כן":
+    elif request_context.history[-1]["content"].strip() in ("fi", "כן", "רוצה", "מוכן", "מוכנה", "בסדר", "בטח", "סבבה"):
         client_id = request_context.get_var(VariableClientId)
         if request_context.get_var(VariableClientId) != DemoClientId:
             request_context.save_to_var(VariableShouldSaveClientStatus, True)
@@ -85,9 +107,9 @@ async def get_if_to_continue(request_context: RequestContext):
             await request_context.app_resources.table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity)
 
         request_context.set_next_state(StateGetAge)
-        return request_context.write_chat_message("אנא הקלד\י את גילך")
+        return request_context.write_chat_message("מה גילך ?")
     else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד/י כן/לא")
+        return request_context.write_chat_message("לא הבנתי את תשובתך. נא להקליד כן/לא")
 States[StateGetIfToContinue] = State(run=get_if_to_continue)
 
 def user_already_participated(request_context: RequestContext):
@@ -95,11 +117,14 @@ def user_already_participated(request_context: RequestContext):
 States[StateUserAlreadyParticipated] = State(run=user_already_participated)
 
 async def get_age(request_context: RequestContext):
-    ageMsg = request_context.history[-1]["content"]
-    age = int(ageMsg)
-    if age > 18:
+    ageMsg = request_context.history[-1]["content"].strip()
+    if ageMsg in text_to_number:
+        age = text_to_number[ageMsg]
+    else:
+        age = int(ageMsg)
+    if age >= 18:
         request_context.set_next_state(StateGetBotGender)
-        return request_context.write_chat_message("שלום, האם היית מעדיפ/ה לשוחח עם בוט מטפל או מטפלת?")
+        return request_context.write_chat_message("שלום. לתהליך הנוכחי, מה תעדיפ/י: מטפל או מטפלת?")
     elif age > 0:
         request_context.set_next_state(StateExit)
         request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. כרגע המערכת פתוחה לאנשים מעל גיל 18. היות שהרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה, אם אתה חווה מצוקה, אפשר לפנות לסיוע נפשי ולקבל כלים להתמודדות בגופים שונים כגון
@@ -109,8 +134,8 @@ async def get_age(request_context: RequestContext):
 States[StateGetAge] = State(run=get_age)
 
 def get_bot_gender(request_context: RequestContext):
-    has_male = not(re.search("מטפל(?!ת)", request_context.history[-1]["content"]) is None)
-    has_female = "מטפלת" in request_context.history[-1]["content"]
+    has_male = not(re.search("מטפל(?!ת)", request_context.history[-1]["content"]) is None) or not(re.search("nypk(?!,)", request_context.history[-1]["content"]) is None)
+    has_female = "מטפלת" in request_context.history[-1]["content"] or "nypk," in request_context.history[-1]["content"]
     if has_male and not has_female:
         is_male = True
         bot_name = "יואב"
@@ -133,9 +158,9 @@ async def get_name(request_context: RequestContext):
 States[StateGetName] = State(run=get_name)
 
 async def get_patient_gender(request_context: RequestContext):
-    if request_context.history[-1]["content"].strip() in ("גבר", "לשון גבר", "פנה אלי בלשון גבר", "פנה אלי כגבר"):
+    if request_context.history[-1]["content"].strip() in ("dcr", "גבר", "לשון גבר", "פנה אלי בלשון גבר", "פנה אלי כגבר"):
         is_male = True
-    elif request_context.history[-1]["content"].strip() in ("אשה", "אישה", "לשון אשה", "לשון אישה", "פנה אלי בלשון אשה", "פנה אלי בלשון אישה", "פנה אלי כאשה", "פנה אלי כאישה"):
+    elif request_context.history[-1]["content"].strip() in ("tav", "אשה", "אישה", "לשון אשה", "לשון אישה", "פנה אלי בלשון אשה", "פנה אלי בלשון אישה", "פנה אלי כאשה", "פנה אלי כאישה"):
         is_male = False
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד/י גבר/אשה?")
