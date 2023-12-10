@@ -54,14 +54,21 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 ![RAG Architecture](docs/appcomponents.png)
 
 ## Features
+Our tool primarily consists of two main pages: a chat page and an query page ('ask a question' page).
 
-* Chat and Q&A interfaces
-* Explores various options to help users evaluate the trustworthiness of responses with citations, tracking of source content, etc.
-* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (Cognitive Search)
-* Settings directly in the UX to tweak the behavior and experiment with options
-* Optional performance tracing and monitoring with Application Insights
+Chat Page:
+* Generation of Island of Agreement (IoA) tables based on background and other information of a case
+* Queries about a case based on given information of the case
 
-![Chat screen](docs/chatscreen.png)
+Query Page:
+* Negotiation-related Queries based on CCHN Field Manual
+
+In both pages, responses can include links to references, which 
+can be viewed in PDF format on the page.
+
+![Chat screen](docs/chat_page.png)
+
+![Chat screen](docs/query_page.png)
 
 ## Azure account requirements
 
