@@ -15,60 +15,97 @@ page_type: sample
 urlFragment: azure-search-openai-demo
 ---
 
-# ChatGPT + Enterprise data with Azure OpenAI and Cognitive Search
+# Frontline Neigotiation Assistant Tool: Island of Agreement Generation
 
 ## Table of Contents
 
-- [Features](#features)
-- [Azure account requirements](#azure-account-requirements)
-- [Azure deployment](#azure-deployment)
-  - [Cost estimation](#cost-estimation)
-  - [Project setup](#project-setup)
-    - [GitHub Codespaces](#github-codespaces)
-    - [VS Code Dev Containers](#vs-code-dev-containers)
-    - [Local environment](#local-environment)
-  - [Deploying from scratch](#deploying-from-scratch)
-  - [Deploying with existing Azure resources](#deploying-with-existing-azure-resources)
-  - [Deploying again](#deploying-again)
-- [Sharing environments](#sharing-environments)
-- [Enabling optional features](#enabling-optional-features)
-  - [Enabling Application Insights](#enabling-application-insights)
-  - [Enabling authentication](#enabling-authentication)
-  - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
-  - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
-- [Using the app](#using-the-app)
-- [Running locally](#running-locally)
-- [Productionizing](#productionizing)
-- [Resources](#resources)
-  - [Note](#note)
-  - [FAQ](#faq)
-  - [Troubleshooting](#troubleshooting)
+- [Frontline Neigotiation Assistant Tool: Island of Agreement Generation](#frontline-neigotiation-assistant-tool-island-of-agreement-generation)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Quick Overview of Development](#quick-overview-of-development)
+  - [Azure account requirements](#azure-account-requirements)
+  - [Azure deployment](#azure-deployment)
+    - [Cost estimation](#cost-estimation)
+    - [Project setup](#project-setup)
+      - [GitHub Codespaces](#github-codespaces)
+      - [VS Code Dev Containers](#vs-code-dev-containers)
+      - [Local environment](#local-environment)
+    - [Deploying from scratch](#deploying-from-scratch)
+    - [Deploying with existing Azure resources](#deploying-with-existing-azure-resources)
+      - [Existing resource group](#existing-resource-group)
+      - [Existing OpenAI resource](#existing-openai-resource)
+        - [Azure OpenAI:](#azure-openai)
+        - [Openai.com OpenAI:](#openaicom-openai)
+      - [Existing Azure Cognitive Search resource](#existing-azure-cognitive-search-resource)
+      - [Other existing Azure resources](#other-existing-azure-resources)
+      - [Provision remaining resources](#provision-remaining-resources)
+    - [Deploying again](#deploying-again)
+  - [Sharing environments](#sharing-environments)
+  - [Enabling optional features](#enabling-optional-features)
+    - [Enabling Application Insights](#enabling-application-insights)
+    - [Enabling authentication](#enabling-authentication)
+    - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
+    - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
+  - [Running locally](#running-locally)
+  - [Using the app](#using-the-app)
+  - [Customizing the UI and data](#customizing-the-ui-and-data)
+  - [Productionizing](#productionizing)
+  - [Resources](#resources)
+  - [Clean up](#clean-up)
+    - [Note](#note)
+    - [FAQ](#faq)
+    - [Troubleshooting](#troubleshooting)
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
-This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure Cognitive Search for data indexing and retrieval.
-
-The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
+This project creates a ChatGPT-like experiences for Island of Agreement Generation and asking quesiton over the CCHN Field Maunal the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-4-1106-preview	), and Azure Cognitive Search for data indexing and retrieval. The repo includes the CCNH Field Manual so it's ready to deploy end to end. 
 
 ![RAG Architecture](docs/appcomponents.png)
 
 ## Features
 Our tool primarily consists of two main pages: a chat page and an query page ('ask a question' page).
 
-Chat Page:
-* Generation of Island of Agreement (IoA) tables based on background and other information of a case
-* Queries about a case based on given information of the case
+**Chat Page:**
+* Generation of Island of Agreement (IoA) tables based on background and other information of a case provided by the user.
+* There are three helper buttons for user's convinence of generating Island of Agreement table.
+  * User can provide background and additional information about a case.
+  * Then request a generation of IoA table based on the information provided. 
+* The chat page also supports answering further queries about the generation process and explaining the IoA table.
 
-Query Page:
-* Negotiation-related Queries based on CCHN Field Manual
+<img src="docs/chat_page.png" alt="chat_screen" width="1000"/>
 
-In both pages, responses can include links to references, which 
-can be viewed in PDF format on the page.
 
-![Chat screen](docs/chat_page.png)
+**Query Page:**
+* Negotiation-related Queries based on CCHN Field Manual using the Retrieval Augmented Generation pattern.
+* User can ask questions about the CCHN Field Manual and get answers with citations from the manual.
 
-![Chat screen](docs/query_page.png)
+<img src="docs/query_page.png" alt="qa_screen" width="1000"/>
+
+
+In both pages, responses can include links to references, which can be viewed in PDF format on the page.
+
+## Quick Overview of Development
+To ensure a smoother development experience, we suggest first go over the following sections to complete a quick deployment of the project. Then you can start to customize the project for your own needs.
+
+Both the frontend and backend code are located in the `app` folder.
+
+**Frontend**
+* The frontend is a React app that uses TypeScript. You can view and edit the apis and components in the `app/frontend/src` folder.
+* If you are having issue running the scripts below to start the frontend locally, we recommend simply running `npm install` and `npm start` in the `app/frontend` folder to start the frontend vite server locally.
+
+**Backend**
+* The backend is a Python app that uses Quart. You can view and edit the apis and components in the `app/backend` folder.
+* The prompt engineering code is located in the `app/backend/approaches` folder, which is divided by the *Chat page* and *Ask a question* page. 
+
+**Infrastructure**
+* The infrastructure code is located in the `infra` folder. It uses Bicep to define the Azure resources.
+* After a update to the infrastructure code, you can run `azd run` to provision the resources and deploy the code to the resources. Otherwise, only need to run `azd deploy` to deploy the code to the resources.
+* To modify the ChatGPT model, you can update the `chatGptModelName` parameter in the `infra/main.bicep` file. The default model is `gpt-4-1106-preview`. 
+
+**Future Development Steps**
+* Modifying the first two user button to cache the user's background information and other information about a case. Only submit a request when the user clicks the third button to generate the IoA table or ask a question.
+* Support user login and store user's history sessions in a database.
 
 ## Azure account requirements
 
