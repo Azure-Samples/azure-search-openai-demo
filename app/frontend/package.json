@@ -16,22 +16,22 @@
     "@azure/msal-browser": "^3.1.0",
     "@fluentui/react": "^8.112.9",
     "@fluentui/react-components": "^9.42.0",
-    "@fluentui/react-icons": "^2.0.223",
+    "@fluentui/react-icons": "^2.0.224",
     "@react-spring/web": "^9.7.3",
     "dompurify": "^3.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
     "ndjson-readablestream": "^1.0.9",
-    "scheduler": "^0.20.2"
+    "scheduler": "^0.23.0"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
-    "@types/react": "^18.2.42",
+    "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.2",
-    "vite": "^4.4.12"
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.7"
   }
 }
