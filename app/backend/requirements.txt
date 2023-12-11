@@ -12,7 +12,7 @@ aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.6.0
     # via pydantic
-anyio==3.7.1
+anyio==4.1.0
     # via
     #   httpx
     #   openai
@@ -72,7 +72,7 @@ deprecated==1.2.14
     # via opentelemetry-api
 distro==1.8.0
     # via openai
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.0
     # via quart
@@ -104,7 +104,7 @@ idna==3.6
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==6.11.0
+importlib-metadata==7.0.0
     # via opentelemetry-api
 isodate==0.6.1
     # via
@@ -129,7 +129,7 @@ msal==1.26.0
     #   -r requirements.in
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.0.0
+msal-extensions==1.1.0
     # via
     #   -r requirements.in
     #   azure-identity
@@ -146,7 +146,7 @@ numpy==1.26.2
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.3.7
+openai[datalib]==1.3.8
     # via -r requirements.in
 opentelemetry-api==1.21.0
     # via
@@ -243,7 +243,7 @@ opentelemetry-util-http==0.42b0
     #   opentelemetry-instrumentation-wsgi
 packaging==23.2
     # via opentelemetry-instrumentation-flask
-pandas==2.1.3
+pandas==2.1.4
     # via openai
 pandas-stubs==2.1.1.230928
     # via openai
@@ -296,7 +296,7 @@ tqdm==4.66.1
     # via openai
 types-pytz==2023.3.1.1
     # via pandas-stubs
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   azure-core
     #   azure-storage-blob
