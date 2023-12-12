@@ -1,11 +1,11 @@
 name: Validate AZD template
 on:
   push:
-    branches: [ main ]
+    branches: [ abnarain ]
     paths:
       - "infra/**"
   pull_request:
-    branches: [ main ]
+    branches: [ abnarain ]
     paths:
       - "infra/**"
 
