@@ -4,6 +4,7 @@ import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
+import introImage from "../../assets/intro.png";
 
 import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
@@ -252,20 +253,18 @@ const Chat = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.commandsContainer}>
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                {/* <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} /> */}
-            </div>
             <div className={styles.chatRoot}>
+                <div className={styles.chatHeader}>חרבות ברזל - תמיכה והכוונה רגשית</div>
                 <div className={styles.chatContainer}>
-                    {!lastQuestionRef.current ? (
-                        <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(18, 29, 59, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>אני כאן בשבילך</h1>
-                            {/* <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
-                            <ExampleList onExampleClicked={onExampleClicked} /> */}
+                    <div className={styles.chatMessageStreamContainer}>
+                        <div className={styles.chatIntroContainer}>
+                            <div className={styles.chatIntroImageContainer}>
+                                <div className={styles.chatIntroImageViewport}>
+                                    <img src={introImage} className={styles.chatIntroImage} />
+                                </div>
+                            </div>
+                            <div className={styles.chatIntroText}>אנחנו כאן עבורך</div>
                         </div>
-                    ) : (
                         <div className={styles.chatMessageStream}>
                             {isStreaming &&
                                 streamedAnswers.map((streamedAnswer, index) => (
@@ -323,7 +322,7 @@ const Chat = () => {
                             ) : null}
                             <div ref={chatMessageStreamEnd} />
                         </div>
-                    )}
+                    </div>
 
                     <div className={styles.chatInput}>
                         <QuestionInput

@@ -99,7 +99,7 @@ async def get_if_to_continue_after_video(request_context: RequestContext):
         request_context.save_to_var(VariableNextVideoPrefix, "")
         request_context.set_next_state(StateNextVideo)
     elif not (request_context.history[-1]["content"].strip in ("kt", "לא", "פחות", "ממש לא", "אין מצב", "די", "מספיק")):
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כן/לא".format("הקלד" if is_male else "הקלידי"))
+        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כן/לא".format(type = "הקלד" if is_male else "הקלידי"))
     elif was_distress_level_increased and isp_path != "1":
         request_context.save_to_var(VariableExitText, get_exit_text(request_context))
         request_context.set_next_state(StateExit)

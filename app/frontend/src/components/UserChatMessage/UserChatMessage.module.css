@@ -1,6 +1,5 @@
 .container {
     display: flex;
-    justify-content: flex-end;
     margin-bottom: 1.25rem;
     max-width: 80%;
     margin-left: auto;
@@ -8,7 +7,7 @@
 
 .message {
     padding: 1.25rem;
-    background: #222a3f10;
+    background: #d7c5d0;
     border-radius: 0.5rem;
     box-shadow:
         0px 0.125rem 0.25rem rgba(0, 0, 0, 0.14),

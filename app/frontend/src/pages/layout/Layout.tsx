@@ -14,10 +14,10 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
-                    <Link to="/" className={styles.headerTitleContainer}>
+                    {/*<Link to="/" className={styles.headerTitleContainer}>
                         <img src={golda} alt="נחמה" width="20px" height="20px" className={styles.goldaLogo} />
                         <h3 className={styles.headerTitle}>נחמה</h3>
-                    </Link>
+                    </Link>*/}
                     {/* <nav>
                         <ul className={styles.headerNavList}>
                             <li>

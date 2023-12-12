@@ -3,11 +3,29 @@
     display: flex;
     flex-direction: column;
     margin-top: 2rem;
+    background-color: #ded8e2;
+    align-items: center;
 }
 
 .chatRoot {
     flex: 1;
     display: flex;
+    flex-direction: column;
+    max-width: 64.25rem;
+    width: 100%;
+    height: 100%;
+}
+
+.chatHeader {
+    width: 100%;
+    height: 44px;
+    background-color: #192f2a;
+    color: white;
+    font-family: "Segoe UI";
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .chatContainer {
@@ -16,6 +34,38 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+}
+
+.chatIntroContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatIntroImageContainer {
+    background-color: #9a7489;
+}
+
+.chatIntroImageViewport {
+    width: 50%;
+    text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.chatIntroImage {
+    position: relative;
+}
+
+.chatIntroText {
+    width: 100%;
+    height: 39px;
+    color: #192f2a;
+    font-family: "Segoe UI";
+    font-size: 24px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .chatEmptyState {
@@ -60,12 +110,18 @@
     }
 }
 
-.chatMessageStream {
+.chatMessageStreamContainer {
     flex-grow: 1;
     max-height: 64rem;
     max-width: 64.25rem;
     width: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatMessageStream {
+    width: 100%;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     display: flex;
@@ -97,7 +153,6 @@
     padding-right: 1.5rem;
     width: 100%;
     max-width: 64.25rem;
-    background: #fdf3e7;
     direction: rtl;
 }
 
