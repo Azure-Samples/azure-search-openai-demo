@@ -111,11 +111,21 @@ def create_server_app_permission_setup_payload(server_app_id: str):
             ],
         },
         "requiredResourceAccess": [
-            # Graph User.Read
             {
                 "resourceAppId": "00000003-0000-0000-c000-000000000000",
-                "resourceAccess": [{"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope"}],
-            }
+                "resourceAccess": [
+                    # Graph User.Read
+                    {"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope"},
+                    # Graph email
+                    {"id": "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0", "type": "Scope"},
+                    # Graph offline_access
+                    {"id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182", "type": "Scope"},
+                    # Graph openid
+                    {"id": "37f7f235-527c-4136-accd-4a02d197296e", "type": "Scope"},
+                    # Graph profile
+                    {"id": "14dad69e-099b-42c9-810b-d002981feec1", "type": "Scope"},
+                ],
+            },
         ],
         "identifierUris": [f"api://{server_app_id}"],
     }

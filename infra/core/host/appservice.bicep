@@ -50,7 +50,7 @@ var loginEndpoint = environment().authentication.loginEndpoint
 var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
 var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [loginEndpointFixed]) : msftAllowedOrigins
 
-var requiredScopes = ['openid', 'profile', 'email', 'offline_access', 'api://${serverAppId}/access_as_user']
+var requiredScopes = ['api://${serverAppId}/.default', 'openid', 'profile', 'email', 'offline_access']
 var requiredAudiences = ['api://${serverAppId}']
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
