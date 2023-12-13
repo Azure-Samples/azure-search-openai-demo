@@ -3,8 +3,8 @@ import sys
 from tempfile import NamedTemporaryFile
 
 import pytest
-from conftest import MockAzureCredential
 
+from .mocks import MockAzureCredential
 from scripts.prepdocslib.blobmanager import BlobManager
 from scripts.prepdocslib.listfilestrategy import File
 
@@ -24,7 +24,7 @@ def blob_manager(monkeypatch):
 async def test_upload_and_remove(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
-        filename = f.content.name.split("/tmp/")[1]
+        filename = os.path.basename(f.content.name)
 
         # Set up mocks used by upload_blob
         async def mock_exists(*args, **kwargs):
@@ -75,7 +75,7 @@ async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
         print(f.content.name)
-        filename = f.content.name.split("/tmp/")[1]
+        filename = os.path.basename(f.content.name)
 
         # Set up mocks used by upload_blob
         async def mock_exists(*args, **kwargs):
@@ -125,7 +125,7 @@ async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
 async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
-        filename = f.content.name.split("/tmp/")[1]
+        filename = os.path.basename(f.content.name)
 
         # Set up mocks used by upload_blob
         async def mock_exists(*args, **kwargs):

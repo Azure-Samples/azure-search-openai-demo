@@ -1,8 +1,15 @@
 import pytest
-from conftest import MockSearchIndex
 
+from azure.search.documents.indexes.models import SearchField, SearchIndex
 from core.authentication import AuthenticationHelper, AuthError
 
+MockSearchIndex = SearchIndex(
+    name="test",
+    fields=[
+        SearchField(name="oids", type="Collection(Edm.String)"),
+        SearchField(name="groups", type="Collection(Edm.String)"),
+    ],
+)
 
 def create_authentication_helper(require_access_control: bool = False):
     return AuthenticationHelper(

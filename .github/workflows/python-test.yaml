@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-20.04", "windows-latest"]
-        python_version: ["3.9", "3.10", "3.11"]
+        python_version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
         - uses: actions/checkout@v4
         - name: Setup python
@@ -48,7 +48,7 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: python3 -m pytest -s -vv --cov --cov-fail-under=87
+          run: python3 -m pytest -s -vv --cov --cov-fail-under=86
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'

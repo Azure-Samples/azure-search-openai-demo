@@ -18,15 +18,21 @@ class TextSplitter:
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, verbose: bool = False):
+    def __init__(self, has_image_embeddings, verbose: bool = False):
         self.sentence_endings = [".", "!", "?"]
         self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
         self.max_section_length = 1000
         self.sentence_search_limit = 100
         self.section_overlap = 100
         self.verbose = verbose
+        self.has_image_embeddings = has_image_embeddings
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+        # Chunking is disabled when using GPT4V. To be updated in the future.
+        if self.has_image_embeddings:
+            for i, page in enumerate(pages):
+                yield SplitPage(page_num=i, text=page.text)
+
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):

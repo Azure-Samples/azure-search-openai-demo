@@ -1,7 +1,12 @@
 const BACKEND_URI = "";
 
+<<<<<<< HEAD
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
+=======
+import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config } from "./models";
+import { useLogin } from "../authConfig";
+>>>>>>> upstream/main
 
 function getHeaders(idToken: string | undefined): Record<string, string> {
     var headers: Record<string, string> = {
@@ -30,6 +35,15 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
     }
 
     return parsedResponse as ChatAppResponse;
+}
+
+export async function configApi(idToken: string | undefined): Promise<Config> {
+    const response = await fetch(`${BACKEND_URI}/config`, {
+        method: "GET",
+        headers: getHeaders(idToken)
+    });
+
+    return (await response.json()) as Config;
 }
 
 export async function chatApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {

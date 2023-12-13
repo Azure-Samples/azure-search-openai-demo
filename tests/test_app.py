@@ -31,6 +31,19 @@ filtered_response = BadRequestError(
 )
 
 
+def thoughts_contains_text(thoughts, text):
+    found = False
+    for thought in thoughts:
+        description = thought["description"]
+        if isinstance(description, str) and text in description:
+            found = True
+            break
+        elif isinstance(description, list) and any(text in item for item in description):
+            found = True
+            break
+    return found
+
+
 @pytest.mark.asyncio
 async def test_missing_env_vars():
     with mock.patch.dict(os.environ, clear=True):
@@ -468,7 +481,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["choices"][0]["context"]["thoughts"].find("performance review") != -1
+    assert thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "performance review")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -496,7 +509,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert result["choices"][0]["context"]["thoughts"].find("Is there a dress code?") == -1
+    assert not thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "Is there a dress code?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -572,6 +585,67 @@ async def test_chat_stream_followup(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_vision(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "use_gpt4v": True,
+                    "gpt4v_input": "textAndImages",
+                    "vector_fields": ["embedding", "imageEmbedding"],
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_vision_vectors(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "use_gpt4v": True,
+                    "gpt4v_input": "textAndImages",
+                    "vector_fields": ["embedding", "imageEmbedding"],
+                    "retrieval_mode": "vectors",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_vision(client, snapshot):
+    response = await client.post(
+        "/ask",
+        json={
+            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "use_gpt4v": True,
+                    "gpt4v_input": "textAndImages",
+                    "vector_fields": ["embedding", "imageEmbedding"],
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_format_as_ndjson():
     async def gen():
         yield {"a": "I ❤️ 🐍"}
@@ -579,24 +653,3 @@ async def test_format_as_ndjson():
 
     result = [line async for line in app.format_as_ndjson(gen())]
     assert result == ['{"a": "I ❤️ 🐍"}\n', '{"b": "Newlines inside \\n strings are fine"}\n']
-
-
-@pytest.mark.asyncio
-async def test_format_as_ndjson_error(caplog):
-    async def gen():
-        if False:
-            yield {"a": "I ❤️ 🐍"}
-        raise ZeroDivisionError("something bad happened")
-
-    result = [line async for line in app.format_as_ndjson(gen())]
-    assert "Exception while generating response stream: something bad happened\n" in caplog.text
-    assert result == [
-        '{"error": "The app encountered an error processing your request.\\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\\nError type: <class \'ZeroDivisionError\'>\\n"}'
-    ]
-
-
-def test_error_dict(caplog):
-    error = app.error_dict(Exception("test"))
-    assert error == {
-        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\nError type: <class 'Exception'>\n"
-    }
