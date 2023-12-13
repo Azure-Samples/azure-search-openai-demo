@@ -23,8 +23,8 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
-import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
@@ -63,7 +63,7 @@ const Chat = () => {
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
 
-        configApi(token?.accessToken).then(config => {
+        configApi(token).then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
         });
     };
@@ -152,7 +152,7 @@ const Chat = () => {
                 session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
 
-            const response = await chatApi(request, token?.accessToken);
+            const response = await chatApi(request, token);
             if (!response.body) {
                 throw Error("No response body");
             }
@@ -414,18 +414,18 @@ const Chat = () => {
                     {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
-                            checked={useOidSecurityFilter}
+                            checked={useOidSecurityFilter || requireAccessControl}
                             label="Use oid security filter"
-                            disabled={!client?.getActiveAccount()}
+                            disabled={!isLoggedIn(client) || requireAccessControl}
                             onChange={onUseOidSecurityFilterChange}
                         />
                     )}
                     {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
-                            checked={useGroupsSecurityFilter}
+                            checked={useGroupsSecurityFilter || requireAccessControl}
                             label="Use groups security filter"
-                            disabled={!client?.getActiveAccount()}
+                            disabled={!isLoggedIn(client) || requireAccessControl}
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}

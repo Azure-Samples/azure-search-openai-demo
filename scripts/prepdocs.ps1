@@ -6,9 +6,6 @@ if (Test-Path -Path "/usr") {
   $venvPythonPath = "./scripts/.venv/bin/python"
 }
 
-Write-Host 'Installing dependencies from "requirements.txt" into virtual environment'
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r ./scripts/requirements.txt" -Wait -NoNewWindow
-
 Write-Host 'Running "prepdocs.py"'
 $cwd = (Get-Location)
 
@@ -23,9 +20,10 @@ if ($env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT) {
   if ($env:AZURE_ADLS_GEN2_FILESYSTEM) {
     $adlsGen2FilesystemArg = "--datalakefilesystem $env:ADLS_GEN2_FILESYSTEM"
   }
-  $aclArg = "--useacls"
 }
-
+if ($env:AZURE_USE_AUTHENTICATION) {
+    $aclArg = "--useacls"
+}
 # Optional Search Analyzer name if using a custom analyzer
 if ($env:AZURE_SEARCH_ANALYZER_NAME) {
   $searchAnalyzerNameArg = "--searchanalyzername $env:AZURE_SEARCH_ANALYZER_NAME"

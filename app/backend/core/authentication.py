@@ -2,17 +2,12 @@
 
 import json
 import logging
-import os
-from tempfile import TemporaryDirectory
 from typing import Any, Optional
 
 import aiohttp
+from azure.search.documents.indexes.models import SearchIndex
 from msal import ConfidentialClientApplication
-from msal_extensions import (
-    FilePersistence,
-    PersistedTokenCache,
-    build_encrypted_persistence,
-)
+from msal.token_cache import TokenCache
 
 
 # AuthError is raised when the authentication token sent by the client UI cannot be parsed or there is an authentication error accessing the graph API
@@ -21,18 +16,22 @@ class AuthError(Exception):
         self.error = error
         self.status_code = status_code
 
+    def __str__(self) -> str:
+        return self.error or ""
+
 
 class AuthenticationHelper:
     scope: str = "https://graph.microsoft.com/.default"
 
     def __init__(
         self,
+        search_index: Optional[SearchIndex],
         use_authentication: bool,
         server_app_id: Optional[str],
         server_app_secret: Optional[str],
         client_app_id: Optional[str],
         tenant_id: Optional[str],
-        token_cache_path: Optional[str] = None,
+        require_access_control: bool = False,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -42,26 +41,21 @@ class AuthenticationHelper:
         self.authority = f"https://login.microsoftonline.com/{tenant_id}"
 
         if self.use_authentication:
-            self.token_cache_path = token_cache_path
-            if not self.token_cache_path:
-                self.temporary_directory = TemporaryDirectory()
-                self.token_cache_path = os.path.join(self.temporary_directory.name, "token_cache.bin")
-            try:
-                persistence = build_encrypted_persistence(location=self.token_cache_path)
-            except Exception:
-                logging.exception("Encryption unavailable. Opting in to plain text.")
-                persistence = FilePersistence(location=self.token_cache_path)
+            field_names = [field.name for field in search_index.fields] if search_index else []
+            self.has_auth_fields = "oids" in field_names and "groups" in field_names
+            self.require_access_control = require_access_control
             self.confidential_client = ConfidentialClientApplication(
-                server_app_id,
-                authority=self.authority,
-                client_credential=server_app_secret,
-                token_cache=PersistedTokenCache(persistence),
+                server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
+        else:
+            self.has_auth_fields = False
+            self.require_access_control = False
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
             "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
+            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to use the application
             "msalConfig": {
                 "auth": {
                     "clientId": self.client_app_id,  # Client app id used for login
@@ -94,32 +88,38 @@ class AuthenticationHelper:
     def get_token_auth_header(headers: dict) -> str:
         # Obtains the Access Token from the Authorization Header
         auth = headers.get("Authorization", None)
-        if not auth:
-            raise AuthError(
-                {"code": "authorization_header_missing", "description": "Authorization header is expected"}, 401
-            )
+        if auth:
+            parts = auth.split()
 
-        parts = auth.split()
+            if parts[0].lower() != "bearer":
+                raise AuthError(error="Authorization header must start with Bearer", status_code=401)
+            elif len(parts) == 1:
+                raise AuthError(error="Token not found", status_code=401)
+            elif len(parts) > 2:
+                raise AuthError(error="Authorization header must be Bearer token", status_code=401)
 
-        if parts[0].lower() != "bearer":
-            raise AuthError(
-                {"code": "invalid_header", "description": "Authorization header must start with Bearer"}, 401
-            )
-        elif len(parts) == 1:
-            raise AuthError({"code": "invalid_header", "description": "Token not found"}, 401)
-        elif len(parts) > 2:
-            raise AuthError({"code": "invalid_header", "description": "Authorization header must be Bearer token"}, 401)
+            token = parts[1]
+            return token
 
-        token = parts[1]
-        return token
+        # App services built-in authentication passes the access token directly as a header
+        # To learn more, please visit https://learn.microsoft.com/azure/app-service/configure-authentication-oauth-tokens
+        token = headers.get("x-ms-token-aad-access-token", None)
+        if token:
+            return token
 
-    @staticmethod
-    def build_security_filters(overrides: dict[str, Any], auth_claims: dict[str, Any]):
+        raise AuthError(error="Authorization header is expected", status_code=401)
+
+    def build_security_filters(self, overrides: dict[str, Any], auth_claims: dict[str, Any]):
         # Build different permutations of the oid or groups security filter using OData filters
         # https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search
         # https://learn.microsoft.com/azure/search/search-query-odata-filter
-        use_oid_security_filter = overrides.get("use_oid_security_filter")
-        use_groups_security_filter = overrides.get("use_groups_security_filter")
+        use_oid_security_filter = self.require_access_control or overrides.get("use_oid_security_filter")
+        use_groups_security_filter = self.require_access_control or overrides.get("use_groups_security_filter")
+
+        if (use_oid_security_filter or use_oid_security_filter) and not self.has_auth_fields:
+            raise AuthError(
+                error="oids and groups must be defined in the search index to use authentication", status_code=400
+            )
 
         oid_security_filter = (
             "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid") or "") if use_oid_security_filter else None
@@ -206,7 +206,11 @@ class AuthenticationHelper:
         except AuthError as e:
             print(e.error)
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
+            if self.require_access_control:
+                raise
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
+            if self.require_access_control:
+                raise
             return {}
