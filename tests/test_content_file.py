@@ -16,7 +16,7 @@ from .mocks import MockAzureCredential
 
 
 @pytest.mark.asyncio
-async def test_content_file(monkeypatch, mock_env):
+async def test_content_file(monkeypatch, mock_env, mock_acs_search):
     class MockAiohttpClientResponse404(aiohttp.ClientResponse):
         def __init__(self, url, body_bytes, headers=None):
             self._body = body_bytes
