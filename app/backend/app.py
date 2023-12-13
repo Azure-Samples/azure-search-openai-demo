@@ -12,6 +12,7 @@ from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
 from openai import APIError, AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
@@ -129,8 +130,8 @@ async def ask():
     request_json = await request.get_json()
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
+        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
@@ -168,9 +169,8 @@ async def chat():
     request_json = await request.get_json()
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
-
     try:
+        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
@@ -230,12 +230,14 @@ async def setup_clients():
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
+
+    AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
     AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    AZURE_ENFORCE_ACCESS_CONTROL = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
     AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
-    AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
-    TOKEN_CACHE_PATH = os.getenv("TOKEN_CACHE_PATH")
+    AZURE_AUTH_TENANT_ID = os.getenv("AZURE_AUTH_TENANT_ID", AZURE_TENANT_ID)
 
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
@@ -251,26 +253,31 @@ async def setup_clients():
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
-    # Set up authentication helper
-    auth_helper = AuthenticationHelper(
-        use_authentication=AZURE_USE_AUTHENTICATION,
-        server_app_id=AZURE_SERVER_APP_ID,
-        server_app_secret=AZURE_SERVER_APP_SECRET,
-        client_app_id=AZURE_CLIENT_APP_ID,
-        tenant_id=AZURE_TENANT_ID,
-        token_cache_path=TOKEN_CACHE_PATH,
-    )
-
     # Set up clients for AI Search and Storage
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,
         credential=azure_credential,
     )
+    search_index_client = SearchIndexClient(
+        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        credential=azure_credential,
+    )
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+
+    # Set up authentication helper
+    auth_helper = AuthenticationHelper(
+        search_index=(await search_index_client.get_index(AZURE_SEARCH_INDEX)) if AZURE_USE_AUTHENTICATION else None,
+        use_authentication=AZURE_USE_AUTHENTICATION,
+        server_app_id=AZURE_SERVER_APP_ID,
+        server_app_secret=AZURE_SERVER_APP_SECRET,
+        client_app_id=AZURE_CLIENT_APP_ID,
+        tenant_id=AZURE_AUTH_TENANT_ID,
+        require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
+    )
 
     vision_key = None
     if VISION_SECRET_NAME and AZURE_KEY_VAULT_NAME:  # Cognitive vision keys are stored in keyvault
@@ -310,6 +317,7 @@ async def setup_clients():
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client=search_client,
         openai_client=openai_client,
+        auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -328,6 +336,7 @@ async def setup_clients():
             search_client=search_client,
             openai_client=openai_client,
             blob_container_client=blob_container_client,
+            auth_helper=auth_helper,
             vision_endpoint=AZURE_VISION_ENDPOINT,
             vision_key=vision_key,
             gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
@@ -344,6 +353,7 @@ async def setup_clients():
             search_client=search_client,
             openai_client=openai_client,
             blob_container_client=blob_container_client,
+            auth_helper=auth_helper,
             vision_endpoint=AZURE_VISION_ENDPOINT,
             vision_key=vision_key,
             gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
@@ -359,6 +369,7 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         openai_client=openai_client,
+        auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,

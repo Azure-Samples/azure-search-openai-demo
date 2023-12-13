@@ -1,12 +1,14 @@
 import json
 
 import pytest
+from azure.search.documents.indexes.models import SearchField, SearchIndex
 from azure.search.documents.models import (
     RawVectorQuery,
 )
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
+from core.authentication import AuthenticationHelper
 
 
 class MockOpenAIClient:
@@ -17,16 +19,34 @@ class MockOpenAIClient:
         pass
 
 
+MockSearchIndex = SearchIndex(
+    name="test",
+    fields=[
+        SearchField(name="oids", type="Collection(Edm.String)"),
+        SearchField(name="groups", type="Collection(Edm.String)"),
+    ],
+)
+
+
 @pytest.fixture
 def openai_client():
     return MockOpenAIClient()
 
 
 @pytest.fixture
-def chat_approach(openai_client):
+def chat_approach(openai_client, mock_confidential_client_success):
     return ChatReadRetrieveReadVisionApproach(
         search_client=None,
         openai_client=openai_client,
+        auth_helper=AuthenticationHelper(
+            search_index=MockSearchIndex,
+            use_authentication=True,
+            server_app_id="SERVER_APP",
+            server_app_secret="SERVER_SECRET",
+            client_app_id="CLIENT_APP",
+            tenant_id="TENANT_ID",
+            require_access_control=None,
+        ),
         blob_container_client=None,
         vision_endpoint="endpoint",
         vision_key="key",
