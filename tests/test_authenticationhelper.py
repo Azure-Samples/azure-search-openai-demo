@@ -1,6 +1,6 @@
 import pytest
-
 from azure.search.documents.indexes.models import SearchField, SearchIndex
+
 from core.authentication import AuthenticationHelper, AuthError
 
 MockSearchIndex = SearchIndex(
@@ -10,6 +10,7 @@ MockSearchIndex = SearchIndex(
         SearchField(name="groups", type="Collection(Edm.String)"),
     ],
 )
+
 
 def create_authentication_helper(require_access_control: bool = False):
     return AuthenticationHelper(
