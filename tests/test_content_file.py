@@ -1,5 +1,4 @@
 import os
-from collections import namedtuple
 
 import aiohttp
 import pytest
@@ -13,12 +12,7 @@ from azure.storage.blob.aio import BlobServiceClient
 
 import app
 
-MockToken = namedtuple("MockToken", ["token", "expires_on"])
-
-
-class MockAzureCredential:
-    async def get_token(self, uri):
-        return MockToken("mock_token", 9999999999)
+from .mocks import MockAzureCredential
 
 
 @pytest.mark.asyncio

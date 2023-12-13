@@ -1,7 +1,9 @@
 import time
 from abc import ABC
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
+from urllib.parse import urljoin
 
+import aiohttp
 import tiktoken
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -178,5 +180,47 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
         self.credential = credential
         self.organization = organization
 
-    async def create_client(self) -> AsyncOpenAI:
-        return AsyncOpenAI(api_key=self.credential, organization=self.organization)
+    async def create_embedding_arguments(self) -> dict[str, Any]:
+        return {
+            "model": self.open_ai_model_name,
+            "api_key": self.credential,
+            "api_type": "openai",
+            "organization": self.organization,
+        }
+
+
+class ImageEmbeddings:
+    """
+    Class for using image embeddings from Azure AI Vision
+    To learn more, please visit https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-image-api
+    """
+
+    def __init__(self, credential: str, endpoint: str, verbose: bool = False):
+        self.credential = credential
+        self.endpoint = endpoint
+        self.verbose = verbose
+
+    async def create_embeddings(self, blob_urls: List[str]) -> List[List[float]]:
+        headers = {"Ocp-Apim-Subscription-Key": self.credential}
+        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
+        endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
+        embeddings: List[List[float]] = []
+        async with aiohttp.ClientSession(headers=headers) as session:
+            for blob_url in blob_urls:
+                async for attempt in AsyncRetrying(
+                    retry=retry_if_exception_type(Exception),
+                    wait=wait_random_exponential(min=15, max=60),
+                    stop=stop_after_attempt(15),
+                    before_sleep=self.before_retry_sleep,
+                ):
+                    with attempt:
+                        body = {"url": blob_url}
+                        async with session.post(url=endpoint, params=params, json=body) as resp:
+                            resp_json = await resp.json()
+                            embeddings.append(resp_json["vector"])
+
+        return embeddings
+
+    def before_retry_sleep(self, retry_state):
+        if self.verbose:
+            print("Rate limited on the Vision embeddings API, sleeping before retrying...")

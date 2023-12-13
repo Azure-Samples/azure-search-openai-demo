@@ -6,8 +6,8 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     SimpleField,
 )
-from conftest import MockAzureCredential
 
+from .mocks import MockAzureCredential
 from scripts.manageacl import ManageAcl
 
 
