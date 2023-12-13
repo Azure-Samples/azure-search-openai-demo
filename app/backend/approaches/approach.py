@@ -125,7 +125,7 @@ class Approach:
             )
         else:
             results = await self.search_client.search(
-                search_text=query_text or "", filter=filter, top=top, vectors=vectors
+                search_text=query_text or "", filter=filter, top=top, vector_queries=vectors
             )
 
         documents = []
