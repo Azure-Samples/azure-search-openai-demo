@@ -328,7 +328,7 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
-    if AZURE_OPENAI_GPT4V_MODEL:
+    if USE_GPT4V:
         if vision_key is None:
             raise ValueError("Vision key must be set (in Key Vault) to use the vision approach.")
 

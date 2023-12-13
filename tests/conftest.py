@@ -235,6 +235,7 @@ envs = [
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
         "VISION_SECRET_NAME": "mysecret",
         "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
