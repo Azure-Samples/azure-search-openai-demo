@@ -21,6 +21,10 @@ if [ -n "$AZURE_SEARCH_ANALYZER_NAME" ]; then
   searchAnalyzerNameArg="--searchanalyzername $AZURE_SEARCH_ANALYZER_NAME"
 fi
 
+if [ -n "$AZURE_USE_AUTHENTICATION" ]; then
+  aclArg="--useacls"
+fi
+
 visionEndpointArg=""
 if [ -n "$AZURE_VISION_ENDPOINT" ]; then
   visionEndpointArg="--visionendpoint $AZURE_VISION_ENDPOINT"

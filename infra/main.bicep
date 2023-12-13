@@ -80,12 +80,18 @@ param gpt4vModelName string = 'gpt-4'
 param gpt4vDeploymentName string = 'gpt-4v'
 param gpt4vModelVersion string = 'vision-preview'
 
+param tenantId string = tenant().tenantId
+param authTenantId string = ''
+
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
+param enforceAccessControl bool = false
 param serverAppId string = ''
 @secure()
 param serverAppSecret string = ''
 param clientAppId string = ''
+@secure()
+param clientAppSecret string = ''
 
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
@@ -101,6 +107,9 @@ var resourceToken = toLower(uniqueString(subscription().id, environmentName, loc
 var tags = { 'azd-env-name': environmentName }
 var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServiceName : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
 var keyVaultName = !empty(keyVaultServiceName) ? keyVaultServiceName : '${abbrs.keyVaultVaults}${resourceToken}'
+
+var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
+var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -187,7 +196,11 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    allowedOrigins: [ allowedOrigin ]
+    allowedOrigins: [allowedOrigin]
+    clientAppId: clientAppId
+    serverAppId: serverAppId
+    clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
+    authenticationIssuerUri: authenticationIssuerUri
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -214,10 +227,14 @@ module backend 'core/host/appservice.bicep' = {
       OPENAI_ORGANIZATION: openAiApiOrganization
       // Optional login and document level access control system
       AZURE_USE_AUTHENTICATION: useAuthentication
+      AZURE_ENFORCE_ACCESS_CONTROL: enforceAccessControl
       AZURE_SERVER_APP_ID: serverAppId
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId
-      AZURE_TENANT_ID: tenant().tenantId
+      AZURE_CLIENT_APP_SECRET: clientAppSecret
+      AZURE_TENANT_ID: tenantId
+      AZURE_AUTH_TENANT_ID: tenantIdForAuth
+      AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
 
@@ -479,6 +496,8 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
+// Used to issue search queries
+// https://learn.microsoft.com/azure/search/search-security-rbac
 module searchRoleBackend 'core/security/role.bicep' = {
   scope: searchServiceResourceGroup
   name: 'search-role-backend'
@@ -489,8 +508,21 @@ module searchRoleBackend 'core/security/role.bicep' = {
   }
 }
 
+// Used to read index definitions (required when using authentication)
+// https://learn.microsoft.com/azure/search/search-security-rbac
+module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthentication) {
+  scope: searchServiceResourceGroup
+  name: 'search-reader-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output AZURE_LOCATION string = location
-output AZURE_TENANT_ID string = tenant().tenantId
+output AZURE_TENANT_ID string = tenantId
+output AZURE_AUTH_TENANT_ID string = authTenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
 // Shared by all OpenAI deployments
@@ -524,5 +556,7 @@ output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.n
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_USE_AUTHENTICATION bool = useAuthentication
 
 output BACKEND_URI string = backend.outputs.uri

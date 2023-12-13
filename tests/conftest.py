@@ -11,6 +11,8 @@ import pytest
 import pytest_asyncio
 from azure.keyvault.secrets.aio import SecretClient
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.models import SearchField, SearchIndex
 from azure.storage.blob.aio import ContainerClient
 from openai.types import CreateEmbeddingResponse, Embedding
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
@@ -30,6 +32,14 @@ from .mocks import (
     MockKeyVaultSecretClient,
     MockResponse,
     mock_computervision_response,
+)
+
+MockSearchIndex = SearchIndex(
+    name="test",
+    fields=[
+        SearchField(name="oids", type="Collection(Edm.String)"),
+        SearchField(name="groups", type="Collection(Edm.String)"),
+    ],
 )
 
 
@@ -193,10 +203,20 @@ def mock_acs_search(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
+    async def mock_get_index(*args, **kwargs):
+        return MockSearchIndex
+
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+
 
 @pytest.fixture
 def mock_acs_search_filter(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    async def mock_get_index(*args, **kwargs):
+        return MockSearchIndex
+
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
 
 
 @pytest.fixture

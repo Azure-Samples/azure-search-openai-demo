@@ -6,6 +6,7 @@ from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 
 from approaches.approach import Approach, ThoughtStep
+from core.authentication import AuthenticationHelper
 from core.messagebuilder import MessageBuilder
 
 # Replace these with your own values, either in environment variables or directly here
@@ -45,6 +46,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self,
         *,
         search_client: SearchClient,
+        auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -58,6 +60,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
+        self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.chatgpt_deployment = chatgpt_deployment
