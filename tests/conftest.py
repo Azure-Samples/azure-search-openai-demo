@@ -35,7 +35,7 @@ from .mocks import (
 
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
-    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vectors"))
+    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
 @pytest.fixture

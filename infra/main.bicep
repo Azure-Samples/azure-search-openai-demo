@@ -338,7 +338,7 @@ module secrets 'secrets.bicep' = if (useGPT4V) {
   params: {
     keyVaultName: keyVaultName
     storeComputerVisionSecret: useGPT4V
-    computerVisionId: computerVision.outputs.id
+    computerVisionId: useGPT4V ? computerVision.outputs.id : ''
     computerVisionSecretName: computerVisionSecretName
   }
 }
