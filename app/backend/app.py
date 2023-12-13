@@ -1,13 +1,15 @@
+import dataclasses
 import io
 import json
 import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import AsyncGenerator
+from typing import AsyncGenerator, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
+from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
@@ -28,14 +30,22 @@ from quart import (
 )
 from quart_cors import cors
 
+from approaches.approach import Approach
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
+from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
 from core.authentication import AuthenticationHelper
 
+CONFIG_OPENAI_TOKEN = "openai_token"
+CONFIG_CREDENTIAL = "azure_credential"
 CONFIG_ASK_APPROACH = "ask_approach"
+CONFIG_ASK_VISION_APPROACH = "ask_vision_approach"
+CONFIG_CHAT_VISION_APPROACH = "chat_vision_approach"
 CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
+CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
 CONFIG_SEARCH_CLIENT = "search_client"
 CONFIG_OPENAI_CLIENT = "openai_client"
 ERROR_MESSAGE = """The app encountered an error processing your request.
@@ -121,7 +131,12 @@ async def ask():
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
-        approach = current_app.config[CONFIG_ASK_APPROACH]
+        use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+        approach: Approach
+        if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
+            approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
+        else:
+            approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
         r = await approach.run(
             request_json["messages"], context=context, session_state=request_json.get("session_state")
         )
@@ -130,13 +145,20 @@ async def ask():
         return error_response(error, "/ask")
 
 
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
+        return super().default(o)
+
+
 async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
     try:
         async for event in r:
-            yield json.dumps(event, ensure_ascii=False) + "\n"
-    except Exception as e:
-        logging.exception("Exception while generating response stream: %s", e)
-        yield json.dumps(error_dict(e))
+            yield json.dumps(event, ensure_ascii=False, cls=JSONEncoder) + "\n"
+    except Exception as error:
+        logging.exception("Exception while generating response stream: %s", error)
+        yield json.dumps(error_dict(error))
 
 
 @bp.route("/chat", methods=["POST"])
@@ -147,8 +169,15 @@ async def chat():
     context = request_json.get("context", {})
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
+
     try:
-        approach = current_app.config[CONFIG_CHAT_APPROACH]
+        use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+        approach: Approach
+        if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
+            approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
+        else:
+            approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
+
         result = await approach.run(
             request_json["messages"],
             stream=request_json.get("stream", False),
@@ -173,6 +202,11 @@ def auth_setup():
     return jsonify(auth_helper.get_auth_setup_for_client())
 
 
+@bp.route("/config", methods=["GET"])
+def config():
+    return jsonify({"showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED]})
+
+
 @bp.before_app_serving
 async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
@@ -180,14 +214,19 @@ async def setup_clients():
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
+    VISION_SECRET_NAME = os.getenv("VISION_SECRET_NAME")
+    AZURE_KEY_VAULT_NAME = os.getenv("AZURE_KEY_VAULT_NAME")
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
+    AZURE_OPENAI_GPT4V_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT4V_DEPLOYMENT")
+    AZURE_OPENAI_GPT4V_MODEL = os.environ.get("AZURE_OPENAI_GPT4V_MODEL")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == "azure" else None
     AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST == "azure" else None
+    AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
@@ -203,6 +242,8 @@ async def setup_clients():
 
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+
+    USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
 
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -231,6 +272,15 @@ async def setup_clients():
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
+    vision_key = None
+    if VISION_SECRET_NAME and AZURE_KEY_VAULT_NAME:  # Cognitive vision keys are stored in keyvault
+        key_vault_client = SecretClient(
+            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
+        )
+        vision_secret = await key_vault_client.get_secret(VISION_SECRET_NAME)
+        vision_key = vision_secret.value
+        await key_vault_client.close()
+
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
 
@@ -253,6 +303,8 @@ async def setup_clients():
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
+    current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
+
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
@@ -268,6 +320,42 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
+    if AZURE_OPENAI_GPT4V_MODEL:
+        if vision_key is None:
+            raise ValueError("Vision key must be set (in Key Vault) to use the vision approach.")
+
+        current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
+            search_client=search_client,
+            openai_client=openai_client,
+            blob_container_client=blob_container_client,
+            vision_endpoint=AZURE_VISION_ENDPOINT,
+            vision_key=vision_key,
+            gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
+            gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
+            embedding_model=OPENAI_EMB_MODEL,
+            embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+            sourcepage_field=KB_FIELDS_SOURCEPAGE,
+            content_field=KB_FIELDS_CONTENT,
+            query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+            query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        )
+
+        current_app.config[CONFIG_CHAT_VISION_APPROACH] = ChatReadRetrieveReadVisionApproach(
+            search_client=search_client,
+            openai_client=openai_client,
+            blob_container_client=blob_container_client,
+            vision_endpoint=AZURE_VISION_ENDPOINT,
+            vision_key=vision_key,
+            gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
+            gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
+            embedding_model=OPENAI_EMB_MODEL,
+            embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+            sourcepage_field=KB_FIELDS_SOURCEPAGE,
+            content_field=KB_FIELDS_CONTENT,
+            query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+            query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        )
+
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         openai_client=openai_client,
@@ -280,6 +368,12 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
+
+
+@bp.after_app_serving
+async def close_clients():
+    await current_app.config[CONFIG_SEARCH_CLIENT].close()
+    await current_app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
 
 
 def create_app():

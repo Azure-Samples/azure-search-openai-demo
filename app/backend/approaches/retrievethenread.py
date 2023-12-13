@@ -1,12 +1,16 @@
+import os
 from typing import Any, AsyncGenerator, Optional, Union
 
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.models import QueryType, RawVectorQuery, VectorQuery
+from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 
-from approaches.approach import Approach
+from approaches.approach import Approach, ThoughtStep
 from core.messagebuilder import MessageBuilder
-from text import nonewlines
+
+# Replace these with your own values, either in environment variables or directly here
+AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT")
+AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
 
 
 class RetrieveThenReadApproach(Approach):
@@ -52,6 +56,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         query_speller: str,
     ):
         self.search_client = search_client
+        self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
@@ -74,61 +79,34 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_ranker = overrides.get("semantic_ranker") and has_text
+
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if has_vector:
-            embedding = await self.openai_client.embeddings.create(
-                # Azure Open AI takes the deployment name as the model name
-                model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
-                input=q,
-            )
-            query_vector = embedding.data[0].embedding
-            vectors.append(RawVectorQuery(vector=query_vector, k=50, fields="embedding"))
+            vectors.append(await self.compute_text_embedding(q))
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        query_text = q if has_text else ""
+        query_text = q if has_text else None
 
-        # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
-        if overrides.get("semantic_ranker") and has_text:
-            r = await self.search_client.search(
-                query_text,
-                filter=filter,
-                query_type=QueryType.SEMANTIC,
-                query_language=self.query_language,
-                query_speller=self.query_speller,
-                semantic_configuration_name="default",
-                top=top,
-                query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                vector_queries=vectors,
-            )
-        else:
-            r = await self.search_client.search(
-                query_text,
-                filter=filter,
-                top=top,
-                vector_queries=vectors,
-            )
-        if use_semantic_captions:
-            results = [
-                doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc["@search.captions"]]))
-                async for doc in r
-            ]
-        else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) async for doc in r]
-        content = "\n".join(results)
+        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions)
 
-        message_builder = MessageBuilder(
-            overrides.get("prompt_template") or self.system_chat_template, self.chatgpt_model
-        )
+        user_content = [q]
 
-        # add user question
+        template = overrides.get("prompt_template") or self.system_chat_template
+        model = self.chatgpt_model
+        message_builder = MessageBuilder(template, model)
+
+        # Process results
+        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+
+        # Append user message
+        content = "\n".join(sources_content)
         user_content = q + "\n" + f"Sources:\n {content}"
         message_builder.insert_message("user", user_content)
-
-        # Add shots/samples. This helps model to mimic response and make sure they match rules laid out in system message.
         message_builder.insert_message("assistant", self.answer)
         message_builder.insert_message("user", self.question)
 
@@ -143,11 +121,22 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             )
         ).model_dump()
 
+        data_points = {"text": sources_content}
         extra_info = {
-            "data_points": results,
-            "thoughts": f"Question:<br>{query_text}<br><br>Prompt:<br>"
-            + "\n\n".join([str(message) for message in message_builder.messages]),
+            "data_points": data_points,
+            "thoughts": [
+                ThoughtStep(
+                    "Search Query",
+                    query_text,
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                    },
+                ),
+                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
+                ThoughtStep("Prompt", [str(message) for message in message_builder.messages]),
+            ],
         }
+
         chat_completion["choices"][0]["context"] = extra_info
         chat_completion["choices"][0]["session_state"] = session_state
         return chat_completion

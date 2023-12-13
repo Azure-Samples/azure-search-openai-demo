@@ -4,6 +4,18 @@ export const enum RetrievalMode {
     Text = "text"
 }
 
+export const enum GPT4VInput {
+    TextAndImages = "textAndImages",
+    Images = "images",
+    Texts = "texts"
+}
+
+export const enum VectorFieldOptions {
+    Embedding = "embedding",
+    ImageEmbedding = "imageEmbedding",
+    Both = "both"
+}
+
 export type ChatAppRequestOverrides = {
     retrieval_mode?: RetrievalMode;
     semantic_ranker?: boolean;
@@ -17,6 +29,9 @@ export type ChatAppRequestOverrides = {
     suggest_followup_questions?: boolean;
     use_oid_security_filter?: boolean;
     use_groups_security_filter?: boolean;
+    use_gpt4v?: boolean;
+    gpt4v_input?: GPT4VInput;
+    vector_fields: VectorFieldOptions[];
 };
 
 export type ResponseMessage = {
@@ -24,10 +39,16 @@ export type ResponseMessage = {
     role: string;
 };
 
+export type Thoughts = {
+    title: string;
+    description: any; // It can be any output from the api
+    props?: { [key: string]: string };
+};
+
 export type ResponseContext = {
-    thoughts: string | null;
     data_points: string[];
     followup_questions: string[] | null;
+    thoughts: Thoughts[];
 };
 
 export type ResponseChoice = {
@@ -55,4 +76,8 @@ export type ChatAppRequest = {
     context?: ChatAppRequestContext;
     stream?: boolean;
     session_state: any;
+};
+
+export type Config = {
+    showGPT4VOptions: boolean;
 };

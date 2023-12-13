@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-from collections import namedtuple
 from unittest import mock
 
 import aiohttp
@@ -10,8 +9,9 @@ import azure.storage.filedatalake.aio
 import msal
 import pytest
 import pytest_asyncio
-from azure.core.credentials_async import AsyncTokenCredential
+from azure.keyvault.secrets.aio import SecretClient
 from azure.search.documents.aio import SearchClient
+from azure.storage.blob.aio import ContainerClient
 from openai.types import CreateEmbeddingResponse, Embedding
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from openai.types.chat.chat_completion import (
@@ -23,12 +23,35 @@ from openai.types.create_embedding_response import Usage
 import app
 from core.authentication import AuthenticationHelper
 
-MockToken = namedtuple("MockToken", ["token", "expires_on"])
+from .mocks import (
+    MockAsyncSearchResultsIterator,
+    MockAzureCredential,
+    MockBlobClient,
+    MockKeyVaultSecretClient,
+    MockResponse,
+    mock_computervision_response,
+)
 
 
-class MockAzureCredential(AsyncTokenCredential):
-    async def get_token(self, uri):
-        return MockToken("mock_token", 9999999999)
+async def mock_search(self, *args, **kwargs):
+    self.filter = kwargs.get("filter")
+    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vectors"))
+
+
+@pytest.fixture
+def mock_get_secret(monkeypatch):
+    monkeypatch.setattr(SecretClient, "get_secret", MockKeyVaultSecretClient().get_secret)
+
+
+@pytest.fixture
+def mock_compute_embeddings_call(monkeypatch):
+    def mock_post(*args, **kwargs):
+        if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
+            return mock_computervision_response()
+        else:
+            raise Exception("Unexpected URL for mock call to ClientSession.post()")
+
+    monkeypatch.setattr(aiohttp.ClientSession, "post", mock_post)
 
 
 @pytest.fixture
@@ -133,8 +156,13 @@ def mock_openai_chatcompletion(monkeypatch):
 
     async def mock_acreate(*args, **kwargs):
         messages = kwargs["messages"]
-        if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
+        last_question = messages[-1]["content"]
+        if last_question == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
+        elif last_question == "Generate search query for: Are interest rates high?":
+            answer = "interest rates"
+        elif isinstance(last_question, list) and last_question[2].get("image_url"):
+            answer = "From the provided sources, the impact of interest rates and GDP growth on financial markets can be observed through the line graph. [Financial Market Analysis Report 2023-7.png]"
         else:
             answer = "The capital of France is Paris. [Benefit_Options-2.pdf]."
             if messages[0]["content"].find("Generate 3 very brief follow-up questions") > -1:
@@ -162,58 +190,18 @@ def mock_openai_chatcompletion(monkeypatch):
 
 @pytest.fixture
 def mock_acs_search(monkeypatch):
-    class Caption:
-        def __init__(self, text):
-            self.text = text
-
-    class AsyncSearchResultsIterator:
-        def __init__(self):
-            self.num = 1
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            if self.num == 1:
-                self.num = 0
-                return {
-                    "sourcepage": "Benefit_Options-2.pdf",
-                    "sourcefile": "Benefit_Options.pdf",
-                    "content": "There is a whistleblower policy.",
-                    "embeddings": [],
-                    "category": None,
-                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
-                    "@search.score": 0.03279569745063782,
-                    "@search.reranker_score": 3.4577205181121826,
-                    "@search.highlights": None,
-                    "@search.captions": [Caption("Caption: A whistleblower policy.")],
-                }
-            else:
-                raise StopAsyncIteration
-
-    async def mock_search(*args, **kwargs):
-        return AsyncSearchResultsIterator()
-
+    monkeypatch.setattr(SearchClient, "search", mock_search)
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
 
 @pytest.fixture
 def mock_acs_search_filter(monkeypatch):
-    class AsyncSearchResultsIterator:
-        def __init__(self):
-            self.num = 1
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            raise StopAsyncIteration
-
-    async def mock_search(self, *args, **kwargs):
-        self.filter = kwargs.get("filter")
-        return AsyncSearchResultsIterator()
-
     monkeypatch.setattr(SearchClient, "search", mock_search)
+
+
+@pytest.fixture
+def mock_blob_container_client(monkeypatch):
+    monkeypatch.setattr(ContainerClient, "get_blob_client", lambda *args, **kwargs: MockBlobClient())
 
 
 envs = [
@@ -227,6 +215,10 @@ envs = [
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
+        "VISION_SECRET_NAME": "mysecret",
+        "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
+        "AZURE_KEY_VAULT_NAME": "mykeyvault",
     },
 ]
 
@@ -246,7 +238,7 @@ auth_envs = [
 
 
 @pytest.fixture(params=envs, ids=["client0", "client1"])
-def mock_env(monkeypatch, request):
+def mock_env(monkeypatch, request, mock_get_secret):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -265,11 +257,19 @@ def mock_env(monkeypatch, request):
 
 
 @pytest_asyncio.fixture()
-async def client(monkeypatch, mock_env, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
+async def client(
+    monkeypatch,
+    mock_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
+    mock_blob_container_client,
+    mock_compute_embeddings_call,
+):
     quart_app = app.create_app()
 
     async with quart_app.test_app() as test_app:
-        quart_app.config.update({"TESTING": True})
+        test_app.app.config.update({"TESTING": True})
         mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
@@ -283,6 +283,7 @@ async def auth_client(
     mock_confidential_client_success,
     mock_list_groups_success,
     mock_acs_search_filter,
+    mock_get_secret,
     request,
 ):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
@@ -366,24 +367,6 @@ def mock_confidential_client_overage(monkeypatch):
         pass
 
     monkeypatch.setattr(msal.ConfidentialClientApplication, "__init__", mock_init)
-
-
-class MockResponse:
-    def __init__(self, text, status):
-        self.text = text
-        self.status = status
-
-    async def text(self):
-        return self._text
-
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
-
-    async def __aenter__(self):
-        return self
-
-    async def json(self):
-        return json.loads(self.text)
 
 
 @pytest.fixture

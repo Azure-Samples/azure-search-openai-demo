@@ -4,8 +4,8 @@ import os
 import tempfile
 
 import pytest
-from conftest import MockAzureCredential
 
+from .mocks import MockAzureCredential
 from scripts.prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     File,

@@ -2,10 +2,10 @@ import openai
 import openai.types
 import pytest
 import tenacity
-from conftest import MockAzureCredential
 from httpx import Request, Response
 from openai.types.create_embedding_response import Usage
 
+from .mocks import MockAzureCredential
 from scripts.prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     OpenAIEmbeddingService,
