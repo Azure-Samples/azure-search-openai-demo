@@ -9,14 +9,10 @@ import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-<<<<<<< HEAD
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
-=======
 import { VectorSettings } from "../../components/VectorSettings";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 
-import { useLogin, getToken } from "../../authConfig";
->>>>>>> upstream/main
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
@@ -52,7 +48,7 @@ export function Component(): JSX.Element {
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
 
-        configApi(token?.accessToken).then(config => {
+        configApi(token).then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
         });
     };

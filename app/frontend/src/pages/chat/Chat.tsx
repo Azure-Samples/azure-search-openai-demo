@@ -23,12 +23,8 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
-<<<<<<< HEAD
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
-=======
 import { VectorSettings } from "../../components/VectorSettings";
-import { useLogin, getToken } from "../../authConfig";
->>>>>>> upstream/main
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
@@ -67,7 +63,7 @@ const Chat = () => {
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
 
-        configApi(token?.accessToken).then(config => {
+        configApi(token).then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
         });
     };
