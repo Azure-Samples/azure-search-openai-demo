@@ -50,9 +50,9 @@ if [ "$USE_GPT4V" = true ]; then
 fi
 
 if [ -n "$AZURE_AUTH_TENANT_ID" ]; then
-  tenantArg="--tenant $AZURE_AUTH_TENANT_ID"
+  tenantArg="--tenantid $AZURE_AUTH_TENANT_ID"
 elif [ -n "$AZURE_TENANT_ID" ]; then
-  tenantArg="--tenant $AZURE_TENANT_ID"
+  tenantArg="--tenantid $AZURE_TENANT_ID"
 fi
 
 ./scripts/.venv/bin/python ./scripts/prepdocs.py \
