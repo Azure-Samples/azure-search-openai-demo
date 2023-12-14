@@ -48,9 +48,7 @@ if ($env:USE_GPT4V -eq $true) {
   $searchImagesArg = "--searchimages"
 }
 
-if ($env:AZURE_AUTH_TENANT_ID) {
-  $tenantArg = "--tenantid $env:AZURE_AUTH_TENANT_ID"
-} elseif  ($env:AZURE_TENANT_ID) {
+if ($env:AZURE_TENANT_ID) {
   $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
 }
 

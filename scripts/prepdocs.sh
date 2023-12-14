@@ -49,9 +49,7 @@ if [ "$USE_GPT4V" = true ]; then
   searchImagesArg="--searchimages"
 fi
 
-if [ -n "$AZURE_AUTH_TENANT_ID" ]; then
-  tenantArg="--tenantid $AZURE_AUTH_TENANT_ID"
-elif [ -n "$AZURE_TENANT_ID" ]; then
+if [ -n "$AZURE_TENANT_ID" ]; then
   tenantArg="--tenantid $AZURE_TENANT_ID"
 fi
 
