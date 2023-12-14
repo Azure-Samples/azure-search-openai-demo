@@ -1,4 +1,6 @@
+import docx
 import html
+import os
 from abc import ABC
 from typing import IO, AsyncGenerator, Union
 
@@ -78,41 +80,65 @@ class DocumentAnalysisPdfParser(PdfParser):
         async with DocumentAnalysisClient(
             endpoint=self.endpoint, credential=self.credential, headers={"x-ms-useragent": USER_AGENT}
         ) as form_recognizer_client:
-            poller = await form_recognizer_client.begin_analyze_document(model_id=self.model_id, document=content)
-            form_recognizer_results = await poller.result()
+            
+            #AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            if os.path.splitext(content.name)[1].lower() == ".pdf":
+                poller = await form_recognizer_client.begin_analyze_document(model_id=self.model_id, document=content)
+                form_recognizer_results = await poller.result()
 
-            offset = 0
-            for page_num, page in enumerate(form_recognizer_results.pages):
-                tables_on_page = [
-                    table
-                    for table in (form_recognizer_results.tables or [])
-                    if table.bounding_regions and table.bounding_regions[0].page_number == page_num + 1
-                ]
+                offset = 0
+                for page_num, page in enumerate(form_recognizer_results.pages):
+                    tables_on_page = [
+                        table
+                        for table in (form_recognizer_results.tables or [])
+                        if table.bounding_regions and table.bounding_regions[0].page_number == page_num + 1
+                    ]
 
-                # mark all positions of the table spans in the page
-                page_offset = page.spans[0].offset
-                page_length = page.spans[0].length
-                table_chars = [-1] * page_length
-                for table_id, table in enumerate(tables_on_page):
-                    for span in table.spans:
-                        # replace all table spans with "table_id" in table_chars array
-                        for i in range(span.length):
-                            idx = span.offset - page_offset + i
-                            if idx >= 0 and idx < page_length:
-                                table_chars[idx] = table_id
+                    # mark all positions of the table spans in the page
+                    page_offset = page.spans[0].offset
+                    page_length = page.spans[0].length
+                    table_chars = [-1] * page_length
+                    for table_id, table in enumerate(tables_on_page):
+                        for span in table.spans:
+                            # replace all table spans with "table_id" in table_chars array
+                            for i in range(span.length):
+                                idx = span.offset - page_offset + i
+                                if idx >= 0 and idx < page_length:
+                                    table_chars[idx] = table_id
 
-                # build page text by replacing characters in table spans with table html
+                    # build page text by replacing characters in table spans with table html
+                    page_text = ""
+                    added_tables = set()
+                    for idx, table_id in enumerate(table_chars):
+                        if table_id == -1:
+                            page_text += form_recognizer_results.content[page_offset + idx]
+                        elif table_id not in added_tables:
+                            page_text += DocumentAnalysisPdfParser.table_to_html(tables_on_page[table_id])
+                            added_tables.add(table_id)
+
+                    with open('./out1.txt', 'a') as file:
+                        file.write(page_text)
+
+                    yield Page(page_num=page_num, offset=offset, text=page_text)
+                    offset += len(page_text)
+
+                #BBBBBBBBBBBBBBBBB
+            elif os.path.splitext(content.name)[1].lower() == ".docx":
+                print(f"Extracting text from '{content.name}' using python docx")
                 page_text = ""
-                added_tables = set()
-                for idx, table_id in enumerate(table_chars):
-                    if table_id == -1:
-                        page_text += form_recognizer_results.content[page_offset + idx]
-                    elif table_id not in added_tables:
-                        page_text += DocumentAnalysisPdfParser.table_to_html(tables_on_page[table_id])
-                        added_tables.add(table_id)
+                
+                doc = docx.Document(content.name)
+                full_text = []
 
-                yield Page(page_num=page_num, offset=offset, text=page_text)
-                offset += len(page_text)
+                for paragraph in doc.paragraphs:
+                    full_text.append(paragraph.text)
+                    
+                page_text = '\n'.join(full_text)
+
+                with open('./out2.txt', 'a') as file:
+                        file.write(page_text)
+
+                yield Page(page_num=1, offset=0, text=page_text)
 
     @classmethod
     def table_to_html(cls, table: DocumentTable):
