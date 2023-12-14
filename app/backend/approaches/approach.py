@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 from typing import Any, AsyncGenerator, List, Optional, Union, cast
+from urllib.parse import urljoin
 
 import aiohttp
 from azure.search.documents.aio import SearchClient
@@ -185,9 +186,9 @@ class Approach:
         return RawVectorQuery(vector=query_vector, k=50, fields="embedding")
 
     async def compute_image_embedding(self, q: str):
-        endpoint = f"{self.vision_endpoint}computervision/retrieval:vectorizeText"
-        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
+        endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
         headers = {"Content-Type": "application/json"}
+        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
         data = {"text": q}
 
         headers["Authorization"] = "Bearer " + await self.vision_token_provider()

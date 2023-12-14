@@ -39,7 +39,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], "str | Awaitable[str]"]
+        vision_token_provider: Callable[[], Awaitable[str]]
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
