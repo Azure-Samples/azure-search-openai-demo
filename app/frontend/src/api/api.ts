@@ -1,14 +1,14 @@
 const BACKEND_URI = "";
 
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config } from "./models";
-import { useLogin } from "../authConfig";
+import { useLogin, appServicesToken } from "../authConfig";
 
 function getHeaders(idToken: string | undefined): Record<string, string> {
     var headers: Record<string, string> = {
         "Content-Type": "application/json"
     };
-    // If using login, add the id token of the logged in account as the authorization
-    if (useLogin) {
+    // If using login and not using app services, add the id token of the logged in account as the authorization
+    if (useLogin && appServicesToken == null) {
         if (idToken) {
             headers["Authorization"] = `Bearer ${idToken}`;
         }
