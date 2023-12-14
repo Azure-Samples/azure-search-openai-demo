@@ -2,6 +2,16 @@
 
 This guide provides more details for customizing the Chat App.
 
+- [Using your own data](#using-your-own-data)
+- [Customizing the UI](#customizing-the-ui)
+- [Customizing the backend](#customizing-the-backend)
+  - [Chat/Ask approaches](#chatask-approaches)
+- [Improving answer quality](#improving-answer-quality)
+  - [Identify the problem point](#identify-the-problem-point)
+  - [Improving OpenAI ChatCompletion results](#improving-openai-chatcompletion-results)
+  - [Improving Azure AI Search results](#improving-azure-ai-search-results)
+  - [Evaluating answer quality](#evaluating-answer-quality)
+
 ## Using your own data
 
 The Chat App is designed to work with any PDF documents. The sample data is provided to help you get started quickly, but you can easily replace it with your own data. You'll want to first remove all the existing data, then add your own. See the [data ingestion guide](data_ingestion.md) for more details.
@@ -86,15 +96,15 @@ The first step is to identify where the problem is occurring. For example, if us
 You can look at the "Thought process" tab in the chat app to see each of those steps,
 and determine which one is the problem.
 
-#### Improving OpenAI ChatCompletion results
+### Improving OpenAI ChatCompletion results
 
 If the problem is with the ChatCompletion API calls (steps 1 or 3 above), you can try changing the relevant prompt.
 
-Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved. The ChatCompletion API can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
+Once you've changed the prompt, make sure you ask the same question multiple times to see if the overall quality has improved, and [run an evaluation](#evaluating-answer-quality) when you're satisfied with the changes. The ChatCompletion API can yield different results every time, even for a temperature of 0.0, but especially for a higher temperature than that (like our default of 0.7 for step 3).
 
 You can also try changing the ChatCompletion parameters, like temperature, to see if that improves results for your domain.
 
-#### Improving Azure AI Search results
+### Improving Azure AI Search results
 
 If the problem is with Azure AI Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however.
 
@@ -135,3 +145,8 @@ You can also use the `highlight` parameter to see what text is being matched in 
 ![Screenshot of search explorer with highlighted results](screenshot_searchindex.png)
 
 The search explorer works well for testing text, but is harder to use with vectors, since you'd also need to compute the vector embedding and send it in. It is probably easier to use the app frontend for testing vectors/hybrid search.
+
+
+### Evaluating answer quality
+
+Once you've made changes to the prompts or settings, you'll want to rigorously evaluate the results to see if they've improved. You can use tools in [the AI RAG Chat evaluator](https://github.com/Azure-Samples/ai-rag-chat-evaluator) repository to run evaluations, review results, and compare answers across runs.
