@@ -9,7 +9,7 @@
       "value": "${AZURE_RESOURCE_GROUP}"
     },
     "location": {
-      "value": "${AZURE_LOCATION}"
+      "value": "${AZURE_LOCATION=westeurope}"
     },
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"

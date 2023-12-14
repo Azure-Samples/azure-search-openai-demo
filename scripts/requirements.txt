@@ -122,6 +122,8 @@ pydantic==2.5.2
     # via openai
 pydantic-core==2.14.5
     # via pydantic
+python-docx==1.1.0
+    # via something (I don't know)
 pyjwt[crypto]==2.8.0
     # via msal
 pymupdf==1.23.7
