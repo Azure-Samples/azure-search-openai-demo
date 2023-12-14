@@ -184,11 +184,13 @@ class Approach:
         query_vector = embedding.data[0].embedding
         return RawVectorQuery(vector=query_vector, k=50, fields="embedding")
 
-    async def compute_image_embedding(self, q: str, vision_endpoint: str, vision_key: str):
-        endpoint = f"{vision_endpoint}computervision/retrieval:vectorizeText"
+    async def compute_image_embedding(self, q: str):
+        endpoint = f"{self.vision_endpoint}computervision/retrieval:vectorizeText"
         params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
-        headers = {"Content-Type": "application/json", "Ocp-Apim-Subscription-Key": vision_key}
+        headers = {"Content-Type": "application/json"}
         data = {"text": q}
+
+        headers["Authorization"] = "Bearer " + await self.vision_token_provider()
 
         async with aiohttp.ClientSession() as session:
             async with session.post(

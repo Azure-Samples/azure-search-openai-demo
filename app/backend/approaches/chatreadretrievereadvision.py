@@ -1,4 +1,4 @@
-from typing import Any, Coroutine, Optional, Union
+from typing import Any, Awaitable, Callable, Coroutine, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -39,7 +39,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_key: str,
+        vision_token_provider: Callable[[], "str | Awaitable[str]"]
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -53,7 +53,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
-        self.vision_key = vision_key
+        self.vision_token_provider = vision_token_provider
         self.chatgpt_token_limit = get_token_limit(gpt4v_model)
 
     @property
@@ -124,7 +124,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 vector = (
                     await self.compute_text_embedding(query_text)
                     if field == "embedding"
-                    else await self.compute_image_embedding(query_text, self.vision_endpoint, self.vision_key)
+                    else await self.compute_image_embedding(query_text)
                 )
                 vectors.append(vector)
 

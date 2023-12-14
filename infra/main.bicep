@@ -28,7 +28,6 @@ param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 
 param storageAccountName string = ''
-param keyVaultResourceGroupName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
@@ -40,9 +39,6 @@ param openAiHost string // Set in main.parameters.json
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 param useGPT4V bool = false
-
-param keyVaultServiceName string = ''
-param computerVisionSecretName string = 'computerVisionSecret'
 
 @description('Location for the OpenAI resource group')
 @allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
@@ -100,7 +96,6 @@ var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
 var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServiceName : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-var keyVaultName = !empty(keyVaultServiceName) ? keyVaultServiceName : '${abbrs.keyVaultVaults}${resourceToken}'
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -127,10 +122,6 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
-}
-
-resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(keyVaultResourceGroupName)) {
-  name: !empty(keyVaultResourceGroupName) ? keyVaultResourceGroupName : resourceGroup.name
 }
 
 // Monitor application with Azure Monitor
@@ -194,8 +185,6 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
-      VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName: ''
-      AZURE_KEY_VAULT_NAME: useGPT4V ? keyVaultName: ''
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
@@ -307,39 +296,6 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
     sku: {
       name: computerVisionSkuName
     }
-  }
-}
-
-
-// Currently, we only need Key Vault for storing Computer Vision key,
-// which is only used for GPT-4V.
-module keyVault 'core/security/keyvault.bicep' = if (useGPT4V) {
-  name: 'keyvault'
-  scope: keyVaultResourceGroup
-  params: {
-    name: keyVaultName
-    location: location
-    principalId: principalId
-  }
-}
-
-module webKVAccess 'core/security/keyvault-access.bicep' = if (useGPT4V) {
-  name: 'web-keyvault-access'
-  scope: keyVaultResourceGroup
-  params: {
-    keyVaultName: keyVaultName
-    principalId: backend.outputs.identityPrincipalId
-  }
-}
-
-module secrets 'secrets.bicep' = if (useGPT4V) {
-  name: 'secrets'
-  scope: keyVaultResourceGroup
-  params: {
-    keyVaultName: keyVaultName
-    storeComputerVisionSecret: useGPT4V
-    computerVisionId: useGPT4V ? computerVision.outputs.id : ''
-    computerVisionSecretName: computerVisionSecretName
   }
 }
 
@@ -511,8 +467,6 @@ output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
 output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
-output VISION_SECRET_NAME string = useGPT4V ? computerVisionSecretName : ''
-output AZURE_KEY_VAULT_NAME string = useGPT4V ? keyVault.outputs.name : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name

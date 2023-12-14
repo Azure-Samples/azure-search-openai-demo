@@ -9,7 +9,6 @@ from typing import AsyncGenerator, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
-from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import BlobServiceClient
@@ -214,8 +213,6 @@ async def setup_clients():
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
-    VISION_SECRET_NAME = os.getenv("VISION_SECRET_NAME")
-    AZURE_KEY_VAULT_NAME = os.getenv("AZURE_KEY_VAULT_NAME")
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
@@ -272,15 +269,6 @@ async def setup_clients():
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
-    vision_key = None
-    if VISION_SECRET_NAME and AZURE_KEY_VAULT_NAME:  # Cognitive vision keys are stored in keyvault
-        key_vault_client = SecretClient(
-            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
-        )
-        vision_secret = await key_vault_client.get_secret(VISION_SECRET_NAME)
-        vision_key = vision_secret.value
-        await key_vault_client.close()
-
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
 
@@ -320,16 +308,15 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
-    if AZURE_OPENAI_GPT4V_MODEL:
-        if vision_key is None:
-            raise ValueError("Vision key must be set (in Key Vault) to use the vision approach.")
+    if USE_GPT4V:
+        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
             search_client=search_client,
             openai_client=openai_client,
             blob_container_client=blob_container_client,
             vision_endpoint=AZURE_VISION_ENDPOINT,
-            vision_key=vision_key,
+            vision_token_provider=token_provider,
             gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
             gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
             embedding_model=OPENAI_EMB_MODEL,
@@ -345,7 +332,7 @@ async def setup_clients():
             openai_client=openai_client,
             blob_container_client=blob_container_client,
             vision_endpoint=AZURE_VISION_ENDPOINT,
-            vision_key=vision_key,
+            vision_token_provider=token_provider,
             gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
             gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
             embedding_model=OPENAI_EMB_MODEL,
