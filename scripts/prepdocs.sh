@@ -21,6 +21,10 @@ if [ -n "$AZURE_SEARCH_ANALYZER_NAME" ]; then
   searchAnalyzerNameArg="--searchanalyzername $AZURE_SEARCH_ANALYZER_NAME"
 fi
 
+if [ -n "$AZURE_USE_AUTHENTICATION" ]; then
+  aclArg="--useacls"
+fi
+
 visionEndpointArg=""
 if [ -n "$AZURE_VISION_ENDPOINT" ]; then
   visionEndpointArg="--visionendpoint $AZURE_VISION_ENDPOINT"
@@ -45,6 +49,10 @@ if [ "$USE_GPT4V" = true ]; then
   searchImagesArg="--searchimages"
 fi
 
+if [ -n "$AZURE_TENANT_ID" ]; then
+  tenantArg="--tenantid $AZURE_TENANT_ID"
+fi
+
 ./scripts/.venv/bin/python ./scripts/prepdocs.py \
 './data/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
 $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
@@ -53,5 +61,5 @@ $searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyV
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" \
 --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" --index "$AZURE_SEARCH_INDEX" \
 --formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
---tenantid "$AZURE_TENANT_ID" --openaihost "$OPENAI_HOST" \
+$tenantArg --openaihost "$OPENAI_HOST" \
 --openaikey "$OPENAI_API_KEY" -v
