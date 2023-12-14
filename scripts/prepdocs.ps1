@@ -48,10 +48,10 @@ if ($env:USE_GPT4V -eq $true) {
   $searchImagesArg = "--searchimages"
 }
 
-if ($AZURE_AUTH_TENANT_ID) {
-  $tenantArg = "--tenantid $AZURE_AUTH_TENANT_ID"
-} elseif  ($AZURE_TENANT_ID) {
-  $tenantArg = "--tenantid $AZURE_TENANT_ID"
+if ($env:AZURE_AUTH_TENANT_ID) {
+  $tenantArg = "--tenantid $env:AZURE_AUTH_TENANT_ID"
+} elseif  ($env:AZURE_TENANT_ID) {
+  $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
 }
 
 $argumentList = "./scripts/prepdocs.py $dataArg $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg " + `
