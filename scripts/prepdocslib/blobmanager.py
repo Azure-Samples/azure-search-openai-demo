@@ -63,6 +63,15 @@ class BlobManager:
         start_time = datetime.datetime.now(datetime.timezone.utc)
         expiry_time = start_time + datetime.timedelta(days=1)
 
+        font = None
+        try:
+            font = ImageFont.truetype("arial.ttf", 20)
+        except OSError:
+            try:
+                font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
+            except OSError:
+                print("\tUnable to find arial.ttf or FreeMono.ttf, using default font")
+
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
             if self.verbose:
@@ -81,10 +90,6 @@ class BlobManager:
             new_img.paste(original_img, (0, text_height))
 
             # Draw the text on the white area
-            try:
-                font = ImageFont.truetype("arial.ttf", 20)
-            except OSError:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
             draw = ImageDraw.Draw(new_img)
             text = f"SourceFileName:{blob_name}"
 
