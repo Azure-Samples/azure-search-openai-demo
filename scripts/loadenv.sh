@@ -1,14 +1,5 @@
-echo "Loading azd .env file from current environment"
+ #!/bin/sh
 
-while IFS='=' read -r key value; do
-    value=$(echo "$value" | sed 's/^"//' | sed 's/"$//')
-    export "$key=$value"
-done <<EOF
-$(azd env get-values)
-EOF
+. ./scripts/load_azd_env.sh
 
-echo 'Creating Python virtual environment "scripts/.venv"'
-python3 -m venv scripts/.venv
-
-echo 'Installing dependencies from "requirements.txt" into virtual environment'
-./scripts/.venv/bin/python -m pip install -r scripts/requirements.txt
+. ./scripts/load_python_env.sh

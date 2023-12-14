@@ -77,6 +77,7 @@ class Approach:
         self,
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
+        auth_helper: AuthenticationHelper,
         query_language: Optional[str],
         query_speller: Optional[str],
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -85,6 +86,7 @@ class Approach:
     ):
         self.search_client = search_client
         self.openai_client = openai_client
+        self.auth_helper = auth_helper
         self.query_language = query_language
         self.query_speller = query_speller
         self.embedding_deployment = embedding_deployment
@@ -93,7 +95,7 @@ class Approach:
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         exclude_category = overrides.get("exclude_category") or None
-        security_filter = AuthenticationHelper.build_security_filters(overrides, auth_claims)
+        security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
         filters = []
         if exclude_category:
             filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))

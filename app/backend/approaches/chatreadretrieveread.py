@@ -10,6 +10,7 @@ from openai.types.chat import (
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
+from core.authentication import AuthenticationHelper
 from core.modelhelper import get_token_limit
 
 
@@ -25,6 +26,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self,
         *,
         search_client: SearchClient,
+        auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -37,6 +39,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     ):
         self.search_client = search_client
         self.openai_client = openai_client
+        self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
