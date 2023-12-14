@@ -10,6 +10,7 @@ from openai.types.chat import (
 )
 
 from approaches.approach import Approach, ThoughtStep
+from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 from core.messagebuilder import MessageBuilder
 
@@ -42,6 +43,7 @@ class RetrieveThenReadVisionApproach(Approach):
         search_client: SearchClient,
         blob_container_client: ContainerClient,
         openai_client: AsyncOpenAI,
+        auth_helper: AuthenticationHelper,
         gpt4v_deployment: Optional[str],
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -56,6 +58,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
+        self.auth_helper = auth_helper
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field

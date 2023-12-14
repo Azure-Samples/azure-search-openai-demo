@@ -67,10 +67,6 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
 cryptography==41.0.7
     # via
     #   azure-identity
@@ -140,9 +136,7 @@ msal==1.25.0
     #   azure-identity
     #   msal-extensions
 msal-extensions==1.0.0
-    # via
-    #   -r requirements.in
-    #   azure-identity
+    # via azure-identity
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
 multidict==6.0.4
@@ -338,6 +332,3 @@ yarl==1.9.3
     # via aiohttp
 zipp==3.17.0
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools

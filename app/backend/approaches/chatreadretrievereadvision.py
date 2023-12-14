@@ -12,6 +12,7 @@ from openai.types.chat import (
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
+from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 from core.modelhelper import get_token_limit
 
@@ -30,6 +31,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         search_client: SearchClient,
         blob_container_client: ContainerClient,
         openai_client: AsyncOpenAI,
+        auth_helper: AuthenticationHelper,
         gpt4v_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -44,6 +46,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
+        self.auth_helper = auth_helper
         self.gpt4v_deployment = gpt4v_deployment
         self.gpt4v_model = gpt4v_model
         self.embedding_deployment = embedding_deployment

@@ -13,5 +13,4 @@ opentelemetry-instrumentation-httpx
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 msal
-msal-extensions
 azure-keyvault-secrets
