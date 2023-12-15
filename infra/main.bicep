@@ -21,39 +21,6 @@ param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
-@allowed(['azure', 'openai'])
-param openAiHost string // Set in main.parameters.json
-
-param openAiServiceName string = ''
-param openAiResourceGroupName string = ''
-@description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus'])
-@metadata({
-  azd: {
-    type: 'location'
-  }
-})
-param openAiResourceGroupLocation string
-
-param openAiSkuName string = 'S0'
-
-param openAiApiKey string = ''
-param openAiApiOrganization string = ''
-
-param formRecognizerServiceName string = ''
-param formRecognizerResourceGroupName string = ''
-param formRecognizerResourceGroupLocation string = location
-
-param formRecognizerSkuName string = 'S0'
-
-param chatGptDeploymentName string // Set in main.parameters.json
-param chatGptDeploymentCapacity int = 30
-param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
-param chatGptModelVersion string = '0613'
-param embeddingDeploymentName string // Set in main.parameters.json
-param embeddingDeploymentCapacity int = 30
-param embeddingModelName string = 'text-embedding-ada-002'
-
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
 param serverAppId string = ''
@@ -79,14 +46,6 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
   location: location
   tags: tags
-}
-
-resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(openAiResourceGroupName)) {
-  name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
-}
-
-resource formRecognizerResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(formRecognizerResourceGroupName)) {
-  name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup.name
 }
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
@@ -139,17 +98,6 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
-      // Shared by all OpenAI deployments
-      OPENAI_HOST: openAiHost
-      AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
-      AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
-      // Specific to Azure OpenAI
-      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAi.outputs.name : ''
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
-      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
-      // Used only with non-Azure OpenAI deployments
-      OPENAI_API_KEY: openAiApiKey
-      OPENAI_ORGANIZATION: openAiApiOrganization
       // Optional login and document level access control system
       AZURE_USE_AUTHENTICATION: useAuthentication
       AZURE_SERVER_APP_ID: serverAppId
@@ -158,56 +106,6 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_TENANT_ID: tenant().tenantId
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
-    }
-  }
-}
-
-module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
-  name: 'openai'
-  scope: openAiResourceGroup
-  params: {
-    name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
-    location: openAiResourceGroupLocation
-    tags: tags
-    sku: {
-      name: openAiSkuName
-    }
-    deployments: [
-      {
-        name: chatGptDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: chatGptModelName
-          version: chatGptModelVersion
-        }
-        sku: {
-          name: 'Standard'
-          capacity: chatGptDeploymentCapacity
-        }
-      }
-      {
-        name: embeddingDeploymentName
-        model: {
-          format: 'OpenAI'
-          name: embeddingModelName
-          version: '2'
-        }
-        capacity: embeddingDeploymentCapacity
-      }
-    ]
-  }
-}
-
-module formRecognizer 'core/ai/cognitiveservices.bicep' = {
-  name: 'formrecognizer'
-  scope: formRecognizerResourceGroup
-  params: {
-    name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
-    kind: 'FormRecognizer'
-    location: formRecognizerResourceGroupLocation
-    tags: tags
-    sku: {
-      name: formRecognizerSkuName
     }
   }
 }
@@ -233,27 +131,6 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
-  }
-}
-
-// USER ROLES
-module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
-  scope: openAiResourceGroup
-  name: 'openai-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-    principalType: 'User'
-  }
-}
-
-module formRecognizerRoleUser 'core/security/role.bicep' = {
-  scope: formRecognizerResourceGroup
-  name: 'formrecognizer-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: 'User'
   }
 }
 
@@ -297,17 +174,6 @@ module storageAccountContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
-// SYSTEM IDENTITIES
-module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
-  scope: openAiResourceGroup
-  name: 'openai-role-backend'
-  params: {
-    principalId: backend.outputs.identityPrincipalId
-    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-    principalType: 'ServicePrincipal'
-  }
-}
-
 module storageRoleBackend 'core/security/role.bicep' = {
   scope: storageResourceGroup
   name: 'storage-role-backend'
@@ -341,22 +207,6 @@ module storageTablesContributorRoleBackend 'core/security/role.bicep' = {
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
-
-// Shared by all OpenAI deployments
-output OPENAI_HOST string = openAiHost
-output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
-output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
-// Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
-output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiHost == 'azure') ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiHost == 'azure') ? embeddingDeploymentName : ''
-// Used only with non-Azure OpenAI deployments
-output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
-output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
-
-output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
-output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName

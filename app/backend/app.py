@@ -99,9 +99,7 @@ async def ask():
     }
     try:
         approach = current_app.config[CONFIG_ASK_APPROACH]
-        # Workaround for: https://github.com/openai/openai-python/issues/371
         async with aiohttp.ClientSession() as s:
-            openai.aiosession.set(s)
             r = await approach.run(
                 request_json["messages"], context=context, session_state=request_json.get("session_state"), request_data = request_data
             )
@@ -174,17 +172,6 @@ async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
-    # Shared by all OpenAI deployments
-    OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
-    OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
-    # Used with Azure OpenAI deployments
-    AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
-    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
-    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
-    # Used only with non-Azure OpenAI deployments
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
     AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
@@ -228,20 +215,6 @@ async def setup_clients():
     except ResourceExistsError:
         logging.info("Table 'UserTable' already exists")
 
-    # Used by the OpenAI SDK
-    if OPENAI_HOST == "azure":
-        openai.api_type = "azure_ad"
-        openai.api_base = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-        openai.api_version = "2023-07-01-preview"
-        openai_token = await azure_credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_key = openai_token.token
-        # Store on app.config for later use inside requests
-        current_app.config[CONFIG_OPENAI_TOKEN] = openai_token
-    else:
-        openai.api_type = "openai"
-        openai.api_key = OPENAI_API_KEY
-        openai.organization = OPENAI_ORGANIZATION
-
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_TABLE_STORAGE_CLIENT] = table_client
@@ -249,24 +222,19 @@ async def setup_clients():
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
-    current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
-        table_client,
-        OPENAI_HOST,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
-        KB_FIELDS_SOURCEPAGE,
-        KB_FIELDS_CONTENT,
-    )
+    #current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
+    #    table_client,
+    #    OPENAI_HOST,
+    #    AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+    #    OPENAI_CHATGPT_MODEL,
+    #    AZURE_OPENAI_EMB_DEPLOYMENT,
+    #    OPENAI_EMB_MODEL,
+    #    KB_FIELDS_SOURCEPAGE,
+    #    KB_FIELDS_CONTENT,
+    #)
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(AppResources(
         table_client,
-        OPENAI_HOST,
-        AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        OPENAI_CHATGPT_MODEL,
-        AZURE_OPENAI_EMB_DEPLOYMENT,
-        OPENAI_EMB_MODEL,
         KB_FIELDS_SOURCEPAGE,
         KB_FIELDS_CONTENT,
     ))
