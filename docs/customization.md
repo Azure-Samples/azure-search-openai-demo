@@ -29,7 +29,7 @@ The frontend is built using [React](https://reactjs.org/) and [Fluent UI compone
 
 The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder.
 
-### Chat/Ask approaches
+### Chat/Ask tabs
 
 Typically, the primary backend code you'll want to customize is the `app/backend/approaches` folder, which contains the classes powering the Chat and Ask tabs. Each class uses a different RAG (Retrieval Augmented Generation) approach, which include system messages that should be changed to match your data
 
@@ -43,7 +43,15 @@ The chat tab uses the approach programmed in [chatreadretrieveread.py](https://g
 
 The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Change that to match your data.
 
-#### Ask approach
+##### Chat with vision
+
+If you followed the instructions in [docs/gpt4v.md](docs/gpt4v.md) to enable the GPT-4 Vision model and then select "Use GPT-4 Turbo with Vision", then the chat tab will use the `chatreadretrievereadvision.py` approach instead. This approach is similar to the `chatreadretrieveread.py` approach, with a few differences:
+
+1. Step 1 is the same as before, except it uses the GPT-4 Vision model instead of the default GPT-3.5 model.
+2. For this step, it also calculates a vector embedding for the user question using [the Computer Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
+3. When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the GPT4 Vision model (similar to this [documentation example](https://platform.openai.com/docs/guides/vision/quick-start)). The model generates a response that includes citations to the images, and the UI renders the base64 encoded images when a citation is clicked.
+
+#### Ask tab
 
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
@@ -51,6 +59,15 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 2. It then combines the search results and user question, and asks OpenAI ChatCompletion API to answer the question based on the sources.
 
 The `system_chat_template` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Change that to match your data.
+
+#### Read with vision
+
+If you followed the instructions in [docs/gpt4v.md](docs/gpt4v.md) to enable the GPT-4 Vision model and then select "Use GPT-4 Turbo with Vision", then the ask tab will use the `retrievethenreadvision.py` approach instead. This approach is similar to the `retrievethenread.py` approach, with a few differences:
+
+1. For this step, it also calculates a vector embedding for the user question using [the Computer Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
+2. When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the GPT4 Vision model (similar to this [documentation example](https://platform.openai.com/docs/guides/vision/quick-start)). The model generates a response that includes citations to the images, and the UI renders the base64 encoded images when a citation is clicked.
+
+The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd". Change that to match your data.
 
 #### Making settings overrides permanent
 
