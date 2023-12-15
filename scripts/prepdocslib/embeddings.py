@@ -1,6 +1,6 @@
 import time
 from abc import ABC
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 from urllib.parse import urljoin
 
 import aiohttp
@@ -180,13 +180,8 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
         self.credential = credential
         self.organization = organization
 
-    async def create_embedding_arguments(self) -> dict[str, Any]:
-        return {
-            "model": self.open_ai_model_name,
-            "api_key": self.credential,
-            "api_type": "openai",
-            "organization": self.organization,
-        }
+    async def create_client(self) -> AsyncOpenAI:
+        return AsyncOpenAI(api_key=self.credential, organization=self.organization)
 
 
 class ImageEmbeddings:
