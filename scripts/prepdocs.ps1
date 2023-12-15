@@ -48,6 +48,10 @@ if ($env:USE_GPT4V -eq $true) {
   $searchImagesArg = "--searchimages"
 }
 
+if ($env:AZURE_TENANT_ID) {
+  $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
+}
+
 $argumentList = "./scripts/prepdocs.py $dataArg $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg " + `
 "$aclArg --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER " + `
 "--searchservice $env:AZURE_SEARCH_SERVICE --openaihost `"$env:OPENAI_HOST`" " + `
@@ -55,5 +59,5 @@ $argumentList = "./scripts/prepdocs.py $dataArg $adlsGen2StorageAccountArg $adls
 "--openaiorg `"$env:OPENAI_ORGANIZATION`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
 "--openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" --index $env:AZURE_SEARCH_INDEX " + `
 "$searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyVaultName " + `
-"--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE --tenantid $env:AZURE_TENANT_ID -v"
+"--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE $tenantArg -v"
 Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow
