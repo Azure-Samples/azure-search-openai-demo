@@ -4,7 +4,7 @@ from azure.data.tables import UpdateMode
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
-from approaches.flow.shared_states import ContactsText, DemoClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus
+from approaches.flow.shared_states import ContactsText, DemoClientId, MissingClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from azure.core.exceptions import ResourceNotFoundError
@@ -40,26 +40,16 @@ for decade in decades:
         digit_number += 1
         text_to_number[decade + "ו" + digit] = decade_number * 10 + digit_number
 
-def start_intro(request_context: RequestContext):
-    parsed_url = urlparse(request_context.request_data["url"])
-    query = parse_qs(parsed_url.query)
-    if not('clientId' in query) or query['clientId'] is None or len(query['clientId']) < 1:
-        request_context.set_next_state(StateGetClientId)
-        return request_context.write_chat_message("אנא הקלד/י מזהה משתמש:")
-    request_context.save_to_var(VariableClientId, client_ids[0])
-States[StateStartIntro] = State(is_wait_for_user_input_before_state=False, run=start_intro)
-
-def get_client_id(request_context: RequestContext):
+async def start_intro(request_context: RequestContext):
     client_id = request_context.history[-1]["content"]
     request_context.save_to_var(VariableClientId, client_id)
-    request_context.set_next_state(StateCheckClientId)
-States[StateGetClientId] = State(run=get_client_id)
-
-async def check_client_id(request_context: RequestContext):
-    client_id = request_context.get_var(VariableClientId)
     request_context.save_to_var(VariableShouldSaveClientStatus, False)
     if client_id == DemoClientId:
         entity = { "Status": "new" }
+    elif client_id == MissingClientId:
+        request_context.save_to_var(VariableExitText, "כניסה ללא זיהוי משתמש לא אפשרית כרגע. נא לפנות לצוות לקבלת קישור")
+        request_context.set_next_state(StateExit)
+        return
     else:
         try:
             entity = await request_context.app_resources.table_client.get_entity(partition_key=PartitionKey, row_key=client_id)
@@ -87,7 +77,7 @@ async def check_client_id(request_context: RequestContext):
     else:
         request_context.save_to_var(VariableExitText, "אירעה שגיאה. ייתכן כי הקישור לא תקין. נא לפנות לצוות לקבלת קישור חדש")
     request_context.set_next_state(StateExit)
-States[StateCheckClientId] = State(is_wait_for_user_input_before_state=False, run=check_client_id)
+States[StateStartIntro] = State(is_wait_for_user_input_before_state=False, run=start_intro)
 
 async def get_if_to_continue(request_context: RequestContext):
     if request_context.history[-1]["content"].strip() in ("kt", "לא", "ממש לא", "אין מצב", "די", "מספיק"):
