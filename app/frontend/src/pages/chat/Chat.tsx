@@ -44,24 +44,31 @@ const Chat = () => {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
-    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+    const [answers, setAnswers] = useState<[user: string, responses: ChatAppResponse[]][]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse[]][]>([]);
 
     const [lastAnswer, setLastAnswer] = useState<ChatAppResponse | undefined>(undefined);
 
-    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse[]][], setAnswers: Function, responseBody: ReadableStream<any>) => {
+        let role: string;
         let answer: string = "";
+        let responses: ChatAppResponse[] = [];
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
+
+        const createResponse = (contentAnswer: string): ChatAppResponse => {
+            return {
+                ...askResponse,
+                choices: [{ ...askResponse.choices[0], message: { content: contentAnswer, role: role } }]
+            };
+        };
 
         const updateState = (newContent: string) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: ChatAppResponse = {
-                        ...askResponse,
-                        choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
-                    };
-                    setStreamedAnswers([...answers, [question, latestResponse]]);
+                    const latestResponse = createResponse(answer);
+                    let latestResponses: ChatAppResponse[] = [...responses, latestResponse];
+                    setStreamedAnswers([...answers, [question, latestResponses]]);
                     resolve(null);
                 }, 33);
             });
@@ -82,18 +89,27 @@ const Chat = () => {
                 if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
                     event["choices"][0]["message"] = event["choices"][0]["delta"];
                     askResponse = event;
-                } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
+                } else if (event["choices"] && event["choices"][0]["delta"]) {
                     setIsLoading(false);
                     setIsWritingWords(true);
-                    const sentence = event["choices"][0]["delta"]["content"];
-                    const delay = 33;
-                    let isFirst = true;
-                    for await (let word of asyncWordGenerator(sentence, delay)) {
-                        if (!isFirst) {
-                            word = " " + word;
+                    const partsWithContent = event["choices"][0]["delta"].filter((part: any) => part["content"]);
+                    for (const msg of partsWithContent) {
+                        role = msg["role"] ? msg["role"] : askResponse.choices[0].message.role;
+                        if (msg["role"] == "assistant") {
+                            // Animate writing words only for assistant role
+                            const sentence = msg["content"];
+                            const delay = 33;
+                            let isFirst = true;
+                            for await (let word of asyncWordGenerator(sentence, delay)) {
+                                if (!isFirst) {
+                                    word = " " + word;
+                                }
+                                await updateState(word);
+                                isFirst = false;
+                            }
                         }
-                        await updateState(word);
-                        isFirst = false;
+
+                        responses.push(createResponse(msg["content"]));
                     }
                     setIsWritingWords(false);
                 }
@@ -101,11 +117,7 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: ChatAppResponse = {
-            ...askResponse,
-            choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
-        };
-        return fullResponse;
+        return responses;
     };
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -123,7 +135,9 @@ const Chat = () => {
         try {
             const messages: ResponseMessage[] = answers.flatMap(a => [
                 { content: a[0], role: "user" },
-                { content: a[1].choices[0].message.content, role: "assistant" }
+                ...a[1].map(b => {
+                    return { content: b.choices[0].message.content, role: "assistant" };
+                })
             ]);
 
             const request: ChatAppRequest = {
@@ -143,7 +157,7 @@ const Chat = () => {
                     }
                 },
                 // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
+                session_state: answers.length ? answers[answers.length - 1][1][answers[answers.length - 1][1].length - 1].choices[0].session_state : null
             };
 
             const response = await chatApi(request, token?.accessToken);
@@ -151,14 +165,15 @@ const Chat = () => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                const parsedResponse: ChatAppResponse[] = await handleAsyncRequest(question, answers, setAnswers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
+                // This might not work since support of roled list in server response
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
+                setAnswers([...answers, [question, [parsedResponse as ChatAppResponse]]]);
             }
         } catch (e) {
             setError(e);
@@ -273,38 +288,42 @@ const Chat = () => {
                                 streamedAnswers.map((streamedAnswer, index) => (
                                     <div key={index}>
                                         {index > 0 && <UserChatMessage message={streamedAnswer[0]} />}
-                                        <div className={styles.chatMessageGpt}>
-                                            <Answer
-                                                isStreaming={true}
-                                                key={index}
-                                                answer={streamedAnswer[1]}
-                                                isSelected={false}
-                                                onCitationClicked={c => onShowCitation(c, index)}
-                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                            />
-                                        </div>
+                                        {streamedAnswer[1].map(roledAnswer => (
+                                            <div className={styles.chatMessageGpt}>
+                                                <Answer
+                                                    isStreaming={true}
+                                                    key={index}
+                                                    answer={roledAnswer}
+                                                    isSelected={false}
+                                                    onCitationClicked={c => onShowCitation(c, index)}
+                                                    onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                    onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                    onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                    showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
                                         {index > 0 && <UserChatMessage message={answer[0]} />}
-                                        <div className={styles.chatMessageGpt}>
-                                            <Answer
-                                                isStreaming={false}
-                                                key={index}
-                                                answer={answer[1]}
-                                                isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
-                                                onCitationClicked={c => onShowCitation(c, index)}
-                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                            />
-                                        </div>
+                                        {answer[1].map(roledAnswer => (
+                                            <div className={styles.chatMessageGpt}>
+                                                <Answer
+                                                    isStreaming={false}
+                                                    key={index}
+                                                    answer={roledAnswer}
+                                                    isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
+                                                    onCitationClicked={c => onShowCitation(c, index)}
+                                                    onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                    onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                    onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                    showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             {isLoading && (
@@ -343,7 +362,7 @@ const Chat = () => {
                         activeCitation={activeCitation}
                         onActiveTabChanged={x => onToggleTab(x, selectedAnswer)}
                         citationHeight="810px"
-                        answer={answers[selectedAnswer][1]}
+                        answer={answers[selectedAnswer][1][answers[selectedAnswer][1].length - 1]}
                         activeTab={activeAnalysisPanelTab}
                     />
                 )}

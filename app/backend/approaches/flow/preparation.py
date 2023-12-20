@@ -10,16 +10,24 @@ async def start_preperation(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     patient_name = request_context.get_var(VariablePatientName)
     request_context.set_next_state(StateGetDistressLevel)
-    return request_context.write_chat_message("""שלום {patient_name}, {welcome} לתהליך ייצוב מיידי, שמטרתו להביא לרגיעה ולהקלה במצוקה פסיכולוגית. תהליך זה עזר לאנשים רבים בעולם. התהליך ייקח כ 10-20 דקות לכל היותר, במהלכן אנחה אותך בשלבים חשובים של הרגעה.
-יש תרגיל שיכול לעזור לך. זה עזר לאנשים אחרים, זה יעזור לך להרגיש {calm} יותר. אבל לפני שנתחיל, {can_you} להגיד לי עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?
+    return request_context.write_roled_chat_message([
+        {
+            "role": "explanationText",
+            "content": """שלום {patient_name}, {welcome} לתהליך ייצוב מיידי, שמטרתו להביא לרגיעה ולהקלה במצוקה פסיכולוגית. תהליך זה עזר לאנשים רבים בעולם. התהליך ייקח כ 10-20 דקות לכל היותר, במהלכן אנחה אותך בשלבים חשובים של הרגעה.
+יש תרגיל שיכול לעזור לך. זה עזר לאנשים אחרים, זה יעזור לך להרגיש {calm} יותר.""".format(
+                patient_name = patient_name,
+                welcome = "ברוך הבא" if is_patient_male else "ברוכה הבאה",
+                calm = "רגוע" if is_patient_male else "רגועה")
+        },
+        {
+            "role": "assistant",
+            "content": """אבל לפני שנתחיל, {can_you} להגיד לי עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?
 0  לא {annoyed} ולא חווה מצוקה כלל,
 10 {annoyed} או חווה מצוקה ברמה חריפה""".format(
-    patient_name = patient_name,
-    welcome = "ברוך הבא" if is_patient_male else "ברוכה הבאה",
-    calm = "רגוע" if is_patient_male else "רגועה",
-    can_you = "אתה יכול" if is_patient_male else "את יכולה",
-    you = "אתה" if is_patient_male else "את",
-    annoyed = "מוטרד" if is_patient_male else "מוטרדת"))
+                can_you = "אתה יכול" if is_patient_male else "את יכולה",
+                you = "אתה" if is_patient_male else "את",
+                annoyed = "מוטרד" if is_patient_male else "מוטרדת")
+        }])
 States[StateStartPreperation] = State(is_wait_for_user_input_before_state=False, run=start_preperation)
 
 async def get_distress_level(request_context: RequestContext):
@@ -63,23 +71,28 @@ async def ask_what_annoying(request_context: RequestContext):
         prefixByDistressLevel = "אני {understand} {that_you} חווה {some}מצוקה כרגע, בשביל זה אני כאן".format(understand = understand, that_you = "שאתה" if is_patient_male else "שאת", some = "מידה מסוימת של " if distress <= 4 else "")
     else:
         prefixByDistressLevel = ""
-    return request_context.write_chat_message(prefixByDistressLevel + """
+    return request_context.write_roled_chat_message([
+        {
+            "role": "explanationText",
+            "content": prefixByDistressLevel + """
 מה הכי מטריד אותך כעת: 
 1. אני {feel} כרגע בסכנה/{threatened}
 2. אני {feel} {guilty_or_accountable} על משהו קשה שקרה
 3. אני {feel} חוסר שליטה לגבי מה שקורה עכשיו
 4. אני {feel} חוסר שליטה לגבי איומים או מצבים קשים שעלולים לקרות בעתיד
-5. אני {concerned_and_feel} חוסר שליטה בנוגע לאנשים שיקרים לי.
-
-{notice}, ייתכן שיותר מתשובה אחת משקפת את {that_you_feel}. {select} את זו שמשקפת בצורה הכי מדוייקת את {that_you_feel}.""".format(
-    feel = "מרגיש" if is_patient_male else "מרגישה",
-    threatened = "מאויים" if is_patient_male else "מאויימת",
-    guilty_or_accountable = "אשם או אחראי" if is_patient_male else "אשמה או אחראית",
-    concerned_and_feel = "דואג וחש" if is_patient_male else "דואגת וחשה",
-    notice = "שים לב" if is_patient_male else "שימי לב",
-    select = "בחר" if is_patient_male else "בחרי",
-    that_you_feel = "מה שאתה מרגיש" if is_patient_male else "מה שאת מרגישה",
-))
+5. אני {concerned_and_feel} חוסר שליטה בנוגע לאנשים שיקרים לי.""".format(
+                feel = "מרגיש" if is_patient_male else "מרגישה",
+                threatened = "מאויים" if is_patient_male else "מאויימת",
+                guilty_or_accountable = "אשם או אחראי" if is_patient_male else "אשמה או אחראית",
+                concerned_and_feel = "דואג וחש" if is_patient_male else "דואגת וחשה")
+        },
+        {
+            "role": "assistant",
+            "content": "{notice}, ייתכן שיותר מתשובה אחת משקפת את {that_you_feel}. {select} את זו שמשקפת בצורה הכי מדוייקת את {that_you_feel}.".format(
+                notice = "שים לב" if is_patient_male else "שימי לב",
+                select = "בחר" if is_patient_male else "בחרי",
+                that_you_feel = "מה שאתה מרגיש" if is_patient_male else "מה שאת מרגישה")
+        }]);
 States[StateAskWhatAnnoying] = State(is_wait_for_user_input_before_state=False, run=ask_what_annoying)
 
 async def get_annoying_reason(request_context: RequestContext):

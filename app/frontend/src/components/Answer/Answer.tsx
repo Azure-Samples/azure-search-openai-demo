@@ -44,25 +44,32 @@ export const Answer = ({
             // Select the parent div using a class name that contains 'chatMessageGpt'
             const parentDiv = document.querySelector('[class*="chatMessageGpt"]');
             if (parentDiv instanceof HTMLElement) {
-                const marginOfMessageBubbleFromBothEndsInPx = 32
+                const marginOfMessageBubbleFromBothEndsInPx = 32;
                 const additionalBufferToAvoidScrollBar = 16;
                 setIframeWidth(parentDiv.offsetWidth - marginOfMessageBubbleFromBothEndsInPx - additionalBufferToAvoidScrollBar);
             }
         };
-        
+
         updateWidth();
 
         // Set up the resize event listener
-        window.addEventListener('resize', updateWidth);
+        window.addEventListener("resize", updateWidth);
 
         // Clean up the event listener
-        return () => window.removeEventListener('resize', updateWidth);
+        return () => window.removeEventListener("resize", updateWidth);
     }, []); // Empty dependency array ensures this runs once on mount and then on every resize
 
-    const sanitizedAnswerHtmlWithEmbddedVideos = transformYotubeUrlsToEmbdedded(sanitizedAnswerHtml, iframeWidth)
+    const sanitizedAnswerHtmlWithEmbddedVideos = transformYotubeUrlsToEmbdedded(sanitizedAnswerHtml, iframeWidth);
+
+    const styleByRole =
+        answer.choices[0].message.role == "assistant"
+            ? styles.answerContainer
+            : answer.choices[0].message.role == "explanationText"
+            ? styles.explanationTextContainer
+            : null;
 
     return (
-        <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
+        <Stack className={`${styleByRole} ${isSelected && styles.selected}`} verticalAlign="space-between">
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />

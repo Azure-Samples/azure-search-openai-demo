@@ -25,7 +25,7 @@ async def start_isp(request_context: RequestContext):
     }
     return request_context.write_chat_message(prefixDict[isp_path] + """
 אציג לך כעת וידאו שילמד אותך לעשות תרגיל שיכול לעזור לך להשיג יותר שליטה ורוגע. {watch} בו. {_try} לא לעצום עיניים, לשמור על קשר עין עם {therapist} {and_act} לפי ההנחיות בוידאו.
-צפה: {video}""".format(
+{video}""".format(
         watch = "צפה" if is_patient_male else "צפי",
         _try = "נסה" if is_patient_male else "נסי",
         therapist = "המטפל" if is_bot_male else "המטפלת",
@@ -98,7 +98,7 @@ async def get_if_to_continue_after_video(request_context: RequestContext):
     if user_continued:
         request_context.save_to_var(VariableNextVideoPrefix, "")
         request_context.set_next_state(StateNextVideo)
-    elif not (request_context.history[-1]["content"].strip in ("kt", "לא", "פחות", "ממש לא", "אין מצב", "די", "מספיק")):
+    elif not (request_context.history[-1]["content"].strip() in ("kt", "לא", "פחות", "ממש לא", "אין מצב", "די", "מספיק")):
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כן/לא".format(type = "הקלד" if is_male else "הקלידי"))
     elif was_distress_level_increased and isp_path != "1":
         request_context.save_to_var(VariableExitText, get_exit_text(request_context))

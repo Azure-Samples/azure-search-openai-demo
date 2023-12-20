@@ -8,6 +8,10 @@
     outline: transparent solid 0.0625rem;
 }
 
+.explanationText {
+    font-weight: bold;
+}
+
 .answerLogo {
     font-size: 1.75rem;
 }

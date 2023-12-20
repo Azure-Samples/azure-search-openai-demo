@@ -35,14 +35,17 @@ class RequestContext:
         return not (self.extra_info is None)
     
     def write_chat_message(self, msg_to_display):
+        return self.write_roled_chat_message([{ "content": msg_to_display, "role": "assistant" }], msg_to_display)
+    
+    def write_roled_chat_message(self, roled_parts, extra_info_string = None):
         extra_info = {
             "data_points": [],
-            "thoughts": f"Searched for:<br><br><br>Conversations:<br>" + msg_to_display,
+            "thoughts": f"Searched for:<br><br><br>Conversations:<br>" + ("styled_text" if extra_info_string is None else extra_info_string),
         }
 
         self.set_response_extra_info(extra_info)
 
-        return Utils.single_item_generator({ "choices": [{ "delta": { "content": msg_to_display } }] })
+        return Utils.single_item_generator({ "choices": [{ "delta": roled_parts }] })
     
     def set_next_state(self, next_state):
         self.session_state["machineState"] = next_state

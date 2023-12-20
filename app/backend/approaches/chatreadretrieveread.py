@@ -41,7 +41,6 @@ class ChatReadRetrieveReadApproach(Approach):
                 event_generators.append(chat_coroutine)
 
             state_id = session_state["machineState"]
-            print(state_id)
             if not (state_id in States):
                 raise Exception("Unexpected state " + state_id)
             state = States[state_id]
