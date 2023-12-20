@@ -49,6 +49,20 @@ jobs:
         - name: Run Python tests
           if: runner.os != 'Windows'
           run: python3 -m pytest -s -vv --cov --cov-fail-under=86
+        - name: Setup and verify prepdocs environment (Windows)
+          if: runner.os == 'Windows'
+          run: |
+            .\scripts\loadenv.ps1
+            .\scripts\.venv\Scripts\activate.ps1
+            cd scripts\
+            python -m compileall preplocslib
+        - name: Setup and verify prepdocs environment (Linux)
+          if: runner.os != 'Windows'
+          run: |
+            scripts/loadenv.sh
+            source ./scripts/.venv/bin/activate
+            cd scripts/
+            python -m compileall preplocslib
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
