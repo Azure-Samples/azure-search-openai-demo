@@ -20,6 +20,9 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: true
           continueOnError: false
+pipeline:
+  # Set all variables from env as secrets
+  additionalVariablesAsSecrets: true
 hooks:
     preprovision:
       windows:
