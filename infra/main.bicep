@@ -112,7 +112,10 @@ var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 
 @description('Whether the deployment is running on GitHub Actions')
-param runningOnGhActions string = ''
+param runningOnGh string = ''
+
+@description('Whether the deployment is running on Azure DevOps Pipeline')
+param runningOnAdo string = ''
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -408,7 +411,7 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
-var principalType = empty(runningOnGhActions) ? 'User': 'ServicePrincipal'
+var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User': 'ServicePrincipal'
 
 module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
   scope: openAiResourceGroup

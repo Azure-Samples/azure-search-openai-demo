@@ -110,8 +110,11 @@
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     },
-    "runningOnGhActions": {
+    "runningOnGh": {
       "value": "${GITHUB_ACTIONS}"
+    },
+    "runningOnAdo": {
+      "value": "${TF_BUILD}"
     }
   }
 }
