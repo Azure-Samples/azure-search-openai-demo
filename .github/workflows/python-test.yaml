@@ -55,14 +55,14 @@ jobs:
             .\scripts\load_python_env.ps1
             .\scripts\.venv\Scripts\activate.ps1
             cd scripts\
-            python -m compileall preplocslib
+            python test_prepdocs.py
         - name: Setup and verify prepdocs environment (Linux)
           if: runner.os != 'Windows'
           run: |
             scripts/load_python_env.sh
             source ./scripts/.venv/bin/activate
             cd scripts/
-            python -m compileall preplocslib
+            python test_prepdocs.py
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
