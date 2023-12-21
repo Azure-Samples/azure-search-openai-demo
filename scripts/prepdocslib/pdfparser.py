@@ -86,6 +86,11 @@ class DocumentAnalysisPdfParser(PdfParser):
                 poller = await form_recognizer_client.begin_analyze_document(model_id=self.model_id, document=content)
                 form_recognizer_results = await poller.result()
 
+                #Delete this
+                with open('./out3.txt', 'a') as file:
+                        file.write(''.join(str(table) for table in form_recognizer_results.tables))
+                        file.write(''.join(str(content) for content in form_recognizer_results.content))
+
                 offset = 0
                 for page_num, page in enumerate(form_recognizer_results.pages):
                     tables_on_page = [
@@ -122,7 +127,7 @@ class DocumentAnalysisPdfParser(PdfParser):
                     yield Page(page_num=page_num, offset=offset, text=page_text)
                     offset += len(page_text)
 
-                #BBBBBBBBBBBBBBBBB
+            #BBBBBBBBBBBBBBBBB
             elif os.path.splitext(content.name)[1].lower() == ".docx":
                 print(f"Extracting text from '{content.name}' using python docx")
                 page_text = ""
