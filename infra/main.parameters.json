@@ -109,6 +109,9 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "runningOnGhActions": {
+      "value": "${GITHUB_ACTIONS}"
     }
   }
 }
