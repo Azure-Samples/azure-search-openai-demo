@@ -59,7 +59,7 @@ jobs:
         - name: Setup and verify prepdocs environment (Linux)
           if: runner.os != 'Windows'
           run: |
-            scripts/loadenv.sh
+            scripts/load_python_env.sh
             source ./scripts/.venv/bin/activate
             cd scripts/
             python -m compileall preplocslib
