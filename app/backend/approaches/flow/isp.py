@@ -2,17 +2,16 @@ from approaches.flow.shared_states import ContactsText, State, StateExit, StateS
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
+StateShowVideo = "SHOW_VIDEO"
 StateGetIfToContinueAfterVideo = "GET_IF_TO_CONTINUE_AFTER_VIDEO"
 StateAskForDistressAfterVideo = "ASK_FOR_DISTRESS_AFTER_VIDEO"
 StateGetDistressAfterVideo = "GET_DISTRESS_LEVEL_AFTER_VIDEO"
 StateNextVideo = "NEXT_VIDEO"
 
 async def start_isp(request_context: RequestContext):
-    isp_path = request_context.get_var(VariableIspPath)
     request_context.save_to_var(VariableSumDistressLevel, 0)
     request_context.save_to_var(VariableVideoIndex, 0)
     request_context.save_to_var(VariableWasDistressLevelIncreased, False)
-    request_context.set_next_state(StateAskForDistressAfterVideo)
     is_bot_male = request_context.get_var(VariableIsBotMale)
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     isp_path = request_context.get_var(VariableIspPath)
@@ -23,15 +22,25 @@ async def start_isp(request_context: RequestContext):
         "4": "מחשבות לגבי חוסר שליטה לגבי מצבים קשים עתידיים נפוצות אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך.",
         "5": "זו תחושה טבעית אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך. "
     }
+    request_context.set_next_state(StateShowVideo)
     return request_context.write_chat_message(prefixDict[isp_path] + """
 אציג לך כעת וידאו שילמד אותך לעשות תרגיל שיכול לעזור לך להשיג יותר שליטה ורוגע. {watch} בו. {_try} לא לעצום עיניים, לשמור על קשר עין עם {therapist} {and_act} לפי ההנחיות בוידאו.
-{video}""".format(
+הוידאו יתחיל מיד לאחר הודעתך הבאה.""".format(
         watch = "צפה" if is_patient_male else "צפי",
         _try = "נסה" if is_patient_male else "נסי",
         therapist = "המטפל" if is_bot_male else "המטפלת",
-        and_act = "ופעל" if is_patient_male else "ופעלי",
-        video = get_video(isp_path, is_bot_male, is_patient_male, 0)))
+        and_act = "ופעל" if is_patient_male else "ופעלי"))
 States[StateStartISP] = State(is_wait_for_user_input_before_state=False, run=start_isp)
+
+async def show_video(request_context: RequestContext):
+    is_bot_male = request_context.get_var(VariableIsBotMale)
+    is_patient_male = request_context.get_var(VariableIsPatientMale)
+    isp_path = request_context.get_var(VariableIspPath)
+    request_context.set_next_state(StateAskForDistressAfterVideo)
+    video_index = request_context.get_var(VariableVideoIndex)
+    video_index_to_show = (video_index - 1) % 3 + 1
+    return request_context.write_roled_chat_message([{"role": "vimeo", "content": get_video(isp_path, is_bot_male, is_patient_male, video_index_to_show)}])
+States[StateShowVideo] = State(run=show_video)
 
 async def show_ask_again_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
@@ -113,13 +122,11 @@ async def next_video(request_context: RequestContext):
     isp_path = request_context.get_var(VariableIspPath)
     is_bot_male = request_context.get_var(VariableIsBotMale)
     is_patient_male = request_context.get_var(VariableIsPatientMale)
-    video_index_to_show = (video_index - 1) % 3 + 1
-    request_context.set_next_state(StateAskForDistressAfterVideo)
+    request_context.set_next_state(StateShowVideo)
     return request_context.write_chat_message(request_context.get_var(VariableNextVideoPrefix) + """{watch} בוידאו המשך. {_try} לא לעצום עיניים, לשמור על קשר עין עם {therapist} {and_act} לפי ההנחיות בוידאו.
-צפה: {video}""".format(
+הוידאו יתחיל מיד לאחר הודעתך הבאה.""".format(
         watch = "צפה" if is_patient_male else "צפי",
         _try = "נסה" if is_patient_male else "נסי",
         therapist = "המטפל" if is_bot_male else "המטפלת",
-        and_act = "ופעל" if is_patient_male else "ופעלי",
-        video = get_video(isp_path, is_bot_male, is_patient_male, video_index_to_show)))
+        and_act = "ופעל" if is_patient_male else "ופעלי"))
 States[StateNextVideo] = State(is_wait_for_user_input_before_state=False, run=next_video)

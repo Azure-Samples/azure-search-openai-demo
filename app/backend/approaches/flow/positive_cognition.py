@@ -1,6 +1,5 @@
 from approaches.flow.shared_states import State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, get_exit_text
 from approaches.requestcontext import RequestContext
-from approaches.videos import get_video
 
 StateGetImprovement = "GET_IMPROVEMENT"
 StateGetIsConnectedToCurrent = "GET_IS_CONNECTED_TO_CURRENT"

@@ -9,8 +9,6 @@ import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
-import { transformYotubeUrlsToEmbdedded } from "./AnswerVideoEmbedder";
-
 interface Props {
     answer: ChatAppResponse;
     isSelected?: boolean;
@@ -59,8 +57,6 @@ export const Answer = ({
         return () => window.removeEventListener("resize", updateWidth);
     }, []); // Empty dependency array ensures this runs once on mount and then on every resize
 
-    const sanitizedAnswerHtmlWithEmbddedVideos = transformYotubeUrlsToEmbdedded(sanitizedAnswerHtml, iframeWidth);
-
     const styleByRole =
         answer.choices[0].message.role == "assistant"
             ? styles.answerContainer
@@ -70,11 +66,11 @@ export const Answer = ({
 
     return (
         <Stack className={`${styleByRole} ${isSelected && styles.selected}`} verticalAlign="space-between">
-            <Stack.Item>
+            {/*<Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
                     <div>
-                        {/* <IconButton
+                        <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "Lightbulb" }}
                             title="Show thought process"
@@ -89,13 +85,13 @@ export const Answer = ({
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.choices[0].context.data_points?.length}
-                        /> */}
+                        />
                     </div>
                 </Stack>
-            </Stack.Item>
+            </Stack.Item>*/}
 
             <Stack.Item grow>
-                <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtmlWithEmbddedVideos }}></div>
+                <div className={styles.answerText} dangerouslySetInnerHTML={{ __html: sanitizedAnswerHtml }}></div>
             </Stack.Item>
 
             {!!parsedAnswer.citations.length && (

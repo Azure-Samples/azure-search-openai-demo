@@ -1,5 +1,5 @@
-import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
+import { useRef, useState, useEffect, memo } from "react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption, Dialog } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -17,6 +17,17 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import Vimeo from "@vimeo/player";
+
+interface VideoPlayerProperties {
+    hidden: boolean;
+}
+
+const VideoPlayerContainer = memo<VideoPlayerProperties>(({ hidden }) => (
+    <div hidden={hidden} className={styles.playerContainer}>
+        <div id="playerElement" />
+    </div>
+));
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -36,6 +47,7 @@ const Chat = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isWritingWords, setIsWritingWords] = useState<boolean>(false);
+    const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(false);
     const [isStreaming, setIsStreaming] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
     const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
@@ -193,6 +205,10 @@ const Chat = () => {
         setIsStreaming(false);
     };
 
+    const extractVimeoUrl = (answer: ChatAppResponse): string | undefined => {
+        return answer.choices[0].message.role == "vimeo" ? answer.choices[0].message.content : undefined;
+    };
+
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
 
@@ -203,6 +219,35 @@ const Chat = () => {
             makeApiRequest(clientId == null || clientId == "" ? "כניסה ללא זיהוי משתמש" : clientId);
         }
     }, [isFirstRender]);
+
+    useEffect(() => {
+        if (isLoading || isPlayingVideo) {
+            return;
+        }
+
+        const ans = isStreaming ? streamedAnswers : answers;
+        const lastAnswer = ans.length > 0 ? ans[ans.length - 1][1] : undefined;
+        const lastRoledAnswer = lastAnswer && lastAnswer.length > 0 ? lastAnswer[lastAnswer.length - 1] : undefined;
+        const vimeoUrl = lastRoledAnswer ? extractVimeoUrl(lastRoledAnswer) : undefined;
+        if (!vimeoUrl) {
+            return;
+        }
+
+        setIsPlayingVideo(true);
+        const player = new Vimeo("playerElement", {
+            url: vimeoUrl,
+            autoplay: true,
+            controls: false,
+            dnt: true,
+            title: false
+        });
+
+        player.on("ended", () => {
+            makeApiRequest("הצפיה הסתיימה");
+            setIsPlayingVideo(false);
+            player.destroy();
+        });
+    }, [isStreaming, streamedAnswers, answers, isLoading, isPlayingVideo]);
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
@@ -288,42 +333,48 @@ const Chat = () => {
                                 streamedAnswers.map((streamedAnswer, index) => (
                                     <div key={index}>
                                         {index > 0 && <UserChatMessage message={streamedAnswer[0]} />}
-                                        {streamedAnswer[1].map(roledAnswer => (
-                                            <div className={styles.chatMessageGpt}>
-                                                <Answer
-                                                    isStreaming={true}
-                                                    key={index}
-                                                    answer={roledAnswer}
-                                                    isSelected={false}
-                                                    onCitationClicked={c => onShowCitation(c, index)}
-                                                    onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                    onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                    onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                                    showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                                />
-                                            </div>
-                                        ))}
+                                        {streamedAnswer[1].map(
+                                            roledAnswer =>
+                                                !extractVimeoUrl(roledAnswer) && (
+                                                    <div className={styles.chatMessageGpt}>
+                                                        <Answer
+                                                            isStreaming={true}
+                                                            key={index}
+                                                            answer={roledAnswer}
+                                                            isSelected={false}
+                                                            onCitationClicked={c => onShowCitation(c, index)}
+                                                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                        />
+                                                    </div>
+                                                )
+                                        )}
                                     </div>
                                 ))}
                             {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
                                         {index > 0 && <UserChatMessage message={answer[0]} />}
-                                        {answer[1].map(roledAnswer => (
-                                            <div className={styles.chatMessageGpt}>
-                                                <Answer
-                                                    isStreaming={false}
-                                                    key={index}
-                                                    answer={roledAnswer}
-                                                    isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
-                                                    onCitationClicked={c => onShowCitation(c, index)}
-                                                    onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                    onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                                    onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                                    showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                                />
-                                            </div>
-                                        ))}
+                                        {answer[1].map(
+                                            roledAnswer =>
+                                                !extractVimeoUrl(roledAnswer) && (
+                                                    <div className={styles.chatMessageGpt}>
+                                                        <Answer
+                                                            isStreaming={false}
+                                                            key={index}
+                                                            answer={roledAnswer}
+                                                            isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
+                                                            onCitationClicked={c => onShowCitation(c, index)}
+                                                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                        />
+                                                    </div>
+                                                )
+                                        )}
                                     </div>
                                 ))}
                             {isLoading && (
@@ -350,7 +401,7 @@ const Chat = () => {
                         <QuestionInput
                             clearOnSend
                             placeholder="כיצד אני יכול לעזור לך?"
-                            disabled={isLoading || isWritingWords || isFirstRender}
+                            disabled={isLoading || isWritingWords || isFirstRender || isPlayingVideo}
                             onSend={question => makeApiRequest(question)}
                         />
                     </div>
@@ -366,6 +417,8 @@ const Chat = () => {
                         activeTab={activeAnalysisPanelTab}
                     />
                 )}
+
+                <VideoPlayerContainer hidden={!isPlayingVideo} />
 
                 <Panel
                     headerText="Configure answer generation"

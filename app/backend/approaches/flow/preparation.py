@@ -21,7 +21,7 @@ async def start_preperation(request_context: RequestContext):
         },
         {
             "role": "assistant",
-            "content": """אבל לפני שנתחיל, {can_you} להגיד לי עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?
+            "content": """אבל לפני שנתחיל, {can_you} להגיד לי עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר בין 0 ל-10)?
 0  לא {annoyed} ולא חווה מצוקה כלל,
 10 {annoyed} או חווה מצוקה ברמה חריפה""".format(
                 can_you = "אתה יכול" if is_patient_male else "את יכולה",

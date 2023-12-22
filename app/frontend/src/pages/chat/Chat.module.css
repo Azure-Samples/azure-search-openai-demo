@@ -156,6 +156,16 @@
     direction: rtl;
 }
 
+.playerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid purple;
+    padding: 2px;
+    background-color: #ded8e2;
+}
+
 .chatAnalysisPanel {
     flex: 1;
     overflow-y: auto;
