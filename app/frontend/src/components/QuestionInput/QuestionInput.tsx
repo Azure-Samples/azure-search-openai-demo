@@ -4,15 +4,17 @@ import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 
 import styles from "./QuestionInput.module.css";
+import { ChatInput } from "../../api/models";
 
 interface Props {
     onSend: (question: string) => void;
     disabled: boolean;
     placeholder?: string;
     clearOnSend?: boolean;
+    chatInput?: ChatInput;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
+export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, chatInput }: Props) => {
     const [question, setQuestion] = useState<string>("");
 
     const sendQuestion = () => {
@@ -38,13 +40,26 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         if (!newValue) {
             setQuestion("");
         } else if (newValue.length <= 1000) {
-            setQuestion(newValue);
+            setQuestion(!chatInput || chatInput.inputType == "numeric" ? newValue?.replace(/\D/g, "") : newValue);
         }
     };
 
     const sendQuestionDisabled = disabled || !question.trim();
 
-    return (
+    return chatInput && chatInput.inputType == "multiple" ? (
+        <Stack horizontal className={styles.questionInputContainer}>
+            {chatInput.options.map(option => (
+                <Button
+                    style={{ backgroundColor: "#d7c5d0", borderColor: "purple", borderWidth: 2, borderStyle: "solid", borderRadius: 4, marginLeft: 10 }}
+                    onClick={() => {
+                        onSend(option);
+                    }}
+                >
+                    {option}
+                </Button>
+            ))}
+        </Stack>
+    ) : (
         <Stack horizontal className={styles.questionInputContainer}>
             <TextField
                 className={styles.questionInputTextArea}

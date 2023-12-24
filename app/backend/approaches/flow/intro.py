@@ -4,7 +4,7 @@ from azure.data.tables import UpdateMode
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
-from approaches.flow.shared_states import ContactsText, DemoClientId, MissingClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, DemoClientId, MissingClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus, chat_input_multiple_options
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from azure.core.exceptions import ResourceNotFoundError
@@ -84,7 +84,7 @@ async def start_intro(request_context: RequestContext):
     else:
         request_context.save_to_var(VariableExitText, "אירעה שגיאה. ייתכן כי הקישור לא תקין. נא לפנות לצוות לקבלת קישור חדש")
     request_context.set_next_state(StateExit)
-States[StateStartIntro] = State(is_wait_for_user_input_before_state=False, run=start_intro)
+States[StateStartIntro] = State(chat_input=ChatInputNotWait, run=start_intro)
 
 async def get_if_to_continue(request_context: RequestContext):
     if request_context.history[-1]["content"].strip() in ("kt", "לא", "ממש לא", "אין מצב", "די", "מספיק"):
@@ -107,7 +107,7 @@ async def get_if_to_continue(request_context: RequestContext):
         return request_context.write_chat_message("מה גילך ?")
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. נא להקליד כן/לא")
-States[StateGetIfToContinue] = State(run=get_if_to_continue)
+States[StateGetIfToContinue] = State(chat_input=chat_input_multiple_options(["כן", "לא"]), run=get_if_to_continue)
 
 def user_already_participated(request_context: RequestContext):
     return request_context.write_chat_message("""השתתפותך כבר רשומה.""")
@@ -128,7 +128,7 @@ async def get_age(request_context: RequestContext):
 {contactsText}""".format(contactsText = ContactsText))
     else:
         return request_context.write_chat_message("הגיל שהכנסת אינו חוקי, יש להכניס מספר בלבד")
-States[StateGetAge] = State(run=get_age)
+States[StateGetAge] = State(chat_input=ChatInputNumeric, run=get_age)
 
 def get_bot_gender(request_context: RequestContext):
     has_male = not(re.search("מטפל(?!ת)", request_context.history[-1]["content"]) is None) or not(re.search("nypk(?!,)", request_context.history[-1]["content"]) is None)

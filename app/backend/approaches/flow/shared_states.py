@@ -36,6 +36,12 @@ MissingClientId = "כניסה ללא זיהוי משתמש"
 ContactsText = """טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
 טלפון ער"ן  טלפון 1201 או ווטסאפ <a href="https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0">https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0</a> (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
 
+ChatInputNotWait = "INTERNAL_PLACEHOLDER_NOT_WAIT"
+ChatInputFreeText = { "inputType": "freeText" }
+ChatInputNumeric = { "inputType": "numeric" }
+def chat_input_multiple_options(options: list[str]):
+    return { "inputType": "multiple", "options": options }
+
 def get_exit_text(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     is_bot_male = request_context.get_var(VariableIsBotMale)
@@ -73,8 +79,8 @@ def get_exit_text(request_context: RequestContext):
         wish = "ומאחל" if is_bot_male else "ומאחלת")
 
 class State:
-    def __init__(self, run: Callable, is_wait_for_user_input_before_state: bool = True):
-        self.is_wait_for_user_input_before_state = is_wait_for_user_input_before_state
+    def __init__(self, run: Callable, chat_input = ChatInputFreeText):
+        self.chat_input = chat_input
         self.run = run
 
 async def start_exit_loop(request_context: RequestContext):
@@ -88,7 +94,7 @@ async def start_exit_loop(request_context: RequestContext):
 
     request_context.set_next_state(StateEndLoop)
     return request_context.write_chat_message(request_context.get_var(VariableExitText))
-States[StateExit] = State(is_wait_for_user_input_before_state=False, run=start_exit_loop)
+States[StateExit] = State(chat_input=ChatInputNotWait, run=start_exit_loop)
 
 def exit_loop(request_context: RequestContext):
     return request_context.write_chat_message(request_context.get_var(VariableExitText))

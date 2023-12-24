@@ -22,12 +22,12 @@ export type ChatAppRequestOverrides = {
 export type ResponseMessage = {
     content: string;
     role: string;
-}
+};
 
 export type ResponseContext = {
     thoughts: string | null;
     data_points: string[];
-}
+};
 
 export type ResponseChoice = {
     index: number;
@@ -43,11 +43,12 @@ export type ChatAppResponseOrError = {
 
 export type ChatAppResponse = {
     choices: ResponseChoice[];
+    chatInput: ChatInput;
 };
 
 export type ChatAppRequestContext = {
     overrides?: ChatAppRequestOverrides;
-}
+};
 
 export type ChatAppRequest = {
     messages: ResponseMessage[];
@@ -55,3 +56,15 @@ export type ChatAppRequest = {
     stream?: boolean;
     session_state: any;
 };
+
+export type ChatInput =
+    | {
+          inputType: "freeText";
+      }
+    | {
+          inputType: "numeric";
+      }
+    | {
+          inputType: "multiple";
+          options: string[];
+      };

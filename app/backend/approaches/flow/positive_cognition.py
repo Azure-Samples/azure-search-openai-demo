@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, get_exit_text
 from approaches.requestcontext import RequestContext
 
 StateGetImprovement = "GET_IMPROVEMENT"
@@ -7,7 +7,7 @@ StateGetIsConnectedToCurrent = "GET_IS_CONNECTED_TO_CURRENT"
 async def start_positive_cognition(request_context: RequestContext):
     request_context.set_next_state(StateGetImprovement)
     return request_context.write_chat_message("""באיזו מידה {you_feel} שיפור ביכולת שלך להתמודד עם החוויה? ללא שיפור / שיפור מועט / שיפור קל / שיפור בינוני / שיפור גדול""".format(you_feel = "אתה מרגיש" if request_context.get_var(VariableIsPatientMale) else "את מרגישה"))
-States[StateStartPositiveCognition] = State(is_wait_for_user_input_before_state=False, run=start_positive_cognition)
+States[StateStartPositiveCognition] = State(chat_input=ChatInputNotWait, run=start_positive_cognition)
 
 async def get_improvement(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)

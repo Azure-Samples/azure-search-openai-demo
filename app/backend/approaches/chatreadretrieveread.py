@@ -9,6 +9,7 @@ from approaches.flow.flow import States, FirstState
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from approaches.utils import Utils
+from approaches.flow.shared_states import ChatInputNotWait
 
 class ChatReadRetrieveReadApproach(Approach):
     def __init__(self, app_resources: AppResources):
@@ -30,9 +31,11 @@ class ChatReadRetrieveReadApproach(Approach):
             raise Exception("Unexpected state " + state_id)
         state = States[state_id]
 
-        event_generators = []
-        is_wait_for_user_input_before_state = False
-        while (not is_wait_for_user_input_before_state):
+        event_generators = [
+            None # Placeholder for chat input
+        ]
+        chat_input = ChatInputNotWait
+        while (chat_input == ChatInputNotWait):
             chat_coroutine = state.run(request_context)
             if not (chat_coroutine is None):
                 if iscoroutine(chat_coroutine):
@@ -44,7 +47,9 @@ class ChatReadRetrieveReadApproach(Approach):
             if not (state_id in States):
                 raise Exception("Unexpected state " + state_id)
             state = States[state_id]
-            is_wait_for_user_input_before_state = state.is_wait_for_user_input_before_state
+            chat_input = state.chat_input
+        
+        event_generators[0] = Utils.single_item_generator(chat_input)
 
         # Return after aggregation, so request_context.extra_info has already been set
         return Utils.merge_generators(event_generators)

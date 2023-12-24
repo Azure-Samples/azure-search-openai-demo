@@ -6,7 +6,7 @@ import readNDJSONStream from "ndjson-readablestream";
 import styles from "./Chat.module.css";
 import introImage from "../../assets/intro.png";
 
-import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage } from "../../api";
+import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ChatInput, ResponseMessage } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -59,7 +59,7 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, responses: ChatAppResponse[]][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse[]][]>([]);
 
-    const [lastAnswer, setLastAnswer] = useState<ChatAppResponse | undefined>(undefined);
+    const [chatInput, setChatInput] = useState<ChatInput>({ inputType: "freeText" });
 
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse[]][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let role: string;
@@ -98,7 +98,9 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
+                if (event["inputType"]) {
+                    setChatInput(event);
+                } else if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
                     event["choices"][0]["message"] = event["choices"][0]["delta"];
                     askResponse = event;
                 } else if (event["choices"] && event["choices"][0]["delta"]) {
@@ -402,6 +404,7 @@ const Chat = () => {
                             clearOnSend
                             placeholder="כיצד אני יכול לעזור לך?"
                             disabled={isLoading || isWritingWords || isFirstRender || isPlayingVideo}
+                            chatInput={chatInput}
                             onSend={question => makeApiRequest(question)}
                         />
                     </div>

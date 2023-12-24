@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ContactsText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariableNextVideoPrefix, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariableNextVideoPrefix, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
@@ -30,7 +30,7 @@ async def start_isp(request_context: RequestContext):
         _try = "נסה" if is_patient_male else "נסי",
         therapist = "המטפל" if is_bot_male else "המטפלת",
         and_act = "ופעל" if is_patient_male else "ופעלי"))
-States[StateStartISP] = State(is_wait_for_user_input_before_state=False, run=start_isp)
+States[StateStartISP] = State(chat_input=ChatInputNotWait, run=start_isp)
 
 async def show_video(request_context: RequestContext):
     is_bot_male = request_context.get_var(VariableIsBotMale)
@@ -96,7 +96,7 @@ async def get_distress_level_after_video(request_context: RequestContext):
         return request_context.write_chat_message("""חלק מהאנשים חווים שיפור אחרי תרגול נוסף. האם {want} להמשיך לתרגל?""".format(want = "תרצה" if is_male else "תרצי"))
     else:
         return request_context.write_chat_message("""אני מבין שקשה לך. {ready_to_continue}""".format(ready_to_continue = ready_to_continue))
-States[StateGetDistressAfterVideo] = State(run=get_distress_level_after_video)
+States[StateGetDistressAfterVideo] = State(chat_input=ChatInputNumeric, run=get_distress_level_after_video)
 
 async def get_if_to_continue_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
@@ -129,4 +129,4 @@ async def next_video(request_context: RequestContext):
         _try = "נסה" if is_patient_male else "נסי",
         therapist = "המטפל" if is_bot_male else "המטפלת",
         and_act = "ופעל" if is_patient_male else "ופעלי"))
-States[StateNextVideo] = State(is_wait_for_user_input_before_state=False, run=next_video)
+States[StateNextVideo] = State(chat_input=ChatInputNotWait, run=next_video)

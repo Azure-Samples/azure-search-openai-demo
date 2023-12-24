@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName
 from approaches.requestcontext import RequestContext
 
 StateGetDistressLevel = "GET_DISTRESS_LEVEL"
@@ -28,7 +28,7 @@ async def start_preperation(request_context: RequestContext):
                 you = "אתה" if is_patient_male else "את",
                 annoyed = "מוטרד" if is_patient_male else "מוטרדת")
         }])
-States[StateStartPreperation] = State(is_wait_for_user_input_before_state=False, run=start_preperation)
+States[StateStartPreperation] = State(chat_input=ChatInputNotWait, run=start_preperation)
 
 async def get_distress_level(request_context: RequestContext):
     distress_msg = request_context.history[-1]["content"]
@@ -44,7 +44,7 @@ async def get_distress_level(request_context: RequestContext):
         request_context.set_next_state(StateAskWhatAnnoying)
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} מספר בין 0 ל-10".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-States[StateGetDistressLevel] = State(run=get_distress_level)
+States[StateGetDistressLevel] = State(chat_input=ChatInputNumeric, run=get_distress_level)
 
 async def ask_if_to_continue_on_low_distress(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
@@ -93,7 +93,7 @@ async def ask_what_annoying(request_context: RequestContext):
                 select = "בחר" if is_patient_male else "בחרי",
                 that_you_feel = "מה שאתה מרגיש" if is_patient_male else "מה שאת מרגישה")
         }]);
-States[StateAskWhatAnnoying] = State(is_wait_for_user_input_before_state=False, run=ask_what_annoying)
+States[StateAskWhatAnnoying] = State(chat_input=ChatInputNotWait, run=ask_what_annoying)
 
 async def get_annoying_reason(request_context: RequestContext):
     isp_path = request_context.history[-1]["content"]
@@ -101,4 +101,4 @@ async def get_annoying_reason(request_context: RequestContext):
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} מספר בין 1 ל-5".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
     request_context.save_to_var(VariableIspPath, isp_path)
     request_context.set_next_state(StateStartISP)
-States[StateGetAnnoyingReason] = State(run=get_annoying_reason)
+States[StateGetAnnoyingReason] = State(chat_input=ChatInputNumeric, run=get_annoying_reason)
