@@ -38,7 +38,7 @@ async def show_video(request_context: RequestContext):
     isp_path = request_context.get_var(VariableIspPath)
     request_context.set_next_state(StateAskForDistressAfterVideo)
     video_index = request_context.get_var(VariableVideoIndex)
-    video_index_to_show = (video_index - 1) % 3 + 1
+    video_index_to_show = video_index % 4
     return request_context.write_roled_chat_message([{"role": "vimeo", "content": get_video(isp_path, is_bot_male, is_patient_male, video_index_to_show)}])
 States[StateShowVideo] = State(run=show_video)
 

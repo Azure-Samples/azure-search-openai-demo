@@ -5,10 +5,10 @@ videos = {
     "1": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/895974469",
-                "https://player.vimeo.com/video/895970401",
-                "https://player.vimeo.com/video/895972299",
-                "https://player.vimeo.com/video/895968595",
+                "https://player.vimeo.com/video/897559149",
+                "https://player.vimeo.com/video/897557836",
+                "https://player.vimeo.com/video/897555279",
+                "https://player.vimeo.com/video/897556460",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/895974469",
@@ -19,10 +19,10 @@ videos = {
         },
         "maleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/895974469",
-                "https://player.vimeo.com/video/895970401",
-                "https://player.vimeo.com/video/895972299",
-                "https://player.vimeo.com/video/895968595",
+                "https://player.vimeo.com/video/897559149",
+                "https://player.vimeo.com/video/897557836",
+                "https://player.vimeo.com/video/897555279",
+                "https://player.vimeo.com/video/897556460",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/895974469",
@@ -35,10 +35,10 @@ videos = {
     "2": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/896006274",
-                "https://player.vimeo.com/video/896008746",
-                "https://player.vimeo.com/video/896004265",
-                "https://player.vimeo.com/video/896000466",
+                "https://player.vimeo.com/video/897564810",
+                "https://player.vimeo.com/video/897562332",
+                "https://player.vimeo.com/video/897563724",
+                "https://player.vimeo.com/video/897561328",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/896006274",
@@ -49,10 +49,10 @@ videos = {
         },
         "maleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/896006274",
-                "https://player.vimeo.com/video/896008746",
-                "https://player.vimeo.com/video/896004265",
-                "https://player.vimeo.com/video/896000466",
+                "https://player.vimeo.com/video/897564810",
+                "https://player.vimeo.com/video/897562332",
+                "https://player.vimeo.com/video/897563724",
+                "https://player.vimeo.com/video/897561328",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/896006274",
@@ -65,10 +65,10 @@ videos = {
     "3": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/895992824",
-                "https://player.vimeo.com/video/895990902",
-                "https://player.vimeo.com/video/895987357",
-                "https://player.vimeo.com/video/895989491",
+                "https://player.vimeo.com/video/897574889",
+                "https://player.vimeo.com/video/897572422",
+                "https://player.vimeo.com/video/897573841",
+                "https://player.vimeo.com/video/897571339",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/895992824",
@@ -79,10 +79,10 @@ videos = {
         },
         "maleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/895992824",
-                "https://player.vimeo.com/video/895990902",
-                "https://player.vimeo.com/video/895987357",
-                "https://player.vimeo.com/video/895989491",
+                "https://player.vimeo.com/video/897574889",
+                "https://player.vimeo.com/video/897572422",
+                "https://player.vimeo.com/video/897573841",
+                "https://player.vimeo.com/video/897571339",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/895992824",
@@ -95,10 +95,10 @@ videos = {
     "4": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/895982402",
-                "https://player.vimeo.com/video/895978161",
-                "https://player.vimeo.com/video/895980650",
-                "https://player.vimeo.com/video/895985710",
+                "https://player.vimeo.com/video/897569924",
+                "https://player.vimeo.com/video/897568139",
+                "https://player.vimeo.com/video/897569105",
+                "https://player.vimeo.com/video/897567127",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/895982402",
@@ -109,10 +109,10 @@ videos = {
         },
         "maleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/895982402",
-                "https://player.vimeo.com/video/895978161",
-                "https://player.vimeo.com/video/895980650",
-                "https://player.vimeo.com/video/895985710",
+                "https://player.vimeo.com/video/897569924",
+                "https://player.vimeo.com/video/897568139",
+                "https://player.vimeo.com/video/897569105",
+                "https://player.vimeo.com/video/897567127",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/895982402",
@@ -125,10 +125,10 @@ videos = {
     "5": {
         "femaleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/896002079",
-                "https://player.vimeo.com/video/895998785",
-                "https://player.vimeo.com/video/895995866",
-                "https://player.vimeo.com/video/895997267",
+                "https://player.vimeo.com/video/897580251",
+                "https://player.vimeo.com/video/897577581",
+                "https://player.vimeo.com/video/897578894",
+                "https://player.vimeo.com/video/897576687",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/896002079",
@@ -139,10 +139,10 @@ videos = {
         },
         "maleBot": {
             "femalePatient": [
-                "https://player.vimeo.com/video/896002079",
-                "https://player.vimeo.com/video/895998785",
-                "https://player.vimeo.com/video/895995866",
-                "https://player.vimeo.com/video/895997267",
+                "https://player.vimeo.com/video/897580251",
+                "https://player.vimeo.com/video/897577581",
+                "https://player.vimeo.com/video/897578894",
+                "https://player.vimeo.com/video/897576687",
             ],
             "malePatient": [
                 "https://player.vimeo.com/video/896002079",
