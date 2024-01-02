@@ -29,3 +29,15 @@ module = [
     "msal.*"
 ]
 ignore_missing_imports = true
+
+[tool.poetry]
+name = "azure-search-openai-demo"  # Skutečný název vašeho projektu
+version = "1.0.0"  # Start with 1.0.0 or update to the next appropriate version
+description = "A demo project integrating Azure Search with OpenAI"  # Popis vašeho projektu
+authors = ["Jméno Autora <email@domena.com>"]  # Vaše jméno a email
+
+[tool.poetry.dependencies]
+python = "^3.8"  # Verze Pythonu, kterou projekt vyžaduje
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"  # Případné vývojové závislosti
