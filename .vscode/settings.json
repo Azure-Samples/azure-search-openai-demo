@@ -30,5 +30,7 @@
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "appService.defaultWebAppToDeploy": "/subscriptions/27f0ff49-5019-4fe6-a0ae-6530b7608f37/resourceGroups/rg-wikicopilot/providers/Microsoft.Web/sites/app-backend-r5bkbywwfdc5g",
+    "appService.deploySubpath": "."
 }
