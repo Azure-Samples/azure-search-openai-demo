@@ -37,7 +37,7 @@ Two Azure AD apps must be registered in order to make the optional login and doc
 The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
 
 1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
-1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `./scrips/manageacl.ps1 --acl-action enable_acls`.
+1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
 1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`.
 1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
 2. Run `azd up` to deploy the app.
