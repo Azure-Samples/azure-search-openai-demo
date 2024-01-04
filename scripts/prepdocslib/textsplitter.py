@@ -18,7 +18,7 @@ class TextSplitter:
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, has_image_embeddings, verbose: bool = False):
+    def __init__(self, has_image_embeddings: bool, verbose: bool = False):
         self.sentence_endings = [".", "!", "?"]
         self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
         self.max_section_length = 1000
