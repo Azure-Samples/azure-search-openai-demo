@@ -1,13 +1,17 @@
 .container {
     display: flex;
-    margin-bottom: 1.25rem;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
     max-width: 80%;
     margin-left: auto;
 }
 
 .message {
-    padding: 1.25rem;
-    background: #d7c5d0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    background: white;
     border-radius: 0.5rem;
     box-shadow:
         0px 0.125rem 0.25rem rgba(0, 0, 0, 0.14),
@@ -22,13 +26,19 @@
     }
 
     .message {
-        padding: 1rem;
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
         border-radius: 0.375rem;
     }
 }
 
 @media only screen and (max-width: 30rem) {
     .message {
-        padding: 0.75rem;
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+        padding-left: 0.45rem;
+        padding-right: 0.45rem;
     }
 }

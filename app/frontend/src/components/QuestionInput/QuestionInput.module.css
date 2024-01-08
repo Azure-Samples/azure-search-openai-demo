@@ -3,16 +3,16 @@
     box-shadow:
         0px 8px 16px rgba(0, 0, 0, 0.14),
         0px 0px 2px rgba(0, 0, 0, 0.12);
-    height: 90px;
+    height: 45px;
     width: 100%;
-    padding: 15px;
+    padding: 3px;
     background: white;
     border: 1px solid #296163;
 }
 
 .questionInputTextArea {
     width: 100%;
-    line-height: 40px;
+    line-height: 20px;
 }
 
 .questionInputButtonsContainer {

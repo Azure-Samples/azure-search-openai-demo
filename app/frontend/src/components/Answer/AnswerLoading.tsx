@@ -2,7 +2,6 @@ import { Stack } from "@fluentui/react";
 import { animated, useSpring } from "@react-spring/web";
 
 import styles from "./Answer.module.css";
-import { AnswerIcon } from "./AnswerIcon";
 
 export const AnswerLoading = () => {
     const animatedStyles = useSpring({
@@ -13,7 +12,6 @@ export const AnswerLoading = () => {
     return (
         <animated.div style={{ ...animatedStyles }}>
             <Stack className={styles.answerContainer} verticalAlign="space-between">
-                <AnswerIcon />
                 <Stack.Item grow>
                     <p className={styles.answerText}>
                         אני כבר איתך

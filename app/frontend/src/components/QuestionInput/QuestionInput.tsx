@@ -9,12 +9,11 @@ import { ChatInput } from "../../api/models";
 interface Props {
     onSend: (question: string) => void;
     disabled: boolean;
-    placeholder?: string;
     clearOnSend?: boolean;
     chatInput?: ChatInput;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, chatInput }: Props) => {
+export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput }: Props) => {
     const [question, setQuestion] = useState<string>("");
 
     const sendQuestion = () => {
@@ -63,8 +62,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, chat
         <Stack horizontal className={styles.questionInputContainer}>
             <TextField
                 className={styles.questionInputTextArea}
-                placeholder={placeholder}
-                multiline
+                placeholder={chatInput?.inputType == "numeric" ? "יש להקליד מספר" : "יש להקליד תשובה"}
                 resizable={false}
                 borderless
                 value={question}

@@ -75,22 +75,18 @@ const Chat = () => {
         };
 
         const updateState = (newContent: string) => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    answer += newContent;
-                    const latestResponse = createResponse(answer);
-                    let latestResponses: ChatAppResponse[] = [...responses, latestResponse];
-                    setStreamedAnswers([...answers, [question, latestResponses]]);
-                    resolve(null);
-                }, 33);
-            });
+            answer += newContent;
+            const latestResponse = createResponse(answer);
+            let latestResponses: ChatAppResponse[] = [...responses, latestResponse];
+            setStreamedAnswers([...answers, [question, latestResponses]]);
         };
 
-        async function* asyncWordGenerator(str: string, delay: number) {
+        const delay = async (timeout: number) => await new Promise((resolve, reject) => setTimeout(resolve, timeout));
+
+        function* asyncWordGenerator(str: string) {
             const words = str.split(" ");
             for (const word of words) {
                 // Wait for the delay, then yield the word
-                await new Promise(resolve => setTimeout(resolve, delay));
                 yield word;
             }
         }
@@ -112,13 +108,13 @@ const Chat = () => {
                         if (msg["role"] == "assistant") {
                             // Animate writing words only for assistant role
                             const sentence = msg["content"];
-                            const delay = 33;
                             let isFirst = true;
-                            for await (let word of asyncWordGenerator(sentence, delay)) {
+                            for await (let word of asyncWordGenerator(sentence)) {
                                 if (!isFirst) {
                                     word = " " + word;
                                 }
-                                await updateState(word);
+                                await delay(100);
+                                updateState(word);
                                 isFirst = false;
                             }
                         }
@@ -179,7 +175,9 @@ const Chat = () => {
                 throw Error("No response body");
             }
             if (shouldStream) {
+                const thinkingDelay = new Promise((resolve, reject) => setTimeout(resolve, 500));
                 const parsedResponse: ChatAppResponse[] = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                await thinkingDelay;
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
                 // This might not work since support of roled list in server response
@@ -402,7 +400,6 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="כיצד אני יכול לעזור לך?"
                             disabled={isLoading || isWritingWords || isFirstRender || isPlayingVideo}
                             chatInput={chatInput}
                             onSend={question => makeApiRequest(question)}
