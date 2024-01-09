@@ -65,9 +65,11 @@ class AuthenticationHelper:
                     "navigateToLoginRequestUrl": False,  # If "true", will navigate back to the original request location before processing the auth code response.
                 },
                 "cache": {
-                    "cacheLocation": "sessionStorage",
+                    # Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+                    "cacheLocation": "localStorage",
+                    # Set this to "true" if you are having issues on IE11 or Edge
                     "storeAuthStateInCookie": False,
-                },  # Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.  # Set this to "true" if you are having issues on IE11 or Edge
+                },
             },
             "loginRequest": {
                 # Scopes you add here will be prompted for user consent during sign-in.
