@@ -2,6 +2,8 @@ import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
 
+import plus_logo from "../../assets/plus_logo.png";
+
 import styles from "./Layout.module.css";
 
 import { useLogin } from "../../authConfig";
@@ -13,8 +15,9 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
+                    <img src={plus_logo} height="20px" width="56px"></img>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>GPT + Altera Procedures | Demo</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>

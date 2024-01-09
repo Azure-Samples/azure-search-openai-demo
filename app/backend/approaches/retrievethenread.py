@@ -22,8 +22,9 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
-        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
+        "You are an intelligent assistant helping the Altera company's employees with questions regarding internal company procedure documents."
+        + "You have access to procedure documents"
+        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'."
         + "Answer the following question using only the data provided in the sources below. "
         + "For tabular information return it as an html table. Do not return markdown format. "
         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
@@ -32,15 +33,12 @@ class RetrieveThenReadApproach(Approach):
 
     # shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+'What is a Change Proposal?'
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+FPSO-AP-AP601-ALL.pdf: A proposed temporary or permanent design change to production systems, ship systems, hull/superstructure, production/marine plant control systems or production/marine plant safety systems, not being a “like for like” replacement. A change proposal includes the combination of all technical actions needed to add or change one or more item or equipment functions.
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "A proposed temporary or permanent design change to production systems, ship systems, hull/superstructure, production/marine plant control systems or production/marine plant safety systems, not being a “like for like” replacement. A change proposal includes the combination of all technical actions needed to add or change one or more item or equipment functions. [FPSO-AP-AP601-ALL]"
 
     def __init__(
         self,
