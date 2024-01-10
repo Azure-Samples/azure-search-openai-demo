@@ -15,7 +15,7 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
-                    <img src={plus_logo} height="20px" width="56px"></img>
+                    <img src={plus_logo} className={styles.headerLogo}></img>
                     <Link to="/" className={styles.headerTitleContainer}>
                         <h3 className={styles.headerTitle}>GPT + Altera Procedures | Demo</h3>
                     </Link>

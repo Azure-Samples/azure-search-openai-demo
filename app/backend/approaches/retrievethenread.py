@@ -29,6 +29,7 @@ class RetrieveThenReadApproach(Approach):
         + "For tabular information return it as an html table. Do not return markdown format. "
         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
         + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
+        + "If the question is not in English, answer in the language used in the question"
     )
 
     # shots/sample conversation

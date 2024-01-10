@@ -10,9 +10,10 @@ body {
 }
 
 html {
-    background: #f2f2f2;
+    background: rgb(228 238 240);
 
     font-family:
+        "Arial",
         "Segoe UI",
         -apple-system,
         BlinkMacSystemFont,
@@ -26,6 +27,7 @@ html {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
 }
 
 #root {
