@@ -15,10 +15,12 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
-                    <img src={plus_logo} className={styles.headerLogo}></img>
-                    <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Altera Procedures | Demo</h3>
-                    </Link>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <img src={plus_logo} className={styles.headerLogo}></img>
+                        <Link to="/" className={styles.headerTitleContainer}>
+                            <h3 className={styles.headerTitle}>GPT + Altera Procedures | Demo</h3>
+                        </Link>
+                    </div>
                     <nav>
                         <ul className={styles.headerNavList}>
                             <li>
@@ -31,6 +33,7 @@ const Layout = () => {
                                     Ask a question
                                 </NavLink>
                             </li>
+                            {/*
                             <li className={styles.headerNavLeftMargin}>
                                 <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
                                     <img
@@ -42,10 +45,10 @@ const Layout = () => {
                                         className={styles.githubLogo}
                                     />
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
+                    {/* <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4> */}
                     {useLogin && <LoginButton />}
                 </div>
             </header>

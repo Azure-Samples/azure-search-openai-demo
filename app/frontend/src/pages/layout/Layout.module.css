@@ -13,14 +13,13 @@
     height: 64px;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-right: 12px;
 }
 
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
     color: #f2f2f2;
     text-decoration: none;
 }

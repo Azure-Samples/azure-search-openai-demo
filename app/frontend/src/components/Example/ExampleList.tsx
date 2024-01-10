@@ -3,9 +3,9 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "How do I evaluate the priority level of an anomaly?",
-    "What are the responsibilities of an SRO?",
-    "Hvem er ansvarlig for håndtering av en endringsordre (VO)?"
+    "What categories of anomalies are there?",
+    "Hvem er ansvarlig for håndtering av en endringsordre (VO)?",
+    "What are the responsibilities of an SRO?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
