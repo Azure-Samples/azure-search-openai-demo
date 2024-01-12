@@ -95,10 +95,10 @@ const Chat = () => {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
                 if (event["inputType"]) {
-                    setChatInput(event);
+                    setChatInput(event as ChatInput);
                 } else if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
                     event["choices"][0]["message"] = event["choices"][0]["delta"];
-                    askResponse = event;
+                    askResponse = event as ChatAppResponse;
                 } else if (event["choices"] && event["choices"][0]["delta"]) {
                     setIsLoading(false);
                     setIsWritingWords(true);
