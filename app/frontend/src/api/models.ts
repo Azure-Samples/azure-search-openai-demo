@@ -67,4 +67,11 @@ export type ChatInput =
     | {
           inputType: "multiple";
           options: string[];
+      }
+    | {
+          inputType: "slider";
+          minValue: number;
+          minLabel: string;
+          maxValue: number;
+          maxLabel: string;
       };

@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName, chat_input_multiple_options
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName, chat_input_multiple_options, chat_input_slider
 from approaches.requestcontext import RequestContext
 
 StateGetDistressLevel = "GET_DISTRESS_LEVEL"
@@ -10,13 +10,9 @@ async def start_preperation(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     patient_name = request_context.get_var(VariablePatientName)
     request_context.set_next_state(StateGetDistressLevel)
-    return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?
-0  לא {annoyed} ולא חווה מצוקה כלל,
-10 {annoyed} או חווה מצוקה ברמה חריפה""".format(
-                can_you = "אתה יכול" if is_patient_male else "את יכולה",
-                you = "אתה" if is_patient_male else "את",
-                annoyed = "מוטרד" if is_patient_male else "מוטרדת")
-        )
+    return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?""".format(
+        you = "אתה" if is_patient_male else "את",
+        annoyed = "מוטרד" if is_patient_male else "מוטרדת"))
 States[StateStartPreperation] = State(chat_input=ChatInputNotWait, run=start_preperation)
 
 async def get_distress_level(request_context: RequestContext):
@@ -33,7 +29,7 @@ async def get_distress_level(request_context: RequestContext):
         request_context.set_next_state(StateAskWhatAnnoying)
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} מספר בין 0 ל-10".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-States[StateGetDistressLevel] = State(chat_input=ChatInputNumeric, run=get_distress_level)
+States[StateGetDistressLevel] = State(chat_input=chat_input_slider(0, "ללא מצוקה כלל", 10, "מצוקה חריפה מאד"), run=get_distress_level)
 
 async def ask_if_to_continue_on_low_distress(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)

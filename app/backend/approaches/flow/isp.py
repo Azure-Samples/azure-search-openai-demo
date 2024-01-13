@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, GenericExitText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariablePatientName, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, chat_input_multiple_options, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, GenericExitText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariablePatientName, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, chat_input_multiple_options, chat_input_slider, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
@@ -58,9 +58,7 @@ States[StateShowVideo] = State(chat_input=ChatInputNotWait, run=show_video)
 async def show_ask_for_distress_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
     request_context.set_next_state(StateGetDistressAfterVideo)
-    return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע?
-0  לא {annoyed} ולא חווה מצוקה בכלל
-10 {annoyed} או חווה מצוקה ברמה חריפה""".format(you = "אתה" if is_male else "את", annoyed = "מוטרד" if is_male else "מוטרדת"))
+    return request_context.write_chat_message("עד כמה {you} {annoyed} או חווה מצוקה כרגע?".format(you = "אתה" if is_male else "את", annoyed = "מוטרד" if is_male else "מוטרדת"))
 States[StateAskForDistressAfterVideo] = State(run=show_ask_for_distress_after_video)
 
 async def get_distress_level_after_video(request_context: RequestContext):
@@ -111,7 +109,7 @@ async def get_distress_level_after_video(request_context: RequestContext):
     else:
         request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""אני מבין שקשה לך. {ready_to_continue}""".format(ready_to_continue = ready_to_continue))
-States[StateGetDistressAfterVideo] = State(chat_input=ChatInputNumeric, run=get_distress_level_after_video)
+States[StateGetDistressAfterVideo] = State(chat_input=chat_input_slider(0, "ללא מצוקה כלל", 10, "מצוקה חריפה מאד"), run=get_distress_level_after_video)
 
 async def get_if_to_continue_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)

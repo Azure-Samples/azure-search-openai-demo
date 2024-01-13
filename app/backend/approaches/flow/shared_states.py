@@ -43,6 +43,8 @@ ChatInputFreeText = { "inputType": "freeText" }
 ChatInputNumeric = { "inputType": "numeric" }
 def chat_input_multiple_options(options: list[str]):
     return { "inputType": "multiple", "options": options }
+def chat_input_slider(minValue, minLabel, maxValue, maxLabel):
+    return { "inputType": "slider", "minValue": minValue, "minLabel": minLabel, "maxValue": maxValue, "maxLabel": maxLabel }
 
 def get_exit_text(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
