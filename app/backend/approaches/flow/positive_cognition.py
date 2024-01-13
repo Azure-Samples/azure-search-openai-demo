@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ChatInputNotWait, State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, chat_input_multiple_options, get_exit_text
 from approaches.requestcontext import RequestContext
 
 StateGetImprovement = "GET_IMPROVEMENT"
@@ -24,17 +24,18 @@ async def get_improvement(request_context: RequestContext):
     
     request_context.set_next_state(StateGetIsConnectedToCurrent)
     return request_context.write_chat_message(prefix + """
-עד כמה {feel_current} לכאן ועכשיו, ולהכיר בעובדה שגם אם קרה אירוע קשה, אותו אירוע נגמר ?
 
-כלל לא / במידה מועטה / במידה מתונה / במידה רבה / במידה רבה מאד""".format(feel_current = "אתה מרגיש שאתה מסוגל להיות מחובר" if is_patient_male else "את מרגישה שאת מסוגלת להיות מחוברת"))
-States[StateGetImprovement] = State(run=get_improvement)
+עד כמה {you_connect} למה שקורה עכשיו, {and_feel} שגם אם קרה אירוע קשה, הוא נגמר?
+
+כלל לא / במידה מועטה / במידה מתונה / במידה רבה / במידה רבה מאד""".format(you_connect = "אתה מחובר" if is_patient_male else "את מחוברת", and_feel = "ומרגיש" if is_patient_male else "ומרגישה"))
+States[StateGetImprovement] = State(chat_input=chat_input_multiple_options(["ללא שיפור", "שיפור מועט", "שיפור קל", "שיפור בינוני", "שיפור גדול"]), run=get_improvement)
 
 async def get_is_connected_to_current(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     is_bot_male = request_context.get_var(VariableIsBotMale)
     is_connected = request_context.history[-1]["content"]
     if is_connected == "כלל לא":
-        exit_text = "אני {understand}, ורוצה להזכיר לך {that_you_here} איתי כאן ועכשיו. בנוסף חשוב לי לציין שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך".format(
+        exit_text = "אני {understand}, ורוצה להזכיר לך שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך".format(
             understand = "מבין" if is_bot_male else "מבינה",
             that_you_here = "שאתה נמצא" if is_bot_male else "שאת נמצאת"
         )
@@ -48,4 +49,4 @@ async def get_is_connected_to_current(request_context: RequestContext):
 """ + get_exit_text(request_context)
     request_context.save_to_var(VariableExitText, exit_text)
     request_context.set_next_state(StateExit)
-States[StateGetIsConnectedToCurrent] = State(run=get_is_connected_to_current)
+States[StateGetIsConnectedToCurrent] = State(chat_input=chat_input_multiple_options(["כלל לא", "במידה מועטה", "במידה מתונה", "במידה רבה", "במידה רבה מאד"]), run=get_is_connected_to_current)

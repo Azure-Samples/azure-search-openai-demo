@@ -1,7 +1,8 @@
-from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariableNextVideoPrefix, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, GenericExitText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariablePatientName, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, chat_input_multiple_options, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
+StateWaitForResponseBeforeVideo = "WAIT_FOR_RESPONSE_BEFORE_VIDEO"
 StateShowVideo = "SHOW_VIDEO"
 StateGetIfToContinueAfterVideo = "GET_IF_TO_CONTINUE_AFTER_VIDEO"
 StateAskForDistressAfterVideo = "ASK_FOR_DISTRESS_AFTER_VIDEO"
@@ -15,22 +16,34 @@ async def start_isp(request_context: RequestContext):
     is_bot_male = request_context.get_var(VariableIsBotMale)
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     isp_path = request_context.get_var(VariableIspPath)
+    patient_name = request_context.get_var(VariablePatientName)
     prefixDict = {
-        "1": "זו חוויה מאוד הגיונית שהרבה אנשים יכולים לחוות לאחר או במהלך אירוע קשה. התרגול שנעשה כעת יוכל להקל עליך.",
-        "2": "מחשבות לגבי אחריות ואשמה נפוצות אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך.",
-        "3": "לעתים אחרי אירוע מאיים, שבו חווינו חוסר שליטה, התחושה הזו ממשיכה ללוות אותנו לזמן מה. התרגול שנעשה כעת יוכל להקל עליך.",
-        "4": "מחשבות לגבי חוסר שליטה לגבי מצבים קשים עתידיים נפוצות אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך.",
-        "5": "זו תחושה טבעית אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך. "
+        "1": "זו חוויה מאוד הגיונית שהרבה אנשים חווים. התרגול שנעשה כעת יוכל להקל עליך, הוא ידוע כתרגול שעזר לאנשים רבים",
+        "2": "מחשבות לגבי אחריות ואשמה נפוצות אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה יוכל להקל עליך",
+        "3": "לעתים לאחר אירוע מאיים, שבו חווינו חוסר שליטה, התחושה הזו ממשיכה ללוות אותנו לזמן מה. התרגול שנעשה כעת יוכל להקל עליך",
+        "4": "מחשבות לגבי חוסר שליטה לגבי מצבים קשים עתידיים נפוצות אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך",
+        "5": "זו תחושה טבעית אחרי חשיפה לאירועים קשים ומאיימים. התרגול שנעשה כעת יוכל להקל עליך"
     }
-    request_context.set_next_state(StateShowVideo)
-    return request_context.write_chat_message(prefixDict[isp_path] + """
-אציג לך כעת וידאו שילמד אותך לעשות תרגיל שיכול לעזור לך להשיג יותר שליטה ורוגע. {watch} בו. {_try} לא לעצום עיניים, לשמור על קשר עין עם {therapist} {and_act} לפי ההנחיות בוידאו.
-הוידאו יתחיל מיד לאחר הודעתך הבאה.""".format(
-        watch = "צפה" if is_patient_male else "צפי",
-        _try = "נסה" if is_patient_male else "נסי",
-        therapist = "המטפל" if is_bot_male else "המטפלת",
-        and_act = "ופעל" if is_patient_male else "ופעלי"))
+    request_context.set_next_state(StateWaitForResponseBeforeVideo)
+    return request_context.write_chat_message("""{patient_name}, {prefix}. בדקות הקרובות אנחה אותך בתרגול.
+
+אציג לך וידאו שילמד אותך לעשות תרגיל לייצוב מיידי.""".format(
+        patient_name = patient_name,
+        prefix = prefixDict[isp_path]))
 States[StateStartISP] = State(chat_input=ChatInputNotWait, run=start_isp)
+
+async def wait_for_response_before_video(request_context: RequestContext):
+    response = request_context.history[-1]["content"]
+    is_patient_male = request_context.get_var(VariableIsPatientMale)
+    if response == "הפעל סרטון":
+        request_context.set_next_state(StateShowVideo)
+    elif response == "ברצוני לסיים":
+        request_context.save_to_var(VariableIsUserExited, True)
+        request_context.save_to_var(VariableExitText, GenericExitText)
+        request_context.set_next_state(StateExit)
+    else:
+        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} הפעל סרטון/ברצוני לסיים".format(type = "הקלד" if is_patient_male else "הקלידי"))
+States[StateWaitForResponseBeforeVideo] = State(chat_input=chat_input_multiple_options(["ברצוני לסיים", "הפעל סרטון"]), run=wait_for_response_before_video)
 
 async def show_video(request_context: RequestContext):
     is_bot_male = request_context.get_var(VariableIsBotMale)
@@ -40,15 +53,15 @@ async def show_video(request_context: RequestContext):
     video_index = request_context.get_var(VariableVideoIndex)
     video_index_to_show = video_index % 4
     return request_context.write_roled_chat_message([{"role": "vimeo", "content": get_video(isp_path, is_bot_male, is_patient_male, video_index_to_show)}])
-States[StateShowVideo] = State(run=show_video)
+States[StateShowVideo] = State(chat_input=ChatInputNotWait, run=show_video)
 
-async def show_ask_again_after_video(request_context: RequestContext):
+async def show_ask_for_distress_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
     request_context.set_next_state(StateGetDistressAfterVideo)
     return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע?
 0  לא {annoyed} ולא חווה מצוקה בכלל
 10 {annoyed} או חווה מצוקה ברמה חריפה""".format(you = "אתה" if is_male else "את", annoyed = "מוטרד" if is_male else "מוטרדת"))
-States[StateAskForDistressAfterVideo] = State(run=show_ask_again_after_video)
+States[StateAskForDistressAfterVideo] = State(run=show_ask_for_distress_after_video)
 
 async def get_distress_level_after_video(request_context: RequestContext):
     distress_msg = request_context.history[-1]["content"]
@@ -88,13 +101,15 @@ async def get_distress_level_after_video(request_context: RequestContext):
         return
 
     ready_to_continue = "האם {you_ready} להמשיך לתרגל?".format(you_ready = "אתה מוכן" if is_male else "את מוכנה")
-    request_context.set_next_state(StateGetIfToContinueAfterVideo)
     if distress < prevDistress:
-        return request_context.write_chat_message("""אני {happy} {that_you} חווה שיפור, מיד נוכל להמשיך לתרגל אם {want}. {ready_to_continue}""".format(
+        request_context.set_next_state(StateGetIfToContinueAfterVideo)
+        return request_context.write_chat_message("""אני {happy} {that_you} חווה שיפור, ייתכן שיפור נוסף עם התרגול. האם {want} להמשיך?""".format(
             happy = "שמח" if is_bot_male else "שמחה", that_you = "שאתה" if is_male else "שאת", ready_to_continue = ready_to_continue, want = "תרצה" if is_male else "תרצי"))
     elif distress == prevDistress:
+        request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""חלק מהאנשים חווים שיפור אחרי תרגול נוסף. האם {want} להמשיך לתרגל?""".format(want = "תרצה" if is_male else "תרצי"))
     else:
+        request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""אני מבין שקשה לך. {ready_to_continue}""".format(ready_to_continue = ready_to_continue))
 States[StateGetDistressAfterVideo] = State(chat_input=ChatInputNumeric, run=get_distress_level_after_video)
 
@@ -105,8 +120,9 @@ async def get_if_to_continue_after_video(request_context: RequestContext):
     user_continued = request_context.history[-1]["content"].strip() in ("fi", "כן", "טוב", "מוכן", "מוכנה", "בסדר", "בטח", "סבבה", "למה לא", "לך על זה", "לכי על זה", "קדימה", "אני על זה")
     request_context.save_to_var(VariableIsUserExited, not user_continued)
     if user_continued:
-        request_context.save_to_var(VariableNextVideoPrefix, "")
-        request_context.set_next_state(StateNextVideo)
+        video_index = request_context.get_var(VariableVideoIndex) + 1
+        request_context.save_to_var(VariableVideoIndex, video_index)
+        request_context.set_next_state(StateShowVideo)
     elif not (request_context.history[-1]["content"].strip() in ("kt", "לא", "פחות", "ממש לא", "אין מצב", "די", "מספיק")):
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כן/לא".format(type = "הקלד" if is_male else "הקלידי"))
     elif was_distress_level_increased and isp_path != "1":
@@ -114,19 +130,4 @@ async def get_if_to_continue_after_video(request_context: RequestContext):
         request_context.set_next_state(StateExit)
     else:
         request_context.set_next_state(StateStartPositiveCognition)
-States[StateGetIfToContinueAfterVideo] = State(run=get_if_to_continue_after_video)
-
-async def next_video(request_context: RequestContext):
-    video_index = request_context.get_var(VariableVideoIndex) + 1
-    request_context.save_to_var(VariableVideoIndex, video_index)
-    isp_path = request_context.get_var(VariableIspPath)
-    is_bot_male = request_context.get_var(VariableIsBotMale)
-    is_patient_male = request_context.get_var(VariableIsPatientMale)
-    request_context.set_next_state(StateShowVideo)
-    return request_context.write_chat_message(request_context.get_var(VariableNextVideoPrefix) + """{watch} בוידאו המשך. {_try} לא לעצום עיניים, לשמור על קשר עין עם {therapist} {and_act} לפי ההנחיות בוידאו.
-הוידאו יתחיל מיד לאחר הודעתך הבאה.""".format(
-        watch = "צפה" if is_patient_male else "צפי",
-        _try = "נסה" if is_patient_male else "נסי",
-        therapist = "המטפל" if is_bot_male else "המטפלת",
-        and_act = "ופעל" if is_patient_male else "ופעלי"))
-States[StateNextVideo] = State(chat_input=ChatInputNotWait, run=next_video)
+States[StateGetIfToContinueAfterVideo] = State(chat_input=chat_input_multiple_options(["לא", "כן"]), run=get_if_to_continue_after_video)
