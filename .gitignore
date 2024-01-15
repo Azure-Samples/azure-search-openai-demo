@@ -148,8 +148,6 @@ static/
 
 data/**/*.md5
 
-#ignore data folder to avoid internal testing documents being published
+#ignore data folder to avoid internal testing documents being published. Ignore output file
 data/*
-out1.txt
-out2.txt
-out3.txt
+out*.txt
