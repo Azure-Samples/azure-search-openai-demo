@@ -3,6 +3,7 @@
 import { IPublicClientApplication } from "@azure/msal-browser";
 
 const appServicesAuthTokenUrl = ".auth/me";
+const appServicesAuthTokenRefreshUrl = ".auth/refresh";
 const appServicesAuthLogoutUrl = ".auth/logout?post_logout_redirect_uri=/";
 
 interface AppServicesToken {
@@ -88,18 +89,24 @@ export const getRedirectUri = () => {
 // Get an access token if a user logged in using app services authentication
 // Returns null if the app doesn't support app services authentication
 const getAppServicesToken = (): Promise<AppServicesToken | null> => {
-    return fetch(appServicesAuthTokenUrl).then(r => {
+    return fetch(appServicesAuthTokenRefreshUrl).then(r => {
         if (r.ok) {
-            return r.json().then(json => {
-                if (json.length > 0) {
-                    return {
-                        id_token: json[0]["id_token"] as string,
-                        access_token: json[0]["access_token"] as string,
-                        user_claims: json[0]["user_claims"].reduce((acc: Record<string, any>, item: Record<string, any>) => {
-                            acc[item.typ] = item.val;
-                            return acc;
-                        }, {}) as Record<string, any>
-                    };
+            return fetch(appServicesAuthTokenUrl).then(r => {
+                if (r.ok) {
+                    return r.json().then(json => {
+                        if (json.length > 0) {
+                            return {
+                                id_token: json[0]["id_token"] as string,
+                                access_token: json[0]["access_token"] as string,
+                                user_claims: json[0]["user_claims"].reduce((acc: Record<string, any>, item: Record<string, any>) => {
+                                    acc[item.typ] = item.val;
+                                    return acc;
+                                }, {}) as Record<string, any>
+                            };
+                        }
+
+                        return null;
+                    });
                 }
 
                 return null;
