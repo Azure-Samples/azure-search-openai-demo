@@ -1,0 +1,56 @@
+﻿
+.ISP {
+    color: #192f2a;
+    direction: rtl;
+    font-family: "Segoe UI-Semibold", Helvetica;
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    width: 100%;
+    padding-right: 1.4rem;
+    padding-left: 1.4rem;
+}
+
+.buttonWrapper {
+    width: 100%;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically, if needed */
+    /* Remove height if you want the div to size with the content */
+    padding-bottom: 3rem;
+    padding-left: 1.4rem;
+    padding-right: 1.4rem;
+}
+
+.buttonpadding {
+    height: 100%;
+}
+
+
+.gototosbutton {
+    background-color: #296163; /* Button background color */
+    color: white; /* Text color */
+    padding: 1.1rem; /* Padding inside the button */
+    font-family: 'Arial', sans-serif; /* Font family */
+    font-size: 1.4rem; /* Font size */
+    border: none; /* No border */
+    border-radius: 15px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-align: center; /* Center the text */
+    display: inline-block; /* Allow width and height */
+    margin: 0; /* No margin */
+    vertical-align: middle; /* Align inline-block elements in the middle */
+    touch-action: manipulation; /* Improve mobile experience */
+    user-select: none; /* Prevent text select */
+    background-image: none; /* No background image */
+    white-space: nowrap; /* Prevents the text from wrapping */
+    width: 100%;
+    flex: 1 1 auto;
+}
+
+    .gototosbutton:hover,
+    .gototosbutton:focus {
+        background-color: #3b4a75; /* Darker background on hover/focus */
+    }
+
+

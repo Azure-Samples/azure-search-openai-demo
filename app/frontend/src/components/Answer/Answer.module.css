@@ -3,16 +3,13 @@
     padding-bottom: 0.25rem;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-    background: #d7c5d0;
+    background: white;
     border-radius: 0.5rem;
     box-shadow:
         0px 0.125rem 0.25rem rgba(0, 0, 0, 0.14),
         0px 0px 0.125rem rgba(0, 0, 0, 0.12);
     outline: transparent solid 0.0625rem;
-}
-
-.explanationText {
-    font-weight: bold;
+    width: 100%
 }
 
 .answerLogo {
@@ -192,5 +189,42 @@ sup {
     .answerText td,
     .answerText th {
         padding: 0.2rem;
+    }
+}
+
+
+@media only screen and (max-width: 39rem) {
+    .answerContainer {
+        /* Assuming these values remain constant as they don't change between 48rem and 30rem */
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+    }
+
+    .answerLogo {
+        /* Assuming the logo size remains constant as it's only defined at 48rem */
+        font-size: 1.5rem;
+    }
+
+    .answerText {
+        /* Interpolating between 0.875rem and 0.75rem */
+        font-size: 0.8125rem; /* Midway approximation */
+        /* Interpolating between 1.1rem and 1rem */
+        line-height: 1.05rem; /* Midway approximation */
+        /* Interpolating padding top and bottom */
+        padding-top: 0.1625rem; /* Midway approximation */
+        padding-bottom: 0.5125rem; /* Midway approximation */
+    }
+
+        .answerText td,
+        .answerText th {
+            /* Interpolating between 0.25rem and 0.2rem */
+            padding: 0.225rem; /* Midway approximation */
+        }
+
+    .followupQuestionsList {
+        /* Assuming this value remains constant as it's only defined at 48rem */
+        margin-top: 0.5rem;
     }
 }

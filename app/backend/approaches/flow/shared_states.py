@@ -34,7 +34,7 @@ PartitionKey = "DefaultPartition"
 DemoClientId = "דמו"
 MissingClientId = "כניסה ללא זיהוי משתמש"
 ContactsText = """טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-טלפון ער"ן  טלפון 1201 או ווטסאפ <a href="https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0">https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0</a> (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
+טלפון ער"ן  טלפון 1201 או <a href="https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0">ווטסאפ</a> (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
 
 ChatInputNotWait = "INTERNAL_PLACEHOLDER_NOT_WAIT"
 ChatInputFreeText = { "inputType": "freeText" }

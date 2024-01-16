@@ -29,7 +29,7 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput }: Prop
     };
 
     const onEnterPress = (ev: React.KeyboardEvent<Element>) => {
-        if (ev.key === "Enter" && !ev.shiftKey) {
+        if ((ev.key === "Enter" || ev.keyCode === 13) && !ev.shiftKey) {
             ev.preventDefault();
             sendQuestion();
         }
@@ -59,25 +59,27 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput }: Prop
             ))}
         </Stack>
     ) : (
-        <Stack horizontal className={styles.questionInputContainer}>
-            <TextField
-                className={styles.questionInputTextArea}
-                placeholder={chatInput?.inputType == "numeric" ? "יש להקליד מספר" : "יש להקליד תשובה"}
-                resizable={false}
-                borderless
-                value={question}
-                onChange={onQuestionChange}
-                onKeyDown={onEnterPress}
-            />
-            <div className={styles.questionInputButtonsContainer}>
-                <Button
-                    size="large"
-                    icon={<Send28Filled primaryFill="rgba(18, 29, 59, 1)" />}
-                    style={{ transform: "rotate(180deg)" }}
-                    disabled={sendQuestionDisabled}
-                    onClick={sendQuestion}
+        <form>
+            <Stack horizontal className={styles.questionInputContainer}>
+                <TextField
+                    className={styles.questionInputTextArea}
+                    placeholder={chatInput?.inputType == "numeric" ? "יש להקליד מספר" : "יש להקליד תשובה"}
+                    resizable={false}
+                    borderless
+                    value={question}
+                    onChange={onQuestionChange}
+                    onKeyDown={onEnterPress}
                 />
-            </div>
-        </Stack>
+                <div className={styles.questionInputButtonsContainer}>
+                    <Button
+                        size="large"
+                        icon={<Send28Filled primaryFill="rgba(18, 29, 59, 1)" />}
+                        style={{ transform: "rotate(180deg)" }}
+                        disabled={sendQuestionDisabled}
+                        onClick={sendQuestion}
+                    />
+                </div>
+            </Stack>
+        </form>
     );
 };

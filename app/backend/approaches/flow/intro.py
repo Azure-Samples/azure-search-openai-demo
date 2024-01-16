@@ -14,6 +14,7 @@ StateCheckClientId = "CHECK_CLIENT_ID"
 StateUserAlreadyParticipated = "USER_ALREADY_PARTICIPATED"
 StateGetAge = "GET_AGE"
 StateGetIfToContinue = "GET_IF_TO_CONTINUE"
+StateGetTosAgreement = "GET_TOS_AGREEMENT"
 StateGetBotGender = "GET_BOT_GENDER"
 StateGetName = "Get_NAME"
 StateGetPatientGender = "GET_PATIENT_GENDER"
@@ -62,18 +63,8 @@ async def start_intro(request_context: RequestContext):
         request_context.set_next_state(StateGetIfToContinue)
         return request_context.write_roled_chat_message([
             {
-                "role": "explanationText",
-                "content": """ברוכים הבאים לכלי סיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. הכלים והידע שכלי זה עושה בהם שימוש מבוססים על פרוטוקול ISP (Immediate Support Protocol)  שנמצא יעיל מחקרית לצמצום רמות חרדה אחרי אירוע טראומטי.  הכלי הוא דיגיטלי ואיננו כולל מעורבות אנושית בפעילותו השוטפת. הטכנולוגיה נועדה להנגיש באופן מסודר ומובנה את התהליך לתמיכה מיידית להרגעה וטיפול עצמי.  
-<span style="font-weight: bolder">נא לאשר את תנאי השימוש:</span>
-כלי זה כעת בשלב מחקר ופיתוח של חוקרי אקדמיה. בשלב הזה הוא למבוגרים מעל גיל 18, דוברי עברית, ללא אבחנה של מחלה פסיכוטית ושלא חשים מסוכנים לעצמם או לאחרים. אם אתה מתמודד עם מחשבות אובדניות או חושש שתפגע בעצמך או באחר, נא פנה לאחד מגורמי התמיכה הבאים:
-{contactsText}
-המידע והתרגולים שמוצעים כאן הם למידע כללי בלבד ולא מיועדים לטיפול רפואי או כל טיפול של מקצועות בריאות אחרים. המידע אינו מחליף ייעוץ מקצועי רפואי. השימוש במידע ובתרגולים כאן הוא באחריות המשתמש בלבד. תוכן בן השיח הדיגיטלי הוא לא תחליף לייעוץ, אבחון או טיפול רפואיים. האחריות על השימוש בתומך הדיגיטלי היא על המשתמש בלבד. 
-אני יודע שמידע שנאסף כאן נשמר על מנת לחקור את התחום של יעילות כלים דיגיטליים אחרי אירוע טראומטי לצמצום מתחים וכי שום מידע אישי מזהה לא יפורסם במסגרת פרסומים אקדמיים של המחקר.
-ניתן ליצור קשר באימייל: asman@tauex.tau.ac.il""".format(contactsText = ContactsText)
-            },
-            {
-                "role": "assistant",
-                "content": "האם ברצונך להמשיך? כן/לא"
+                "role": "introPage",
+                "content": "none"
             }])
         
     if entity["Status"] == "finished":
@@ -87,12 +78,7 @@ async def start_intro(request_context: RequestContext):
 States[StateStartIntro] = State(chat_input=ChatInputNotWait, run=start_intro)
 
 async def get_if_to_continue(request_context: RequestContext):
-    if request_context.history[-1]["content"].strip() in ("kt", "לא", "ממש לא", "אין מצב", "די", "מספיק"):
-        request_context.set_next_state(StateExit)
-        request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. 
-הרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה. יש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
-{contactsText}""".format(contactsText = ContactsText))
-    elif request_context.history[-1]["content"].strip() in ("fi", "כן", "רוצה", "מוכן", "מוכנה", "בסדר", "בטח", "סבבה"):
+    if request_context.history[-1]["content"].strip() == "go-to-tos":
         client_id = request_context.get_var(VariableClientId)
         if request_context.get_var(VariableClientId) != DemoClientId:
             request_context.save_to_var(VariableShouldSaveClientStatus, True)
@@ -103,11 +89,23 @@ async def get_if_to_continue(request_context: RequestContext):
             }
             await request_context.app_resources.table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity)
 
+        request_context.set_next_state(StateGetTosAgreement)
+        return request_context.write_roled_chat_message([
+            {
+                "role": "termsOfServicePage",
+                "content": "none"
+            }])
+    else:
+        raise Exception('Unexpected content for get_if_to_continue state.')
+States[StateGetIfToContinue] = State(run=get_if_to_continue)
+
+async def get_tos_agreement(request_context: RequestContext):
+    if request_context.history[-1]["content"].strip() == "user-accepted-tos":
         request_context.set_next_state(StateGetAge)
         return request_context.write_chat_message("מה גילך ?")
     else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. נא להקליד כן/לא")
-States[StateGetIfToContinue] = State(chat_input=chat_input_multiple_options(["כן", "לא"]), run=get_if_to_continue)
+        raise Exception('Unexpected content for get_tos_agreement state.')
+States[StateGetTosAgreement] = State(run=get_tos_agreement)
 
 def user_already_participated(request_context: RequestContext):
     return request_context.write_chat_message("""השתתפותך כבר רשומה.""")

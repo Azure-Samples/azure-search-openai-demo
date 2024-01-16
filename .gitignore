@@ -148,3 +148,4 @@ static/
 
 # Visual studio
 .vs
+obj

@@ -1,0 +1,139 @@
+﻿.container {
+    background-color: white;
+    padding-top: 0.5%;
+    padding-bottom: 3%;
+    padding-left: 6%;
+    padding-right: 6%;
+    border-radius: 8px;
+    margin: 4%;
+    flex: 1 1 auto;
+    flex-flow: column;
+    height: 100%;
+    display: flex;
+}
+
+.textspace {
+}
+
+.label {
+    color: #192f2a;
+    direction: rtl;
+    font-family: "Segoe UI-Bold", Helvetica;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: normal;
+    text-align: right;
+}
+
+.content {
+    color: #192f2a;
+    direction: rtl;
+    font-family: "Segoe UI-Semibold", Helvetica;
+    font-size: 1em;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    text-align: right;
+}
+
+
+
+.confirmbutton {
+    background-color: #296163; /* Button background color */
+    color: white; /* Text color */
+    padding: 1.1rem; /* Padding inside the button */
+    font-family: "SF Pro Text-Semibold", Helvetica;
+    font-size: 1.4rem; /* Font size */
+    border: none; /* No border */
+    border-radius: 15px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-align: center; /* Center the text */
+    display: inline-block; /* Allow width and height */
+    margin: 0; /* No margin */
+    vertical-align: middle; /* Align inline-block elements in the middle */
+    touch-action: manipulation; /* Improve mobile experience */
+    user-select: none; /* Prevent text select */
+    background-image: none; /* No background image */
+    white-space: nowrap; /* Prevents the text from wrapping */
+    width: 100%;
+    margin-right: 2.5%;
+    margin-bottom: 5%;
+}
+
+    .confirmbutton:hover,
+    .confirmbutton:focus {
+        background-color: #3b4a75; /* Darker background on hover/focus */
+    }
+    .confirmbutton:disabled {
+        background-color: #efefef; /* Lighter pink background */
+        color: #808080; /* Dimmed text color */
+        border: 1px solid #efefef; /* Lighter border color */
+        cursor: not-allowed; /* Shows a 'no entry' cursor when hovered */
+        opacity: 0.65; /* Make the button appear faded */
+        pointer-events: none; /* Prevents any interaction with the button */
+    }
+
+
+    .exitbutton {
+        background-color: white; /* White background */
+        color: #192f2a;
+        border: 2px solid #192f2a; /* Black border */
+        outline: none; /* Removes the outline to avoid default browser styles */
+        font-weight: 400;
+        padding: 1rem; /* Padding inside the button */
+        font-family: "SF Pro Text-Semibold", Helvetica;
+        font-size: 1.4rem; /* Font size */
+        border-radius: 15px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+        text-align: center; /* Center the text */
+        display: inline-block; /* Allow width and height */
+        vertical-align: middle; /* Align inline-block elements in the middle */
+        touch-action: manipulation; /* Improve mobile experience */
+        user-select: none; /* Prevent text select */
+        background-image: none; /* No background image */
+        white-space: nowrap; /* Prevents the text from wrapping */
+        width: 100%;
+        margin-left: 2.5%;
+        margin-bottom: 5%;
+    }
+
+.buttonscontainer {
+    width: 100%;
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically, if needed */
+}
+
+
+
+.emailLink {
+    color: #296163;
+    text-decoration: underline;
+}
+
+.buttonpadding {
+    height: 100%;
+}
+
+
+
+@media only screen and (max-width: 391px) {
+    .label {
+        font-size: 0.95rem
+    }
+
+    .content {
+        font-size: 0.95em
+    }
+
+    .chatHeader {
+        font-size: 0.8rem; /* Adjusted font size for medium screens */
+    }
+    .exitbutton,
+    .confirmbutton {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+}
+
