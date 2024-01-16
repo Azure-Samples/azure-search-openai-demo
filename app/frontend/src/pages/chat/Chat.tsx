@@ -329,7 +329,7 @@ const Chat: React.FC = ({
                 <TermsOfService onButtonClicked={() => makeApiRequest("user-accepted-tos", "frontend-client")} />
             }
 
-            {!isIntroPage && !isTosPage && answers.length > 1 &&
+            {!isIntroPage && !isTosPage && answers.length > 0 &&
                 <div className={styles.container}>
                     <div className={styles.chatRoot}>
                         <div className={styles.chatContainer}>
@@ -338,7 +338,7 @@ const Chat: React.FC = ({
                                     {isStreaming &&
                                         streamedAnswers.map((streamedAnswer, index) => (
                                             <div key={index}>
-                                                {index > 0 && shouldShowClientMessage(streamedAnswer.clientRole) && <UserChatMessage message={streamedAnswer.content} />}
+                                                {shouldShowClientMessage(streamedAnswer.clientRole) && <UserChatMessage message={streamedAnswer.content} />}
                                                 {streamedAnswer.responses.map(
                                                     (roledAnswer, index) =>
                                                         shouldShowServerResponse(roledAnswer) && (
@@ -362,7 +362,7 @@ const Chat: React.FC = ({
                                     {!isStreaming &&
                                         answers.map((answer, index) => (
                                             <div key={index}>
-                                                {index > 0 && shouldShowClientMessage(answer.clientRole) && <UserChatMessage message={answer.content} />}
+                                                {shouldShowClientMessage(answer.clientRole) && <UserChatMessage message={answer.content} />}
                                                 {answer.responses.map(
                                                     (roledAnswer, index) =>
                                                         shouldShowServerResponse(roledAnswer) && (
