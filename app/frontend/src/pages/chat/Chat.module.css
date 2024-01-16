@@ -2,7 +2,6 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
     background-color: #ded8e2;
     align-items: center;
 }
@@ -16,18 +15,6 @@
     height: 100%;
 }
 
-.chatHeader {
-    width: 100%;
-    height: 44px;
-    background-color: #192f2a;
-    color: white;
-    font-family: "Segoe UI";
-    font-size: 17px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .chatContainer {
     flex: 1;
     display: flex;
@@ -36,43 +23,11 @@
     width: 100%;
 }
 
-.chatIntroContainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.chatIntroImageContainer {
-    background-color: #9a7489;
-}
-
-.chatIntroImageViewport {
-    width: 50%;
-    text-align: right;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-.chatIntroImage {
-    position: relative;
-}
-
-.chatIntroText {
-    width: 100%;
-    height: 39px;
-    color: #192f2a;
-    font-family: "Segoe UI";
-    font-size: 24px;
-    text-align: center;
-    vertical-align: middle;
-}
 
 .chatEmptyState {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    max-height: 64rem;
     padding-top: 3.75rem;
 }
 
@@ -88,31 +43,10 @@
     margin-bottom: 0.625rem;
 }
 
-@media only screen and (max-width: 48rem) {
-    .chatEmptyStateTitle {
-        font-size: 3rem;
-        margin-bottom: 0;
-    }
 
-    .chatMessageGpt {
-        min-width: 18.75rem;
-    }
-}
-
-@media only screen and (max-height: 48.75rem) {
-    .chatEmptyState {
-        padding-top: 0;
-    }
-
-    .chatEmptyStateTitle {
-        font-size: 3rem;
-        margin-bottom: 0;
-    }
-}
 
 .chatMessageStreamContainer {
     flex-grow: 1;
-    max-height: 64rem;
     max-width: 64.25rem;
     width: 100%;
     overflow-y: auto;
@@ -130,12 +64,12 @@
 
 .chatMessageGpt {
     margin-bottom: 1.25rem;
-    max-width: 40rem; /* Adjusted max-width */
+    max-width: 100%; /* Changed to 100% for better fluidity */
     display: flex;
-    min-width: 31.25rem;
-    overflow-x: auto; /* Added overflow-x */
-    overflow-y: hidden; /* Added overflow-y */
-    flex-shrink: 1; /* Added flex-shrink */
+    min-width: 0; /* Changed to allow shrinkage on small screens */
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-shrink: 1;
 }
 
 .chatMessageGptMinWidth {
@@ -144,15 +78,11 @@
 }
 
 .chatInput {
-    position: sticky;
     bottom: 0;
-    flex: 0 0 6.25rem;
-    padding-top: 0.75rem;
-    padding-bottom: 1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    flex: 0 0 auto; /* Changed to auto for flexible height */
+    padding: 0.75rem 1.5rem;
     width: 100%;
-    max-width: 64.25rem;
+    max-width: 100%; /* Adjusted for better responsiveness */
     direction: rtl;
 }
 
@@ -193,6 +123,34 @@
 
 @media only screen and (max-width: 30rem) {
     .chatMessageGpt {
-        min-width: 15rem; /* Adjusted min-width */
+        min-width: 0; /* Allow messages to shrink on smaller screens */
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .chatMessageGpt {
+        min-width: 0; /* Allow messages to shrink on smaller screens */
+    }
+}
+
+@media only screen and (max-width: 48rem) {
+    .chatEmptyStateTitle {
+        font-size: 2.5rem; /* Adjusted font size */
+        margin-bottom: 0.5rem;
+    }
+
+    .chatMessageGpt {
+        min-width: 0; /* Allow shrink on smaller screens */
+    }
+}
+
+@media only screen and (max-height: 48.75rem) {
+    .chatEmptyState {
+        padding-top: 0;
+    }
+
+    .chatEmptyStateTitle {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
     }
 }

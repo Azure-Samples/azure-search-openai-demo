@@ -145,3 +145,7 @@ cython_debug/
 npm-debug.log*
 node_modules
 static/
+
+# Visual studio
+.vs
+obj

@@ -1,0 +1,110 @@
+﻿.chatHeader {
+    background-color: #192f2a;
+    color: white;
+    font-family: "SF Pro Text-Semibold", Helvetica;
+    font-weight: 400;
+    font-size: 1.3rem; /* Adjusted font size for medium screens */
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    direction: rtl;
+    height: 2.75rem; /* Converted 44px to rem for responsiveness */
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    padding-top: 0.5rem;
+}
+
+
+.invisibleChatHeader {
+    width: 100%;
+    background-color: #192f2a;
+    color: white;
+    font-family: "SF Pro Text-Semibold", Helvetica;
+    font-weight: 400;
+    font-size: 1.3rem; /* Adjusted font size for medium screens */
+    align-items: center;
+    justify-content: center;
+    height: 2.75rem; /* Converted 44px to rem for responsiveness */
+    padding-top: 0.5rem;
+}
+
+.chatIntroContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatIntroImageContainer {
+    background-color: #9a7489;
+    display: flex; /* Use flexbox to center the image */
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+}
+
+
+
+.chatIntroImageViewport {
+    width: 50%;
+    display: flex;
+    margin-left: 38vmin; /* Adjust the value as needed to move the image to the left */
+}
+
+.chatIntroImage {
+    max-width: 100%; /* Ensure the image scales within its container */
+    height: auto; /* Maintain the aspect ratio of the image */
+    position: relative;
+}
+
+.chatIntroText {
+    width: 100%;
+    height: 10%;
+    color: #192f2a;
+    font-family: "Segoe UI-Bold", Helvetica;
+    font-weight: 700;
+    font-size: 2.1rem;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 0.6rem;
+    padding-bottom: 2rem;
+}
+
+
+@media only screen and (max-width: 48rem) {
+    .invisibleChatHeader,
+    .chatHeader {
+        font-size: 1.2rem; /* Adjusted font size for medium screens */
+        height: 2.55rem
+    }
+
+    .chatIntroText {
+        font-size: 1.8rem;
+    }
+}
+
+@media only screen and (max-width: 20rem) {
+    .invisibleChatHeader,
+    .chatHeader {
+        font-size: 1.1rem; /* Adjusted font size for medium screens */
+        height: 2.35rem
+    }
+
+    .chatIntroText {
+        font-size: 1.6rem;
+    }
+}
+
+@media only screen and (max-width: 18rem) {
+    .invisibleChatHeader,
+    .chatHeader {
+        font-size: 1rem; /* Adjusted font size for medium screens */
+        height: 2.15rem
+    }
+
+    .chatIntroText {
+        font-size: 1.4rem;
+    }
+}
