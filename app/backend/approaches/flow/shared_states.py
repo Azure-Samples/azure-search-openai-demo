@@ -22,7 +22,6 @@ VariableIsBotMale = "isBotMale"
 VariableIsPatientMale = "isPatientMale"
 VariableIspPath = "ispPath"
 VariableIsUserExited = "isUserExited"
-VariableNextVideoPrefix = "nextVideoPrefix"
 VariablePatientName = "patientName"
 VariableShouldSaveClientStatus = "shouldSaveClientStatus"
 VariableSumDistressLevel = "sumDistressLevel"
@@ -34,13 +33,18 @@ PartitionKey = "DefaultPartition"
 DemoClientId = "דמו"
 MissingClientId = "כניסה ללא זיהוי משתמש"
 ContactsText = """טלפון מרכז החוסן הארצי הטיפולי *5486 (פתוח בימים א-ה בין 8.00-20.00)
-טלפון ער"ן  טלפון 1201 או <a href="https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0">ווטסאפ</a> (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
+טלפון ער"ן  טלפון 1201 או  <a href="https://api.whatsapp.com/send/?phone=%2B972545903462&text&type=phone_number&app_absent=0">ווטסאפ</a> (השירות מוגש לכל מצוקה ובמגוון שפות, וניתן בצורה אנונימית ומיידית, 24 שעות ביממה בכל ימות השנה)"""
+GenericExitText = """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה. 
+הרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה. יש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון
+{contactsText}""".format(contactsText = ContactsText)
 
 ChatInputNotWait = "INTERNAL_PLACEHOLDER_NOT_WAIT"
 ChatInputFreeText = { "inputType": "freeText" }
 ChatInputNumeric = { "inputType": "numeric" }
 def chat_input_multiple_options(options: list[str]):
     return { "inputType": "multiple", "options": options }
+def chat_input_slider(minValue, minLabel, maxValue, maxLabel):
+    return { "inputType": "slider", "minValue": minValue, "minLabel": minLabel, "maxValue": maxValue, "maxLabel": maxLabel }
 
 def get_exit_text(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)

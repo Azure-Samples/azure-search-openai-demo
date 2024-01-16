@@ -4,7 +4,7 @@ from azure.data.tables import UpdateMode
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
-from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, DemoClientId, MissingClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus, chat_input_multiple_options
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, DemoClientId, GenericExitText, MissingClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus, chat_input_multiple_options
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from azure.core.exceptions import ResourceNotFoundError
@@ -119,7 +119,7 @@ async def get_age(request_context: RequestContext):
         age = int(ageMsg)
     if age >= 18:
         request_context.set_next_state(StateGetBotGender)
-        return request_context.write_chat_message("שלום. לתהליך הנוכחי, מה תעדיפ/י: מטפל או מטפלת?")
+        return request_context.write_chat_message("לתהליך הנוכחי, מה תעדיפ/י?")
     elif age > 0:
         request_context.set_next_state(StateExit)
         request_context.save_to_var(VariableExitText, """תודה שהתעניינת בכלי לסיוע עצמי במצבי מצוקה אחרי אירוע טראומטי. כרגע המערכת פתוחה לאנשים מעל גיל 18. היות שהרבה פעמים אחרי שחווים אירוע מאיים או קשה, או במצבים שחוששים מאירועים כאלה, חווים קושי או מצוקה, אם אתה חווה מצוקה, אפשר לפנות לסיוע נפשי ולקבל כלים להתמודדות בגופים שונים כגון
@@ -142,32 +142,24 @@ def get_bot_gender(request_context: RequestContext):
     
     request_context.save_to_var(VariableIsBotMale, is_male)
     request_context.set_next_state(StateGetName)
-    return request_context.write_roled_chat_message([
-        {
-            "role": "explanationText",
-            "content": "שמי {bot_name}, אני כלי דיגיטלי שמומחה במתן עזרה מיידית למבוגרים שהיו חשופים לאירועי מלחמה או קרב. הפסיכולוגים, החוקרים והמפתחים שפיתחו אותי הסתמכו על ידע מדעי ויכולת טכנולוגית מתקדמת כדי לסייע לך.".format(bot_name = bot_name)
-        },
-        {
-            "role": "assistant",
-            "content": "אמור/אמרי לי בבקשה מה שמך?"
-        }])
-States[StateGetBotGender] = State(run=get_bot_gender)
+    return request_context.write_chat_message("מה שמך?")
+States[StateGetBotGender] = State(chat_input=chat_input_multiple_options(["מטפלת", "מטפל"]), run=get_bot_gender)
 
 async def get_name(request_context: RequestContext):
     patient_name = request_context.history[-1]["content"]
     request_context.save_to_var(VariablePatientName, patient_name)
     request_context.set_next_state(StateGetPatientGender)
-    return request_context.write_chat_message("האם תרצה/י שאפנה אליך בלשון גבר/אשה?")
+    return request_context.write_chat_message("איך לפנות אליך/אלייך?")
 States[StateGetName] = State(run=get_name)
 
 async def get_patient_gender(request_context: RequestContext):
-    if request_context.history[-1]["content"].strip() in ("dcr", "גבר", "לשון גבר", "פנה אלי בלשון גבר", "פנה אלי כגבר"):
+    if request_context.history[-1]["content"].strip() in ("dcr", "גבר", "לשון גבר", "פנה אלי בלשון גבר", "פנה אלי כגבר", "זכר"):
         is_male = True
-    elif request_context.history[-1]["content"].strip() in ("tav", "אשה", "אישה", "לשון אשה", "לשון אישה", "פנה אלי בלשון אשה", "פנה אלי בלשון אישה", "פנה אלי כאשה", "פנה אלי כאישה"):
+    elif request_context.history[-1]["content"].strip() in ("tav", "אשה", "אישה", "לשון אשה", "לשון אישה", "פנה אלי בלשון אשה", "פנה אלי בלשון אישה", "פנה אלי כאשה", "פנה אלי כאישה", "נקבה"):
         is_male = False
     else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד/י גבר/אשה?")
+        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא הקלד/י נקבה/זכר?")
 
     request_context.save_to_var(VariableIsPatientMale, is_male)
     request_context.set_next_state(StateStartPreperation)
-States[StateGetPatientGender] = State(run=get_patient_gender)
+States[StateGetPatientGender] = State(chat_input=chat_input_multiple_options(["זכר", "נקבה"]), run=get_patient_gender)

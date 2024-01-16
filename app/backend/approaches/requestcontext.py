@@ -28,7 +28,7 @@ class RequestContext:
     
     def set_response_extra_info(self, extra_info: dict[str, str]):
         if self.has_extra_info():
-            raise Exception("Unexpected two results")
+            raise Exception("Unexpected two results: " + str(self.extra_info) + " and " + str(extra_info))
         self.extra_info = extra_info
 
     def has_extra_info(self):
