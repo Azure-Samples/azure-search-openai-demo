@@ -4,6 +4,7 @@
     flex-direction: column;
     background-color: #ded8e2;
     align-items: center;
+    margin-top: 2rem;
 }
 
 .chatRoot {

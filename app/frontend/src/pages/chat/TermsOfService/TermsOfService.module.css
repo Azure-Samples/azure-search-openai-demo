@@ -1,15 +1,26 @@
-﻿.container {
+﻿
+.rootContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ded8e2;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.container {
     background-color: white;
     padding-top: 0.5%;
-    padding-bottom: 3%;
     padding-left: 6%;
     padding-right: 6%;
     border-radius: 8px;
-    margin: 4%;
-    flex: 1 1 auto;
-    flex-flow: column;
-    height: 100%;
+    margin-left: 4%;
+    margin-right: 4%;
+    margin-bottom: 2%;
+    flex-direction: column;
     display: flex;
+    max-width: 64.25rem;
+    height: 100%;
 }
 
 .textspace {
@@ -58,7 +69,7 @@
     white-space: nowrap; /* Prevents the text from wrapping */
     width: 100%;
     margin-right: 2.5%;
-    margin-bottom: 5%;
+    margin-bottom: 1.5rem;
 }
 
     .confirmbutton:hover,
@@ -75,28 +86,28 @@
     }
 
 
-    .exitbutton {
-        background-color: white; /* White background */
-        color: #192f2a;
-        border: 2px solid #192f2a; /* Black border */
-        outline: none; /* Removes the outline to avoid default browser styles */
-        font-weight: 400;
-        padding: 1rem; /* Padding inside the button */
-        font-family: "SF Pro Text-Semibold", Helvetica;
-        font-size: 1.4rem; /* Font size */
-        border-radius: 15px; /* Rounded corners */
-        cursor: pointer; /* Pointer cursor on hover */
-        text-align: center; /* Center the text */
-        display: inline-block; /* Allow width and height */
-        vertical-align: middle; /* Align inline-block elements in the middle */
-        touch-action: manipulation; /* Improve mobile experience */
-        user-select: none; /* Prevent text select */
-        background-image: none; /* No background image */
-        white-space: nowrap; /* Prevents the text from wrapping */
-        width: 100%;
-        margin-left: 2.5%;
-        margin-bottom: 5%;
-    }
+.exitbutton {
+    background-color: white; /* White background */
+    color: #192f2a;
+    border: 2px solid #192f2a; /* Black border */
+    outline: none; /* Removes the outline to avoid default browser styles */
+    font-weight: 400;
+    padding: 1rem; /* Padding inside the button */
+    font-family: "SF Pro Text-Semibold", Helvetica;
+    font-size: 1.4rem; /* Font size */
+    border-radius: 15px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-align: center; /* Center the text */
+    display: inline-block; /* Allow width and height */
+    vertical-align: middle; /* Align inline-block elements in the middle */
+    touch-action: manipulation; /* Improve mobile experience */
+    user-select: none; /* Prevent text select */
+    background-image: none; /* No background image */
+    white-space: nowrap; /* Prevents the text from wrapping */
+    width: 100%;
+    margin-left: 2.5%;
+    margin-bottom: 1.5rem;
+}
 
 .buttonscontainer {
     width: 100%;
