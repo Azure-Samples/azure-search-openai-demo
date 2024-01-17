@@ -240,9 +240,10 @@ const Chat: React.FC = ({
         const player = new Vimeo("playerElement", {
             url: vimeoUrl,
             autoplay: true,
-            controls: false,
+            controls: true,
             dnt: true,
-            title: false
+            title: false,
+            playsinline: false
         });
 
         player.on("ended", () => {
