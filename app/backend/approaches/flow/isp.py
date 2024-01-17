@@ -82,9 +82,10 @@ async def get_distress_level_after_video(request_context: RequestContext):
         if isp_path == "1":
             request_context.set_next_state(StateStartPositiveCognition)
         else:
-            request_context.save_to_var(VariableExitText, """לאנשים שונים בזמנים שונים מתאימות התערבויות שונות. כיוון שאני מתרשם שקשה לך כעת אני {suggest} שנתקדם לקראת סיום התרגול.
+            request_context.save_to_var(VariableExitText, """לאנשים שונים בזמנים שונים מתאימות התערבויות שונות. כיוון שאני {impressed} שקשה לך כעת אני {suggest} שנתקדם לקראת סיום התרגול.
     לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה שיש לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון:
     {contactsText}""".format(
+                impressed = "מתרשם" if is_bot_male else "מתרשמת",
                 suggest = "מציע" if is_bot_male else "מציעה",
                 contactsText = ContactsText))
             request_context.set_next_state(StateExit)

@@ -65,6 +65,9 @@ export type ChatInput =
           inputType: "numeric";
       }
     | {
+          inputType: "disabled";
+      }
+    | {
           inputType: "multiple";
           options: string[];
       }

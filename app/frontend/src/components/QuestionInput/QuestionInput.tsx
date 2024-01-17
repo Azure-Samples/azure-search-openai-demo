@@ -53,7 +53,11 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput, isLoad
 
     const buttonStyle = { backgroundColor: "#d7c5d0", borderColor: "purple", borderWidth: 2, borderStyle: "solid", borderRadius: 4, marginLeft: 10 };
 
-    return chatInput && !isLoading && chatInput.inputType == "multiple" ? (
+    return chatInput && chatInput.inputType == "disabled" ? (
+        <Stack horizontal className={styles.questionInputContainer}>
+            התרגול הסתיים
+        </Stack>
+    ) : chatInput && !isLoading && chatInput.inputType == "multiple" ? (
         <Stack horizontal className={styles.questionInputContainer}>
             {chatInput.options.map(option => (
                 <Button

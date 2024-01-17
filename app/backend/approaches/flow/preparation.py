@@ -24,7 +24,7 @@ async def get_distress_level(request_context: RequestContext):
     request_context.save_to_var(VariableFirstDistressLevel, distress)
     if 0 <= distress and distress <= 1:
         request_context.set_next_state(StateAskIfToContinueOnLowDistress)
-        return request_context.write_chat_message("אני {understand} שאינך חווה מצוקה כרגע. האם {want} לסיים את התהליך כעת?".format(understand = "מבין" if is_patient_male else "מבינה", want = "תרצה" if is_bot_male else "תרצי"))
+        return request_context.write_chat_message("אני {understand} שאינך חווה מצוקה כרגע. האם {want} לסיים את התהליך כעת?".format(understand = "מבין" if is_patient_male else "מבינה", want = "תרצה" if is_patient_male else "תרצי"))
     elif 2 <= distress and distress <= 10:
         request_context.set_next_state(StateAskWhatAnnoying)
     else:
@@ -63,7 +63,7 @@ async def ask_what_annoying(request_context: RequestContext):
 מה הכי מטריד אותך כרגע?
 1. אני {feel} <span style="font-weight: bolder">בסכנה/{threatened}</span>
 2. אני {feel} <span style="font-weight: bolder">{guilty}</span> על משהו קשה שקרה
-3. אני {feel} חוסר שליטה לגבי מה שקורה<span style="font-weight: bolder">עכשיו</span>
+3. אני {feel} חוסר שליטה לגבי מה שקורה <span style="font-weight: bolder">עכשיו</span>
 4. אני {feel} חוסר שליטה לגבי דברים שעלולים לקרות <span style="font-weight: bolder">בעתיד</span>
 5. אני {concerned_and_feel} חוסר שליטה בנוגע <span style="font-weight: bolder">לאנשים שיקרים לי</span>""".format(
                 feel = "מרגיש" if is_patient_male else "מרגישה",

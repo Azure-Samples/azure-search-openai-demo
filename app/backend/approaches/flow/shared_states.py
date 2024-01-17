@@ -10,7 +10,7 @@ StateStartPositiveCognition = "START_POSITIVE_COGNITION"
 
 StateAskIfToExit = "ASK_IF_TO_EXIT"
 StateExit = "EXIT"
-StateEndLoop = "END_LOOP"
+StateEndInput = "END_INPUT"
 
 States = {}
 
@@ -41,6 +41,7 @@ GenericExitText = """תודה שהתעניינת בכלי לסיוע עצמי ב
 ChatInputNotWait = "INTERNAL_PLACEHOLDER_NOT_WAIT"
 ChatInputFreeText = { "inputType": "freeText" }
 ChatInputNumeric = { "inputType": "numeric" }
+ChatInputDisabled = { "inputType": "disabled" }
 def chat_input_multiple_options(options: list[str]):
     return { "inputType": "multiple", "options": options }
 def chat_input_slider(minValue, minLabel, maxValue, maxLabel):
@@ -87,7 +88,7 @@ class State:
         self.chat_input = chat_input
         self.run = run
 
-async def start_exit_loop(request_context: RequestContext):
+async def write_exit_text(request_context: RequestContext):
     if request_context.get_var(VariableShouldSaveClientStatus):
         entity = {
             "PartitionKey": PartitionKey,
@@ -96,10 +97,10 @@ async def start_exit_loop(request_context: RequestContext):
         }
         await request_context.app_resources.table_client.update_entity(mode=UpdateMode.REPLACE, entity=entity)
 
-    request_context.set_next_state(StateEndLoop)
+    request_context.set_next_state(StateEndInput)
     return request_context.write_chat_message(request_context.get_var(VariableExitText))
-States[StateExit] = State(chat_input=ChatInputNotWait, run=start_exit_loop)
+States[StateExit] = State(chat_input=ChatInputNotWait, run=write_exit_text)
 
-def exit_loop(request_context: RequestContext):
-    return request_context.write_chat_message(request_context.get_var(VariableExitText))
-States[StateEndLoop] = State(run=exit_loop)
+def end_input(request_context: RequestContext):
+    return None
+States[StateEndInput] = State(chat_input=ChatInputDisabled, run=end_input)

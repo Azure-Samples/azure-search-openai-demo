@@ -148,7 +148,7 @@ export function Component(): JSX.Element {
                 <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 <h1 className={styles.oneshotTitle}>Ask your data</h1>
                 <div className={styles.oneshotQuestionInput}>
-                    <QuestionInput disabled={isLoading} onSend={question => makeApiRequest(question)} />
+                    <QuestionInput disabled={isLoading} isLoading={false} onSend={question => makeApiRequest(question)} />
                 </div>
             </div>
             <div className={styles.oneshotBottomSection}>
