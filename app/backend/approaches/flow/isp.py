@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, GenericExitText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariablePatientName, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, chat_input_multiple_options, chat_input_slider, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, GenericExitText, State, StateExit, StateStartISP, StateStartPositiveCognition, States, VariableDistressLevel, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIsUserExited, VariableIspPath, VariablePatientName, VariableSumDistressLevel, VariableVideoIndex, VariableWasDistressLevelIncreased, VariableWasDistressLevelIncreasedTwice, chat_input_multiple_options, get_exit_text
 from approaches.requestcontext import RequestContext
 from approaches.videos import get_video
 
@@ -109,7 +109,7 @@ async def get_distress_level_after_video(request_context: RequestContext):
     else:
         request_context.set_next_state(StateGetIfToContinueAfterVideo)
         return request_context.write_chat_message("""אני מבין שקשה לך. {ready_to_continue}""".format(ready_to_continue = ready_to_continue))
-States[StateGetDistressAfterVideo] = State(chat_input=chat_input_slider(0, "ללא מצוקה כלל", 10, "מצוקה חריפה מאד"), run=get_distress_level_after_video)
+States[StateGetDistressAfterVideo] = State(chat_input=ChatInputNumeric, run=get_distress_level_after_video)
 
 async def get_if_to_continue_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)

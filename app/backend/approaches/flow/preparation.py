@@ -1,4 +1,4 @@
-from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName, chat_input_multiple_options, chat_input_slider
+from approaches.flow.shared_states import ChatInputNotWait, ChatInputNumeric, ContactsText, State, StateExit, States, StateStartISP, StateStartPreperation, VariableDistressLevel, VariableExitText, VariableFirstDistressLevel, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, VariablePatientName, chat_input_multiple_options
 from approaches.requestcontext import RequestContext
 
 StateGetDistressLevel = "GET_DISTRESS_LEVEL"
@@ -29,7 +29,7 @@ async def get_distress_level(request_context: RequestContext):
         request_context.set_next_state(StateAskWhatAnnoying)
     else:
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} מספר בין 0 ל-10".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-States[StateGetDistressLevel] = State(chat_input=chat_input_slider(0, "ללא מצוקה כלל", 10, "מצוקה חריפה מאד"), run=get_distress_level)
+States[StateGetDistressLevel] = State(chat_input=ChatInputNumeric, run=get_distress_level)
 
 async def ask_if_to_continue_on_low_distress(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
