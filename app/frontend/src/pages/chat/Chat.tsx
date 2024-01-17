@@ -409,6 +409,7 @@ const Chat: React.FC = ({
                                     disabled={isLoading || isWritingWords || isFirstRender || isPlayingVideo}
                                     chatInput={chatInput}
                                     onSend={question => makeApiRequest(question, "user")}
+                                    isLoading={isLoading || isWritingWords}
                                 />
                             </div>
                         </div>

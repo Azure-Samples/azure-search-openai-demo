@@ -11,9 +11,10 @@ interface Props {
     disabled: boolean;
     clearOnSend?: boolean;
     chatInput?: ChatInput;
+    isLoading: boolean;
 }
 
-export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput }: Props) => {
+export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput, isLoading }: Props) => {
     const [question, setQuestion] = useState<string>(chatInput?.inputType == "slider" ? chatInput.minValue.toString() : "");
 
     const sendQuestion = () => {
@@ -52,7 +53,7 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput }: Prop
 
     const buttonStyle = { backgroundColor: "#d7c5d0", borderColor: "purple", borderWidth: 2, borderStyle: "solid", borderRadius: 4, marginLeft: 10 };
 
-    return chatInput && chatInput.inputType == "multiple" ? (
+    return chatInput && !isLoading && chatInput.inputType == "multiple" ? (
         <Stack horizontal className={styles.questionInputContainer}>
             {chatInput.options.map(option => (
                 <Button
@@ -60,12 +61,13 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput }: Prop
                     onClick={() => {
                         onSend(option);
                     }}
+                    disabled={disabled}
                 >
                     {option}
                 </Button>
             ))}
         </Stack>
-    ) : chatInput && chatInput.inputType == "slider" ? (
+    ) : chatInput && !isLoading && chatInput.inputType == "slider" ? (
         <Stack horizontal className={styles.questionInputContainer}>
             <Label>{chatInput.maxLabel}</Label>
             <Slider
