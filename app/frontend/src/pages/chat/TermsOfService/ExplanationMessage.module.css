@@ -1,4 +1,19 @@
 ﻿
+.rootContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #ded8e2;
+    align-items: center;
+}
+
+.container {
+    max-width: 64.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .ISP {
     color: #192f2a;
     direction: rtl;
@@ -10,6 +25,7 @@
     width: 100%;
     padding-right: 1.4rem;
     padding-left: 1.4rem;
+    align-items: center;
 }
 
 .buttonWrapper {
@@ -45,7 +61,8 @@
     background-image: none; /* No background image */
     white-space: nowrap; /* Prevents the text from wrapping */
     width: 100%;
-    flex: 1 1 auto;
+    bottom: 0;
+    flex: 0 0 auto; /* Changed to auto for flexible height */
 }
 
     .gototosbutton:hover,
