@@ -5,7 +5,10 @@ import styles from "./Example.module.css";
 const DEFAULT_EXAMPLES: string[] = [
     "What categories of anomalies are there?",
     "Hvem er ansvarlig for håndtering av en endringsordre (VO)?",
-    "What are the responsibilities of an SRO?"
+    "What are the responsibilities of an SRO?",
+    "Resuma el procedimiento de gestión de documentos.",
+    "Fassen Sie das Verfahren zur Dokumentenverwaltung zusammen.",
+    "Résumez la procédure de gestion des documents."
 ];
 
 const GPT4V_EXAMPLES: string[] = [
