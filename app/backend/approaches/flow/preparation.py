@@ -10,9 +10,13 @@ async def start_preperation(request_context: RequestContext):
     is_patient_male = request_context.get_var(VariableIsPatientMale)
     patient_name = request_context.get_var(VariablePatientName)
     request_context.set_next_state(StateGetDistressLevel)
-    return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?""".format(
-        you = "אתה" if is_patient_male else "את",
-        annoyed = "מוטרד" if is_patient_male else "מוטרדת"))
+    return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע (במספר)?
+0  לא {annoyed} ולא חווה מצוקה כלל,
+10 {annoyed} או חווה מצוקה ברמה חריפה""".format(
+                can_you = "אתה יכול" if is_patient_male else "את יכולה",
+                you = "אתה" if is_patient_male else "את",
+                annoyed = "מוטרד" if is_patient_male else "מוטרדת")
+        )
 States[StateStartPreperation] = State(chat_input=ChatInputNotWait, run=start_preperation)
 
 async def get_distress_level(request_context: RequestContext):

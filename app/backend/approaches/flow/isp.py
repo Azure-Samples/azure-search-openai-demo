@@ -35,15 +35,15 @@ States[StateStartISP] = State(chat_input=ChatInputNotWait, run=start_isp)
 async def wait_for_response_before_video(request_context: RequestContext):
     response = request_context.history[-1]["content"]
     is_patient_male = request_context.get_var(VariableIsPatientMale)
-    if response == "הפעל סרטון":
+    if response == "לתרגל עם סרטון":
         request_context.set_next_state(StateShowVideo)
-    elif response == "ברצוני לסיים":
+    elif response == "לצאת":
         request_context.save_to_var(VariableIsUserExited, True)
         request_context.save_to_var(VariableExitText, GenericExitText)
         request_context.set_next_state(StateExit)
     else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} הפעל סרטון/ברצוני לסיים".format(type = "הקלד" if is_patient_male else "הקלידי"))
-States[StateWaitForResponseBeforeVideo] = State(chat_input=chat_input_multiple_options(["ברצוני לסיים", "הפעל סרטון"]), run=wait_for_response_before_video)
+        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} לתרגל עם סרטון/לצאת".format(type = "הקלד" if is_patient_male else "הקלידי"))
+States[StateWaitForResponseBeforeVideo] = State(chat_input=chat_input_multiple_options(["לצאת", "לתרגל עם סרטון"]), run=wait_for_response_before_video)
 
 async def show_video(request_context: RequestContext):
     is_bot_male = request_context.get_var(VariableIsBotMale)
@@ -51,14 +51,16 @@ async def show_video(request_context: RequestContext):
     isp_path = request_context.get_var(VariableIspPath)
     request_context.set_next_state(StateAskForDistressAfterVideo)
     video_index = request_context.get_var(VariableVideoIndex)
-    video_index_to_show = video_index % 4
+    video_index_to_show = 0 if video_index == 0 else ((video_index - 1) % 3 + 1)
     return request_context.write_roled_chat_message([{"role": "vimeo", "content": get_video(isp_path, is_bot_male, is_patient_male, video_index_to_show)}])
 States[StateShowVideo] = State(chat_input=ChatInputNotWait, run=show_video)
 
 async def show_ask_for_distress_after_video(request_context: RequestContext):
     is_male = request_context.get_var(VariableIsPatientMale)
     request_context.set_next_state(StateGetDistressAfterVideo)
-    return request_context.write_chat_message("עד כמה {you} {annoyed} או חווה מצוקה כרגע?".format(you = "אתה" if is_male else "את", annoyed = "מוטרד" if is_male else "מוטרדת"))
+    return request_context.write_chat_message("""עד כמה {you} {annoyed} או חווה מצוקה כרגע?
+0  לא {annoyed} ולא חווה מצוקה בכלל
+10 {annoyed} או חווה מצוקה ברמה חריפה""".format(you = "אתה" if is_male else "את", annoyed = "מוטרד" if is_male else "מוטרדת"))
 States[StateAskForDistressAfterVideo] = State(run=show_ask_for_distress_after_video)
 
 async def get_distress_level_after_video(request_context: RequestContext):
@@ -96,7 +98,11 @@ async def get_distress_level_after_video(request_context: RequestContext):
     video_index = request_context.get_var(VariableVideoIndex)
     if video_index == 7:
         request_context.save_to_var(VariableIsUserExited, False)
-        request_context.set_next_state(StateStartPositiveCognition)
+        if isp_path == "1":
+            request_context.set_next_state(StateStartPositiveCognition)
+        else:
+            request_context.save_to_var(VariableExitText, get_exit_text(request_context))
+            request_context.set_next_state(StateExit)
         return
 
     ready_to_continue = "האם {you_ready} להמשיך לתרגל?".format(you_ready = "אתה מוכן" if is_male else "את מוכנה")
@@ -124,7 +130,7 @@ async def get_if_to_continue_after_video(request_context: RequestContext):
         request_context.set_next_state(StateShowVideo)
     elif not (request_context.history[-1]["content"].strip() in ("kt", "לא", "פחות", "ממש לא", "אין מצב", "די", "מספיק")):
         return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כן/לא".format(type = "הקלד" if is_male else "הקלידי"))
-    elif was_distress_level_increased and isp_path != "1":
+    elif was_distress_level_increased or isp_path != "1":
         request_context.save_to_var(VariableExitText, get_exit_text(request_context))
         request_context.set_next_state(StateExit)
     else:
