@@ -80,7 +80,7 @@ def test_auth_setup(mock_confidential_client_success):
                 "postLogoutRedirectUri": "/",
                 "navigateToLoginRequestUrl": False,
             },
-            "cache": {"cacheLocation": "sessionStorage", "storeAuthStateInCookie": False},
+            "cache": {"cacheLocation": "localStorage", "storeAuthStateInCookie": False},
         },
         "loginRequest": {
             "scopes": [".default"],
@@ -104,7 +104,7 @@ def test_auth_setup_required_access_control(mock_confidential_client_success):
                 "postLogoutRedirectUri": "/",
                 "navigateToLoginRequestUrl": False,
             },
-            "cache": {"cacheLocation": "sessionStorage", "storeAuthStateInCookie": False},
+            "cache": {"cacheLocation": "localStorage", "storeAuthStateInCookie": False},
         },
         "loginRequest": {
             "scopes": [".default"],

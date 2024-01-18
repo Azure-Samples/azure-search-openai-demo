@@ -121,7 +121,7 @@ itsdangerous==2.1.2
     # via
     #   flask
     #   quart
-jinja2==3.1.2
+jinja2==3.1.3
     # via
     #   flask
     #   quart
@@ -151,7 +151,9 @@ numpy==1.26.2
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==1.3.7
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai
 opentelemetry-api==1.21.0
     # via
     #   azure-core-tracing-opentelemetry
@@ -262,7 +264,9 @@ pydantic==2.5.2
 pydantic-core==2.14.5
     # via pydantic
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3.post1
