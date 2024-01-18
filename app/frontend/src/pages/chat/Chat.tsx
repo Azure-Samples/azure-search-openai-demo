@@ -90,7 +90,7 @@ const Chat = () => {
             for await (const event of readNDJSONStream(responseBody)) {
                 if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
                     event["choices"][0]["message"] = event["choices"][0]["delta"];
-                    askResponse = event;
+                    askResponse = event as ChatAppResponse;
                 } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
                     setIsLoading(false);
                     await updateState(event["choices"][0]["delta"]["content"]);
