@@ -44,7 +44,7 @@ class TextSplitter:
         length = len(all_text)
 
         if length <= self.max_section_length:
-            yield (all_text, find_page(0))
+            yield SplitPage(page_num=find_page(0), text=all_text)
         else:
             start = 0
             end = length
