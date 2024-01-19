@@ -33,16 +33,12 @@ async def get_vision_key(credential: AsyncTokenCredential) -> Optional[str]:
     if args.visionkey:
         return args.visionkey
 
-    if args.visionKeyVaultName and args.visionKeyVaultkey:
-        key_vault_client = SecretClient(
-            vault_url=f"https://{args.visionKeyVaultName}.vault.azure.net", credential=credential
-        )
+    if args.keyvaultname and args.visionKeyVaultkey:
+        key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
         visionkey = await key_vault_client.get_secret(args.visionKeyVaultkey)
         return visionkey.value
     else:
-        print(
-            "Error: Please provide --visionkey or --visionKeyVaultName and --visionKeyVaultkey when using --searchimages."
-        )
+        print("Error: Please provide --visionkey or --keyvaultname and --visionKeyVaultkey when using --searchimages.")
         exit(1)
 
 
@@ -144,9 +140,16 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
 
 
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
+    search_key = args.searchkey
+    if args.keyvaultname and args.searchsecretname:
+        key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
+        search_key = (await key_vault_client.get_secret(args.searchsecretname)).value
+        await key_vault_client.close()
+
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
-        credential if is_key_empty(args.searchkey) else AzureKeyCredential(args.searchkey)
+        credential if is_key_empty(search_key) else AzureKeyCredential(search_key)
     )
+
     search_info = SearchInfo(
         endpoint=f"https://{args.searchservice}.search.windows.net/",
         credential=search_creds,
@@ -214,6 +217,11 @@ if __name__ == "__main__":
         "--searchkey",
         required=False,
         help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+    )
+    parser.add_argument(
+        "--searchsecretname",
+        required=False,
+        help="Required if searchkey is not provided and search service is free sku. Fetch the Azure AI Vision key from this keyvault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
         "--searchanalyzername",
@@ -286,14 +294,14 @@ if __name__ == "__main__":
         help="Required if --searchimages is specified. Use this Azure AI Vision key instead of the instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
-        "--visionKeyVaultName",
+        "--keyvaultname",
         required=False,
         help="Required if --searchimages is specified and visionkey is not provided. Fetch the Azure AI Vision key from this keyvault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
         "--visionKeyVaultkey",
         required=False,
-        help="Required if --searchimages is specified and visionKeyVaultName is provided. Fetch the Azure AI Vision key from this visionKeyVaultName in the key vault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required if --searchimages is specified and --keyvaultname is provided. Fetch the Azure AI Vision key from this key vault instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()

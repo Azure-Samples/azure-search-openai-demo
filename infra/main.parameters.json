@@ -30,7 +30,7 @@
       "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
     },
     "formRecognizerSkuName": {
-      "value": "S0"
+      "value": "${AZURE_FORMRECOGNIZER_SKU=S0}"
     },
     "searchIndexName": {
       "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
@@ -61,6 +61,9 @@
     },
     "storageSkuName": {
       "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+    },
+    "appServiceSkuName": {
+      "value": "${AZURE_APP_SERVICE_SKU=B1}"
     },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"

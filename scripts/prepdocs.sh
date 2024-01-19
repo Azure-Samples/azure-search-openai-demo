@@ -37,12 +37,16 @@ fi
 
 visionKeyVaultName=""
 if [ -n "$AZURE_KEY_VAULT_NAME" ]; then
-  visionKeyVaultName="--visionKeyVaultName $AZURE_KEY_VAULT_NAME"
+  visionKeyVaultName="--keyvaultname $AZURE_KEY_VAULT_NAME"
 fi
 
 visionKeyVaultkey=""
 if [ -n "$VISION_SECRET_NAME" ]; then
   visionKeyVaultkey="--visionKeyVaultkey $VISION_SECRET_NAME"
+fi
+searchSecretNameArg=""
+if [ -n "$AZURE_SEARCH_SECRET_NAME" ]; then
+  searchSecretNameArg="--searchsecretname $AZURE_SEARCH_SECRET_NAME"
 fi
 
 if [ "$USE_GPT4V" = true ]; then
@@ -54,8 +58,8 @@ if [ -n "$AZURE_TENANT_ID" ]; then
 fi
 
 ./scripts/.venv/bin/python ./scripts/prepdocs.py \
-'./data/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
-$aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
+'./data/*' --localpdfparser $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
+$searchSecretNameArg $aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
 $searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyVaultName \
 --container "$AZURE_STORAGE_CONTAINER" --searchservice "$AZURE_SEARCH_SERVICE" \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" \

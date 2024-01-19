@@ -5,8 +5,10 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import AsyncGenerator, cast
+from typing import AsyncGenerator, Union, cast
 
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.keyvault.secrets.aio import SecretClient
@@ -214,6 +216,7 @@ async def setup_clients():
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
+    SEARCH_SECRET_NAME = os.getenv("SEARCH_SECRET_NAME")
     VISION_SECRET_NAME = os.getenv("VISION_SECRET_NAME")
     AZURE_KEY_VAULT_NAME = os.getenv("AZURE_KEY_VAULT_NAME")
     # Shared by all OpenAI deployments
@@ -253,16 +256,31 @@ async def setup_clients():
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
+    # Fetch any necessary secrets from Key Vault
+    vision_key = None
+    search_key = None
+    if AZURE_KEY_VAULT_NAME and (VISION_SECRET_NAME or SEARCH_SECRET_NAME):
+        key_vault_client = SecretClient(
+            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
+        )
+        vision_key = (await key_vault_client.get_secret(VISION_SECRET_NAME)).value
+        search_key = (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
+        await key_vault_client.close()
+
     # Set up clients for AI Search and Storage
+    search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        AzureKeyCredential(search_key) if search_key else azure_credential
+    )
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,
-        credential=azure_credential,
+        credential=search_credential,
     )
     search_index_client = SearchIndexClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-        credential=azure_credential,
+        credential=search_credential,
     )
+
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
@@ -278,15 +296,6 @@ async def setup_clients():
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
     )
-
-    vision_key = None
-    if VISION_SECRET_NAME and AZURE_KEY_VAULT_NAME:  # Cognitive vision keys are stored in keyvault
-        key_vault_client = SecretClient(
-            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
-        )
-        vision_secret = await key_vault_client.get_secret(VISION_SECRET_NAME)
-        vision_key = vision_secret.value
-        await key_vault_client.close()
 
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
