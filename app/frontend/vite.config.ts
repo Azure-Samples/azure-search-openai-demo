@@ -27,6 +27,7 @@ export default defineConfig({
         proxy: {
             "/content/": "http://localhost:50505",
             "/auth_setup": "http://localhost:50505",
+            "/.auth/me": "http://localhost:50505",
             "/ask": "http://localhost:50505",
             "/chat": "http://localhost:50505",
             "/config": "http://localhost:50505"
