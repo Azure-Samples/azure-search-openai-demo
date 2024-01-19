@@ -15,9 +15,9 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        {/* <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3> */}
+                        {/* <h3 className={styles.headerTitle}>Veraqor GPT + Enterprise data | Sample</h3> */}
                         <img src={veraqor} alt="Veraqor logo" aria-label="Link to github repository" width="60px" height="60px" className={styles.githubLogo} />
-                        <h3 className={styles.headerTitle}>Veraqor Human Assistant Bot</h3>
+                        <h3 className={styles.headerTitle}> Veraqor GPT + Enterprise data | Sample</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
