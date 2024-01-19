@@ -16,7 +16,14 @@ const Layout = () => {
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
                         {/* <h3 className={styles.headerTitle}>Veraqor GPT + Enterprise data | Sample</h3> */}
-                        <img src={veraqor} alt="Veraqor logo" aria-label="Link to github repository" width="120px" height="120px" className={styles.githubLogo} />
+                        <img
+                            src={veraqor}
+                            alt="Veraqor logo"
+                            aria-label="Link to github repository"
+                            width="100px"
+                            height="100px"
+                            className={styles.githubLogo}
+                        />
                         <h3 className={styles.headerTitle}> Veraqor GPT + Enterprise data | Sample</h3>
                     </Link>
                     <nav>

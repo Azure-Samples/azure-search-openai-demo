@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #f2f2f2;
+    background-color: white;
     color: #585858;
 }
 
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     margin-right: 40px;
-    color: #f2f2f2;
+    color: #585858;
     text-decoration: none;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .headerNavPageLink {
-    color: #f2f2f2;
+    color: #585858;
     text-decoration: none;
     opacity: 0.75;
 
@@ -55,7 +55,7 @@
 }
 
 .headerNavPageLinkActive {
-    color: #f2f2f2;
+    color: #585858;
     text-decoration: none;
 }
 
@@ -74,5 +74,5 @@
 }
 
 .githubLogo {
-    height: 120px;
+    height: 100px;
 }
