@@ -88,7 +88,9 @@ class TextSplitter:
                 yield SplitPage(page_num=find_page(start), text=section_text)
 
                 last_table_start = section_text.rfind("<table")
-                if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind("</table"):
+                if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind(
+                    "</table"
+                ):
                     # If the section ends with an unclosed table, we need to start the next section with the table.
                     # If table starts inside sentence_search_limit, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
                     # If last table starts inside section_overlap, keep overlapping
