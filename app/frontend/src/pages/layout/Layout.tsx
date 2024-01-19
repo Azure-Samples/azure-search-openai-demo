@@ -1,7 +1,7 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
-import veraqor from "../../assets/veraqor.jpeg";
+import veraqor from "../../assets/color-vertical.jpg";
 
 import styles from "./Layout.module.css";
 
@@ -16,7 +16,7 @@ const Layout = () => {
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
                         {/* <h3 className={styles.headerTitle}>Veraqor GPT + Enterprise data | Sample</h3> */}
-                        <img src={veraqor} alt="Veraqor logo" aria-label="Link to github repository" width="60px" height="60px" className={styles.githubLogo} />
+                        <img src={veraqor} alt="Veraqor logo" aria-label="Link to github repository" width="120px" height="120px" className={styles.githubLogo} />
                         <h3 className={styles.headerTitle}> Veraqor GPT + Enterprise data | Sample</h3>
                     </Link>
                     <nav>
@@ -31,7 +31,7 @@ const Layout = () => {
                                     Ask a question
                                 </NavLink>
                             </li>
-                            <li className={styles.headerNavLeftMargin}>
+                            {/* <li className={styles.headerNavLeftMargin}>
                                 <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
                                     <img
                                         src={github}
@@ -42,7 +42,7 @@ const Layout = () => {
                                         className={styles.githubLogo}
                                     />
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
                     <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>

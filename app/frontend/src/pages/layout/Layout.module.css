@@ -5,8 +5,8 @@
 }
 
 .header {
-    background-color: #222222;
-    color: #f2f2f2;
+    background-color: #f2f2f2;
+    color: #585858;
 }
 
 .headerContainer {
@@ -74,5 +74,5 @@
 }
 
 .githubLogo {
-    height: 20px;
+    height: 120px;
 }
