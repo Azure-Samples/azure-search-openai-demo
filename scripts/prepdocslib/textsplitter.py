@@ -1,4 +1,5 @@
 from typing import Generator, List
+
 from .pdfparser import Page
 
 
