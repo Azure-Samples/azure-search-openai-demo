@@ -276,6 +276,8 @@ You can only run locally **after** having successfully run the `azd up` command.
 2. Change dir to `app`
 3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
 
+See more tips in [the local development guide](docs/local.md).
+
 ## Using the app
 
 * In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.

@@ -299,6 +299,8 @@ async def setup_clients():
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
         )
+    elif OPENAI_HOST == "local":
+        openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
     else:
         openai_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,
