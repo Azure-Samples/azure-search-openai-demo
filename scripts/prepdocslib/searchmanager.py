@@ -3,6 +3,8 @@ import os
 from typing import List, Optional
 
 from azure.search.documents.indexes.models import (
+    ExhaustiveKnnParameters,
+    ExhaustiveKnnVectorSearchAlgorithmConfiguration,
     HnswParameters,
     HnswVectorSearchAlgorithmConfiguration,
     PrioritizedFields,
@@ -16,11 +18,13 @@ from azure.search.documents.indexes.models import (
     SimpleField,
     VectorSearch,
     VectorSearchAlgorithmKind,
+    VectorSearchAlgorithmMetric,
     VectorSearchProfile,
+    VectorSearchVectorizer,
 )
 
 from .blobmanager import BlobManager
-from .embeddings import OpenAIEmbeddings
+from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import SplitPage
@@ -57,14 +61,23 @@ class SearchManager:
         self.embeddings = embeddings
         self.search_images = search_images
 
-    async def create_index(self):
+    async def create_index(self, vectorizers: VectorSearchVectorizer = []):
         if self.search_info.verbose:
             print(f"Ensuring search index {self.search_info.index_name} exists")
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
-                SimpleField(name="id", type="Edm.String", key=True),
+                SearchField(
+                    name="id",
+                    type="Edm.String",
+                    key=True,
+                    sortable=True,
+                    filterable=True,
+                    facetable=True,
+                    analyzer_name="keyword",
+                ),
                 SearchableField(name="content", type="Edm.String", analyzer_name=self.search_analyzer_name),
+                SearchableField(name="parent_id", type="Edm.String", filterable=True),
                 SearchField(
                     name="embedding",
                     type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
@@ -131,14 +144,16 @@ class SearchManager:
                         VectorSearchProfile(
                             name="embedding_config",
                             algorithm="hnsw_config",
+                            vectorizer="myOpenAI"
                         ),
                     ],
+                    vectorizers=vectorizers,
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
                 if self.search_info.verbose:
                     print(f"Creating {self.search_info.index_name} search index")
-                await search_index_client.create_index(index)
+                await search_index_client.create_or_update_index(index)
             else:
                 if self.search_info.verbose:
                     print(f"Search index {self.search_info.index_name} already exists")

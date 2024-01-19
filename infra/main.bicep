@@ -486,6 +486,17 @@ module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure')
   }
 }
 
+module openAiRoleSearchservice 'core/security/role.bicep' = if (openAiHost == 'azure') {
+  scope: openAiResourceGroup
+  name: 'openai-role-searchservice'
+  params: {
+    principalId: searchService.outputs.principalId
+    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+
 module storageRoleBackend 'core/security/role.bicep' = {
   scope: storageResourceGroup
   name: 'storage-role-backend'
@@ -552,6 +563,7 @@ output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.
 output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
+output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName

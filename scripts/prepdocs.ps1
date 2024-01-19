@@ -59,5 +59,6 @@ $argumentList = "./scripts/prepdocs.py $dataArg $adlsGen2StorageAccountArg $adls
 "--openaiorg `"$env:OPENAI_ORGANIZATION`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
 "--openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" --index $env:AZURE_SEARCH_INDEX " + `
 "$searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyVaultName " + `
-"--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE $tenantArg -v"
+"--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE --subscriptionId $env:AZURE_SUBSCRIPTION_ID " + `
+" --searchserviceassignedid $env:AZURE_SEARCH_SERVICE_ASSIGNED_USERID -- $tenantArg -v"
 Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow
