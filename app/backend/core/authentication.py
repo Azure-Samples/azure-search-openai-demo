@@ -5,6 +5,7 @@ import logging
 from typing import Any, Optional
 
 import aiohttp
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchIndex
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
@@ -214,3 +215,16 @@ class AuthenticationHelper:
             if self.require_access_control:
                 raise
             return {}
+
+    async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
+        # Start with the standard security filter for all queries
+        security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
+        # Filter down to only chunks that are from the specific source file
+        filter = f"{security_filter} and (sourcefile eq '{path}')"
+
+        # If the filter returns any results, the user is allowed to access the document
+        # Otherwise, access is denied
+        results = await search_client.search(search_text="*", top=1, filter=filter, include_total_count=True)
+        allowed = await results.get_count() > 0
+
+        return allowed

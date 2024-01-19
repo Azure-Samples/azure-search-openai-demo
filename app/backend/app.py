@@ -36,7 +36,7 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
-from core.authentication import AuthenticationHelper
+from core.authentication import AuthenticationHelper, AuthError
 
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
@@ -84,10 +84,23 @@ async def assets(path):
 
 
 # Serve content files from blob storage from within the app to keep the example self-contained.
-# *** NOTE *** this assumes that the content files are public, or at least that all users of the app
-# can access all the files. This is also slow and memory hungry.
+# *** NOTE *** if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, all content is accessible
+# This is also slow and memory hungry.
 @bp.route("/content/<path>")
 async def content_file(path: str):
+    # If authentication is enabled, validate the user can access the file
+    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    search_client = current_app.config[CONFIG_SEARCH_CLIENT]
+    try:
+        auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
+        if not await auth_helper.check_path_auth(path, auth_claims, search_client):
+            abort(403)
+    except AuthError:
+        abort(403)
+    except Exception as error:
+        logging.exception("Problem checking path auth %s", error)
+        return error_response(error, route="/content")
+
     # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
