@@ -3,7 +3,7 @@ const BACKEND_URI = "";
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
-function getHeaders(idToken: string | undefined): Record<string, string> {
+export function getHeaders(idToken: string | undefined): Record<string, string> {
     var headers: Record<string, string> = {
         "Content-Type": "application/json"
     };
@@ -49,6 +49,6 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
     });
 }
 
-export function getCitationFilePath(citation: string, idToken: string | undefined): string {
+export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
 }

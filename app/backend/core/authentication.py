@@ -220,7 +220,8 @@ class AuthenticationHelper:
         # Start with the standard security filter for all queries
         security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
         # Filter down to only chunks that are from the specific source file
-        filter = f"{security_filter} and (sourcefile eq '{path}')"
+        filter = f"{security_filter} and (sourcepage eq '{path}')"
+        print(f"path filter {filter}")
 
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied

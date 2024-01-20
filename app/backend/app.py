@@ -91,15 +91,18 @@ async def content_file(path: str):
     # If authentication is enabled, validate the user can access the file
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     search_client = current_app.config[CONFIG_SEARCH_CLIENT]
+    authorized = False
     try:
         auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-        if not await auth_helper.check_path_auth(path, auth_claims, search_client):
-            abort(403)
+        authorized = await auth_helper.check_path_auth(path, auth_claims, search_client)
     except AuthError:
         abort(403)
     except Exception as error:
         logging.exception("Problem checking path auth %s", error)
         return error_response(error, route="/content")
+
+    if not authorized:
+        abort(403)
 
     # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
