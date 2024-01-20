@@ -52,12 +52,14 @@ class SearchManager:
         search_info: SearchInfo,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
+        use_int_vectorization: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
         search_images: bool = False,
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
+        self.use_int_vectorization = use_int_vectorization
         self.embeddings = embeddings
         self.search_images = search_images
 
@@ -67,6 +69,7 @@ class SearchManager:
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
+                SimpleField(name="id", type="Edm.String", key=True) if not self.use_int_vectorization else
                 SearchField(
                     name="id",
                     type="Edm.String",
@@ -144,7 +147,7 @@ class SearchManager:
                         VectorSearchProfile(
                             name="embedding_config",
                             algorithm="hnsw_config",
-                            vectorizer="myOpenAI"
+                            vectorizer="myOpenAI" if self.use_int_vectorization else None
                         ),
                     ],
                     vectorizers=vectorizers,

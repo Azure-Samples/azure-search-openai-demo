@@ -55,7 +55,10 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
     blob_manager = BlobManager(
         endpoint=f"https://{args.storageaccount}.blob.core.windows.net",
         container=args.container,
+        account=args.storageaccount,
         credential=storage_creds,
+        resourceGroup=args.storageresourcegroup,
+        subscriptionId=args.subscriptionId,
         store_page_images=args.searchimages,
         verbose=args.verbose,
     )
@@ -151,7 +154,10 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
     blob_manager = BlobManager(
         endpoint=f"https://{args.storageaccount}.blob.core.windows.net",
         container=args.container,
+        account=args.storageaccount,
         credential=storage_creds,
+        resourceGroup=args.storageresourcegroup,
+        subscriptionId=args.subscriptionId,
         store_page_images=args.searchimages,
         verbose=args.verbose,
     )
@@ -195,7 +201,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
         print(f"Using local files in {args.files}")
         list_file_strategy = LocalListFileStrategy(path_pattern=args.files, verbose=args.verbose)
 
-        document_action = DocumentAction.Add
+    document_action = DocumentAction.Add
 
     return IntegratedVectorizerStrategy(
         list_file_strategy=list_file_strategy,
@@ -260,6 +266,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
     parser.add_argument("--container", help="Azure Blob Storage container name")
+    parser.add_argument("--storageresourcegroup", help="Azure blob storage resource group")
     parser.add_argument(
         "--storagekey",
         required=False,
@@ -370,8 +377,14 @@ if __name__ == "__main__":
         required=False,
         help="Required if --searchimages is specified and visionKeyVaultName is provided. Fetch the Azure AI Vision key from this visionKeyVaultName in the key vault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
     )
+    parser.add_argument(
+        "--useIntVectorization",
+        required=False,
+        help="Required if --useIntVectorization is specified. Enable Integrated vectorizer indexer support which is in preview)",
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
+    use_int_vectorization = True if args.useIntVectorization.lower() == "true" else False
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (
@@ -381,6 +394,9 @@ if __name__ == "__main__":
     )
 
     loop = asyncio.get_event_loop()
-    file_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
-    loop.run_until_complete(main(file_strategy, azd_credential, args))
+    if use_int_vectorization:
+        injestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
+    else:
+        injestion_strategy = loop.run_until_complete(setup_file_strategy(azd_credential, args))
+    loop.run_until_complete(main(injestion_strategy, azd_credential, args))
     loop.close()

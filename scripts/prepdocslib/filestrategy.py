@@ -50,13 +50,14 @@ class FileStrategy(Strategy):
             search_info,
             self.search_analyzer_name,
             self.use_acls,
+            False,
             self.embeddings,
             search_images=self.image_embeddings is not None,
         )
         await search_manager.create_index()
 
     async def run(self, search_info: SearchInfo):
-        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
+        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings)
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:

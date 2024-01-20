@@ -52,13 +52,17 @@ if ($env:AZURE_TENANT_ID) {
   $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
 }
 
+if ($env:USE_FEATURE_INT_VECTORIZATION) {
+  $integratedVectorizationArg = "--useIntVectorization $env:USE_FEATURE_INT_VECTORIZATION"
+}
+
 $argumentList = "./scripts/prepdocs.py $dataArg $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg " + `
-"$aclArg --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER " + `
+"$aclArg --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --storageresourcegroup $env:AZURE_STORAGE_RESOURCE_GROUP " + `
 "--searchservice $env:AZURE_SEARCH_SERVICE --openaihost `"$env:OPENAI_HOST`" " + `
 "--openaiservice `"$env:AZURE_OPENAI_SERVICE`" --openaikey `"$env:OPENAI_API_KEY`" " + `
 "--openaiorg `"$env:OPENAI_ORGANIZATION`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
 "--openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" --index $env:AZURE_SEARCH_INDEX " + `
 "$searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyVaultName " + `
 "--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE --subscriptionId $env:AZURE_SUBSCRIPTION_ID " + `
-" --searchserviceassignedid $env:AZURE_SEARCH_SERVICE_ASSIGNED_USERID -- $tenantArg -v"
+" --searchserviceassignedid $env:AZURE_SEARCH_SERVICE_ASSIGNED_USERID -v $tenantArg $integratedVectorizationArg"
 Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow

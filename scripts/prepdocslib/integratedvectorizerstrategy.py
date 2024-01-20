@@ -1,50 +1,29 @@
-import datetime
-import json
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIEmbeddingSkill,
     AzureOpenAIParameters,
     AzureOpenAIVectorizer,
-    ExhaustiveKnnParameters,
-    ExhaustiveKnnVectorSearchAlgorithmConfiguration,
     FieldMapping,
-    HnswParameters,
-    HnswVectorSearchAlgorithmConfiguration,
     IndexProjectionMode,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
-    PrioritizedFields,
-    SearchField,
-    SearchFieldDataType,
-    SearchIndex,
     SearchIndexer,
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
-    SearchIndexerDataUserAssignedIdentity,
     SearchIndexerIndexProjections,
     SearchIndexerIndexProjectionSelector,
     SearchIndexerIndexProjectionsParameters,
     SearchIndexerSkillset,
-    SemanticConfiguration,
-    SemanticField,
-    SemanticSettings,
     SplitSkill,
-    VectorSearch,
-    VectorSearchAlgorithmKind,
-    VectorSearchAlgorithmMetric,
-    VectorSearchProfile,
 )
 
 from .blobmanager import BlobManager
 from .embeddings import AzureOpenAIEmbeddingService
 from .listfilestrategy import ListFileStrategy
-from .pdfparser import PdfParser
-from .searchmanager import SearchManager, Section
+from .searchmanager import SearchManager
 from .strategy import SearchInfo, Strategy
-from .textsplitter import TextSplitter
-
 
 class DocumentAction(Enum):
     Add = 0
@@ -52,7 +31,7 @@ class DocumentAction(Enum):
 
 class IntegratedVectorizerStrategy(Strategy):
     """
-    Strategy for ingesting documents into a search service from files stored either locally or in a data lake storage account
+    Strategy for ingesting and vectorizing documents into a search service from files stored storage account
     """
 
     def __init__(
@@ -92,16 +71,12 @@ class IntegratedVectorizerStrategy(Strategy):
             outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
         )
 
-        openai_key = await self.embeddings.wrap_credential()
-
         embedding_skill = AzureOpenAIEmbeddingSkill(
             description="Skill to generate embeddings via Azure OpenAI",
             context="/document/pages/*",
             resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
             deployment_id=self.embeddings.open_ai_deployment,
-            auth_identity=SearchIndexerDataUserAssignedIdentity(
-                user_assigned_identity=f"/subscriptions/{self.subscriptionId}/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{self.search_user_assigned_identity}"
-            ),
+            auth_identity=None,
             inputs=[
                 InputFieldMappingEntry(name="text", source="/document/pages/*"),
             ],
@@ -117,7 +92,7 @@ class IntegratedVectorizerStrategy(Strategy):
                     mappings=[
                         InputFieldMappingEntry(name="content", source="/document/pages/*"),
                         InputFieldMappingEntry(name="embedding", source="/document/pages/*/vector"),
-                        InputFieldMappingEntry(name="sourcefile", source="/document/metadata_storage_name"),
+                        InputFieldMappingEntry(name="sourcepage", source="/document/metadata_storage_name"),
                     ],
                 ),
             ],
@@ -140,6 +115,7 @@ class IntegratedVectorizerStrategy(Strategy):
             search_info,
             self.search_analyzer_name,
             self.use_acls,
+            True,
             self.embeddings,
             search_images=False,
         )
@@ -151,9 +127,7 @@ class IntegratedVectorizerStrategy(Strategy):
                     azure_open_ai_parameters=AzureOpenAIParameters(
                         resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
                         deployment_id=self.embeddings.open_ai_deployment,
-                        auth_identity=SearchIndexerDataUserAssignedIdentity(
-                            user_assigned_identity=f"/subscriptions/{self.subscriptionId}/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{self.search_user_assigned_identity}"
-                        ),
+                        auth_identity=None,
                     ),
                 ),
             ]
@@ -162,11 +136,10 @@ class IntegratedVectorizerStrategy(Strategy):
         # create indexer client
         ds_client = search_info.create_search_indexer_client()
         ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)
-        print(await self.blob_manager.get_blob_sas_365days())
         data_source_connection = SearchIndexerDataSourceConnection(
             name=f"{search_info.index_name}-blob",
             type="azureblob",
-            connection_string=await self.blob_manager.get_blob_sas_365days(),
+            connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
         )
         data_source = await ds_client.create_or_update_data_source_connection(data_source_connection)
@@ -198,10 +171,9 @@ class IntegratedVectorizerStrategy(Strategy):
         )
 
         indexer_client = search_info.create_search_indexer_client()
-
         indexer_result = await indexer_client.create_or_update_indexer(indexer)
-
-        print(indexer_result)
 
         # Run the indexer
         await indexer_client.run_indexer(indexer_name)
+
+        print('Successfully created index, indexer and skillset. Please navigate to search service in azure portal to view the status.')

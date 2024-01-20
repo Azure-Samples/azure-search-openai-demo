@@ -1,7 +1,7 @@
 pypdf
 aiohttp
 azure-identity
-azure-search-documents==11.4.0b11
+./azure_search_documents-11.4.0b12-py3-none-any.whl
 azure-ai-formrecognizer
 azure-storage-blob
 azure-storage-file-datalake

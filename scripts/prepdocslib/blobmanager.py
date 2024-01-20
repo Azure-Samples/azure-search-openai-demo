@@ -29,15 +29,21 @@ class BlobManager:
         self,
         endpoint: str,
         container: str,
+        account: str,
         credential: Union[AsyncTokenCredential, str],
+        resourceGroup: str,
+        subscriptionId: str,
         store_page_images: bool = False,
         verbose: bool = False,
     ):
         self.endpoint = endpoint
         self.credential = credential
+        self.account = account
         self.container = container
         self.store_page_images = store_page_images
         self.verbose = verbose
+        self.resourceGroup = resourceGroup
+        self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
     async def upload_blob(self, file: File) -> Optional[List[str]]:
@@ -58,24 +64,8 @@ class BlobManager:
 
         return None
 
-    async def get_container_sas_7days(self):
-        async with BlobServiceClient(account_url=self.endpoint, credential=self.credential) as service_client:
-            delegation_key_start_time = datetime.datetime.now(datetime.timezone.utc)
-            delegation_key_start_time -= datetime.timedelta(minutes=10)
-            delegation_key_expiry_time = delegation_key_start_time + datetime.timedelta(days=7)
-            user_delegation_key = await service_client.get_user_delegation_key(
-                delegation_key_start_time, delegation_key_expiry_time
-            )
-            if service_client.account_name is not None:
-                sas_token = generate_container_sas(
-                    account_name=service_client.account_name,
-                    container_name=self.container,
-                    user_delegation_key=user_delegation_key,
-                    permission=ContainerSasPermissions(read=True, list=True),
-                    expiry=delegation_key_expiry_time,
-                    start=delegation_key_start_time,
-                )
-            return f"ContainerSharedAccessUri={service_client.url}{self.container}?{sas_token}"
+    def get_managedidentity_connectionstring(self):
+        return f'ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};'
     
     async def upload_pdf_blob_images(
         self, service_client: BlobServiceClient, container_client: ContainerClient, file: File

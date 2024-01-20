@@ -507,6 +507,16 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
+module storageRolesearchservice 'core/security/role.bicep' = {
+  scope: storageResourceGroup
+  name: 'storage-role-searchservice'
+  params: {
+    principalId: searchService.outputs.principalId
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    principalType: 'ServicePrincipal'
+  }
+}
+
 // Used to issue search queries
 // https://learn.microsoft.com/azure/search/search-security-rbac
 module searchRoleBackend 'core/security/role.bicep' = {
