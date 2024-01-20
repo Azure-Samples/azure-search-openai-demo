@@ -245,6 +245,16 @@ either you or they can follow these steps:
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](docs/gpt4v.md) page.
 
+### Enabling Integrated Vectorization
+Azure AI search has integrated vectorization in preview https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in/ba-p/3960809#:~:text=Integrated%20vectorization%20is%20a%20new%20feature%20of%20Azure,pull-indexers%2C%20and%20vectorization%20of%20text%20queries%20through%20vectorizers.
+
+To enable integrated vectorization with this sample
+
+1. Delete existing index
+2. Run ```azd env set USE_FEATURE_INT_VECTORIZATION true```
+3. Run ```azd up``` to update system and user roles
+4. You could view the resources such as the indexer, skillet in azure portal and monitor the status
+
 ### Enabling authentication
 
 By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data.  You can require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
