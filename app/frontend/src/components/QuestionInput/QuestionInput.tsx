@@ -59,8 +59,9 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput, isLoad
         </Stack>
     ) : chatInput && !isLoading && chatInput.inputType == "multiple" ? (
         <Stack horizontal className={styles.questionInputContainer}>
-            {chatInput.options.map(option => (
+            {chatInput.options.map((option, index) => (
                 <Button
+                    key={index}
                     style={buttonStyle}
                     onClick={() => {
                         onSend(option);
@@ -98,6 +99,7 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput, isLoad
                     value={question}
                     onChange={onQuestionChange}
                     onKeyDown={onEnterPress}
+                    autoComplete={"off"}
                 />
                 <div className={styles.questionInputButtonsContainer}>
                     <Button

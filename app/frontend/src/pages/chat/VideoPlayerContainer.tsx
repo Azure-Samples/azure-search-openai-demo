@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import styles from './Chat.module.css';
+import styles from './VideoPlayerContainer.module.css';
 
 
 interface VideoPlayerProperties {
@@ -7,8 +7,8 @@ interface VideoPlayerProperties {
 }
 
 const VideoPlayerContainer = memo<VideoPlayerProperties>(({ hidden }) => (
-    <div hidden={hidden} className={styles.playerContainer}>
-        <div id="playerElement" />
+    <div hidden={hidden} className={styles.wrapper}>
+        <div id="playerElement" className={styles.player} />
     </div>
 ));
 

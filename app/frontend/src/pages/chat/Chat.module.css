@@ -90,11 +90,10 @@
 .playerContainer {
     position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 2px solid purple;
-    padding: 2px;
-    background-color: #ded8e2;
+    width: 100%;
+    height: 100%;
+
+    background-color: #000f;
 }
 
 .chatAnalysisPanel {
