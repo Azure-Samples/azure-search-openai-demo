@@ -1,8 +1,8 @@
-## Deploying with minimal costs
+# Deploying with minimal costs
 
 This AI RAG chat application is designed to be easily deployed using the Azure Developer CLI, which provisions the infrastructure according to the Bicep files in the `infra` folder. Those files describe each of the Azure resources needed, and configures their SKU (pricing tier) and other parameters. Many Azure services offer a free tier, but the infrastructure files in this project do *not* default to the free tier as there are often limitations in that tier.
 
-However, if your goal is to minimize costs while prototyping your application, you can follow these steps to minimize the costs as much as possible, _before_ deploying the application.
+However, if your goal is to minimize costs while prototyping your application, follow these steps below _before_ deploying the application.
 
 1. Use the free tier of App Service:
 
@@ -61,7 +61,9 @@ However, if your goal is to minimize costs while prototyping your application, y
 
     Modify `Chat.tsx` so that `retrievalMode` defaults to `RetrievalMode.Text` instead of `RetrievalMode.HYBRID`.
 
-* Use a local OpenAI-compatible model:
+5. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch).
 
-    To save costs for local development, you could use an OpenAI-compatible model.
-    Follow steps in [local development guide](localdev.md#using-a-local-openai-compatible-api).
+## Reducing costs locally
+
+To save costs for local development, you could use an OpenAI-compatible model.
+Follow steps in [local development guide](localdev.md#using-a-local-openai-compatible-api).
