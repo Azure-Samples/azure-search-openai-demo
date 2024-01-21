@@ -87,15 +87,6 @@
     direction: rtl;
 }
 
-.playerContainer {
-    position: fixed;
-    top: 50%;
-    width: 100%;
-    height: 100%;
-
-    background-color: #000f;
-}
-
 .chatAnalysisPanel {
     flex: 1;
     overflow-y: auto;
