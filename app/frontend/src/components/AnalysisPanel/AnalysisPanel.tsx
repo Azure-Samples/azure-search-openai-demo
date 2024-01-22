@@ -40,7 +40,6 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
             });
             const citationContent = await response.blob();
             const citationObjectUrl = URL.createObjectURL(citationContent);
-            console.log(`object url {citationObjectUrl}`);
             setCitation(citationObjectUrl);
         }
     };

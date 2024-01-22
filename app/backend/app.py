@@ -5,7 +5,7 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import AsyncGenerator, cast
+from typing import AsyncGenerator, Callable, Dict, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -83,27 +83,58 @@ async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
+# Dectorator for routes that request a specific file that might require access control enforcement
+def authenticated_path(route_fn: Callable[[str], any]):
+    async def auth_handler(path=""):
+        # If authentication is enabled, validate the user can access the file
+        auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+        search_client = current_app.config[CONFIG_SEARCH_CLIENT]
+        authorized = False
+        try:
+            auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
+            authorized = await auth_helper.check_path_auth(path, auth_claims, search_client)
+        except AuthError:
+            abort(403)
+        except Exception as error:
+            logging.exception("Problem checking path auth %s", error)
+            return error_response(error, route="/content")
+
+        if not authorized:
+            abort(403)
+
+        return await route_fn(path)
+
+    # Rename decorator to avoid view function mapping overwrite error
+    auth_handler.__name__ = route_fn.__name__
+
+    return auth_handler
+
+
+# Decorator for routes that might require access control. Unpacks Authorization header informaiton into an auth_claims dictionary
+def authenticated(route_fn: Callable[[], any]):
+    async def auth_handler():
+        auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+        try:
+            auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
+        except AuthError:
+            abort(403)
+
+        return await route_fn(auth_claims)
+
+    # Rename decorator to avoid view function mapping overwrite error
+    auth_handler.__name__ = route_fn.__name__
+
+    return auth_handler
+
+
 # Serve content files from blob storage from within the app to keep the example self-contained.
-# *** NOTE *** if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, all content is accessible
+# *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
+# if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, logged in users can access all files regardless of access control
+# if AZURE_ENFORCE_ACCESS_CONTROL is set to true, logged in users can only access files they have access to
 # This is also slow and memory hungry.
 @bp.route("/content/<path>")
+@authenticated_path
 async def content_file(path: str):
-    # If authentication is enabled, validate the user can access the file
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-    search_client = current_app.config[CONFIG_SEARCH_CLIENT]
-    authorized = False
-    try:
-        auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-        authorized = await auth_helper.check_path_auth(path, auth_claims, search_client)
-    except AuthError:
-        abort(403)
-    except Exception as error:
-        logging.exception("Problem checking path auth %s", error)
-        return error_response(error, route="/content")
-
-    if not authorized:
-        abort(403)
-
     # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
@@ -140,14 +171,14 @@ def error_response(error: Exception, route: str, status_code: int = 500):
 
 
 @bp.route("/ask", methods=["POST"])
-async def ask():
+@authenticated
+async def ask(auth_claims: Dict[str, any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context["auth_claims"] = auth_claims
     try:
-        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
@@ -179,14 +210,14 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 
 @bp.route("/chat", methods=["POST"])
-async def chat():
+@authenticated
+async def chat(auth_claims: Dict[str, any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context["auth_claims"] = auth_claims
     try:
-        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
