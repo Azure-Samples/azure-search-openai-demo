@@ -20,7 +20,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 5px;
+    margin-right: 20px;
     color: #585858;
     text-decoration: none;
 }
@@ -30,7 +30,7 @@
 }
 
 .headerTitle {
-    margin-left: 20px;
+    margin-left: 40px;
     font-weight: bold;
 }
 
