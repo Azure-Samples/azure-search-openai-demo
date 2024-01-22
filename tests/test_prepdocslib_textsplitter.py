@@ -6,13 +6,22 @@ import pytest
 from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
 from scripts.prepdocslib.pdfparser import LocalPdfParser
 from scripts.prepdocslib.searchmanager import Section
-from scripts.prepdocslib.textsplitter import TextSplitter
+from scripts.prepdocslib.textsplitter import Page, TextSplitter
 
 
 def test_split_empty_pages():
     t = TextSplitter(False, True)
 
     assert list(t.split_pages([])) == []
+
+
+def test_split_small_pages():
+    t = TextSplitter(has_image_embeddings=False, verbose=True)
+
+    split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text="Not a large page")]))
+    assert len(split_pages) == 1
+    assert split_pages[0].page_num == 0
+    assert split_pages[0].text == "Not a large page"
 
 
 @pytest.mark.asyncio
