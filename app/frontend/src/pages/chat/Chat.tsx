@@ -109,7 +109,8 @@ const Chat = () => {
         let thoughts = askResponse["choices"][0]["context"]["thoughts"];
         for (const thought of thoughts) {
             if (thought.title === "Time") {
-                thought.description = "Response generated in " String((Math.floor(Number(new Date().getTime() / 10)) - Number(thought.description)) / 100) + " seconds\n";
+                thought.description =
+                    "Response generated in " + String((Number(new Date().getTime()) - Number(thought.description) * 1000) / 1000) + " seconds\n";
                 askResponse["choices"][0]["context"]["thoughts"] = thoughts;
             }
         }
@@ -118,7 +119,6 @@ const Chat = () => {
             ...askResponse,
             choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
         };
-
         return fullResponse;
     };
 

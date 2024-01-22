@@ -88,6 +88,7 @@ Each source has a name followed by colon and the actual information, always incl
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        timeStamp = str(round(time.time(), 3))
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -174,7 +175,6 @@ Each source has a name followed by colon and the actual information, always incl
         )
 
         data_points = {"text": sources_content}
-        timeStamp = str(round(time.time(), 2)*100)
         extra_info = {
             "data_points": data_points,
             "thoughts": [

@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import time
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional, Union
 
@@ -10,7 +11,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 
-from approaches.approach import Approach
+from approaches.approach import Approach, ThoughtStep
 from core.messagebuilder import MessageBuilder
 
 
@@ -80,6 +81,17 @@ class ChatApproach(Approach, ABC):
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
         return user_query
+    
+    def get_responseTime(self, context: any):
+        thoughts = context["thoughts"]
+        thought: ThoughtStep
+        for thought in thoughts:
+            if thought.title == "Time" and isinstance(float(thought.description), float):
+                generateTime = round(time.time() - float(thought.description), 3)
+                thought.description = f"Response generated in {generateTime} seconds\n"
+        context["thoughts"] = thoughts
+        
+        return context
 
     def extract_followup_questions(self, content: str):
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
@@ -126,6 +138,7 @@ class ChatApproach(Approach, ABC):
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
         chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
+        extra_info = self.get_responseTime(extra_info)
         chat_resp["choices"][0]["context"] = extra_info
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])
