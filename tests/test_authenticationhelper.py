@@ -1,7 +1,11 @@
 import pytest
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchField, SearchIndex
 
 from core.authentication import AuthenticationHelper, AuthError
+
+from .mocks import MockAsyncPageIterator
 
 MockSearchIndex = SearchIndex(
     name="test",
@@ -22,6 +26,10 @@ def create_authentication_helper(require_access_control: bool = False):
         tenant_id="TENANT_ID",
         require_access_control=require_access_control,
     )
+
+
+def create_search_client():
+    return SearchClient(endpoint="", index_name="", credential=AzureKeyCredential(""))
 
 
 @pytest.mark.asyncio
@@ -184,3 +192,82 @@ def test_build_security_filters(mock_confidential_client_success):
         )
         == "oids/any(g:search.in(g, ''))"
     )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_success):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is False
+    )
+    assert (
+        filter
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and (sourcepage eq 'Benefit_Options-2.pdf')"
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed(monkeypatch, mock_confidential_client_success):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcepage": "Benefit_Options-2.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert (
+        filter
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and (sourcepage eq 'Benefit_Options-2.pdf')"
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_without_access_control(monkeypatch, mock_confidential_client_success):
+    auth_helper = create_authentication_helper(require_access_control=False)
+    filter = None
+    called_search = False
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        nonlocal called_search
+        filter = kwargs.get("filter")
+        called_search = True
+        return MockAsyncPageIterator(data=[])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+    assert called_search is False
