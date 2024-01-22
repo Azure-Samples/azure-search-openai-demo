@@ -30,7 +30,7 @@
 }
 
 .headerTitle {
-    margin-left: 12px;
+    margin-left: 5px;
     font-weight: bold;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .headerRightText {
-    font-weight: bold;
+    font-weight: normal;
     margin-left: 20px;
 }
 
