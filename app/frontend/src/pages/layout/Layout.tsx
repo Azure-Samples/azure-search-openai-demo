@@ -20,8 +20,8 @@ const Layout = () => {
                             src={veraqor}
                             alt="Veraqor logo"
                             aria-label="Link to github repository"
-                            width="120px"
-                            height="100px"
+                            width="100px"
+                            height="80px"
                             className={styles.githubLogo}
                         />
                         <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
