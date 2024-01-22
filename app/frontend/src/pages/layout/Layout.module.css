@@ -31,7 +31,7 @@
 
 .headerTitle {
     margin-left: 12px;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 .headerNavList {
@@ -60,12 +60,12 @@
 }
 
 .headerNavLeftMargin {
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 .headerRightText {
-    font-weight: normal;
-    margin-left: 40px;
+    font-weight: bold;
+    margin-left: 20px;
 }
 
 .microsoftLogo {
