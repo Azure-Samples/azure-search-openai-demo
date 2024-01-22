@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
-import veraqor from "../../assets/color-vertical.jpg";
+import veraqorgenai from "../../assets/Screenshot 2024-01-22 at 11.16.16 AM.png";
 import styles from "./Chat.module.css";
 
 import {
@@ -262,12 +262,12 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <img
-                                src={veraqor}
-                                alt="Veraqor logo"
-                                aria-label="Link to github repository"
-                                width="120px"
-                                height="100px"
-                                className={styles.githubLogo}
+                                src={veraqorgenai}
+                                alt="Veraqor genai"
+                                aria-label="Veraqor generative ai"
+                                width="200px"
+                                height="140px"
+                                // className={styles.githubLogo}
                             />
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>

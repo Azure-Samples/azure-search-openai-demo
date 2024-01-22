@@ -20,7 +20,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    margin-right: 20px;
     color: #585858;
     text-decoration: none;
 }
@@ -41,7 +41,7 @@
 }
 
 .headerNavPageLink {
-    color: #585858;
+    color: #5d378f;
     text-decoration: none;
     opacity: 0.75;
 
@@ -55,7 +55,7 @@
 }
 
 .headerNavPageLinkActive {
-    color: #585858;
+    color: #5d378f;
     text-decoration: none;
 }
 

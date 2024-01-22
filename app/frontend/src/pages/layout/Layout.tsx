@@ -20,7 +20,7 @@ const Layout = () => {
                             src={veraqor}
                             alt="Veraqor logo"
                             aria-label="Link to github repository"
-                            width="120px"
+                            width="130px"
                             height="100px"
                             className={styles.githubLogo}
                         />
@@ -30,12 +30,12 @@ const Layout = () => {
                         <ul className={styles.headerNavList}>
                             <li>
                                 <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Chat
+                                    <h3 className={styles.headerTitle}>Chat |</h3>
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Ask a question
+                                    <h3 className={styles.headerTitle}> Ask a question </h3>
                                 </NavLink>
                             </li>
                             {/* <li className={styles.headerNavLeftMargin}>
