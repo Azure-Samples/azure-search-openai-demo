@@ -1,7 +1,7 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
-import veraqor from "../../assets/veraqor-logo.png";
+import veraqor from "../../assets/veraqor.png";
 
 import styles from "./Layout.module.css";
 
@@ -20,8 +20,8 @@ const Layout = () => {
                             src={veraqor}
                             alt="Veraqor logo"
                             aria-label="Link to github repository"
-                            width="100px"
-                            height="80px"
+                            width="160px"
+                            height="60px"
                             className={styles.githubLogo}
                         />
                         <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
