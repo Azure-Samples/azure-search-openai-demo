@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput, isLoading }: Props) => {
-    const [question, setQuestion] = useState<string>(chatInput?.inputType == "slider" ? chatInput.minValue.toString() : "");
+    const [question, setQuestion] = useState<string>(chatInput?.inputType == "numeric" && chatInput.control == "slider" ? chatInput.minValue.toString() : "");
 
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
@@ -72,7 +72,7 @@ export const QuestionInput = ({ onSend, disabled, clearOnSend, chatInput, isLoad
                 </Button>
             ))}
         </Stack>
-    ) : chatInput && !isLoading && chatInput.inputType == "slider" ? (
+    ) : chatInput && !isLoading && chatInput.inputType == "numeric" && chatInput.control == "slider" ? (
         <Stack horizontal className={styles.questionInputContainer}>
             <Label>{chatInput.maxLabel}</Label>
             <Slider

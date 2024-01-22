@@ -62,9 +62,6 @@ export type ChatInput =
           inputType: "freeText";
       }
     | {
-          inputType: "numeric";
-      }
-    | {
           inputType: "disabled";
       }
     | {
@@ -72,7 +69,8 @@ export type ChatInput =
           options: string[];
       }
     | {
-          inputType: "slider";
+          inputType: "numeric";
+          control: "text" | "slider";
           minValue: number;
           minLabel: string;
           maxValue: number;

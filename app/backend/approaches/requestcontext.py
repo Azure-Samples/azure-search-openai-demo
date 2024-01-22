@@ -22,40 +22,18 @@ class RequestContext:
         self.auth_claims = auth_claims
         self.request_data = request_data
         self.should_stream = should_stream
-        self.extra_info = None
         self.client_ip = client_ip
         self.session_user_id = session_user_id
     
-    def set_response_extra_info(self, extra_info: dict[str, str]):
-        if self.has_extra_info():
-            raise Exception("Unexpected two results: " + str(self.extra_info) + " and " + str(extra_info))
-        self.extra_info = extra_info
-
-    def has_extra_info(self):
-        return not (self.extra_info is None)
-    
-    def write_chat_message(self, msg_to_display):
-        return self.write_roled_chat_message([{ "content": msg_to_display, "role": "assistant" }], msg_to_display)
-    
-    def write_roled_chat_message(self, roled_parts, extra_info_string = None):
-        extra_info = {
-            "data_points": [],
-            "thoughts": f"Searched for:<br><br><br>Conversations:<br>" + ("styled_text" if extra_info_string is None else extra_info_string),
-        }
-
-        self.set_response_extra_info(extra_info)
-
-        return Utils.single_item_generator({ "choices": [{ "delta": roled_parts }] })
-    
-    def set_next_state(self, next_state):
-        self.session_state["machineState"] = next_state
-
     def save_to_var(self, var_name, value):
         vars = self.session_state["vars"]
         if vars is None:
             vars = {}
             self.session_state["vars"] = vars
         vars[var_name] = value
+    
+    def has_var(self, var_name):
+        return var_name in self.session_state["vars"]
 
     def get_var(self, var_name):
         return self.session_state["vars"][var_name]

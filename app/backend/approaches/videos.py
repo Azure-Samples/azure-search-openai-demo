@@ -1,4 +1,4 @@
-def get_video(isp_path, is_bot_male, is_patient_male, video_index):
+def get_video_url(isp_path, is_bot_male, is_patient_male, video_index):
     return videos[isp_path]["maleBot" if is_bot_male else "femaleBot"]["malePatient" if is_patient_male else "femalePatient"][video_index]
 
 videos = {

@@ -1,52 +1,31 @@
-from approaches.flow.shared_states import ChatInputNotWait, State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, VariableIspPath, chat_input_multiple_options, get_exit_text
+from approaches.flow.shared_states import ChatInputNotWait, ConditionedAction, State, StateExit, StateStartPositiveCognition, States, VariableExitText, VariableIsBotMale, VariableIsPatientMale, chat_input_multiple_options, is_exit_after_average_improvement, is_exit_after_distress_increased, is_exit_after_improvement
 from approaches.requestcontext import RequestContext
 
 StateGetImprovement = "GET_IMPROVEMENT"
 StateGetIsConnectedToCurrent = "GET_IS_CONNECTED_TO_CURRENT"
 
-async def start_positive_cognition(request_context: RequestContext):
-    request_context.set_next_state(StateGetImprovement)
-    return request_context.write_chat_message("""באיזו מידה {you_feel} שיפור ביכולת שלך להתמודד עם החוויה? ללא שיפור / שיפור מועט / שיפור קל / שיפור בינוני / שיפור גדול""".format(you_feel = "אתה מרגיש" if request_context.get_var(VariableIsPatientMale) else "את מרגישה"))
-States[StateStartPositiveCognition] = State(chat_input=ChatInputNotWait, run=start_positive_cognition)
+States[StateStartPositiveCognition] = State(chat_input=ChatInputNotWait, conditioned_actions=[
+    ConditionedAction(condition=None, output="hadImprovement", next_state=StateGetImprovement, condition_description=None)
+])
 
-async def get_improvement(request_context: RequestContext):
-    is_patient_male = request_context.get_var(VariableIsPatientMale)
-    is_bot_male = request_context.get_var(VariableIsBotMale)
-    is_improved = request_context.history[-1]["content"].strip()
-    if is_improved in ["שיפור מועט", "שיפור קל", "שיפור בינוני", "שיפור גדול", "מועט", "קל", "בינוני", "גדול"]:
-        prefix = """אני {happy} לראות {that_you_succeeding} לעזור לעצמך באמצעות התרגול.""".format(
-            happy = "שמח" if is_bot_male else "שמחה",
-            that_you_succeeding = "שאתה מצליח" if is_patient_male else "שאת מצליחה")
-    elif is_improved in ("ללא שיפור", "ללא"):
-        prefix = "אני {understand}, עם זאת חשוב לציין שחלק מהאנשים לא חווים שיפור מיד בסוף התרגול אלא מאוחר יותר, ויתכן {feel} שיפור בהמשך ".format(understand = "מבין" if is_bot_male else "מבינה", feel = "שתחוש" if is_patient_male else "שתחושי")
-    else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} ללא שיפור/שיפור מועט/שיפור גדול".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-    
-    request_context.set_next_state(StateGetIsConnectedToCurrent)
-    return request_context.write_chat_message(prefix + """
+States[StateGetImprovement] = State(chat_input=chat_input_multiple_options(["ללא שיפור", "שיפור מועט", "שיפור קל", "שיפור בינוני", "שיפור גדול"]), conditioned_actions=[
+    ConditionedAction(condition=lambda request_context, input: input.strip() in ("ללא שיפור", "ללא"), output="isConnectedToCurrentAfterNoImprovement", next_state=StateGetIsConnectedToCurrent, condition_description="המשתמש\ת בחר\ה ללא שיפור"),
+    ConditionedAction(condition=lambda request_context, input: input.strip() in ("שיפור מועט", "שיפור קל", "שיפור בינוני", "שיפור גדול", "מועט", "קל", "בינוני", "גדול"), output="isConnectedToCurrentAfterImprovement", next_state=StateGetIsConnectedToCurrent, condition_description="המשתמש\ת בחר\ה שיפור מסוים"),
+    ConditionedAction(condition=None, output="wrongHasImprovement", next_state=StateGetImprovement, condition_description=None),
+])
 
-עד כמה {you_connect} למה שקורה עכשיו, {and_feel} שגם אם קרה אירוע קשה, הוא נגמר?
-
-כלל לא / במידה מועטה / במידה מתונה / במידה רבה / במידה רבה מאד""".format(you_connect = "אתה מחובר" if is_patient_male else "את מחוברת", and_feel = "ומרגיש" if is_patient_male else "ומרגישה"))
-States[StateGetImprovement] = State(chat_input=chat_input_multiple_options(["ללא שיפור", "שיפור מועט", "שיפור קל", "שיפור בינוני", "שיפור גדול"]), run=get_improvement)
-
-async def get_is_connected_to_current(request_context: RequestContext):
-    is_patient_male = request_context.get_var(VariableIsPatientMale)
-    is_bot_male = request_context.get_var(VariableIsBotMale)
-    is_connected = request_context.history[-1]["content"]
-    if is_connected == "כלל לא":
-        exit_text = "אני {understand}, ורוצה להזכיר לך שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך".format(
-            understand = "מבין" if is_bot_male else "מבינה",
-            that_you_here = "שאתה נמצא" if is_bot_male else "שאת נמצאת"
-        )
-    elif is_connected in ["במידה מועטה", "במידה מתונה", "במידה רבה", "במידה רבה מאד"]:
-        exit_text = "אני {happy} לראות שלמרות מה שחווית {that_you_succeeding} להתחבר להווה.".format(
-            happy = "שמח" if is_bot_male else "שמחה",
-            that_you_succeeding = "שאתה מצליח" if is_patient_male else "שאת מצליחה")
-    else:
-        return request_context.write_chat_message("לא הבנתי את תשובתך. אנא {type} כלל לא/במידה מועטה/במידה מתונה/במידה רבה/במידה רבה מאד".format(type = "הקלד" if request_context.get_var(VariableIsPatientMale) else "הקלידי"))
-    exit_text += """
-""" + get_exit_text(request_context)
-    request_context.save_to_var(VariableExitText, exit_text)
-    request_context.set_next_state(StateExit)
-States[StateGetIsConnectedToCurrent] = State(chat_input=chat_input_multiple_options(["כלל לא", "במידה מועטה", "במידה מתונה", "במידה רבה", "במידה רבה מאד"]), run=get_is_connected_to_current)
+def is_exit_after_fail_to_connect_to_current(input) -> bool:
+    return input.strip() == "כלל לא"
+def is_exit_after_succeed_to_connect_to_current(input) -> bool:
+    return input.strip() in ["במידה מועטה", "במידה מתונה", "במידה רבה", "במידה רבה מאד"]
+States[StateGetIsConnectedToCurrent] = State(chat_input=chat_input_multiple_options(["כלל לא", "במידה מועטה", "במידה מתונה", "במידה רבה", "במידה רבה מאד"]), conditioned_actions=[
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_distress_increased(request_context, input) and is_exit_after_fail_to_connect_to_current(input), output="exitAfterDistressIncreasedAndFailToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה כלל לא, והייתה החרפה"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_distress_increased(request_context, input) and is_exit_after_succeed_to_connect_to_current(input), output="exitAfterDistressIncreasedAndSucceedToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה הצלחה כלשהי להתחבר להווה, והייתה החרפה"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_improvement(request_context, input) and is_exit_after_fail_to_connect_to_current(input), output="exitAfterImprovementAndFailToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה כלל לא, והייתה הטבה ברמת המצוקה"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_improvement(request_context, input) and is_exit_after_succeed_to_connect_to_current(input), output="exitAfterImprovementAndSucceedToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה הצלחה כלשהי להתחבר להווה, והייתה הטבה ברמת המצוקה"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_average_improvement(request_context, input) and is_exit_after_fail_to_connect_to_current(input), output="exitAfterAverageImprovementAndFailToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה כלל לא, והייתה הטבה ברמת המצוקה הממוצעת בלבד"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_average_improvement(request_context, input) and is_exit_after_succeed_to_connect_to_current(input), output="exitAfterAverageImprovementAndSucceedToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה הצלחה כלשהי להתחבר להווה, והייתה הטבה ברמת המצוקה הממוצעת בלבד"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_fail_to_connect_to_current(input), output="exitAfterNoClearImprovementAndFailToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה כלל לא, ולא ניתן להצביע על הטבה"),
+    ConditionedAction(condition=lambda request_context, input: is_exit_after_succeed_to_connect_to_current(input), output="exitAfterNoClearImprovementAndSucceedToConnectToCurrent", next_state=StateExit, condition_description="המשתמש\ת בחר\ה הצלחה כלשהי להתחבר להווה, ולא ניתן להצביע על הטבה"),
+    ConditionedAction(condition=None, output="wrongIsConnectedToCurrent", next_state=StateGetIsConnectedToCurrent, condition_description=None)
+])

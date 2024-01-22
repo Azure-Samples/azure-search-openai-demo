@@ -1,4 +1,4 @@
-from typing import Any, AsyncGenerator, Union
+from typing import Any, AsyncGenerator, Callable, Union
 
 import aiohttp
 from inspect import iscoroutine
@@ -6,10 +6,11 @@ from inspect import iscoroutine
 from approaches.appresources import AppResources
 from approaches.approach import Approach
 from approaches.flow.flow import States, FirstState
+from approaches.localization.strings import Strings
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from approaches.utils import Utils
-from approaches.flow.shared_states import ChatInputNotWait
+from approaches.flow.shared_states import ChatInputNotWait, VariableStringsId
 
 class ChatReadRetrieveReadApproach(Approach):
     def __init__(self, app_resources: AppResources):
@@ -31,28 +32,57 @@ class ChatReadRetrieveReadApproach(Approach):
             raise Exception("Unexpected state " + state_id)
         state = States[state_id]
 
-        event_generators = [
-            None # Placeholder for chat input
-        ]
         chat_input = ChatInputNotWait
+        out_final = None
         while (chat_input == ChatInputNotWait):
-            chat_coroutine = state.run(request_context)
-            if not (chat_coroutine is None):
-                if iscoroutine(chat_coroutine):
-                    chat_coroutine = await chat_coroutine
-            if not (chat_coroutine is None):
-                event_generators.append(chat_coroutine)
+            print(state_id)
+            if not (state.action_before is None):
+                coroutine_action_before = state.action_before(request_context, history[-1]["content"])
+                if iscoroutine(coroutine_action_before):
+                    await coroutine_action_before
+            ac = None
+            for conditioned_ac in state.conditioned_actions[0]:
+                if conditioned_ac.condition is None or conditioned_ac.condition(request_context, history[-1]["content"]):
+                    ac = conditioned_ac
+                    break
+            if ac is None:
+                raise Exception("Neither condition in state " + state_id + " was satisfied")
 
-            state_id = session_state["machineState"]
+            output = None
+            if not (ac.custom_action is None):
+                ac = ac.custom_action(request_context)
+                if iscoroutine(ac):
+                    await ac
+            if not (ac.output is None):
+                stringsId = request_context.get_var(VariableStringsId)
+                strings = Strings[stringsId]
+                while "parent" in strings and not(ac.output in strings):
+                    strings = Strings[strings["parent"]]
+                if not(ac.output in strings):
+                    raise Exception("String output " + ac.output + " does not exist for " + stringsId)
+                output = strings[ac.output]
+                if isinstance(output, Callable):
+                    output = output(request_context)
+                if isinstance(output, str):
+                    output = [{"role": "assistant" , "content": output}]
+                output = { "choices": [{ "delta": output }] }
+
+            if not (output is None):
+                if not (out_final is None):
+                    raise Exception("Unexpected second output in state " + state_id)
+                out_final = output
+
+            state_id = ac.next_state
             if not (state_id in States):
                 raise Exception("Unexpected state " + state_id)
             state = States[state_id]
             chat_input = state.chat_input
-        
-        event_generators[0] = Utils.single_item_generator(chat_input)
 
-        # Return after aggregation, so request_context.extra_info has already been set
-        return Utils.merge_generators(event_generators)
+        session_state["machineState"] = state_id
+        chat_input_response_item = Utils.single_item_generator(chat_input)
+        if out_final is None:
+            return [chat_input_response_item]
+        return Utils.merge_generators([chat_input_response_item, Utils.single_item_generator(out_final)])
 
     async def run_without_streaming(
         self,
@@ -66,7 +96,7 @@ class ChatReadRetrieveReadApproach(Approach):
             session_state, request_context, history, overrides, auth_claims, should_stream=False
         )
         chat_resp = dict(await chat_coroutine)
-        chat_resp["choices"][0]["context"] = request_context.extra_info
+        chat_resp["choices"][0]["context"] = {"data_points": "dummy_non_null"}
         chat_resp["choices"][0]["session_state"] = session_state
         return chat_resp
 
@@ -86,7 +116,7 @@ class ChatReadRetrieveReadApproach(Approach):
             "choices": [
                 {
                     "delta": {"role": OpenAI.ASSISTANT},
-                    "context": request_context.extra_info,
+                    "context": {"data_points": "dummy_non_null"},
                     "session_state": session_state,
                     "finish_reason": None,
                     "index": 0,
