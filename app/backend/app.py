@@ -5,7 +5,7 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import AsyncGenerator, Callable, Dict, cast
+from typing import Any, AsyncGenerator, Callable, Dict, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -84,7 +84,7 @@ async def assets(path):
 
 
 # Dectorator for routes that request a specific file that might require access control enforcement
-def authenticated_path(route_fn: Callable[[str], any]):
+def authenticated_path(route_fn: Callable[[str], Any]):
     async def auth_handler(path=""):
         # If authentication is enabled, validate the user can access the file
         auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
@@ -111,7 +111,7 @@ def authenticated_path(route_fn: Callable[[str], any]):
 
 
 # Decorator for routes that might require access control. Unpacks Authorization header informaiton into an auth_claims dictionary
-def authenticated(route_fn: Callable[[], any]):
+def authenticated(route_fn: Callable[[Dict[str, Any]], Any]):
     async def auth_handler():
         auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
         try:
@@ -172,7 +172,7 @@ def error_response(error: Exception, route: str, status_code: int = 500):
 
 @bp.route("/ask", methods=["POST"])
 @authenticated
-async def ask(auth_claims: Dict[str, any]):
+async def ask(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -211,7 +211,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 @bp.route("/chat", methods=["POST"])
 @authenticated
-async def chat(auth_claims: Dict[str, any]):
+async def chat(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
