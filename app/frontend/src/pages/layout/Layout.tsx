@@ -30,12 +30,12 @@ const Layout = () => {
                         <ul className={styles.headerNavList}>
                             <li>
                                 <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    <h3 className={styles.headerTitle}>Chat | </h3>
+                                    <h3 className={styles.headerTitleASK}>Chat | </h3>
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    <h3 className={styles.headerTitle}> Ask a question </h3>
+                                    <h3 className={styles.headerTitleASK}> Ask a question </h3>
                                 </NavLink>
                             </li>
                             {/* <li className={styles.headerNavLeftMargin}>

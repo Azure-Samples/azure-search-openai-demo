@@ -33,7 +33,10 @@
     margin-left: 40px;
     font-weight: bold;
 }
-
+.headerTitleASK {
+    margin-left: 50px;
+    font-weight: bold;
+}
 .headerNavList {
     display: flex;
     list-style: none;
