@@ -21,7 +21,7 @@ const Layout = () => {
                             alt="Veraqor logo"
                             aria-label="Link to github repository"
                             width="120px"
-                            height="80px"
+                            height="100px"
                             className={styles.githubLogo}
                         />
                         <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>

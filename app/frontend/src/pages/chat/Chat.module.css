@@ -33,6 +33,7 @@
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 30px;
+    color: #585858;
 }
 
 .chatEmptyStateSubtitle {
@@ -48,6 +49,7 @@
     .chatEmptyStateTitle {
         font-size: 3rem;
         margin-bottom: 0px;
+        color: #585858;
     }
 }
 
