@@ -33,12 +33,12 @@ async def get_vision_key(credential: AsyncTokenCredential) -> Optional[str]:
     if args.visionkey:
         return args.visionkey
 
-    if args.keyvaultname and args.visionKeyVaultkey:
+    if args.keyvaultname and args.visionsecretname:
         key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
-        visionkey = await key_vault_client.get_secret(args.visionKeyVaultkey)
+        visionkey = await key_vault_client.get_secret(args.visionsecretname)
         return visionkey.value
     else:
-        print("Error: Please provide --visionkey or --keyvaultname and --visionKeyVaultkey when using --searchimages.")
+        print("Error: Please provide --visionkey or --keyvaultname and --visionsecretname when using --searchimages.")
         exit(1)
 
 
@@ -291,17 +291,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--visionkey",
         required=False,
-        help="Required if --searchimages is specified. Use this Azure AI Vision key instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required if --searchimages is specified. Use this Azure AI Vision key instead of the instead of the current user identity to login.",
     )
     parser.add_argument(
         "--keyvaultname",
         required=False,
-        help="Required if --searchimages is specified and visionkey is not provided. Fetch the Azure AI Vision key from this keyvault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required only if any keys must be fetched from the key vault.",
     )
     parser.add_argument(
-        "--visionKeyVaultkey",
+        "--visionsecretname",
         required=False,
-        help="Required if --searchimages is specified and --keyvaultname is provided. Fetch the Azure AI Vision key from this key vault instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required if --searchimages is specified and --keyvaultname is provided. Fetch the Azure AI Vision key from this key vault instead of using the current user identity to login.",
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
