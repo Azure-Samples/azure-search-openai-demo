@@ -21,10 +21,10 @@ const Layout = () => {
                             alt="Veraqor logo"
                             aria-label="Link to github repository"
                             width="140px"
-                            height="100px"
+                            height="80px"
                             className={styles.githubLogo}
                         />
-                        <h3 className={styles.headerTitle}> Veraqor GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
