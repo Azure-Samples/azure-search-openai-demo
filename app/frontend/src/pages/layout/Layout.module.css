@@ -20,7 +20,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 20px;
+    margin-right: 5px;
     color: #585858;
     text-decoration: none;
 }
@@ -60,7 +60,7 @@
 }
 
 .headerNavLeftMargin {
-    margin-left: 10px;
+    margin-left: 0px;
 }
 
 .headerRightText {
