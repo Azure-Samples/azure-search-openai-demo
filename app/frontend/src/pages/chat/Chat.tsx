@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
-import veraqorgenai from "../../assets/Screenshot 2024-01-22 at 11.16.16 AM.png";
+import veraqorgenai from "../../assets/Frame 1000002154.png";
 import styles from "./Chat.module.css";
 
 import {
