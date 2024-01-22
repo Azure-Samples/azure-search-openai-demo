@@ -1,3 +1,4 @@
+import time
 from typing import Any, Coroutine, Literal, Optional, Union, overload
 
 from azure.search.documents.aio import SearchClient
@@ -173,7 +174,7 @@ Each source has a name followed by colon and the actual information, always incl
         )
 
         data_points = {"text": sources_content}
-
+        timeStamp = str(round(time.time(), 2)*100)
         extra_info = {
             "data_points": data_points,
             "thoughts": [
@@ -188,6 +189,7 @@ Each source has a name followed by colon and the actual information, always incl
                 ),
                 ThoughtStep("Results", [result.serialize_for_results() for result in results]),
                 ThoughtStep("Prompt", [str(message) for message in messages]),
+                ThoughtStep("Time", timeStamp),
             ],
         }
 

@@ -14,6 +14,7 @@ import {
     ChatAppResponseOrError,
     ChatAppRequest,
     ResponseMessage,
+    Thoughts,
     VectorFieldOptions,
     GPT4VInput
 } from "../../api";
@@ -105,10 +106,19 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
+        let thoughts = askResponse["choices"][0]["context"]["thoughts"];
+        for (const thought of thoughts) {
+            if (thought.title === "Time") {
+                thought.description = "Response generated in " String((Math.floor(Number(new Date().getTime() / 10)) - Number(thought.description)) / 100) + " seconds\n";
+                askResponse["choices"][0]["context"]["thoughts"] = thoughts;
+            }
+        }
+
         const fullResponse: ChatAppResponse = {
             ...askResponse,
             choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
         };
+
         return fullResponse;
     };
 
