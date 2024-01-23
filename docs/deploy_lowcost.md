@@ -22,9 +22,8 @@ However, if your goal is to minimize costs while prototyping your application, f
     1. You are only allowed one free search service across all regions.
     If you have one already, either delete that service or follow instructions to
     reuse your [existing search service](../README.md#existing-azure-ai-search-resource).
-    2. The free tier does not support semantic ranker, so you will need to disable
-    that option in the developer settings. You should change the default of `useSemanticRanker`
-    in `Chat.tsx` to `false` instead of `true`.
+    2. The free tier does not support semantic ranker, so the app UI will no longer display
+    the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid/ba-p/3929167).
     3. The free tier does not support Managed Identity (keyless API access),
     so if you enable the free tier, the Bicep will use Azure Key Vault to securely store the key instead.
 

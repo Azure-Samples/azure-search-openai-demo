@@ -59,12 +59,15 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
+    const [showSemanticSearchOption, setShowSemanticSearchOption] = useState<boolean>(false);
 
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
 
         configApi(token).then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
+            setUseSemanticRanker(config.showSemanticSearchOption);
+            setShowSemanticSearchOption(config.showSemanticSearchOption);
         });
     };
 
@@ -374,12 +377,15 @@ const Chat = () => {
                         onChange={onRetrieveCountChange}
                     />
                     <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticRanker}
-                        label="Use semantic ranker for retrieval"
-                        onChange={onUseSemanticRankerChange}
-                    />
+
+                    {showSemanticSearchOption && (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSemanticRanker}
+                            label="Use semantic ranker for retrieval"
+                            onChange={onUseSemanticRankerChange}
+                        />
+                    )}
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSemanticCaptions}

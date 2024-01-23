@@ -49,6 +49,7 @@ CONFIG_CHAT_APPROACH = "chat_approach"
 CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
+CONFIG_SEMANTIC_SEARCH_DEPLOYED = "semantic_search_deployed"
 CONFIG_SEARCH_CLIENT = "search_client"
 CONFIG_OPENAI_CLIENT = "openai_client"
 ERROR_MESSAGE = """The app encountered an error processing your request.
@@ -206,7 +207,12 @@ def auth_setup():
 
 @bp.route("/config", methods=["GET"])
 def config():
-    return jsonify({"showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED]})
+    return jsonify(
+        {
+            "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
+            "showSemanticSearchOption": current_app.config[CONFIG_SEMANTIC_SEARCH_DEPLOYED],
+        }
+    )
 
 
 @bp.before_app_serving
@@ -247,6 +253,7 @@ async def setup_clients():
 
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+    AZURE_SEARCH_SEMANTIC_SEARCH = os.getenv("AZURE_SEARCH_SEMANTIC_SEARCH", "free").lower()
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
 
@@ -320,6 +327,7 @@ async def setup_clients():
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
+    current_app.config[CONFIG_SEMANTIC_SEARCH_DEPLOYED] = AZURE_SEARCH_SEMANTIC_SEARCH != "disabled"
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
