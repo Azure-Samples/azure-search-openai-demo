@@ -83,7 +83,7 @@ async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
-# Dectorator for routes that request a specific file that might require access control enforcement
+# Decorator for routes that request a specific file that might require access control enforcement
 def authenticated_path(route_fn: Callable[[str], Any]):
     async def auth_handler(path=""):
         # If authentication is enabled, validate the user can access the file
