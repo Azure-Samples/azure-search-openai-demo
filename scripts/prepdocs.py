@@ -14,7 +14,7 @@ from prepdocslib.embeddings import (
     OpenAIEmbeddings,
     OpenAIEmbeddingService,
 )
-from prepdocslib.filestrategy import DocumentAction, FileStrategy
+from prepdocslib.filestrategy import FileStrategy
 from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
@@ -24,7 +24,7 @@ from prepdocslib.listfilestrategy import (
     LocalListFileStrategy,
 )
 from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
-from prepdocslib.strategy import SearchInfo, Strategy
+from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textsplitter import TextSplitter
 
 
@@ -162,7 +162,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
     )
 
     use_vectors = not args.novectors
-    embeddings: Optional[AzureOpenAIEmbeddingService] = None
+    embeddings: AzureOpenAIEmbeddingService = None
     if use_vectors and args.openaihost != "openai":
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
             credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)

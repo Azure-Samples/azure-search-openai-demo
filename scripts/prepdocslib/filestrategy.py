@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List, Optional
 
 from .blobmanager import BlobManager
@@ -6,14 +5,8 @@ from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .pdfparser import PdfParser
 from .searchmanager import SearchManager, Section
-from .strategy import SearchInfo, Strategy
+from .strategy import DocumentAction, SearchInfo, Strategy
 from .textsplitter import TextSplitter
-
-
-class DocumentAction(Enum):
-    Add = 0
-    Remove = 1
-    RemoveAll = 2
 
 
 class FileStrategy(Strategy):

@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Optional
 
 # Workaround to use the preview SDK
@@ -26,11 +25,7 @@ from .blobmanager import BlobManager
 from .embeddings import AzureOpenAIEmbeddingService
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
-from .strategy import SearchInfo, Strategy
-
-
-class DocumentAction(Enum):
-    Add = 0
+from .strategy import DocumentAction, SearchInfo, Strategy
 
 
 class IntegratedVectorizerStrategy(Strategy):
