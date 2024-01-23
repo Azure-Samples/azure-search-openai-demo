@@ -32,6 +32,7 @@ from quart_cors import cors
 
 from approaches.appresources import AppResources
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.flow.flowwriter import write_flow_html
 from approaches.retrievethenread import RetrieveThenReadApproach
 from core.authentication import AuthenticationHelper
 
@@ -85,6 +86,21 @@ async def content_file(path):
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
+@bp.route("/internal/flow/femalepatient/femalebot")
+async def female_female_flow_writer():
+    return write_flow_html(False, False)
+
+@bp.route("/internal/flow/femalepatient/malebot")
+async def female_male_flow_writer():
+    return write_flow_html(False, True)
+
+@bp.route("/internal/flow/malepatient/femalebot")
+async def male_female_flow_writer():
+    return write_flow_html(True, False)
+
+@bp.route("/internal/flow/malepatient/malebot")
+async def male_male_flow_writer():
+    return write_flow_html(True, True)
 
 @bp.route("/ask", methods=["POST"])
 async def ask():

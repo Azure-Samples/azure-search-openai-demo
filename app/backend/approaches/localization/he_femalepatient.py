@@ -1,4 +1,4 @@
-from approaches.localization.he import choose_annoying_reason, exit_no_distress, had_improvement, he, how_much_distress, no_distress_on_start, should_continue_after_distress_increased, should_continue_after_no_change, wait_input_before_video, wrong_annoying_reason, wrong_distress_level
+from approaches.localization.he import choose_annoying_reason, exit_no_distress, had_improvement, he, how_much_distress, no_distress_on_start, should_continue_after_distress_increased, should_continue_after_no_change, wrong_annoying_reason, wrong_distress_level, wrong_has_improvement, wrong_input_before_video, wrong_is_connected_to_current
 
 heFemalePatient = {
     "id": "heFemalePatient",
@@ -10,8 +10,10 @@ heFemalePatient = {
     "exitNoDistress": exit_no_distress(is_patient_male=False),
     "chooseAnnoyingReasonWithLowDistress": [{"role": "explanationText", "content": choose_annoying_reason(is_patient_male=False)}],
     "wrongAnnoyingReason": wrong_annoying_reason(is_patient_male=False),
-    "waitInputBeforeVideo": wait_input_before_video(is_patient_male=True),
+    "wrongInputBeforeVideo": wrong_input_before_video(is_patient_male=False),
     "shouldContinueAfterNoChange": should_continue_after_no_change(is_patient_male=False),
     "shouldContinueAfterDistressIncreased": should_continue_after_distress_increased(is_patient_male=False),
+    "wrongHasImprovement": wrong_has_improvement(is_patient_male=False),
+    "wrongIsConnectedToCurrent": wrong_is_connected_to_current(is_patient_male=False),
     "hadImprovement": had_improvement(is_patient_male=False),
 }

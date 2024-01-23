@@ -56,7 +56,7 @@ def start_exercise(text):
     # Using similar logic for other variables requires updating FlowWriter logic to simulate this variable too
     return lambda request_context: request_context.get_var(VariablePatientName) + ", " + full_text_without_name
 
-def wait_input_before_video(is_patient_male: bool):
+def wrong_input_before_video(is_patient_male: bool):
     return "לא הבנתי את תשובתך. אנא {type} לתרגל עם סרטון/לצאת".format(type = "הקלד" if is_patient_male else "הקלידי")
 
 def get_video_message(request_context, is_patient_male: bool, is_bot_male: bool):
@@ -73,6 +73,9 @@ def exit_after_distress_increased_twice(is_bot_male: bool):
         impressed = "מתרשם" if is_bot_male else "מתרשמת",
         suggest = "מציע" if is_bot_male else "מציעה",
         contacts_text = contacts_text)
+
+def wrong_has_improvement(is_patient_male: bool):
+    return "לא הבנתי את תשובתך. אנא {type} ללא שיפור/שיפור מועט/שיפור גדול".format(type = "הקלד" if is_patient_male else "הקלידי")
 
 def exit_by_improvement(is_patient_male: bool, is_bot_male: bool, improvement_description: str):
     return """לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה. אני רוצה לציין בפניך את העובדה {improvement_description} אם {will_feel} שוב מצוקה. בנוסף אני רוצה לציין כי {you_might} לחוות בהמשך כל מיני קשיים, שהם טבעיים ונורמליים כמו תמונות של מה שקרה או {that_you_afraid} שיקרה, קושי בשינה, ומספר רגשות כמו מצוקה, פחד או כעס. אם {experience} אותם, מומלץ לך להשתמש בתרגול שעשינו.
@@ -120,6 +123,9 @@ def is_connected_to_current(is_patient_male: bool):
 עד כמה {you_connect} למה שקורה עכשיו, {and_feel} שגם אם קרה אירוע קשה, הוא נגמר?
 
 כלל לא / במידה מועטה / במידה מתונה / במידה רבה / במידה רבה מאד""".format(you_connect = "אתה מחובר" if is_patient_male else "את מחוברת", and_feel = "ומרגיש" if is_patient_male else "ומרגישה")
+
+def wrong_is_connected_to_current(is_patient_male: bool):
+    return "לא הבנתי את תשובתך. אנא {type} כלל לא/במידה מועטה/במידה מתונה/במידה רבה/במידה רבה מאד".format(type = "הקלד" if is_patient_male else "הקלידי")
 
 def is_connected_to_current_after_improvement(is_patient_male: bool, is_bot_male: bool):
     return """אני {happy} לראות {that_you_succeeding} לעזור לעצמך באמצעות התרגול.{is_connected}""".format(

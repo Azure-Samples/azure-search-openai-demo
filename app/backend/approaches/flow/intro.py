@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
 from approaches.flow.shared_states import ChatInputNotWait, ConditionedAction, DemoClientId, MissingClientId, PartitionKey, State, StateExit, States, StateStartIntro, StateStartPreperation, VariableClientId, VariableIsBotMale, VariableIsPatientMale, VariablePatientName, VariableShouldSaveClientStatus, VariableStringsId, chat_input_multiple_options, chat_input_numeric
+from approaches.localization.strings import get_strings_id
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from azure.core.exceptions import ResourceNotFoundError
@@ -122,7 +123,7 @@ async def get_patient_gender(request_context: RequestContext, input: str):
         return
 
     is_bot_male = request_context.get_var(VariableIsBotMale)
-    stringsId = "he" + ("MalePatient" if is_patient_male else "FemalePatient") + ("MaleBot" if is_bot_male else "FemaleBot")
+    stringsId = get_strings_id(is_patient_male, is_bot_male)
     request_context.save_to_var(VariableStringsId, stringsId)
     request_context.save_to_var(VariableIsPatientMale, is_patient_male)
 States[StateGetPatientGender] = State(action_before=get_patient_gender, chat_input=chat_input_multiple_options(["זכר", "נקבה"]), conditioned_actions=[

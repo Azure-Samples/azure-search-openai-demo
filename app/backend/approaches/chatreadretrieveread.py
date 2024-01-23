@@ -6,7 +6,7 @@ from inspect import iscoroutine
 from approaches.appresources import AppResources
 from approaches.approach import Approach
 from approaches.flow.flow import States, FirstState
-from approaches.localization.strings import Strings
+from approaches.localization.strings import get_string_by_key
 from approaches.openai import OpenAI
 from approaches.requestcontext import RequestContext
 from approaches.utils import Utils
@@ -54,15 +54,8 @@ class ChatReadRetrieveReadApproach(Approach):
                 if iscoroutine(ac):
                     await ac
             if not (ac.output is None):
-                stringsId = request_context.get_var(VariableStringsId)
-                strings = Strings[stringsId]
-                while "parent" in strings and not(ac.output in strings):
-                    strings = Strings[strings["parent"]]
-                if not(ac.output in strings):
-                    raise Exception("String output " + ac.output + " does not exist for " + stringsId)
-                output = strings[ac.output]
-                if isinstance(output, Callable):
-                    output = output(request_context)
+                strings_id = request_context.get_var(VariableStringsId)
+                output = get_string_by_key(ac.output, strings_id, request_context)
                 if isinstance(output, str):
                     output = [{"role": "assistant" , "content": output}]
                 output = { "choices": [{ "delta": output }] }
