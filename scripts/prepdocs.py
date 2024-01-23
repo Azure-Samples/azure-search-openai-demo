@@ -16,7 +16,6 @@ from prepdocslib.embeddings import (
 )
 from prepdocslib.filestrategy import DocumentAction, FileStrategy
 from prepdocslib.integratedvectorizerstrategy import (
-    DocumentAction,
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.listfilestrategy import (
@@ -175,14 +174,6 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
             credential=azure_open_ai_credential,
             disable_batch=args.disablebatchvectors,
             verbose=args.verbose,
-        )
-
-    image_embeddings: Optional[ImageEmbeddings] = None
-
-    if args.searchimages:
-        key = await get_vision_key(credential)
-        image_embeddings = (
-            ImageEmbeddings(credential=key, endpoint=args.visionendpoint, verbose=args.verbose) if key else None
         )
 
     print("Processing files...")

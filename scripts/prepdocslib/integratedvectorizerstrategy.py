@@ -146,8 +146,8 @@ class IntegratedVectorizerStrategy(Strategy):
             connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
         )
-        data_source = await ds_client.create_or_update_data_source_connection(data_source_connection)
-
+        
+        await ds_client.create_or_update_data_source_connection(data_source_connection)
         print ("Search indexer data source connection updated.")
 
         embedding_skillset = await self.createEmbeddingSkill(search_info.index_name)

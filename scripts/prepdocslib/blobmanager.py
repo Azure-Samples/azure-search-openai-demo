@@ -8,10 +8,8 @@ import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
     BlobSasPermissions,
-    ContainerSasPermissions,
     UserDelegationKey,
     generate_blob_sas,
-    generate_container_sas,
 )
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from PIL import Image, ImageDraw, ImageFont
