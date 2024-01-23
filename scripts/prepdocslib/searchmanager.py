@@ -61,7 +61,7 @@ class SearchManager:
         self.embeddings = embeddings
         self.search_images = search_images
 
-    async def create_index(self, vectorizers: list[VectorSearchVectorizer] = None):
+    async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
         if self.search_info.verbose:
             print(f"Ensuring search index {self.search_info.index_name} exists")
 

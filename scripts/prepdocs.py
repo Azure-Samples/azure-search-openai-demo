@@ -162,7 +162,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
     )
 
     use_vectors = not args.novectors
-    embeddings: Optional[OpenAIEmbeddings] = None
+    embeddings: Optional[AzureOpenAIEmbeddingService] = None
     if use_vectors and args.openaihost != "openai":
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
             credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
@@ -385,6 +385,7 @@ if __name__ == "__main__":
     )
 
     loop = asyncio.get_event_loop()
+    injestion_strategy: Strategy = None
     if use_int_vectorization:
         injestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
     else:
