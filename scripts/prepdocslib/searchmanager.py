@@ -2,9 +2,8 @@ import asyncio
 import os
 from typing import List, Optional
 
+# Workaround to use the preview SDK
 from azure.search.documents.indexes.models import (
-    ExhaustiveKnnParameters,
-    ExhaustiveKnnVectorSearchAlgorithmConfiguration,
     HnswParameters,
     HnswVectorSearchAlgorithmConfiguration,
     PrioritizedFields,
@@ -18,13 +17,12 @@ from azure.search.documents.indexes.models import (
     SimpleField,
     VectorSearch,
     VectorSearchAlgorithmKind,
-    VectorSearchAlgorithmMetric,
     VectorSearchProfile,
     VectorSearchVectorizer,
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
+from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import SplitPage

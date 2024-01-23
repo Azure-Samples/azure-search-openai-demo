@@ -1,21 +1,24 @@
 from enum import Enum
 from typing import Optional
 
+# Workaround to use the preview SDK
+from azure.search.documents.indexes._generated.models import (
+    IndexProjectionMode,
+    SearchIndexerIndexProjections,
+    SearchIndexerIndexProjectionSelector,
+    SearchIndexerIndexProjectionsParameters,
+    SearchIndexerSkillset,
+)
 from azure.search.documents.indexes.models import (
     AzureOpenAIEmbeddingSkill,
     AzureOpenAIParameters,
     AzureOpenAIVectorizer,
     FieldMapping,
-    IndexProjectionMode,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
     SearchIndexer,
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
-    SearchIndexerIndexProjections,
-    SearchIndexerIndexProjectionSelector,
-    SearchIndexerIndexProjectionsParameters,
-    SearchIndexerSkillset,
     SplitSkill,
 )
 
@@ -24,6 +27,7 @@ from .embeddings import AzureOpenAIEmbeddingService
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import SearchInfo, Strategy
+
 
 class DocumentAction(Enum):
     Add = 0
@@ -144,6 +148,8 @@ class IntegratedVectorizerStrategy(Strategy):
         )
         data_source = await ds_client.create_or_update_data_source_connection(data_source_connection)
 
+        print ("Search indexer data source connection updated.")
+
         embedding_skillset = await self.createEmbeddingSkill(search_info.index_name)
         await ds_client.create_or_update_skillset(embedding_skillset)
 
@@ -152,7 +158,7 @@ class IntegratedVectorizerStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    blob_sas_uris = await self.blob_manager.upload_blob(file)
+                    await self.blob_manager.upload_blob(file)
                 finally:
                     if file:
                         file.close()
@@ -176,4 +182,4 @@ class IntegratedVectorizerStrategy(Strategy):
         # Run the indexer
         await indexer_client.run_indexer(indexer_name)
 
-        print('Successfully created index, indexer and skillset. Please navigate to search service in azure portal to view the status.')
+        print(f'Successfully created index, indexer: {indexer_result.name} and skillset. Please navigate to search service in azure portal to view the status of the indexer.')
