@@ -82,13 +82,17 @@ class ChatApproach(Approach, ABC):
                 return query_text
         return user_query
     
-    def get_responseTime(self, context: any):
+    def get_TimeTokens_no_stream(self, context: any, usage: any):
         thoughts = context["thoughts"]
         thought: ThoughtStep
         for thought in thoughts:
-            if thought.title == "Time" and isinstance(float(thought.description), float):
-                generateTime = round(time.time() - float(thought.description), 3)
-                thought.description = f"Response generated in {generateTime} seconds\n"
+            if thought.title == "Time and Tokencost" and isinstance(float(thought.description), float):
+                responseTime = round(time.time() - float(thought.description), 3)
+                thought.description = ""
+                thought.props = {
+                    "Time": f"{responseTime} seconds.", 
+                    "Tokencost": f'{usage["total_tokens"]}. ({usage["prompt_tokens"]} prompt + {usage["completion_tokens"]} completion tokens)'
+                    }
         context["thoughts"] = thoughts
         
         return context
@@ -138,7 +142,7 @@ class ChatApproach(Approach, ABC):
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
         chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
-        extra_info = self.get_responseTime(extra_info)
+        extra_info = self.get_TimeTokens_no_stream(extra_info, chat_resp["usage"])
         chat_resp["choices"][0]["context"] = extra_info
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])

@@ -189,7 +189,7 @@ Each source has a name followed by colon and the actual information, always incl
                 ),
                 ThoughtStep("Results", [result.serialize_for_results() for result in results]),
                 ThoughtStep("Prompt", [str(message) for message in messages]),
-                ThoughtStep("Time", timeStamp),
+                ThoughtStep("Time and Tokencost", timeStamp),
             ],
         }
 

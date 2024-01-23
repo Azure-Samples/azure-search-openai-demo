@@ -108,9 +108,13 @@ const Chat = () => {
         }
         let thoughts = askResponse["choices"][0]["context"]["thoughts"];
         for (const thought of thoughts) {
-            if (thought.title === "Time") {
-                thought.description =
-                    "Response generated in " + String((Number(new Date().getTime()) - Number(thought.description) * 1000) / 1000) + " seconds\n";
+            if (thought.title === "Time and Tokencost") {
+                let responseTime = String((Number(new Date().getTime()) - Number(thought.description) * 1000) / 1000) + " seconds";
+                thought.description = "";
+                thought.props = {
+                    Time: responseTime,
+                    TokenCost: "Tokencost currently unavailable in streaming-mode"
+                };
                 askResponse["choices"][0]["context"]["thoughts"] = thoughts;
             }
         }
