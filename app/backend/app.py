@@ -110,7 +110,7 @@ def authenticated_path(route_fn: Callable[[str], Any]):
     return auth_handler
 
 
-# Decorator for routes that might require access control. Unpacks Authorization header informaiton into an auth_claims dictionary
+# Decorator for routes that might require access control. Unpacks Authorization header information into an auth_claims dictionary
 def authenticated(route_fn: Callable[[Dict[str, Any]], Any]):
     async def auth_handler():
         auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
