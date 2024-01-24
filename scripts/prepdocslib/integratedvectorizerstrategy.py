@@ -70,6 +70,9 @@ class IntegratedVectorizerStrategy(Strategy):
             outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
         )
 
+        if self.embeddings is None:
+            raise ValueError("Expecting Azure Open AI instance")
+
         embedding_skill = AzureOpenAIEmbeddingSkill(
             description="Skill to generate embeddings via Azure OpenAI",
             context="/document/pages/*",
@@ -118,6 +121,10 @@ class IntegratedVectorizerStrategy(Strategy):
             self.embeddings,
             search_images=False,
         )
+
+        if self.embeddings is None:
+            raise ValueError("Expecting Azure Open AI instance")
+            
         await search_manager.create_index(
             [
                 AzureOpenAIVectorizer(

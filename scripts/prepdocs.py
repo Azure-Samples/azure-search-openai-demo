@@ -49,7 +49,7 @@ async def get_vision_key(credential: AsyncTokenCredential) -> Optional[str]:
         exit(1)
 
 
-async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> FileStrategy:
+async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Strategy:
     storage_creds = credential if is_key_empty(args.storagekey) else args.storagekey
     blob_manager = BlobManager(
         endpoint=f"https://{args.storageaccount}.blob.core.windows.net",
@@ -148,7 +148,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         category=args.category,
     )
 
-async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: Any) -> IntegratedVectorizerStrategy:
+async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: Any) -> Strategy:
     storage_creds = credential if is_key_empty(args.storagekey) else args.storagekey
     blob_manager = BlobManager(
         endpoint=f"https://{args.storageaccount}.blob.core.windows.net",
