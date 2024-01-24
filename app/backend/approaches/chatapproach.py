@@ -71,16 +71,17 @@ class ChatApproach(Approach, ABC):
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str) -> str:
         response_message = chat_completion.choices[0].message
 
-        for tool in response_message.tool_calls:
-            if tool.type != "function":
-                continue
-            function = tool.function
-            if function.name == "search_sources":
-                arg = json.loads(function.arguments)
-                search_query = arg.get("search_query", self.NO_RESPONSE)
-                if search_query != self.NO_RESPONSE:
-                    return search_query
-        if query_text := response_message.content:
+        if response_message.tool_calls:
+            for tool in response_message.tool_calls:
+                if tool.type != "function":
+                    continue
+                function = tool.function
+                if function.name == "search_sources":
+                    arg = json.loads(function.arguments)
+                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    if search_query != self.NO_RESPONSE:
+                        return search_query
+        elif query_text := response_message.content:
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
         return user_query
