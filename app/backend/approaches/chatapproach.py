@@ -68,7 +68,7 @@ class ChatApproach(Approach, ABC):
         else:
             return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
-    def get_search_query(self, chat_completion: ChatCompletion, user_query: str) -> str:
+    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
 
         if response_message.tool_calls:
