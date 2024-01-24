@@ -113,7 +113,7 @@ var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
 var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServiceName : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-var keyVaultName = !empty(keyVaultServiceName) ? keyVaultServiceName : '${abbrs.keyVaultVaults}${resourceToken}'
+
 var useKeyVault = useGPT4V || useSearchServiceKey
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
@@ -219,7 +219,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
       VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName: ''
       SEARCH_SECRET_NAME: useSearchServiceKey ? searchServiceSecretName : ''
-      AZURE_KEY_VAULT_NAME: (useKeyVault) ? keyVaultName: ''
+      AZURE_KEY_VAULT_NAME: (useKeyVault) ? keyVault.outputs.name : ''
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
@@ -296,7 +296,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-module openAi 'core/ai/cognitiveservices.bicep' = {
+module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -345,7 +345,7 @@ module keyVault 'core/security/keyvault.bicep' = if (useKeyVault) {
   name: 'keyvault'
   scope: keyVaultResourceGroup
   params: {
-    name: keyVaultName
+    name: !empty(keyVaultServiceName) ? keyVaultServiceName : '${abbrs.keyVaultVaults}${resourceToken}'
     location: location
     principalId: principalId
   }
@@ -355,7 +355,7 @@ module webKVAccess 'core/security/keyvault-access.bicep' = if (useKeyVault) {
   name: 'web-keyvault-access'
   scope: keyVaultResourceGroup
   params: {
-    keyVaultName: keyVaultName
+    keyVaultName: keyVault.outputs.name
     principalId: backend.outputs.identityPrincipalId
   }
 }
@@ -364,7 +364,7 @@ module secrets 'secrets.bicep' = if (useKeyVault) {
   name: 'secrets'
   scope: keyVaultResourceGroup
   params: {
-    keyVaultName: keyVaultName
+    keyVaultName: keyVault.outputs.name
     storeComputerVisionSecret: useGPT4V
     computerVisionId: useGPT4V ? computerVision.outputs.id : ''
     computerVisionSecretName: computerVisionSecretName

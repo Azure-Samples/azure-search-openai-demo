@@ -30,7 +30,7 @@ However, if your goal is to minimize costs while prototyping your application, f
 3. Use the free tier of Azure Document Intelligence (used in analyzing PDFs):
 
     ```shell
-    azd env set AZURE_FORMRECOGNIZER_SKU free
+    azd env set AZURE_FORMRECOGNIZER_SKU F0
     ```
 
     Limitation: The free tier will only scan the first two pages of each PDF.
@@ -65,6 +65,11 @@ However, if your goal is to minimize costs while prototyping your application, f
     If you do so, the application will fall back to a keyword search, which is less accurate.
 
 5. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch).
+
+## Deploying from an Azure free account
+
+As of January 2024, Azure free accounts cannot sign up for Azure OpenAI access.
+You can instead sign up for an openai.com account. Follow these [directions to specify your OpenAI host and key](../README.md#openaicom-openai).
 
 ## Reducing costs locally
 
