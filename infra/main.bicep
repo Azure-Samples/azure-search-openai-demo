@@ -371,7 +371,7 @@ module secrets 'secrets.bicep' = if (useKeyVault) {
 }
 
 
-var searchServiceSemanticSearchLevel = (searchServiceSkuName == 'free') ? 'disabled' : 'free'
+var searchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : 'free'
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
   scope: searchServiceResourceGroup
@@ -387,7 +387,7 @@ module searchService 'core/search/search-services.bicep' = {
     sku: {
       name: searchServiceSkuName
     }
-    semanticSearch: searchServiceSemanticSearchLevel
+    semanticSearch: searchServiceSemanticRankerLevel
   }
 }
 
@@ -566,7 +566,7 @@ output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SECRET_NAME string = useSearchServiceKey ? searchServiceSecretName : ''
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
-output AZURE_SEARCH_SEMANTIC_SEARCH string = searchServiceSemanticSearchLevel
+output AZURE_SEARCH_SEMANTIC_RANKER string = searchServiceSemanticRankerLevel
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName

@@ -33,6 +33,8 @@ export function Component(): JSX.Element {
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
+    const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
+    const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -50,6 +52,12 @@ export function Component(): JSX.Element {
 
         configApi(token).then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
+            setUseSemanticRanker(config.showSemanticRankerOption);
+            setShowSemanticRankerOption(config.showSemanticRankerOption);
+            setShowVectorOption(config.showVectorOption);
+            if (!config.showVectorOption) {
+                setRetrievalMode(RetrievalMode.Text);
+            }
         });
     };
 
@@ -237,12 +245,16 @@ export function Component(): JSX.Element {
                     onChange={onRetrieveCountChange}
                 />
                 <TextField className={styles.oneshotSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                <Checkbox
-                    className={styles.oneshotSettingsSeparator}
-                    checked={useSemanticRanker}
-                    label="Use semantic ranker for retrieval"
-                    onChange={onUseSemanticRankerChange}
-                />
+
+                {showSemanticRankerOption && (
+                    <Checkbox
+                        className={styles.oneshotSettingsSeparator}
+                        checked={useSemanticRanker}
+                        label="Use semantic ranker for retrieval"
+                        onChange={onUseSemanticRankerChange}
+                    />
+                )}
+
                 <Checkbox
                     className={styles.oneshotSettingsSeparator}
                     checked={useSemanticCaptions}
@@ -262,11 +274,13 @@ export function Component(): JSX.Element {
                     />
                 )}
 
-                <VectorSettings
-                    showImageOptions={useGPT4V && showGPT4VOptions}
-                    updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
-                    updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
-                />
+                {showVectorOption && (
+                    <VectorSettings
+                        showImageOptions={useGPT4V && showGPT4VOptions}
+                        updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                        updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                    />
+                )}
 
                 {useLogin && (
                     <Checkbox
