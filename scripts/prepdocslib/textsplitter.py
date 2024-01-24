@@ -41,7 +41,14 @@ class TextSplitter:
             return pages[num_pages - 1].page_num
 
         all_text = "".join(page.text for page in pages)
+        if len(all_text.strip()) == 0:
+            return
+
         length = len(all_text)
+        if length <= self.max_section_length:
+            yield SplitPage(page_num=find_page(0), text=all_text)
+            return
+
         start = 0
         end = length
         while start + self.section_overlap < length:
