@@ -79,7 +79,7 @@ class ChatApproach(Approach, ABC):
                 function = tool.function
                 if function.name == "human_escalation":
                     arg = json.loads(function.arguments)
-                    escalate = arg.get("human_escalation", "false").lower() == "true"
+                    escalate = arg.get("requires_escalation", False)
                 if function.name == "search_sources":
                     arg = json.loads(function.arguments)
                     search_query = arg.get("search_query", self.NO_RESPONSE)

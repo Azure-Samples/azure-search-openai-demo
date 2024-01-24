@@ -125,8 +125,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "type": "object",
                         "properties": {
                             "requires_escalation": {
-                                "type": "string",
-                                "description": "'true' if user is showing signs of frustration or anger at the query. Also 'true' if the user says 'I want to talk to a human'. Otherwise 'false'",
+                                "type": "boolean",
+                                "description": "If user is showing signs of frustration or anger in the query. Also if the user says they want to talk to a real person and not a chat bot.",
                             }
                         },
                         "required": ["requires_escalation"],

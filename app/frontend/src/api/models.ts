@@ -49,6 +49,7 @@ export type ResponseContext = {
     data_points: string[];
     followup_questions: string[] | null;
     thoughts: Thoughts[];
+    escalate: boolean;
 };
 
 export type ResponseChoice = {

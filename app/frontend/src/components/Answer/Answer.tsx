@@ -30,6 +30,7 @@ export const Answer = ({
     showFollowupQuestions
 }: Props) => {
     const followupQuestions = answer.choices[0].context.followup_questions;
+    const escalate = answer.choices[0].context.escalate;
     const messageContent = answer.choices[0].message.content;
     const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
@@ -92,6 +93,13 @@ export const Answer = ({
                                 </a>
                             );
                         })}
+                    </Stack>
+                </Stack.Item>
+            )}
+            {escalate && (
+                <Stack.Item>
+                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
+                        <span>Call 1800 BISCUITS to speak to a customer support agent.</span>
                     </Stack>
                 </Stack.Item>
             )}
