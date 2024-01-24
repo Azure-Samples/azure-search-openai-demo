@@ -28,14 +28,14 @@
 
 .exampleText {
     margin: 0;
-    font-size: 22px;
+    font-size: 18px;
     width: 280px;
     min-height: 100px;
 }
 
 @media only screen and (max-height: 780px) {
     .exampleText {
-        font-size: 20px;
+        font-size: 18px;
         height: 80px;
     }
 }

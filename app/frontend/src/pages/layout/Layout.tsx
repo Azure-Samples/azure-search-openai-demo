@@ -2,7 +2,6 @@ import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
 import veraqor from "../../assets/veraqor.png";
-
 import styles from "./Layout.module.css";
 
 import { useLogin } from "../../authConfig";
@@ -15,7 +14,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        {/* <h3 className={styles.headerTitle}>Veraqor GPT + Enterprise data | Sample</h3> */}
+                        {/* <h3 className={styles.headerTitle}>Veraqor GPT + Enterprise data | Demo</h3> */}
                         <img
                             src={veraqor}
                             alt="Veraqor logo"
@@ -24,7 +23,7 @@ const Layout = () => {
                             height="60px"
                             className={styles.githubLogo}
                         />
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Demo</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
@@ -52,7 +51,9 @@ const Layout = () => {
                             </li> */}
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
+                    <a href="imagepage.html">
+                        <h4 className={styles.headerRightText}>Architecture</h4>
+                    </a>
                     {useLogin && <LoginButton />}
                 </div>
             </header>

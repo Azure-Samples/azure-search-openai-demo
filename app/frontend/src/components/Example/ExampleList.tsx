@@ -3,9 +3,9 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
+    "Can you provide details on the different holiday options that Veraqor offers?",
+    "What kind of travel reimbursements does Veraqor provide?",
+    "State Veraqor medical reimbursements coverage?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
