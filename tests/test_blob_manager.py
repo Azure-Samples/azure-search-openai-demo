@@ -16,6 +16,9 @@ def blob_manager(monkeypatch):
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
         verbose=True,
+        account=os.environ['AZURE_STORAGE_ACCOUNT'],
+        resourceGroup="test-rg",
+        subscriptionId="test-sub-id"
     )
 
 
