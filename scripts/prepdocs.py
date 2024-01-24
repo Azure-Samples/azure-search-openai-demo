@@ -81,8 +81,6 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
             credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
         )
-        print(args.openaiservice)
-        print(credential)
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service=args.openaiservice,
             open_ai_deployment=args.openaideployment,
@@ -92,7 +90,6 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
             disable_batch=args.disablebatchvectors,
             verbose=args.verbose,
         )
-        print(embeddings)
     elif use_vectors:
         embeddings = OpenAIEmbeddingService(
             open_ai_model_name=args.openaimodelname,

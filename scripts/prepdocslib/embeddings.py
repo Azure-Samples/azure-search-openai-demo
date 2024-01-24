@@ -144,10 +144,6 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.cached_token: Optional[AccessToken] = None
 
     async def create_client(self) -> AsyncOpenAI:
-        print(self.open_ai_service)
-        print(self.api_key)
-        print(self.credential)
-        print("Hello")
         return AsyncAzureOpenAI(
             azure_endpoint=f"https://ey-sandbox.openai.azure.com",
             api_key = self.api_key,  
