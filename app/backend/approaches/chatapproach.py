@@ -71,18 +71,19 @@ class ChatApproach(Approach, ABC):
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str) -> Tuple[str, bool]:
         response_message = chat_completion.choices[0].message
         escalate = False
-        for tool in response_message.tool_calls:
-            if tool.type != "function":
-                continue
-            function = tool.function
-            if function.name == "human_escalation":
-                arg = json.loads(function.arguments)
-                escalate = arg.get("human_escalation", "false").lower() == "true"
-            if function.name == "search_sources":
-                arg = json.loads(function.arguments)
-                search_query = arg.get("search_query", self.NO_RESPONSE)
-                if search_query != self.NO_RESPONSE:
-                    return search_query, escalate
+        if response_message.tool_calls:
+            for tool in response_message.tool_calls:
+                if tool.type != "function":
+                    continue
+                function = tool.function
+                if function.name == "human_escalation":
+                    arg = json.loads(function.arguments)
+                    escalate = arg.get("human_escalation", "false").lower() == "true"
+                if function.name == "search_sources":
+                    arg = json.loads(function.arguments)
+                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    if search_query != self.NO_RESPONSE:
+                        return search_query, escalate
         if query_text := response_message.content:
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text, escalate
