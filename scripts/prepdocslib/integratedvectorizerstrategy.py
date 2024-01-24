@@ -124,7 +124,7 @@ class IntegratedVectorizerStrategy(Strategy):
 
         if self.embeddings is None:
             raise ValueError("Expecting Azure Open AI instance")
-            
+
         await search_manager.create_index(
             [
                 AzureOpenAIVectorizer(
@@ -148,9 +148,9 @@ class IntegratedVectorizerStrategy(Strategy):
             connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
         )
-        
+
         await ds_client.create_or_update_data_source_connection(data_source_connection)
-        print ("Search indexer data source connection updated.")
+        print("Search indexer data source connection updated.")
 
         embedding_skillset = await self.createEmbeddingSkill(search_info.index_name)
         await ds_client.create_or_update_skillset(embedding_skillset)
@@ -184,4 +184,6 @@ class IntegratedVectorizerStrategy(Strategy):
         # Run the indexer
         await indexer_client.run_indexer(indexer_name)
 
-        print(f'Successfully created index, indexer: {indexer_result.name} and skillset. Please navigate to search service in azure portal to view the status of the indexer.')
+        print(
+            f"Successfully created index, indexer: {indexer_result.name} and skillset. Please navigate to search service in azure portal to view the status of the indexer."
+        )

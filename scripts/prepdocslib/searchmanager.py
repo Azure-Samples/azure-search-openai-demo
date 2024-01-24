@@ -67,8 +67,9 @@ class SearchManager:
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
-                SimpleField(name="id", type="Edm.String", key=True) if not self.use_int_vectorization else
-                SearchField(
+                SimpleField(name="id", type="Edm.String", key=True)
+                if not self.use_int_vectorization
+                else SearchField(
                     name="id",
                     type="Edm.String",
                     key=True,
@@ -145,7 +146,7 @@ class SearchManager:
                         VectorSearchProfile(
                             name="embedding_config",
                             algorithm="hnsw_config",
-                            vectorizer="myOpenAI" if self.use_int_vectorization else None
+                            vectorizer="myOpenAI" if self.use_int_vectorization else None,
                         ),
                     ],
                     vectorizers=vectorizers,

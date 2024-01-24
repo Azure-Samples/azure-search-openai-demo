@@ -63,8 +63,8 @@ class BlobManager:
         return None
 
     def get_managedidentity_connectionstring(self):
-        return f'ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};'
-    
+        return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
+
     async def upload_pdf_blob_images(
         self, service_client: BlobServiceClient, container_client: ContainerClient, file: File
     ) -> List[str]:

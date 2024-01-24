@@ -148,6 +148,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         category=args.category,
     )
 
+
 async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: Any) -> Strategy:
     storage_creds = credential if is_key_empty(args.storagekey) else args.storagekey
     blob_manager = BlobManager(
@@ -205,6 +206,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
         use_acls=args.useacls,
         category=args.category,
     )
+
 
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
