@@ -106,6 +106,9 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
+@description('Show options to use vector embeddings for searching in the app UI')
+param useVectors bool = false
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
@@ -212,6 +215,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
+      AZURE_SEARCH_SEMANTIC_RANKER: searchServiceSemanticRankerLevel
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
       VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName: ''
       SEARCH_SECRET_NAME: useSearchServiceKey ? searchServiceSecretName : ''
@@ -244,7 +248,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
-
+      USE_VECTORS: useVectors
       USE_GPT4V: useGPT4V
     }
   }
