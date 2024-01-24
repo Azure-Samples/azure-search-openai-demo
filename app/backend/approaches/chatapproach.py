@@ -71,6 +71,7 @@ class ChatApproach(Approach, ABC):
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str) -> Tuple[str, bool]:
         response_message = chat_completion.choices[0].message
         escalate = False
+
         if response_message.tool_calls:
             for tool in response_message.tool_calls:
                 if tool.type != "function":
