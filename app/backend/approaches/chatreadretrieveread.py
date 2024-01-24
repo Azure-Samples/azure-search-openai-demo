@@ -1,3 +1,4 @@
+import time
 from typing import Any, Coroutine, Literal, Optional, Union, overload
 
 from azure.search.documents.aio import SearchClient
@@ -87,6 +88,7 @@ Each source has a name followed by colon and the actual information, always incl
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        timeStamp = str(round(time.time(), 3))
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
@@ -173,7 +175,6 @@ Each source has a name followed by colon and the actual information, always incl
         )
 
         data_points = {"text": sources_content}
-
         extra_info = {
             "data_points": data_points,
             "thoughts": [
@@ -188,6 +189,7 @@ Each source has a name followed by colon and the actual information, always incl
                 ),
                 ThoughtStep("Results", [result.serialize_for_results() for result in results]),
                 ThoughtStep("Prompt", [str(message) for message in messages]),
+                ThoughtStep("Time and Tokencost", timeStamp),
             ],
         }
 

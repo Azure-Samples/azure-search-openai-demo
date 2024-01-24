@@ -14,6 +14,7 @@ import {
     ChatAppResponseOrError,
     ChatAppRequest,
     ResponseMessage,
+    Thoughts,
     VectorFieldOptions,
     GPT4VInput
 } from "../../api";
@@ -105,6 +106,19 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
+        let thoughts = askResponse["choices"][0]["context"]["thoughts"];
+        for (const thought of thoughts) {
+            if (thought.title === "Time and Tokencost") {
+                let responseTime = String((Number(new Date().getTime()) - Number(thought.description) * 1000) / 1000) + " seconds";
+                thought.description = "";
+                thought.props = {
+                    Time: responseTime,
+                    TokenCost: "Tokencost currently unavailable in streaming-mode"
+                };
+                askResponse["choices"][0]["context"]["thoughts"] = thoughts;
+            }
+        }
+
         const fullResponse: ChatAppResponse = {
             ...askResponse,
             choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
