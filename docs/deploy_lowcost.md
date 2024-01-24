@@ -68,6 +68,8 @@ However, if your goal is to minimize costs while prototyping your application, f
 
 ## Deploying from an Azure free account
 
+There are additional limitations for Azure free accounts (as opposed to "Pay-as-you-go" accounts which have billing enabled).
+
 As of January 2024, Azure free accounts cannot sign up for Azure OpenAI access.
 You can instead sign up for an openai.com account. Follow these [directions to specify your OpenAI host and key](../README.md#openaicom-openai).
 
