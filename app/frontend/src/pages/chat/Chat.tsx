@@ -346,6 +346,7 @@ const Chat = () => {
                         citationHeight="810px"
                         answer={answers[selectedAnswer][1]}
                         activeTab={activeAnalysisPanelTab}
+                        question={answers[selectedAnswer][0]} //streamedAnswer[0]
                     />
                 )}
 
