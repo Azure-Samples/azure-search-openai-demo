@@ -7,6 +7,7 @@ import { SupportingContent } from "../SupportingContent";
 import { ChatAppResponse } from "../../api";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 import { ThoughtProcess } from "./ThoughtProcess";
+import { Evaluation } from "./Evaluation";
 
 interface Props {
     className: string;
@@ -23,6 +24,8 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     const isDisabledThoughtProcessTab: boolean = !answer.choices[0].context.thoughts;
     const isDisabledSupportingContentTab: boolean = !answer.choices[0].context.data_points;
     const isDisabledCitationTab: boolean = !activeCitation;
+
+    console.log(answer.choices);
 
     return (
         <Pivot
@@ -43,6 +46,13 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
             >
                 <SupportingContent supportingContent={answer.choices[0].context.data_points} />
+            </PivotItem>
+            <PivotItem
+                itemKey={AnalysisPanelTabs.EvaluationTab}
+                headerText="Evaluation"
+                headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
+            >
+                <Evaluation question="Question" answer={answer.choices[0].message.content} supportingContent={answer.choices[0].context.data_points} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.CitationTab}
