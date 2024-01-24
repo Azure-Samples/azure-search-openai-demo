@@ -37,7 +37,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
-        embeddings: AzureOpenAIEmbeddingService,
+        embeddings: Optional[AzureOpenAIEmbeddingService],
         subscriptionId: str,
         searchServiceUserAssginedId: str,
         document_action: DocumentAction = DocumentAction.Add,
