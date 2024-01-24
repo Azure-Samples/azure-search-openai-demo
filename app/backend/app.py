@@ -125,6 +125,7 @@ def error_response(error: Exception, route: str, status_code: int = 500):
 
 @bp.route("/ask", methods=["POST"])
 async def ask():
+    current_app.logger.info("Received ask request")
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -164,6 +165,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 @bp.route("/chat", methods=["POST"])
 async def chat():
+    current_app.logger.info("Received chat request")
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -209,6 +211,7 @@ def config():
 
 @bp.before_app_serving
 async def setup_clients():
+    current_app.logger.info("Setting up client")
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
@@ -292,13 +295,10 @@ async def setup_clients():
     openai_client: AsyncOpenAI
 
     if OPENAI_HOST == "azure":
-        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
-        # Store on app.config for later use inside requests
-        openai_client = AsyncAzureOpenAI(
-            api_version="2023-07-01-preview",
-            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
-            azure_ad_token_provider=token_provider,
-        )
+        openai_client = AsyncAzureOpenAI(  
+            api_key = OPENAI_API_KEY,  
+            api_version = "2023-12-01-preview",
+            azure_endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com")
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
     else:
@@ -313,6 +313,12 @@ async def setup_clients():
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
+
+    current_app.logger.info("MODEL_PARAMETERS")
+    current_app.logger.info(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
+    current_app.logger.info(OPENAI_EMB_MODEL)
+    current_app.logger.info(AZURE_OPENAI_EMB_DEPLOYMENT)
+
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
@@ -403,10 +409,11 @@ def create_app():
         app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    default_level = "INFO"  # In development, log more verbosely
+    default_level = "DEBUG"  # In development, log more verbosely
     if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
         default_level = "WARNING"
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
+    # logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
+    logging.basicConfig(level=logging.DEBUG)
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)
