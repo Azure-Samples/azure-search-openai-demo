@@ -116,7 +116,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             n=1,
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_text, escalate = self.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -190,6 +190,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 ThoughtStep("Results", [result.serialize_for_results() for result in results]),
                 ThoughtStep("Prompt", [str(message) for message in messages]),
             ],
+            "escalate": escalate,
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(

@@ -115,7 +115,24 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "required": ["search_query"],
                     },
                 },
-            }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "human_escalation",
+                    "description": "Check if user wants to escalate to a human",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "requires_escalation": {
+                                "type": "string",
+                                "description": "'true' if user is showing signs of frustration or anger at the query. Also 'true' if the user says 'I want to talk to a human'. Otherwise 'false'",
+                            }
+                        },
+                        "required": ["requires_escalation"],
+                    },
+                },
+            },
         ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
@@ -139,7 +156,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             function_call="auto",
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_text, escalate = self.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -193,6 +210,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ThoughtStep("Results", [result.serialize_for_results() for result in results]),
                 ThoughtStep("Prompt", [str(message) for message in messages]),
             ],
+            "escalate": escalate,
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(
