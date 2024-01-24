@@ -44,6 +44,7 @@ visionSecretNameArg=""
 if [ -n "$VISION_SECRET_NAME" ]; then
   visionSecretNameArg="--visionsecretname $VISION_SECRET_NAME"
 fi
+
 searchSecretNameArg=""
 if [ -n "$AZURE_SEARCH_SECRET_NAME" ]; then
   searchSecretNameArg="--searchsecretname $AZURE_SEARCH_SECRET_NAME"
@@ -51,6 +52,14 @@ fi
 
 if [ "$USE_GPT4V" = true ]; then
   searchImagesArg="--searchimages"
+fi
+
+if [ "$USE_VECTORS" = false ]; then
+  disableVectorsArg="--novectors"
+fi
+
+if [ "$USE_LOCAL_PDF_PARSER" = true ]; then
+  localPdfParserArg="--localpdfparser"
 fi
 
 if [ -n "$AZURE_TENANT_ID" ]; then
@@ -68,4 +77,5 @@ $searchAnalyzerNameArg $searchSecretNameArg \
 $searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
+$disableVectorsArg $localPdfParserArg \
 $keyVaultName

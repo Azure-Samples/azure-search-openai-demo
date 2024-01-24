@@ -50,6 +50,7 @@ CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
 CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
 CONFIG_SEMANTIC_SEARCH_DEPLOYED = "semantic_search_deployed"
+CONFIG_VECTOR_SEARCH_ENABLED = "vector_search_enabled"
 CONFIG_SEARCH_CLIENT = "search_client"
 CONFIG_OPENAI_CLIENT = "openai_client"
 ERROR_MESSAGE = """The app encountered an error processing your request.
@@ -211,6 +212,7 @@ def config():
         {
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticSearchOption": current_app.config[CONFIG_SEMANTIC_SEARCH_DEPLOYED],
+            "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
         }
     )
 
@@ -330,6 +332,7 @@ async def setup_clients():
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_SEARCH_DEPLOYED] = AZURE_SEARCH_SEMANTIC_SEARCH != "disabled"
+    current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes

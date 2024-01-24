@@ -25,7 +25,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     2. The free tier does not support semantic ranker, so the app UI will no longer display
     the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid/ba-p/3929167).
     3. The free tier does not support Managed Identity (keyless API access),
-    so if you enable the free tier, the Bicep will use Azure Key Vault to securely store the key instead.
+    so the Bicep will use Azure Key Vault to securely store the key instead.
 
 3. Use the free tier of Azure Document Intelligence (used in analyzing PDFs):
 
@@ -37,8 +37,11 @@ However, if your goal is to minimize costs while prototyping your application, f
     In our sample documents, those first two pages are just title pages,
     so you won't be able to get answers from the documents.
     You can either use your own documents that are only 2-pages long,
-    or you can use a local Python package for PDF parsing by adding the `--localpdfparser`
-    argument to the command at the bottom of `prepdocs.sh` or `prepdocs.ps1`.
+    or you can use a local Python package for PDF parsing by setting:
+
+    ```shell
+    azd env set USE_LOCAL_PDF_PARSER true
+    ```
 
 3. Turn off Azure Monitor (Application Insights):
 
@@ -51,14 +54,15 @@ However, if your goal is to minimize costs while prototyping your application, f
 
 4. Disable vector search:
 
+    ```shell
+    azd env set USE_VECTORS false
+    ```
+
     By default, the application computes vector embeddings for documents during the data ingestion phase,
     and then computes a vector embedding for user questions asked in the application.
     Those computations require an embedding model, which incurs costs per tokens used. The costs are fairly low,
     so the benefits of vector search would typically outweigh the costs, but it is possible to disable vector support.
-
-    Modify `prepdocs.sh` or `prepdocs.ps1` to add the `--novectors` argument to the command at the bottom.
-
-    Modify `Chat.tsx` so that `retrievalMode` defaults to `RetrievalMode.Text` instead of `RetrievalMode.HYBRID`.
+    If you do so, the application will fall back to a keyword search, which is less accurate.
 
 5. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch).
 

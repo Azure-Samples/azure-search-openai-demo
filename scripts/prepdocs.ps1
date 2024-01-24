@@ -49,6 +49,14 @@ if ($env:USE_GPT4V -eq $true) {
   $searchImagesArg = "--searchimages"
 }
 
+if ($env:USE_VECTORS -eq $false) {
+  $disableVectorsArg="--novectors"
+}
+
+if ($env:USE_LOCAL_PDF_PARSER -eq $true) {
+  $localPdfParserArg = "--localpdfparser"
+}
+
 if ($env:AZURE_TENANT_ID) {
   $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
 }
@@ -67,5 +75,6 @@ $argumentList = "./scripts/prepdocs.py $dataArg --verbose " + `
 "$searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg " + `
 "$adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg  " + `
 "$tenantArg $aclArg " + `
+"$disableVectorsArg $localPdfParserArg " + `
 "$keyVaultName "
 Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow
