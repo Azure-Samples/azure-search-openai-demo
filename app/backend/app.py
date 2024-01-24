@@ -5,7 +5,7 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import Any, AsyncGenerator, Callable, Dict, cast
+from typing import Any, AsyncGenerator, Dict, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -14,7 +14,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
-from openai import APIError, AsyncAzureOpenAI, AsyncOpenAI
+from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
@@ -36,24 +36,20 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
-from core.authentication import AuthenticationHelper, AuthError
-
-CONFIG_OPENAI_TOKEN = "openai_token"
-CONFIG_CREDENTIAL = "azure_credential"
-CONFIG_ASK_APPROACH = "ask_approach"
-CONFIG_ASK_VISION_APPROACH = "ask_vision_approach"
-CONFIG_CHAT_VISION_APPROACH = "chat_vision_approach"
-CONFIG_CHAT_APPROACH = "chat_approach"
-CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
-CONFIG_AUTH_CLIENT = "auth_client"
-CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
-CONFIG_SEARCH_CLIENT = "search_client"
-CONFIG_OPENAI_CLIENT = "openai_client"
-ERROR_MESSAGE = """The app encountered an error processing your request.
-If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
-Error type: {error_type}
-"""
-ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
+from config import (
+    CONFIG_ASK_APPROACH,
+    CONFIG_ASK_VISION_APPROACH,
+    CONFIG_AUTH_CLIENT,
+    CONFIG_BLOB_CONTAINER_CLIENT,
+    CONFIG_CHAT_APPROACH,
+    CONFIG_CHAT_VISION_APPROACH,
+    CONFIG_GPT4V_DEPLOYED,
+    CONFIG_OPENAI_CLIENT,
+    CONFIG_SEARCH_CLIENT,
+)
+from core.authentication import AuthenticationHelper
+from decorators import authenticated, authenticated_path
+from error import error_dict, error_response
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -81,50 +77,6 @@ async def favicon():
 @bp.route("/assets/<path:path>")
 async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
-
-
-# Decorator for routes that request a specific file that might require access control enforcement
-def authenticated_path(route_fn: Callable[[str], Any]):
-    async def auth_handler(path=""):
-        # If authentication is enabled, validate the user can access the file
-        auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-        search_client = current_app.config[CONFIG_SEARCH_CLIENT]
-        authorized = False
-        try:
-            auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-            authorized = await auth_helper.check_path_auth(path, auth_claims, search_client)
-        except AuthError:
-            abort(403)
-        except Exception as error:
-            logging.exception("Problem checking path auth %s", error)
-            return error_response(error, route="/content")
-
-        if not authorized:
-            abort(403)
-
-        return await route_fn(path)
-
-    # Rename decorator to avoid view function mapping overwrite error
-    auth_handler.__name__ = route_fn.__name__
-
-    return auth_handler
-
-
-# Decorator for routes that might require access control. Unpacks Authorization header information into an auth_claims dictionary
-def authenticated(route_fn: Callable[[Dict[str, Any]], Any]):
-    async def auth_handler():
-        auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
-        try:
-            auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-        except AuthError:
-            abort(403)
-
-        return await route_fn(auth_claims)
-
-    # Rename decorator to avoid view function mapping overwrite error
-    auth_handler.__name__ = route_fn.__name__
-
-    return auth_handler
 
 
 # Serve content files from blob storage from within the app to keep the example self-contained.
@@ -155,19 +107,6 @@ async def content_file(path: str):
     await blob.readinto(blob_file)
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
-
-
-def error_dict(error: Exception) -> dict:
-    if isinstance(error, APIError) and error.code == "content_filter":
-        return {"error": ERROR_MESSAGE_FILTER}
-    return {"error": ERROR_MESSAGE.format(error_type=type(error))}
-
-
-def error_response(error: Exception, route: str, status_code: int = 500):
-    logging.exception("Exception in %s: %s", route, error)
-    if isinstance(error, APIError) and error.code == "content_filter":
-        status_code = 400
-    return jsonify(error_dict(error)), status_code
 
 
 @bp.route("/ask", methods=["POST"])
