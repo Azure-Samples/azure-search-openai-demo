@@ -385,7 +385,7 @@ if __name__ == "__main__":
     )
 
     loop = asyncio.get_event_loop()
-    injestion_strategy: Strategy = None
+    injestion_strategy = None
     if use_int_vectorization:
         injestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
     else:
