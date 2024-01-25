@@ -40,7 +40,8 @@ resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   name: name
   location: location
   tags: tags
-  identity: {
+  // The free tier does not support managed identity
+  identity: (sku.name == 'free') ? null : {
     type: 'SystemAssigned'
   }
   properties: {

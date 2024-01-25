@@ -7,7 +7,6 @@ if (Test-Path -Path "/usr") {
 }
 
 Write-Host 'Running "prepdocs.py"'
-$cwd = (Get-Location)
 
 # Optional Data Lake Storage Gen2 args if using sample data for login and access control
 if ($env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT) {
@@ -37,27 +36,45 @@ if ($env:AZURE_VISION_KEY) {
 
 # If vision keys are stored in keyvault provide the keyvault name and secret name
 if ($env:AZURE_KEY_VAULT_NAME) {
-  $visionKeyVaultName = "--visionKeyVaultName $env:AZURE_KEY_VAULT_NAME"
+  $keyVaultName = "--keyvaultname $env:AZURE_KEY_VAULT_NAME"
 }
 if ($env:VISION_SECRET_NAME) {
-  $visionKeyVaultkey = "--visionKeyVaultkey $env:VISION_SECRET_NAME"
+  $visionSecretNameArg = "--visionsecretname $env:VISION_SECRET_NAME"
+}
+if ($env:AZURE_SEARCH_SECRET_NAME) {
+  $searchSecretNameArg = "--searchsecretname $env:AZURE_SEARCH_SECRET_NAME"
 }
 
-$dataArg = "`"$cwd/data/*`""
 if ($env:USE_GPT4V -eq $true) {
   $searchImagesArg = "--searchimages"
+}
+
+if ($env:USE_VECTORS -eq $false) {
+  $disableVectorsArg="--novectors"
+}
+
+if ($env:USE_LOCAL_PDF_PARSER -eq $true) {
+  $localPdfParserArg = "--localpdfparser"
 }
 
 if ($env:AZURE_TENANT_ID) {
   $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
 }
 
-$argumentList = "./scripts/prepdocs.py $dataArg $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg " + `
-"$aclArg --storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER " + `
-"--searchservice $env:AZURE_SEARCH_SERVICE --openaihost `"$env:OPENAI_HOST`" " + `
-"--openaiservice `"$env:AZURE_OPENAI_SERVICE`" --openaikey `"$env:OPENAI_API_KEY`" " + `
-"--openaiorg `"$env:OPENAI_ORGANIZATION`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
-"--openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" --index $env:AZURE_SEARCH_INDEX " + `
-"$searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyVaultName " + `
-"--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE $tenantArg -v"
+$cwd = (Get-Location)
+$dataArg = "`"$cwd/data/*`""
+
+$argumentList = "./scripts/prepdocs.py $dataArg --verbose " + `
+"--storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER " + `
+"--searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX " + `
+"$searchAnalyzerNameArg $searchSecretNameArg " + `
+"--openaihost `"$env:OPENAI_HOST`" --openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" " + `
+"--openaiservice `"$env:AZURE_OPENAI_SERVICE`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
+"--openaikey `"$env:OPENAI_API_KEY`" --openaiorg `"$env:OPENAI_ORGANIZATION`" " + `
+"--formrecognizerservice $env:AZURE_FORMRECOGNIZER_SERVICE " + `
+"$searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg " + `
+"$adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg  " + `
+"$tenantArg $aclArg " + `
+"$disableVectorsArg $localPdfParserArg " + `
+"$keyVaultName "
 Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow

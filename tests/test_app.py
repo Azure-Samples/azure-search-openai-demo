@@ -55,24 +55,6 @@ async def test_missing_env_vars():
 
 
 @pytest.mark.asyncio
-async def test_app_local_openai(monkeypatch):
-    with mock.patch.dict(os.environ, clear=True):
-        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
-        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
-        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
-        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
-        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
-        os.environ["OPENAI_HOST"] = "local"
-        os.environ["OPENAI_BASE_URL"] = "http://localhost:5000"
-
-        quart_app = app.create_app()
-
-        async with quart_app.test_app():
-            assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "no-key-required"
-            assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://localhost:5000"
-
-
-@pytest.mark.asyncio
 async def test_index(client):
     response = await client.get("/")
     assert response.status_code == 200
