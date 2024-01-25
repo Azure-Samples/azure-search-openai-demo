@@ -251,7 +251,7 @@ Azure AI search has introduced an [integrated vectorization feature in preview m
 
 To enable integrated vectorization with this sample:
 
-1. Delete existing index
+1. If you've previously deployed, delete the existing search index.
 2. Run `azd env set USE_FEATURE_INT_VECTORIZATION true`
 3. Run ```azd up``` to update system and user roles
 4. You could view the resources such as the indexer, skillet in azure portal and monitor the status
