@@ -221,7 +221,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
       VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName: ''
       SEARCH_SECRET_NAME: useSearchServiceKey ? searchServiceSecretName : ''
-      AZURE_KEY_VAULT_NAME: (useKeyVault) ? keyVault.outputs.name : ''
+      AZURE_KEY_VAULT_NAME: useKeyVault ? keyVault.outputs.name : ''
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
@@ -357,7 +357,7 @@ module webKVAccess 'core/security/keyvault-access.bicep' = if (useKeyVault) {
   name: 'web-keyvault-access'
   scope: keyVaultResourceGroup
   params: {
-    keyVaultName: keyVault.outputs.name
+    keyVaultName: useKeyVault ? keyVault.outputs.name : ''
     principalId: backend.outputs.identityPrincipalId
   }
 }
@@ -366,7 +366,7 @@ module secrets 'secrets.bicep' = if (useKeyVault) {
   name: 'secrets'
   scope: keyVaultResourceGroup
   params: {
-    keyVaultName: keyVault.outputs.name
+    keyVaultName: useKeyVault ? keyVault.outputs.name : ''
     storeComputerVisionSecret: useGPT4V
     computerVisionId: useGPT4V ? computerVision.outputs.id : ''
     computerVisionSecretName: computerVisionSecretName
@@ -562,7 +562,7 @@ output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganiza
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 output VISION_SECRET_NAME string = useGPT4V ? computerVisionSecretName : ''
-output AZURE_KEY_VAULT_NAME string = (useKeyVault) ? keyVault.outputs.name : ''
+output AZURE_KEY_VAULT_NAME string = useKeyVault ? keyVault.outputs.name : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
