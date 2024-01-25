@@ -486,7 +486,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure')
   }
 }
 
-module openAiRoleSearchservice 'core/security/role.bicep' = if (openAiHost == 'azure') {
+module openAiRoleSearchService 'core/security/role.bicep' = if (openAiHost == 'azure') {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
