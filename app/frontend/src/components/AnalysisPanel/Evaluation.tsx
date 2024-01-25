@@ -1,5 +1,3 @@
-import { parseSupportingContentItem } from "../SupportingContent/SupportingContentParser";
-
 import styles from "./AnalysisPanel.module.css";
 
 import { evalApi, EvaluationRequest, EvaluationResponse } from "../../api";
@@ -18,13 +16,6 @@ interface SupportingItemProps {
     content: string;
 }
 
-/*
-Evaluations that we can do:
-- Context Precision: Question & Context
-- Answer Relevance: Question & Answer
-- Faithfulness: Answer & Context
-*/
-
 const response: EvaluationResponse = {
     contextPrecision: 0.1,
     answerRelevance: 0.2,
@@ -36,16 +27,29 @@ const client = useLogin ? useMsal().instance : undefined;
 export const Evaluation = ({ question, answer, supportingContent }: Props) => {
     const [evalResult, setEvalResult] = useState<EvaluationResponse | null>(null);
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<unknown>();
+
     const getEvaluation = async (question: string, contexts: string[], answer: string) => {
-        // const token = client ? await getToken(client) : undefined;
-        // const request: EvaluationRequest = {
-        //     question: question,
-        //     contexts: contexts,
-        //     answer: answer
-        // };
-        // const response: EvaluationResponse = await evalApi(request, token);
-        setEvalResult(response);
-        // console.log(response);
+        error && setError(undefined);
+        setIsLoading(true);
+
+        const token = client ? await getToken(client) : undefined;
+
+        try {
+            const request: EvaluationRequest = {
+                question: question,
+                contexts: contexts,
+                answer: answer
+            };
+            const response: EvaluationResponse = await evalApi(request, token);
+            setEvalResult(response);
+            console.log(response);
+        } catch (e) {
+            setError(e);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     console.log("Eval", evalResult);
@@ -63,7 +67,24 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                 {answer}
             </div>
             <div className="">
-                {evalResult === null ? (
+                {evalResult ? (
+                    <>
+                        <div>
+                            <span>
+                                <h2>Evaluation</h2>
+                            </span>
+                            <ul>
+                                <li>Context Precision: {evalResult.contextPrecision}</li>
+                                <li>Answer Relevance: {evalResult.answerRelevance}</li>
+                                <li>Faithfulness: {evalResult.faithfulness}</li>
+                            </ul>
+                        </div>
+                    </>
+                ) : isLoading ? (
+                    <>
+                        <h3>Evaluating Answer...</h3>
+                    </>
+                ) : (
                     <button
                         style={{
                             margin: "2em auto",
@@ -80,54 +101,11 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                     >
                         Evaluate
                     </button>
-                ) : (
-                    <div>
-                        <span>
-                            <h2>Evaluation</h2>
-                        </span>
-                        <ul>
-                            <li>Context Precision: {evalResult.contextPrecision}</li>
-                            <li>Answer Relevance: {evalResult.answerRelevance}</li>
-                            <li>Faithfulness: {evalResult.faithfulness}</li>
-                        </ul>
-                    </div>
                 )}
             </div>
         </div>
     );
 };
-
-// export const EvaluationResult = (contextPrecision: number, answerRelevance: number, faithfulness: number) => {
-//     return (
-//         <ul>
-//             <li>Context Precision: {contextPrecision}</li>
-//             <li>Answer Relevance: {answerRelevance}</li>
-//             <li>Faithfulness: {faithfulness}</li>
-//         </ul>
-//     );
-// };
-
-// export const EvalButton = ({ question, supportingContent, answer, getEvaluation }: Props) => {
-//     return (
-//         <button
-//             className="eval_button"
-//             style={{
-//                 margin: "2em auto",
-//                 display: "block",
-//                 fontSize: "17px",
-//                 padding: "0.5em 2em",
-//                 border: "transparent",
-//                 boxShadow: "2px 2px 4px rgba(0,0,0,0.4)",
-//                 background: "dodgerblue",
-//                 color: "white",
-//                 borderRadius: "4px"
-//             }}
-//             onClick={() => getEvaluation(question, supportingContent, answer)}
-//         >
-//             Evaluate
-//         </button>
-//     );
-// };
 
 export const TextSupportingContent = ({ title, content }: SupportingItemProps) => {
     return (
