@@ -1,10 +1,12 @@
 .examplesNavList {
     list-style: none;
+    max-width: 1309px;
     padding-left: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     flex: 1;
+    flex-direction: row;
     justify-content: center;
 }
 
@@ -13,7 +15,6 @@
     background: #dbdbdb;
     border-radius: 8px;
     display: flex;
-    flex-direction: column;
     padding: 20px;
     margin-bottom: 5px;
     cursor: pointer;

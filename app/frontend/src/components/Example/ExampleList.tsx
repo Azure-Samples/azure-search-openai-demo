@@ -6,9 +6,10 @@ const DEFAULT_EXAMPLES: string[] = [
     "What categories of anomalies are there?",
     "Hvem er ansvarlig for håndtering av en endringsordre (VO)?",
     "What are the responsibilities of an SRO?",
-    "Resuma el procedimiento de gestión de documentos.",
-    "Fassen Sie das Verfahren zur Dokumentenverwaltung zusammen.",
-    "Résumez la procédure de gestion des documents."
+    "Oppsummer prosedyren for dokumenthåndtering.",
+    "Resuma o procedimento de gerenciamento de documentos.",
+    "Résumez la procédure de gestion des documents.",
+    "Fassen Sie das Verfahren zur Dokumentenverwaltung zusammen."
 ];
 
 const GPT4V_EXAMPLES: string[] = [
