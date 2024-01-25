@@ -5,7 +5,7 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import AsyncGenerator, cast
+from typing import Any, AsyncGenerator, Dict, cast
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -14,7 +14,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
-from openai import APIError, AsyncAzureOpenAI, AsyncOpenAI
+from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
@@ -36,24 +36,20 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
+from config import (
+    CONFIG_ASK_APPROACH,
+    CONFIG_ASK_VISION_APPROACH,
+    CONFIG_AUTH_CLIENT,
+    CONFIG_BLOB_CONTAINER_CLIENT,
+    CONFIG_CHAT_APPROACH,
+    CONFIG_CHAT_VISION_APPROACH,
+    CONFIG_GPT4V_DEPLOYED,
+    CONFIG_OPENAI_CLIENT,
+    CONFIG_SEARCH_CLIENT,
+)
 from core.authentication import AuthenticationHelper
-
-CONFIG_OPENAI_TOKEN = "openai_token"
-CONFIG_CREDENTIAL = "azure_credential"
-CONFIG_ASK_APPROACH = "ask_approach"
-CONFIG_ASK_VISION_APPROACH = "ask_vision_approach"
-CONFIG_CHAT_VISION_APPROACH = "chat_vision_approach"
-CONFIG_CHAT_APPROACH = "chat_approach"
-CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
-CONFIG_AUTH_CLIENT = "auth_client"
-CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
-CONFIG_SEARCH_CLIENT = "search_client"
-CONFIG_OPENAI_CLIENT = "openai_client"
-ERROR_MESSAGE = """The app encountered an error processing your request.
-If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
-Error type: {error_type}
-"""
-ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
+from decorators import authenticated, authenticated_path
+from error import error_dict, error_response
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -83,11 +79,16 @@ async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
-# Serve content files from blob storage from within the app to keep the example self-contained.
-# *** NOTE *** this assumes that the content files are public, or at least that all users of the app
-# can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
+@authenticated_path
 async def content_file(path: str):
+    """
+    Serve content files from blob storage from within the app to keep the example self-contained.
+    *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
+    if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, logged in users can access all files regardless of access control
+    if AZURE_ENFORCE_ACCESS_CONTROL is set to true, logged in users can only access files they have access to
+    This is also slow and memory hungry.
+    """
     # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
@@ -110,28 +111,15 @@ async def content_file(path: str):
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
 
-def error_dict(error: Exception) -> dict:
-    if isinstance(error, APIError) and error.code == "content_filter":
-        return {"error": ERROR_MESSAGE_FILTER}
-    return {"error": ERROR_MESSAGE.format(error_type=type(error))}
-
-
-def error_response(error: Exception, route: str, status_code: int = 500):
-    logging.exception("Exception in %s: %s", route, error)
-    if isinstance(error, APIError) and error.code == "content_filter":
-        status_code = 400
-    return jsonify(error_dict(error)), status_code
-
-
 @bp.route("/ask", methods=["POST"])
-async def ask():
+@authenticated
+async def ask(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context["auth_claims"] = auth_claims
     try:
-        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
@@ -163,14 +151,14 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 
 @bp.route("/chat", methods=["POST"])
-async def chat():
+@authenticated
+async def chat(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context["auth_claims"] = auth_claims
     try:
-        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
