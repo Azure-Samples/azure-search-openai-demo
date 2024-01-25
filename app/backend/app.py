@@ -79,14 +79,16 @@ async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
-# Serve content files from blob storage from within the app to keep the example self-contained.
-# *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
-# if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, logged in users can access all files regardless of access control
-# if AZURE_ENFORCE_ACCESS_CONTROL is set to true, logged in users can only access files they have access to
-# This is also slow and memory hungry.
 @bp.route("/content/<path>")
 @authenticated_path
 async def content_file(path: str):
+    """
+    Serve content files from blob storage from within the app to keep the example self-contained.
+    *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
+    if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, logged in users can access all files regardless of access control
+    if AZURE_ENFORCE_ACCESS_CONTROL is set to true, logged in users can only access files they have access to
+    This is also slow and memory hungry.
+    """
     # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
