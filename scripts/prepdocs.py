@@ -377,7 +377,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
-    use_int_vectorization = True if args.useIntVectorization.lower() == "true" else False
+    use_int_vectorization = args.useIntVectorization.lower() == "true"
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (
