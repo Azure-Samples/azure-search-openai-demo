@@ -26,6 +26,8 @@ param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
+param searchServiceSemanticRankerLevel string // Set in main.parameters.json
+var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : searchServiceSemanticRankerLevel
 param useSearchServiceKey bool = searchServiceSkuName == 'free'
 
 param storageAccountName string = ''
@@ -375,7 +377,6 @@ module secrets 'secrets.bicep' = if (useKeyVault) {
 }
 
 
-var searchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : 'free'
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
   scope: searchServiceResourceGroup
@@ -391,7 +392,7 @@ module searchService 'core/search/search-services.bicep' = {
     sku: {
       name: searchServiceSkuName
     }
-    semanticSearch: searchServiceSemanticRankerLevel
+    semanticSearch: actualSearchServiceSemanticRankerLevel
   }
 }
 
@@ -570,7 +571,7 @@ output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SECRET_NAME string = useSearchServiceKey ? searchServiceSecretName : ''
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
-output AZURE_SEARCH_SEMANTIC_RANKER string = searchServiceSemanticRankerLevel
+output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
