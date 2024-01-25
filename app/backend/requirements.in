@@ -14,3 +14,5 @@ opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 msal
 azure-keyvault-secrets
+cryptography
+python-jose[cryptography]
