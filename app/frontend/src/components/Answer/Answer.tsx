@@ -15,6 +15,7 @@ interface Props {
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
+    onEvaluationClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -26,6 +27,7 @@ export const Answer = ({
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
+    onEvaluationClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
@@ -55,6 +57,14 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
+                            disabled={!answer.choices[0].context.data_points}
+                        />
+                        <IconButton
+                            style={{ color: "black" }}
+                            iconProps={{ iconName: "CheckMark" }}
+                            title="Show Evaluation"
+                            ariaLabel="Show Evaluation"
+                            onClick={() => onEvaluationClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>

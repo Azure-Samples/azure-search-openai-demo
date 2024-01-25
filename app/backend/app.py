@@ -197,6 +197,18 @@ async def chat():
         return error_response(error, "/chat")
 
 
+@bp.route("/evaluate", methods=["POST"])
+async def evaluate():
+    response = {
+        "contextPrecision": 0.25,
+        "answerRelevance": 0.10,
+        "faithfulness": 0.45,
+    }
+    json_response = jsonify(response)
+    print(json_response)
+    return json_response
+
+
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
 def auth_setup():
