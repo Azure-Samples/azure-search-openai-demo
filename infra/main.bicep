@@ -507,7 +507,7 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
-module storageRolesearchservice 'core/security/role.bicep' = {
+module storageRoleSearchService 'core/security/role.bicep' = {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
