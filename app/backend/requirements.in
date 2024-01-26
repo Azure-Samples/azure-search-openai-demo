@@ -3,6 +3,7 @@ quart
 quart-cors
 openai[datalib]>=1.3.7
 tiktoken
+tenacity
 azure-search-documents==11.4.0b11
 azure-storage-blob
 uvicorn
