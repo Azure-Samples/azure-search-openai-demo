@@ -45,6 +45,9 @@ class IntegratedVectorizerStrategy(Strategy):
         use_acls: bool = False,
         category: Optional[str] = None,
     ):
+        if not embeddings:
+            raise Exception("Expecting AzureOpenAI embedding Service")
+
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
         self.document_action = document_action
@@ -114,11 +117,11 @@ class IntegratedVectorizerStrategy(Strategy):
 
     async def setup(self, search_info: SearchInfo):
         search_manager = SearchManager(
-            search_info,
-            self.search_analyzer_name,
-            self.use_acls,
-            True,
-            self.embeddings,
+            search_info=search_info,
+            search_analyzer_name=self.search_analyzer_name,
+            use_acls=self.use_acls,
+            use_int_vectorization=True,
+            embeddings=self.embeddings,
             search_images=False,
         )
 
@@ -126,14 +129,13 @@ class IntegratedVectorizerStrategy(Strategy):
             raise ValueError("Expecting Azure Open AI instance")
 
         await search_manager.create_index(
-            [
+            vectorizers=[
                 AzureOpenAIVectorizer(
-                    name="myOpenAI",
+                    name=f"{search_info.index_name}-vectorizer",
                     kind="azureOpenAI",
                     azure_open_ai_parameters=AzureOpenAIParameters(
                         resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-                        deployment_id=self.embeddings.open_ai_deployment,
-                        auth_identity=None,
+                        deployment_id=self.embeddings.open_ai_deployment
                     ),
                 ),
             ]

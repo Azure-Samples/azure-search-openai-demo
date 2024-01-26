@@ -101,6 +101,8 @@ param principalId string = ''
 
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
+@description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
+param useIntegratedVectorization bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
@@ -486,7 +488,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure')
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (openAiHost == 'azure') {
+module openAiRoleSearchService 'core/security/role.bicep' = if (openAiHost == 'azure' && useIntegratedVectorization) {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
@@ -507,7 +509,7 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
-module storageRoleSearchService 'core/security/role.bicep' = {
+module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
