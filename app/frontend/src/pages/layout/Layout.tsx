@@ -18,7 +18,7 @@ const Layout = () => {
                     <div style={{ display: "flex", alignItems: "center" }}>
                         <img src={plus_logo} className={styles.headerLogo}></img>
                         <Link to="/" className={styles.headerTitleContainer}>
-                            <h3 className={styles.headerTitle}>GPT + Altera Procedures | Demo</h3>
+                            <h3 className={styles.headerTitle}>GPT + Altera Procedures | Demo 6</h3>
                         </Link>
                     </div>
                     <nav>
