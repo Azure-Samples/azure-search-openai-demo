@@ -75,7 +75,7 @@ The UI provides a "Developer Settings" menu for customizing the approaches, like
 Those settings are passed in the "context" field of the request to the backend, and are not saved permanently.
 However, if you find a setting that you do want to make permanent, there are two approaches:
 
-1. Change the defaults in the frontend. You'll find the defaults in `Chat.tsx` and `OneShot.tsx` (for Ask). For example, this line of code sets the default retrieval mode to Hybrid:
+1. Change the defaults in the frontend. You'll find the defaults in `Chat.tsx` and `Ask.tsx`. For example, this line of code sets the default retrieval mode to Hybrid:
 
 ```typescript
 const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);

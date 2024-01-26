@@ -38,7 +38,6 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
             {useGPT4V && (
                 <Dropdown
                     selectedKey={vectorFieldOption}
-                    className={styles.oneshotSettingsSeparator}
                     label="GPT-4 Turbo with Vision Inputs"
                     options={[
                         {
