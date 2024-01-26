@@ -185,5 +185,5 @@ class IntegratedVectorizerStrategy(Strategy):
         await indexer_client.run_indexer(indexer_name)
 
         print(
-            f"Successfully created index, indexer: {indexer_result.name} and skillset. Please navigate to search service in azure portal to view the status of the indexer."
+            f"Successfully created index, indexer: {indexer_result.name}, and skillset. Please navigate to search service in Azure Portal to view the status of the indexer."
         )
