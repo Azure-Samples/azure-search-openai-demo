@@ -55,7 +55,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self.use_acls = use_acls
         self.category = category
 
-    async def createEmbeddingSkill(self, index_name: str):
+    async def create_embedding_skill(self, index_name: str):
         skillset_name = f"{index_name}-skillset"
 
         split_skill = SplitSkill(
