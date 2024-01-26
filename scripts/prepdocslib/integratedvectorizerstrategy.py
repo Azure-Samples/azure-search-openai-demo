@@ -134,7 +134,7 @@ class IntegratedVectorizerStrategy(Strategy):
                     kind="azureOpenAI",
                     azure_open_ai_parameters=AzureOpenAIParameters(
                         resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-                        deployment_id=self.embeddings.open_ai_deployment
+                        deployment_id=self.embeddings.open_ai_deployment,
                     ),
                 ),
             ]
