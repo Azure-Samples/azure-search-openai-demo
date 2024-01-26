@@ -37,6 +37,11 @@ from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionAppr
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
 from core.authentication import AuthenticationHelper
+from evaluation.ragevaluator import RagEvaluator
+
+from langchain_community.chat_models import AzureChatOpenAI
+from langchain_community.embeddings import AzureOpenAIEmbeddings
+
 
 CONFIG_OPENAI_TOKEN = "openai_token"
 CONFIG_CREDENTIAL = "azure_credential"
@@ -49,6 +54,8 @@ CONFIG_AUTH_CLIENT = "auth_client"
 CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
 CONFIG_SEARCH_CLIENT = "search_client"
 CONFIG_OPENAI_CLIENT = "openai_client"
+CONFIG_RAGEVALUATOR_APPROACH = "rag_evaluator"
+
 ERROR_MESSAGE = """The app encountered an error processing your request.
 If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
 Error type: {error_type}
@@ -199,15 +206,20 @@ async def chat():
 
 @bp.route("/evaluate", methods=["POST"])
 async def evaluate():
-    response = {
-        "contextPrecision": 0.25,
-        "answerRelevance": 0.10,
-        "faithfulness": 0.45,
-    }
-    json_response = jsonify(response)
-    print(json_response)
-    return json_response
-
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    request_json = await request.get_json()
+    try:
+        print(request_json)
+        ragevaluator: RagEvaluator
+        ragevaluator = cast(RagEvaluator, current_app.config[CONFIG_RAGEVALUATOR_APPROACH])
+        result = ragevaluator.evaluate_qa(request_json["question"], request_json["answer"], request_json["contexts"])
+        response =  jsonify(result)
+        return response
+    except Exception as error:
+        return error_response(error, "/evaluate")
+    
+    
 
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
@@ -318,6 +330,22 @@ async def setup_clients():
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
         )
+        
+    langchain_openai_client = AzureChatOpenAI(  
+        api_key = OPENAI_API_KEY,  
+        api_version = "2023-12-01-preview",
+        azure_endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+        azure_deployment= "gpt-4-32k"
+        )
+    
+    langchain_openai_embedding_client = AzureOpenAIEmbeddings(
+        model="text-embedding-ada-002",
+        azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+        openai_api_type="azure",
+        openai_api_key=OPENAI_API_KEY
+        )
+        
+    
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
@@ -325,11 +353,12 @@ async def setup_clients():
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
-
     current_app.logger.info("MODEL_PARAMETERS")
     current_app.logger.info(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
     current_app.logger.info(OPENAI_EMB_MODEL)
     current_app.logger.info(AZURE_OPENAI_EMB_DEPLOYMENT)
+    
+
 
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
@@ -398,6 +427,11 @@ async def setup_clients():
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
+    )
+    
+    current_app.config[CONFIG_RAGEVALUATOR_APPROACH] = RagEvaluator(
+        langchain_openai_client=langchain_openai_client,
+        langchain_embedding_client=langchain_openai_embedding_client
     )
 
 
