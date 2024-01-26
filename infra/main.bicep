@@ -21,11 +21,14 @@ param searchServiceName string = ''
 param searchServiceResourceGroupName string = ''
 param searchServiceLocation string = ''
 // The free tier does not support managed identity (required) or semantic search (optional)
-@allowed([ 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
+@allowed([ 'free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
+param searchServiceSemanticRankerLevel string // Set in main.parameters.json
+var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : searchServiceSemanticRankerLevel
+param useSearchServiceKey bool = searchServiceSkuName == 'free'
 
 param storageAccountName string = ''
 param keyVaultResourceGroupName string = ''
@@ -33,6 +36,8 @@ param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
+
+param appServiceSkuName string // Set in main.parameters.json
 
 @allowed([ 'azure', 'openai' ])
 param openAiHost string // Set in main.parameters.json
@@ -43,6 +48,7 @@ param useGPT4V bool = false
 
 param keyVaultServiceName string = ''
 param computerVisionSecretName string = 'computerVisionSecret'
+param searchServiceSecretName string = 'searchServiceSecret'
 
 @description('Location for the OpenAI resource group')
 @allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
@@ -101,6 +107,9 @@ param principalId string = ''
 
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
+
+@description('Show options to use vector embeddings for searching in the app UI')
+param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
 param useIntegratedVectorization bool = false
 
@@ -108,8 +117,8 @@ var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
 var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServiceName : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-var keyVaultName = !empty(keyVaultServiceName) ? keyVaultServiceName : '${abbrs.keyVaultVaults}${resourceToken}'
 
+var useKeyVault = useGPT4V || useSearchServiceKey
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 
@@ -163,7 +172,7 @@ module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicati
   params: {
     name: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
     location: location
-    applicationInsightsName: monitoring.outputs.applicationInsightsName
+    applicationInsightsName: useApplicationInsights ? monitoring.outputs.applicationInsightsName : ''
   }
 }
 
@@ -177,7 +186,7 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
     location: location
     tags: tags
     sku: {
-      name: 'B1'
+      name: appServiceSkuName
       capacity: 1
     }
     kind: 'linux'
@@ -203,14 +212,18 @@ module backend 'core/host/appservice.bicep' = {
     serverAppId: serverAppId
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
     authenticationIssuerUri: authenticationIssuerUri
+    use32BitWorkerProcess: appServiceSkuName == 'F1'
+    alwaysOn: appServiceSkuName != 'F1'
     appSettings: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
       AZURE_SEARCH_INDEX: searchIndexName
       AZURE_SEARCH_SERVICE: searchService.outputs.name
+      AZURE_SEARCH_SEMANTIC_RANKER: searchServiceSemanticRankerLevel
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
       VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName: ''
-      AZURE_KEY_VAULT_NAME: useGPT4V ? keyVaultName: ''
+      SEARCH_SECRET_NAME: useSearchServiceKey ? searchServiceSecretName : ''
+      AZURE_KEY_VAULT_NAME: useKeyVault ? keyVault.outputs.name : ''
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
@@ -239,7 +252,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
-
+      USE_VECTORS: useVectors
       USE_GPT4V: useGPT4V
     }
   }
@@ -287,7 +300,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-module openAi 'core/ai/cognitiveservices.bicep' = {
+module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -332,35 +345,39 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
 
 // Currently, we only need Key Vault for storing Computer Vision key,
 // which is only used for GPT-4V.
-module keyVault 'core/security/keyvault.bicep' = if (useGPT4V) {
+module keyVault 'core/security/keyvault.bicep' = if (useKeyVault) {
   name: 'keyvault'
   scope: keyVaultResourceGroup
   params: {
-    name: keyVaultName
+    name: !empty(keyVaultServiceName) ? keyVaultServiceName : '${abbrs.keyVaultVaults}${resourceToken}'
     location: location
     principalId: principalId
   }
 }
 
-module webKVAccess 'core/security/keyvault-access.bicep' = if (useGPT4V) {
+module webKVAccess 'core/security/keyvault-access.bicep' = if (useKeyVault) {
   name: 'web-keyvault-access'
   scope: keyVaultResourceGroup
   params: {
-    keyVaultName: keyVaultName
+    keyVaultName: useKeyVault ? keyVault.outputs.name : ''
     principalId: backend.outputs.identityPrincipalId
   }
 }
 
-module secrets 'secrets.bicep' = if (useGPT4V) {
+module secrets 'secrets.bicep' = if (useKeyVault) {
   name: 'secrets'
   scope: keyVaultResourceGroup
   params: {
-    keyVaultName: keyVaultName
+    keyVaultName: useKeyVault ? keyVault.outputs.name : ''
     storeComputerVisionSecret: useGPT4V
     computerVisionId: useGPT4V ? computerVision.outputs.id : ''
     computerVisionSecretName: computerVisionSecretName
+    storeSearchServiceSecret: useSearchServiceKey
+    searchServiceId: useSearchServiceKey ? searchService.outputs.id : ''
+    searchServiceSecretName: searchServiceSecretName
   }
 }
+
 
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
@@ -377,7 +394,7 @@ module searchService 'core/search/search-services.bicep' = {
     sku: {
       name: searchServiceSkuName
     }
-    semanticSearch: 'free'
+    semanticSearch: actualSearchServiceSemanticRankerLevel
   }
 }
 
@@ -447,7 +464,8 @@ module storageContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchRoleUser 'core/security/role.bicep' = {
+// Only create if using managed identity (non-free tier)
+module searchRoleUser 'core/security/role.bicep' = if (!useSearchServiceKey) {
   scope: searchServiceResourceGroup
   name: 'search-role-user'
   params: {
@@ -457,7 +475,7 @@ module searchRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchContribRoleUser 'core/security/role.bicep' = {
+module searchContribRoleUser 'core/security/role.bicep' = if (!useSearchServiceKey) {
   scope: searchServiceResourceGroup
   name: 'search-contrib-role-user'
   params: {
@@ -467,7 +485,7 @@ module searchContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchSvcContribRoleUser 'core/security/role.bicep' = {
+module searchSvcContribRoleUser 'core/security/role.bicep' = if (!useSearchServiceKey) {
   scope: searchServiceResourceGroup
   name: 'search-svccontrib-role-user'
   params: {
@@ -521,7 +539,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
 
 // Used to issue search queries
 // https://learn.microsoft.com/azure/search/search-security-rbac
-module searchRoleBackend 'core/security/role.bicep' = {
+module searchRoleBackend 'core/security/role.bicep' = if (!useSearchServiceKey) {
   scope: searchServiceResourceGroup
   name: 'search-role-backend'
   params: {
@@ -533,7 +551,7 @@ module searchRoleBackend 'core/security/role.bicep' = {
 
 // Used to read index definitions (required when using authentication)
 // https://learn.microsoft.com/azure/search/search-security-rbac
-module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthentication) {
+module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthentication && !useSearchServiceKey) {
   scope: searchServiceResourceGroup
   name: 'search-reader-role-backend'
   params: {
@@ -567,14 +585,16 @@ output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganiza
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 output VISION_SECRET_NAME string = useGPT4V ? computerVisionSecretName : ''
-output AZURE_KEY_VAULT_NAME string = useGPT4V ? keyVault.outputs.name : ''
+output AZURE_KEY_VAULT_NAME string = useKeyVault ? keyVault.outputs.name : ''
 
 output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
 output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
+output AZURE_SEARCH_SECRET_NAME string = useSearchServiceKey ? searchServiceSecretName : ''
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
+output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
 output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name

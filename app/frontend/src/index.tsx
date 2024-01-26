@@ -51,7 +51,7 @@ const router = createHashRouter([
             },
             {
                 path: "qa",
-                lazy: () => import("./pages/oneshot/OneShot")
+                lazy: () => import("./pages/ask/Ask")
             },
             {
                 path: "*",

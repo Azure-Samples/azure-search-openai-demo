@@ -5,8 +5,10 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import AsyncGenerator, cast
+from typing import Any, AsyncGenerator, Dict, Union, cast
 
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.keyvault.secrets.aio import SecretClient
@@ -14,7 +16,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
-from openai import APIError, AsyncAzureOpenAI, AsyncOpenAI
+from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
@@ -36,24 +38,22 @@ from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
+from config import (
+    CONFIG_ASK_APPROACH,
+    CONFIG_ASK_VISION_APPROACH,
+    CONFIG_AUTH_CLIENT,
+    CONFIG_BLOB_CONTAINER_CLIENT,
+    CONFIG_CHAT_APPROACH,
+    CONFIG_CHAT_VISION_APPROACH,
+    CONFIG_GPT4V_DEPLOYED,
+    CONFIG_OPENAI_CLIENT,
+    CONFIG_SEARCH_CLIENT,
+    CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_VECTOR_SEARCH_ENABLED,
+)
 from core.authentication import AuthenticationHelper
-
-CONFIG_OPENAI_TOKEN = "openai_token"
-CONFIG_CREDENTIAL = "azure_credential"
-CONFIG_ASK_APPROACH = "ask_approach"
-CONFIG_ASK_VISION_APPROACH = "ask_vision_approach"
-CONFIG_CHAT_VISION_APPROACH = "chat_vision_approach"
-CONFIG_CHAT_APPROACH = "chat_approach"
-CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
-CONFIG_AUTH_CLIENT = "auth_client"
-CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
-CONFIG_SEARCH_CLIENT = "search_client"
-CONFIG_OPENAI_CLIENT = "openai_client"
-ERROR_MESSAGE = """The app encountered an error processing your request.
-If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
-Error type: {error_type}
-"""
-ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
+from decorators import authenticated, authenticated_path
+from error import error_dict, error_response
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -83,11 +83,16 @@ async def assets(path):
     return await send_from_directory(Path(__file__).resolve().parent / "static" / "assets", path)
 
 
-# Serve content files from blob storage from within the app to keep the example self-contained.
-# *** NOTE *** this assumes that the content files are public, or at least that all users of the app
-# can access all the files. This is also slow and memory hungry.
 @bp.route("/content/<path>")
+@authenticated_path
 async def content_file(path: str):
+    """
+    Serve content files from blob storage from within the app to keep the example self-contained.
+    *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
+    if AZURE_ENFORCE_ACCESS_CONTROL is not set or false, logged in users can access all files regardless of access control
+    if AZURE_ENFORCE_ACCESS_CONTROL is set to true, logged in users can only access files they have access to
+    This is also slow and memory hungry.
+    """
     # Remove page number from path, filename-1.txt -> filename.txt
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
@@ -110,28 +115,15 @@ async def content_file(path: str):
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
 
-def error_dict(error: Exception) -> dict:
-    if isinstance(error, APIError) and error.code == "content_filter":
-        return {"error": ERROR_MESSAGE_FILTER}
-    return {"error": ERROR_MESSAGE.format(error_type=type(error))}
-
-
-def error_response(error: Exception, route: str, status_code: int = 500):
-    logging.exception("Exception in %s: %s", route, error)
-    if isinstance(error, APIError) and error.code == "content_filter":
-        status_code = 400
-    return jsonify(error_dict(error)), status_code
-
-
 @bp.route("/ask", methods=["POST"])
-async def ask():
+@authenticated
+async def ask(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context["auth_claims"] = auth_claims
     try:
-        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
@@ -163,14 +155,14 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 
 @bp.route("/chat", methods=["POST"])
-async def chat():
+@authenticated
+async def chat(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
-    auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
+    context["auth_claims"] = auth_claims
     try:
-        context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
@@ -204,7 +196,13 @@ def auth_setup():
 
 @bp.route("/config", methods=["GET"])
 def config():
-    return jsonify({"showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED]})
+    return jsonify(
+        {
+            "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
+            "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
+            "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
+        }
+    )
 
 
 @bp.before_app_serving
@@ -214,6 +212,7 @@ async def setup_clients():
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
+    SEARCH_SECRET_NAME = os.getenv("SEARCH_SECRET_NAME")
     VISION_SECRET_NAME = os.getenv("VISION_SECRET_NAME")
     AZURE_KEY_VAULT_NAME = os.getenv("AZURE_KEY_VAULT_NAME")
     # Shared by all OpenAI deployments
@@ -244,6 +243,7 @@ async def setup_clients():
 
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+    AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
 
@@ -253,16 +253,31 @@ async def setup_clients():
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
+    # Fetch any necessary secrets from Key Vault
+    vision_key = None
+    search_key = None
+    if AZURE_KEY_VAULT_NAME and (VISION_SECRET_NAME or SEARCH_SECRET_NAME):
+        key_vault_client = SecretClient(
+            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
+        )
+        vision_key = (await key_vault_client.get_secret(VISION_SECRET_NAME)).value
+        search_key = (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
+        await key_vault_client.close()
+
     # Set up clients for AI Search and Storage
+    search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        AzureKeyCredential(search_key) if search_key else azure_credential
+    )
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,
-        credential=azure_credential,
+        credential=search_credential,
     )
     search_index_client = SearchIndexClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-        credential=azure_credential,
+        credential=search_credential,
     )
+
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
@@ -278,15 +293,6 @@ async def setup_clients():
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
     )
-
-    vision_key = None
-    if VISION_SECRET_NAME and AZURE_KEY_VAULT_NAME:  # Cognitive vision keys are stored in keyvault
-        key_vault_client = SecretClient(
-            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
-        )
-        vision_secret = await key_vault_client.get_secret(VISION_SECRET_NAME)
-        vision_key = vision_secret.value
-        await key_vault_client.close()
 
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
@@ -313,6 +319,8 @@ async def setup_clients():
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
+    current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
+    current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
