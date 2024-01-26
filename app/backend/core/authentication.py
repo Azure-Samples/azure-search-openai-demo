@@ -53,7 +53,7 @@ class AuthenticationHelper:
             f"https://sts.windows.net/{tenant_id}/",
             f"https://login.microsoftonline.com/{tenant_id}/v2.0",
         ]
-        self.valid_audiences = [f"api://{server_app_id}", server_app_id]
+        self.valid_audiences = [f"api://{server_app_id}", str(server_app_id)]
         # See https://learn.microsoft.com/entra/identity-platform/access-tokens#validate-the-issuer for more information on token validation
         self.key_url = f"{self.authority}/discovery/v2.0/keys"
 
@@ -279,7 +279,7 @@ class AuthenticationHelper:
                             )
                         jwks = await resp.json()
 
-        if not jwks and "keys" not in jwks:
+        if not jwks or "keys" not in jwks:
             raise AuthError({"code": "invalid_keys", "description": "Unable to get keys to validate auth token."}, 401)
 
         rsa_key = None
