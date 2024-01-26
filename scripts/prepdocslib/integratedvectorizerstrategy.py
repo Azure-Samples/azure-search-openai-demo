@@ -38,8 +38,8 @@ class IntegratedVectorizerStrategy(Strategy):
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
         embeddings: Optional[AzureOpenAIEmbeddingService],
-        subscriptionId: str,
-        searchServiceUserAssginedId: str,
+        subscription_id: str,
+        search_service_user_assgined_id: str,
         document_action: DocumentAction = DocumentAction.Add,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
@@ -52,8 +52,8 @@ class IntegratedVectorizerStrategy(Strategy):
         self.blob_manager = blob_manager
         self.document_action = document_action
         self.embeddings = embeddings
-        self.subscriptionId = subscriptionId
-        self.search_user_assigned_identity = searchServiceUserAssginedId
+        self.subscription_id = subscription_id
+        self.search_user_assigned_identity = search_service_user_assgined_id
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
@@ -81,7 +81,6 @@ class IntegratedVectorizerStrategy(Strategy):
             context="/document/pages/*",
             resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
             deployment_id=self.embeddings.open_ai_deployment,
-            auth_identity=None,
             inputs=[
                 InputFieldMappingEntry(name="text", source="/document/pages/*"),
             ],
@@ -154,7 +153,7 @@ class IntegratedVectorizerStrategy(Strategy):
         await ds_client.create_or_update_data_source_connection(data_source_connection)
         print("Search indexer data source connection updated.")
 
-        embedding_skillset = await self.createEmbeddingSkill(search_info.index_name)
+        embedding_skillset = await self.create_embedding_skill(search_info.index_name)
         await ds_client.create_or_update_skillset(embedding_skillset)
 
     async def run(self, search_info: SearchInfo):
@@ -166,6 +165,12 @@ class IntegratedVectorizerStrategy(Strategy):
                 finally:
                     if file:
                         file.close()
+        elif self.document_action == DocumentAction.Remove:
+            paths = self.list_file_strategy.list_paths()
+            async for path in paths:
+                await self.blob_manager.remove_blob(path)
+        elif self.document_action == DocumentAction.RemoveAll:
+            await self.blob_manager.remove_blob()
 
         # Create an indexer
         indexer_name = f"{search_info.index_name}-indexer"

@@ -53,7 +53,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         account=args.storageaccount,
         credential=storage_creds,
         resourceGroup=args.storageresourcegroup,
-        subscriptionId=args.subscriptionId,
+        subscriptionId=args.subscriptionid,
         store_page_images=args.searchimages,
         verbose=args.verbose,
     )
@@ -153,7 +153,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
         account=args.storageaccount,
         credential=storage_creds,
         resourceGroup=args.storageresourcegroup,
-        subscriptionId=args.subscriptionId,
+        subscriptionId=args.subscriptionid,
         store_page_images=args.searchimages,
         verbose=args.verbose,
     )
@@ -189,15 +189,20 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
         print(f"Using local files in {args.files}")
         list_file_strategy = LocalListFileStrategy(path_pattern=args.files, verbose=args.verbose)
 
-    document_action = DocumentAction.Add
+    if args.removeall:
+        document_action = DocumentAction.RemoveAll
+    elif args.remove:
+        document_action = DocumentAction.Remove
+    else:
+        document_action = DocumentAction.Add
 
     return IntegratedVectorizerStrategy(
         list_file_strategy=list_file_strategy,
         blob_manager=blob_manager,
         document_action=document_action,
         embeddings=embeddings,
-        subscriptionId=args.subscriptionId,
-        searchServiceUserAssginedId=args.searchserviceassignedid,
+        subscription_id=args.subscriptionid,
+        search_service_user_assgined_id=args.searchserviceassignedid,
         search_analyzer_name=args.searchanalyzername,
         use_acls=args.useacls,
         category=args.category,
@@ -272,7 +277,7 @@ if __name__ == "__main__":
         "--tenantid", required=False, help="Optional. Use this to define the Azure directory where to authenticate)"
     )
     parser.add_argument(
-        "--subscriptionId",
+        "--subscriptionid",
         required=False,
         help="Optional. Use this to define the Azure directory where to authenticate)",
     )
@@ -379,13 +384,13 @@ if __name__ == "__main__":
         help="Required if --searchimages is specified and --keyvaultname is provided. Fetch the Azure AI Vision key from this key vault instead of using the current user identity to login.",
     )
     parser.add_argument(
-        "--useIntVectorization",
+        "--useintvectorization",
         required=False,
-        help="Required if --useIntVectorization is specified. Enable Integrated vectorizer indexer support which is in preview)",
+        help="Required if --useintvectorization is specified. Enable Integrated vectorizer indexer support which is in preview)",
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
-    use_int_vectorization = args.useIntVectorization.lower() == "true"
+    use_int_vectorization = args.useintvectorization and args.useintvectorization.lower() == "true"
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (
@@ -395,10 +400,10 @@ if __name__ == "__main__":
     )
 
     loop = asyncio.get_event_loop()
-    injestion_strategy = None
+    ingestion_strategy = None
     if use_int_vectorization:
-        injestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
+        ingestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
     else:
-        injestion_strategy = loop.run_until_complete(setup_file_strategy(azd_credential, args))
-    loop.run_until_complete(main(injestion_strategy, azd_credential, args))
+        ingestion_strategy = loop.run_until_complete(setup_file_strategy(azd_credential, args))
+    loop.run_until_complete(main(ingestion_strategy, azd_credential, args))
     loop.close()
