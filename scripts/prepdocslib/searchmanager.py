@@ -78,7 +78,11 @@ class SearchManager:
                     facetable=True,
                     analyzer_name="keyword",
                 ),
-                SearchableField(name="content", type="Edm.String", analyzer_name=self.search_analyzer_name),
+                SearchableField(
+                    name="content",
+                    type="Edm.String",
+                    analyzer_name=self.search_analyzer_name,
+                ),
                 SearchableField(name="parent_id", type="Edm.String", filterable=True),
                 SearchField(
                     name="embedding",
@@ -92,18 +96,32 @@ class SearchManager:
                     vector_search_profile="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(
+                    name="sourcepage",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=True,
+                ),
+                SimpleField(
+                    name="sourcefile",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=True,
+                ),
             ]
             if self.use_acls:
                 fields.append(
                     SimpleField(
-                        name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True
+                        name="oids",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
                     )
                 )
                 fields.append(
                     SimpleField(
-                        name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True
+                        name="groups",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
                     )
                 )
             if self.search_images:
@@ -129,7 +147,8 @@ class SearchManager:
                         SemanticConfiguration(
                             name="default",
                             prioritized_fields=PrioritizedFields(
-                                title_field=None, prioritized_content_fields=[SemanticField(field_name="content")]
+                                title_field=None,
+                                prioritized_content_fields=[SemanticField(field_name="content")],
                             ),
                         )
                     ]
@@ -160,7 +179,11 @@ class SearchManager:
                 if self.search_info.verbose:
                     print(f"Search index {self.search_info.index_name} already exists")
 
-    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
+    async def update_content(
+        self,
+        sections: List[Section],
+        image_embeddings: Optional[List[List[float]]] = None,
+    ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -173,11 +196,13 @@ class SearchManager:
                         "category": section.category,
                         "sourcepage": (
                             BlobManager.blob_image_name_from_file_page(
-                                filename=section.content.filename(), page=section.split_page.page_num
+                                filename=section.content.filename(),
+                                page=section.split_page.page_num,
                             )
                             if image_embeddings
                             else BlobManager.sourcepage_from_file_page(
-                                filename=section.content.filename(), page=section.split_page.page_num
+                                filename=section.content.filename(),
+                                page=section.split_page.page_num,
                             )
                         ),
                         "sourcefile": section.content.filename(),
