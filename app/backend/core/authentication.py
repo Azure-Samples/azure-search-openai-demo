@@ -258,7 +258,7 @@ class AuthenticationHelper:
 
         return allowed
 
-    # See https://github.com/Azure-Samples/ms-identity-python-on-behalf-of/FlaskAPI/helpers/authorization.py#L44
+    # See https://github.com/Azure-Samples/ms-identity-python-on-behalf-of/blob/939be02b11f1604814532fdacc2c2eccd198b755/FlaskAPI/helpers/authorization.py#L44
     async def validate_access_token(self, token: str):
         """
         Validate an access token is issued by Entra
