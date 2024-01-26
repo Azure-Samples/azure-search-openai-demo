@@ -54,7 +54,6 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
     return (
         <Stack className={styles.container} tokens={{ childrenGap: 10 }}>
             <Dropdown
-                className={styles.oneshotSettingsSeparator}
                 label="Retrieval mode"
                 options={[
                     { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },

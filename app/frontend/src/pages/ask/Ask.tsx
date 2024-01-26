@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Checkbox, Panel, DefaultButton, Spinner, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
 
-import styles from "./OneShot.module.css";
+import styles from "./Ask.module.css";
 
 import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
@@ -175,11 +175,11 @@ export function Component(): JSX.Element {
     };
 
     return (
-        <div className={styles.oneshotContainer}>
-            <div className={styles.oneshotTopSection}>
+        <div className={styles.askContainer}>
+            <div className={styles.askTopSection}>
                 <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-                <h1 className={styles.oneshotTitle}>Ask your data</h1>
-                <div className={styles.oneshotQuestionInput}>
+                <h1 className={styles.askTitle}>Ask your data</h1>
+                <div className={styles.askQuestionInput}>
                     <QuestionInput
                         placeholder="Example: Does my plan cover annual eye exams?"
                         disabled={isLoading}
@@ -188,11 +188,11 @@ export function Component(): JSX.Element {
                     />
                 </div>
             </div>
-            <div className={styles.oneshotBottomSection}>
+            <div className={styles.askBottomSection}>
                 {isLoading && <Spinner label="Generating answer" />}
                 {!lastQuestionRef.current && <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />}
                 {!isLoading && answer && !error && (
-                    <div className={styles.oneshotAnswerContainer}>
+                    <div className={styles.askAnswerContainer}>
                         <Answer
                             answer={answer}
                             isStreaming={false}
@@ -203,13 +203,13 @@ export function Component(): JSX.Element {
                     </div>
                 )}
                 {error ? (
-                    <div className={styles.oneshotAnswerContainer}>
+                    <div className={styles.askAnswerContainer}>
                         <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />
                     </div>
                 ) : null}
                 {activeAnalysisPanelTab && answer && (
                     <AnalysisPanel
-                        className={styles.oneshotAnalysisPanel}
+                        className={styles.askAnalysisPanel}
                         activeCitation={activeCitation}
                         onActiveTabChanged={x => onToggleTab(x)}
                         citationHeight="600px"
@@ -229,7 +229,7 @@ export function Component(): JSX.Element {
                 isFooterAtBottom={true}
             >
                 <TextField
-                    className={styles.oneshotSettingsSeparator}
+                    className={styles.askSettingsSeparator}
                     defaultValue={promptTemplate}
                     label="Override prompt template"
                     multiline
@@ -237,18 +237,18 @@ export function Component(): JSX.Element {
                     onChange={onPromptTemplateChange}
                 />
                 <SpinButton
-                    className={styles.oneshotSettingsSeparator}
+                    className={styles.askSettingsSeparator}
                     label="Retrieve this many search results:"
                     min={1}
                     max={50}
                     defaultValue={retrieveCount.toString()}
                     onChange={onRetrieveCountChange}
                 />
-                <TextField className={styles.oneshotSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                <TextField className={styles.askSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
 
                 {showSemanticRankerOption && (
                     <Checkbox
-                        className={styles.oneshotSettingsSeparator}
+                        className={styles.askSettingsSeparator}
                         checked={useSemanticRanker}
                         label="Use semantic ranker for retrieval"
                         onChange={onUseSemanticRankerChange}
@@ -256,7 +256,7 @@ export function Component(): JSX.Element {
                 )}
 
                 <Checkbox
-                    className={styles.oneshotSettingsSeparator}
+                    className={styles.askSettingsSeparator}
                     checked={useSemanticCaptions}
                     label="Use query-contextual summaries instead of whole documents"
                     onChange={onUseSemanticCaptionsChange}
@@ -284,7 +284,7 @@ export function Component(): JSX.Element {
 
                 {useLogin && (
                     <Checkbox
-                        className={styles.oneshotSettingsSeparator}
+                        className={styles.askSettingsSeparator}
                         checked={useOidSecurityFilter || requireAccessControl}
                         label="Use oid security filter"
                         disabled={!isLoggedIn(client) || requireAccessControl}
@@ -293,7 +293,7 @@ export function Component(): JSX.Element {
                 )}
                 {useLogin && (
                     <Checkbox
-                        className={styles.oneshotSettingsSeparator}
+                        className={styles.askSettingsSeparator}
                         checked={useGroupsSecurityFilter || requireAccessControl}
                         label="Use groups security filter"
                         disabled={!isLoggedIn(client) || requireAccessControl}
@@ -306,4 +306,4 @@ export function Component(): JSX.Element {
     );
 }
 
-Component.displayName = "OneShot";
+Component.displayName = "Ask";

@@ -16,7 +16,6 @@ from core.modelhelper import get_token_limit
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):
-
     """
     A multi-step approach that first uses OpenAI to turn the user's question into a search query,
     then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,
@@ -68,8 +67,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: Literal[False],
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]:
-        ...
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]: ...
 
     @overload
     async def run_until_final_call(
@@ -78,8 +76,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: Literal[True],
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, AsyncStream[ChatCompletionChunk]]]:
-        ...
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, AsyncStream[ChatCompletionChunk]]]: ...
 
     async def run_until_final_call(
         self,
