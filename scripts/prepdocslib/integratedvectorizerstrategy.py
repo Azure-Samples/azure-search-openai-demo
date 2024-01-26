@@ -105,7 +105,7 @@ class IntegratedVectorizerStrategy(Strategy):
 
         skillset = SearchIndexerSkillset(
             name=skillset_name,
-            description="Skillset to chunk documents and generating embeddings",
+            description="Skillset to chunk documents and generate embeddings",
             skills=[split_skill, embedding_skill],
             index_projections=index_projections,
         )
