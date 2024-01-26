@@ -1,18 +1,18 @@
-.oneshotContainer {
+.askContainer {
     display: flex;
     flex: 1;
     flex-direction: column;
     align-items: center;
 }
 
-.oneshotTopSection {
+.askTopSection {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
 
-.oneshotBottomSection {
+.askBottomSection {
     display: flex;
     flex: 1;
     flex-wrap: wrap;
@@ -22,40 +22,40 @@
     margin-top: 20px;
 }
 
-.oneshotTitle {
+.askTitle {
     font-size: 4rem;
     font-weight: 600;
     margin-top: 130px;
 }
 
 @media only screen and (max-width: 800px) {
-    .oneshotTitle {
+    .askTitle {
         font-size: 3rem;
         font-weight: 600;
         margin-top: 0;
     }
 }
 
-.oneshotQuestionInput {
+.askQuestionInput {
     max-width: 800px;
     width: 100%;
     padding-left: 10px;
     padding-right: 10px;
 }
 
-.oneshotAnswerContainer {
+.askAnswerContainer {
     max-width: 800px;
     width: 100%;
     padding-left: 10px;
     padding-right: 10px;
 }
 
-.oneshotAnalysisPanel {
+.askAnalysisPanel {
     width: 600px;
     margin-left: 20px;
 }
 
-.oneshotSettingsSeparator {
+.askSettingsSeparator {
     margin-top: 15px;
 }
 
