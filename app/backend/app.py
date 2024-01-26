@@ -260,8 +260,8 @@ async def setup_clients():
         key_vault_client = SecretClient(
             vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
         )
-        vision_key = (await key_vault_client.get_secret(VISION_SECRET_NAME)).value
-        search_key = (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
+        vision_key = VISION_SECRET_NAME and (await key_vault_client.get_secret(VISION_SECRET_NAME)).value
+        search_key = SEARCH_SECRET_NAME and (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
         await key_vault_client.close()
 
     # Set up clients for AI Search and Storage
