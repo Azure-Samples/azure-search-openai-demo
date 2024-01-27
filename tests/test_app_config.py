@@ -2,8 +2,11 @@ import os
 from unittest import mock
 
 import pytest
+from azure.keyvault.secrets.aio import SecretClient
 
 import app
+
+from .mocks import MockKeyVaultSecret
 
 
 @pytest.fixture
@@ -105,3 +108,39 @@ async def test_app_config_for_client(client):
     assert result["showGPT4VOptions"] == (os.getenv("USE_GPT4V") == "true")
     assert result["showSemanticRankerOption"] is True
     assert result["showVectorOption"] is True
+
+
+@pytest.mark.asyncio
+async def test_app_visionkey_notfound(monkeypatch, minimal_env):
+    monkeypatch.setenv("AZURE_KEY_VAULT_NAME", "my_key_vault")
+    monkeypatch.setenv("VISION_SECRET_NAME", "")
+    monkeypatch.setenv("SEARCH_SECRET_NAME", "search-secret-name")
+
+    async def get_secret(*args, **kwargs):
+        if args[1] == "vision-secret-name":
+            raise Exception("Key not found")
+        return MockKeyVaultSecret("mysecret")
+
+    monkeypatch.setattr(SecretClient, "get_secret", get_secret)
+
+    quart_app = app.create_app()
+    async with quart_app.test_app() as test_app:
+        test_app.test_client()
+
+
+@pytest.mark.asyncio
+async def test_app_searchkey_notfound(monkeypatch, minimal_env):
+    monkeypatch.setenv("AZURE_KEY_VAULT_NAME", "my_key_vault")
+    monkeypatch.setenv("VISION_SECRET_NAME", "vision-secret-name")
+    monkeypatch.setenv("SEARCH_SECRET_NAME", "")
+
+    async def get_secret(*args, **kwargs):
+        if args[1] == "search-secret-name":
+            raise Exception("Key not found")
+        return MockKeyVaultSecret("mysecret")
+
+    monkeypatch.setattr(SecretClient, "get_secret", get_secret)
+
+    quart_app = app.create_app()
+    async with quart_app.test_app() as test_app:
+        test_app.test_client()
