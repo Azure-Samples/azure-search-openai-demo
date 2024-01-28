@@ -67,7 +67,7 @@ class FileStrategy(Strategy):
                     if file.filename().endswith(".pdf"):
                         pages = [page async for page in self.pdf_parser.parse(content=file.content)]
                     elif file.filename().endswith(".json"):
-                        pages = [page for page in self.json_parser.parse(content=file.content)]                       
+                        pages = [page for page in self.json_parser.parse(content=file.content)]
                     if search_info.verbose:
                         print(f"Splitting '{file.filename()}' into sections")
                     sections = [
