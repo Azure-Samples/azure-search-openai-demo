@@ -49,7 +49,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
         for index in []:
             yield index
 
-    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(
@@ -58,7 +58,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
-    assert len(indexes[0].fields) == 6
+    assert len(indexes[0].fields) == 7
 
 
 @pytest.mark.asyncio
@@ -71,7 +71,7 @@ async def test_create_index_does_exist(monkeypatch, search_info):
     async def mock_list_index_names(self):
         yield "test"
 
-    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(
@@ -92,7 +92,7 @@ async def test_create_index_acls(monkeypatch, search_info):
         for index in []:
             yield index
 
-    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(
@@ -102,7 +102,7 @@ async def test_create_index_acls(monkeypatch, search_info):
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
-    assert len(indexes[0].fields) == 8
+    assert len(indexes[0].fields) == 9
 
 
 @pytest.mark.asyncio
