@@ -67,16 +67,18 @@ class SearchManager:
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
-                SimpleField(name="id", type="Edm.String", key=True)
-                if not self.use_int_vectorization
-                else SearchField(
-                    name="id",
-                    type="Edm.String",
-                    key=True,
-                    sortable=True,
-                    filterable=True,
-                    facetable=True,
-                    analyzer_name="keyword",
+                (
+                    SimpleField(name="id", type="Edm.String", key=True)
+                    if not self.use_int_vectorization
+                    else SearchField(
+                        name="id",
+                        type="Edm.String",
+                        key=True,
+                        sortable=True,
+                        filterable=True,
+                        facetable=True,
+                        analyzer_name="keyword",
+                    )
                 ),
                 SearchableField(
                     name="content",
