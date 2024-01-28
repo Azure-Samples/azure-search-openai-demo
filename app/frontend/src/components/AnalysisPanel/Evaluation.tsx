@@ -8,7 +8,8 @@ import { useState } from "react";
 interface Props {
     question: string;
     answer: string;
-    supportingContent: string[];
+    // supportingContent: { text: string[]; images?: { url: string }[] };
+    supportingContent: string[] | { text: string[]; images?: { url: string }[] };
 }
 
 interface SupportingItemProps {
@@ -29,6 +30,8 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
+
+    const supportingContentText: string[] = "text" in supportingContent ? supportingContent.text : (supportingContent as string[]);
 
     const getEvaluation = async (question: string, contexts: string[], answer: string) => {
         error && setError(undefined);
@@ -97,7 +100,7 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                             color: "white",
                             borderRadius: "4px"
                         }}
-                        onClick={() => getEvaluation(question, supportingContent, answer)}
+                        onClick={() => getEvaluation(question, supportingContentText, answer)}
                     >
                         Evaluate
                     </button>

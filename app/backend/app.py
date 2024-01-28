@@ -214,12 +214,11 @@ async def evaluate():
         ragevaluator: RagEvaluator
         ragevaluator = cast(RagEvaluator, current_app.config[CONFIG_RAGEVALUATOR_APPROACH])
         result = ragevaluator.evaluate_qa(request_json["question"], request_json["answer"], request_json["contexts"])
-        response =  jsonify(result)
+        response = jsonify(result)
         return response
     except Exception as error:
         return error_response(error, "/evaluate")
-    
-    
+
 
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
@@ -319,10 +318,11 @@ async def setup_clients():
     openai_client: AsyncOpenAI
 
     if OPENAI_HOST == "azure":
-        openai_client = AsyncAzureOpenAI(  
-            api_key = OPENAI_API_KEY,  
-            api_version = "2023-12-01-preview",
-            azure_endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com")
+        openai_client = AsyncAzureOpenAI(
+            api_key=OPENAI_API_KEY,
+            api_version="2023-12-01-preview",
+            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+        )
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
     else:
@@ -330,22 +330,20 @@ async def setup_clients():
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
         )
-        
-    langchain_openai_client = AzureChatOpenAI(  
-        api_key = OPENAI_API_KEY,  
-        api_version = "2023-12-01-preview",
-        azure_endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
-        azure_deployment= "gpt-4-32k"
-        )
-    
+
+    langchain_openai_client = AzureChatOpenAI(
+        api_key=OPENAI_API_KEY,
+        api_version="2023-12-01-preview",
+        azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+        azure_deployment="gpt-4-32k",
+    )
+
     langchain_openai_embedding_client = AzureOpenAIEmbeddings(
         model="text-embedding-ada-002",
         azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
         openai_api_type="azure",
-        openai_api_key=OPENAI_API_KEY
-        )
-        
-    
+        openai_api_key=OPENAI_API_KEY,
+    )
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
@@ -357,9 +355,6 @@ async def setup_clients():
     current_app.logger.info(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
     current_app.logger.info(OPENAI_EMB_MODEL)
     current_app.logger.info(AZURE_OPENAI_EMB_DEPLOYMENT)
-    
-
-
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
@@ -428,10 +423,9 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
-    
+
     current_app.config[CONFIG_RAGEVALUATOR_APPROACH] = RagEvaluator(
-        langchain_openai_client=langchain_openai_client,
-        langchain_embedding_client=langchain_openai_embedding_client
+        langchain_openai_client=langchain_openai_client, langchain_embedding_client=langchain_openai_embedding_client
     )
 
 
