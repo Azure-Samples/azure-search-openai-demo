@@ -1,11 +1,8 @@
 import json
-from abc import ABC
-from typing import IO, AsyncGenerator, Union
+from typing import IO
 from .page import Page
 
-from .strategy import USER_AGENT
-
-class JsonFileParser():
+class JsonParser():
     """
     Concrete parser that can parse json into pages
     """
@@ -15,7 +12,7 @@ class JsonFileParser():
         data = json.loads(content.read())
         if isinstance(data, list):
             for i, obj in enumerate(data):
-                page_text = json.dumps(data[i])
+                page_text = json.dumps(obj)
                 offset += len(page_text)
                 yield Page(i, offset, page_text)
         elif isinstance(data, dict):

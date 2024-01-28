@@ -23,7 +23,7 @@ from prepdocslib.listfilestrategy import (
 from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
 from prepdocslib.textsplitter import TextSplitter
-from prepdocslib.jsonparser import JsonFileParser
+from prepdocslib.jsonparser import JsonParser
 
 
 def is_key_empty(key):
@@ -53,7 +53,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         verbose=args.verbose,
     )
 
-    json_parser: JsonParser = JsonFileParser()
+    json_parser: JsonParser = JsonParser()
     pdf_parser: PdfParser
     if args.localpdfparser:
         pdf_parser = LocalPdfParser()
