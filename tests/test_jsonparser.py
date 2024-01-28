@@ -1,11 +1,7 @@
 import io
 
-from scripts.prepdocslib.page import (
-    Page
-)
-from scripts.prepdocslib.jsonparser import (
-    JsonParser
-)
+from scripts.prepdocslib.jsonparser import JsonParser
+
 
 def test_jsonparser_single_obj():
     file = io.StringIO('{"test": "test"}')

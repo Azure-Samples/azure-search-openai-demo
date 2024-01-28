@@ -3,9 +3,9 @@ from typing import List, Optional
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
+from .jsonparser import JsonParser
 from .listfilestrategy import ListFileStrategy
 from .pdfparser import PdfParser
-from .jsonparser import JsonParser
 from .searchmanager import SearchManager, Section
 from .strategy import SearchInfo, Strategy
 from .textsplitter import TextSplitter

@@ -1,8 +1,10 @@
 import json
 from typing import IO
+
 from .page import Page
 
-class JsonParser():
+
+class JsonParser:
     """
     Concrete parser that can parse json into pages
     """

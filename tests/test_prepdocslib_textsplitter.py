@@ -4,10 +4,11 @@ from pathlib import Path
 import pytest
 
 from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
+from scripts.prepdocslib.page import Page
 from scripts.prepdocslib.pdfparser import LocalPdfParser
 from scripts.prepdocslib.searchmanager import Section
 from scripts.prepdocslib.textsplitter import TextSplitter
-from scripts.prepdocslib.page import Page
+
 
 def test_split_empty_pages():
     t = TextSplitter(False, True)

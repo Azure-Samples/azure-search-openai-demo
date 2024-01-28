@@ -8,8 +8,9 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from pypdf import PdfReader
 
-from .strategy import USER_AGENT
 from .page import Page
+from .strategy import USER_AGENT
+
 
 class PdfParser(ABC):
     """

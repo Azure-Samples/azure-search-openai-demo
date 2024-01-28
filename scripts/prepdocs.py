@@ -15,6 +15,7 @@ from prepdocslib.embeddings import (
     OpenAIEmbeddingService,
 )
 from prepdocslib.filestrategy import DocumentAction, FileStrategy
+from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
@@ -23,7 +24,6 @@ from prepdocslib.listfilestrategy import (
 from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
 from prepdocslib.textsplitter import TextSplitter
-from prepdocslib.jsonparser import JsonParser
 
 
 def is_key_empty(key):
