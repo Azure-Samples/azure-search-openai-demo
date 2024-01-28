@@ -23,6 +23,7 @@ from prepdocslib.listfilestrategy import (
 from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
 from prepdocslib.textsplitter import TextSplitter
+from prepdocslib.jsonparser import JsonFileParser
 
 
 def is_key_empty(key):
@@ -52,6 +53,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         verbose=args.verbose,
     )
 
+    json_parser: JsonParser = JsonFileParser()
     pdf_parser: PdfParser
     if args.localpdfparser:
         pdf_parser = LocalPdfParser()
@@ -128,6 +130,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
     return FileStrategy(
         list_file_strategy=list_file_strategy,
         blob_manager=blob_manager,
+        json_parser=json_parser,
         pdf_parser=pdf_parser,
         text_splitter=TextSplitter(has_image_embeddings=args.searchimages),
         document_action=document_action,

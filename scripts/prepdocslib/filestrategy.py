@@ -5,6 +5,7 @@ from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .pdfparser import PdfParser
+from .jsonparser import JsonParser
 from .searchmanager import SearchManager, Section
 from .strategy import SearchInfo, Strategy
 from .textsplitter import TextSplitter
@@ -25,6 +26,7 @@ class FileStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
+        json_parser: JsonParser,
         pdf_parser: PdfParser,
         text_splitter: TextSplitter,
         document_action: DocumentAction = DocumentAction.Add,
@@ -36,6 +38,7 @@ class FileStrategy(Strategy):
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
+        self.json_parser = json_parser
         self.pdf_parser = pdf_parser
         self.text_splitter = text_splitter
         self.document_action = document_action
@@ -61,7 +64,10 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                    if file.filename().endswith(".pdf"):
+                        pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                    elif file.filename().endswith(".json"):
+                        pages = [page for page in self.json_parser.parse(content=file.content)]                       
                     if search_info.verbose:
                         print(f"Splitting '{file.filename()}' into sections")
                     sections = [
