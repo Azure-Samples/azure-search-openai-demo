@@ -165,8 +165,12 @@ async def test_dont_remove_if_no_container(monkeypatch, mock_env, blob_manager):
 
     await blob_manager.remove_blob()
 
+
 def test_get_managed_identity_connection_string(mock_env, blob_manager):
-    assert blob_manager.get_managedidentity_connectionstring() == "ResourceId=/subscriptions/test-storage-subid/resourceGroups/test-storage-rg/providers/Microsoft.Storage/storageAccounts/test-storage-account;"
+    assert (
+        blob_manager.get_managedidentity_connectionstring()
+        == "ResourceId=/subscriptions/test-storage-subid/resourceGroups/test-storage-rg/providers/Microsoft.Storage/storageAccounts/test-storage-account;"
+    )
 
 
 def test_sourcepage_from_file_page():
