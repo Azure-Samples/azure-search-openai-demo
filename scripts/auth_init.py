@@ -109,6 +109,9 @@ def create_server_app_permission_setup_payload(server_app_id: str):
                     "type": "User",
                 }
             ],
+            # Required to match v2.0 OpenID configuration for token validation
+            # Learn more at https://learn.microsoft.com/entra/identity-platform/v2-protocols-oidc#find-your-apps-openid-configuration-document-uri
+            "requestedAccessTokenVersion": 2,
         },
         "requiredResourceAccess": [
             {
