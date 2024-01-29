@@ -8,7 +8,7 @@ from .listfilestrategy import ListFileStrategy
 from .pdfparser import PdfParser
 from .searchmanager import SearchManager, Section
 from .strategy import SearchInfo, Strategy
-from .textsplitter import TextSplitter
+from .textsplitter import JsonTextSplitter, PdfTextSplitter
 
 
 class DocumentAction(Enum):
@@ -28,7 +28,8 @@ class FileStrategy(Strategy):
         blob_manager: BlobManager,
         json_parser: JsonParser,
         pdf_parser: PdfParser,
-        text_splitter: TextSplitter,
+        pdf_text_splitter: PdfTextSplitter,
+        json_text_splitter: JsonTextSplitter,
         document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
@@ -39,8 +40,9 @@ class FileStrategy(Strategy):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
         self.json_parser = json_parser
+        self.json_text_splitter = json_text_splitter
         self.pdf_parser = pdf_parser
-        self.text_splitter = text_splitter
+        self.pdf_text_splitter = pdf_text_splitter
         self.document_action = document_action
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
@@ -66,8 +68,10 @@ class FileStrategy(Strategy):
                 try:
                     if file.filename().endswith(".pdf"):
                         pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                        self.text_splitter = self.pdf_text_splitter
                     elif file.filename().endswith(".json"):
                         pages = [page for page in self.json_parser.parse(content=file.content)]
+                        self.text_splitter = self.json_text_splitter
                     if search_info.verbose:
                         print(f"Splitting '{file.filename()}' into sections")
                     sections = [

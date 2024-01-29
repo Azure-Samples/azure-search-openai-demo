@@ -18,4 +18,4 @@ class JsonParser:
                 offset += len(page_text)
                 yield Page(i, offset, page_text)
         elif isinstance(data, dict):
-            yield Page(1, 0, json.dumps(data))
+            yield Page(0, 0, json.dumps(data))
