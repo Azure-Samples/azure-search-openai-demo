@@ -85,7 +85,6 @@ class SearchManager:
                     type="Edm.String",
                     analyzer_name=self.search_analyzer_name,
                 ),
-                SearchableField(name="parent_id", type="Edm.String", filterable=True),
                 SearchField(
                     name="embedding",
                     type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
@@ -126,6 +125,8 @@ class SearchManager:
                         filterable=True,
                     )
                 )
+            if self.use_int_vectorization:
+                fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
             if self.search_images:
                 fields.append(
                     SearchField(
