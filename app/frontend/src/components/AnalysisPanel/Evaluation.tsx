@@ -17,16 +17,24 @@ interface SupportingItemProps {
     content: string;
 }
 
-const response: EvaluationResponse = {
-    contextPrecision: 0.1,
-    answerRelevance: 0.2,
-    faithfulness: 0.3
+const metricsExplanations = {
+    contextPrecision: "Context Precision evaluates whether all of the claims in the answer can be found in the passed context.",
+    answerRelevance: "Asnwer Relevance assesses how pertinent the generated answer is to the given prompt.",
+    faithfulness: "Faithfulness measures the factual consistency of the gneerated answer against the given context."
 };
 
 const client = useLogin ? useMsal().instance : undefined;
 
 export const Evaluation = ({ question, answer, supportingContent }: Props) => {
     const [evalResult, setEvalResult] = useState<EvaluationResponse | null>(null);
+
+    const [hover, setHover] = useState<any | null>(null);
+    const onHover = (metric: string) => {
+        setHover(metric);
+    };
+    const onLeave = () => {
+        setHover(null);
+    };
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
@@ -50,12 +58,16 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
             console.log(response);
         } catch (e) {
             setError(e);
+            const response: EvaluationResponse = {
+                contextPrecision: 0.1,
+                answerRelevance: 0.2,
+                faithfulness: 0.3
+            };
+            setEvalResult(response);
         } finally {
             setIsLoading(false);
         }
     };
-
-    console.log("Eval", evalResult);
 
     return (
         <div className="">
@@ -76,11 +88,21 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                             <span>
                                 <h2>Evaluation</h2>
                             </span>
-                            <ul>
-                                <li>Context Precision: {evalResult.contextPrecision}</li>
-                                <li>Answer Relevance: {evalResult.answerRelevance}</li>
-                                <li>Faithfulness: {evalResult.faithfulness}</li>
-                            </ul>
+                            <section className={styles.evalSection}>
+                                <div className={styles.evalMetric} onMouseEnter={() => onHover("contextPrecision")} onMouseLeave={onLeave}>
+                                    Context Precision
+                                </div>
+                                <div>{evalResult.contextPrecision} </div>
+                                <div className={styles.evalMetric} onMouseEnter={() => onHover("answerRelevance")} onMouseLeave={onLeave}>
+                                    Answer Relevance
+                                </div>
+                                <div>{evalResult.answerRelevance}</div>
+                                <div className={styles.evalMetric} onMouseEnter={() => onHover("faithfulness")} onMouseLeave={onLeave}>
+                                    Faithfulness
+                                </div>
+                                <div>{evalResult.faithfulness}</div>
+                            </section>
+                            <div className="">{hover ? metricsExplanations[hover as keyof typeof metricsExplanations] : ""}</div>
                         </div>
                     </>
                 ) : isLoading ? (
@@ -107,14 +129,5 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                 )}
             </div>
         </div>
-    );
-};
-
-export const TextSupportingContent = ({ title, content }: SupportingItemProps) => {
-    return (
-        <li className={styles.supportingContentItem}>
-            <h4 className={styles.supportingContentItemHeader}>{title}</h4>
-            <p className={styles.supportingContentItemText} dangerouslySetInnerHTML={{ __html: content }} />
-        </li>
     );
 };
