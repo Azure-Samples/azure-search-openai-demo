@@ -36,3 +36,14 @@ You may want to remove documents from the index. For example, if you're using th
 To remove all documents, use the `--removeall` flag. Open either `scripts/prepdocs.sh` or `scripts/prepdocs.ps1` and add `--removeall` to the command at the bottom of the file. Then run the script as usual.
 
 You can also remove individual documents by using the `--remove` flag. Open either `scripts/prepdocs.sh` or `scripts/prepdocs.ps1`, add `--remove` to the command at the bottom of the file, and replace `/data/*` with `/data/YOUR-DOCUMENT-FILENAME-GOES-HERE.pdf`. Then run the script as usual.
+
+## Overview of Integrated Vectorization
+Azure AI search has introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in/ba-p/3960809#:~:text=Integrated%20vectorization%20is%20a%20new%20feature%20of%20Azure,pull-indexers%2C%20and%20vectorization%20of%20text%20queries%20through%20vectorizers). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
+
+Offical integrated vectorization example https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/azure-search-integrated-vectorization-sample.ipynb
+
+### Removing documents from search index
+Once documents are removed from datasource such as blob, indexers in ai search is responsible to keep track and remove documents from the index. 
+
+### Vectorize additional documents
+Add additional documents to blob and execute indexer from azure portal or from sample code. Indexer will take care of extracting addtional documents, chunk vectorize and upload them to index.
