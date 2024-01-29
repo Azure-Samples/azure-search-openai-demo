@@ -6,7 +6,7 @@
       "value": "${AZURE_ENV_NAME}"
     },
     "resourceGroupName": {
-      "value": "legal_copilot_jiri"
+      "value": "legal_co_pilot"
     },
     "location": {
       "value": "westeurope"
