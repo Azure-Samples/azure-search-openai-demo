@@ -86,7 +86,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     so the benefits of vector search would typically outweigh the costs, but it is possible to disable vector support.
     If you do so, the application will fall back to a keyword search, which is less accurate.
 
-7. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch).
+7. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch). We recommend using "eastus" as the region, for availability reasons.
 
 ## Reducing costs locally
 
