@@ -27,7 +27,7 @@ class File:
         return os.path.basename(self.content.name)
 
     def file_extension(self):
-        return os.path.splitext(self.content.name)
+        return os.path.splitext(self.content.name)[1]
 
     def filename_to_id(self):
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())

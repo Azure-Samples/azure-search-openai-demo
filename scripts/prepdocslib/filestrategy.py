@@ -59,7 +59,7 @@ class FileStrategy(Strategy):
             async for file in files:
                 try:
                     key = file.file_extension()
-                    processor = self.file_processors.get(key)
+                    processor = self.file_processors[key]
                     if not processor:
                         # skip file if no parser is found
                         if search_info.verbose:
