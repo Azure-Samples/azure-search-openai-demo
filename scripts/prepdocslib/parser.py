@@ -6,7 +6,7 @@ from .page import Page
 
 class Parser(ABC):
     """
-    Abstract parser that parses PDFs into pages
+    Abstract parser that parses content into Page objects
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
