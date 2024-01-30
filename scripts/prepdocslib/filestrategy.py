@@ -3,10 +3,10 @@ from typing import List, Optional
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
+from .fileprocessor import FileProcessor
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager, Section
 from .strategy import SearchInfo, Strategy
-from .fileprocessor import FileProcessor
 
 
 class DocumentAction(Enum):

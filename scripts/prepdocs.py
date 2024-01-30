@@ -14,6 +14,7 @@ from prepdocslib.embeddings import (
     OpenAIEmbeddings,
     OpenAIEmbeddingService,
 )
+from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import DocumentAction, FileStrategy
 from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
@@ -25,8 +26,6 @@ from prepdocslib.parser import Parser
 from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
-
-from prepdocslib.fileprocessor import FileProcessor
 
 
 def is_key_empty(key):
