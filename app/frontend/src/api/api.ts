@@ -1,6 +1,6 @@
 const BACKEND_URI = "";
 
-import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config } from "./models";
+import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, EvaluationRequest, EvaluationResponse } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
 export function getHeaders(idToken: string | undefined): Record<string, string> {
@@ -51,4 +51,18 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 
 export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
+}
+
+export async function evalApi(request: EvaluationRequest, idToken: string | undefined): Promise<EvaluationResponse> {
+    const response = await fetch(`${BACKEND_URI}/evaluate`, {
+        method: "POST",
+        headers: getHeaders(idToken),
+        body: JSON.stringify(request)
+    });
+
+    console.log(response);
+
+    const parsedResponse: EvaluationResponse = await response.json();
+
+    return parsedResponse;
 }

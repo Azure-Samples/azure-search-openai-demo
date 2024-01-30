@@ -11,6 +11,7 @@ import { useMsal } from "@azure/msal-react";
 import { getHeaders } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
 import { useState, useEffect } from "react";
+import { Evaluation } from "./Evaluation";
 
 interface Props {
     className: string;
@@ -19,11 +20,12 @@ interface Props {
     activeCitation: string | undefined;
     citationHeight: string;
     answer: ChatAppResponse;
+    question: string;
 }
 
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
-export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
+export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged, question }: Props) => {
     const isDisabledThoughtProcessTab: boolean = !answer.choices[0].context.thoughts;
     const isDisabledSupportingContentTab: boolean = !answer.choices[0].context.data_points;
     const isDisabledCitationTab: boolean = !activeCitation;
@@ -33,13 +35,16 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
 
     const fetchCitation = async () => {
         const token = client ? await getToken(client) : undefined;
+
         if (activeCitation) {
+            const page = activeCitation.split("#")[1];
+            // Get the end of the string starting from "#"
             const response = await fetch(activeCitation, {
                 method: "GET",
                 headers: getHeaders(token)
             });
             const citationContent = await response.blob();
-            const citationObjectUrl = URL.createObjectURL(citationContent);
+            const citationObjectUrl = URL.createObjectURL(citationContent) + "#" + page;
             setCitation(citationObjectUrl);
         }
     };
@@ -66,6 +71,13 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
             >
                 <SupportingContent supportingContent={answer.choices[0].context.data_points} />
+            </PivotItem>
+            <PivotItem
+                itemKey={AnalysisPanelTabs.EvaluationTab}
+                headerText="Evaluation"
+                headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
+            >
+                <Evaluation question={question} answer={answer.choices[0].message.content} supportingContent={answer.choices[0].context.data_points} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.CitationTab}

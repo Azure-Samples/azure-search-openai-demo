@@ -83,3 +83,15 @@ export type Config = {
     showSemanticRankerOption: boolean;
     showVectorOption: boolean;
 };
+
+export type EvaluationRequest = {
+    question: string;
+    contexts: string[];
+    answer: string;
+};
+
+export type EvaluationResponse = {
+    contextPrecision: number;
+    answerRelevance: number;
+    faithfulness: number;
+};

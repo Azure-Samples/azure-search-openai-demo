@@ -251,6 +251,12 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const returnFeedback = (type: string) => {
+        // TODO
+        console.log(type);
+        return "success";
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -282,6 +288,8 @@ const Chat = () => {
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab, index)}
+                                                onBadFeedbackClicked={() => returnFeedback("bad")} // TODO
+                                                onGoodFeedbackClicked={() => returnFeedback("good")} // TODO
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
@@ -302,6 +310,8 @@ const Chat = () => {
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab, index)}
+                                                onBadFeedbackClicked={() => returnFeedback("bad")} // TODO
+                                                onGoodFeedbackClicked={() => returnFeedback("good")} // TODO
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />

@@ -138,7 +138,7 @@ sup {
 
 .satisfactionContainer {
     display: flex;
-    margin-right: 0;
+    margin-right: s;
 }
 
 .satisfactory {
