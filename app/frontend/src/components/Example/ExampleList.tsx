@@ -3,9 +3,9 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What does the law specify regarding hygiene at the office?",
-    "How should mental wellbeing of the employees be respected?",
-    "What should one do in case of a work accident?"
+    "Can you provide me the details about the House of Representatives?",
+    "Give a summarization of the constitution.",
+    "What power does Congress have in America?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [

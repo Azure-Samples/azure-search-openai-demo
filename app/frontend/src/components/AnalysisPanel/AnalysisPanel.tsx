@@ -44,7 +44,12 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headers: getHeaders(token)
             });
             const citationContent = await response.blob();
-            const citationObjectUrl = URL.createObjectURL(citationContent) + "#" + page;
+            var citationObjectUrl;
+            if (page !== "page=1") {
+                citationObjectUrl = URL.createObjectURL(citationContent) + "#" + page;
+            } else {
+                citationObjectUrl = URL.createObjectURL(citationContent) + "#" + "page=2";
+            }
             setCitation(citationObjectUrl);
         }
     };
