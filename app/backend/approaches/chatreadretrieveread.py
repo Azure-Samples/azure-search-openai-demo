@@ -132,8 +132,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             temperature=0.0,
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
-            tools=tools,
-            tool_choice="auto",
+            # tools=tools,
+            # tool_choice="auto",
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)

@@ -32,6 +32,7 @@ export const Answer = ({
     onEvaluationClicked,
     // onGoodFeedbackClicked,
     // onBadFeedbackClicked,
+
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {

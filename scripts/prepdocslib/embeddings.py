@@ -131,6 +131,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_service: str,
         open_ai_deployment: str,
         open_ai_model_name: str,
+        api_key: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         disable_batch: bool = False,
         verbose: bool = False,
@@ -138,15 +139,17 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         super().__init__(open_ai_model_name, disable_batch, verbose)
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
+        self.api_key = api_key
         self.credential = credential
         self.cached_token: Optional[AccessToken] = None
 
     async def create_client(self) -> AsyncOpenAI:
+        print(self.open_ai_service)
+        print(self.api_key)
         return AsyncAzureOpenAI(
             azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
-            azure_deployment=self.open_ai_deployment,
-            api_key=await self.wrap_credential(),
-            api_version="2023-05-15",
+            api_key = self.api_key,  
+            api_version = "2023-12-01-preview"
         )
 
     async def wrap_credential(self) -> str:
