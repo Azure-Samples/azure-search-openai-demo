@@ -60,3 +60,14 @@
     max-width: 100%;
     object-fit: contain;
 }
+
+.evalSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0rem 2rem;
+    margin-bottom: 2rem;
+}
+
+.evalMetric {
+    justify-self: end;
+}

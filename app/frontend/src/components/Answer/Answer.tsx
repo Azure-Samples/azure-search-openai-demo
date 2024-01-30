@@ -15,6 +15,9 @@ interface Props {
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
+    onEvaluationClicked: () => void;
+    onGoodFeedbackClicked: () => void;
+    onBadFeedbackClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -26,6 +29,9 @@ export const Answer = ({
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
+    onEvaluationClicked,
+    onGoodFeedbackClicked,
+    onBadFeedbackClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
@@ -55,6 +61,14 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
+                            disabled={!answer.choices[0].context.data_points}
+                        />
+                        <IconButton
+                            style={{ color: "black" }}
+                            iconProps={{ iconName: "BarChart4" }}
+                            title="Show Evaluation"
+                            ariaLabel="Show Evaluation"
+                            onClick={() => onEvaluationClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>
@@ -95,6 +109,28 @@ export const Answer = ({
                     </Stack>
                 </Stack.Item>
             )}
+
+            <Stack.Item>
+                <div className={styles.satisfactionContainer}>
+                    <span className={styles.satisfactory}>Did you like this response?</span>
+                    <IconButton
+                        style={{ color: "green" }}
+                        iconProps={{ iconName: "CheckMark" }}
+                        title="Show thought process"
+                        ariaLabel="Show thought process"
+                        onClick={() => onGoodFeedbackClicked()}
+                        disabled={!answer.choices[0].context.thoughts?.length}
+                    />
+                    <IconButton
+                        style={{ color: "red" }}
+                        iconProps={{ iconName: "Cancel" }}
+                        title="Show supporting content"
+                        ariaLabel="Show supporting content"
+                        onClick={() => onBadFeedbackClicked()}
+                        disabled={!answer.choices[0].context.data_points}
+                    />
+                </div>
+            </Stack.Item>
         </Stack>
     );
 };

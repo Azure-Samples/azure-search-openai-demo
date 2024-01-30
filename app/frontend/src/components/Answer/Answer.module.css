@@ -135,3 +135,16 @@ sup {
     content: "";
     animation: loading 1s infinite;
 }
+
+.satisfactionContainer {
+    display: flex;
+    margin-right: 0;
+}
+
+.satisfactory {
+    margin-top: 3px;
+    margin-left: auto;
+    margin-right: 1rem;
+    font-weight: 600;
+    line-height: 24px;
+}
