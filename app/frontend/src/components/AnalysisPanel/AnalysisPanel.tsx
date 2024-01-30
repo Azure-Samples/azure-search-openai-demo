@@ -35,13 +35,21 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
 
     const fetchCitation = async () => {
         const token = client ? await getToken(client) : undefined;
+
         if (activeCitation) {
+            const page = activeCitation.split("#")[1];
+            // Get the end of the string starting from "#"
             const response = await fetch(activeCitation, {
                 method: "GET",
                 headers: getHeaders(token)
             });
             const citationContent = await response.blob();
-            const citationObjectUrl = URL.createObjectURL(citationContent);
+            var citationObjectUrl;
+            if (page !== "page=1") {
+                citationObjectUrl = URL.createObjectURL(citationContent) + "#" + page;
+            } else {
+                citationObjectUrl = URL.createObjectURL(citationContent) + "#" + "page=2";
+            }
             setCitation(citationObjectUrl);
         }
     };

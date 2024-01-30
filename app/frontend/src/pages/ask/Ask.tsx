@@ -174,6 +174,12 @@ export function Component(): JSX.Element {
         setUseGroupsSecurityFilter(!!checked);
     };
 
+    const returnFeedback = (type: string) => {
+        // TODO
+        console.log(type);
+        return "success";
+    };
+
     return (
         <div className={styles.askContainer}>
             <div className={styles.askTopSection}>
@@ -200,6 +206,8 @@ export function Component(): JSX.Element {
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
                             onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab)}
+                            onBadFeedbackClicked={() => returnFeedback("bad")} // TODO
+                            onGoodFeedbackClicked={() => returnFeedback("good")} // TODO
                         />
                     </div>
                 )}

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 
@@ -16,6 +16,8 @@ interface Props {
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
     onEvaluationClicked: () => void;
+    onGoodFeedbackClicked: () => void;
+    onBadFeedbackClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -28,6 +30,9 @@ export const Answer = ({
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onEvaluationClicked,
+    // onGoodFeedbackClicked,
+    // onBadFeedbackClicked,
+
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
@@ -36,6 +41,16 @@ export const Answer = ({
     const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
+
+    const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
+
+    const onGoodFeedbackClicked = () => {
+        setFeedbackGiven(true);
+    };
+
+    const onBadFeedbackClicked = () => {
+        setFeedbackGiven(true);
+    };
 
     return (
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
@@ -61,7 +76,7 @@ export const Answer = ({
                         />
                         <IconButton
                             style={{ color: "black" }}
-                            iconProps={{ iconName: "CheckMark" }}
+                            iconProps={{ iconName: "BarChart4" }}
                             title="Show Evaluation"
                             ariaLabel="Show Evaluation"
                             onClick={() => onEvaluationClicked()}
@@ -105,6 +120,34 @@ export const Answer = ({
                     </Stack>
                 </Stack.Item>
             )}
+
+            <Stack.Item>
+                {feedbackGiven ? (
+                    <div className={styles.satisfactionContainer}>
+                        <span className={styles.satisfactory}>Thank you for your feedback!</span>
+                    </div>
+                ) : (
+                    <div className={styles.satisfactionContainer}>
+                        <span className={styles.satisfactory}>Did you like this response?</span>
+                        <IconButton
+                            style={{ color: "green" }}
+                            iconProps={{ iconName: "CheckMark" }}
+                            title="Show thought process"
+                            ariaLabel="Show thought process"
+                            onClick={() => onGoodFeedbackClicked()}
+                            disabled={!answer.choices[0].context.thoughts?.length}
+                        />
+                        <IconButton
+                            style={{ color: "red" }}
+                            iconProps={{ iconName: "Cancel" }}
+                            title="Show supporting content"
+                            ariaLabel="Show supporting content"
+                            onClick={() => onBadFeedbackClicked()}
+                            disabled={!answer.choices[0].context.data_points}
+                        />
+                    </div>
+                )}
+            </Stack.Item>
         </Stack>
     );
 };

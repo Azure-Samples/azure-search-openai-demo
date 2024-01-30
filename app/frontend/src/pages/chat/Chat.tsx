@@ -59,20 +59,12 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
-    const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
-    const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
 
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
 
         configApi(token).then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
-            setUseSemanticRanker(config.showSemanticRankerOption);
-            setShowSemanticRankerOption(config.showSemanticRankerOption);
-            setShowVectorOption(config.showVectorOption);
-            if (!config.showVectorOption) {
-                setRetrievalMode(RetrievalMode.Text);
-            }
         });
     };
 
@@ -259,6 +251,12 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const returnFeedback = (type: string) => {
+        // TODO
+        console.log(type);
+        return "success";
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -290,6 +288,8 @@ const Chat = () => {
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab, index)}
+                                                onBadFeedbackClicked={() => returnFeedback("bad")} // TODO
+                                                onGoodFeedbackClicked={() => returnFeedback("good")} // TODO
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
@@ -310,6 +310,8 @@ const Chat = () => {
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab, index)}
+                                                onBadFeedbackClicked={() => returnFeedback("bad")} // TODO
+                                                onGoodFeedbackClicked={() => returnFeedback("good")} // TODO
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
@@ -385,15 +387,12 @@ const Chat = () => {
                         onChange={onRetrieveCountChange}
                     />
                     <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-
-                    {showSemanticRankerOption && (
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useSemanticRanker}
-                            label="Use semantic ranker for retrieval"
-                            onChange={onUseSemanticRankerChange}
-                        />
-                    )}
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useSemanticRanker}
+                        label="Use semantic ranker for retrieval"
+                        onChange={onUseSemanticRankerChange}
+                    />
                     <Checkbox
                         className={styles.chatSettingsSeparator}
                         checked={useSemanticCaptions}
@@ -419,13 +418,11 @@ const Chat = () => {
                         />
                     )}
 
-                    {showVectorOption && (
-                        <VectorSettings
-                            showImageOptions={useGPT4V && showGPT4VOptions}
-                            updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
-                            updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
-                        />
-                    )}
+                    <VectorSettings
+                        showImageOptions={useGPT4V && showGPT4VOptions}
+                        updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                        updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                    />
 
                     {useLogin && (
                         <Checkbox
