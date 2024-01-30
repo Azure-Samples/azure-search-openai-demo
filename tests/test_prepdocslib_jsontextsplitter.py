@@ -27,7 +27,7 @@ def test_json_split_pages():
     assert split_pages[0].text == '{"test": "'
     assert len(split_pages[0].text) <= max_object_length
     assert split_pages[1].page_num == 1
-    assert split_pages[1].text == 'Not a larg'
+    assert split_pages[1].text == "Not a larg"
     assert len(split_pages[1].text) <= max_object_length
     assert split_pages[2].page_num == 2
     assert split_pages[2].text == 'e page"}'

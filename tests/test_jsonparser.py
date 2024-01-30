@@ -1,7 +1,9 @@
 import io
+
 import pytest
 
 from scripts.prepdocslib.jsonparser import JsonParser
+
 
 @pytest.mark.asyncio
 async def test_jsonparser_single_obj():
@@ -10,6 +12,7 @@ async def test_jsonparser_single_obj():
     jsonparser = JsonParser()
     pages = [page async for page in jsonparser.parse(file)]
     assert len(pages) == 1
+
 
 @pytest.mark.asyncio
 async def test_jsonparser_array_multiple_obj():
