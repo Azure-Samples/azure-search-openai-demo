@@ -1,15 +1,16 @@
 import json
-from typing import IO
+from typing import IO, AsyncGenerator
 
 from .page import Page
+from .parser import Parser
 
 
-class JsonParser:
+class JsonParser(Parser):
     """
     Concrete parser that can parse json into pages
     """
 
-    def parse(self, content: IO):
+    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         offset = 0
         data = json.loads(content.read())
         if isinstance(data, list):

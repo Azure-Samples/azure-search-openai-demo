@@ -7,17 +7,17 @@ from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
 from scripts.prepdocslib.page import Page
 from scripts.prepdocslib.pdfparser import LocalPdfParser
 from scripts.prepdocslib.searchmanager import Section
-from scripts.prepdocslib.textsplitter import PdfTextSplitter
+from scripts.prepdocslib.textsplitter import SentenceTextSplitter
 
 
 def test_pdf_split_empty_pages():
-    t = PdfTextSplitter(False, True)
+    t = SentenceTextSplitter(False, True)
 
     assert list(t.split_pages([])) == []
 
 
 def test_pdf_split_small_pages():
-    t = PdfTextSplitter(has_image_embeddings=False, verbose=True)
+    t = SentenceTextSplitter(has_image_embeddings=False, verbose=True)
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text="Not a large page")]))
     assert len(split_pages) == 1
@@ -27,7 +27,7 @@ def test_pdf_split_small_pages():
 
 @pytest.mark.asyncio
 async def test_list_parse_and_split(tmp_path):
-    text_splitter = PdfTextSplitter(False, True)
+    text_splitter = SentenceTextSplitter(False, True)
     pdf_parser = LocalPdfParser()
     for pdf in Path("data").glob("*.pdf"):
         shutil.copy(str(pdf.absolute()), tmp_path)

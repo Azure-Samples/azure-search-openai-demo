@@ -3,12 +3,10 @@ from typing import List, Optional
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
-from .jsonparser import JsonParser
 from .listfilestrategy import ListFileStrategy
-from .pdfparser import PdfParser
 from .searchmanager import SearchManager, Section
 from .strategy import SearchInfo, Strategy
-from .textsplitter import JsonTextSplitter, PdfTextSplitter
+from .fileprocessor import FileProcessor
 
 
 class DocumentAction(Enum):
@@ -26,10 +24,7 @@ class FileStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
-        json_parser: JsonParser,
-        pdf_parser: PdfParser,
-        pdf_text_splitter: PdfTextSplitter,
-        json_text_splitter: JsonTextSplitter,
+        file_processors: dict[str, FileProcessor],
         document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
@@ -39,10 +34,7 @@ class FileStrategy(Strategy):
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
-        self.json_parser = json_parser
-        self.json_text_splitter = json_text_splitter
-        self.pdf_parser = pdf_parser
-        self.pdf_text_splitter = pdf_text_splitter
+        self.file_processors = file_processors
         self.document_action = document_action
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
@@ -66,17 +58,20 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    if file.filename().endswith(".pdf"):
-                        pages = [page async for page in self.pdf_parser.parse(content=file.content)]
-                        self.text_splitter = self.pdf_text_splitter
-                    elif file.filename().endswith(".json"):
-                        pages = [page for page in self.json_parser.parse(content=file.content)]
-                        self.text_splitter = self.json_text_splitter
+                    key = file.file_extension()
+                    processor = self.file_processors.get(key)
+                    if not processor:
+                        # skip file if no parser is found
+                        print(f"Skipping '{file.filename()}'.")
+                        continue
+                    if search_info.verbose:
+                        print(f"Parsing '{file.filename()}'")
+                    pages = [page async for page in processor.parser.parse(content=file.content)]
                     if search_info.verbose:
                         print(f"Splitting '{file.filename()}' into sections")
                     sections = [
                         Section(split_page, content=file, category=self.category)
-                        for split_page in self.text_splitter.split_pages(pages)
+                        for split_page in processor.splitter.split_pages(pages)
                     ]
 
                     blob_sas_uris = await self.blob_manager.upload_blob(file)

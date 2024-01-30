@@ -1,5 +1,4 @@
 import html
-from abc import ABC
 from typing import IO, AsyncGenerator, Union
 
 from azure.ai.formrecognizer import DocumentTable
@@ -9,20 +8,11 @@ from azure.core.credentials_async import AsyncTokenCredential
 from pypdf import PdfReader
 
 from .page import Page
+from .parser import Parser
 from .strategy import USER_AGENT
 
 
-class PdfParser(ABC):
-    """
-    Abstract parser that parses PDFs into pages
-    """
-
-    async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        if False:
-            yield
-
-
-class LocalPdfParser(PdfParser):
+class LocalPdfParser(Parser):
     """
     Concrete parser backed by PyPDF that can parse PDFs into pages
     To learn more, please visit https://pypi.org/project/pypdf/
@@ -38,7 +28,7 @@ class LocalPdfParser(PdfParser):
             offset += len(page_text)
 
 
-class DocumentAnalysisPdfParser(PdfParser):
+class DocumentAnalysisParser(Parser):
     """
     Concrete parser backed by Azure AI Document Intelligence that can parse PDFS into pages
     To learn more, please visit https://learn.microsoft.com/azure/ai-services/document-intelligence/overview
@@ -93,7 +83,7 @@ class DocumentAnalysisPdfParser(PdfParser):
                     if table_id == -1:
                         page_text += form_recognizer_results.content[page_offset + idx]
                     elif table_id not in added_tables:
-                        page_text += DocumentAnalysisPdfParser.table_to_html(tables_on_page[table_id])
+                        page_text += DocumentAnalysisParser.table_to_html(tables_on_page[table_id])
                         added_tables.add(table_id)
 
                 yield Page(page_num=page_num, offset=offset, text=page_text)

@@ -1,19 +1,22 @@
+from abc import ABC
 from typing import Generator, List
 
-from .page import Page
+from .page import Page, SplitPage
 
 
-class SplitPage:
+class TextSplitter(ABC):
     """
-    A section of a page that has been split into a smaller chunk.
+    Splits a list of pages into smaller chunks
+    :param pages: The pages to split
+    :return: A generator of SplitPage
     """
 
-    def __init__(self, page_num: int, text: str):
-        self.page_num = page_num
-        self.text = text
+    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+        if False:
+            yield
 
 
-class PdfTextSplitter:
+class SentenceTextSplitter(TextSplitter):
     """
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
@@ -107,9 +110,9 @@ class PdfTextSplitter:
             yield SplitPage(page_num=find_page(start), text=all_text[start:end])
 
 
-class JsonTextSplitter:
+class SimpleTextSplitter(TextSplitter):
     """
-    Class that splits json pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
+    Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
     def __init__(self, max_object_length: int = 1000, verbose: bool = False):
@@ -127,7 +130,7 @@ class JsonTextSplitter:
             return
 
         # its too big, so we need to split it
-         # its too big, so we need to split it
+        # its too big, so we need to split it
         for i in range(0, length, self.max_object_length):
-            yield SplitPage(page_num=i//self.max_object_length, text=all_text[i:i+self.max_object_length])
+            yield SplitPage(page_num=i // self.max_object_length, text=all_text[i : i + self.max_object_length])
         return

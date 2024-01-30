@@ -1,15 +1,15 @@
 from scripts.prepdocslib.page import Page
-from scripts.prepdocslib.textsplitter import JsonTextSplitter
+from scripts.prepdocslib.textsplitter import SimpleTextSplitter
 
 
 def test_json_split_empty_pages():
-    t = JsonTextSplitter(True)
+    t = SimpleTextSplitter(True)
 
     assert list(t.split_pages([])) == []
 
 
 def test_json_split_small_pages():
-    t = JsonTextSplitter(verbose=True)
+    t = SimpleTextSplitter(verbose=True)
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
     assert len(split_pages) == 1
@@ -19,7 +19,7 @@ def test_json_split_small_pages():
 
 def test_json_split_pages():
     max_object_length = 10
-    t = JsonTextSplitter(max_object_length=max_object_length, verbose=True)
+    t = SimpleTextSplitter(max_object_length=max_object_length, verbose=True)
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
     assert len(split_pages) == 3
