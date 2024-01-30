@@ -1,7 +1,11 @@
 import pytest
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchField, SearchIndex
 
 from core.authentication import AuthenticationHelper, AuthError
+
+from .mocks import MockAsyncPageIterator
 
 MockSearchIndex = SearchIndex(
     name="test",
@@ -24,8 +28,12 @@ def create_authentication_helper(require_access_control: bool = False):
     )
 
 
+def create_search_client():
+    return SearchClient(endpoint="", index_name="", credential=AzureKeyCredential(""))
+
+
 @pytest.mark.asyncio
-async def test_get_auth_claims_success(mock_confidential_client_success):
+async def test_get_auth_claims_success(mock_confidential_client_success, mock_validate_token_success):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert auth_claims.get("oid") == "OID_X"
@@ -33,14 +41,16 @@ async def test_get_auth_claims_success(mock_confidential_client_success):
 
 
 @pytest.mark.asyncio
-async def test_get_auth_claims_unauthorized(mock_confidential_client_unauthorized):
+async def test_get_auth_claims_unauthorized(mock_confidential_client_unauthorized, mock_validate_token_success):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert len(auth_claims.keys()) == 0
 
 
 @pytest.mark.asyncio
-async def test_get_auth_claims_overage_success(mock_confidential_client_overage, mock_list_groups_success):
+async def test_get_auth_claims_overage_success(
+    mock_confidential_client_overage, mock_list_groups_success, mock_validate_token_success
+):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert auth_claims.get("oid") == "OID_X"
@@ -48,26 +58,28 @@ async def test_get_auth_claims_overage_success(mock_confidential_client_overage,
 
 
 @pytest.mark.asyncio
-async def test_get_auth_claims_overage_unauthorized(mock_confidential_client_overage, mock_list_groups_unauthorized):
+async def test_get_auth_claims_overage_unauthorized(
+    mock_confidential_client_overage, mock_list_groups_unauthorized, mock_validate_token_success
+):
     helper = create_authentication_helper()
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert len(auth_claims.keys()) == 0
 
 
 @pytest.mark.asyncio
-async def test_list_groups_success(mock_list_groups_success):
+async def test_list_groups_success(mock_list_groups_success, mock_validate_token_success):
     groups = await AuthenticationHelper.list_groups(graph_resource_access_token={"access_token": "MockToken"})
     assert groups == ["OVERAGE_GROUP_Y", "OVERAGE_GROUP_Z"]
 
 
 @pytest.mark.asyncio
-async def test_list_groups_unauthorized(mock_list_groups_unauthorized):
+async def test_list_groups_unauthorized(mock_list_groups_unauthorized, mock_validate_token_success):
     with pytest.raises(AuthError) as exc_info:
         await AuthenticationHelper.list_groups(graph_resource_access_token={"access_token": "MockToken"})
     assert exc_info.value.error == '{"error": "unauthorized"}'
 
 
-def test_auth_setup(mock_confidential_client_success):
+def test_auth_setup(mock_confidential_client_success, mock_validate_token_success):
     helper = create_authentication_helper()
     assert helper.get_auth_setup_for_client() == {
         "useLogin": True,
@@ -91,7 +103,7 @@ def test_auth_setup(mock_confidential_client_success):
     }
 
 
-def test_auth_setup_required_access_control(mock_confidential_client_success):
+def test_auth_setup_required_access_control(mock_confidential_client_success, mock_validate_token_success):
     helper = create_authentication_helper(require_access_control=True)
     assert helper.get_auth_setup_for_client() == {
         "useLogin": True,
@@ -115,7 +127,7 @@ def test_auth_setup_required_access_control(mock_confidential_client_success):
     }
 
 
-def test_get_auth_token(mock_confidential_client_success):
+def test_get_auth_token(mock_confidential_client_success, mock_validate_token_success):
     with pytest.raises(AuthError) as exc_info:
         AuthenticationHelper.get_token_auth_header({})
     assert exc_info.value.status_code == 401
@@ -132,7 +144,7 @@ def test_get_auth_token(mock_confidential_client_success):
     AuthenticationHelper.get_token_auth_header({"x-ms-token-aad-access-token": "MockToken"}) == "MockToken"
 
 
-def test_build_security_filters(mock_confidential_client_success):
+def test_build_security_filters(mock_confidential_client_success, mock_validate_token_success):
     auth_helper = create_authentication_helper()
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     assert auth_helper.build_security_filters(overrides={}, auth_claims={}) is None
@@ -184,3 +196,84 @@ def test_build_security_filters(mock_confidential_client_success):
         )
         == "oids/any(g:search.in(g, ''))"
     )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_success, mock_validate_token_success):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is False
+    )
+    assert (
+        filter
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and (sourcepage eq 'Benefit_Options-2.pdf')"
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed(monkeypatch, mock_confidential_client_success, mock_validate_token_success):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcepage": "Benefit_Options-2.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert (
+        filter
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and (sourcepage eq 'Benefit_Options-2.pdf')"
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_without_access_control(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper = create_authentication_helper(require_access_control=False)
+    filter = None
+    called_search = False
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        nonlocal called_search
+        filter = kwargs.get("filter")
+        called_search = True
+        return MockAsyncPageIterator(data=[])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+    assert called_search is False

@@ -18,7 +18,6 @@ from core.modelhelper import get_token_limit
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
-
     """
     A multi-step approach that first uses OpenAI to turn the user's question into a search query,
     then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,

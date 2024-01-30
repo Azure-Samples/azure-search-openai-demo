@@ -40,16 +40,18 @@ class Document:
             "sourcefile": self.sourcefile,
             "oids": self.oids,
             "groups": self.groups,
-            "captions": [
-                {
-                    "additional_properties": caption.additional_properties,
-                    "text": caption.text,
-                    "highlights": caption.highlights,
-                }
-                for caption in self.captions
-            ]
-            if self.captions
-            else [],
+            "captions": (
+                [
+                    {
+                        "additional_properties": caption.additional_properties,
+                        "text": caption.text,
+                        "highlights": caption.highlights,
+                    }
+                    for caption in self.captions
+                ]
+                if self.captions
+                else []
+            ),
         }
 
     @classmethod
