@@ -81,7 +81,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.18.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.1
     # via quart
@@ -113,7 +113,7 @@ idna==3.6
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==6.11.0
+importlib-metadata==7.0.1
     # via opentelemetry-api
 isodate==0.6.1
     # via
