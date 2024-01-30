@@ -60,6 +60,7 @@
             },
             "finish_reason": "stop",
             "index": 0,
+            "logprobs": null,
             "message": {
                 "content": "From the provided sources, the impact of interest rates and GDP growth on financial markets can be observed through the line graph. [Financial Market Analysis Report 2023-7.png]",
                 "function_call": null,
