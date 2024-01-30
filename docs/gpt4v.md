@@ -14,7 +14,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 ### Prerequisites
 
 - Create a [Computer Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing.
-- An Azure AI resource with a GPT-4 Turbo with Vision model deployed in one of the regions that support GPT-4 Turbo with Vision: Australia East, Switzerland North, Sweden Central, and West US. When you create a deployment from your project's Deployments page, you should be able to select: 
+- The ability to deploy a GPT-4 Turbo with Vision model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability). If you're not sure, try to create a deployment from your Azure OpenAI deployments page. You should be able to select: 
 
    | Model | Version |
    |--|--|
