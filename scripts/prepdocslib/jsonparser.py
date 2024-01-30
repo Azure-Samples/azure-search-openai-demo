@@ -7,7 +7,7 @@ from .parser import Parser
 
 class JsonParser(Parser):
     """
-    Concrete parser that can parse json into pages
+    Concrete parser that can parse JSON into Page objects. A top-level object becomes a single Page, while a top-level array becomes multiple Page objects.
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
