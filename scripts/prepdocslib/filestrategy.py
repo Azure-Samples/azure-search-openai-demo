@@ -62,7 +62,8 @@ class FileStrategy(Strategy):
                     processor = self.file_processors.get(key)
                     if not processor:
                         # skip file if no parser is found
-                        print(f"Skipping '{file.filename()}'.")
+                        if search_info.verbose:
+                            print(f"Skipping '{file.filename()}'.")
                         continue
                     if search_info.verbose:
                         print(f"Parsing '{file.filename()}'")

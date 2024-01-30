@@ -112,7 +112,8 @@ class SentenceTextSplitter(TextSplitter):
 
 class SimpleTextSplitter(TextSplitter):
     """
-    Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
+    Class that splits pages into smaller chunks based on a max object length. It is not aware of the content of the page.
+    This is required because embedding models may not be able to analyze an entire page at once
     """
 
     def __init__(self, max_object_length: int = 1000, verbose: bool = False):
@@ -129,7 +130,6 @@ class SimpleTextSplitter(TextSplitter):
             yield SplitPage(page_num=0, text=all_text)
             return
 
-        # its too big, so we need to split it
         # its too big, so we need to split it
         for i in range(0, length, self.max_object_length):
             yield SplitPage(page_num=i // self.max_object_length, text=all_text[i : i + self.max_object_length])
