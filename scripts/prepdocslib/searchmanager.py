@@ -154,12 +154,14 @@ class SearchManager:
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
                         "content": section.split_page.text,
                         "category": section.category,
-                        "sourcepage": BlobManager.blob_image_name_from_file_page(
-                            filename=section.content.filename(), page=section.split_page.page_num
-                        )
-                        if image_embeddings
-                        else BlobManager.sourcepage_from_file_page(
-                            filename=section.content.filename(), page=section.split_page.page_num
+                        "sourcepage": (
+                            BlobManager.blob_image_name_from_file_page(
+                                filename=section.content.filename(), page=section.split_page.page_num
+                            )
+                            if image_embeddings
+                            else BlobManager.sourcepage_from_file_page(
+                                filename=section.content.filename(), page=section.split_page.page_num
+                            )
                         ),
                         "sourcefile": section.content.filename(),
                         **section.content.acls,

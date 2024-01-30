@@ -54,16 +54,18 @@ cffi==1.16.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-colorama==0.4.6
-    # via tqdm
-cryptography==41.0.7
+cryptography==42.0.1
     # via
+    #   -r requirements.in
     #   azure-identity
     #   azure-storage-blob
     #   msal
     #   pyjwt
+    #   python-jose
 distro==1.8.0
     # via openai
+ecdsa==0.18.0
+    # via python-jose
 frozenlist==1.4.0
     # via
     #   aiohttp
@@ -107,15 +109,21 @@ numpy==1.26.2
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==1.3.7
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai
 pandas==2.1.3
     # via openai
 pandas-stubs==2.1.1.230928
     # via openai
-pillow==10.1.0
+pillow==10.2.0
     # via -r requirements.in
 portalocker==2.8.2
     # via msal-extensions
+pyasn1==0.5.1
+    # via
+    #   python-jose
+    #   rsa
 pycparser==2.21
     # via cffi
 pydantic==2.5.2
@@ -132,6 +140,8 @@ pypdf==3.17.1
     # via -r requirements.in
 python-dateutil==2.8.2
     # via pandas
+python-jose[cryptography]==3.3.0
+    # via -r requirements.in
 pytz==2023.3.post1
     # via pandas
 regex==2023.10.3
@@ -145,9 +155,12 @@ requests==2.31.0
     #   tiktoken
 requests-oauthlib==1.3.1
     # via msrest
+rsa==4.9
+    # via python-jose
 six==1.16.0
     # via
     #   azure-core
+    #   ecdsa
     #   isodate
     #   python-dateutil
 sniffio==1.3.0

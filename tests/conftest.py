@@ -23,6 +23,7 @@ from openai.types.chat.chat_completion import (
 from openai.types.create_embedding_response import Usage
 
 import app
+import core
 from core.authentication import AuthenticationHelper
 
 from .mocks import (
@@ -302,6 +303,7 @@ async def auth_client(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_confidential_client_success,
+    mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
     mock_get_secret,
@@ -327,6 +329,14 @@ async def auth_client(
             client.config = quart_app.config
 
             yield client
+
+
+@pytest.fixture
+def mock_validate_token_success(monkeypatch):
+    async def mock_validate_access_token(self, token):
+        pass
+
+    monkeypatch.setattr(core.authentication.AuthenticationHelper, "validate_access_token", mock_validate_access_token)
 
 
 @pytest.fixture
