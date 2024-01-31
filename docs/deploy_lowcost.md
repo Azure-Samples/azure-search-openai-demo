@@ -15,6 +15,13 @@ However, if your goal is to minimize costs while prototyping your application, f
     Enter a name that will be used for the resource group.
     This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
 
+
+    > **Important:** To use Azure Developer CLI, you need to authenticate with Azure first. You can do this by running the command `azd auth login --use-device-code`, which will prompt you to enter a device code in a browser.
+    
+    ```shell
+    azd auth login  --use-device-code
+    ```
+
 2. Use the free tier of App Service:
 
     ```shell
