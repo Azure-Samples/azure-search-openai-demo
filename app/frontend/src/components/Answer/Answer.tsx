@@ -4,7 +4,9 @@ import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { ChatAppResponse, getCitationFilePath } from "../../api";
+import { ChatAppResponse, getCitationFilePath, feedbackApi, FeedbackRequest } from "../../api";
+import { useLogin, getToken } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
@@ -16,8 +18,6 @@ interface Props {
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
     onEvaluationClicked: () => void;
-    onGoodFeedbackClicked: () => void;
-    onBadFeedbackClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -30,8 +30,6 @@ export const Answer = ({
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onEvaluationClicked,
-    // onGoodFeedbackClicked,
-    // onBadFeedbackClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
@@ -42,13 +40,26 @@ export const Answer = ({
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
     const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
+    const [error, setError] = useState<unknown>();
 
-    const onGoodFeedbackClicked = () => {
-        setFeedbackGiven(true);
-    };
+    const onFeedbackClicked = async (type: string, question: string, answer: ChatAppResponse) => {
+        error && setError(undefined);
 
-    const onBadFeedbackClicked = () => {
-        setFeedbackGiven(true);
+        const client = useLogin ? useMsal().instance : undefined;
+        const token = client ? await getToken(client) : undefined;
+
+        try {
+            const request: FeedbackRequest = {
+                feedback: type,
+                question: question,
+                answer: answer
+            };
+            const response: Response = await feedbackApi(request, token);
+        } catch (e) {
+            setError(e);
+        } finally {
+            setFeedbackGiven(true);
+        }
     };
 
     return (
@@ -133,7 +144,7 @@ export const Answer = ({
                             iconProps={{ iconName: "CheckMark" }}
                             title="Show thought process"
                             ariaLabel="Show thought process"
-                            onClick={() => onGoodFeedbackClicked()}
+                            onClick={() => onFeedbackClicked("good", sanitizedAnswerHtml, answer)}
                             disabled={!answer.choices[0].context.thoughts?.length}
                         />
                         <IconButton
@@ -141,7 +152,7 @@ export const Answer = ({
                             iconProps={{ iconName: "Cancel" }}
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
-                            onClick={() => onBadFeedbackClicked()}
+                            onClick={() => onFeedbackClicked("bad", sanitizedAnswerHtml, answer)}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>
