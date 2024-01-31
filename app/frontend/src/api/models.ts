@@ -95,3 +95,9 @@ export type EvaluationResponse = {
     answerRelevance: number;
     faithfulness: number;
 };
+
+export type FeedbackRequest = {
+    feedback: string;
+    question: string;
+    answer: ChatAppResponse;
+};

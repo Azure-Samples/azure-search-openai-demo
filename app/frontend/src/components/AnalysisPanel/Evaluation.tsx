@@ -8,7 +8,6 @@ import { useState } from "react";
 interface Props {
     question: string;
     answer: string;
-    // supportingContent: { text: string[]; images?: { url: string }[] };
     supportingContent: string[] | { text: string[]; images?: { url: string }[] };
 }
 
