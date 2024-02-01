@@ -6,16 +6,16 @@
       "value": "${AZURE_ENV_NAME}"
     },
     "resourceGroupName": {
-      "value": "legal_co_pilot"
+      "value": "${AZURE_RESOURCE_GROUP}"
     },
     "location": {
-      "value": "westeurope"
+      "value": "${AZURE_LOCATION}"
     },
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },
     "openAiServiceName": {
-      "value": "ey-sandbox"
+      "value": "${AZURE_OPENAI_SERVICE}"
     },
     "openAiResourceGroupName": {
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
@@ -69,10 +69,10 @@
       "value": "${AZURE_APP_SERVICE_SKU=B1}"
     },
     "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=gpt-4-32k}"
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
     "embeddingDeploymentName": {
-      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=text-embedding-ada-002}"
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
     },
     "openAiHost":{
       "value": "${OPENAI_HOST=azure}"
@@ -85,6 +85,9 @@
     },
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
+    },
+    "useVectors": {
+      "value": "${USE_VECTORS=true}"
     },
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"

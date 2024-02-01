@@ -147,5 +147,3 @@ node_modules
 static/
 
 data/**/*.md5
-infra/main.parameters.json
-infra/abbreviations.json

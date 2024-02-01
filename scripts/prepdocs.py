@@ -81,7 +81,6 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
             open_ai_service=args.openaiservice,
             open_ai_deployment=args.openaideployment,
             open_ai_model_name=args.openaimodelname,
-            api_key=args.openaikey,
             credential=azure_open_ai_credential,
             disable_batch=args.disablebatchvectors,
             verbose=args.verbose,

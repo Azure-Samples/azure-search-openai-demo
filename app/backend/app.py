@@ -33,9 +33,6 @@ from quart import (
 )
 from quart_cors import cors
 
-from decorators import authenticated, authenticated_path
-from error import error_dict, error_response
-
 from approaches.approach import Approach
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
@@ -55,30 +52,8 @@ from config import (
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
 from core.authentication import AuthenticationHelper
-from evaluation.ragevaluator import RagEvaluator
-
-from langchain_community.chat_models import AzureChatOpenAI
-from langchain_community.embeddings import AzureOpenAIEmbeddings
-
-
-CONFIG_OPENAI_TOKEN = "openai_token"
-CONFIG_CREDENTIAL = "azure_credential"
-CONFIG_ASK_APPROACH = "ask_approach"
-CONFIG_ASK_VISION_APPROACH = "ask_vision_approach"
-CONFIG_CHAT_VISION_APPROACH = "chat_vision_approach"
-CONFIG_CHAT_APPROACH = "chat_approach"
-CONFIG_BLOB_CONTAINER_CLIENT = "blob_container_client"
-CONFIG_AUTH_CLIENT = "auth_client"
-CONFIG_GPT4V_DEPLOYED = "gpt4v_deployed"
-CONFIG_SEARCH_CLIENT = "search_client"
-CONFIG_OPENAI_CLIENT = "openai_client"
-CONFIG_RAGEVALUATOR_APPROACH = "rag_evaluator"
-
-ERROR_MESSAGE = """The app encountered an error processing your request.
-If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
-Error type: {error_type}
-"""
-ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
+from decorators import authenticated, authenticated_path
+from error import error_dict, error_response
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -212,22 +187,6 @@ async def chat(auth_claims: Dict[str, Any]):
         return error_response(error, "/chat")
 
 
-@bp.route("/evaluate", methods=["POST"])
-async def evaluate():
-    if not request.is_json:
-        return jsonify({"error": "request must be json"}), 415
-    request_json = await request.get_json()
-    try:
-        print(request_json)
-        ragevaluator: RagEvaluator
-        ragevaluator = cast(RagEvaluator, current_app.config[CONFIG_RAGEVALUATOR_APPROACH])
-        result = ragevaluator.evaluate_qa(request_json["question"], request_json["answer"], request_json["contexts"])
-        response = jsonify(result)
-        return response
-    except Exception as error:
-        return error_response(error, "/evaluate")
-
-
 # Send MSAL.js settings to the client UI
 @bp.route("/auth_setup", methods=["GET"])
 def auth_setup():
@@ -248,7 +207,6 @@ def config():
 
 @bp.before_app_serving
 async def setup_clients():
-    current_app.logger.info("Setting up client")
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
@@ -340,10 +298,12 @@ async def setup_clients():
     openai_client: AsyncOpenAI
 
     if OPENAI_HOST == "azure":
+        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
+        # Store on app.config for later use inside requests
         openai_client = AsyncAzureOpenAI(
-            api_key=OPENAI_API_KEY,
-            api_version="2023-12-01-preview",
+            api_version="2023-07-01-preview",
             azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_ad_token_provider=token_provider,
         )
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
@@ -352,20 +312,6 @@ async def setup_clients():
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
         )
-
-    langchain_openai_client = AzureChatOpenAI(
-        api_key=OPENAI_API_KEY,
-        api_version="2023-12-01-preview",
-        azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
-        azure_deployment="gpt-4-32k",
-    )
-
-    langchain_openai_embedding_client = AzureOpenAIEmbeddings(
-        model="text-embedding-ada-002",
-        azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
-        openai_api_type="azure",
-        openai_api_key=OPENAI_API_KEY,
-    )
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
@@ -444,10 +390,6 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
 
-    current_app.config[CONFIG_RAGEVALUATOR_APPROACH] = RagEvaluator(
-        langchain_openai_client=langchain_openai_client, langchain_embedding_client=langchain_openai_embedding_client
-    )
-
 
 @bp.after_app_serving
 async def close_clients():
@@ -469,11 +411,10 @@ def create_app():
         app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    default_level = "DEBUG"  # In development, log more verbosely
+    default_level = "INFO"  # In development, log more verbosely
     if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
         default_level = "WARNING"
-    # logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)

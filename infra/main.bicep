@@ -231,7 +231,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
-      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAiServiceName : ''
+      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAi.outputs.name : ''
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
@@ -298,19 +298,19 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-// module openAi 'core/ai/cognitiveservices.bicep' = {
-//   name: 'openai'
-//   scope: openAiResourceGroup
-//   params: {
-//     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
-//     location: openAiResourceGroupLocation
-//     tags: tags
-//     sku: {
-//       name: openAiSkuName
-//     }
-//     deployments: openAiDeployments
-//   }
-// }
+module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
+  name: 'openai'
+  scope: openAiResourceGroup
+  params: {
+    name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+    location: openAiResourceGroupLocation
+    tags: tags
+    sku: {
+      name: openAiSkuName
+    }
+    deployments: openAiDeployments
+  }
+}
 
 module formRecognizer 'core/ai/cognitiveservices.bicep' = {
   name: 'formrecognizer'
@@ -422,15 +422,15 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
-// module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
-//   scope: openAiResourceGroup
-//   name: 'openai-role-user'
-//   params: {
-//     principalId: principalId
-//     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-//     principalType: 'User'
-//   }
-// }
+module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
+  scope: openAiResourceGroup
+  name: 'openai-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    principalType: 'User'
+  }
+}
 
 module formRecognizerRoleUser 'core/security/role.bicep' = {
   scope: formRecognizerResourceGroup
@@ -494,15 +494,15 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = if (!useSearchServi
 }
 
 // SYSTEM IDENTITIES
-// module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
-//   scope: openAiResourceGroup
-//   name: 'openai-role-backend'
-//   params: {
-//     principalId: backend.outputs.identityPrincipalId
-//     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-//     principalType: 'ServicePrincipal'
-//   }
-// }
+module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
+  scope: openAiResourceGroup
+  name: 'openai-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    principalType: 'ServicePrincipal'
+  }
+}
 
 module storageRoleBackend 'core/security/role.bicep' = {
   scope: storageResourceGroup
@@ -550,7 +550,7 @@ output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAiServiceName : ''
+output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiHost == 'azure') ? chatGptDeploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiHost == 'azure') ? embeddingDeploymentName : ''

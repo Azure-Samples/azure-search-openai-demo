@@ -183,7 +183,7 @@ class Approach:
         embedding = await self.openai_client.embeddings.create(
             # Azure Open AI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
-            input=q
+            input=q,
         )
         query_vector = embedding.data[0].embedding
         return RawVectorQuery(vector=query_vector, k=50, fields="embedding")
