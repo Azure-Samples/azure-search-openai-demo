@@ -4,7 +4,18 @@ This AI RAG chat application is designed to be easily deployed using the Azure D
 
 However, if your goal is to minimize costs while prototyping your application, follow these steps below _before_ deploying the application.
 
-1. Use the free tier of App Service:
+[📺 Live stream: Deploying from a free account](https://www.youtube.com/watch?v=nlIyos0RXHw)
+
+1. Create a new azd environment for the free resource group:
+
+    ```shell
+    azd env new
+    ```
+
+    Enter a name that will be used for the resource group.
+    This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
+
+2. Use the free tier of App Service:
 
     ```shell
     azd env set AZURE_APP_SERVICE_SKU F1
@@ -12,7 +23,7 @@ However, if your goal is to minimize costs while prototyping your application, f
 
     Limitation: You are only allowed a certain number of free App Service instances per region. If you have exceeded your limit in a region, you will get an error during the provisioning stage. If that happens, you can run `azd down`, then `azd env new` to create a new environment with a new region.
 
-2. Use the free tier of Azure AI Search:
+3. Use the free tier of Azure AI Search:
 
     ```shell
     azd env set AZURE_SEARCH_SERVICE_SKU free
@@ -27,7 +38,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     3. The free tier does not support Managed Identity (keyless API access),
     so the Bicep will use Azure Key Vault to securely store the key instead.
 
-3. Use the free tier of Azure Document Intelligence (used in analyzing PDFs):
+4. Use the free tier of Azure Document Intelligence (used in analyzing PDFs):
 
     ```shell
     azd env set AZURE_FORMRECOGNIZER_SKU F0
@@ -43,7 +54,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     azd env set USE_LOCAL_PDF_PARSER true
     ```
 
-3. Turn off Azure Monitor (Application Insights):
+5. Turn off Azure Monitor (Application Insights):
 
     ```shell
     azd env set AZURE_USE_APPLICATION_INSIGHTS false
@@ -52,7 +63,18 @@ However, if your goal is to minimize costs while prototyping your application, f
     Application Insights is quite inexpensive already, so turning this off may not be worth the costs saved,
     but it is an option for those who want to minimize costs.
 
-4. Disable vector search:
+6. Use OpenAI.com instead of Azure OpenAI: This is only a necessary step for Azure free/student accounts, as they do not currently have access to Azure OpenAI.
+
+    ```shell
+    azd env set OPENAI_HOST openai
+    azd env set OPENAI_ORGANIZATION {Your OpenAI organization}
+    azd env set OPENAI_API_KEY {Your OpenAI API key}
+    ```
+
+    Both Azure OpenAI and openai.com OpenAI accounts will incur costs, based on tokens used,
+    but the costs are fairly low for the amount of sample data (less than $10).
+
+6. Disable vector search:
 
     ```shell
     azd env set USE_VECTORS false
@@ -64,14 +86,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     so the benefits of vector search would typically outweigh the costs, but it is possible to disable vector support.
     If you do so, the application will fall back to a keyword search, which is less accurate.
 
-5. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch).
-
-## Deploying from an Azure free account
-
-There are additional limitations for Azure free accounts (as opposed to "Pay-as-you-go" accounts which have billing enabled).
-
-As of January 2024, Azure free accounts cannot sign up for Azure OpenAI access.
-You can instead sign up for an openai.com account. Follow these [directions to specify your OpenAI host and key](../README.md#openaicom-openai).
+7. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch). We recommend using "eastus" as the region, for availability reasons.
 
 ## Reducing costs locally
 
