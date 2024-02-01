@@ -19,7 +19,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     > **Important:** To use Azure Developer CLI, you need to authenticate with Azure first. You can do this by running the command `azd auth login --use-device-code`, which will prompt you to enter a device code in a browser.
     
     ```shell
-    azd auth login  --use-device-code
+    azd auth login
     ```
 
 2. Use the free tier of App Service:
