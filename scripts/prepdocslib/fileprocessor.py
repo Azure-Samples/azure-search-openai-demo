@@ -8,4 +8,3 @@ from .textsplitter import TextSplitter
 class FileProcessor:
     parser: Parser
     splitter: TextSplitter
-

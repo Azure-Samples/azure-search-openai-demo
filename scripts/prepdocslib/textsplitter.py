@@ -13,7 +13,7 @@ class TextSplitter(ABC):
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
         if False:
-            yield # pragma: no cover - this is necessary for mypy to type check
+            yield  # pragma: no cover - this is necessary for mypy to type check
 
 
 class SentenceTextSplitter(TextSplitter):
