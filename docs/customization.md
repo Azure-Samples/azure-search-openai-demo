@@ -37,9 +37,9 @@ Typically, the primary backend code you'll want to customize is the `app/backend
 
 The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
 
-1. It uses the OpenAI ChatCompletion API to turn the user question into a good search query.
+1. It calls the OpenAI ChatCompletion API (with a temperature of 0) to turn the user question into a good search query.
 2. It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).
-3. It then combines the search results and original user question, and asks OpenAI ChatCompletion API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
+3. It then combines the search results and original user question, and calls the OpenAI ChatCompletion API (with a temperature of 0.7) to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
 
 The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Change that to match your data.
 
@@ -56,7 +56,7 @@ If you followed the instructions in [docs/gpt4v.md](docs/gpt4v.md) to enable the
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
 1. It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
-2. It then combines the search results and user question, and asks OpenAI ChatCompletion API to answer the question based on the sources.
+2. It then combines the search results and user question, and calls the OpenAI ChatCompletion API (with a temperature of 0.3) to answer the question based on the sources.
 
 The `system_chat_template` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Change that to match your data.
 

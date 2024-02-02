@@ -110,7 +110,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,
-            temperature=0.0,
+            temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=100,
             n=1,
         )
