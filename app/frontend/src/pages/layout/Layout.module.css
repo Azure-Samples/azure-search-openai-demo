@@ -6,7 +6,9 @@
 
 .header {
     /* CUSTOM */
-    background-color: #031e45; /*ezv Blue*/ /*was: #222222;*/
+    /*ezv Blue*/ /*was: #222222;*/
+    /* background-color: #031e45;  */
+    background-color: #fff;
     color: #f2f2f2;
 }
 
@@ -82,8 +84,9 @@
 
 header .coLogo {
     display: block;
-    width: 150px;
-    height: 45px;
+    /* width: 150px;
+    height: 45px; */
+    height: 70px;
     background-size: contain;
     background-repeat: no-repeat;
     margin: 0;
