@@ -1,12 +1,12 @@
-import time
 from abc import ABC
 from typing import List, Optional, Union
 from urllib.parse import urljoin
 
 import aiohttp
 import tiktoken
-from azure.core.credentials import AccessToken, AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import get_bearer_token_provider
 from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError
 from tenacity import (
     AsyncRetrying,
@@ -139,27 +139,24 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
         self.credential = credential
-        self.cached_token: Optional[AccessToken] = None
 
     async def create_client(self) -> AsyncOpenAI:
+        auth_args = {}
+        if isinstance(self.credential, AzureKeyCredential):
+            auth_args["api_key"] = self.credential.key
+        elif isinstance(self.credential, AsyncTokenCredential):
+            auth_args["azure_ad_token_provider"] = get_bearer_token_provider(
+                self.credential, "https://cognitiveservices.azure.com/.default"
+            )
+        else:
+            raise TypeError("Invalid credential type")
+
         return AsyncAzureOpenAI(
             azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
             azure_deployment=self.open_ai_deployment,
-            api_key=await self.wrap_credential(),
             api_version="2023-05-15",
+            **auth_args,
         )
-
-    async def wrap_credential(self) -> str:
-        if isinstance(self.credential, AzureKeyCredential):
-            return self.credential.key
-
-        if isinstance(self.credential, AsyncTokenCredential):
-            if not self.cached_token or self.cached_token.expires_on <= time.time():
-                self.cached_token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
-
-            return self.cached_token.token
-
-        raise TypeError("Invalid credential type")
 
 
 class OpenAIEmbeddingService(OpenAIEmbeddings):
