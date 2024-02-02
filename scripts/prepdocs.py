@@ -14,15 +14,18 @@ from prepdocslib.embeddings import (
     OpenAIEmbeddings,
     OpenAIEmbeddingService,
 )
+from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import DocumentAction, FileStrategy
+from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
-from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
+from prepdocslib.parser import Parser
+from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
-from prepdocslib.textsplitter import TextSplitter
+from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 
 def is_key_empty(key):
@@ -52,25 +55,29 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         verbose=args.verbose,
     )
 
-    pdf_parser: PdfParser
-    if args.localpdfparser:
-        pdf_parser = LocalPdfParser()
-    else:
-        # check if Azure Document Intelligence credentials are provided
-        if args.formrecognizerservice is None:
-            print(
-                "Error: Azure Document Intelligence service is not provided. Please provide --formrecognizerservice or use --localpdfparser for local pypdf parser."
-            )
-            exit(1)
+    pdf_parser: Parser
+    doc_int_parser: DocumentAnalysisParser
+
+    # check if Azure Document Intelligence credentials are provided
+    if args.formrecognizerservice is not None:
         formrecognizer_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
             credential if is_key_empty(args.formrecognizerkey) else AzureKeyCredential(args.formrecognizerkey)
         )
-        pdf_parser = DocumentAnalysisPdfParser(
+        doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/",
             credential=formrecognizer_creds,
             verbose=args.verbose,
         )
-
+    if args.localpdfparser or args.formrecognizerservice is None:
+        pdf_parser = LocalPdfParser()
+    else:
+        pdf_parser = doc_int_parser
+    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=args.searchimages)
+    file_processors = {
+        ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
+        ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
+        ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
+    }
     use_vectors = not args.novectors
     embeddings: Optional[OpenAIEmbeddings] = None
     if use_vectors and args.openaihost != "openai":
@@ -128,8 +135,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
     return FileStrategy(
         list_file_strategy=list_file_strategy,
         blob_manager=blob_manager,
-        pdf_parser=pdf_parser,
-        text_splitter=TextSplitter(has_image_embeddings=args.searchimages),
+        file_processors=file_processors,
         document_action=document_action,
         embeddings=embeddings,
         image_embeddings=image_embeddings,
