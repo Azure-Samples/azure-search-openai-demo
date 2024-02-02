@@ -144,7 +144,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
     async def create_client(self) -> AsyncOpenAI:
         class AuthArgs(TypedDict, total=False):
             api_key: str
-            azure_ad_token_provider: Callable[[], str | Awaitable[str]]
+            azure_ad_token_provider: Callable[[], Union[str, Awaitable[str]]]
 
         auth_args = AuthArgs()
         if isinstance(self.credential, AzureKeyCredential):
