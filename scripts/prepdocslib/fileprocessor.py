@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
-from .textsplitter import TextSplitter
 from .parser import Parser
+from .textsplitter import TextSplitter
+
 
 @dataclass(frozen=True)
 class FileProcessor:
