@@ -5,7 +5,8 @@
 }
 
 .header {
-    background-color: #222222;
+    /* CUSTOM */
+    background-color: #031e45; /*ezv Blue*/ /*was: #222222;*/
     color: #f2f2f2;
 }
 
@@ -15,6 +16,8 @@
     justify-content: space-around;
     margin-right: 12px;
     margin-left: 12px;
+
+    height: 90px;
 }
 
 .headerTitleContainer {
@@ -75,4 +78,13 @@
 
 .githubLogo {
     height: 20px;
+}
+
+header .coLogo {
+    display: block;
+    width: 150px;
+    height: 45px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 0;
 }
