@@ -106,7 +106,7 @@ class AuthenticationHelper:
     @staticmethod
     def get_token_auth_header(headers: dict) -> str:
         # Obtains the Access Token from the Authorization Header
-        auth = headers.get("Authorization", None)
+        auth = headers.get("Authorization")
         if auth:
             parts = auth.split()
 
@@ -122,7 +122,7 @@ class AuthenticationHelper:
 
         # App services built-in authentication passes the access token directly as a header
         # To learn more, please visit https://learn.microsoft.com/azure/app-service/configure-authentication-oauth-tokens
-        token = headers.get("x-ms-token-aad-access-token", None)
+        token = headers.get("x-ms-token-aad-access-token")
         if token:
             return token
 
@@ -141,10 +141,10 @@ class AuthenticationHelper:
             )
 
         oid_security_filter = (
-            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid") or "") if use_oid_security_filter else None
+            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid", "")) if use_oid_security_filter else None
         )
         groups_security_filter = (
-            "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups") or []))
+            "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups", [])))
             if use_groups_security_filter
             else None
         )
@@ -212,7 +212,7 @@ class AuthenticationHelper:
             # Read the claims from the response. The oid and groups claims are used for security filtering
             # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference
             id_token_claims = graph_resource_access_token["id_token_claims"]
-            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups") or []}
+            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups", [])}
 
             # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
             # or a groups overage claim may have been emitted.
