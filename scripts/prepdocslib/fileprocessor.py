@@ -1,4 +1,10 @@
-from dataclasses import make_dataclass
+from dataclasses import dataclass
 
-FileProcessor = make_dataclass("FileProcessor", ["parser", "splitter"], frozen=True)
+from .textsplitter import TextSplitter
+from .parser import Parser
+
+@dataclass(frozen=True)
+class FileProcessor:
+    parser: Parser
+    splitter: TextSplitter
 
