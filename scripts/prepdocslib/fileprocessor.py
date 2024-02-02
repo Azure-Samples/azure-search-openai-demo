@@ -1,3 +1,4 @@
-from collections import namedtuple
+from dataclasses import make_dataclass
 
-FileProcessor = namedtuple("FileProcessor", ["parser", "splitter"])
+FileProcessor = make_dataclass("FileProcessor", ["parser", "splitter"], frozen=True)
+
