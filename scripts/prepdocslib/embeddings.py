@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Optional, Union
+from typing import Awaitable, Callable, List, Optional, Union
 from urllib.parse import urljoin
 
 import aiohttp
@@ -14,6 +14,7 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
+from typing_extensions import TypedDict
 
 
 class EmbeddingBatch:
@@ -141,7 +142,11 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.credential = credential
 
     async def create_client(self) -> AsyncOpenAI:
-        auth_args = {}
+        class AuthArgs(TypedDict, total=False):
+            api_key: str
+            azure_ad_token_provider: Callable[[], str | Awaitable[str]]
+
+        auth_args = AuthArgs()
         if isinstance(self.credential, AzureKeyCredential):
             auth_args["api_key"] = self.credential.key
         elif isinstance(self.credential, AsyncTokenCredential):
