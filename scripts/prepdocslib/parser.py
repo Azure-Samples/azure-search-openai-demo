@@ -11,4 +11,4 @@ class Parser(ABC):
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         if False:
-            yield
+            yield  # pragma: no cover - this is necessary for mypy to type check
