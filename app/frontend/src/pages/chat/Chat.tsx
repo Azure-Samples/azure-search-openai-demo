@@ -30,10 +30,10 @@ import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 
 import { toolTipText, toolTipTextCalloutProps } from "../../components/i18n/tooltips.js";
-import { SettingsStyles } from "../../components/SettingsStyles/SettingsStyles.js";
-import type { CustomStylesState } from "../../components/SettingsStyles/SettingsStyles.js";
 import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch.js";
 import { useTheme } from "../../hooks/useTheme";
+import { CustomStyles } from "../../types";
+import SettingsStyles from "../../components/SettingsStyles/SettingsStyles";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -68,7 +68,7 @@ const Chat = () => {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
 
-    const { isDarkTheme, isBrandingEnabled, isShowingHeader, toggleTheme, setCustomStyle, enableBranding, toggleHeader, customText, chatLogo } = useTheme();
+    const { isDarkTheme, isBrandingEnabled, isShowingHeader, toggleTheme, setCustomStyle, enableBranding, toggleHeader, customText } = useTheme();
 
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
@@ -279,6 +279,10 @@ const Chat = () => {
         }
     };
 
+    const onStyleChangeWrapper = (styles: CustomStyles) => {
+        setCustomStyle(styles as CustomStyles);
+    };
+
     const [isChatStylesAccordionOpen, setIsChatStylesAccordionOpen] = useState(false);
     return (
         <div className={styles.container}>
@@ -291,7 +295,7 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             {/* CUSTOM */}
-                            <SparkleFilled fontSize={"80px"} primaryFill={"#edff00"} aria-hidden="true" aria-label="Chat logo" />
+                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             {/* <img src={chatLogo} alt="Chat logo" aria-label="Link to company" className={styles.chatLogo} /> */}
                             <h1 className={styles.chatEmptyStateTitle}>{customText.chatTitle}</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>{customText.chatSubtitle}</h2>
@@ -398,7 +402,7 @@ const Chat = () => {
                         {isChatStylesAccordionOpen && (
                             <>
                                 <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
-                                    <SettingsStyles onChange={setCustomStyle}></SettingsStyles>
+                                    <SettingsStyles onChange={onStyleChangeWrapper}></SettingsStyles>
                                 </TooltipHost>
                             </>
                         )}
