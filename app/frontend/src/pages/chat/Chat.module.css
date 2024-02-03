@@ -113,3 +113,11 @@
     margin-right: 20px;
     margin-bottom: 20px;
 }
+
+.chatLogo {
+    width: 20%;
+    /* height: 45px; */
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-bottom: 30px;
+}

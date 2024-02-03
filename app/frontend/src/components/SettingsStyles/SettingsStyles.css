@@ -1,0 +1,25 @@
+.ms-style-picker.colors,
+.ms-style-picker.sliders {
+  display: grid;
+  margin-top: 10px;
+  padding-bottom: 20px;
+}
+
+.ms-style-picker.colors {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ms-style-picker > input,
+.ms-style-picker > label {
+  margin-bottom: 3px;
+  margin-right: 10px;
+  font-size: small;
+  font-weight: bold;
+}
+
+.ms-settings-input-slider {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, TooltipHost, Toggle } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -28,6 +28,12 @@ import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
+
+import { toolTipText, toolTipTextCalloutProps } from "../../components/i18n/tooltips.js";
+import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch.js";
+import { useTheme } from "../../hooks/useTheme";
+import { CustomStyles } from "../../types";
+import SettingsStyles from "../../components/SettingsStyles/SettingsStyles";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -61,6 +67,8 @@ const Chat = () => {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
+
+    const { isDarkTheme, isBrandingEnabled, isShowingHeader, toggleTheme, setCustomStyle, enableBranding, toggleHeader, customText } = useTheme();
 
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
@@ -259,6 +267,23 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const onChangeWrapper = (event: React.MouseEvent<HTMLElement>, checked?: boolean) => {
+        if (checked !== undefined) {
+            enableBranding(checked);
+        }
+    };
+
+    const onHeaderChange = (event: React.MouseEvent<HTMLElement>, checked?: boolean) => {
+        if (checked !== undefined) {
+            toggleHeader(checked);
+        }
+    };
+
+    const onStyleChangeWrapper = (styles: CustomStyles) => {
+        setCustomStyle(styles as CustomStyles);
+    };
+
+    const [isChatStylesAccordionOpen, setIsChatStylesAccordionOpen] = useState(false);
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -269,9 +294,12 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
+                            {/* CUSTOM */}
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
+                            {/* <img src={chatLogo} alt="Chat logo" aria-label="Link to company" className={styles.chatLogo} /> */}
+                            <h1 className={styles.chatEmptyStateTitle}>{customText.chatTitle}</h1>
+                            <h2 className={styles.chatEmptyStateSubtitle}>{customText.chatSubtitle}</h2>
+
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
@@ -356,7 +384,7 @@ const Chat = () => {
                 )}
 
                 <Panel
-                    headerText="Configure answer generation"
+                    headerText="Settings"
                     isOpen={isConfigPanelOpen}
                     isBlocking={false}
                     onDismiss={() => setIsConfigPanelOpen(false)}
@@ -364,6 +392,32 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
+                    <div>
+                        <Toggle
+                            label="Customize chat styles"
+                            checked={isChatStylesAccordionOpen}
+                            onChange={() => setIsChatStylesAccordionOpen(!isChatStylesAccordionOpen)}
+                        />
+
+                        {isChatStylesAccordionOpen && (
+                            <>
+                                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                                    <SettingsStyles onChange={onStyleChangeWrapper}></SettingsStyles>
+                                </TooltipHost>
+                            </>
+                        )}
+
+                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                            <Toggle label="Enable Branding" checked={isBrandingEnabled} onChange={onChangeWrapper} />
+                        </TooltipHost>
+
+                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.toggleHeader}>
+                            <Toggle label="Toggle Header" checked={isShowingHeader} onChange={onHeaderChange} />
+                        </TooltipHost>
+                    </div>
+
+                    <h3>Configure answer generation</h3>
+
                     <TextField
                         className={styles.chatSettingsSeparator}
                         defaultValue={promptTemplate}
@@ -372,39 +426,49 @@ const Chat = () => {
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
                     />
-
-                    <SpinButton
-                        className={styles.chatSettingsSeparator}
-                        label="Retrieve this many search results:"
-                        min={1}
-                        max={50}
-                        defaultValue={retrieveCount.toString()}
-                        onChange={onRetrieveCountChange}
-                    />
-                    <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                        <ThemeSwitch onToggle={toggleTheme} isDarkTheme={isDarkTheme} isConfigPanelOpen={isConfigPanelOpen} />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
+                        <SpinButton
+                            className={styles.chatSettingsSeparator}
+                            label="Retrieve this many search results:"
+                            min={1}
+                            max={50}
+                            defaultValue={retrieveCount.toString()}
+                            onChange={onRetrieveCountChange}
+                        />
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.excludeCategory}>
+                        <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                    </TooltipHost>
                     {showSemanticRankerOption && (
+                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useSemanticRanker}>
+                            <Checkbox
+                                className={styles.chatSettingsSeparator}
+                                checked={useSemanticRanker}
+                                label="Use semantic ranker for retrieval"
+                                onChange={onUseSemanticRankerChange}
+                            />
+                        </TooltipHost>
+                    )}
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useQueryContextSummaries}>
                         <Checkbox
                             className={styles.chatSettingsSeparator}
-                            checked={useSemanticRanker}
-                            label="Use semantic ranker for retrieval"
-                            onChange={onUseSemanticRankerChange}
+                            checked={useSemanticCaptions}
+                            label="Use query-contextual summaries instead of whole documents"
+                            onChange={onUseSemanticCaptionsChange}
+                            disabled={!useSemanticRanker}
                         />
-                    )}
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticCaptions}
-                        label="Use query-contextual summaries instead of whole documents"
-                        onChange={onUseSemanticCaptionsChange}
-                        disabled={!useSemanticRanker}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSuggestFollowupQuestions}
-                        label="Suggest follow-up questions"
-                        onChange={onUseSuggestFollowupQuestionsChange}
-                    />
-
+                    </TooltipHost>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.suggestFollowupQuestions}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSuggestFollowupQuestions}
+                            label="Suggest follow-up questions"
+                            onChange={onUseSuggestFollowupQuestionsChange}
+                        />
+                    </TooltipHost>
                     {showGPT4VOptions && (
                         <GPT4VSettings
                             gpt4vInputs={gpt4vInput}
@@ -415,7 +479,6 @@ const Chat = () => {
                             updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
                         />
                     )}
-
                     {showVectorOption && (
                         <VectorSettings
                             showImageOptions={useGPT4V && showGPT4VOptions}
@@ -423,7 +486,6 @@ const Chat = () => {
                             updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
                         />
                     )}
-
                     {useLogin && (
                         <Checkbox
                             className={styles.chatSettingsSeparator}
@@ -442,13 +504,14 @@ const Chat = () => {
                             onChange={onUseGroupsSecurityFilterChange}
                         />
                     )}
-
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={shouldStream}
-                        label="Stream chat completion responses"
-                        onChange={onShouldStreamChange}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.streamChat}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={shouldStream}
+                            label="Stream chat completion responses"
+                            onChange={onShouldStreamChange}
+                        />
+                    </TooltipHost>
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>

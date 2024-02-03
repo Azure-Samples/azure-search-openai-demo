@@ -32,6 +32,7 @@
 }
 
 .selected {
+    /* CUSTOM */
     outline: 2px solid rgba(115, 118, 225, 1);
 }
 
@@ -48,6 +49,7 @@
     border-radius: 4px;
     padding: 0px 8px;
     background: #d1dbfa;
+    /* CUSTOM */
     color: #123bb6;
     text-decoration: none;
     cursor: pointer;
