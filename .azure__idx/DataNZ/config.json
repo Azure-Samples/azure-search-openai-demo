@@ -1,7 +1,0 @@
-{
-  "infra": {
-    "parameters": {
-      "openAiResourceGroupLocation": "australiaeast"
-    }
-  }
-}

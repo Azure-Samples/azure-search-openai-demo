@@ -16,7 +16,7 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
-export function Component(): JSX.Element {
+export default function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");

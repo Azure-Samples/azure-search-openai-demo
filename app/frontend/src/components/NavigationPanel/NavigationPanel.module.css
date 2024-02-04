@@ -1,0 +1,10 @@
+.navigationPanel {
+    width: 208;
+    height: 350;
+    box-sizing: "border-box";
+    overflow-y: "auto";
+}
+
+.navigationLink {
+    background-color: "transparent";
+}

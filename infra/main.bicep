@@ -318,7 +318,8 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
   params: {
     name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
     kind: 'FormRecognizer'
-    location: formRecognizerResourceGroupLocation
+    // Limited regions for new version: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-layout?view=doc-intel-4.0.0
+    location: 'eastus'
     tags: tags
     sku: {
       name: formRecognizerSkuName

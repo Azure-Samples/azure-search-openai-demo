@@ -2,9 +2,10 @@ import React, { createContext, ReactNode, useContext, useEffect, useState, useCa
 
 import defaultLogo from "../assets/defaultLogo.svg";
 import customLogo from "../assets/customLogo.png";
+// import customLogo from "../assets/neon1.png";
 import { CustomStyles, CustomText } from "../types";
 import { GlobalStyleManager } from "../services/GlobalStyleManager";
-// import chatLogo from "../assets/customLogoLetsgetnaked.png";
+import botLogo from "../assets/botLogo.png";
 
 interface ThemeContextType {
     isDarkTheme: boolean;
@@ -13,6 +14,7 @@ interface ThemeContextType {
     customText: CustomText;
     customStyles: CustomStyles;
     logo: string;
+    botLogo: string;
     toggleTheme: (isDark: boolean) => void;
     setCustomStyle: (styles: CustomStyles) => void;
     setCustomTexts: (texts: CustomText) => void;
@@ -21,8 +23,8 @@ interface ThemeContextType {
 }
 
 const defaultCustomText: CustomText = {
-    chatTitle: "Chat with Business Bot",
-    chatSubtitle: "Ask anything or try an example",
+    chatTitle: "Hello :)",
+    chatSubtitle: "How can I help you today?",
     exampleQuestions: ["What information do you provide?", "What are the package prices?", "How do I get hold of someone?"]
 };
 
@@ -104,6 +106,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         customText,
         customStyles,
         logo,
+        botLogo,
         toggleTheme,
         setCustomStyle,
         setCustomTexts,

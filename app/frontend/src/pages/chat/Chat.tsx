@@ -68,7 +68,7 @@ const Chat = () => {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
 
-    const { isDarkTheme, isBrandingEnabled, isShowingHeader, toggleTheme, setCustomStyle, enableBranding, toggleHeader, customText } = useTheme();
+    const { isDarkTheme, isBrandingEnabled, isShowingHeader, toggleTheme, setCustomStyle, enableBranding, toggleHeader, customText, botLogo } = useTheme();
 
     const getConfig = async () => {
         const token = client ? await getToken(client) : undefined;
@@ -284,6 +284,7 @@ const Chat = () => {
     };
 
     const [isChatStylesAccordionOpen, setIsChatStylesAccordionOpen] = useState(false);
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -295,8 +296,8 @@ const Chat = () => {
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             {/* CUSTOM */}
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            {/* <img src={chatLogo} alt="Chat logo" aria-label="Link to company" className={styles.chatLogo} /> */}
+                            {/* <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" /> */}
+                            {/* <img src={botLogo} alt="Chat logo" aria-label="Link to company" className={styles.botLogo} /> */}
                             <h1 className={styles.chatEmptyStateTitle}>{customText.chatTitle}</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>{customText.chatSubtitle}</h2>
 
@@ -363,12 +364,7 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <QuestionInput
-                            clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
-                            disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
-                        />
+                        <QuestionInput clearOnSend placeholder="Message BotGPT..." disabled={isLoading} onSend={question => makeApiRequest(question)} />
                     </div>
                 </div>
 

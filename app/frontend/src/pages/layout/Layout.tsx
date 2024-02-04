@@ -1,61 +1,16 @@
-import { Outlet, NavLink, Link } from "react-router-dom";
-
-import github from "../../assets/github.svg";
+import { Outlet } from "react-router-dom";
 
 import styles from "./Layout.module.css";
 
-import { useLogin } from "../../authConfig";
-
-import { LoginButton } from "../../components/LoginButton";
 import { useTheme } from "../../hooks/useTheme";
+import { Header } from "../../components/Header/Header";
 
 const Layout = () => {
     const { logo, isShowingHeader } = useTheme();
 
     return (
         <div className={styles.layout}>
-            {isShowingHeader && (
-                <header className={styles.header} role={"banner"}>
-                    <div className={styles.headerContainer}>
-                        {/* <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
-                    </Link> */}
-                        {/* CUSTOM  */}
-                        <Link to="/">
-                            <img src={logo} alt="Company logo" aria-label="Link to company" className={styles.coLogo} />
-                        </Link>
-                        <nav>
-                            <ul className={styles.headerNavList}>
-                                <li>
-                                    <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                        Chat
-                                    </NavLink>
-                                </li>
-                                <li className={styles.headerNavLeftMargin}>
-                                    <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                        Ask a question
-                                    </NavLink>
-                                </li>
-                                <li className={styles.headerNavLeftMargin}>
-                                    <a href="https://github.com/charlie-hssrr/azure-search-openai-demo" target={"_blank"} title="Github repository link">
-                                        <img
-                                            src={github}
-                                            alt="Github logo"
-                                            aria-label="Link to github repository"
-                                            width="20px"
-                                            height="20px"
-                                            className={styles.githubLogo}
-                                        />
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <h4 className={styles.headerRightText}>GPT Assistant</h4>
-                        {useLogin && <LoginButton />}
-                    </div>
-                </header>
-            )}
-            ;
+            {isShowingHeader && <Header logo={logo}></Header>}
             <Outlet />
         </div>
     );
