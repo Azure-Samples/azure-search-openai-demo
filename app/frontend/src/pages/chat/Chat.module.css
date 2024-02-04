@@ -26,6 +26,7 @@
     align-items: center;
     max-height: 1024px;
     padding-top: 60px;
+    max-width: 1028px;
 }
 
 .chatEmptyStateTitle {
@@ -85,7 +86,7 @@
     padding-right: 24px;
     width: 100%;
     max-width: 1028px;
-    background: #f2f2f2;
+    background: #fff;
 }
 
 .chatAnalysisPanel {
@@ -114,8 +115,8 @@
     margin-bottom: 20px;
 }
 
-.chatLogo {
-    width: 20%;
+.botLogo {
+    width: 10%;
     /* height: 45px; */
     background-size: contain;
     background-repeat: no-repeat;

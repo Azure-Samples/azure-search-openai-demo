@@ -9,8 +9,13 @@ import { msalConfig, useLogin } from "./authConfig";
 import "./index.css";
 
 import Layout from "./pages/layout/Layout";
-import Chat from "./pages/chat/Chat";
 import { ThemeProvider } from "./context/ThemeContext";
+
+// Lazy load the components
+const Chat = React.lazy(() => import("./pages/chat/Chat"));
+const Sources = React.lazy(() => import("./pages/sources/Sources"));
+const Ask = React.lazy(() => import("./pages/ask/Ask"));
+const NoPage = React.lazy(() => import("./pages/NoPage"));
 
 var layout;
 if (useLogin) {
@@ -48,17 +53,56 @@ const router = createHashRouter([
         children: [
             {
                 index: true,
-                element: <Chat />
+                element: (
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                        <Chat />
+                    </React.Suspense>
+                )
+            },
+            {
+                path: "sources/*", // Add '/*' to allow nested routes
+                element: (
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                        <Sources />
+                    </React.Suspense>
+                )
             },
             {
                 path: "qa",
-                lazy: () => import("./pages/ask/Ask")
+                element: (
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                        <Ask />
+                    </React.Suspense>
+                )
             },
             {
                 path: "*",
-                lazy: () => import("./pages/NoPage")
+                element: (
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                        <NoPage />
+                    </React.Suspense>
+                )
             }
         ]
+
+        // children: [
+        //     {
+        //         index: true,
+        //         element: <Chat />
+        //     },
+        //     {
+        //         path: "sources",
+        //         lazy: () => import("./pages/sources/Sources")
+        //     },
+        //     {
+        //         path: "qa",
+        //         lazy: () => import("./pages/ask/Ask")
+        //     },
+        //     {
+        //         path: "*",
+        //         lazy: () => import("./pages/NoPage")
+        //     }
+        // ]
     }
 ]);
 

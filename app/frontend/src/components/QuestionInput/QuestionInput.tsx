@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
-import { Stack, TextField } from "@fluentui/react";
+import { FontSizes, Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 import { isLoggedIn, requireAccessControl } from "../../authConfig";
@@ -69,6 +69,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
                 value={question}
                 onChange={onQuestionChange}
                 onKeyDown={onEnterPress}
+                style={{ fontSize: "18px" }}
             />
             <div className={styles.questionInputButtonsContainer}>
                 <Tooltip content="Ask question button" relationship="label">
