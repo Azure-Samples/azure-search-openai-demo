@@ -3,11 +3,10 @@ from typing import List, Optional
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
+from .fileprocessor import FileProcessor
 from .listfilestrategy import ListFileStrategy
-from .pdfparser import PdfParser
 from .searchmanager import SearchManager, Section
 from .strategy import SearchInfo, Strategy
-from .textsplitter import TextSplitter
 
 
 class DocumentAction(Enum):
@@ -25,8 +24,7 @@ class FileStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
-        pdf_parser: PdfParser,
-        text_splitter: TextSplitter,
+        file_processors: dict[str, FileProcessor],
         document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
@@ -36,8 +34,7 @@ class FileStrategy(Strategy):
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
-        self.pdf_parser = pdf_parser
-        self.text_splitter = text_splitter
+        self.file_processors = file_processors
         self.document_action = document_action
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
@@ -61,12 +58,21 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                    key = file.file_extension()
+                    processor = self.file_processors[key]
+                    if not processor:
+                        # skip file if no parser is found
+                        if search_info.verbose:
+                            print(f"Skipping '{file.filename()}'.")
+                        continue
+                    if search_info.verbose:
+                        print(f"Parsing '{file.filename()}'")
+                    pages = [page async for page in processor.parser.parse(content=file.content)]
                     if search_info.verbose:
                         print(f"Splitting '{file.filename()}' into sections")
                     sections = [
                         Section(split_page, content=file, category=self.category)
-                        for split_page in self.text_splitter.split_pages(pages)
+                        for split_page in processor.splitter.split_pages(pages)
                     ]
 
                     blob_sas_uris = await self.blob_manager.upload_blob(file)
