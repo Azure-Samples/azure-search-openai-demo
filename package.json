@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@azure/msal-react": "^2.0.10",
+    "@fluentui/react": "^8.115.2",
+    "@fluentui/react-components": "^9.46.3",
+    "@fluentui/react-icons": "^2.0.226",
+    "@react-spring/web": "^9.7.3",
+    "dompurify": "^3.0.8",
+    "ndjson-readablestream": "^1.1.0",
+    "react-router-dom": "^6.21.3"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^3.0.5",
+    "@types/react": "^18.2.48",
+    "vite": "^5.0.12"
+  }
+}

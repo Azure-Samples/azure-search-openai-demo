@@ -8,6 +8,7 @@
 .chatRoot {
     flex: 1;
     display: flex;
+    margin-left: 45px;
 }
 
 .chatContainer {
@@ -33,16 +34,18 @@
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 30px;
+    color: #409ece;
 }
 
 .chatEmptyStateSubtitle {
     font-weight: 600;
     margin-bottom: 10px;
+    color: #409ece;
 }
 
 @media only screen and (max-height: 780px) {
     .chatEmptyState {
-        padding-top: 0;
+        padding-top: 45px;
     }
 
     .chatEmptyStateTitle {
@@ -77,7 +80,7 @@
 
 .chatInput {
     position: sticky;
-    bottom: 0;
+    bottom: 25px;
     flex: 0 0 100px;
     padding-top: 12px;
     padding-bottom: 24px;
@@ -112,4 +115,10 @@
 .commandButton {
     margin-right: 20px;
     margin-bottom: 20px;
+}
+
+.palAIIcon {
+    height: 130px;
+    width: 160px;
+    margin-top: 305px;
 }

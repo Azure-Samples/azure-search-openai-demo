@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #222222;
+    background-color: #409ece;
     color: #f2f2f2;
 }
 
@@ -20,7 +20,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    margin-right: 950px;
     color: #f2f2f2;
     text-decoration: none;
 }
