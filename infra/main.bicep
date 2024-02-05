@@ -66,7 +66,15 @@ param openAiApiOrganization string = ''
 
 param formRecognizerServiceName string = ''
 param formRecognizerResourceGroupName string = ''
-param formRecognizerResourceGroupLocation string = location
+@description('Location for the Document Intelligence resource group')
+@allowed(['eastus', 'westus2', 'westeurope'])
+@metadata({
+  azd: {
+    type: 'location'
+  }
+})
+param formRecognizerResourceGroupLocation string
+
 param formRecognizerSkuName string = 'S0'
 
 param computerVisionServiceName string = ''
@@ -316,10 +324,10 @@ module formRecognizer 'core/ai/cognitiveservices.bicep' = {
   name: 'formrecognizer'
   scope: formRecognizerResourceGroup
   params: {
-    name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
+    name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     kind: 'FormRecognizer'
     // Limited regions for new version: https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-layout?view=doc-intel-4.0.0
-    location: 'eastus'
+    location: formRecognizerResourceGroupLocation
     tags: tags
     sku: {
       name: formRecognizerSkuName
