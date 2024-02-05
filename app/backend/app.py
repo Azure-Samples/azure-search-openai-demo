@@ -194,6 +194,16 @@ def auth_setup():
     return jsonify(auth_helper.get_auth_setup_for_client())
 
 
+@bp.route("/feedback", methods=["POST"])
+async def feedback():
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    request_json = await request.get_json()
+    with open("feedback.json", "a") as f:
+        f.write(json.dumps(request_json) + ", \n")
+    return jsonify({})
+
+
 @bp.route("/config", methods=["GET"])
 def config():
     return jsonify(

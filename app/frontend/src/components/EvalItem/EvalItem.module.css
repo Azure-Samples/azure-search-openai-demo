@@ -1,0 +1,45 @@
+.evalItemContainer {
+    margin: 1rem auto;
+    width: 70vw;
+    padding: 20px;
+    background: rgb(249, 249, 249);
+    border-radius: 8px;
+    box-shadow:
+        0px 2px 4px rgba(0, 0, 0, 0.14),
+        0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: transparent solid 1px;
+    display: sticky;
+}
+
+.evalItem {
+    display: grid;
+    column-gap: 1rem;
+    grid-column-gap: 10px;
+    grid-row-gap: 1px;
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.evalItem span {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 1rem;
+    font-weight: bold;
+    align-content: center;
+}
+
+.detailsButton {
+    margin-right: 0;
+    margin-left: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 14px;
+    padding: 0.5em 2em;
+    border: transparent;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    background: rgba(115, 118, 225, 1);
+    color: white;
+    font-weight: 600;
+    border-radius: 5px;
+}

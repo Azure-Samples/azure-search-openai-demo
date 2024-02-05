@@ -1,0 +1,48 @@
+/* styles.css */
+
+.sidebar {
+    width: 200px;
+    background-color: #f0f0f0;
+    /* padding: 20px; */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    margin-left: 0.5rem;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar a {
+    display: block;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    margin-left: 1rem;
+}
+
+/* .sidebar li:active {
+    background-color: rgb(160, 176, 184);
+} */
+
+.sidebar li:hover {
+    /* text-decoration: underline; */
+    transition-duration: 0.4s;
+    background-color: #dbdbdb;
+    color: white;
+}
+
+.sidebarLinkActive {
+    font-weight: bold;
+    text-decoration: underline;
+}

@@ -12,6 +12,7 @@ import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
     answer: ChatAppResponse;
+    question: string;
     isSelected?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
@@ -24,6 +25,7 @@ interface Props {
 
 export const Answer = ({
     answer,
+    question,
     isSelected,
     isStreaming,
     onCitationClicked,
@@ -41,6 +43,8 @@ export const Answer = ({
 
     const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
+
+    console.log("Question", question);
 
     const onFeedbackClicked = async (type: string, question: string, answer: ChatAppResponse) => {
         error && setError(undefined);
@@ -140,19 +144,19 @@ export const Answer = ({
                     <div className={styles.satisfactionContainer}>
                         <span className={styles.satisfactory}>Did you like this response?</span>
                         <IconButton
-                            style={{ color: "green" }}
-                            iconProps={{ iconName: "CheckMark" }}
+                            style={{ color: "black" }}
+                            iconProps={{ iconName: "Like" }}
                             title="Show thought process"
                             ariaLabel="Show thought process"
-                            onClick={() => onFeedbackClicked("good", sanitizedAnswerHtml, answer)}
+                            onClick={() => onFeedbackClicked("good", question, answer)}
                             disabled={!answer.choices[0].context.thoughts?.length}
                         />
                         <IconButton
-                            style={{ color: "red" }}
-                            iconProps={{ iconName: "Cancel" }}
+                            style={{ color: "black" }}
+                            iconProps={{ iconName: "Dislike" }}
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
-                            onClick={() => onFeedbackClicked("bad", sanitizedAnswerHtml, answer)}
+                            onClick={() => onFeedbackClicked("bad", question, answer)}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>
