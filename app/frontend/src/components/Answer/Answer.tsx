@@ -143,6 +143,7 @@ export const Answer = ({
                 ) : (
                     <div className={styles.satisfactionContainer}>
                         <span className={styles.satisfactory}>Did you like this response?</span>
+                        {/* TODO Add feedback entering field */}
                         <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "Like" }}

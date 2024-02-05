@@ -1,17 +1,16 @@
 import { ChatAppResponse } from "../../api";
-import styles from "./EvalItem.module.css";
+import styles from "./FeedbackItem.module.css";
 import { IconButton } from "@fluentui/react";
-import { SupportingContent } from "../SupportingContent";
 
 interface Props {
     id: number;
     feedback: string;
     question: string;
     answer: ChatAppResponse;
-    removeActiveSample: () => void;
+    setActiveSample: (sample: number) => void;
 }
 
-const EvalItemDetailed = ({ id, feedback, question, answer, removeActiveSample }: Props) => {
+const FeedbackItem = ({ id, feedback, question, answer, setActiveSample }: Props) => {
     const choice = answer.choices[0];
     const index: number = choice.index;
     const message: string = choice.message.content;
@@ -20,14 +19,6 @@ const EvalItemDetailed = ({ id, feedback, question, answer, removeActiveSample }
 
     return (
         <section className={styles.evalItemContainer}>
-            <IconButton
-                style={{ color: "black" }}
-                iconProps={{ iconName: "ChevronLeftMed" }}
-                title="Show supporting content"
-                ariaLabel="Show supporting content"
-                disabled={!answer.choices[0].context.data_points}
-                onClick={() => removeActiveSample()}
-            />
             <div className={styles.evalItem}>
                 <span>Feedback</span>
                 <p>
@@ -54,10 +45,11 @@ const EvalItemDetailed = ({ id, feedback, question, answer, removeActiveSample }
                 <span>Answer</span>
                 <p>{message}</p>
                 {/* <h3>{context}</h3> */}
-                <span>Context</span>
-                <SupportingContent supportingContent={context} />
             </div>
+            <button className={styles.detailsButton} onClick={() => setActiveSample(id)}>
+                Details
+            </button>
         </section>
     );
 };
-export default EvalItemDetailed;
+export default FeedbackItem;

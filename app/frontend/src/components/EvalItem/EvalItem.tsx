@@ -6,49 +6,42 @@ interface Props {
     id: number;
     feedback: string;
     question: string;
-    answer: ChatAppResponse;
-    setActiveSample: (sample: number) => void;
+    answer: string;
+    relevance: number;
+    coherence: number;
+    similarity: number;
+    groundedness: number;
 }
 
-const EvalItem = ({ id, feedback, question, answer, setActiveSample }: Props) => {
-    const choice = answer.choices[0];
-    const index: number = choice.index;
-    const message: string = choice.message.content;
-    const context: string[] = choice.context.data_points;
-    const session_state: any = choice.session_state;
-
+const EvalItem = ({ id, question, answer, relevance, coherence, similarity, groundedness }: Props) => {
     return (
         <section className={styles.evalItemContainer}>
             <div className={styles.evalItem}>
-                <span>Feedback</span>
-                <p>
-                    {feedback === "good" ? (
-                        <IconButton
-                            style={{ color: "green" }}
-                            iconProps={{ iconName: "CheckMark" }}
-                            title="Show thought process"
-                            ariaLabel="Show thought process"
-                            disabled={!answer.choices[0].context.thoughts?.length}
-                        />
-                    ) : (
-                        <IconButton
-                            style={{ color: "red" }}
-                            iconProps={{ iconName: "Cancel" }}
-                            title="Show supporting content"
-                            ariaLabel="Show supporting content"
-                            disabled={!answer.choices[0].context.data_points}
-                        />
-                    )}
-                </p>
-                <span>Question</span>
-                <p>{question}</p>
-                <span>Answer</span>
-                <p>{message}</p>
-                {/* <h3>{context}</h3> */}
+                <div className={styles.questionContainer}>
+                    <span>Question</span>
+                    <p>{question}</p>
+                </div>
+                {/* <span>Answer</span>
+                <p>{answer}</p> */}
+                <div className={styles.metricsContainer}>
+                    <div className={styles.metricGridElem}>
+                        <span>Groundedness</span>
+                        {groundedness}
+                    </div>
+                    <div className={styles.metricGridElem}>
+                        <span>Relevance</span>
+                        {relevance}
+                    </div>
+                    <div className={styles.metricGridElem}>
+                        <span>Coherence</span>
+                        {coherence}
+                    </div>
+                    <div className={styles.metricGridElem}>
+                        <span>Similarity</span>
+                        {similarity}
+                    </div>
+                </div>
             </div>
-            <button className={styles.detailsButton} onClick={() => setActiveSample(id)}>
-                Details
-            </button>
         </section>
     );
 };

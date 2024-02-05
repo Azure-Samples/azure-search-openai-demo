@@ -14,7 +14,7 @@ const EvalSidebar = () => {
                 </li>
                 <li>
                     <NavLink to="/eval_cases" className={({ isActive }) => (isActive ? styles.sidebarLinkActive : styles.sidebarLink)}>
-                        Sample Evaluation
+                        Review Feedback
                     </NavLink>
                 </li>
                 <li>

@@ -199,8 +199,8 @@ async def feedback():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
-    with open("feedback.json", "a") as f:
-        f.write(json.dumps(request_json) + ", \n")
+    with open("../frontend/src/data/feedback.jsonl", "a") as f:
+        f.write(json.dumps(request_json) + "\n")
     return jsonify({})
 
 

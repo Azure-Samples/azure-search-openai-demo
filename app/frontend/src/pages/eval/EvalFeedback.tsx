@@ -1,9 +1,9 @@
-import { useState } from "react";
-import EvalItem from "../../components/EvalItem/EvalItem";
+import { useState, useEffect } from "react";
 
-import * as fb from "../../../../backend/feedback.json";
+import * as fb from "../../data/feedback.json";
 import EvalSidebar from "../../components/EvalSidebar/EvalSidebar";
-import EvalItemDetailed from "../../components/EvalItem/EvalItemDetailed";
+import FeedbackItem from "../../components/FeedbackItem/FeedbackItem";
+import FeedbackItemDetailed from "../../components/FeedbackItem/FeedbackItemDetailed";
 
 import styles from "./Eval.module.css";
 
@@ -13,7 +13,28 @@ const evalItems: { default: any[] } = JSON.parse(str);
 export function Component(): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState<any>({ evalItems });
+    // const [data, setData] = useState<any>(null);
     const [activeSample, setActiveSample] = useState<any>(null);
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             console.log("Fetching Data");
+    //             setIsLoading(true);
+    //             const response = await fetch("../../data/feedback.jsonl");
+    //             const text = await response.text();
+    //             const lines = text.split("\n");
+
+    //             const parsedData = lines.map((line: string) => JSON.parse(line));
+    //             setData(parsedData);
+    //             console.log(parsedData);
+    //         } catch (e) {
+    //             console.log(e);
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, []);
 
     const setActiveSampleId = (id: number) => {
         const newActiveSample = data.evalItems.default.find((sample: any) => sample.id === id);
@@ -32,7 +53,7 @@ export function Component(): JSX.Element {
                 {isLoading ? (
                     <p>Loading...</p>
                 ) : activeSample ? (
-                    <EvalItemDetailed
+                    <FeedbackItemDetailed
                         id={activeSample.id}
                         feedback={activeSample.feedback}
                         question={activeSample.question}
@@ -42,7 +63,7 @@ export function Component(): JSX.Element {
                 ) : (
                     <>
                         {data.evalItems.default.map((evalItem: any) => (
-                            <EvalItem
+                            <FeedbackItem
                                 key={evalItem.id}
                                 id={evalItem.id}
                                 feedback={evalItem.feedback}

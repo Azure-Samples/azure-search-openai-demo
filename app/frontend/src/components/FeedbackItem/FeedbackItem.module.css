@@ -13,13 +13,19 @@
 
 .evalItem {
     display: grid;
-    grid-template-areas:
-        "question "
-        "metrics";
     column-gap: 1rem;
     grid-column-gap: 10px;
     grid-row-gap: 1px;
     grid-template-columns: auto minmax(0, 1fr);
+}
+
+.evalItem span {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 1rem;
+    font-weight: bold;
+    align-content: center;
 }
 
 .detailsButton {
@@ -36,37 +42,4 @@
     color: white;
     font-weight: 600;
     border-radius: 5px;
-}
-
-.evalItem span {
-    align-items: center;
-    margin-left: auto;
-    margin-right: 1rem;
-    font-weight: bold;
-    align-content: center;
-}
-.questionContainer {
-    display: grid;
-    grid-area: question;
-    grid-template-areas: "q1 q2";
-    align-items: center;
-    justify-content: left;
-}
-
-.metricsContainer {
-    display: grid;
-    grid-area: metrics;
-    grid-template-areas: "groundedness relevance coherence similarity";
-}
-
-.metricGridElem {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    justify-content: left;
-}
-
-.metricGridElem span {
-    justify-self: right;
-    font-weight: 600;
-    margin-right: 1rem;
 }
