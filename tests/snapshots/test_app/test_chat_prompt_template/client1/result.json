@@ -1,0 +1,76 @@
+{
+    "choices": [
+        {
+            "context": {
+                "data_points": {
+                    "text": [
+                        "Benefit_Options-2.pdf: There is a whistleblower policy."
+                    ]
+                },
+                "thoughts": [
+                    {
+                        "description": "What is the capital of France?",
+                        "props": null,
+                        "title": "Original user query"
+                    },
+                    {
+                        "description": "capital of France",
+                        "props": {
+                            "has_vector": false,
+                            "use_semantic_captions": false
+                        },
+                        "title": "Generated search query"
+                    },
+                    {
+                        "description": [
+                            {
+                                "captions": [
+                                    {
+                                        "additional_properties": {},
+                                        "highlights": [],
+                                        "text": "Caption: A whistleblower policy."
+                                    }
+                                ],
+                                "category": null,
+                                "content": "There is a whistleblower policy.",
+                                "embedding": null,
+                                "groups": null,
+                                "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                                "imageEmbedding": null,
+                                "oids": null,
+                                "sourcefile": "Benefit_Options.pdf",
+                                "sourcepage": "Benefit_Options-2.pdf"
+                            }
+                        ],
+                        "props": null,
+                        "title": "Results"
+                    },
+                    {
+                        "description": [
+                            "{'role': 'system', 'content': 'You are a cat.'}",
+                            "{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
+                        ],
+                        "props": null,
+                        "title": "Prompt"
+                    }
+                ]
+            },
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+                "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "function_call": null,
+                "role": "assistant",
+                "tool_calls": null
+            },
+            "session_state": null
+        }
+    ],
+    "created": 0,
+    "id": "test-123",
+    "model": "test-model",
+    "object": "chat.completion",
+    "system_fingerprint": null,
+    "usage": null
+}

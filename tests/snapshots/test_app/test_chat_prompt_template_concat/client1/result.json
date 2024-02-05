@@ -1,0 +1,76 @@
+{
+    "choices": [
+        {
+            "context": {
+                "data_points": {
+                    "text": [
+                        "Benefit_Options-2.pdf: There is a whistleblower policy."
+                    ]
+                },
+                "thoughts": [
+                    {
+                        "description": "What is the capital of France?",
+                        "props": null,
+                        "title": "Original user query"
+                    },
+                    {
+                        "description": "capital of France",
+                        "props": {
+                            "has_vector": false,
+                            "use_semantic_captions": false
+                        },
+                        "title": "Generated search query"
+                    },
+                    {
+                        "description": [
+                            {
+                                "captions": [
+                                    {
+                                        "additional_properties": {},
+                                        "highlights": [],
+                                        "text": "Caption: A whistleblower policy."
+                                    }
+                                ],
+                                "category": null,
+                                "content": "There is a whistleblower policy.",
+                                "embedding": null,
+                                "groups": null,
+                                "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                                "imageEmbedding": null,
+                                "oids": null,
+                                "sourcefile": "Benefit_Options.pdf",
+                                "sourcepage": "Benefit_Options-2.pdf"
+                            }
+                        ],
+                        "props": null,
+                        "title": "Results"
+                    },
+                    {
+                        "description": [
+                            "{'role': 'system', 'content': \"Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.\\n        Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.\\n        For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.\\n        Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\\n        \\n         Meow like a cat.\\n\\n        \"}",
+                            "{'role': 'user', 'content': 'What is the capital of France?\\n\\nSources:\\nBenefit_Options-2.pdf: There is a whistleblower policy.'}"
+                        ],
+                        "props": null,
+                        "title": "Prompt"
+                    }
+                ]
+            },
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+                "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "function_call": null,
+                "role": "assistant",
+                "tool_calls": null
+            },
+            "session_state": null
+        }
+    ],
+    "created": 0,
+    "id": "test-123",
+    "model": "test-model",
+    "object": "chat.completion",
+    "system_fingerprint": null,
+    "usage": null
+}

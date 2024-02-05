@@ -5,6 +5,9 @@
     "environmentName": {
       "value": "${AZURE_ENV_NAME}"
     },
+    "resourceGroupName": {
+      "value": "${AZURE_RESOURCE_GROUP}"
+    },
     "location": {
       "value": "${AZURE_LOCATION}"
     },
@@ -27,7 +30,10 @@
       "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
     },
     "formRecognizerSkuName": {
-      "value": "S0"
+      "value": "${AZURE_FORMRECOGNIZER_SKU=S0}"
+    },
+    "searchIndexName": {
+      "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
     },
     "searchServiceName": {
       "value": "${AZURE_SEARCH_SERVICE}"
@@ -35,14 +41,83 @@
     "searchServiceResourceGroupName": {
       "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
     },
+    "searchServiceLocation": {
+      "value": "${AZURE_SEARCH_SERVICE_LOCATION}"
+    },
     "searchServiceSkuName": {
-      "value": "standard"
+      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
+    },
+    "searchQueryLanguage": {
+      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+    },
+    "searchQuerySpeller": {
+      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+    },
+    "searchServiceSemanticRankerLevel": {
+      "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
     "storageResourceGroupName": {
       "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
+    },
+    "storageSkuName": {
+      "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+    },
+    "appServiceSkuName": {
+      "value": "${AZURE_APP_SERVICE_SKU=B1}"
+    },
+    "chatGptDeploymentName": {
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+    },
+    "embeddingDeploymentName": {
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
+    },
+    "openAiHost":{
+      "value": "${OPENAI_HOST=azure}"
+    },
+    "openAiApiKey": {
+      "value": "${OPENAI_API_KEY}"
+    },
+    "openAiApiOrganization": {
+      "value": "${OPENAI_ORGANIZATION}"
+    },
+    "useApplicationInsights": {
+      "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
+    },
+    "useVectors": {
+      "value": "${USE_VECTORS=true}"
+    },
+    "useGPT4V": {
+      "value": "${USE_GPT4V=false}"
+    },
+    "useAuthentication": {
+      "value": "${AZURE_USE_AUTHENTICATION=false}"
+    },
+    "enforceAccessControl": {
+      "value": "${AZURE_ENFORCE_ACCESS_CONTROL=false}"
+    },
+    "tenantId": {
+      "value": "${AZURE_TENANT_ID}"
+    },
+    "authTenantId": {
+      "value": "${AZURE_AUTH_TENANT_ID}"
+    },
+    "serverAppId": {
+      "value": "${AZURE_SERVER_APP_ID}"
+    },
+    "serverAppSecret": {
+      "value": "${AZURE_SERVER_APP_SECRET}"
+    },
+    "clientAppId": {
+      "value": "${AZURE_CLIENT_APP_ID}"
+    },
+    "clientAppSecret": {
+      "value": "${AZURE_CLIENT_APP_SECRET}"
+    },
+    "allowedOrigin": {
+      "value": "${ALLOWED_ORIGIN}"
     }
   }
 }

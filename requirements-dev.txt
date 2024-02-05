@@ -1,0 +1,15 @@
+-r app/backend/requirements.txt
+-r scripts/requirements.txt
+ruff
+black
+pytest
+pytest-asyncio
+pytest-snapshot
+coverage
+playwright
+pytest-cov
+pytest-playwright
+pre-commit
+locust
+pip-tools
+mypy

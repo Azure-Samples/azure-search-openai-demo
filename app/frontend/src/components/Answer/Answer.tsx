@@ -4,13 +4,14 @@ import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { AskResponse, getCitationFilePath } from "../../api";
+import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
-    answer: AskResponse;
+    answer: ChatAppResponse;
     isSelected?: boolean;
+    isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
@@ -21,13 +22,16 @@ interface Props {
 export const Answer = ({
     answer,
     isSelected,
+    isStreaming,
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, onCitationClicked), [answer]);
+    const followupQuestions = answer.choices[0].context.followup_questions;
+    const messageContent = answer.choices[0].message.content;
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
@@ -43,7 +47,7 @@ export const Answer = ({
                             title="Show thought process"
                             ariaLabel="Show thought process"
                             onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.thoughts}
+                            disabled={!answer.choices[0].context.thoughts?.length}
                         />
                         <IconButton
                             style={{ color: "black" }}
@@ -51,7 +55,7 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.data_points.length}
+                            disabled={!answer.choices[0].context.data_points}
                         />
                     </div>
                 </Stack>
@@ -77,11 +81,11 @@ export const Answer = ({
                 </Stack.Item>
             )}
 
-            {!!parsedAnswer.followupQuestions.length && showFollowupQuestions && onFollowupQuestionClicked && (
+            {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <Stack.Item>
                     <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
                         <span className={styles.followupQuestionLearnMore}>Follow-up questions:</span>
-                        {parsedAnswer.followupQuestions.map((x, i) => {
+                        {followupQuestions.map((x, i) => {
                             return (
                                 <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>
                                     {`${x}`}

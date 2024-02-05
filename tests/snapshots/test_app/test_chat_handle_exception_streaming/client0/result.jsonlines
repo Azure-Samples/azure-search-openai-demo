@@ -1,0 +1,1 @@
+{"error": "The app encountered an error processing your request.\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\nError type: <class 'ZeroDivisionError'>\n"}

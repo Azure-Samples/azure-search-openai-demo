@@ -10,7 +10,9 @@
     word-break: break-word;
     background: rgb(249, 249, 249);
     border-radius: 8px;
-    box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px, rgb(0 0 0 / 10%) 0px 2px 3px 0px;
+    box-shadow:
+        rgb(0 0 0 / 5%) 0px 0px 0px 1px,
+        rgb(0 0 0 / 10%) 0px 2px 3px 0px;
     outline: transparent solid 1px;
 
     display: flex;
@@ -25,4 +27,8 @@
 .supportingContentItemText {
     margin-bottom: 0;
     font-weight: 300;
+}
+
+.supportingContentItemImage {
+    object-fit: contain;
 }
