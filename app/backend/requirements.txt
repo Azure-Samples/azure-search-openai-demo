@@ -24,7 +24,7 @@ azure-common==1.1.28
     # via
     #   azure-keyvault-secrets
     #   azure-search-documents
-azure-core==1.29.7
+azure-core==1.30.0
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-identity
@@ -52,7 +52,7 @@ blinker==1.7.0
     # via
     #   flask
     #   quart
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   httpcore
     #   httpx
@@ -67,7 +67,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==42.0.1
+cryptography==42.0.2
     # via
     #   -r requirements.in
     #   azure-identity
@@ -81,9 +81,9 @@ distro==1.9.0
     # via openai
 ecdsa==0.18.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
-flask==3.0.1
+flask==3.0.2
     # via quart
 frozenlist==1.4.1
     # via
@@ -113,7 +113,7 @@ idna==3.6
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==6.11.0
+importlib-metadata==7.0.1
     # via opentelemetry-api
 isodate==0.6.1
     # via
@@ -129,7 +129,7 @@ jinja2==3.1.3
     # via
     #   flask
     #   quart
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via
     #   jinja2
     #   quart
@@ -143,7 +143,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
@@ -154,7 +154,7 @@ numpy==1.26.3
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.10.0
+openai[datalib]==1.11.1
     # via -r requirements.in
 opentelemetry-api==1.22.0
     # via
@@ -269,7 +269,7 @@ pycparser==2.21
     # via cffi
 pydantic==2.6.0
     # via openai
-pydantic-core==2.16.1
+pydantic-core==2.16.2
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via msal
@@ -277,7 +277,7 @@ python-dateutil==2.8.2
     # via pandas
 python-jose[cryptography]==3.3.0
     # via -r requirements.in
-pytz==2023.4
+pytz==2024.1
     # via pandas
 quart==0.19.4
     # via
@@ -315,7 +315,7 @@ tiktoken==0.5.2
     # via -r requirements.in
 tqdm==4.66.1
     # via openai
-types-pytz==2023.4.0.20240130
+types-pytz==2024.1.0.20240203
     # via pandas-stubs
 typing-extensions==4.9.0
     # via
@@ -328,7 +328,7 @@ typing-extensions==4.9.0
     #   pydantic-core
 tzdata==2023.4
     # via pandas
-urllib3==2.1.0
+urllib3==2.2.0
     # via requests
 uvicorn==0.27.0.post1
     # via -r requirements.in
