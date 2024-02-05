@@ -58,7 +58,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const [isDarkTheme, setIsDarkTheme] = useState<boolean>(() => JSON.parse(localStorage.getItem("ms-azoaicc:isDarkTheme") ?? "false"));
-    const [isBrandingEnabled, setEnableBranding] = useState<boolean>(() => JSON.parse(localStorage.getItem("ms-azoaicc:isBrandingEnabled") ?? "true"));
+    const [isBrandingEnabled, setEnableBranding] = useState<boolean>(() => JSON.parse(localStorage.getItem("ms-azoaicc:isBrandingEnabled") ?? "false"));
     const [isShowingHeader, setShowHeader] = useState<boolean>(() => JSON.parse(localStorage.getItem("ms-azoaicc:isShowingHeader") ?? "true"));
     const [customText, setCustomText] = useState<CustomText>(() =>
         JSON.parse(localStorage.getItem("ms-azoaicc:customText") ?? JSON.stringify(defaultCustomText))

@@ -10,8 +10,6 @@
     justify-content: space-around;
     margin-right: 12px;
     margin-left: 12px;
-
-    height: 90px;
 }
 
 .headerTitleContainer {
@@ -76,9 +74,7 @@
 
 header .coLogo {
     display: block;
-    /* width: 150px;
-    height: 45px; */
-    height: 60px;
+    height: 35px;
     background-size: contain;
     background-repeat: no-repeat;
     margin: 0;
