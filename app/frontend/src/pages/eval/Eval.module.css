@@ -1,0 +1,59 @@
+/* styles.css */
+
+.layout {
+    display: flex;
+    height: 100vh;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 20px;
+    margin-left: 30px; /* Set the margin to accommodate the sidebar width */
+    overflow-y: auto;
+}
+
+.evalTitle {
+    font-size: 4rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.evalTitleContainer {
+    margin: auto auto;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.buttonContainer .evalButton {
+    margin: 1rem 1rem;
+    font-size: 18px;
+    padding: 0.5em 2em;
+    border: transparent;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    background: rgba(115, 118, 225, 1);
+    color: white;
+    font-weight: 600;
+    border-radius: 5px;
+}
+
+.buttonContainer .evalButton {
+    text-decoration: none;
+    color: white;
+}
+
+.batchTitleContainer {
+    margin: 1rem auto;
+    width: 70vw;
+    padding: 20px;
+    background: rgb(249, 249, 249);
+    border-radius: 8px;
+    box-shadow:
+        0px 2px 4px rgba(0, 0, 0, 0.14),
+        0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: transparent solid 1px;
+    display: flex;
+}
