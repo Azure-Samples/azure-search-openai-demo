@@ -79,6 +79,12 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
     }
     use_vectors = not args.novectors
     embeddings: Optional[OpenAIEmbeddings] = None
