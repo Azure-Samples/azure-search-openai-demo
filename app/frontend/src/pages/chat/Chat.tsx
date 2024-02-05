@@ -32,7 +32,7 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [temperature, setTemperature] = useState<number>(0.3);
+    const [temperature, setTemperature] = useState<number>(0.7);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -87,15 +87,7 @@ const Chat = () => {
                     answer += newContent;
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
-                        choices: [
-                            {
-                                ...askResponse.choices[0],
-                                message: {
-                                    content: answer,
-                                    role: askResponse.choices[0].message.role
-                                }
-                            }
-                        ]
+                        choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
@@ -113,10 +105,7 @@ const Chat = () => {
                     await updateState(event["choices"][0]["delta"]["content"]);
                 } else if (event["choices"] && event["choices"][0]["context"]) {
                     // Update context with new keys from latest event
-                    askResponse.choices[0].context = {
-                        ...askResponse.choices[0].context,
-                        ...event["choices"][0]["context"]
-                    };
+                    askResponse.choices[0].context = { ...askResponse.choices[0].context, ...event["choices"][0]["context"] };
                 } else if (event["error"]) {
                     throw Error(event["error"]);
                 }
@@ -126,15 +115,7 @@ const Chat = () => {
         }
         const fullResponse: ChatAppResponse = {
             ...askResponse,
-            choices: [
-                {
-                    ...askResponse.choices[0],
-                    message: {
-                        content: answer,
-                        role: askResponse.choices[0].message.role
-                    }
-                }
-            ]
+            choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
         };
         return fullResponse;
     };
@@ -164,8 +145,8 @@ const Chat = () => {
                     overrides: {
                         prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
-                        temperature: temperature,
                         top: retrieveCount,
+                        temperature: temperature,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -401,6 +382,7 @@ const Chat = () => {
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
                     />
+
                     <Slider
                         className={styles.chatSettingsSeparator}
                         label="Temperature"
@@ -412,6 +394,7 @@ const Chat = () => {
                         showValue
                         snapToStep
                     />
+
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Retrieve this many search results:"
