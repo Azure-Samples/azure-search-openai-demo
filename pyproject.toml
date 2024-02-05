@@ -1,7 +1,7 @@
 [tool.ruff]
 target-version = "py38"
-select = ["E", "F", "I", "UP"]
-ignore = ["E501", "E701"] # line too long, multiple statements on one line
+lint.select = ["E", "F", "I", "UP"]
+lint.ignore = ["E501", "E701"] # line too long, multiple statements on one line
 src = ["app/backend", "scripts"]
 
 [tool.ruff.isort]

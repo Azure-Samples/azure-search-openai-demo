@@ -56,4 +56,4 @@ def get_oai_chatmodel_tiktok(aoaimodel: str) -> str:
         raise ValueError(message)
     if aoaimodel not in AOAI_2_OAI and aoaimodel not in MODELS_2_TOKEN_LIMITS:
         raise ValueError(message)
-    return AOAI_2_OAI.get(aoaimodel) or aoaimodel
+    return AOAI_2_OAI.get(aoaimodel, aoaimodel)
