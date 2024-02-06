@@ -13,13 +13,10 @@
 
 .evalItem {
     display: grid;
-    grid-template-areas:
-        "question "
-        "metrics";
+    grid-template-areas: "question metrics";
     column-gap: 1rem;
-    grid-column-gap: 10px;
     grid-row-gap: 1px;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto 10rem;
 }
 
 .detailsButton {
@@ -46,27 +43,31 @@
     align-content: center;
 }
 .questionContainer {
-    display: grid;
     grid-area: question;
-    grid-template-areas: "q1 q2";
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     justify-content: left;
 }
 
 .metricsContainer {
-    display: grid;
     grid-area: metrics;
-    grid-template-areas: "groundedness relevance coherence similarity";
+    grid-template-areas:
+        "groundedness"
+        "relevance"
+        "coherence"
+        "similarity";
 }
 
 .metricGridElem {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    justify-content: left;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1rem);
+    text-align: right;
 }
 
 .metricGridElem span {
     justify-self: right;
     font-weight: 600;
     margin-right: 1rem;
+    text-align: right;
 }

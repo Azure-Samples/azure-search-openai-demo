@@ -58,6 +58,7 @@ export function Component(): JSX.Element {
                         feedback={activeSample.feedback}
                         question={activeSample.question}
                         answer={activeSample.answer}
+                        comment={activeSample.comment}
                         removeActiveSample={removeActiveSample}
                     />
                 ) : (
@@ -69,6 +70,7 @@ export function Component(): JSX.Element {
                                 feedback={evalItem.feedback}
                                 question={evalItem.question}
                                 answer={evalItem.answer}
+                                comment={evalItem.comment}
                                 setActiveSample={setActiveSampleId}
                             />
                         ))}

@@ -148,3 +148,38 @@ sup {
     font-weight: 600;
     line-height: 24px;
 }
+
+.feedbackContainer {
+    display: flex;
+    justify-content: right;
+}
+
+.textInput {
+    padding: 5px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #24292e;
+    vertical-align: middle;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    outline: none;
+    box-shadow: rgba(225, 228, 232, 0.2) 0px 1px 0px 0px inset;
+    :focus {
+        border-color: #0366d6;
+        outline: none;
+        box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+    }
+}
+
+.feedbackContainer button {
+    margin-left: 10px;
+    font-size: 14px;
+    border: transparent;
+    background: rgba(115, 118, 225, 1);
+    color: white;
+    font-weight: 500;
+    border-radius: 5px;
+}

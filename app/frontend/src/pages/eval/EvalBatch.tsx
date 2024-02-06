@@ -51,8 +51,6 @@ export function Component(): JSX.Element {
     const answer_length = summ.answer_length.mean;
     const answer_has_citation = summ.answer_has_citation.rate;
 
-    console.log(results);
-
     return (
         <div className={styles.layout}>
             <EvalSidebar />

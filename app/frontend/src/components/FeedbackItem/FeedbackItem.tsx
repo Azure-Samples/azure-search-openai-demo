@@ -7,10 +7,11 @@ interface Props {
     feedback: string;
     question: string;
     answer: ChatAppResponse;
+    comment: string;
     setActiveSample: (sample: number) => void;
 }
 
-const FeedbackItem = ({ id, feedback, question, answer, setActiveSample }: Props) => {
+const FeedbackItem = ({ id, feedback, question, answer, comment, setActiveSample }: Props) => {
     const choice = answer.choices[0];
     const index: number = choice.index;
     const message: string = choice.message.content;
@@ -18,8 +19,8 @@ const FeedbackItem = ({ id, feedback, question, answer, setActiveSample }: Props
     const session_state: any = choice.session_state;
 
     return (
-        <section className={styles.evalItemContainer}>
-            <div className={styles.evalItem}>
+        <section className={styles.feedbackItemContainer}>
+            <div className={styles.feedbackItem}>
                 <span>Feedback</span>
                 <p>
                     {feedback === "good" ? (
@@ -40,11 +41,12 @@ const FeedbackItem = ({ id, feedback, question, answer, setActiveSample }: Props
                         />
                     )}
                 </p>
+                <span>Comment</span>
+                <p>{comment}</p>
                 <span>Question</span>
                 <p>{question}</p>
                 <span>Answer</span>
                 <p>{message}</p>
-                {/* <h3>{context}</h3> */}
             </div>
             <button className={styles.detailsButton} onClick={() => setActiveSample(id)}>
                 Details

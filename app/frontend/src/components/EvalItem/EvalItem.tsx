@@ -20,9 +20,9 @@ const EvalItem = ({ id, question, answer, relevance, coherence, similarity, grou
                 <div className={styles.questionContainer}>
                     <span>Question</span>
                     <p>{question}</p>
+                    {/* <span>Answer</span>
+                    <p>{answer}</p> */}
                 </div>
-                {/* <span>Answer</span>
-                <p>{answer}</p> */}
                 <div className={styles.metricsContainer}>
                     <div className={styles.metricGridElem}>
                         <span>Groundedness</span>

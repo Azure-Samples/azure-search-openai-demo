@@ -8,10 +8,11 @@ interface Props {
     feedback: string;
     question: string;
     answer: ChatAppResponse;
+    comment: string;
     removeActiveSample: () => void;
 }
 
-const FeedbackItemDetailed = ({ id, feedback, question, answer, removeActiveSample }: Props) => {
+const FeedbackItemDetailed = ({ id, feedback, question, answer, comment, removeActiveSample }: Props) => {
     const choice = answer.choices[0];
     const index: number = choice.index;
     const message: string = choice.message.content;
@@ -19,7 +20,7 @@ const FeedbackItemDetailed = ({ id, feedback, question, answer, removeActiveSamp
     const session_state: any = choice.session_state;
 
     return (
-        <section className={styles.evalItemContainer}>
+        <section className={styles.feedbackItemContainer}>
             <IconButton
                 style={{ color: "black" }}
                 iconProps={{ iconName: "ChevronLeftMed" }}
@@ -28,7 +29,7 @@ const FeedbackItemDetailed = ({ id, feedback, question, answer, removeActiveSamp
                 disabled={!answer.choices[0].context.data_points}
                 onClick={() => removeActiveSample()}
             />
-            <div className={styles.evalItem}>
+            <div className={styles.feedbackItem}>
                 <span>Feedback</span>
                 <p>
                     {feedback === "good" ? (
@@ -49,6 +50,8 @@ const FeedbackItemDetailed = ({ id, feedback, question, answer, removeActiveSamp
                         />
                     )}
                 </p>
+                <span>Comment</span>
+                <p>{comment}</p>
                 <span>Question</span>
                 <p>{question}</p>
                 <span>Answer</span>
