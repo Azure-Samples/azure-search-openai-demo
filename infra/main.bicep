@@ -35,6 +35,7 @@ param keyVaultResourceGroupName string = ''
 param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
+param storageEvaluateContainerName string = 'batchevaluate'
 param storageSkuName string // Set in main.parameters.json
 
 param appServiceSkuName string // Set in main.parameters.json
@@ -415,6 +416,9 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }, {
+        name: storageEvaluateContainerName
         publicAccess: 'None'
       }
     ]
