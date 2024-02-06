@@ -36,7 +36,7 @@ azure-identity==1.15.0
     # via -r requirements.in
 azure-keyvault-secrets==4.7.0
     # via -r requirements.in
-azure-search-documents==11.4.0b11
+azure-search-documents==11.6.0b1
     # via -r requirements.in
 azure-storage-blob==12.19.0
     # via
