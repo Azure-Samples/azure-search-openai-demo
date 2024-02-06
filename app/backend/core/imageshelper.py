@@ -71,7 +71,6 @@ def calculate_image_token_cost(image, detail="auto"):
             ratio = 2048 / max(width, height)
             width = int(width * ratio)
             height = int(height * ratio)
-
         # Further scale down to 768px on the shortest side
         if min(width, height) > 768:
             ratio = 768 / min(width, height)
@@ -79,10 +78,9 @@ def calculate_image_token_cost(image, detail="auto"):
             height = int(height * ratio)
         # Calculate the number of 512px squares
         num_squares = math.ceil(width / 512) * math.ceil(height / 512)
-
         # Calculate the total token cost
         total_cost = num_squares * HIGH_DETAIL_COST_PER_TILE + ADDITIONAL_COST
         return total_cost
     else:
         # Invalid detail_option
-        raise ValueError("Invalid detail_option. Use 'low' or 'high'.")
+        raise ValueError("Invalid value for detail parameter. Use 'low' or 'high'.")
