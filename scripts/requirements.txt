@@ -174,7 +174,7 @@ tiktoken==0.5.2
     # via -r requirements.in
 tqdm==4.66.1
     # via openai
-types-pillow==10.2.0.20240125
+types-pillow==10.2.0.20240206
     # via -r requirements.in
 types-pytz==2023.4.0.20240130
     # via pandas-stubs
