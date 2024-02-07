@@ -227,18 +227,19 @@ async def experiment():
     blob_evaluate_container_client = current_app.config[CONFIG_BLOB_EVALUATE_CONTAINER_CLIENT]
     try:
         result = {
-            "eval_results.jsonl": "",
-            "evaluate_parameters.json": "",
-            "summary.json": ""
+            "eval_results": "",
+            "evaluate_parameters": "",
+            "summary": ""
         }
-        for file_name in result.keys():
+        for key in result.keys():
+            file_name = f'{key}.json' if "eval_results" not in key else f'{key}.jsonl'
             path = f'{experiment_name}/{file_name}'
             blob = await blob_evaluate_container_client.get_blob_client(path).download_blob()
             if file_name.endswith('.jsonl'):
                 json_data = [json.loads(line) for line in (await blob.content_as_text()).splitlines() if line.strip()]
             else:
                 json_data = json.loads(await blob.content_as_text())
-            result[file_name] = json_data
+            result[key] = json_data
         return jsonify(result)
     except Exception as error:
         return error_response(error, "/experiment_list")
