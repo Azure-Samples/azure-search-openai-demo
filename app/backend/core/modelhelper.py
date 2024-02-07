@@ -45,13 +45,13 @@ def num_tokens_from_messages(message: Mapping[str, object], model: str) -> int:
     num_tokens = 2  # For "role" and "content" keys
     for value in message.values():
         if isinstance(value, list):
+            # For GPT-4-vision support, based on https://github.com/openai/openai-cookbook/pull/881/files
             for item in value:
                 num_tokens += len(encoding.encode(item["type"]))
                 if item["type"] == "text":
                     num_tokens += len(encoding.encode(item["text"]))
                 elif item["type"] == "image_url":
                     num_tokens += calculate_image_token_cost(item["image_url"]["url"], item["image_url"]["detail"])
-
         elif isinstance(value, str):
             num_tokens += len(encoding.encode(value))
         else:
