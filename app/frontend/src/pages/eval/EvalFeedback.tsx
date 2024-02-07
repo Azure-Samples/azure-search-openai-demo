@@ -39,7 +39,6 @@ export function Component(): JSX.Element {
     const setActiveSampleId = (id: number) => {
         const newActiveSample = data.evalItems.default.find((sample: any) => sample.id === id);
         setActiveSample(newActiveSample);
-        console.log(newActiveSample);
     };
 
     const removeActiveSample = () => {

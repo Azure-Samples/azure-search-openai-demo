@@ -4,24 +4,27 @@ import { IconButton } from "@fluentui/react";
 
 interface Props {
     id: number;
-    feedback: string;
     question: string;
     answer: string;
     relevance: number;
     coherence: number;
     similarity: number;
     groundedness: number;
+    setActiveSample: (str: string) => void;
 }
 
-const EvalItem = ({ id, question, answer, relevance, coherence, similarity, groundedness }: Props) => {
+const EvalItem = ({ id, question, answer, relevance, coherence, similarity, groundedness, setActiveSample }: Props) => {
+    const alert = () => {
+        const isAnyValueBelowThree = groundedness < 3 || relevance < 3 || coherence < 3 || similarity < 3;
+        return isAnyValueBelowThree;
+    };
+
     return (
-        <section className={styles.evalItemContainer}>
-            <div className={styles.evalItem}>
+        <section className={alert() ? styles.evalItemContainerAlt : styles.evalItemContainer}>
+            <div className={styles.evalItem} onClick={() => setActiveSample(question)}>
                 <div className={styles.questionContainer}>
                     <span>Question</span>
                     <p>{question}</p>
-                    {/* <span>Answer</span>
-                    <p>{answer}</p> */}
                 </div>
                 <div className={styles.metricsContainer}>
                     <div className={styles.metricGridElem}>

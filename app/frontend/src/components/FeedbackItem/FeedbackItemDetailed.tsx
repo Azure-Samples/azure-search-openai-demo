@@ -24,8 +24,8 @@ const FeedbackItemDetailed = ({ id, feedback, question, answer, comment, removeA
             <IconButton
                 style={{ color: "black" }}
                 iconProps={{ iconName: "ChevronLeftMed" }}
-                title="Show supporting content"
-                ariaLabel="Show supporting content"
+                title="Back to overview"
+                ariaLabel="Back to overview"
                 disabled={!answer.choices[0].context.data_points}
                 onClick={() => removeActiveSample()}
             />
@@ -36,16 +36,16 @@ const FeedbackItemDetailed = ({ id, feedback, question, answer, comment, removeA
                         <IconButton
                             style={{ color: "green" }}
                             iconProps={{ iconName: "CheckMark" }}
-                            title="Show thought process"
-                            ariaLabel="Show thought process"
+                            title="Good Feedback"
+                            ariaLabel="Good Feedback"
                             disabled={!answer.choices[0].context.thoughts?.length}
                         />
                     ) : (
                         <IconButton
                             style={{ color: "red" }}
                             iconProps={{ iconName: "Cancel" }}
-                            title="Show supporting content"
-                            ariaLabel="Show supporting content"
+                            title="Bad Feedback"
+                            ariaLabel="Bad Feedback"
                             disabled={!answer.choices[0].context.data_points}
                         />
                     )}

@@ -31,8 +31,10 @@ export default defineConfig({
             "/ask": "http://localhost:50505",
             "/chat": "http://localhost:50505",
             "/config": "http://localhost:50505",
-            "/evaluate": "https://localhost:50505",
-            "/feedback": "https://localhost:50505"
+            "/evaluate": "http://localhost:50505",
+            "/feedback": "http://localhost:50505",
+            "/experiment_list": "http://localhost:50505",
+            "/experiment": "http://localhost:50505"
         }
     }
 });

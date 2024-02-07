@@ -1,0 +1,10 @@
+{
+    "overrides": {
+        "retrieval_mode": "hybrid",
+        "semantic_ranker": false,
+        "semantic_captions": false,
+        "top": 3,
+        "suggest_followup_questions": false
+    },
+    "evaluation_gpt_model": "gpt-4"
+}
