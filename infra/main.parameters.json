@@ -32,6 +32,9 @@
     "formRecognizerSkuName": {
       "value": "${AZURE_FORMRECOGNIZER_SKU=S0}"
     },
+    "formRecognizerResourceGroupLocation": {
+      "value": "${AZURE_FORMRECOGNIZER_LOCATION}"
+    },
     "searchIndexName": {
       "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
     },
