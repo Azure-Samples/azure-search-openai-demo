@@ -1,12 +1,15 @@
+import { divProperties } from "@fluentui/react";
 import { useState, useEffect } from "react";
 
+import styles from "./BatchExperiment.module.css";
+
 interface Props {
-    onBatchClicked: (id: number) => void;
+    onBatchClicked: (id: string) => void;
 }
 
 const BatchSelect = ({ onBatchClicked }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [data, setData] = useState<any>({});
+    const [data, setData] = useState<any>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,10 +32,19 @@ const BatchSelect = ({ onBatchClicked }: Props) => {
     console.log(data);
 
     return (
-        <div>
-            {data.experiment_names.map(experiment => {
-                <div>{experiment}</div>;
-            })}
+        <div className={styles.batchSelect}>
+            <button className={styles.batchEvalButton}>Evaluate New Batch</button>
+            {data ? (
+                <div className={styles.experimentSelect}>
+                    {data.experiment_names.map((batch: string) => (
+                        <button className={styles.experiment} onClick={() => onBatchClicked(batch)}>
+                            {batch}
+                        </button>
+                    ))}
+                </div>
+            ) : (
+                <h1>Loading Available Experiments...</h1>
+            )}
         </div>
     );
 };

@@ -45,6 +45,10 @@
     border-radius: 5px;
 }
 
+.detailsButton:hover {
+    cursor: pointer;
+}
+
 /* .feedbackItem p {
     margin: auto auto;
 } */

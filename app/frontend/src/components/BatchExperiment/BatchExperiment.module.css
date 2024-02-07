@@ -48,3 +48,49 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     justify-content: center;
 }
+
+.batchSelect {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-row-gap: 2rem;
+    background: linear-gradient(rgba(115, 118, 225, 1), rgba(115, 118, 225, 1)) center/2px 100% no-repeat;
+    margin-top: 10rem;
+}
+
+.batchEvalButton {
+    margin: auto auto;
+    display: block;
+    font-size: 22px;
+    padding: 0.5em 2em;
+    border: transparent;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    background: rgba(115, 118, 225, 1);
+    color: white;
+    font-weight: 600;
+    border-radius: 5px;
+}
+
+.experimentSelect {
+    display: grid;
+    grid-row-gap: 2rem;
+    justify-content: center;
+    align-content: center;
+}
+
+.experiment {
+    font-size: 24px;
+    font-weight: 600;
+    border: transparent;
+    /* color: rgba(115, 118, 225, 1); */
+}
+
+.experiment:hover {
+    color: rgba(115, 118, 225, 1);
+    cursor: pointer;
+}
+
+.batchSelect h1 {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}

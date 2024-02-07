@@ -8,21 +8,32 @@ import BatchExperiment from "../../components/BatchExperiment/BatchExperiment";
 import BatchSelect from "../../components/BatchExperiment/BatchSelect";
 
 export function Component(): JSX.Element {
-    // const [isLoading, setIsLoading] = useState<boolean>(false);
-    // const [params, setParams] = useState<any>(parameters);
-    // const [results, setResults] = useState<any>(summs);
-    // const [summ, setSummary] = useState<any>(summary);
-
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [activeBatch, setActiveBatch] = useState<any>(null);
-    const [data, setData] = useState<any>({});
+    const [data, setData] = useState<any>(null);
 
-    const onBatchClicked = (id: number) => {};
+    const onBatchClicked = async (id: string) => {
+        setIsLoading(true);
+        setActiveBatch(id);
+        console.log("Fetching Data for Batch: " + id);
+        const response = await fetch("/experiment?name=" + id);
+        const jsonData = await response.json();
+        console.log(jsonData);
+        setData(jsonData);
+        setIsLoading(false);
+    };
 
     return (
         <div className={styles.layout}>
             <EvalSidebar />
             <section className={styles.mainContent}>
-                {activeBatch ? <BatchExperiment jsonData={data} /> : <BatchSelect onBatchClicked={onBatchClicked} />}
+                {data ? (
+                    <BatchExperiment jsonData={data} />
+                ) : activeBatch ? (
+                    <h1>Loading Experiment Data...</h1>
+                ) : (
+                    <BatchSelect onBatchClicked={onBatchClicked} />
+                )}
             </section>
         </div>
     );

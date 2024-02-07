@@ -13,20 +13,19 @@ const BatchExperiment = ({ jsonData }: Props) => {
 
     console.log(jsonData);
 
-    const params = jsonData.parameters;
-    const results = jsonData.results;
-    const summ = jsonData.summary;
+    const params = jsonData["parameters.json"];
+    const results = jsonData["eval_results.jsonl"];
+    const summ = jsonData["summary.json"];
 
     const setActiveSampleQ = (question: string) => {
-        const newActiveSample = results.default.find((sample: any) => sample.question === question);
+        const newActiveSample = results.find((sample: any) => sample.question === question);
+        console.log(newActiveSample);
         setActiveSample(newActiveSample);
     };
 
     const removeActiveSample = () => {
         setActiveSample(null);
     };
-
-    console.log(results);
 
     return (
         <div>
