@@ -257,6 +257,8 @@ pandas==2.2.0
     # via openai
 pandas-stubs==2.1.4.231227
     # via openai
+pillow==10.2.0
+    # via -r requirements.in
 portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
@@ -315,6 +317,8 @@ tiktoken==0.5.2
     # via -r requirements.in
 tqdm==4.66.1
     # via openai
+types-pillow==10.2.0.20240206
+    # via -r requirements.in
 types-pytz==2023.4.0.20240130
     # via pandas-stubs
 typing-extensions==4.9.0
