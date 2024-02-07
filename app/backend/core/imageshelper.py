@@ -40,7 +40,8 @@ async def fetch_image(blob_container_client: ContainerClient, result: Document) 
     return None
 
 
-def get_image_dims(image):
+def get_image_dims(image: str) -> tuple[int, int]:
+    # From https://github.com/openai/openai-cookbook/pull/881/files
     if re.match(r"data:image\/\w+;base64", image):
         image = re.sub(r"data:image\/\w+;base64,", "", image)
         image = Image.open(BytesIO(base64.b64decode(image)))
@@ -49,8 +50,9 @@ def get_image_dims(image):
         raise ValueError("Image must be a base64 string.")
 
 
-def calculate_image_token_cost(image, detail="auto"):
-    # Constants
+def calculate_image_token_cost(image: str, detail: str = "auto") -> int:
+    # From https://github.com/openai/openai-cookbook/pull/881/files
+    # Based on https://platform.openai.com/docs/guides/vision
     LOW_DETAIL_COST = 85
     HIGH_DETAIL_COST_PER_TILE = 170
     ADDITIONAL_COST = 85
