@@ -14,15 +14,18 @@ from prepdocslib.embeddings import (
     OpenAIEmbeddings,
     OpenAIEmbeddingService,
 )
+from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import DocumentAction, FileStrategy
+from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
-from prepdocslib.pdfparser import DocumentAnalysisPdfParser, LocalPdfParser, PdfParser
+from prepdocslib.parser import Parser
+from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import SearchInfo, Strategy
-from prepdocslib.textsplitter import TextSplitter
+from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 
 def is_key_empty(key):
@@ -33,16 +36,12 @@ async def get_vision_key(credential: AsyncTokenCredential) -> Optional[str]:
     if args.visionkey:
         return args.visionkey
 
-    if args.visionKeyVaultName and args.visionKeyVaultkey:
-        key_vault_client = SecretClient(
-            vault_url=f"https://{args.visionKeyVaultName}.vault.azure.net", credential=credential
-        )
-        visionkey = await key_vault_client.get_secret(args.visionKeyVaultkey)
+    if args.keyvaultname and args.visionsecretname:
+        key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
+        visionkey = await key_vault_client.get_secret(args.visionsecretname)
         return visionkey.value
     else:
-        print(
-            "Error: Please provide --visionkey or --visionKeyVaultName and --visionKeyVaultkey when using --searchimages."
-        )
+        print("Error: Please provide --visionkey or --keyvaultname and --visionsecretname when using --searchimages.")
         exit(1)
 
 
@@ -56,25 +55,29 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
         verbose=args.verbose,
     )
 
-    pdf_parser: PdfParser
-    if args.localpdfparser:
-        pdf_parser = LocalPdfParser()
-    else:
-        # check if Azure Document Intelligence credentials are provided
-        if args.formrecognizerservice is None:
-            print(
-                "Error: Azure Document Intelligence service is not provided. Please provide --formrecognizerservice or use --localpdfparser for local pypdf parser."
-            )
-            exit(1)
+    pdf_parser: Parser
+    doc_int_parser: DocumentAnalysisParser
+
+    # check if Azure Document Intelligence credentials are provided
+    if args.formrecognizerservice is not None:
         formrecognizer_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
             credential if is_key_empty(args.formrecognizerkey) else AzureKeyCredential(args.formrecognizerkey)
         )
-        pdf_parser = DocumentAnalysisPdfParser(
+        doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/",
             credential=formrecognizer_creds,
             verbose=args.verbose,
         )
-
+    if args.localpdfparser or args.formrecognizerservice is None:
+        pdf_parser = LocalPdfParser()
+    else:
+        pdf_parser = doc_int_parser
+    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=args.searchimages)
+    file_processors = {
+        ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
+        ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
+        ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
+    }
     use_vectors = not args.novectors
     embeddings: Optional[OpenAIEmbeddings] = None
     if use_vectors and args.openaihost != "openai":
@@ -132,8 +135,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
     return FileStrategy(
         list_file_strategy=list_file_strategy,
         blob_manager=blob_manager,
-        pdf_parser=pdf_parser,
-        text_splitter=TextSplitter(has_image_embeddings=args.searchimages),
+        file_processors=file_processors,
         document_action=document_action,
         embeddings=embeddings,
         image_embeddings=image_embeddings,
@@ -144,9 +146,16 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Fi
 
 
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
+    search_key = args.searchkey
+    if args.keyvaultname and args.searchsecretname:
+        key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
+        search_key = (await key_vault_client.get_secret(args.searchsecretname)).value
+        await key_vault_client.close()
+
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
-        credential if is_key_empty(args.searchkey) else AzureKeyCredential(args.searchkey)
+        credential if is_key_empty(search_key) else AzureKeyCredential(search_key)
     )
+
     search_info = SearchInfo(
         endpoint=f"https://{args.searchservice}.search.windows.net/",
         credential=search_creds,
@@ -216,6 +225,11 @@ if __name__ == "__main__":
         help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
+        "--searchsecretname",
+        required=False,
+        help="Required if searchkey is not provided and search service is free sku. Fetch the Azure AI Vision key from this keyvault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+    )
+    parser.add_argument(
         "--searchanalyzername",
         required=False,
         default="en.microsoft",
@@ -283,17 +297,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--visionkey",
         required=False,
-        help="Required if --searchimages is specified. Use this Azure AI Vision key instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required if --searchimages is specified. Use this Azure AI Vision key instead of the instead of the current user identity to login.",
     )
     parser.add_argument(
-        "--visionKeyVaultName",
+        "--keyvaultname",
         required=False,
-        help="Required if --searchimages is specified and visionkey is not provided. Fetch the Azure AI Vision key from this keyvault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required only if any keys must be fetched from the key vault.",
     )
     parser.add_argument(
-        "--visionKeyVaultkey",
+        "--visionsecretname",
         required=False,
-        help="Required if --searchimages is specified and visionKeyVaultName is provided. Fetch the Azure AI Vision key from this visionKeyVaultName in the key vault instead of the instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Required if --searchimages is specified and --keyvaultname is provided. Fetch the Azure AI Vision key from this key vault instead of using the current user identity to login.",
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()

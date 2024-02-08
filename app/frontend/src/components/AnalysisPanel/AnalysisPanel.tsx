@@ -7,6 +7,10 @@ import { SupportingContent } from "../SupportingContent";
 import { ChatAppResponse } from "../../api";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 import { ThoughtProcess } from "./ThoughtProcess";
+import { useMsal } from "@azure/msal-react";
+import { getHeaders } from "../../api";
+import { useLogin, getToken } from "../../authConfig";
+import { useState, useEffect } from "react";
 
 interface Props {
     className: string;
@@ -23,6 +27,25 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     const isDisabledThoughtProcessTab: boolean = !answer.choices[0].context.thoughts;
     const isDisabledSupportingContentTab: boolean = !answer.choices[0].context.data_points;
     const isDisabledCitationTab: boolean = !activeCitation;
+    const [citation, setCitation] = useState("");
+
+    const client = useLogin ? useMsal().instance : undefined;
+
+    const fetchCitation = async () => {
+        const token = client ? await getToken(client) : undefined;
+        if (activeCitation) {
+            const response = await fetch(activeCitation, {
+                method: "GET",
+                headers: getHeaders(token)
+            });
+            const citationContent = await response.blob();
+            const citationObjectUrl = URL.createObjectURL(citationContent);
+            setCitation(citationObjectUrl);
+        }
+    };
+    useEffect(() => {
+        fetchCitation();
+    }, []);
 
     return (
         <Pivot
@@ -50,9 +73,9 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerButtonProps={isDisabledCitationTab ? pivotItemDisabledStyle : undefined}
             >
                 {activeCitation?.endsWith(".png") ? (
-                    <img src={activeCitation} className={styles.citationImg} />
+                    <img src={citation} className={styles.citationImg} />
                 ) : (
-                    <iframe title="Citation" src={activeCitation} width="100%" height={citationHeight} />
+                    <iframe title="Citation" src={citation} width="100%" height={citationHeight} />
                 )}
             </PivotItem>
         </Pivot>

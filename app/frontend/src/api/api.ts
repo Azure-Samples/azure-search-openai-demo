@@ -3,7 +3,7 @@ const BACKEND_URI = "";
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
-function getHeaders(idToken: string | undefined): Record<string, string> {
+export function getHeaders(idToken: string | undefined): Record<string, string> {
     var headers: Record<string, string> = {
         "Content-Type": "application/json"
     };

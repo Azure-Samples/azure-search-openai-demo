@@ -1,7 +1,7 @@
 pypdf
 aiohttp
 azure-identity
-azure-search-documents==11.4.0b11
+azure-search-documents==11.6.0b1
 azure-ai-formrecognizer
 azure-storage-blob
 azure-storage-file-datalake
@@ -12,3 +12,5 @@ azure-keyvault-secrets
 Pillow
 PyMuPDF
 types-Pillow
+cryptography
+python-jose[cryptography]
