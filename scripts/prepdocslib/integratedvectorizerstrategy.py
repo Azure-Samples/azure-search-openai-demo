@@ -148,7 +148,7 @@ class IntegratedVectorizerStrategy(Strategy):
             type="azureblob",
             connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
-            data_deletion_detection_policy=NativeBlobSoftDeleteDeletionDetectionPolicy()
+            data_deletion_detection_policy=NativeBlobSoftDeleteDeletionDetectionPolicy(),
         )
 
         await ds_client.create_or_update_data_source_connection(data_source_connection)
