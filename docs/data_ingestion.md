@@ -47,6 +47,8 @@ This feature cannot be used on existing index. You need to create a new index or
 Index schema:
 A new field 'parent_id' is added to the index. This is used internally by indexer to manage life cycle of chunks.
 
+This feature is not supported in free sku. To support in basic sku, please remove semantic ranker options from integratedvectorizationstrategy.
+
 ### Removing documents from search index
 Once documents are removed from datasource such as blob, indexers in ai search is responsible to keep track and remove documents from the index. 
 
