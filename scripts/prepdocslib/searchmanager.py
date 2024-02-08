@@ -4,19 +4,18 @@ from typing import List, Optional
 
 # Workaround to use the preview SDK
 from azure.search.documents.indexes.models import (
+    HnswAlgorithmConfiguration,
     HnswParameters,
-    HnswVectorSearchAlgorithmConfiguration,
-    PrioritizedFields,
     SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
     SemanticConfiguration,
     SemanticField,
-    SemanticSettings,
+    SemanticPrioritizedFields,
+    SemanticSearch,
     SimpleField,
     VectorSearch,
-    VectorSearchAlgorithmKind,
     VectorSearchProfile,
     VectorSearchVectorizer,
 )
@@ -94,7 +93,7 @@ class SearchManager:
                     sortable=False,
                     facetable=False,
                     vector_search_dimensions=1536,
-                    vector_search_profile="embedding_config",
+                    vector_search_profile_name="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                 SimpleField(
@@ -138,36 +137,34 @@ class SearchManager:
                         sortable=False,
                         facetable=False,
                         vector_search_dimensions=1024,
-                        vector_search_profile="embedding_config",
+                        vector_search_profile_name="embedding_config",
                     ),
                 )
 
             index = SearchIndex(
                 name=self.search_info.index_name,
                 fields=fields,
-                semantic_settings=SemanticSettings(
+                semantic_search=SemanticSearch(
                     configurations=[
                         SemanticConfiguration(
                             name="default",
-                            prioritized_fields=PrioritizedFields(
-                                title_field=None,
-                                prioritized_content_fields=[SemanticField(field_name="content")],
+                            prioritized_fields=SemanticPrioritizedFields(
+                                title_field=None, content_fields=[SemanticField(field_name="content")]
                             ),
                         )
                     ]
                 ),
                 vector_search=VectorSearch(
                     algorithms=[
-                        HnswVectorSearchAlgorithmConfiguration(
+                        HnswAlgorithmConfiguration(
                             name="hnsw_config",
-                            kind=VectorSearchAlgorithmKind.HNSW,
                             parameters=HnswParameters(metric="cosine"),
                         )
                     ],
                     profiles=[
                         VectorSearchProfile(
                             name="embedding_config",
-                            algorithm="hnsw_config",
+                            algorithm_configuration_name="hnsw_config",
                             vectorizer="myOpenAI" if self.use_int_vectorization else None,
                         ),
                     ],

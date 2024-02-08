@@ -112,7 +112,7 @@ class RetrieveThenReadVisionApproach(Approach):
         image_list: list[ChatCompletionContentPartImageParam] = []
         user_content: list[ChatCompletionContentPartParam] = [{"text": q, "type": "text"}]
 
-        template = overrides.get("prompt_template") or (self.system_chat_template_gpt4v)
+        template = overrides.get("prompt_template", self.system_chat_template_gpt4v)
         model = self.gpt4v_model
         message_builder = MessageBuilder(template, model)
 
@@ -137,7 +137,7 @@ class RetrieveThenReadVisionApproach(Approach):
             await self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
                 messages=message_builder.messages,
-                temperature=overrides.get("temperature") or 0.3,
+                temperature=overrides.get("temperature", 0.3),
                 max_tokens=1024,
                 n=1,
             )
