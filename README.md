@@ -209,13 +209,13 @@ You can also customize the search service (new or existing) for non-English sear
 
 #### Existing Azure Document Intelligence resource
 
-In order to support analysis of many document formats, this repository uses a preview version of the Document Intelligence service that is only available in [limited regions](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout).
+In order to support analysis of many document formats, this repository uses a preview version of Azure Document Intelligence (formerly Form Recognizer) that is only available in [limited regions](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout).
 If your existing resource is in one of those regions, then you can re-use it by setting the following environment variables:
 
-1. Run `azd env set AZURE_FORMRECOGNIZER_SERVICE {Name of existing Azure AI Document Intelligence service}`
-1. Run `azd env set AZURE_FORMRECOGNIZER_LOCATION {Location of existing service}`
-1. Run `azd env set AZURE_FORMRECOGNIZER_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}`
-1. Run `azd env set AZURE_FORMRECOGNIZER_SKU {SKU of existing service, defaults to S0}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SERVICE {Name of existing Azure AI Document Intelligence service}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_LOCATION {Location of existing service}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SKU {SKU of existing service, defaults to S0}`
 
 #### Other existing Azure resources
 
