@@ -285,7 +285,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--subscriptionid",
         required=False,
-        help="Optional. Use this to define the Azure directory where to authenticate)",
+        help="Optional. Use this to define managed identity connection string in integrated vectorization",
     )
     parser.add_argument(
         "--searchservice",
@@ -293,7 +293,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--searchserviceassignedid",
-        help="Search service user assigned Identity to authenticate (must exist already)",
+        help="Search service system assigned Identity (Managed identity) to authenticate (used for integrated vectorization)",
     )
     parser.add_argument(
         "--index",

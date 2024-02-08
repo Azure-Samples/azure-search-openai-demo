@@ -42,6 +42,11 @@ Azure AI search has introduced an [integrated vectorization feature in preview m
 
 Offical integrated vectorization example https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/azure-search-integrated-vectorization-sample.ipynb
 
+This feature cannot be used on existing index. You need to create a new index or drop and recreate an existing index.
+
+Index schema:
+A new field 'parent_id' is added to the index. This is used internally by indexer to manage life cycle of chunks.
+
 ### Removing documents from search index
 Once documents are removed from datasource such as blob, indexers in ai search is responsible to keep track and remove documents from the index. 
 

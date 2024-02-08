@@ -49,7 +49,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
         for index in []:
             yield index
 
-    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(
@@ -72,7 +72,7 @@ async def test_create_index_using_int_vectorization(monkeypatch, search_info):
         for index in []:
             yield index
 
-    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(search_info, use_int_vectorization=True)
@@ -92,7 +92,7 @@ async def test_create_index_does_exist(monkeypatch, search_info):
     async def mock_list_index_names(self):
         yield "test"
 
-    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(
@@ -113,7 +113,7 @@ async def test_create_index_acls(monkeypatch, search_info):
         for index in []:
             yield index
 
-    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     manager = SearchManager(

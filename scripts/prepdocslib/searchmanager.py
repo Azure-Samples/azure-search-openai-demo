@@ -2,7 +2,6 @@ import asyncio
 import os
 from typing import List, Optional
 
-# Workaround to use the preview SDK
 from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration,
     HnswParameters,
@@ -165,7 +164,7 @@ class SearchManager:
                         VectorSearchProfile(
                             name="embedding_config",
                             algorithm_configuration_name="hnsw_config",
-                            vectorizer="myOpenAI" if self.use_int_vectorization else None,
+                            vectorizer=f"{self.search_info.index_name}-vectorizer" if self.use_int_vectorization else None,
                         ),
                     ],
                     vectorizers=vectorizers,
@@ -174,7 +173,7 @@ class SearchManager:
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
                 if self.search_info.verbose:
                     print(f"Creating {self.search_info.index_name} search index")
-                await search_index_client.create_or_update_index(index)
+                await search_index_client.create_index(index)
             else:
                 if self.search_info.verbose:
                     print(f"Search index {self.search_info.index_name} already exists")
