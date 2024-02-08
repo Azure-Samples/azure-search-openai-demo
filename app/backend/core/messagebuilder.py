@@ -1,4 +1,5 @@
 import unicodedata
+from collections.abc import Mapping
 from typing import List, Union
 
 from openai.types.chat import (
@@ -52,7 +53,7 @@ class MessageBuilder:
             raise ValueError(f"Invalid role: {role}")
         self.messages.insert(index, message)
 
-    def count_tokens_for_message(self, message: dict[str, str]):
+    def count_tokens_for_message(self, message: Mapping[str, object]):
         return num_tokens_from_messages(message, self.model)
 
     def normalize_content(self, content: Union[str, List[ChatCompletionContentPartParam]]):
