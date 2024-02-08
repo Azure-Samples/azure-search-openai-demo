@@ -22,10 +22,44 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # azd required
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      # project specific
+      AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
+      AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
+      AZURE_FORMRECOGNIZER_SERVICE: ${{ vars.AZURE_FORMRECOGNIZER_SERVICE }}
+      AZURE_FORMRECOGNIZER_RESOURCE_GROUP: ${{ vars.AZURE_FORMRECOGNIZER_RESOURCE_GROUP }}
+      AZURE_FORMRECOGNIZER_SKU: ${{ vars.AZURE_FORMRECOGNIZER_SKU }}
+      AZURE_SEARCH_INDEX: ${{ vars.AZURE_SEARCH_INDEX }}
+      AZURE_SEARCH_SERVICE: ${{ vars.AZURE_SEARCH_SERVICE }}
+      AZURE_SEARCH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SEARCH_SERVICE_RESOURCE_GROUP }}
+      AZURE_SEARCH_SERVICE_LOCATION: ${{ vars.AZURE_SEARCH_SERVICE_LOCATION }}
+      AZURE_SEARCH_SERVICE_SKU: ${{ vars.AZURE_SEARCH_SERVICE_SKU }}
+      AZURE_SEARCH_QUERY_LANGUAGE: ${{ vars.AZURE_SEARCH_QUERY_LANGUAGE }}
+      AZURE_SEARCH_QUERY_SPELLER: ${{ vars.AZURE_SEARCH_QUERY_SPELLER }}
+      AZURE_SEARCH_SEMANTIC_RANKER: ${{ vars.AZURE_SEARCH_SEMANTIC_RANKER }}
+      AZURE_STORAGE_ACCOUNT: ${{ vars.AZURE_STORAGE_ACCOUNT }}
+      AZURE_STORAGE_RESOURCE_GROUP: ${{ vars.AZURE_STORAGE_RESOURCE_GROUP }}
+      AZURE_STORAGE_SKU: ${{ vars.AZURE_STORAGE_SKU }}
+      AZURE_APP_SERVICE_SKU: ${{ vars.AZURE_APP_SERVICE_SKU }}
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT }}
+      AZURE_OPENAI_EMB_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT }}
+      OPENAI_HOST: ${{ vars.OPENAI_HOST }}
+      OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+      OPENAI_ORGANIZATION: ${{ vars.OPENAI_ORGANIZATION }}
+      AZURE_USE_APPLICATION_INSIGHTS: ${{ vars.AZURE_USE_APPLICATION_INSIGHTS }}
+      USE_VECTORS: ${{ vars.USE_VECTORS }}
+      USE_GPT4V: ${{ vars.USE_GPT4V }}
+      AZURE_USE_AUTHENTICATION: ${{ vars.AZURE_USE_AUTHENTICATION }}
+      AZURE_ENFORCE_ACCESS_CONTROL: ${{ vars.AZURE_ENFORCE_ACCESS_CONTROL }}
+      AZURE_AUTH_TENANT_ID: ${{ vars.AZURE_AUTH_TENANT_ID }}
+      AZURE_SERVER_APP_ID: ${{ vars.AZURE_SERVER_APP_ID }}
+      AZURE_CLIENT_APP_ID: ${{ vars.AZURE_CLIENT_APP_ID }}
+      ALLOWED_ORIGIN: ${{ vars.ALLOWED_ORIGIN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -46,7 +80,7 @@ jobs:
             --federated-credential-provider "github" `
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
-
+     
       - name: Log in with Azure (Client Credentials)
         if: ${{ env.AZURE_CREDENTIALS != '' }}
         run: |
@@ -64,14 +98,9 @@ jobs:
       - name: Provision Infrastructure
         run: azd provision --no-prompt
         env:
-          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+          AZURE_SERVER_APP_SECRET: ${{ secrets.AZURE_SERVER_APP_SECRET }}
+          AZURE_CLIENT_APP_SECRET: ${{ secrets.AZURE_CLIENT_APP_SECRET }}
 
       - name: Deploy Application
         run: azd deploy --no-prompt
-        env:
-          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
