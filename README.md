@@ -57,7 +57,7 @@ This sample demonstrates a few approaches for creating ChatGPT-like experiences 
 
 The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
 
-![RAG Architecture](docs/appcomponents.png)
+![RAG Architecture](docs/images/appcomponents.png)
 
 ## Features
 
@@ -67,7 +67,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 * Settings directly in the UX to tweak the behavior and experiment with options
 * Performance tracing and monitoring with Application Insights
 
-![Chat screen](docs/chatscreen.png)
+![Chat screen](docs/images/chatscreen.png)
 
 [📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
 
@@ -297,7 +297,7 @@ By default, deployed apps use Application Insights for the tracing of each reque
 To see the performance data, go to the Application Insights resource in your resource group, click on the "Investigate -> Performance" blade and navigate to any HTTP request to see the timing data.
 To inspect the performance of chat requests, use the "Drill into Samples" button to see end-to-end traces of all the API calls made for any chat request:
 
-![Tracing screenshot](docs/transaction-tracing.png)
+![Tracing screenshot](docs/images/transaction-tracing.png)
 
 To see any exceptions and server errors, navigate to the "Investigate -> Failures" blade and use the filtering tools to locate a specific exception. You can see Python stack traces on the right-hand side.
 

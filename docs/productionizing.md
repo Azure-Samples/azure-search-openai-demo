@@ -89,6 +89,6 @@ From there, you can keep increasing the number of users to simulate your expecte
 
 Here's an example loadtest for 50 users and a spawn rate of 1 per second:
 
-![Screenshot of Locust charts showing 5 requests per second](screenshot_locust.png)
+![Screenshot of Locust charts showing 5 requests per second](images/screenshot_locust.png)
 
 After each test, check the local or App Service logs to see if there are any errors.

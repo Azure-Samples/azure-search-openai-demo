@@ -129,7 +129,7 @@ If the problem is with Azure AI Search (step 2 above), the first step is to chec
 
 You can change many of the search parameters in the "Developer settings" in the frontend and see if results improve for your queries. The most relevant options:
 
-![Screenshot of search options in developer settings](screenshot_searchoptions.png)
+![Screenshot of search options in developer settings](images/screenshot_searchoptions.png)
 
 #### Configuring parameters in the Azure Portal
 
@@ -159,7 +159,7 @@ You can also use the `highlight` parameter to see what text is being matched in 
 }
 ```
 
-![Screenshot of search explorer with highlighted results](screenshot_searchindex.png)
+![Screenshot of search explorer with highlighted results](images/screenshot_searchindex.png)
 
 The search explorer works well for testing text, but is harder to use with vectors, since you'd also need to compute the vector embedding and send it in. It is probably easier to use the app frontend for testing vectors/hybrid search.
 

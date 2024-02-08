@@ -6,7 +6,7 @@ This guide provides more details for using the `prepdocs` script to index docume
 
 The `scripts/prepdocs.py` script is responsible for both uploading and indexing documents. The typical usage is to call it using `scripts/prepdocs.sh` (Mac/Linux) or `scripts/prepdocs.ps1` (Windows), as these scripts will set up a Python virtual environment and pass in the required parameters based on the current `azd` environment. Whenever `azd up` or `azd provision` is run, the script is called automatically.
 
-![Diagram of the indexing process](diagram_prepdocs.png)
+![Diagram of the indexing process](images/diagram_prepdocs.png)
 
 The script uses the following steps to index documents:
 
