@@ -208,7 +208,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
         document_action=document_action,
         embeddings=embeddings,
         subscription_id=args.subscriptionid,
-        search_service_user_assgined_id=args.searchserviceassignedid,
+        search_service_user_assigned_id=args.searchserviceassignedid,
         search_analyzer_name=args.searchanalyzername,
         use_acls=args.useacls,
         category=args.category,

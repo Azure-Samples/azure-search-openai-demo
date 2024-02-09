@@ -39,7 +39,7 @@ class IntegratedVectorizerStrategy(Strategy):
         blob_manager: BlobManager,
         embeddings: Optional[AzureOpenAIEmbeddingService],
         subscription_id: str,
-        search_service_user_assgined_id: str,
+        search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
@@ -53,7 +53,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self.document_action = document_action
         self.embeddings = embeddings
         self.subscription_id = subscription_id
-        self.search_user_assigned_identity = search_service_user_assgined_id
+        self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
@@ -156,6 +156,7 @@ class IntegratedVectorizerStrategy(Strategy):
 
         embedding_skillset = await self.create_embedding_skill(search_info.index_name)
         await ds_client.create_or_update_skillset(embedding_skillset)
+        await ds_client.close()
 
         await ds_client.close()
 
@@ -193,6 +194,7 @@ class IntegratedVectorizerStrategy(Strategy):
 
         # Run the indexer
         await indexer_client.run_indexer(indexer_name)
+        await indexer_client.close()
 
         print(
             f"Successfully created index, indexer: {indexer_result.name}, and skillset. Please navigate to search service in Azure Portal to view the status of the indexer."
