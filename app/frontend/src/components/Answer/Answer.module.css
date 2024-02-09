@@ -139,6 +139,7 @@ sup {
 .satisfactionContainer {
     display: flex;
     margin-right: 0;
+    margin-top: 0.5rem;
 }
 
 .satisfactory {
@@ -152,6 +153,7 @@ sup {
 .feedbackContainer {
     display: flex;
     justify-content: right;
+    padding-top: 0.5rem;
 }
 
 .textInput {

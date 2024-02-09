@@ -2,39 +2,38 @@ import { divProperties } from "@fluentui/react";
 import { useState, useEffect } from "react";
 
 import styles from "./BatchExperiment.module.css";
+import axios from "axios";
 
 interface Props {
     onBatchClicked: (id: string) => void;
 }
 
 const BatchSelect = ({ onBatchClicked }: Props) => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                console.log("Fetching Data");
-                const response = await fetch("/experiment_list");
-                const jsonData = await response.json();
+                const response = await axios("/experiment_list");
+                const jsonData = await response.data;
                 setData(jsonData);
-                console.log(data);
                 setIsLoading(false);
-            } catch (e) {
-                console.log(e);
+            } catch (error) {
+                console.log(error);
             }
         };
 
         fetchData();
     }, []);
 
-    console.log(data);
-
     return (
         <div className={styles.batchSelect}>
             <button className={styles.batchEvalButton}>Evaluate New Batch</button>
-            {data ? (
+            {isLoading ? (
+                <h1>Loading Available Experiments...</h1>
+            ) : (
                 <div className={styles.experimentSelect}>
                     {data.experiment_names.map((batch: string) => (
                         <button className={styles.experiment} onClick={() => onBatchClicked(batch)}>
@@ -42,8 +41,6 @@ const BatchSelect = ({ onBatchClicked }: Props) => {
                         </button>
                     ))}
                 </div>
-            ) : (
-                <h1>Loading Available Experiments...</h1>
             )}
         </div>
     );

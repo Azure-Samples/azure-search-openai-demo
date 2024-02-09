@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { IconButton } from "@fluentui/react";
 
+import { useState } from "react";
 import EvalItemDetailed from "../EvalItem/EvalItemDetailed";
 import EvalItem from "../EvalItem/EvalItem";
 import BatchScorecard from "./BatchScorecard";
 
 interface Props {
     jsonData: any;
+    onRemove: () => void;
 }
 
-const BatchExperiment = ({ jsonData }: Props) => {
+const BatchExperiment = ({ jsonData, onRemove }: Props) => {
     const [activeSample, setActiveSample] = useState<any>(null);
 
     console.log(jsonData);
@@ -29,6 +31,13 @@ const BatchExperiment = ({ jsonData }: Props) => {
 
     return (
         <div>
+            <IconButton
+                style={{ color: "black" }}
+                iconProps={{ iconName: "ChevronLeftMed" }}
+                title="Back to overview"
+                ariaLabel="Back to overview"
+                onClick={() => onRemove()}
+            />
             <BatchScorecard experimentName="Test Experiment 1" summ={summ} />
             <section>
                 {activeSample ? (

@@ -120,7 +120,7 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: 1rem;
-    row-gap: 0.5rem;
+    row-gap: 1rem;
 }
 
 .evalItemDetailedTextContainer span {
