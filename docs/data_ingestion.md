@@ -7,9 +7,9 @@ This guide provides more details for using the `prepdocs` script to index docume
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Overview of Integrated Vectorization](#overview-of-integrated-vectorization)
-  - [Automatic indexing of additional documents](#automatic-indexing-of-additional-documents)
-  - [Automatic removal of documents](#automatic-removal-of-documents)
-
+  - [Indexing additional documents](#indexing-additional-documents-1)
+  - [Removing documents](#removing-documents-1)
+  - [Scheduled indexing](#scheduled-indexing)
 
 ## Overview of the manual indexing process
 
@@ -58,12 +58,18 @@ In the newly created index schema, a new field 'parent_id' is added. This is use
 
 This feature is not supported in the free SKU for Azure AI Search. To use this feature in the basic SKU, please remove semantic ranker options from integratedvectorizationstrategy.
 
-### Automatic indexing of additional documents
+### Indexing of additional documents
 
 To add additional documents to the index, first upload them to your data source (Blob storage, by default).
-The Azure AI Search indexer will take care of extracting text, chunking, vectorizing, and uploading chunks to the index.
+Then navigate to the Azure portal, find the index, and run it.
+The Azure AI Search indexer will identify the new documents and ingest them into the index.
 
-### Automatic removal of documents
+### Removing documents
 
 To remove documents from the index, remove them from your data source (Blob storage, by default).
+Then navigate to the Azure portal, find the index, and run it.
 The Azure AI Search indexer will take care of removing those documents from the index.
+
+### Scheduled indexing
+
+If you would like the indexer to run automatically, you can set it up to [run on a schedule](https://learn.microsoft.com/azure/search/search-howto-schedule-indexers).
