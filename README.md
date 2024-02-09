@@ -280,6 +280,7 @@ For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed
 For an alternate frontend that's written in Web Components and deployed to Static Web Apps, check out
 [azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
 on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
+Both these repositories adhere to the same [HTTP protocol for RAG chat apps](https://github.com/Azure-Samples/ai-chat-app-protocol).
 
 ## Running locally
 
