@@ -56,7 +56,7 @@ We have integrated that code into our `prepdocs` script, so you can use it witho
 This feature cannot be used on existing index. You need to create a new index or drop and recreate an existing index.
 In the newly created index schema, a new field 'parent_id' is added. This is used internally by the indexer to manage life cycle of chunks.
 
-This feature is not supported in the free SKU for Azure AI Search. To use this feature in the basic SKU, please remove semantic ranker options from integratedvectorizationstrategy.
+This feature is not supported in the free SKU for Azure AI Search.
 
 ### Automatic indexing of additional documents
 
