@@ -264,6 +264,8 @@ def mock_env(monkeypatch, request, mock_get_secret):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
