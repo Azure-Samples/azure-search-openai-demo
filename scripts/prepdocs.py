@@ -293,7 +293,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--searchserviceassignedid",
-        help="Search service system assigned Identity (Managed identity) to authenticate (used for integrated vectorization)",
+        required=False,
+        help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
     )
     parser.add_argument(
         "--index",

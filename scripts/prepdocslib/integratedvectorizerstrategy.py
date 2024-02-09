@@ -158,8 +158,6 @@ class IntegratedVectorizerStrategy(Strategy):
         await ds_client.create_or_update_skillset(embedding_skillset)
         await ds_client.close()
 
-        await ds_client.close()
-
     async def run(self, search_info: SearchInfo):
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
@@ -199,5 +197,3 @@ class IntegratedVectorizerStrategy(Strategy):
         print(
             f"Successfully created index, indexer: {indexer_result.name}, and skillset. Please navigate to search service in Azure Portal to view the status of the indexer."
         )
-
-        await indexer_client.close()
