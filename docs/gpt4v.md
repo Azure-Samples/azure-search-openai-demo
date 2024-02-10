@@ -25,7 +25,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
         - gpt-35-turbo
         - text-embedding-ada-002
         - gpt-4v
-    - [Azure AI Vision](https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/)
+    - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
 
 ### Setup and Usage
 
