@@ -37,7 +37,7 @@ Check whether the status of the most recent deploy is "Success (Active)" or "Fai
 
 Click the commit ID to open the logs for the most recent deploy. First scroll down to see if any errors or warnings are reported at the end. This is what you'll hopefully see if all went well:
 
-![Screenshot of successful deployment logs from Azure App Service](images/appservice_deployment_log.png
+![Screenshot of successful deployment logs from Azure App Service](images/appservice_deployment_log.png)
 
 Now scroll back up to find the timestamp with the label "Running oryx build".
 [Oryx](https://github.com/microsoft/Oryx) is the open source tool that builds apps for App Service, Functions, and other platforms, across all the supported MS languages. Click the _Show logs_ link next to that label. That will pop open detailed logs at the bottom. Scroll down.
@@ -546,17 +546,17 @@ If you see all those steps in the Oryx build, then that's a good sign that the b
 
 Select _Advanced Tools_ from the side nav:
 
-![Advanced Tools](./images/advanced-tools.png)
+![Advanced Tools](images/screenshot_appservice_tools.png)
 
 Select _Go_ to open the Kudu website.
 
 When the Kudu website loads, find the _Current Docker Logs_ link and select _Download as zip_ next to it:
 
-![Screenshot of section with Download logs links](./images/screenshot_appservice_dockerlogs.png)
+![Screenshot of section with Download logs links](images/screenshot_appservice_dockerlogs.png)
 
 In the downloaded zip file, find the filename that starts with the most recent date and ends with "_default_docker.log":
 
-![Screenshot of downloaded logs](./images/screenshot_appservice_downloadedlogs.png)
+![Screenshot of downloaded logs](images/screenshot_appservice_downloadedlogs.png)
 
 Open that file to see the full logs, with the most recent logs at the bottom.
 
@@ -626,7 +626,7 @@ In the Azure Portal, navigate to the Application Insights for your app.
 
 To see any exceptions and server errors, navigate to the _Investigate -> Failures_ blade and browse through the exceptions.
 
-![Screenshot of Application Insights Failures tab](./images/screenshot_appinsights_failures.png)
+![Screenshot of Application Insights Failures tab](images/screenshot_appinsights_failures.png)
 
 ## Configuring log levels
 
