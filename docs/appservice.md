@@ -9,6 +9,7 @@ If you encounter an error with that deployed app, you can debug the deployment u
 - [Checking the deployment logs for errors](#checking-the-deployment-logs-for-errors)
 - [Checking the app logs for errors](#checking-the-app-logs-for-errors)
 - [Checking Azure Monitor for errors](#checking-azure-monitor-for-errors)
+- [Configuring log levels](#configuring-log-levels)
 
 ## Debugging failed Azure App Service deployments
 
