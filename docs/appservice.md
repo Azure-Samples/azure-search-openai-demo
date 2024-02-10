@@ -626,3 +626,35 @@ In the Azure Portal, navigate to the Application Insights for your app.
 To see any exceptions and server errors, navigate to the _Investigate -> Failures_ blade and browse through the exceptions.
 
 ![Screenshot of Application Insights Failures tab](./images/screenshot_appinsights_failures.png)
+
+## Configuring log levels
+
+By default, the deployed app only logs messages with a level of `WARNING` or higher.
+
+These lines of code in `app/backend/app.py` configure the logging level:
+
+```python
+default_level = "INFO"
+if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
+    default_level = "WARNING"
+logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
+```
+
+To change the default level, either change `default_level` or set the `APP_LOG_LEVEL` environment variable
+to one of the [allowed log levels](https://docs.python.org/3/library/logging.html#logging-levels):
+`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.
+
+If you need to log in a route handler, use the the global variable `current_app`'s logger:
+
+```python
+async def chat():
+    current_app.logger.info("Received /chat request")
+```
+
+Otherwise, use the `logging` module's root logger:
+
+```python
+logging.info("System message: %s", system_message)
+```
+
+If you're having troubles finding the logs in App Service, read the section above on [checking app logs](#checking-the-app-logs-for-errors) or watch [this video about viewing App Service logs](https://www.youtube.com/watch?v=f0-aYuvws54).
