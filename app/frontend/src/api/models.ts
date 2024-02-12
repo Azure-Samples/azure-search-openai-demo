@@ -100,4 +100,5 @@ export type FeedbackRequest = {
     feedback: string;
     question: string;
     answer: ChatAppResponse;
+    comment: string;
 };

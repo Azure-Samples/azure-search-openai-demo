@@ -6,6 +6,8 @@ import mimetypes
 import os
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
+from datetime import datetime
+
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -50,7 +52,8 @@ from config import (
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
     CONFIG_VECTOR_SEARCH_ENABLED,
-    CONFIG_BLOB_EVALUATE_CONTAINER_CLIENT
+    CONFIG_BLOB_EVALUATE_CONTAINER_CLIENT,
+    CONFIG_BLOB_FEEDBACK_CONTAINER_CLIENT,
 )
 from core.authentication import AuthenticationHelper
 from decorators import authenticated, authenticated_path
@@ -200,42 +203,70 @@ async def feedback():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
-    with open("feedback.json", "a") as f:
-        f.write(json.dumps(request_json) + ", \n")
-    return jsonify({})
+    feedback = json.dumps(request_json)
+    try:
+        blob_feedback_container_client = current_app.config[CONFIG_BLOB_FEEDBACK_CONTAINER_CLIENT]
+
+        current_time = datetime.now()
+        timestamp_str = current_time.strftime("%Y%m%d%H%M%S%f")
+        filename = f"Feedback{timestamp_str}.json"
+
+        blob = blob_feedback_container_client.get_blob_client(filename)
+        await blob.upload_blob(feedback)
+
+        return jsonify("Feedback uploaded to Blob Storage succesfully")
+
+    except Exception as error:
+        return error_response(error, "/feedback")
+
+
+@bp.route("/feedback", methods=["GET"])
+async def feedback_list():
+    try:
+        blob_feedback_container_client = current_app.config[CONFIG_BLOB_FEEDBACK_CONTAINER_CLIENT]
+        blob_properties_list = blob_feedback_container_client.list_blobs(name_starts_with="Feedback")
+
+        feedback_jsons = []
+        async for blob_property in blob_properties_list:
+            blob = await blob_feedback_container_client.get_blob_client(blob_property.name).download_blob()
+            feedback_json = json.loads(await blob.content_as_text())
+            feedback_jsons.append(feedback_json)
+
+        return jsonify({"feedbacks": feedback_jsons})
+
+    except Exception as error:
+        return error_response(error, "/feedback")
+
 
 @bp.route("/experiment_list", methods=["GET"])
 async def experiment_list():
     try:
         blob_evaluate_container_client = current_app.config[CONFIG_BLOB_EVALUATE_CONTAINER_CLIENT]
-        blob_list = blob_evaluate_container_client.list_blobs()
-        
-        experiments_set  = set()
-        async for blob in blob_list:
-            folder_name = blob.name.split('/')[0]
+        blob_properties_list = blob_evaluate_container_client.list_blobs()
+
+        experiments_set = set()
+        async for blob_property in blob_properties_list:
+            folder_name = blob_property.name.split("/")[0]
             experiments_set.add(folder_name)
-            
+
         result = list(experiments_set)
         result = {"experiment_names": result}
         return jsonify(result)
     except Exception as error:
         return error_response(error, "/experiment_list")
-    
+
+
 @bp.route("/experiment", methods=["GET"])
 async def experiment():
     experiment_name = request.args.get("name")
     blob_evaluate_container_client = current_app.config[CONFIG_BLOB_EVALUATE_CONTAINER_CLIENT]
     try:
-        result = {
-            "eval_results": "",
-            "evaluate_parameters": "",
-            "summary": ""
-        }
+        result = {"eval_results": "", "evaluate_parameters": "", "summary": ""}
         for key in result.keys():
-            file_name = f'{key}.json' if "eval_results" not in key else f'{key}.jsonl'
-            path = f'{experiment_name}/{file_name}'
+            file_name = f"{key}.json" if "eval_results" not in key else f"{key}.jsonl"
+            path = f"{experiment_name}/{file_name}"
             blob = await blob_evaluate_container_client.get_blob_client(path).download_blob()
-            if file_name.endswith('.jsonl'):
+            if file_name.endswith(".jsonl"):
                 json_data = [json.loads(line) for line in (await blob.content_as_text()).splitlines() if line.strip()]
             else:
                 json_data = json.loads(await blob.content_as_text())
@@ -243,7 +274,8 @@ async def experiment():
         return jsonify(result)
     except Exception as error:
         return error_response(error, "/experiment_list")
-    
+
+
 @bp.route("/config", methods=["GET"])
 def config():
     return jsonify(
@@ -333,6 +365,7 @@ async def setup_clients():
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
     evaluate_blob_container_client = blob_client.get_container_client("batchevaluate")
+    feedback_blob_container_client = blob_client.get_container_client("feedback")
 
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
@@ -369,7 +402,7 @@ async def setup_clients():
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
     current_app.config[CONFIG_BLOB_EVALUATE_CONTAINER_CLIENT] = evaluate_blob_container_client
-    
+    current_app.config[CONFIG_BLOB_FEEDBACK_CONTAINER_CLIENT] = feedback_blob_container_client
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"

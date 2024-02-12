@@ -8,7 +8,7 @@ export function Component(): JSX.Element {
             <h1 className={styles.evalTitle}>Evaluate your results</h1>
             <div className={styles.buttonContainer}>
                 <NavLink to="/eval_cases" className={styles.evalButton}>
-                    Sample Evaluation
+                    Review Feedback
                 </NavLink>
                 <NavLink to="/eval_batch" className={styles.evalButton}>
                     Batch Evaluation

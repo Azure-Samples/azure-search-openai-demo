@@ -41,12 +41,19 @@ export const Answer = ({
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
+    const [feedbackType, setFeedbackType] = useState<string>("");
+    const [comment, setComment] = useState<string>("");
+
+    const [givingFeedback, setGivingFeedback] = useState<boolean>(false);
     const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
 
-    console.log("Question", question);
+    const onGivingFeedback = async (type: string) => {
+        setFeedbackType(type);
+        setGivingFeedback(true);
+    };
 
-    const onFeedbackClicked = async (type: string, question: string, answer: ChatAppResponse) => {
+    const onFeedbackSent = async (type: string, question: string, answer: ChatAppResponse, comment: string) => {
         error && setError(undefined);
 
         const client = useLogin ? useMsal().instance : undefined;
@@ -56,7 +63,8 @@ export const Answer = ({
             const request: FeedbackRequest = {
                 feedback: type,
                 question: question,
-                answer: answer
+                answer: answer,
+                comment: comment
             };
             const response: Response = await feedbackApi(request, token);
         } catch (e) {
@@ -140,6 +148,13 @@ export const Answer = ({
                     <div className={styles.satisfactionContainer}>
                         <span className={styles.satisfactory}>Thank you for your feedback!</span>
                     </div>
+                ) : givingFeedback ? (
+                    <div className={styles.feedbackContainer}>
+                        <input className={styles.textInput} type="text" name="comment" onChange={e => setComment(e.target.value)} />
+                        <button type="submit" onClick={() => onFeedbackSent(feedbackType, question, answer, comment)}>
+                            Send
+                        </button>
+                    </div>
                 ) : (
                     <div className={styles.satisfactionContainer}>
                         <span className={styles.satisfactory}>Did you like this response?</span>
@@ -148,7 +163,7 @@ export const Answer = ({
                             iconProps={{ iconName: "Like" }}
                             title="Show thought process"
                             ariaLabel="Show thought process"
-                            onClick={() => onFeedbackClicked("good", question, answer)}
+                            onClick={() => onGivingFeedback("good")}
                             disabled={!answer.choices[0].context.thoughts?.length}
                         />
                         <IconButton
@@ -156,7 +171,7 @@ export const Answer = ({
                             iconProps={{ iconName: "Dislike" }}
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
-                            onClick={() => onFeedbackClicked("bad", question, answer)}
+                            onClick={() => onGivingFeedback("bad")}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>

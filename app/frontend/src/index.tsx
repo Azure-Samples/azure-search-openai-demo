@@ -59,7 +59,7 @@ const router = createHashRouter([
             },
             {
                 path: "eval_cases",
-                lazy: () => import("./pages/eval/EvalCases")
+                lazy: () => import("./pages/eval/EvalFeedback")
             },
             {
                 path: "eval_batch",
