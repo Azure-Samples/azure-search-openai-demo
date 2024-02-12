@@ -36,6 +36,7 @@ param storageResourceGroupName string = ''
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageEvaluateContainerName string = 'batchevaluate'
+param storageFeedbackContainerName string = 'feedback'
 param storageSkuName string // Set in main.parameters.json
 
 param appServiceSkuName string // Set in main.parameters.json
@@ -419,6 +420,9 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }, {
         name: storageEvaluateContainerName
+        publicAccess: 'None'
+      }, {
+        name: storageFeedbackContainerName
         publicAccess: 'None'
       }
     ]
