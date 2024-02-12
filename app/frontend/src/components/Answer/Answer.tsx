@@ -48,8 +48,6 @@ export const Answer = ({
     const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
 
-    console.log("Question", question);
-
     const onGivingFeedback = async (type: string) => {
         setFeedbackType(type);
         setGivingFeedback(true);

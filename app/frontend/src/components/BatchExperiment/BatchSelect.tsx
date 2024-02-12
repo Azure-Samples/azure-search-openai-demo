@@ -21,7 +21,6 @@ const BatchSelect = ({ onBatchClicked }: Props) => {
                 const jsonData = await response.data;
                 setData(jsonData);
                 setIsLoading(false);
-                ("");
             } catch (error) {
                 console.log(error);
             }

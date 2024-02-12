@@ -49,6 +49,16 @@
     cursor: pointer;
 }
 
+.feedbackGood {
+    border-left: solid;
+    border-left-color: green;
+}
+
+.feedbackBad {
+    border-left: solid;
+    border-left-color: red;
+}
+
 /* .feedbackItem p {
     margin: auto auto;
 } */

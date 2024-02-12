@@ -17,9 +17,9 @@ interface Props {
 const BatchExperiment = ({ jsonData, onRemove }: Props) => {
     const [activeSample, setActiveSample] = useState<any>(null);
 
-    const params = jsonData["parameters.json"];
-    const results = jsonData["eval_results.jsonl"];
-    const summ = jsonData["summary.json"];
+    const params = jsonData.parameters;
+    const results = jsonData.eval_results;
+    const summ = jsonData.summary;
 
     const setActiveSampleQ = (question: string) => {
         const newActiveSample = results.find((sample: any) => sample.question === question);

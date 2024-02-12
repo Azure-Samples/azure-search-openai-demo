@@ -2,6 +2,7 @@ import { ChatAppResponse } from "../../api";
 import styles from "./FeedbackItem.module.css";
 import { IconButton } from "@fluentui/react";
 import { SupportingContent } from "../SupportingContent";
+import { Icon } from "@fluentui/react/lib/Icon";
 
 interface Props {
     id: number;
@@ -31,25 +32,7 @@ const FeedbackItemDetailed = ({ id, feedback, question, answer, comment, removeA
             />
             <div className={styles.feedbackItem}>
                 <span>Feedback</span>
-                <p>
-                    {feedback === "good" ? (
-                        <IconButton
-                            style={{ color: "green" }}
-                            iconProps={{ iconName: "CheckMark" }}
-                            title="Good Feedback"
-                            ariaLabel="Good Feedback"
-                            disabled={!answer.choices[0].context.thoughts?.length}
-                        />
-                    ) : (
-                        <IconButton
-                            style={{ color: "red" }}
-                            iconProps={{ iconName: "Cancel" }}
-                            title="Bad Feedback"
-                            ariaLabel="Bad Feedback"
-                            disabled={!answer.choices[0].context.data_points}
-                        />
-                    )}
-                </p>
+                <p>{feedback === "good" ? <Icon iconName="Like" /> : <Icon iconName="Dislike" />}</p>
                 <span>Comment</span>
                 <p>{comment}</p>
                 <span>Question</span>
