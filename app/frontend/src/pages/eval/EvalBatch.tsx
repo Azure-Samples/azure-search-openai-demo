@@ -18,7 +18,6 @@ export function Component(): JSX.Element {
         try {
             setIsLoading(true);
             setActiveBatch(id);
-            console.log("Fetching Data for Batch: " + id);
             const response = await axios("/experiment?name=" + id);
             const jsonData = await response.data;
             setData(jsonData);

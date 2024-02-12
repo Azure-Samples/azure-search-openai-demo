@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { v4 as uuidv4 } from "uuid";
+
 import * as fb from "../../data/feedback.json";
 import EvalSidebar from "../../components/EvalSidebar/EvalSidebar";
 import FeedbackItem from "../../components/FeedbackItem/FeedbackItem";
@@ -36,7 +38,9 @@ export function Component(): JSX.Element {
     //     fetchData();
     // }, []);
 
-    const setActiveSampleId = (id: number) => {
+    
+
+    const setActiveSampleId = (id: string) => {
         const newActiveSample = data.evalItems.default.find((sample: any) => sample.id === id);
         setActiveSample(newActiveSample);
     };
@@ -64,8 +68,8 @@ export function Component(): JSX.Element {
                     <>
                         {data.evalItems.default.map((evalItem: any) => (
                             <FeedbackItem
-                                key={evalItem.id}
-                                id={evalItem.id}
+                                key={uuidv4()}
+                                id={uuidv4()}
                                 feedback={evalItem.feedback}
                                 question={evalItem.question}
                                 answer={evalItem.answer}

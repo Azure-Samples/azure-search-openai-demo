@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import styles from "./BatchExperiment.module.css";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
     onBatchClicked: (id: string) => void;
@@ -20,6 +21,7 @@ const BatchSelect = ({ onBatchClicked }: Props) => {
                 const jsonData = await response.data;
                 setData(jsonData);
                 setIsLoading(false);
+                ("");
             } catch (error) {
                 console.log(error);
             }
@@ -36,7 +38,7 @@ const BatchSelect = ({ onBatchClicked }: Props) => {
             ) : (
                 <div className={styles.experimentSelect}>
                     {data.experiment_names.map((batch: string) => (
-                        <button className={styles.experiment} onClick={() => onBatchClicked(batch)}>
+                        <button key={uuidv4()} className={styles.experiment} onClick={() => onBatchClicked(batch)}>
                             {batch}
                         </button>
                     ))}

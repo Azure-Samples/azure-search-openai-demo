@@ -138,10 +138,23 @@
     margin-bottom: 1rem;
 }
 
-/* .evalItemDetailed span {
-    align-items: center;
-    margin-left: auto;
+.citation {
+    font-weight: 500;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 0px 8px;
+    background: #d1dbfa;
+    color: #123bb6;
+    text-decoration: none;
+    cursor: pointer;
     margin-right: 1rem;
-    font-weight: bold;
-    align-content: center;
-} */
+}
+
+.citation:hover {
+    text-decoration: underline;
+}
+
+.citationContainer {
+    margin-top: 1rem;
+}

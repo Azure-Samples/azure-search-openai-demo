@@ -3,7 +3,6 @@ import styles from "./EvalItem.module.css";
 import { IconButton } from "@fluentui/react";
 
 interface Props {
-    id: number;
     question: string;
     answer: string;
     relevance: number;
@@ -13,7 +12,7 @@ interface Props {
     setActiveSample: (str: string) => void;
 }
 
-const EvalItem = ({ id, question, answer, relevance, coherence, similarity, groundedness, setActiveSample }: Props) => {
+const EvalItem = ({ question, answer, relevance, coherence, similarity, groundedness, setActiveSample }: Props) => {
     const alert = () => {
         const isAnyValueBelowThree = groundedness < 3 || relevance < 3 || coherence < 3 || similarity < 3;
         return isAnyValueBelowThree;

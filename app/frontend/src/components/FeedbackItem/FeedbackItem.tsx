@@ -3,12 +3,12 @@ import styles from "./FeedbackItem.module.css";
 import { IconButton } from "@fluentui/react";
 
 interface Props {
-    id: number;
+    id: string;
     feedback: string;
     question: string;
     answer: ChatAppResponse;
     comment: string;
-    setActiveSample: (sample: number) => void;
+    setActiveSample: (sample: string) => void;
 }
 
 const FeedbackItem = ({ id, feedback, question, answer, comment, setActiveSample }: Props) => {

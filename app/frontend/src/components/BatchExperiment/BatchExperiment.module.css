@@ -94,3 +94,13 @@
     justify-content: center;
     align-content: center;
 }
+
+.batchEvalContainer {
+    color: black;
+    display: grid;
+    grid-template-columns: 10px auto;
+}
+
+.batchEvalContainer IconButton {
+    align-self: center;
+}
