@@ -194,7 +194,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         chat_coroutine = self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,
-            temperature=overrides.get("temperature", 0.7),
+            temperature=overrides.get("temperature", 0.3),
             max_tokens=response_token_limit,
             n=1,
             stream=should_stream,

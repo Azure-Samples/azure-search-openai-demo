@@ -196,7 +196,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             # Azure Open AI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             messages=messages,
-            temperature=overrides.get("temperature", 0.7),
+            temperature=overrides.get("temperature", 0.3),
             max_tokens=response_token_limit,
             n=1,
             stream=should_stream,
