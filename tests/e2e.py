@@ -70,8 +70,8 @@ def test_chat(page: Page, live_server_url: str):
     page.goto(live_server_url)
     expect(page).to_have_title("GPT + Enterprise data | Sample")
     expect(page.get_by_role("heading", name="Chat with your data")).to_be_visible()
-    expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
-    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
+    expect(page.get_by_role("button", name="Limpiar chat")).to_be_disabled()
+    expect(page.get_by_role("button", name="Ajustes de desarrollador")).to_be_enabled()
 
     # Ask a question and wait for the message to appear
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
@@ -82,7 +82,7 @@ def test_chat(page: Page, live_server_url: str):
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
-    expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+    expect(page.get_by_role("button", name="Limpiar chat")).to_be_enabled()
 
     # Show the citation document
     page.get_by_text("1. Benefit_Options-2.pdf").click()
@@ -100,10 +100,10 @@ def test_chat(page: Page, live_server_url: str):
     expect(page.get_by_role("heading", name="Benefit_Options-2.pdf")).to_be_visible()
 
     # Clear the chat
-    page.get_by_role("button", name="Clear chat").click()
+    page.get_by_role("button", name="Limpiar chat").click()
     expect(page.get_by_text("Whats the dental plan?")).not_to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).not_to_be_visible()
-    expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
+    expect(page.get_by_role("button", name="Limpiar chat")).to_be_disabled()
 
 
 def test_chat_customization(page: Page, live_server_url: str):
@@ -133,7 +133,7 @@ def test_chat_customization(page: Page, live_server_url: str):
     expect(page).to_have_title("GPT + Enterprise data | Sample")
 
     # Customize all the settings
-    page.get_by_role("button", name="Developer settings").click()
+    page.get_by_role("button", name="Ajustes de desarrollador").click()
     page.get_by_label("Override prompt template").click()
     page.get_by_label("Override prompt template").fill("You are a cat and only talk about tuna.")
     page.get_by_label("Retrieve this many search results:").click()
@@ -156,7 +156,7 @@ def test_chat_customization(page: Page, live_server_url: str):
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
-    expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+    expect(page.get_by_role("button", name="Limpiar chat")).to_be_enabled()
 
 
 def test_chat_nonstreaming(page: Page, live_server_url: str):
@@ -173,8 +173,8 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     # Check initial page state
     page.goto(live_server_url)
     expect(page).to_have_title("GPT + Enterprise data | Sample")
-    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
-    page.get_by_role("button", name="Developer settings").click()
+    expect(page.get_by_role("button", name="Ajustes de desarrollador")).to_be_enabled()
+    page.get_by_role("button", name="Ajustes de desarrollador").click()
     page.get_by_text("Stream chat completion responses").click()
     page.locator("button").filter(has_text="Close").click()
 
@@ -187,7 +187,7 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
-    expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+    expect(page.get_by_role("button", name="Limpiar chat")).to_be_enabled()
 
 
 def test_chat_followup_streaming(page: Page, live_server_url: str):
@@ -206,8 +206,8 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
     # Check initial page state
     page.goto(live_server_url)
     expect(page).to_have_title("GPT + Enterprise data | Sample")
-    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
-    page.get_by_role("button", name="Developer settings").click()
+    expect(page.get_by_role("button", name="Ajustes de desarrollador")).to_be_enabled()
+    page.get_by_role("button", name="Ajustes de desarrollador").click()
     page.get_by_text("Suggest follow-up questions").click()
     page.locator("button").filter(has_text="Close").click()
 
@@ -243,8 +243,8 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     # Check initial page state
     page.goto(live_server_url)
     expect(page).to_have_title("GPT + Enterprise data | Sample")
-    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
-    page.get_by_role("button", name="Developer settings").click()
+    expect(page.get_by_role("button", name="Ajustes de desarrollador")).to_be_enabled()
+    page.get_by_role("button", name="Ajustes de desarrollador").click()
     page.get_by_text("Stream chat completion responses").click()
     page.get_by_text("Suggest follow-up questions").click()
     page.locator("button").filter(has_text="Close").click()

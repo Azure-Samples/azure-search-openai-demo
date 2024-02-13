@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
+import logo from "./logo.jpg"; // Import your logo image
 
 import styles from "./Chat.module.css";
 
@@ -279,9 +280,9 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
-                            <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
+                            <img src={logo} alt="Your Logo" className={`${styles.logo} ${styles.rounded}`} />
+                            <h1 className={styles.chatEmptyStateTitle}>Chatea con Supercalifragilístico</h1>
+                            <h2 className={styles.chatEmptyStateSubtitle}>Pregunta lo que quieras o prueba con un ejemplo</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
@@ -347,7 +348,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Escribe aquí una pregunta (e.g. ¿Quién es Batman?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                         />

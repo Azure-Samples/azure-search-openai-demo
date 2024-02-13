@@ -113,3 +113,13 @@
     margin-right: 20px;
     margin-bottom: 20px;
 }
+
+.logo {
+    width: 200px; /* Adjust the width as needed */
+    height: 200px; /* Adjust the height as needed */
+}
+
+.rounded {
+    border-radius: 50%; /* This will make the image round */
+    overflow: hidden; /* Ensures the image stays within the rounded border */
+}

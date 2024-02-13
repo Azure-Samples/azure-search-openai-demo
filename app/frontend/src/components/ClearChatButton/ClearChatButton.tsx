@@ -13,7 +13,7 @@ export const ClearChatButton = ({ className, disabled, onClick }: Props) => {
     return (
         <div className={`${styles.container} ${className ?? ""}`}>
             <Button icon={<Delete24Regular />} disabled={disabled} onClick={onClick}>
-                {"Clear chat"}
+                {"Limpiar chat"}
             </Button>
         </div>
     );
