@@ -253,7 +253,6 @@ class AuthenticationHelper:
         # Filter down to only chunks that are from the specific source file
         # Sourcepage is used for GPT-4V
         filter = f"{security_filter} and ((sourcefile eq '{path}') or (sourcepage eq '{path}'))"
-        print(filter)
 
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied

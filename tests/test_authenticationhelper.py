@@ -281,6 +281,31 @@ async def test_check_path_auth_allowed_sourcefile(
 
 
 @pytest.mark.asyncio
+async def test_check_path_auth_allowed_empty(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+
+
+@pytest.mark.asyncio
 async def test_check_path_auth_allowed_fragment(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
