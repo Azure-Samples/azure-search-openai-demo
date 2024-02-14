@@ -51,7 +51,7 @@ param computerVisionSecretName string = 'computerVisionSecret'
 param searchServiceSecretName string = 'searchServiceSecret'
 
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
+@allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral' ])
 @metadata({
   azd: {
     type: 'location'
@@ -77,7 +77,7 @@ param computerVisionSkuName string = 'S1'
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGpt4vDeploymentCapacity int = 10
-param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-4' : 'gpt-4'
 param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
@@ -163,7 +163,6 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
   }
 }
 
-
 module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicationInsights) {
   name: 'application-insights-dashboard'
   scope: resourceGroup
@@ -173,7 +172,6 @@ module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicati
     applicationInsightsName: useApplicationInsights ? monitoring.outputs.applicationInsightsName : ''
   }
 }
-
 
 // Create an App Service Plan to group applications under the same payment plan and SKU
 module appServicePlan 'core/host/appserviceplan.bicep' = {
@@ -205,7 +203,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
@@ -219,7 +217,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_SERVICE: searchService.outputs.name
       AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
-      VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName: ''
+      VISION_SECRET_NAME: useGPT4V ? computerVisionSecretName : ''
       SEARCH_SECRET_NAME: useSearchServiceKey ? searchServiceSecretName : ''
       AZURE_KEY_VAULT_NAME: useKeyVault ? keyVault.outputs.name : ''
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
@@ -340,7 +338,6 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   }
 }
 
-
 // Currently, we only need Key Vault for storing Computer Vision key,
 // which is only used for GPT-4V.
 module keyVault 'core/security/keyvault.bicep' = if (useKeyVault) {
@@ -375,7 +372,6 @@ module secrets 'secrets.bicep' = if (useKeyVault) {
     searchServiceSecretName: searchServiceSecretName
   }
 }
-
 
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'

@@ -1,4 +1,5 @@
 import base64
+import requests
 import os
 from typing import Optional
 
@@ -34,3 +35,15 @@ async def fetch_image(blob_container_client: ContainerClient, result: Document) 
         else:
             return None
     return None
+
+
+async def encode_image(image_path):
+    response = requests.get(image_path)
+    # print ("============== DEBUG - imagepath ==============")
+    # print(response)
+    # print ("============== DEBUG ==============")
+    img = base64.b64encode(response.content).decode("utf-8")
+    if img:
+        return f"data:image/png;base64,{img}"
+    else:
+        return None

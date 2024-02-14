@@ -99,6 +99,9 @@ async def content_file(path: str):
         path = path_parts[0]
     logging.info("Opening file %s at page %s", path)
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    # print ("============== DEBUG ==============")
+    # print(blob_container_client)
+    # print ("============== DEBUG ==============")
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
     except ResourceNotFoundError:
@@ -125,6 +128,8 @@ async def ask(auth_claims: Dict[str, Any]):
     context["auth_claims"] = auth_claims
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+        # print ("============== DEBUG ==============")
+        # print (use_gpt4v)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
             approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
@@ -161,11 +166,24 @@ async def chat(auth_claims: Dict[str, Any]):
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
+    messages = request_json.get("messages")
+    content = messages[-1]["content"]
     context["auth_claims"] = auth_claims
+    
+    # if content.startswith("blob"):   
+        # print ("content starts with blob")
+        # print(content)         
+        # await content_file(content)                
+        
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+        
+        # print ("============== DEBUG ==============")
+        # print(request_json)
+        # print ("============== DEBUG ==============")
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
+            print ("============== USE CHAT VISION ==============")
             approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
@@ -254,7 +272,7 @@ async def setup_clients():
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
     # Fetch any necessary secrets from Key Vault
-    vision_key = None
+    vision_key = "be0bb40f91ce41bea2470231038aa19d"
     search_key = None
     if AZURE_KEY_VAULT_NAME and (VISION_SECRET_NAME or SEARCH_SECRET_NAME):
         key_vault_client = SecretClient(
@@ -337,6 +355,20 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
     )
+    
+    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
+        search_client=search_client,
+        openai_client=openai_client,
+        auth_helper=auth_helper,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
+    )
 
     if USE_GPT4V:
         if vision_key is None:
@@ -375,21 +407,6 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
         )
-
-    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
-        search_client=search_client,
-        openai_client=openai_client,
-        auth_helper=auth_helper,
-        chatgpt_model=OPENAI_CHATGPT_MODEL,
-        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        embedding_model=OPENAI_EMB_MODEL,
-        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-        sourcepage_field=KB_FIELDS_SOURCEPAGE,
-        content_field=KB_FIELDS_CONTENT,
-        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
-        query_speller=AZURE_SEARCH_QUERY_SPELLER,
-    )
-
 
 @bp.after_app_serving
 async def close_clients():

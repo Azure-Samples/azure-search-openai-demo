@@ -3,6 +3,8 @@ import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider } from "@
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
+import EE from "../../assets/EE.svg";
+
 import styles from "./Chat.module.css";
 
 import {
@@ -34,7 +36,7 @@ const Chat = () => {
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
+    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Text);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
@@ -137,6 +139,31 @@ const Chat = () => {
                 { content: a[0], role: "user" },
                 { content: a[1].choices[0].message.content, role: "assistant" }
             ]);
+
+            /* let newMessage;
+            if (typeof question === "string" && question.startsWith("data:image")) {
+                newMessage = {
+                    role: "user",
+                    content: JSON.stringify([
+                        {
+                            type: "image_url",
+                            image_url: {
+                                url: question
+                            }
+                        }
+                    ])
+                };
+            } else {
+                newMessage = {
+                    role: "user",
+                    content: JSON.stringify([
+                        {
+                            type: "text",
+                            text: question
+                        }
+                    ])
+                };
+            } */
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: question, role: "user" }],
@@ -279,10 +306,10 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
+                            <img src={EE} alt="EE logo" className={styles.eeLogo} />
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
-                            <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
+                            {/* <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2> */}
+                            {/* <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} /> */}
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -347,10 +374,11 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Upload Image here"
                             disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
+                            onSend={(question: string) => makeApiRequest(question)}
                         />
+                        
                     </div>
                 </div>
 

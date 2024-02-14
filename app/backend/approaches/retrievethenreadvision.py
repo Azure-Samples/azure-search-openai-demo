@@ -16,7 +16,8 @@ from core.messagebuilder import MessageBuilder
 
 # Replace these with your own values, either in environment variables or directly here
 AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT")
-AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
+# AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
+ZURE_STORAGE_CONTAINER = "newuploads"
 
 
 class RetrieveThenReadVisionApproach(Approach):

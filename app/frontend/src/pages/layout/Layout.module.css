@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #222222;
+    background-color: #f07b05;
     color: #f2f2f2;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .headerTitle {
-    margin-left: 12px;
+    margin-left: -200px;
     font-weight: 600;
 }
 

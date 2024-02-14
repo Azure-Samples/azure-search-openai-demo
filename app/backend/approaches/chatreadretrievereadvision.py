@@ -14,6 +14,7 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from core.imageshelper import encode_image
 from core.modelhelper import get_token_limit
 
 
@@ -57,20 +58,34 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_endpoint = vision_endpoint
         self.vision_key = vision_key
         self.chatgpt_token_limit = get_token_limit(gpt4v_model)
+        print("self.chatgpt_token_limit")
+        print(self.chatgpt_token_limit)
 
     @property
     def system_message_chat_conversation(self):
         return """
-        You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images.
-        Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
-        Each text source starts in a new line and has the file name followed by colon and the actual information
-        Always include the source name from the image or text for each fact you use in the response in the format: [filename]
-        Answer the following question using only the data provided in the sources below.
-        If asking a clarifying question to the user would help, ask the question.
-        Be brief in your answers.
-        For tabular information return it as an html table. Do not return markdown format.
-        The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned
-        If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts.
+        You will be given an image to analyse. Focus on the utility pole in the image.
+        
+        Examine the utility pole and succintly summarise the condition of any present crossarms, insulators and pole caps based off of the following information:
+        ---
+        Crossarms: 
+        - Attached perpendicular to the utility pole
+        - Typically installed high on the pole
+        - Made of timber, steel or fibreglass
+        - Can be painted
+        - Have components attached like insulators and conductors
+        
+        Pole caps:
+        - Attached to the tip of the utility pole
+        - Made of a dull metal
+        - Can suffer from corrosion
+        - Often over exposed in the image due to the angle of the sun
+        
+        Insulators:
+        - Attached to crossarms
+        - Attached to conductors
+        - Feature stacked discs
+        
         {follow_up_questions_prompt}
         {injected_prompt}
         """
@@ -94,9 +109,12 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         include_gtpV_images = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
         original_user_query = history[-1]["content"]
-
+        
+        
+       
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         user_query_request = "Generate search query for: " + original_user_query
+        
 
         messages = self.get_messages_from_history(
             system_prompt=self.query_prompt_template,
@@ -106,17 +124,24 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             max_tokens=self.chatgpt_token_limit - len(" ".join(user_query_request)),
             few_shots=self.query_prompt_few_shots,
         )
-
+       
+        print ("max_tokens")
+        print (self.chatgpt_token_limit - len(" ".join(user_query_request)))
+        
+     
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,
             temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=100,
+            # max_tokens=100,
+            max_tokens=300,
             n=1,
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
-
+    
+        
+        
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         # If retrieval mode includes vectors, compute an embedding for the query
@@ -146,20 +171,43 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
         )
 
-        response_token_limit = 1024
+        response_token_limit = 2000
         messages_token_limit = self.chatgpt_token_limit - response_token_limit
-
+        
+        print("---------response_token_limit = 1024")
+        print(response_token_limit)
+        
+        print("---------self.chatgpt_token_limit")
+        print(self.chatgpt_token_limit)
+        print("-----------response_token_limit")
+        print(response_token_limit)
+        print ("---------messages_token_limit = self.chatgpt_token_limit - response_token_limit")
+        print(messages_token_limit)
+        
         user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
+        print ("user_content")
+        print(user_content)
         image_list: list[ChatCompletionContentPartImageParam] = []
+        print ("image_list")
+        print(image_list)
 
         if include_gtpV_text:
             user_content.append({"text": "\n\nSources:\n" + content, "type": "text"})
+            print("user_content.append({'text': '\n\nSources:\n' + content, 'type': 'text'})")
+            print(user_content)
         if include_gtpV_images:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
                 if url:
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
+            print("user_content.extend(image_list)")
+            print(user_content)
+            
+        # url = await encode_image(query_text)
+        # if url:
+        #     image_list.append({"image_url": url, "type": "image_url"})
+        # user_content.extend(image_list)
 
         messages = self.get_messages_from_history(
             system_prompt=system_message,
@@ -168,12 +216,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             user_content=user_content,
             max_tokens=messages_token_limit,
         )
+        print("---------messages")
+        print(messages)
+        
 
         data_points = {
             "text": sources_content,
             "images": [d["image_url"] for d in image_list],
         }
-
+        print("--------data_points")
+        print(data_points)
         extra_info = {
             "data_points": data_points,
             "thoughts": [
