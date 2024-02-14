@@ -66,8 +66,13 @@ if [ -n "$AZURE_TENANT_ID" ]; then
   tenantArg="--tenantid $AZURE_TENANT_ID"
 fi
 
+if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
+  integratedVectorizationArg="--useintvectorization $USE_FEATURE_INT_VECTORIZATION"
+fi
+
 ./scripts/.venv/bin/python ./scripts/prepdocs.py './data/*' --verbose \
---storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER"  \
+--subscriptionid $AZURE_SUBSCRIPTION_ID  \
+--storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \
 $searchAnalyzerNameArg $searchSecretNameArg \
 --openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
@@ -78,4 +83,5 @@ $searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
 $disableVectorsArg $localPdfParserArg \
-$keyVaultName
+$keyVaultName \
+$integratedVectorizationArg

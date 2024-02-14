@@ -185,3 +185,7 @@ sup {
     font-weight: 500;
     border-radius: 5px;
 }
+
+.feedbackContainer button:disabled {
+    background: #f3f4f6;
+}

@@ -3,23 +3,26 @@ import { IconButton } from "@fluentui/react";
 import styles from "./BatchExperiment.module.css";
 
 import { useState } from "react";
+import { useQuery } from "react-query";
+import { v4 as uuidv4 } from "uuid";
+
 import EvalItemDetailed from "../EvalItem/EvalItemDetailed";
 import EvalItem from "../EvalItem/EvalItem";
 import BatchScorecard from "./BatchScorecard";
-
-import { v4 as uuidv4 } from "uuid";
+import { getExperimentApi } from "../../api";
 
 interface Props {
-    jsonData: any;
+    id: string;
     onRemove: () => void;
 }
 
-const BatchExperiment = ({ jsonData, onRemove }: Props) => {
+const BatchExperiment = ({ id, onRemove }: Props) => {
     const [activeSample, setActiveSample] = useState<any>(null);
 
-    const params = jsonData.parameters;
-    const results = jsonData.eval_results;
-    const summ = jsonData.summary;
+    const { data, isLoading, error, isError } = useQuery({
+        queryKey: ["getExperiment" + id],
+        queryFn: () => getExperimentApi(id, undefined)
+    });
 
     const setActiveSampleQ = (question: string) => {
         const newActiveSample = results.find((sample: any) => sample.question === question);
@@ -29,6 +32,14 @@ const BatchExperiment = ({ jsonData, onRemove }: Props) => {
     const removeActiveSample = () => {
         setActiveSample(null);
     };
+
+    if (isLoading) {
+        return <h1>Loading Experiment Data...</h1>;
+    }
+
+    const params = data.evaluate_parameters;
+    const results = data.eval_results;
+    const summ = data.summary;
 
     return (
         <div className={styles.batchEvalContainer}>
@@ -41,7 +52,7 @@ const BatchExperiment = ({ jsonData, onRemove }: Props) => {
                 className={styles.backButton}
             />
             <div>
-                <BatchScorecard experimentName="Test Experiment 1" summ={summ} />
+                <BatchScorecard experimentName={id} summ={summ} />
                 <section>
                     {activeSample ? (
                         <EvalItemDetailed

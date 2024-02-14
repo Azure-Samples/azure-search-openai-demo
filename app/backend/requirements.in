@@ -4,7 +4,7 @@ quart-cors
 openai[datalib]>=1.3.7
 tiktoken
 tenacity
-azure-search-documents==11.4.0b11
+azure-search-documents==11.6.0b1
 azure-storage-blob
 uvicorn
 aiohttp
@@ -17,3 +17,5 @@ msal
 azure-keyvault-secrets
 cryptography
 python-jose[cryptography]
+Pillow
+types-Pillow

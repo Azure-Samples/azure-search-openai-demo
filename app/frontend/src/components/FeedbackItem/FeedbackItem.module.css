@@ -15,18 +15,16 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: 1rem;
-    grid-column-gap: 10px;
-    grid-row-gap: 1px;
-    /* grid-template-columns: auto minmax(0, 1fr); */
+    row-gap: 1rem;
 }
 
 .feedbackItem span {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    margin-right: 1rem;
     font-weight: bold;
-    align-content: center;
+    text-align: end;
+}
+
+.feedbackItem p {
+    margin: 0;
 }
 
 .detailsButton {
@@ -57,6 +55,27 @@
 .feedbackBad {
     border-left: solid;
     border-left-color: red;
+}
+
+.citation {
+    font-weight: 500;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 0px 8px;
+    background: #d1dbfa;
+    color: #123bb6;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 1rem;
+}
+
+.citation:hover {
+    text-decoration: underline;
+}
+
+.citationContainer {
+    margin-top: 1rem;
 }
 
 /* .feedbackItem p {

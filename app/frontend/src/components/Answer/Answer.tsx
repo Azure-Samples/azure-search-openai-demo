@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
+import { v4 as uuidv4 } from "uuid";
+import { useMutation } from "react-query";
 
 import styles from "./Answer.module.css";
 
-import { ChatAppResponse, getCitationFilePath, feedbackApi, FeedbackRequest } from "../../api";
+import { ChatAppResponse, getCitationFilePath, postFeedbackApi, Feedback } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { parseAnswerToHtml } from "./AnswerParser";
@@ -43,35 +45,44 @@ export const Answer = ({
 
     const [feedbackType, setFeedbackType] = useState<string>("");
     const [comment, setComment] = useState<string>("");
-
     const [givingFeedback, setGivingFeedback] = useState<boolean>(false);
     const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
-    const [error, setError] = useState<unknown>();
+
+    const {
+        mutate: postFeedback,
+        isLoading,
+        error
+    } = useMutation({
+        mutationFn: (feedback: Feedback) => postFeedbackApi(feedback, undefined),
+        onSuccess: () => {
+            setFeedbackGiven(true);
+            setGivingFeedback(false);
+        },
+        onError: error => {
+            setGivingFeedback(false);
+            console.log(error);
+        }
+    });
 
     const onGivingFeedback = async (type: string) => {
         setFeedbackType(type);
         setGivingFeedback(true);
     };
 
-    const onFeedbackSent = async (type: string, question: string, answer: ChatAppResponse, comment: string) => {
-        error && setError(undefined);
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
 
         const client = useLogin ? useMsal().instance : undefined;
         const token = client ? await getToken(client) : undefined;
 
-        try {
-            const request: FeedbackRequest = {
-                feedback: type,
-                question: question,
-                answer: answer,
-                comment: comment
-            };
-            const response: Response = await feedbackApi(request, token);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setFeedbackGiven(true);
-        }
+        const request: Feedback = {
+            id: uuidv4(),
+            feedback: feedbackType,
+            question: question,
+            answer: answer,
+            comment: comment
+        };
+        postFeedback(request);
     };
 
     return (
@@ -149,12 +160,12 @@ export const Answer = ({
                         <span className={styles.satisfactory}>Thank you for your feedback!</span>
                     </div>
                 ) : givingFeedback ? (
-                    <div className={styles.feedbackContainer}>
-                        <input className={styles.textInput} type="text" name="comment" onChange={e => setComment(e.target.value)} />
-                        <button type="submit" onClick={() => onFeedbackSent(feedbackType, question, answer, comment)}>
+                    <form onSubmit={handleSubmit} className={styles.feedbackContainer}>
+                        <input className={styles.textInput} type="text" name="comment" onChange={e => setComment(e.target.value)} placeholder="Add a comment" />
+                        <button type="submit" disabled={isLoading || comment.length === 0}>
                             Send
                         </button>
-                    </div>
+                    </form>
                 ) : (
                     <div className={styles.satisfactionContainer}>
                         <span className={styles.satisfactory}>Did you like this response?</span>

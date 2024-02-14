@@ -96,9 +96,22 @@ export type EvaluationResponse = {
     faithfulness: number;
 };
 
-export type FeedbackRequest = {
+export type Feedback = {
+    id: string;
     feedback: string;
     question: string;
     answer: ChatAppResponse;
     comment: string;
 };
+
+export type FeedbackResponse = {
+    feedbacks: Feedback[];
+};
+
+export type ExperimentList = {
+    experiment_names: string[];
+};
+
+export type Experiment = {
+    
+}

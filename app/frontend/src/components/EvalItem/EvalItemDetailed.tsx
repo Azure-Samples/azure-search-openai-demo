@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 
 import styles from "./EvalItem.module.css";
-import { Stack, IconButton } from "@fluentui/react";
+import { IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 import { useMsal } from "@azure/msal-react";
 
-import { ChatAppResponse } from "../../api";
-import { SupportingContent } from "../SupportingContent";
 import { useLogin, getToken } from "../../authConfig";
 import { parseSupportingContentItem } from "../SupportingContent/SupportingContentParser";
 import { parseAnswerToHtml } from "../Answer/AnswerParser";

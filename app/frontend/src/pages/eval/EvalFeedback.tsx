@@ -1,52 +1,35 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
-
-import * as fb from "../../data/feedback.json";
-import EvalSidebar from "../../components/EvalSidebar/EvalSidebar";
-import FeedbackItem from "../../components/FeedbackItem/FeedbackItem";
-import FeedbackItemDetailed from "../../components/FeedbackItem/FeedbackItemDetailed";
+import { useState } from "react";
+import { useQuery } from "react-query";
 
 import styles from "./Eval.module.css";
 
+import EvalSidebar from "../../components/EvalSidebar/EvalSidebar";
+import FeedbackItem from "../../components/FeedbackItem/FeedbackItem";
+import FeedbackItemDetailed from "../../components/FeedbackItem/FeedbackItemDetailed";
+import { Feedback, getFeedbackApi } from "../../api";
+
 export function Component(): JSX.Element {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [data, setData] = useState<any>(null);
-    const [activeSample, setActiveSample] = useState<any>(null);
+    const [activeSample, setActiveSample] = useState<Feedback | undefined>(undefined);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                console.log("Fetching Feedback Data");
-                const response = await axios.get("/feedback");
-                const jsonData = await response.data;
-                const updatedJsonData = await jsonData.feedbacks.map((feedback: any) => ({
-                    id: uuidv4(),
-                    ...feedback
-                }));
-                setData(updatedJsonData);
-                setIsLoading(false);
-            } catch (e) {
-                console.log(e);
-            }
-        };
-
-        fetchData();
-    }, []);
+    const { data, isLoading, error, isError } = useQuery({
+        queryKey: ["getFeedback"],
+        queryFn: () => getFeedbackApi(undefined)
+    });
 
     const setActiveSampleId = (id: string) => {
-        const newActiveSample = data.find((sample: any) => sample.id === id);
+        const newActiveSample: Feedback | undefined = data?.feedbacks.find((sample: Feedback) => sample.id === id);
         setActiveSample(newActiveSample);
     };
 
     const removeActiveSample = () => {
-        setActiveSample(null);
+        setActiveSample(undefined);
     };
 
     return (
         <div className={styles.layout}>
             <EvalSidebar />
             <section className={styles.mainContent}>
+                {isError && <h1>Oh no, something went wrong!</h1>}
                 {isLoading ? (
                     <h1>Loading Feedback...</h1>
                 ) : activeSample ? (
@@ -60,7 +43,7 @@ export function Component(): JSX.Element {
                     />
                 ) : (
                     <>
-                        {data.map((evalItem: any) => (
+                        {data?.feedbacks.map((evalItem: any) => (
                             <FeedbackItem
                                 key={evalItem.id}
                                 id={evalItem.id}

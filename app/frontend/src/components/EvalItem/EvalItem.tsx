@@ -1,6 +1,4 @@
-import { ChatAppResponse } from "../../api";
 import styles from "./EvalItem.module.css";
-import { IconButton } from "@fluentui/react";
 
 interface Props {
     question: string;
