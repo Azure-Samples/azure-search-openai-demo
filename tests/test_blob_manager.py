@@ -16,6 +16,9 @@ def blob_manager(monkeypatch):
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
         verbose=True,
+        account=os.environ["AZURE_STORAGE_ACCOUNT"],
+        resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
     )
 
 
@@ -161,6 +164,13 @@ async def test_dont_remove_if_no_container(monkeypatch, mock_env, blob_manager):
     monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.delete_blob", mock_delete_blob)
 
     await blob_manager.remove_blob()
+
+
+def test_get_managed_identity_connection_string(mock_env, blob_manager):
+    assert (
+        blob_manager.get_managedidentity_connectionstring()
+        == "ResourceId=/subscriptions/test-storage-subid/resourceGroups/test-storage-rg/providers/Microsoft.Storage/storageAccounts/test-storage-account;"
+    )
 
 
 def test_sourcepage_from_file_page():

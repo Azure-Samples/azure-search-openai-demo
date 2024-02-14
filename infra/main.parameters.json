@@ -118,6 +118,9 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "useIntegratedVectorization" :{
+      "value": "${USE_FEATURE_INT_VECTORIZATION}"
     }
   }
 }
