@@ -45,13 +45,23 @@ export const Answer = ({
 
     const [feedbackType, setFeedbackType] = useState<string>("");
     const [comment, setComment] = useState<string>("");
-
     const [givingFeedback, setGivingFeedback] = useState<boolean>(false);
     const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
-    const [error, setError] = useState<unknown>();
 
-    const { mutate: postFeedback, isLoading } = useMutation({
-        mutationFn: (feedback: Feedback) => postFeedbackApi(feedback, undefined)
+    const {
+        mutate: postFeedback,
+        isLoading,
+        error
+    } = useMutation({
+        mutationFn: (feedback: Feedback) => postFeedbackApi(feedback, undefined),
+        onSuccess: () => {
+            setFeedbackGiven(true);
+            setGivingFeedback(false);
+        },
+        onError: error => {
+            setGivingFeedback(false);
+            console.log(error);
+        }
     });
 
     const onGivingFeedback = async (type: string) => {
@@ -73,8 +83,6 @@ export const Answer = ({
             comment: comment
         };
         postFeedback(request);
-        setFeedbackGiven(true);
-        setGivingFeedback(false);
     };
 
     return (
@@ -153,7 +161,7 @@ export const Answer = ({
                     </div>
                 ) : givingFeedback ? (
                     <form onSubmit={handleSubmit} className={styles.feedbackContainer}>
-                        <input className={styles.textInput} type="text" name="comment" onChange={e => setComment(e.target.value)} />
+                        <input className={styles.textInput} type="text" name="comment" onChange={e => setComment(e.target.value)} placeholder="Add a comment" />
                         <button type="submit" disabled={isLoading || comment.length === 0}>
                             Send
                         </button>

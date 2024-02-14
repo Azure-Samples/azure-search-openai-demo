@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 
 import styles from "./Eval.module.css";
@@ -6,7 +6,7 @@ import styles from "./Eval.module.css";
 import EvalSidebar from "../../components/EvalSidebar/EvalSidebar";
 import FeedbackItem from "../../components/FeedbackItem/FeedbackItem";
 import FeedbackItemDetailed from "../../components/FeedbackItem/FeedbackItemDetailed";
-import { Feedback, FeedbackResponse, getFeedbackApi } from "../../api";
+import { Feedback, getFeedbackApi } from "../../api";
 
 export function Component(): JSX.Element {
     const [activeSample, setActiveSample] = useState<Feedback | undefined>(undefined);
