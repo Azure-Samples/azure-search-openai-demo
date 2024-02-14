@@ -39,8 +39,9 @@ param storageSkuName string // Set in main.parameters.json
 
 param appServiceSkuName string // Set in main.parameters.json
 
-@allowed([ 'azure', 'openai' ])
+@allowed([ 'azure', 'openai', 'azure_custom' ])
 param openAiHost string // Set in main.parameters.json
+param openAiBaseUrl string = ''
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
@@ -77,7 +78,7 @@ param computerVisionSkuName string = 'S1'
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGpt4vDeploymentCapacity int = 10
-param chatGptModelName string = (openAiHost == 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+param chatGptModelName string = startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
 param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
@@ -229,6 +230,7 @@ module backend 'core/host/appservice.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
+      OPENAI_BASE_URL: openAiBaseUrl
       AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
       AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName

@@ -77,6 +77,9 @@
     "openAiHost":{
       "value": "${OPENAI_HOST=azure}"
     },
+    "openAiBaseUrl":{
+      "value": "${OPENAI_BASE_URL}"
+    },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
     },
