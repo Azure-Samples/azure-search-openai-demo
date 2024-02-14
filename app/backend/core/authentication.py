@@ -241,12 +241,18 @@ class AuthenticationHelper:
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
         # Start with the standard security filter for all queries
         security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
-        # If there was no security filter, then the path is allowed
-        if not security_filter:
+        # If there was no security filter or no path, then the path is allowed
+        if not security_filter or len(path) == 0:
             return True
 
+        # Remove any fragment string from the path before checking
+        fragment_index = path.find("#")
+        if fragment_index != -1:
+            path = path[:fragment_index]
+
         # Filter down to only chunks that are from the specific source file
-        filter = f"{security_filter} and (sourcepage eq '{path}')"
+        # Sourcepage is used for GPT-4V
+        filter = f"{security_filter} and ((sourcefile eq '{path}') or (sourcepage eq '{path}'))"
 
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
