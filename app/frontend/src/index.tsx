@@ -4,10 +4,10 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { initializeIcons } from "@fluentui/react";
 import { MsalProvider } from "@azure/msal-react";
 import { PublicClientApplication, EventType, AccountInfo } from "@azure/msal-browser";
-import { msalConfig, useLogin } from "./authConfig";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import "./index.css";
-
+import { msalConfig, useLogin } from "./authConfig";
 import Layout from "./pages/layout/Layout";
 import Chat from "./pages/chat/Chat";
 
@@ -73,8 +73,10 @@ const router = createHashRouter([
     }
 ]);
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-    </React.StrictMode>
+    </QueryClientProvider>
 );

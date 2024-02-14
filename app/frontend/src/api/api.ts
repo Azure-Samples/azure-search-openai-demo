@@ -1,6 +1,17 @@
 const BACKEND_URI = "";
+import axios from "axios";
 
-import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, EvaluationRequest, EvaluationResponse, FeedbackRequest } from "./models";
+import {
+    ChatAppResponse,
+    ChatAppResponseOrError,
+    ChatAppRequest,
+    Config,
+    EvaluationRequest,
+    EvaluationResponse,
+    Feedback,
+    FeedbackResponse,
+    ExperimentList
+} from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
 export function getHeaders(idToken: string | undefined): Record<string, string> {
@@ -64,10 +75,35 @@ export async function evalApi(request: EvaluationRequest, idToken: string | unde
     return parsedResponse;
 }
 
-export async function feedbackApi(request: FeedbackRequest, idToken: string | undefined): Promise<Response> {
+// TODO TODO
+export async function postFeedbackApi(request: Feedback, idToken: string | undefined): Promise<Response> {
     return await fetch(`${BACKEND_URI}/feedback`, {
         method: "POST",
         headers: getHeaders(idToken),
         body: JSON.stringify(request)
     });
+}
+
+export async function getFeedbackApi(idToken: string | undefined): Promise<FeedbackResponse> {
+    const response = await axios.get(`${BACKEND_URI}/feedback`, {
+        headers: getHeaders(idToken)
+    });
+
+    return response.data as FeedbackResponse;
+}
+
+export async function getExperimentListApi(idToken: string | undefined): Promise<ExperimentList> {
+    const response = await axios.get(`${BACKEND_URI}/experiment_list`, {
+        headers: getHeaders(idToken)
+    });
+
+    return response.data as ExperimentList;
+}
+
+export async function getExperimentApi(id: string, idToken: string | undefined): Promise<any> {
+    const response = await axios.get(`${BACKEND_URI}/experiment?name=${id}`, {
+        headers: getHeaders(idToken)
+    });
+
+    return response.data;
 }

@@ -5,7 +5,7 @@ import { SupportingContent } from "../SupportingContent";
 import { Icon } from "@fluentui/react/lib/Icon";
 
 interface Props {
-    id: number;
+    id: string;
     feedback: string;
     question: string;
     answer: ChatAppResponse;
