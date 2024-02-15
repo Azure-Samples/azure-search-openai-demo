@@ -64,10 +64,20 @@ param openAiSkuName string = 'S0'
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
-param formRecognizerServiceName string = ''
-param formRecognizerResourceGroupName string = ''
-param formRecognizerResourceGroupLocation string = location
-param formRecognizerSkuName string = 'S0'
+param documentIntelligenceServiceName string = ''
+param documentIntelligenceResourceGroupName string = ''
+// Limited regions for new version:
+// https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
+@description('Location for the Document Intelligence resource group')
+@allowed(['eastus', 'westus2', 'westeurope'])
+@metadata({
+  azd: {
+    type: 'location'
+  }
+})
+param documentIntelligenceResourceGroupLocation string
+
+param documentIntelligenceSkuName string = 'S0'
 
 param computerVisionServiceName string = ''
 param computerVisionResourceGroupName string = ''
@@ -139,8 +149,8 @@ resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' exi
   name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
 }
 
-resource formRecognizerResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(formRecognizerResourceGroupName)) {
-  name: !empty(formRecognizerResourceGroupName) ? formRecognizerResourceGroupName : resourceGroup.name
+resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(documentIntelligenceResourceGroupName)) {
+  name: !empty(documentIntelligenceResourceGroupName) ? documentIntelligenceResourceGroupName : resourceGroup.name
 }
 
 resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(computerVisionResourceGroupName)) {
@@ -320,16 +330,17 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
   }
 }
 
-module formRecognizer 'core/ai/cognitiveservices.bicep' = {
-  name: 'formrecognizer'
-  scope: formRecognizerResourceGroup
+// Formerly known as Form Recognizer
+module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
+  name: 'documentintelligence'
+  scope: documentIntelligenceResourceGroup
   params: {
-    name: !empty(formRecognizerServiceName) ? formRecognizerServiceName : '${abbrs.cognitiveServicesFormRecognizer}${resourceToken}'
+    name: !empty(documentIntelligenceServiceName) ? documentIntelligenceServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     kind: 'FormRecognizer'
-    location: formRecognizerResourceGroupLocation
+    location: documentIntelligenceResourceGroupLocation
     tags: tags
     sku: {
-      name: formRecognizerSkuName
+      name: documentIntelligenceSkuName
     }
   }
 }
@@ -442,9 +453,9 @@ module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
   }
 }
 
-module formRecognizerRoleUser 'core/security/role.bicep' = {
-  scope: formRecognizerResourceGroup
-  name: 'formrecognizer-role-user'
+module documentIntelligenceRoleUser 'core/security/role.bicep' = {
+  scope: documentIntelligenceResourceGroup
+  name: 'documentintelligence-role-user'
   params: {
     principalId: principalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
@@ -595,8 +606,8 @@ output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint
 output VISION_SECRET_NAME string = useGPT4V ? computerVisionSecretName : ''
 output AZURE_KEY_VAULT_NAME string = useKeyVault ? keyVault.outputs.name : ''
 
-output AZURE_FORMRECOGNIZER_SERVICE string = formRecognizer.outputs.name
-output AZURE_FORMRECOGNIZER_RESOURCE_GROUP string = formRecognizerResourceGroup.name
+output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
+output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
