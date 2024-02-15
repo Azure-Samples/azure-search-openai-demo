@@ -406,7 +406,8 @@ if __name__ == "__main__":
         else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     )
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     ingestion_strategy = None
     if use_int_vectorization:
         ingestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
