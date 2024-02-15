@@ -27,7 +27,7 @@ The frontend is built using [React](https://reactjs.org/) and [Fluent UI compone
 
 ## Customizing the backend
 
-The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder.
+The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder. The frontend and backend communicate using the [AI Chat App HTTP Protocol](https://github.com/Azure-Samples/ai-chat-app-protocol).
 
 ### Chat/Ask tabs
 

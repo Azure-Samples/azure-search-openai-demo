@@ -74,7 +74,7 @@
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
     },
-    "openAiHost":{
+    "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
     "openAiApiKey": {
@@ -118,6 +118,9 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "useIntegratedVectorization": {
+      "value": "${USE_FEATURE_INT_VECTORIZATION}"
     },
     "runningOnGh": {
       "value": "${GITHUB_ACTIONS}"

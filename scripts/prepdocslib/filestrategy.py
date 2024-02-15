@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List, Optional
 
 from .blobmanager import BlobManager
@@ -6,13 +5,7 @@ from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager, Section
-from .strategy import SearchInfo, Strategy
-
-
-class DocumentAction(Enum):
-    Add = 0
-    Remove = 1
-    RemoveAll = 2
+from .strategy import DocumentAction, SearchInfo, Strategy
 
 
 class FileStrategy(Strategy):
@@ -47,13 +40,14 @@ class FileStrategy(Strategy):
             search_info,
             self.search_analyzer_name,
             self.use_acls,
+            False,
             self.embeddings,
             search_images=self.image_embeddings is not None,
         )
         await search_manager.create_index()
 
     async def run(self, search_info: SearchInfo):
-        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
+        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings)
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
