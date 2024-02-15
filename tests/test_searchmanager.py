@@ -62,6 +62,27 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
 
 
 @pytest.mark.asyncio
+async def test_create_index_using_int_vectorization(monkeypatch, search_info):
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    manager = SearchManager(search_info, use_int_vectorization=True)
+    await manager.create_index()
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+    assert len(indexes[0].fields) == 7
+
+
+@pytest.mark.asyncio
 async def test_create_index_does_exist(monkeypatch, search_info):
     indexes = []
 

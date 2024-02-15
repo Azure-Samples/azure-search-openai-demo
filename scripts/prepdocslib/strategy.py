@@ -1,4 +1,5 @@
 from abc import ABC
+from enum import Enum
 from typing import Union
 
 from azure.core.credentials import AzureKeyCredential
@@ -35,6 +36,12 @@ class SearchInfo:
 
     def create_search_indexer_client(self) -> SearchIndexerClient:
         return SearchIndexerClient(endpoint=self.endpoint, credential=self.credential)
+
+
+class DocumentAction(Enum):
+    Add = 0
+    Remove = 1
+    RemoveAll = 2
 
 
 class Strategy(ABC):

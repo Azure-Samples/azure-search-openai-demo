@@ -16,6 +16,7 @@ from azure.search.documents.indexes.models import (
     SimpleField,
     VectorSearch,
     VectorSearchProfile,
+    VectorSearchVectorizer,
 )
 
 from .blobmanager import BlobManager
@@ -47,23 +48,41 @@ class SearchManager:
         search_info: SearchInfo,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
+        use_int_vectorization: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
         search_images: bool = False,
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
+        self.use_int_vectorization = use_int_vectorization
         self.embeddings = embeddings
         self.search_images = search_images
 
-    async def create_index(self):
+    async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
         if self.search_info.verbose:
             print(f"Ensuring search index {self.search_info.index_name} exists")
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
-                SimpleField(name="id", type="Edm.String", key=True),
-                SearchableField(name="content", type="Edm.String", analyzer_name=self.search_analyzer_name),
+                (
+                    SimpleField(name="id", type="Edm.String", key=True)
+                    if not self.use_int_vectorization
+                    else SearchField(
+                        name="id",
+                        type="Edm.String",
+                        key=True,
+                        sortable=True,
+                        filterable=True,
+                        facetable=True,
+                        analyzer_name="keyword",
+                    )
+                ),
+                SearchableField(
+                    name="content",
+                    type="Edm.String",
+                    analyzer_name=self.search_analyzer_name,
+                ),
                 SearchField(
                     name="embedding",
                     type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
@@ -76,20 +95,36 @@ class SearchManager:
                     vector_search_profile_name="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcepage", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(name="sourcefile", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(
+                    name="sourcepage",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=True,
+                ),
+                SimpleField(
+                    name="sourcefile",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=True,
+                ),
             ]
             if self.use_acls:
                 fields.append(
                     SimpleField(
-                        name="oids", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True
+                        name="oids",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
                     )
                 )
                 fields.append(
                     SimpleField(
-                        name="groups", type=SearchFieldDataType.Collection(SearchFieldDataType.String), filterable=True
+                        name="groups",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
                     )
                 )
+            if self.use_int_vectorization:
+                fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
             if self.search_images:
                 fields.append(
                     SearchField(
@@ -129,8 +164,12 @@ class SearchManager:
                         VectorSearchProfile(
                             name="embedding_config",
                             algorithm_configuration_name="hnsw_config",
+                            vectorizer=(
+                                f"{self.search_info.index_name}-vectorizer" if self.use_int_vectorization else None
+                            ),
                         ),
                     ],
+                    vectorizers=vectorizers,
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
@@ -141,7 +180,11 @@ class SearchManager:
                 if self.search_info.verbose:
                     print(f"Search index {self.search_info.index_name} already exists")
 
-    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
+    async def update_content(
+        self,
+        sections: List[Section],
+        image_embeddings: Optional[List[List[float]]] = None,
+    ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -154,11 +197,13 @@ class SearchManager:
                         "category": section.category,
                         "sourcepage": (
                             BlobManager.blob_image_name_from_file_page(
-                                filename=section.content.filename(), page=section.split_page.page_num
+                                filename=section.content.filename(),
+                                page=section.split_page.page_num,
                             )
                             if image_embeddings
                             else BlobManager.sourcepage_from_file_page(
-                                filename=section.content.filename(), page=section.split_page.page_num
+                                filename=section.content.filename(),
+                                page=section.split_page.page_num,
                             )
                         ),
                         "sourcefile": section.content.filename(),

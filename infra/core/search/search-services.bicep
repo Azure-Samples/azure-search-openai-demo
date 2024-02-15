@@ -36,14 +36,16 @@ param replicaCount int = 1
 ])
 param semanticSearch string = 'disabled'
 
+var searchIdentityProvider = (sku.name == 'free') ? null : {
+  type: 'SystemAssigned'
+}
+
 resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   name: name
   location: location
   tags: tags
   // The free tier does not support managed identity
-  identity: (sku.name == 'free') ? null : {
-    type: 'SystemAssigned'
-  }
+  identity: searchIdentityProvider
   properties: {
     authOptions: authOptions
     disableLocalAuth: disableLocalAuth
@@ -62,3 +64,4 @@ resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
 output id string = search.id
 output endpoint string = 'https://${name}.search.windows.net/'
 output name string = search.name
+output principalId string = !empty(searchIdentityProvider) ? search.identity.principalId : ''
