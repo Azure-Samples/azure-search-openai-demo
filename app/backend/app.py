@@ -305,7 +305,9 @@ async def setup_clients():
         # Store on app.config for later use inside requests
         openai_client = AsyncAzureOpenAI(
             api_version="2023-07-01-preview",
-            azure_endpoint=os.environ["AZURE_OPENAI_CUSTOM_URL"] if OPENAI_HOST == "azure_custom" else f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_endpoint=os.environ["AZURE_OPENAI_CUSTOM_URL"]
+            if OPENAI_HOST == "azure_custom"
+            else f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
         )
     elif OPENAI_HOST == "local":
