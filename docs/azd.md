@@ -35,6 +35,8 @@ Run this command to set up a Service Principal account for CI deployment and to 
 azd pipeline config
 ```
 
+You can trigger the "Deploy" workflow manually from your GitHub actions, or wait for the next push to main.
+
 If you change your `azd` environment variables at any time (via `azd env set` or as a result of provisioning), re-run that command in order to update the GitHub Actions secrets.
 
 ### Azure DevOps
