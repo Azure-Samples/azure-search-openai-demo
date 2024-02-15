@@ -5,28 +5,27 @@
 }
 
 .header {
-    background-color: #222222;
+    background: linear-gradient(to right, #0d1f2d, #00b5ad); /* Deep Space Blue to Futuristic Teal */
     color: #f2f2f2;
 }
 
 .headerContainer {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
+    justify-content: space-between; /* space-between daha iyi hizalama sağlar */
+    margin: 0 12px; /* margin sağ ve sol için eklendi */
 }
 
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
     color: #f2f2f2;
     text-decoration: none;
+    margin-right: 40px; /* İkinci CSS'teki marjin değeri kullanıldı */
 }
 
 .headerLogo {
-    height: 40px;
+    height: 40px; /* Ortak boyut kullanıldı */
 }
 
 .headerTitle {
@@ -38,16 +37,15 @@
     display: flex;
     list-style: none;
     padding-left: 0;
+    gap: 25px; /* İlk CSS'teki gap değeri kullanıldı */
 }
 
 .headerNavPageLink {
     color: #f2f2f2;
     text-decoration: none;
     opacity: 0.75;
-
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    transition-duration: 500ms;
-    transition-property: opacity;
+    padding: 0 10px; /* İlk CSS'teki padding değeri kullanıldı */
+    transition: opacity 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .headerNavPageLink:hover {
@@ -57,6 +55,8 @@
 .headerNavPageLinkActive {
     color: #f2f2f2;
     text-decoration: none;
+    font-weight: bold;
+    opacity: 1;
 }
 
 .headerNavLeftMargin {
@@ -68,11 +68,23 @@
     margin-left: 40px;
 }
 
-.microsoftLogo {
-    height: 23px;
-    font-weight: 600;
+/* Logolar için sınıflar birleştirildi ve ortak özellikler kullanıldı */
+.logo {
+    height: 20px;
+    font-weight: 600; /* İkinci CSS'teki font ağırlığı kullanıldı */
 }
 
-.githubLogo {
-    height: 20px;
+/* Responsive düzenlemeler */
+@media (max-width: 768px) {
+    .headerContainer {
+        justify-content: space-between;
+    }
+
+    .headerNavList {
+        gap: 10px;
+    }
+
+    .headerNavPageLink {
+        padding: 0 5px;
+    }
 }
