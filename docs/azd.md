@@ -25,6 +25,8 @@ Related commands are `azd provision` for just provisioning (if infra files chang
 
 This repository includes both a GitHub Actions workflow and an Azure DevOps pipeline for continuous deployment with every push to `main`. The GitHub Actions workflow is the default, but you can switch to Azure DevOps if you prefer.
 
+More details are available in [Learn.com: Configure a pipeline and push updates](https://learn.microsoft.com/azure/developer/azure-developer-cli/configure-devops-pipeline?tabs=GitHub)
+
 ### GitHub actions
 
 After you have deployed the app once with `azd up`, you can enable continuous deployment with GitHub Actions.
