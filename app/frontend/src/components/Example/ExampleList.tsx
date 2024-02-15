@@ -3,14 +3,14 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "How can AI Fusion streamline our current workflow for increased efficiency?",
-    "Can VisionAIze help us to predict next quarter's demand patterns?",
+    "How might AI Workflow Optimizer impact team productivity?",
+    "What role does AI play in optimizing resource allocation?",
     "How can AI reduce operational costs in manufacturing?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
-    "How can AI Fusion streamline our current workflow for increased efficiency?",
-    "Can VisionAIze help us to predict next quarter's demand patterns?",
+    "How might AI Workflow Optimizer impact team productivity?",
+    "What role does AI play in optimizing resource allocation?",
     "How can AI reduce operational costs in manufacturing?"
 ];
 
