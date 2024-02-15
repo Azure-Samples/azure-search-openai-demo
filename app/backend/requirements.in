@@ -17,3 +17,5 @@ msal
 azure-keyvault-secrets
 cryptography
 python-jose[cryptography]
+Pillow
+types-Pillow

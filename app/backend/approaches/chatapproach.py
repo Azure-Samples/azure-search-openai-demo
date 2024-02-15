@@ -110,7 +110,7 @@ class ChatApproach(Approach, ABC):
 
         total_token_count = 0
         for existing_message in message_builder.messages:
-            total_token_count += message_builder.count_tokens_for_message(dict(existing_message))  # type: ignore
+            total_token_count += message_builder.count_tokens_for_message(existing_message)
 
         newest_to_oldest = list(reversed(history[:-1]))
         for message in newest_to_oldest:
