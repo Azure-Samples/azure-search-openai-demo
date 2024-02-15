@@ -299,24 +299,17 @@ async def setup_clients():
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
 
-    if OPENAI_HOST == "azure":
+    if OPENAI_HOST.startswith("azure"):
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
+
         # Store on app.config for later use inside requests
         openai_client = AsyncAzureOpenAI(
             api_version="2023-07-01-preview",
-            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_endpoint=os.environ["AZURE_OPENAI_CUSTOM_URL"] if OPENAI_HOST == "azure_custom" else f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
             azure_ad_token_provider=token_provider,
         )
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
-    elif OPENAI_HOST == "azure_custom":
-        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
-        # Store on app.config for later use inside requests
-        openai_client = AsyncAzureOpenAI(
-            api_version="2023-07-01-preview",
-            azure_endpoint=os.environ["OPENAI_BASE_URL"],
-            azure_ad_token_provider=token_provider,
-        )
     else:
         openai_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,

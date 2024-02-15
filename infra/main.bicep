@@ -41,7 +41,7 @@ param appServiceSkuName string // Set in main.parameters.json
 
 @allowed([ 'azure', 'openai', 'azure_custom' ])
 param openAiHost string // Set in main.parameters.json
-param openAiBaseUrl string = ''
+param azureOpenAiCustomUrl string = ''
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
@@ -230,7 +230,7 @@ module backend 'core/host/appservice.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
-      OPENAI_BASE_URL: openAiBaseUrl
+      AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
       AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
