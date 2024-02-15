@@ -23,14 +23,17 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "formRecognizerServiceName": {
-      "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
+    "documentIntelligenceServiceName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
     },
-    "formRecognizerResourceGroupName": {
-      "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
+    "documentIntelligenceResourceGroupName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP}"
     },
-    "formRecognizerSkuName": {
-      "value": "${AZURE_FORMRECOGNIZER_SKU=S0}"
+    "documentIntelligenceSkuName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SKU=S0}"
+    },
+    "documentIntelligenceResourceGroupLocation": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_LOCATION}"
     },
     "searchIndexName": {
       "value": "${AZURE_SEARCH_INDEX=gptkbindex}"

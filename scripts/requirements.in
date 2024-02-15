@@ -2,7 +2,7 @@ pypdf
 aiohttp
 azure-identity
 azure-search-documents==11.6.0b1
-azure-ai-formrecognizer
+azure-ai-documentintelligence
 azure-storage-blob
 azure-storage-file-datalake
 openai[datalib]>=1.3.5

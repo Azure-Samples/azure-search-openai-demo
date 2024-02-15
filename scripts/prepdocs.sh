@@ -78,7 +78,7 @@ $searchAnalyzerNameArg $searchSecretNameArg \
 --openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
 --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
---formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" \
+--documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
 $searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \

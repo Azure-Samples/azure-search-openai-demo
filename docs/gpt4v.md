@@ -1,4 +1,4 @@
-# Enabling GPT-4 Turbo with Vision
+# Using GPT-4 Turbo with Vision
 
 This repository now includes an example of integrating GPT-4 Turbo with Vision with Azure AI Search. This feature enables indexing and searching images and graphs, such as financial documents, in addition to text-based content.
 
@@ -14,7 +14,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 ### Prerequisites
 
 - Create a [Computer Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing.
-- The ability to deploy a GPT-4 Turbo with Vision model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability). If you're not sure, try to create a deployment from your Azure OpenAI deployments page. You should be able to select: 
+- The ability to deploy a GPT-4 Turbo with Vision model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability). If you're not sure, try to create a deployment from your Azure OpenAI deployments page. You should be able to select:
 
    | Model | Version |
    |--|--|
@@ -25,7 +25,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
         - gpt-35-turbo
         - text-embedding-ada-002
         - gpt-4v
-    - [Azure AI Vision](https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/)
+    - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
 
 ### Setup and Usage
 
@@ -43,7 +43,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 
 
 5. **Web Application Usage:**
-    ![GPT4V configuration screenshot](./gpt4v.png)
+    ![GPT4V configuration screenshot](./images/gpt4v.png)
    - Access the developer options in the web app and select "Use GPT-4 Turbo with Vision".
    - Sample questions will be updated for testing.
    - Interact with the questions to view responses.
