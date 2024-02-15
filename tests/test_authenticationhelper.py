@@ -220,12 +220,14 @@ async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_succ
     )
     assert (
         filter
-        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and (sourcepage eq 'Benefit_Options-2.pdf')"
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options-2.pdf') or (sourcepage eq 'Benefit_Options-2.pdf'))"
     )
 
 
 @pytest.mark.asyncio
-async def test_check_path_auth_allowed(monkeypatch, mock_confidential_client_success, mock_validate_token_success):
+async def test_check_path_auth_allowed_sourcepage(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     filter = None
 
@@ -246,7 +248,88 @@ async def test_check_path_auth_allowed(monkeypatch, mock_confidential_client_suc
     )
     assert (
         filter
-        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and (sourcepage eq 'Benefit_Options-2.pdf')"
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options-2.pdf') or (sourcepage eq 'Benefit_Options-2.pdf'))"
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_sourcefile(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="Benefit_Options.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert (
+        filter
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf'))"
+    )
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_empty(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_fragment(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control.check_path_auth(
+            path="Benefit_Options.pdf#textafterfragment",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert (
+        filter
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf'))"
     )
 
 
