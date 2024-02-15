@@ -4,6 +4,10 @@ This sample is designed to be a starting point for your own production applicati
 but you should do a thorough review of the security and performance before deploying
 to production. Here are some things to consider:
 
+* [Azure resource configuration](#azure-resource-configuration)
+* [Additional security measures](#additional-security-measures)
+* [Load testing](#load-testing)
+
 ## Azure resource configuration
 
 ### OpenAI Capacity

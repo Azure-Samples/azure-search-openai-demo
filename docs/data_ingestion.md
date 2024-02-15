@@ -7,8 +7,8 @@ This guide provides more details for using the `prepdocs` script to index docume
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Overview of Integrated Vectorization](#overview-of-integrated-vectorization)
-  - [Indexing additional documents](#indexing-additional-documents-1)
-  - [Removing documents](#removing-documents-1)
+  - [Indexing of additional documents](#indexing-of-additional-documents)
+  - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
 
 ## Overview of the manual indexing process
@@ -64,7 +64,7 @@ To add additional documents to the index, first upload them to your data source 
 Then navigate to the Azure portal, find the index, and run it.
 The Azure AI Search indexer will identify the new documents and ingest them into the index.
 
-### Removing documents
+### Removal of documents
 
 To remove documents from the index, remove them from your data source (Blob storage, by default).
 Then navigate to the Azure portal, find the index, and run it.
