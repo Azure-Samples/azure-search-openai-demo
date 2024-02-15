@@ -16,22 +16,20 @@ anyio==4.2.0
     #   openai
 attrs==23.2.0
     # via aiohttp
-azure-ai-formrecognizer==3.3.2
+azure-ai-documentintelligence==1.0.0b1
     # via -r requirements.in
 azure-common==1.1.28
     # via
-    #   azure-ai-formrecognizer
     #   azure-keyvault-secrets
     #   azure-search-documents
 azure-core==1.30.0
     # via
-    #   azure-ai-formrecognizer
+    #   azure-ai-documentintelligence
     #   azure-identity
     #   azure-keyvault-secrets
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
-    #   msrest
 azure-identity==1.15.0
     # via -r requirements.in
 azure-keyvault-secrets==4.7.0
@@ -48,7 +46,6 @@ certifi==2024.2.2
     # via
     #   httpcore
     #   httpx
-    #   msrest
     #   requests
 cffi==1.16.0
     # via cryptography
@@ -84,19 +81,17 @@ idna==3.6
     #   yarl
 isodate==0.6.1
     # via
+    #   azure-ai-documentintelligence
     #   azure-keyvault-secrets
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
-    #   msrest
 msal==1.26.0
     # via
     #   azure-identity
     #   msal-extensions
 msal-extensions==1.1.0
     # via azure-identity
-msrest==0.7.1
-    # via azure-ai-formrecognizer
 multidict==6.0.5
     # via
     #   aiohttp
@@ -106,8 +101,6 @@ numpy==1.26.4
     #   openai
     #   pandas
     #   pandas-stubs
-oauthlib==3.2.2
-    # via requests-oauthlib
 openai[datalib]==1.12.0
     # via -r requirements.in
 packaging==23.2
@@ -150,11 +143,7 @@ requests==2.31.0
     # via
     #   azure-core
     #   msal
-    #   msrest
-    #   requests-oauthlib
     #   tiktoken
-requests-oauthlib==1.3.1
-    # via msrest
 rsa==4.9
     # via python-jose
 six==1.16.0
@@ -180,7 +169,6 @@ types-pytz==2024.1.0.20240203
     # via pandas-stubs
 typing-extensions==4.9.0
     # via
-    #   azure-ai-formrecognizer
     #   azure-core
     #   azure-keyvault-secrets
     #   azure-storage-blob

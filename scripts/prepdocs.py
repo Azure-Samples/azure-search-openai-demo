@@ -65,16 +65,18 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
     doc_int_parser: DocumentAnalysisParser
 
     # check if Azure Document Intelligence credentials are provided
-    if args.formrecognizerservice is not None:
-        formrecognizer_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
-            credential if is_key_empty(args.formrecognizerkey) else AzureKeyCredential(args.formrecognizerkey)
+    if args.documentintelligenceservice is not None:
+        documentintelligence_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+            credential
+            if is_key_empty(args.documentintelligencekey)
+            else AzureKeyCredential(args.documentintelligencekey)
         )
         doc_int_parser = DocumentAnalysisParser(
-            endpoint=f"https://{args.formrecognizerservice}.cognitiveservices.azure.com/",
-            credential=formrecognizer_creds,
+            endpoint=f"https://{args.documentintelligenceservice}.cognitiveservices.azure.com/",
+            credential=documentintelligence_creds,
             verbose=args.verbose,
         )
-    if args.localpdfparser or args.formrecognizerservice is None:
+    if args.localpdfparser or args.documentintelligenceservice is None:
         pdf_parser = LocalPdfParser()
     else:
         pdf_parser = doc_int_parser
@@ -83,6 +85,14 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
         ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
     }
     use_vectors = not args.novectors
     embeddings: Optional[OpenAIEmbeddings] = None
@@ -355,12 +365,12 @@ if __name__ == "__main__":
         help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Document Intelligence service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
-        "--formrecognizerservice",
+        "--documentintelligenceservice",
         required=False,
         help="Optional. Name of the Azure Document Intelligence service which will be used to extract text, tables and layout from the documents (must exist already)",
     )
     parser.add_argument(
-        "--formrecognizerkey",
+        "--documentintelligencekey",
         required=False,
         help="Optional. Use this Azure Document Intelligence account key instead of the current user identity to login (use az login to set current user for Azure)",
     )

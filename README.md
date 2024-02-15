@@ -209,6 +209,16 @@ You can also customize the search service (new or existing) for non-English sear
 1. To turn off the spell checker, run `azd env set AZURE_SEARCH_QUERY_SPELLER none`. Consult [this table](https://learn.microsoft.com/rest/api/searchservice/preview-api/search-documents#queryLanguage) to determine if spell checker is supported for your query language.
 1. To configure the name of the analyzer to use for a searchable text field to a value other than "en.microsoft", run `azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}`. ([See other possible values](https://learn.microsoft.com/dotnet/api/microsoft.azure.search.models.field.analyzer?view=azure-dotnet-legacy&viewFallbackFrom=azure-dotnet))
 
+#### Existing Azure Document Intelligence resource
+
+In order to support analysis of many document formats, this repository uses a preview version of Azure Document Intelligence (formerly Form Recognizer) that is only available in [limited regions](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout).
+If your existing resource is in one of those regions, then you can re-use it by setting the following environment variables:
+
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SERVICE {Name of existing Azure AI Document Intelligence service}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_LOCATION {Location of existing service}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}`
+1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SKU {SKU of existing service, defaults to S0}`
+
 #### Other existing Azure resources
 
 You can also use existing Azure AI Document Intelligence and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
