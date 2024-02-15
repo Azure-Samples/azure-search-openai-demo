@@ -2,6 +2,13 @@
 
 This guide includes advanced topics that are not necessary for a basic deployment. If you are new to the project, please consult the main [README](../README.md#deploying-from-scratch) for steps on deploying the project.
 
+[📺 Watch: Deployment of your chat app](https://www.youtube.com/watch?v=mDFZdmn7nhk)
+
+* [How does `azd up` work?](#how-does-azd-up-work)
+* [Configuring continuous deployment](#configuring-continuous-deployment)
+  * [GitHub actions](#github-actions)
+  * [Azure DevOps](#azure-devops)
+
 ## How does `azd up` work?
 
 The `azd up` command comes from the [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/overview), and takes care of both provisioning the Azure resources and deploying code to the selected Azure hosts.
@@ -16,6 +23,28 @@ Related commands are `azd provision` for just provisioning (if infra files chang
 
 ## Configuring continuous deployment
 
-Please see [PR #1083](https://github.com/Azure-Samples/azure-search-openai-demo/pull/1083) if you are interested in continuous deployment with GitHub Actions or Azure DevOps pipelines. We expect to merge that PR soon.
+This repository includes both a GitHub Actions workflow and an Azure DevOps pipeline for continuous deployment with every push to `main`. The GitHub Actions workflow is the default, but you can switch to Azure DevOps if you prefer.
 
-[📺 Watch: Continuous deployment of your chat app](https://www.youtube.com/watch?v=mDFZdmn7nhk)
+### GitHub actions
+
+After you have deployed the app once with `azd up`, you can enable continuous deployment with GitHub Actions.
+
+Run this command to set up a Service Principal account for CI deployment and to store your `azd` environment variables in GitHub Actions secrets:
+
+```shell
+azd pipeline config
+```
+
+If you change your `azd` environment variables at any time (via `azd env set` or as a result of provisioning), re-run that command in order to update the GitHub Actions secrets.
+
+### Azure DevOps
+
+After you have deployed the app once with `azd up`, you can enable continuous deployment with Azure DevOps.
+
+Run this command to set up a Service Principal account for CI deployment and to store your `azd` environment variables in GitHub Actions secrets:
+
+```shell
+azd pipeline config --provider azdo
+```
+
+If you change your `azd` environment variables at any time (via `azd env set` or as a result of provisioning), re-run that command in order to update the GitHub Actions secrets.
