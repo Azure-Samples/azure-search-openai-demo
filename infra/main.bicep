@@ -122,6 +122,12 @@ var useKeyVault = useGPT4V || useSearchServiceKey
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
 
+@description('Whether the deployment is running on GitHub Actions')
+param runningOnGh string = ''
+
+@description('Whether the deployment is running on Azure DevOps Pipeline')
+param runningOnAdo string = ''
+
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
@@ -424,13 +430,15 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
+var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User': 'ServicePrincipal'
+
 module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
   scope: openAiResourceGroup
   name: 'openai-role-user'
   params: {
     principalId: principalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
@@ -440,7 +448,7 @@ module formRecognizerRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: principalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
@@ -450,7 +458,7 @@ module storageRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: principalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
@@ -460,7 +468,7 @@ module storageContribRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: principalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
@@ -471,7 +479,7 @@ module searchRoleUser 'core/security/role.bicep' = if (!useSearchServiceKey) {
   params: {
     principalId: principalId
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
@@ -481,7 +489,7 @@ module searchContribRoleUser 'core/security/role.bicep' = if (!useSearchServiceK
   params: {
     principalId: principalId
     roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
@@ -491,7 +499,7 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = if (!useSearchServi
   params: {
     principalId: principalId
     roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
