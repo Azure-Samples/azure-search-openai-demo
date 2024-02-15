@@ -11,6 +11,8 @@ import { Feedback, getFeedbackApi } from "../../api";
 export function Component(): JSX.Element {
     const [activeSample, setActiveSample] = useState<Feedback | undefined>(undefined);
 
+    const [filter, setFilter] = useState<string>("all");
+
     const { data, isLoading, error, isError } = useQuery({
         queryKey: ["getFeedback"],
         queryFn: () => getFeedbackApi(undefined)
@@ -24,6 +26,17 @@ export function Component(): JSX.Element {
     const removeActiveSample = () => {
         setActiveSample(undefined);
     };
+
+    const filteredFeedback = data?.feedbacks.filter(evalItem => {
+        if (filter === "all") {
+            return true;
+        } else if (filter === "good") {
+            return evalItem.feedback === "good";
+        } else if (filter === "bad") {
+            return evalItem.feedback === "bad";
+        }
+        return false;
+    });
 
     return (
         <div className={styles.layout}>
@@ -43,7 +56,15 @@ export function Component(): JSX.Element {
                     />
                 ) : (
                     <>
-                        {data?.feedbacks.map((evalItem: any) => (
+                        {/* Filter:
+                        <label>
+                            <select className={styles.feedbackLabel} value={filter} onChange={e => setFilter(e.target.value)}>
+                                <option value="all">All</option>
+                                <option value="good">Positive</option>
+                                <option value="bad">Negative</option>
+                            </select>
+                        </label> */}
+                        {filteredFeedback?.map((evalItem: any) => (
                             <FeedbackItem
                                 key={evalItem.id}
                                 id={evalItem.id}

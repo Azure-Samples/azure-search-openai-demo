@@ -1,10 +1,11 @@
 import { Stack, Pivot, PivotItem } from "@fluentui/react";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import { useMutation } from "react-query";
 
 import styles from "./AnalysisPanel.module.css";
 
 import { SupportingContent } from "../SupportingContent";
-import { ChatAppResponse } from "../../api";
+import { ChatAppResponse, EmailRequest, postEmailApi } from "../../api";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 import { ThoughtProcess } from "./ThoughtProcess";
 import { useMsal } from "@azure/msal-react";
@@ -57,6 +58,14 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
         fetchCitation();
     }, []);
 
+    const {
+        mutate: postEmail,
+        isLoading,
+        error
+    } = useMutation({
+        mutationFn: (email: EmailRequest) => postEmailApi(email, undefined)
+    });
+
     return (
         <Pivot
             className={className}
@@ -94,6 +103,31 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 ) : (
                     <iframe title="Citation" src={citation} width="100%" height={citationHeight} />
                 )}
+            </PivotItem>
+            <PivotItem itemKey={AnalysisPanelTabs.ContactTab} headerText="Contact Admin">
+                <p>
+                    This form is meant to contact the admin in case of urgent help. For giving non-urgent feedback, please use thumbs up/down next to the
+                    answer.
+                </p>
+                <form
+                    className={styles.formGroup}
+                    onSubmit={e => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target as HTMLFormElement);
+                        postEmail({
+                            name: formData.get("name") as string,
+                            subject: formData.get("subject") as string,
+                            message: formData.get("message") as string
+                        });
+                    }}
+                >
+                    <input type="text" className={styles.formElement} placeholder="name" name="name" />
+                    <input type="text" className={styles.formElement} placeholder="subject" name="subject" />
+                    <textarea name="message" className={styles.formElement} placeholder="please describe the issue" rows={5}></textarea>
+                    <button type="submit" className={styles.formButton}>
+                        Submit
+                    </button>
+                </form>
             </PivotItem>
         </Pivot>
     );

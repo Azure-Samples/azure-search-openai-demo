@@ -2,5 +2,6 @@ export enum AnalysisPanelTabs {
     ThoughtProcessTab = "thoughtProcess",
     SupportingContentTab = "supportingContent",
     CitationTab = "citation",
-    EvaluationTab = "evaluation"
+    EvaluationTab = "evaluation",
+    ContactTab = "contact"
 }

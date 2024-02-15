@@ -112,6 +112,8 @@ export type ExperimentList = {
     experiment_names: string[];
 };
 
-export type Experiment = {
-    
-}
+export type EmailRequest = {
+    name: string;
+    subject: string;
+    message: string;
+};

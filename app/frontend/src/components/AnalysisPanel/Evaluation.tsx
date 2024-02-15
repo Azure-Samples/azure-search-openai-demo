@@ -71,7 +71,7 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
     };
 
     return (
-        <div className="">
+        <div>
             <div>
                 <span>
                     <h2>Question</h2>
@@ -82,7 +82,7 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                 </span>
                 {answer}
             </div>
-            <div className="">
+            <div>
                 {evalResult ? (
                     <>
                         <div>
@@ -111,20 +111,7 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                         <h3>Evaluating Answer...</h3>
                     </>
                 ) : (
-                    <button
-                        style={{
-                            margin: "2em auto",
-                            display: "block",
-                            fontSize: "17px",
-                            padding: "0.5em 2em",
-                            border: "transparent",
-                            boxShadow: "2px 2px 4px rgba(0,0,0,0.4)",
-                            background: "dodgerblue",
-                            color: "white",
-                            borderRadius: "4px"
-                        }}
-                        onClick={() => getEvaluation(question, supportingContentText, answer)}
-                    >
+                    <button className={styles.evalButton} onClick={() => getEvaluation(question, supportingContentText, answer)}>
                         Evaluate
                     </button>
                 )}

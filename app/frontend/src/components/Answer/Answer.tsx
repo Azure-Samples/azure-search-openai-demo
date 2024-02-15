@@ -21,6 +21,7 @@ interface Props {
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
     onEvaluationClicked: () => void;
+    onContactClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -34,6 +35,7 @@ export const Answer = ({
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onEvaluationClicked,
+    onContactClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
@@ -109,10 +111,18 @@ export const Answer = ({
                         />
                         <IconButton
                             style={{ color: "black" }}
-                            iconProps={{ iconName: "BarChart4" }}
+                            iconProps={{ iconName: "BarChartVertical" }}
                             title="Show Evaluation"
                             ariaLabel="Show Evaluation"
                             onClick={() => onEvaluationClicked()}
+                            disabled={!answer.choices[0].context.data_points}
+                        />
+                        <IconButton
+                            style={{ color: "black" }}
+                            iconProps={{ iconName: "mail" }}
+                            title="Show Evaluation"
+                            ariaLabel="Show Evaluation"
+                            onClick={() => onContactClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>
