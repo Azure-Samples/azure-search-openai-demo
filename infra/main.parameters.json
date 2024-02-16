@@ -80,6 +80,9 @@
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
+    "azureOpenAiCustomUrl":{
+      "value": "${AZURE_OPENAI_CUSTOM_URL}"
+    },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
     },
