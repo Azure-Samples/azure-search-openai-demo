@@ -9,7 +9,7 @@ import styles from "./Answer.module.css";
 import { ChatAppResponse, getCitationFilePath, postFeedbackApi, Feedback } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
-import { parseAnswerToHtml } from "./AnswerParser";
+import { parseAnswerToHtml, removeCitations } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
@@ -21,7 +21,6 @@ interface Props {
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
     onEvaluationClicked: () => void;
-    onContactClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
 }
@@ -35,14 +34,13 @@ export const Answer = ({
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onEvaluationClicked,
-    onContactClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
     const followupQuestions = answer.choices[0].context.followup_questions;
     const messageContent = answer.choices[0].message.content;
     const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
-
+    const removeCitationsAnswer = removeCitations(answer.choices[0].message.content);
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
     const [feedbackType, setFeedbackType] = useState<string>("");
@@ -87,6 +85,12 @@ export const Answer = ({
         postFeedback(request);
     };
 
+    const handleContactClick = () => {
+        const email = "jiri.de.jonghe@be.ey.com";
+        const emailTemplate = `Dear [Recipient's Name]\n\nI hope you are doing well. We're contacting you regarding the question you asked: \n\n${question}\n\n${removeCitationsAnswer}\n\nThank you for your time.\n\nKind Regards,\n[Your Name]\n[Your Position]\n[Your Company]\n[Your Contact Information]`;
+        window.open(`mailto:${email}?subject=${encodeURIComponent("Question Follow-up") || ""}&body=${encodeURIComponent(emailTemplate) || ""}`);
+    };
+
     return (
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
             <Stack.Item>
@@ -122,7 +126,7 @@ export const Answer = ({
                             iconProps={{ iconName: "mail" }}
                             title="Show Evaluation"
                             ariaLabel="Show Evaluation"
-                            onClick={() => onContactClicked()}
+                            onClick={() => handleContactClick()}
                             disabled={!answer.choices[0].context.data_points}
                         />
                     </div>

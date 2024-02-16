@@ -4,6 +4,7 @@ import { evalApi, EvaluationRequest, EvaluationResponse } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { useState } from "react";
+import { removeCitations } from "../Answer/AnswerParser";
 
 interface Props {
     question: string;
@@ -26,6 +27,8 @@ const client = useLogin ? useMsal().instance : undefined;
 
 export const Evaluation = ({ question, answer, supportingContent }: Props) => {
     const [evalResult, setEvalResult] = useState<EvaluationResponse | null>(null);
+
+    const removeCitationsAnswer = removeCitations(answer);
 
     const [hover, setHover] = useState<any | null>(null);
     const onHover = (metric: string) => {
@@ -72,7 +75,7 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
 
     return (
         <div>
-            <div>
+            {/* <div>
                 <span>
                     <h2>Question</h2>
                 </span>
@@ -80,32 +83,30 @@ export const Evaluation = ({ question, answer, supportingContent }: Props) => {
                 <span>
                     <h2>Answer</h2>
                 </span>
-                {answer}
-            </div>
-            <div>
+                {removeCitationsAnswer}
+            </div> */}
+            <div className={styles.evalButtonContainer}>
                 {evalResult ? (
-                    <>
-                        <div>
-                            <span>
-                                <h2>Evaluation</h2>
-                            </span>
-                            <section className={styles.evalSection}>
-                                <div className={styles.evalMetric} onMouseEnter={() => onHover("contextPrecision")} onMouseLeave={onLeave}>
-                                    Context Precision
-                                </div>
-                                <div>{evalResult.contextPrecision} </div>
-                                <div className={styles.evalMetric} onMouseEnter={() => onHover("answerRelevance")} onMouseLeave={onLeave}>
-                                    Answer Relevance
-                                </div>
-                                <div>{evalResult.answerRelevance}</div>
-                                <div className={styles.evalMetric} onMouseEnter={() => onHover("faithfulness")} onMouseLeave={onLeave}>
-                                    Faithfulness
-                                </div>
-                                <div>{evalResult.faithfulness}</div>
-                            </section>
-                            <div className="">{hover ? metricsExplanations[hover as keyof typeof metricsExplanations] : ""}</div>
-                        </div>
-                    </>
+                    <div>
+                        <span>
+                            <h2>Evaluation</h2>
+                        </span>
+                        <section className={styles.evalSection}>
+                            <div className={styles.evalMetric} onMouseEnter={() => onHover("contextPrecision")} onMouseLeave={onLeave}>
+                                Context Precision
+                            </div>
+                            <div>{evalResult.contextPrecision} </div>
+                            <div className={styles.evalMetric} onMouseEnter={() => onHover("answerRelevance")} onMouseLeave={onLeave}>
+                                Answer Relevance
+                            </div>
+                            <div>{evalResult.answerRelevance}</div>
+                            <div className={styles.evalMetric} onMouseEnter={() => onHover("faithfulness")} onMouseLeave={onLeave}>
+                                Faithfulness
+                            </div>
+                            <div>{evalResult.faithfulness}</div>
+                        </section>
+                        <div className="">{hover ? metricsExplanations[hover as keyof typeof metricsExplanations] : ""}</div>
+                    </div>
                 ) : isLoading ? (
                     <>
                         <h3>Evaluating Answer...</h3>

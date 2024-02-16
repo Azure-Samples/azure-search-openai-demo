@@ -111,9 +111,3 @@ export type FeedbackResponse = {
 export type ExperimentList = {
     experiment_names: string[];
 };
-
-export type EmailRequest = {
-    name: string;
-    subject: string;
-    message: string;
-};

@@ -10,8 +10,7 @@ import {
     EvaluationResponse,
     Feedback,
     FeedbackResponse,
-    ExperimentList,
-    EmailRequest
+    ExperimentList
 } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
@@ -107,12 +106,4 @@ export async function getExperimentApi(id: string, idToken: string | undefined):
     });
 
     return response.data;
-}
-
-export async function postEmailApi(email: EmailRequest, idToken: string | undefined): Promise<Response> {
-    return await fetch(`${BACKEND_URI}/email`, {
-        method: "POST",
-        headers: getHeaders(idToken),
-        body: JSON.stringify(email)
-    });
 }

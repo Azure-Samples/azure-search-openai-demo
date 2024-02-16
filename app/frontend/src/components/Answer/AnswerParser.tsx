@@ -56,3 +56,14 @@ export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitati
         citations
     };
 }
+
+export function removeCitations(answer: string): string {
+    const parts = answer.split(/\[([^\]]+)\]/g);
+    const fragments: string[] = parts.filter((part, index) => {
+        if (index % 2 === 0) {
+            return part;
+        }
+    });
+
+    return fragments.join("");
+}

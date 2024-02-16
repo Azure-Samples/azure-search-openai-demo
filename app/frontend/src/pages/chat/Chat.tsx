@@ -293,7 +293,6 @@ const Chat = () => {
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab, index)}
-                                                onContactClicked={() => onToggleTab(AnalysisPanelTabs.ContactTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />
@@ -315,7 +314,6 @@ const Chat = () => {
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab, index)}
-                                                onContactClicked={() => onToggleTab(AnalysisPanelTabs.ContactTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                             />

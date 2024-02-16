@@ -211,7 +211,6 @@ export function Component(): JSX.Element {
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
                             onEvaluationClicked={() => onToggleTab(AnalysisPanelTabs.EvaluationTab)}
-                            onContactClicked={() => onToggleTab(AnalysisPanelTabs.ContactTab)}
                         />
                     </div>
                 )}

@@ -96,17 +96,21 @@
 }
 
 .evalButton {
-    margin-left: auto;
-    margin-top: 1rem;
+    margin: 3rem auto;
+    /* margin-left: 1rem; */
     padding: 0.75rem 1.5rem;
     font-size: 14px;
-    border: transparent;
     background: rgba(115, 118, 225, 1);
     color: white;
     font-weight: 500;
     border-radius: 5px;
     text-transform: uppercase;
     border: 1px solid rgba(115, 118, 225, 1);
+}
+
+.evalButtonContainer {
+    margin: 1rem auto;
+    display: grid;
 }
 
 .evalButton:hover {
