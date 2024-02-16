@@ -33,7 +33,20 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
    Pull the latest changes.
 
 2. **Enable GPT-4 Turbo with Vision:**
-   Set the environment variable with `azd env set USE_GPT4V true`. This flag is used to deploy necessary components for vision fuctionality and to toggle UI components.
+
+   First, make sure you do *not* have integrated vectorization enabled, since that is currently incompatible:
+
+   ```shell
+   azd env set USE_FEATURE_INT_VECTORIZATION false
+   ```
+
+   Then set the environment variable for enabling vision support:
+
+   ```shell
+   azd env set USE_GPT4V true
+   ```
+
+   When set, that flag will provision a Computer Vision resource and GPT-4-vision model, upload image versions of PDFs to Blob storage, upload embeddings of images in a new `imageEmbedding` field, and enable the vision approach in the UI.
 
 3. **Clean old deployments (optional):**
    Run `azd down --purge` for a fresh setup.
