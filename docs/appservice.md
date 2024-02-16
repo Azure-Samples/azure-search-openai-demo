@@ -31,13 +31,13 @@ In the Azure portal, navigate to your App Service.
 Select _Deployment Center_ from the side navigation menu, then select _Logs_.
 You should see a timestamped list of recent deploys:
 
-![Screenshot of deployment logs tab from Azure App Service](images/appservice_deploymentcenter.png)
+![Screenshot of deployment logs tab from Azure App Service](images/screenshot_appservice_deploymentcenter.png)
 
 Check whether the status of the most recent deploy is "Success (Active)" or "Failed". If it's success, the deployment logs might still reveal issues, and if it's failed, the logs should certainly reveal the issue.
 
 Click the commit ID to open the logs for the most recent deploy. First scroll down to see if any errors or warnings are reported at the end. This is what you'll hopefully see if all went well:
 
-![Screenshot of successful deployment logs from Azure App Service](images/appservice_deployment_log.png)
+![Screenshot of successful deployment logs from Azure App Service](images/screenshot_appservice_deployment_log.png)
 
 Now scroll back up to find the timestamp with the label "Running oryx build".
 [Oryx](https://github.com/microsoft/Oryx) is the open source tool that builds apps for App Service, Functions, and other platforms, across all the supported MS languages. Click the _Show logs_ link next to that label. That will pop open detailed logs at the bottom. Scroll down.
@@ -531,7 +531,8 @@ Copying .ostype to manifest output directory.
 
 Done in 522 sec(s).
 ```
-</summary>
+
+</details>
 
 Look for these important steps in the Oryx build:
 
