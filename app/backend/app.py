@@ -94,10 +94,11 @@ async def content_file(path: str):
     This is also slow and memory hungry.
     """
     # Remove page number from path, filename-1.txt -> filename.txt
+    # This shouldn't typically be necessary as browsers don't send hash fragments to servers
     if path.find("#page=") > 0:
         path_parts = path.rsplit("#page=", 1)
         path = path_parts[0]
-    logging.info("Opening file %s at page %s", path)
+    logging.info("Opening file %s", path)
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
