@@ -54,6 +54,9 @@ jobs:
       AZURE_USE_APPLICATION_INSIGHTS: ${{ vars.AZURE_USE_APPLICATION_INSIGHTS }}
       USE_VECTORS: ${{ vars.USE_VECTORS }}
       USE_GPT4V: ${{ vars.USE_GPT4V }}
+      AZURE_VISION_ENDPOINT: ${{ vars.AZURE_VISION_ENDPOINT }}
+      VISION_SECRET_NAME: ${{ vars.VISION_SECRET_NAME }}
+      AZURE_KEY_VAULT_NAME: ${{ vars.AZURE_KEY_VAULT_NAME }}
       AZURE_USE_AUTHENTICATION: ${{ vars.AZURE_USE_AUTHENTICATION }}
       AZURE_ENFORCE_ACCESS_CONTROL: ${{ vars.AZURE_ENFORCE_ACCESS_CONTROL }}
       AZURE_AUTH_TENANT_ID: ${{ vars.AZURE_AUTH_TENANT_ID }}
@@ -67,7 +70,7 @@ jobs:
 
       - name: Install azd
         uses: Azure/setup-azd@v0.1.0
-      
+
       - name: Install Nodejs
         uses: actions/setup-node@v3
         with:
@@ -81,7 +84,7 @@ jobs:
             --federated-credential-provider "github" `
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
-     
+
       - name: Log in with Azure (Client Credentials)
         if: ${{ env.AZURE_CREDENTIALS != '' }}
         run: |
