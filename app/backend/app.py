@@ -276,6 +276,24 @@ async def experiment():
         return error_response(error, "/experiment_list")
 
 
+@bp.route("/documents", methods=["GET"])
+async def documents():
+    try:
+        blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+        blob_properties_list = blob_container_client.list_blobs()
+
+        documents = []
+        async for blob_property in blob_properties_list:
+            blob_name = blob_property.name
+            documents.append(blob_name)
+
+        print("Documents", documents)
+        return jsonify({"documents": documents})
+
+    except Exception as error:
+        return error_response(error, "/documents")
+
+
 @bp.route("/config", methods=["GET"])
 def config():
     return jsonify(

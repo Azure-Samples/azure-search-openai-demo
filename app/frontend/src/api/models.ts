@@ -111,3 +111,7 @@ export type FeedbackResponse = {
 export type ExperimentList = {
     experiment_names: string[];
 };
+
+export type DocumentList = {
+    documents: string[];
+};

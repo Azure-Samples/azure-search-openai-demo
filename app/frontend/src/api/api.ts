@@ -10,7 +10,8 @@ import {
     EvaluationResponse,
     Feedback,
     FeedbackResponse,
-    ExperimentList
+    ExperimentList,
+    DocumentList
 } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
@@ -106,4 +107,12 @@ export async function getExperimentApi(id: string, idToken: string | undefined):
     });
 
     return response.data;
+}
+
+export async function getDocsApi(idToken: string | undefined): Promise<DocumentList> {
+    const response = await axios.get(`${BACKEND_URI}/documents`, {
+        headers: getHeaders(idToken)
+    });
+
+    return response.data as DocumentList;
 }

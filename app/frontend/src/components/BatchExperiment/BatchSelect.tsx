@@ -1,9 +1,6 @@
-import { divProperties } from "@fluentui/react";
-import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 
 import styles from "./BatchExperiment.module.css";
-import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 
 import { getExperimentListApi } from "../../api";
