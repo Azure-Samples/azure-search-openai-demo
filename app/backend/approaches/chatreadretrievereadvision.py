@@ -1,3 +1,4 @@
+import re
 from typing import Any, Coroutine, Optional, Union
 
 from azure.search.documents.aio import SearchClient
@@ -13,8 +14,7 @@ from openai.types.chat import (
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
-from core.imageshelper import fetch_image
-from core.imageshelper import encode_image
+from core.imageshelper import fetch_image, get_image_from_base64
 from core.modelhelper import get_token_limit
 
 
@@ -58,8 +58,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_endpoint = vision_endpoint
         self.vision_key = vision_key
         self.chatgpt_token_limit = get_token_limit(gpt4v_model)
-        print("self.chatgpt_token_limit")
-        print(self.chatgpt_token_limit)
+       
 
     @property
     def system_message_chat_conversation(self):
@@ -104,31 +103,46 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         top = overrides.get("top", 3)
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
-
         include_gtpV_text = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         include_gtpV_images = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
-
         original_user_query = history[-1]["content"]
-        
-        
        
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        user_query_request = "Generate search query for: " + original_user_query
+        print("============ DEBUG - chatandretrieve- original_user_query ============")
+        print(original_user_query)
         
-
+        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question.
+        # Update to include image request
+        inspector_prompt_message = self.inspector_prompt;
+        print(inspector_prompt_message)
+        user_content: list[ChatCompletionContentPartParam] = [{"text": inspector_prompt_message, "type": "text"}]
+        image_list: list[ChatCompletionContentPartImageParam] = []
+        
+        # if include_gtpV_text:
+        #     user_content.append({"text": "\n\nSources:\n" + content, "type": "text"})
+            
+        image_uri = None
+        if re.match(r"^data:image\/(jpeg|jpg|png|gif);base64,", original_user_query):
+            # for result in results:
+            #     url = await fetch_image(self.blob_container_client, result)
+            #     if url:
+            #         image_list.append({"image_url": url, "type": "image_url"})
+            url = await get_image_from_base64(original_user_query)
+            if url:
+                image_list.append({"image_url": url, "type": "image_url"})
+            user_content.extend(image_list)
+        
         messages = self.get_messages_from_history(
             system_prompt=self.query_prompt_template,
             model_id=self.gpt4v_model,
             history=history,
-            user_content=user_query_request,
-            max_tokens=self.chatgpt_token_limit - len(" ".join(user_query_request)),
+            user_content=user_content,
+            max_tokens=self.chatgpt_token_limit,
             few_shots=self.query_prompt_few_shots,
         )
-       
-        print ("max_tokens")
-        print (self.chatgpt_token_limit - len(" ".join(user_query_request)))
+        print("============ DEBUG - chatandretrieve- messages ============")
+        print(messages)
         
-     
+        
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,
@@ -139,8 +153,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
-    
-        
+        print("============ DEBUG - chatandretrieve- query_text ============")
+        print(query_text)        
         
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -170,45 +184,15 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             overrides.get("prompt_template"),
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
         )
-
-        response_token_limit = 2000
+        
+        print("============ DEBUG - chatandretrieve- system_message ============")
+        print(system_message)
+        
+        response_token_limit = 1000
         messages_token_limit = self.chatgpt_token_limit - response_token_limit
         
-        print("---------response_token_limit = 1024")
-        print(response_token_limit)
         
-        print("---------self.chatgpt_token_limit")
-        print(self.chatgpt_token_limit)
-        print("-----------response_token_limit")
-        print(response_token_limit)
-        print ("---------messages_token_limit = self.chatgpt_token_limit - response_token_limit")
-        print(messages_token_limit)
         
-        user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
-        print ("user_content")
-        print(user_content)
-        image_list: list[ChatCompletionContentPartImageParam] = []
-        print ("image_list")
-        print(image_list)
-
-        if include_gtpV_text:
-            user_content.append({"text": "\n\nSources:\n" + content, "type": "text"})
-            print("user_content.append({'text': '\n\nSources:\n' + content, 'type': 'text'})")
-            print(user_content)
-        if include_gtpV_images:
-            for result in results:
-                url = await fetch_image(self.blob_container_client, result)
-                if url:
-                    image_list.append({"image_url": url, "type": "image_url"})
-            user_content.extend(image_list)
-            print("user_content.extend(image_list)")
-            print(user_content)
-            
-        # url = await encode_image(query_text)
-        # if url:
-        #     image_list.append({"image_url": url, "type": "image_url"})
-        # user_content.extend(image_list)
-
         messages = self.get_messages_from_history(
             system_prompt=system_message,
             model_id=self.gpt4v_model,
@@ -216,16 +200,12 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             user_content=user_content,
             max_tokens=messages_token_limit,
         )
-        print("---------messages")
-        print(messages)
         
-
         data_points = {
             "text": sources_content,
             "images": [d["image_url"] for d in image_list],
         }
-        print("--------data_points")
-        print(data_points)
+     
         extra_info = {
             "data_points": data_points,
             "thoughts": [
@@ -243,6 +223,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         }
 
+        print("============ DEBUG - chatandretrieve- final messages ============")
+        print(messages)
         chat_coroutine = self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,

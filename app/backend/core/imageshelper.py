@@ -1,5 +1,6 @@
 import base64
 import os
+import re
 import requests
 from io import BytesIO
 import math
@@ -88,14 +89,15 @@ def calculate_image_token_cost(image_uri: str, detail: str = "auto") -> int:
         # Invalid detail_option
         raise ValueError("Invalid value for detail parameter. Use 'low' or 'high'.")
 
-
-async def encode_image(image_path):
-    response = requests.get(image_path)
-    # print ("============== DEBUG - imagepath ==============")
-    # print(response)
-    # print ("============== DEBUG ==============")
-    img = base64.b64encode(response.content).decode("utf-8")
-    if img:
-        return f"data:image/png;base64,{img}"
-    else:
-        return None
+async def get_image_from_base64(image_uri: str) -> Optional[str]:
+    # From https://github.com/openai/openai-cookbook/pull/881/files
+    if re.match(r"data:image\/\w+;base64", image_uri):
+        image_uri = re.sub(r"data:image\/\w+;base64,", "", image_uri)
+        image = f"data:image/png;base64,{image_uri}"
+    
+        if len(image) > 0:
+            return {"url": image, "detail": "auto"}
+        else:
+            return None
+    return None
+    

@@ -30,23 +30,29 @@ class ChatApproach(Approach, ABC):
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<Are there exclusions for prescriptions?>>
-    <<Which pharmacies can be ordered from?>>
-    <<What is the limit for over-the-counter medication?>>
+    <<Can you see any defect?>>
+    <<What should we avoid?>>
+    <<What can be the problem?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge.
-    You have access to Azure AI Search index with 100's of documents.
-    Generate a search query based on the conversation and the new question.
-    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
-    Do not include any text inside [] or <<>> in the search query terms.
-    Do not include any special characters like '+'.
-    If the question is not in English, translate the question to English before generating the search query.
-    If you cannot generate a search query, return just the number 0.
-    """
+    query_prompt_template = """You are a utility pole inspector that describes the qualities of utility poles."""
 
+    inspector_prompt = '''Analyse the image for a utility pole asset inspection report.
+        ---
+        If the image does not contain a utility pole just say "there is no utility pole to inspect".
+        ---
+        The polecap is a small disc shaped object that sits on the tip of the utility pole. It is either a dull grey or an overexposed bright white and can exhibit corrosion. It matches the poles profile.
+        ---
+        Focus only on the quality and condition of the following utility pole componentry:
+            Pole Cap
+            Crossarms
+            Insulators
+            Transformers
+            Stays
+        '''
+    
     @property
     @abstractmethod
     def system_message_chat_conversation(self) -> str:

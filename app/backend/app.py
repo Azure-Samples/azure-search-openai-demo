@@ -17,6 +17,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
+from openai import AzureOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
@@ -99,9 +100,7 @@ async def content_file(path: str):
         path = path_parts[0]
     logging.info("Opening file %s at page %s", path)
     blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
-    # print ("============== DEBUG ==============")
-    # print(blob_container_client)
-    # print ("============== DEBUG ==============")
+    
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
     except ResourceNotFoundError:
@@ -128,8 +127,6 @@ async def ask(auth_claims: Dict[str, Any]):
     context["auth_claims"] = auth_claims
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
-        # print ("============== DEBUG ==============")
-        # print (use_gpt4v)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
             approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
@@ -169,21 +166,12 @@ async def chat(auth_claims: Dict[str, Any]):
     messages = request_json.get("messages")
     content = messages[-1]["content"]
     context["auth_claims"] = auth_claims
-    
-    # if content.startswith("blob"):   
-        # print ("content starts with blob")
-        # print(content)         
-        # await content_file(content)                
         
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         
-        # print ("============== DEBUG ==============")
-        # print(request_json)
-        # print ("============== DEBUG ==============")
         approach: Approach
-        if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
-            print ("============== USE CHAT VISION ==============")
+        if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:          
             approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
@@ -324,7 +312,12 @@ async def setup_clients():
             azure_ad_token_provider=token_provider,
         )
     elif OPENAI_HOST == "local":
-        openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
+        # openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
+        openai_client = AsyncAzureOpenAI(
+            api_version="2023-07-01-preview",
+            azure_endpoint=f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com",
+            azure_ad_token_provider=token_provider,
+        )
     else:
         openai_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,

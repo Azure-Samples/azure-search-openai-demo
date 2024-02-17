@@ -92,6 +92,7 @@ const Chat = () => {
                         choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
+                    // setStreamedAnswers([...answers, [resizedBase64Image, latestResponse]]);
                     resolve(null);
                 }, 33);
             });
@@ -124,9 +125,71 @@ const Chat = () => {
 
     const client = useLogin ? useMsal().instance : undefined;
 
+    // const makeApiRequest = async (question: string) => {
+    //     lastQuestionRef.current = question;
+
+    //     error && setError(undefined);
+    //     setIsLoading(true);
+    //     setActiveCitation(undefined);
+    //     setActiveAnalysisPanelTab(undefined);
+
+    //     const token = client ? await getToken(client) : undefined;
+
+    //     try {
+    //         const messages: ResponseMessage[] = answers.flatMap(a => [
+    //             { content: a[0], role: "user" },
+    //             { content: a[1].choices[0].message.content, role: "assistant" }
+    //         ]);
+
+    //         const request: ChatAppRequest = {
+    //             messages: [...messages, { content: question, role: "user" }],
+    //             stream: shouldStream,
+    //             context: {
+    //                 overrides: {
+    //                     prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+    //                     exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
+    //                     top: retrieveCount,
+    //                     temperature: temperature,
+    //                     retrieval_mode: retrievalMode,
+    //                     semantic_ranker: useSemanticRanker,
+    //                     semantic_captions: useSemanticCaptions,
+    //                     suggest_followup_questions: useSuggestFollowupQuestions,
+    //                     use_oid_security_filter: useOidSecurityFilter,
+    //                     use_groups_security_filter: useGroupsSecurityFilter,
+    //                     vector_fields: vectorFieldList,
+    //                     use_gpt4v: useGPT4V,
+    //                     gpt4v_input: gpt4vInput
+    //                 }
+    //             },
+    //             // ChatAppProtocol: Client must pass on any session state received from the server
+    //             session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
+    //         };
+
+    //         const response = await chatApi(request, token);
+    //         if (!response.body) {
+    //             throw Error("No response body");
+    //         }
+    //         if (shouldStream) {
+    //             const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+    //             setAnswers([...answers, [question, parsedResponse]]);
+    //         } else {
+    //             const parsedResponse: ChatAppResponseOrError = await response.json();
+    //             if (response.status > 299 || !response.ok) {
+    //                 throw Error(parsedResponse.error || "Unknown error");
+    //             }
+    //             setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
+    //         }
+    //     } catch (e) {
+    //         setError(e);
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
+    // const callAPIVision = async (resizedBase64Image: string) => {
+    // lastQuestionRef.current = question;
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
-
         error && setError(undefined);
         setIsLoading(true);
         setActiveCitation(undefined);
@@ -139,31 +202,6 @@ const Chat = () => {
                 { content: a[0], role: "user" },
                 { content: a[1].choices[0].message.content, role: "assistant" }
             ]);
-
-            /* let newMessage;
-            if (typeof question === "string" && question.startsWith("data:image")) {
-                newMessage = {
-                    role: "user",
-                    content: JSON.stringify([
-                        {
-                            type: "image_url",
-                            image_url: {
-                                url: question
-                            }
-                        }
-                    ])
-                };
-            } else {
-                newMessage = {
-                    role: "user",
-                    content: JSON.stringify([
-                        {
-                            type: "text",
-                            text: question
-                        }
-                    ])
-                };
-            } */
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: question, role: "user" }],
@@ -272,7 +310,7 @@ const Chat = () => {
     };
 
     const onExampleClicked = (example: string) => {
-        makeApiRequest(example);
+        // makeApiRequest(example);
     };
 
     const onShowCitation = (citation: string, index: number) => {
@@ -359,14 +397,14 @@ const Chat = () => {
                                     </div>
                                 </>
                             )}
-                            {error ? (
+                            {/* {error ? (
                                 <>
                                     <UserChatMessage message={lastQuestionRef.current} />
                                     <div className={styles.chatMessageGptMinWidth}>
                                         <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />
                                     </div>
                                 </>
-                            ) : null}
+                            ) : null} */}
                             <div ref={chatMessageStreamEnd} />
                         </div>
                     )}
@@ -378,7 +416,6 @@ const Chat = () => {
                             disabled={isLoading}
                             onSend={(question: string) => makeApiRequest(question)}
                         />
-                        
                     </div>
                 </div>
 
