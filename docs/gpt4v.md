@@ -1,4 +1,4 @@
-# Enabling GPT-4 Turbo with Vision
+# Using GPT-4 Turbo with Vision
 
 This repository now includes an example of integrating GPT-4 Turbo with Vision with Azure AI Search. This feature enables indexing and searching images and graphs, such as financial documents, in addition to text-based content.
 
@@ -14,7 +14,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 ### Prerequisites
 
 - Create a [Computer Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing.
-- The ability to deploy a GPT-4 Turbo with Vision model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability). If you're not sure, try to create a deployment from your Azure OpenAI deployments page. You should be able to select: 
+- The ability to deploy a GPT-4 Turbo with Vision model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability). If you're not sure, try to create a deployment from your Azure OpenAI deployments page. You should be able to select:
 
    | Model | Version |
    |--|--|
@@ -25,7 +25,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
         - gpt-35-turbo
         - text-embedding-ada-002
         - gpt-4v
-    - [Azure AI Vision](https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/)
+    - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
 
 ### Setup and Usage
 
@@ -33,7 +33,20 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
    Pull the latest changes.
 
 2. **Enable GPT-4 Turbo with Vision:**
-   Set the environment variable with `azd env set USE_GPT4V true`. This flag is used to deploy necessary components for vision fuctionality and to toggle UI components.
+
+   First, make sure you do *not* have integrated vectorization enabled, since that is currently incompatible:
+
+   ```shell
+   azd env set USE_FEATURE_INT_VECTORIZATION false
+   ```
+
+   Then set the environment variable for enabling vision support:
+
+   ```shell
+   azd env set USE_GPT4V true
+   ```
+
+   When set, that flag will provision a Computer Vision resource and GPT-4-vision model, upload image versions of PDFs to Blob storage, upload embeddings of images in a new `imageEmbedding` field, and enable the vision approach in the UI.
 
 3. **Clean old deployments (optional):**
    Run `azd down --purge` for a fresh setup.
@@ -43,7 +56,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 
 
 5. **Web Application Usage:**
-    ![GPT4V configuration screenshot](./gpt4v.png)
+    ![GPT4V configuration screenshot](./images/gpt4v.png)
    - Access the developer options in the web app and select "Use GPT-4 Turbo with Vision".
    - Sample questions will be updated for testing.
    - Interact with the questions to view responses.

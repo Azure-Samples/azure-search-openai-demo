@@ -37,7 +37,7 @@ class ChatApproach(Approach, ABC):
     Make sure the last question ends with ">>".
     """
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge.
+    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
     You have access to Azure AI Search index with 100's of documents.
     Generate a search query based on the conversation and the new question.
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.

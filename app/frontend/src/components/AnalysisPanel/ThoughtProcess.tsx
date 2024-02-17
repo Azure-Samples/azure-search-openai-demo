@@ -12,9 +12,9 @@ interface Props {
 export const ThoughtProcess = ({ thoughts }: Props) => {
     return (
         <ul className={styles.tList}>
-            {thoughts.map(t => {
+            {thoughts.map((t, ind) => {
                 return (
-                    <li className={styles.tListItem}>
+                    <li className={styles.tListItem} key={ind}>
                         <div className={styles.tStep}>{t.title}</div>
                         {Array.isArray(t.description) ? (
                             <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock}>
