@@ -18,9 +18,7 @@ import ChatHeader from "./ChatHeader";
 import ExplanationMessage from "./TermsOfService/ExplanationMessage";
 import TermsOfService from "./TermsOfService/TermsOfService";
 
-const Chat: React.FC = ({
-}) => {
-
+const Chat: React.FC = ({}) => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -47,8 +45,8 @@ const Chat: React.FC = ({
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<{ content: string, clientRole: string, responses: ChatAppResponse[] }[]>([]);
-    const [streamedAnswers, setStreamedAnswers] = useState<{ content: string, clientRole: string, responses: ChatAppResponse[] }[]>([]);
+    const [answers, setAnswers] = useState<{ content: string; clientRole: string; responses: ChatAppResponse[] }[]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<{ content: string; clientRole: string; responses: ChatAppResponse[] }[]>([]);
 
     const [chatInput, setChatInput] = useState<ChatInput>({ inputType: "freeText" });
 
@@ -58,7 +56,13 @@ const Chat: React.FC = ({
 
     const delay = async (timeout: number) => await new Promise((resolve, reject) => setTimeout(resolve, timeout));
 
-    const handleAsyncRequest = async (question: string, clientRole: string, answers: { content: string, clientRole: string, responses: ChatAppResponse[] }[], setAnswers: Function, responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (
+        question: string,
+        clientRole: string,
+        answers: { content: string; clientRole: string; responses: ChatAppResponse[] }[],
+        setAnswers: Function,
+        responseBody: ReadableStream<any>
+    ) => {
         let role: string;
         let answer: string = "";
         let responses: ChatAppResponse[] = [];
@@ -77,7 +81,6 @@ const Chat: React.FC = ({
             let latestResponses: ChatAppResponse[] = [...responses, latestResponse];
             setStreamedAnswers([...answers, { content: question, clientRole, responses: latestResponses }]);
         };
-
 
         function* asyncWordGenerator(str: string) {
             const words = str.split(" ");
@@ -172,9 +175,10 @@ const Chat: React.FC = ({
                     }
                 },
                 // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answers.length ? answers[answers.length - 1].responses[answers[answers.length - 1].responses.length - 1].choices[0].session_state : null
+                session_state: answers.length
+                    ? answers[answers.length - 1].responses[answers[answers.length - 1].responses.length - 1].choices[0].session_state
+                    : null
             };
-
 
             lastApiCallTime.current = Date.now();
             const response = await chatApi(request, token?.accessToken);
@@ -242,12 +246,11 @@ const Chat: React.FC = ({
         playerRef.current = new Vimeo("playerElement", {
             url: vimeoUrl,
             autoplay: true,
-            controls: true,
+            controls: false,
             dnt: true,
             title: false,
             playsinline: false,
-            width: 1000,
-            
+            width: 1000
         });
 
         playerRef.current.on("ended", () => {
@@ -318,25 +321,21 @@ const Chat: React.FC = ({
         setSelectedAnswer(index);
     };
 
-    const lastAnswer = answers[answers.length - 1]
-    const lastRole = lastAnswer && lastAnswer.responses && lastAnswer.responses[0]?.choices[0]?.message?.role
+    const lastAnswer = answers[answers.length - 1];
+    const lastRole = lastAnswer && lastAnswer.responses && lastAnswer.responses[0]?.choices[0]?.message?.role;
     const isIntroPage = lastRole == "introPage";
     const isTosPage = lastRole == "termsOfServicePage";
 
     return (
         <>
             <VideoPlayerContainer hidden={!isPlayingVideo} />
-            <div style={{ display: isPlayingVideo ? 'none' : 'flex', flexFlow: 'column', height: '100%' }}>
+            <div style={{ display: isPlayingVideo ? "none" : "flex", flexFlow: "column", height: "100%" }}>
                 <ChatHeader />
-                {isIntroPage &&
-                    <ExplanationMessage onButtonClicked={() => makeApiRequest("go-to-tos", "frontend-client")} />
-                }
+                {isIntroPage && <ExplanationMessage onButtonClicked={() => makeApiRequest("go-to-tos", "frontend-client")} />}
 
-                {isTosPage &&
-                    <TermsOfService onButtonClicked={() => makeApiRequest("user-accepted-tos", "frontend-client")} />
-                }
+                {isTosPage && <TermsOfService onButtonClicked={() => makeApiRequest("user-accepted-tos", "frontend-client")} />}
 
-                {!isIntroPage && !isTosPage && answers.length > 0 &&
+                {!isIntroPage && !isTosPage && answers.length > 0 && (
                     <div className={styles.container}>
                         <div className={styles.chatRoot}>
                             <div className={styles.chatContainer}>
@@ -357,7 +356,9 @@ const Chat: React.FC = ({
                                                                         isSelected={false}
                                                                         onCitationClicked={c => onShowCitation(c, index)}
                                                                         onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                                        onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                                        onSupportingContentClicked={() =>
+                                                                            onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)
+                                                                        }
                                                                         onFollowupQuestionClicked={q => makeApiRequest(q, "user")}
                                                                         showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                                     />
@@ -381,7 +382,9 @@ const Chat: React.FC = ({
                                                                         isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
                                                                         onCitationClicked={c => onShowCitation(c, index)}
                                                                         onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                                                        onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                                        onSupportingContentClicked={() =>
+                                                                            onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)
+                                                                        }
                                                                         onFollowupQuestionClicked={q => makeApiRequest(q, "user")}
                                                                         showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                                     />
@@ -500,7 +503,12 @@ const Chat: React.FC = ({
                                     className={styles.chatSettingsSeparator}
                                     label="Retrieval mode"
                                     options={[
-                                        { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                                        {
+                                            key: "hybrid",
+                                            text: "Vectors + Text (Hybrid)",
+                                            selected: retrievalMode == RetrievalMode.Hybrid,
+                                            data: RetrievalMode.Hybrid
+                                        },
                                         { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
                                         { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
                                     ]}
@@ -516,7 +524,8 @@ const Chat: React.FC = ({
                                 {useLogin && <TokenClaimsDisplay />}
                             </Panel>
                         </div>
-                    </div>}
+                    </div>
+                )}
             </div>
         </>
     );

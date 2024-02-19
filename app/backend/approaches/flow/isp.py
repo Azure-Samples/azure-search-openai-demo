@@ -25,7 +25,7 @@ async def wait_for_response_before_video(request_context: RequestContext, input:
         request_context.save_to_var(VariableIsUserExited, True)
 States[StateWaitForResponseBeforeVideo] = State(chat_input=chat_input_multiple_options(["לצאת", "לתרגל עם סרטון"]), action_before=wait_for_response_before_video, conditioned_actions=[
     ConditionedAction(condition=lambda request_context, input: input == "לתרגל עם סרטון", output=None, next_state=StateShowVideo, condition_description="המשתמש\ת בחר\ה לצפות בסרטון"),
-    ConditionedAction(condition=lambda request_context, input: input == "לצאת", output="genericExitText", next_state=StateExit, condition_description="המשתמש\ת בחר\ה לצפות בסרטון"),
+    ConditionedAction(condition=lambda request_context, input: input == "לצאת", output="genericExitText", next_state=StateExit, condition_description="המשתמש\ת בחר\ה לצאת"),
     ConditionedAction(condition=None, output="wrongInputBeforeVideo", next_state=StateWaitForResponseBeforeVideo, condition_description=None),
 ])
 
@@ -63,7 +63,7 @@ States[StateGetDistressAfterVideo] = State(chat_input=chat_input_numeric(0, "0",
     ConditionedAction(condition=lambda request_context, input: not (0 <= int(input) <= 10), output="wrongDistressLevel", next_state=StateGetDistressAfterVideo, condition_description="רמת המצוקה לא בין 0 ל-10"),
     ConditionedAction(condition=lambda request_context, input: (request_context.get_var(VariableWasDistressLevelIncreasedTwice) or request_context.get_var(VariableVideoIndex) == 7) and request_context.get_var(VariableIspPath) == "1", output=None, next_state=StateStartPositiveCognition, condition_description="שתי החרפות או אחרי וידאו שמיני, מוקד מצוקה סכנה"),
     ConditionedAction(condition=lambda request_context, input: request_context.get_var(VariableWasDistressLevelIncreasedTwice), output="exitAfterDistressIncreasedTwice", next_state=StateExit, condition_description="שתי החרפות, מוקד מצוקה אחר"),
-    ConditionedAction(condition=lambda request_context, input: request_context.get_var(VariableVideoIndex) == 7, output="exitAfterDistressIncreasedTwice", next_state=StateChooseExitText, condition_description="אחרי וידאו שמיני"),
+    ConditionedAction(condition=lambda request_context, input: request_context.get_var(VariableVideoIndex) == 7, output=None, next_state=StateChooseExitText, condition_description="אחרי וידאו שמיני"),
     ConditionedAction(condition=lambda request_context, input: int(input) < request_context.get_var(VariablePrevDistressLevel), output="shouldContinueAfterImprovement", next_state=StateGetIfToContinueAfterVideo, condition_description="הייתה הטבה"),
     ConditionedAction(condition=lambda request_context, input: int(input) == request_context.get_var(VariablePrevDistressLevel), output="shouldContinueAfterNoChange", next_state=StateGetIfToContinueAfterVideo, condition_description="רמת מצוקה נשארה זהה"),
     ConditionedAction(condition=None, output="shouldContinueAfterDistressIncreased", next_state=StateGetIfToContinueAfterVideo, condition_description=None),

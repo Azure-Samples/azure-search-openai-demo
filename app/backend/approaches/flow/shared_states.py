@@ -66,13 +66,10 @@ def is_exit_after_distress_increased(request_context, input) -> bool:
         (request_context.get_var(VariableWasDistressLevelIncreased) and request_context.get_var(VariableIsUserExited)) or
         request_context.get_var(VariableFirstDistressLevel) <= request_context.get_var(VariableDistressLevel))
 def is_exit_after_improvement(request_context, input) -> bool:
-    return request_context.get_var(VariableVideoIndex) == 7 and request_context.get_var(VariableFirstDistressLevel) > request_context.get_var(VariableDistressLevel)
-def is_exit_after_average_improvement(request_context, input) -> bool:
-    return request_context.get_var(VariableVideoIndex) == 7 and request_context.get_var(VariableSumDistressLevel) / 8 < request_context.get_var(VariableFirstDistressLevel)
+    return request_context.get_var(VariableFirstDistressLevel) > request_context.get_var(VariableDistressLevel)
 States[StateChooseExitText] = State(chat_input=ChatInputNotWait, conditioned_actions=[
     ConditionedAction(condition=is_exit_after_distress_increased, output="exitTextAfterDistressIncreased", next_state=StateExit, condition_description="שתי החרפות, או שהתמתמש\ת בחר\ה לצאת אחרי החרפה, או שהייתה החרפה בין רמת המצוקה בהתחלה לסוף"),
     ConditionedAction(condition=is_exit_after_improvement, output="exitAfterImprovement", next_state=StateExit, condition_description="המשתמש\ת סיימ\ה שמונה סרטונים וחל שיפור בין רמת המצוקה בהתחלה לסוף"),
-    ConditionedAction(condition=is_exit_after_average_improvement, output="exitAfterAverageImprovement", next_state=StateExit, condition_description="המשתמש\ת סיימ\ה שמונה סרטונים וחל שיפור בין רמת המצוקה בהתחלה לממוצע רמות המצוקה המדווחות"),
     ConditionedAction(condition=None, output="exitNoClearImprovement", next_state=StateExit, condition_description=None)
 ])
 

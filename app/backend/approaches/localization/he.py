@@ -98,11 +98,10 @@ exit_after_distress_increased = """לפני שנסיים אני רוצה להז�
 def exit_after_improvement(is_patient_male: bool, is_bot_male: bool):
     return exit_by_improvement(is_patient_male=is_patient_male, is_bot_male=is_bot_male, improvement_description="שתיארת שיפור בין תחילת התרגול לסיומו ולעודד אותך לעשות שימוש בתרגול שעשינו")
 
-def exit_after_average_improvement(is_patient_male: bool, is_bot_male: bool):
-    return exit_by_improvement(is_patient_male=is_patient_male, is_bot_male=is_bot_male, improvement_description="שבמהלך התרגול תיארת נקודות של שיפור ולכן {can_choose} לעשות שימוש בתרגול שעשינו".format(can_choose = "תוכל לבחור" if is_patient_male else "תוכלי לבחור"))
-
 def exit_no_clear_improvement(is_patient_male: bool, is_bot_male: bool):
-    return exit_by_improvement(is_patient_male=is_patient_male, is_bot_male=is_bot_male, improvement_description="שתיארת שיפור בעקבות התרגול ולעודד אותך לעשות שימוש בתרגול שעשינו")
+    return """סיימנו את התרגול. אני מקווה שתיתרם ממנו. לעיתים השיפור מופיע בהמשך, לאחר שעות או ימים מתום התרגול.    
+לפני שנסיים אני רוצה להזכיר לך שהתגובות שחווית מאוד הגיוניות, ושלאנשים שונים בזמנים שונים מתאימות התערבויות שונות. הרבה פעמים אחרי שחווים אירוע מאיים או קשה או במצבים שחוששים מאירועים כאלה חווים קושי או מצוקה, ויש  לך אפשרות לפנות לסיוע נפשי ולקבל כלים אחרים בגופים שונים כגון:
+{contacts_text}"""
 
 def should_continue_after_improvement(is_patient_male: bool, is_bot_male: bool):
     return """אני {happy} {that_you} חווה שיפור, ייתכן שיפור נוסף עם התרגול. האם {want} להמשיך?""".format(
@@ -140,7 +139,7 @@ def is_connected_to_current_after_no_improvement(is_patient_male: bool, is_bot_m
         is_connected = is_connected_to_current(is_patient_male))
 
 def exit_after_fail_to_connect_to_current(is_bot_male: bool):
-    return "אני {understand}, ורוצה להזכיר לך שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך".format(
+    return "אני {understand}, ורוצה להזכיר לך שלפעמים אחרי אירוע קשה לוקח זמן להתחבר שוב להווה. יתכן שהתהליך הזה יתרחש בהמשך.".format(
         understand = "מבין" if is_bot_male else "מבינה",
         that_you_here = "שאתה נמצא" if is_bot_male else "שאת נמצאת"
     )
@@ -165,14 +164,6 @@ def exit_after_improvement_and_fail_to_connect_to_current(is_patient_male: bool,
 def exit_after_improvement_and_succeed_to_connect_to_current(is_patient_male: bool, is_bot_male: bool):
     return exit_after_succeed_to_connect_to_current(is_patient_male, is_bot_male) + """
 """ + exit_after_improvement(is_patient_male, is_bot_male)
-
-def exit_after_average_improvement_and_fail_to_connect_to_current(is_patient_male: bool, is_bot_male: bool):
-    return exit_after_fail_to_connect_to_current(is_bot_male) + """
-""" + exit_after_average_improvement(is_patient_male, is_bot_male)
-
-def exit_after_average_improvement_and_succeed_to_connect_to_current(is_patient_male: bool, is_bot_male: bool):
-    return exit_after_succeed_to_connect_to_current(is_patient_male, is_bot_male) + """
-""" + exit_after_average_improvement(is_patient_male, is_bot_male)
 
 def exit_after_no_clear_improvement_and_succeed_to_connect_to_current(is_patient_male: bool, is_bot_male: bool):
     return exit_after_succeed_to_connect_to_current(is_patient_male, is_bot_male) + """
