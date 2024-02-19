@@ -1,8 +1,8 @@
 .documentsSelect {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); */
     grid-row-gap: 2rem;
-    background: linear-gradient(rgba(115, 118, 225, 1), rgba(115, 118, 225, 1)) center/2px 100% no-repeat;
+    /* background: linear-gradient(rgba(115, 118, 225, 1), rgba(115, 118, 225, 1)) center/2px 100% no-repeat; */
     margin-top: 10rem;
 }
 
@@ -46,8 +46,16 @@
     cursor: pointer;
 }
 
-.documentSelect h1 {
+.documentsSelect h1 {
     display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.summarizeDocument {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-row-gap: 2rem;
     justify-content: center;
     align-content: center;
 }

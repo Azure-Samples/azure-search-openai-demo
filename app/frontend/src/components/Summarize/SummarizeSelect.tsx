@@ -16,7 +16,6 @@ const SummarizeSelect = ({ onDocumentClicked }: Props) => {
 
     return (
         <div className={styles.documentsSelect}>
-            <button className={styles.docUploadButton}>Upload a new document</button>
             {isLoading ? (
                 <h1>Loading Available Documents...</h1>
             ) : (
@@ -28,6 +27,7 @@ const SummarizeSelect = ({ onDocumentClicked }: Props) => {
                     ))}
                 </div>
             )}
+            <button className={styles.docUploadButton}>Upload a new document</button>
         </div>
     );
 };

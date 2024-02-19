@@ -76,7 +76,6 @@ export async function evalApi(request: EvaluationRequest, idToken: string | unde
     return parsedResponse;
 }
 
-// TODO TODO
 export async function postFeedbackApi(request: Feedback, idToken: string | undefined): Promise<Response> {
     return await fetch(`${BACKEND_URI}/feedback`, {
         method: "POST",
@@ -115,4 +114,12 @@ export async function getDocsApi(idToken: string | undefined): Promise<DocumentL
     });
 
     return response.data as DocumentList;
+}
+
+export async function getDocApi(id: string, idToken: string | undefined): Promise<any> {
+    const response = await axios.get(`${BACKEND_URI}/content/${id}`, {
+        headers: getHeaders(idToken)
+    });
+
+    return response.data;
 }
