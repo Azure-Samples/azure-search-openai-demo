@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 from datetime import datetime
+import aiohttp
+import asyncio
 
 
 from azure.core.credentials import AzureKeyCredential
@@ -274,6 +276,27 @@ async def experiment():
         return jsonify(result)
     except Exception as error:
         return error_response(error, "/experiment_list")
+    
+@bp.route('/batchevaluate', methods=['POST'])
+async def batchevaluate():
+    request_json = await request.get_json()
+    message, _ = await start_evaluation(request_json)
+    return jsonify({"status": message}), 202
+
+async def start_evaluation(payload):
+    session = aiohttp.ClientSession()
+    try:
+        task = asyncio.create_task(post_payload_handler(session, payload))
+        return "Evaluation started, fetch /experiment_list for results", task
+    except Exception as error:
+        return f"Evaluation did not start, error: {error}", task
+        
+async def post_payload_handler(session, payload):
+    try: 
+        async with session.post('https://rageval.azurewebsites.net/api/evaluate', json=payload):
+            pass
+    finally: 
+        await session.close()
 
 
 @bp.route("/config", methods=["GET"])
