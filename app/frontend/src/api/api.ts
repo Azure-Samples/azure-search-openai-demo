@@ -123,3 +123,21 @@ export async function getDocApi(id: string, idToken: string | undefined): Promis
 
     return response.data;
 }
+
+export async function postDocApi(file: File, idToken: string | undefined): Promise<any> {
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await axios.post(`${BACKEND_URI}/content`, formData, {
+            headers: {
+                ...getHeaders(idToken),
+                "Content-Type": "multipart/form-data"
+            }
+        });
+
+        return response.data;
+    } catch (e) {
+        throw e;
+    }
+}

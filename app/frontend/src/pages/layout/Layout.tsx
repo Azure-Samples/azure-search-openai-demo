@@ -25,11 +25,6 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
-                                <NavLink to="/summarize" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Summarize
-                                </NavLink>
-                            </li>
-                            <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/eval" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
                                     Evaluate
                                 </NavLink>

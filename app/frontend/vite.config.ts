@@ -36,7 +36,8 @@ export default defineConfig({
             "/experiment_list": "http://localhost:50505",
             "/experiment": "http://localhost:50505",
             "/documents": "http://localhost:50505",
-            "/document": "http://localhost:50505"
+            "/document": "http://localhost:50505",
+            "/content": "http://localhost:50505"
         }
     }
 });

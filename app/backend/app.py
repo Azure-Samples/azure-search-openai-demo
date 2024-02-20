@@ -18,6 +18,8 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob import ContentSettings
+from azure.search.documents.indexes import SearchIndexerClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -117,6 +119,30 @@ async def content_file(path: str):
     await blob.readinto(blob_file)
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
+
+
+@bp.route("/content", methods=["POST"])
+async def content():
+
+    try:
+        files = await request.files
+        file = files.get("file")
+
+        if file:
+            blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+            blob_name = file.filename
+
+            blob_client = blob_container_client.get_blob_client(blob_name)
+            await blob_client.upload_blob(
+                file.stream.read(), content_settings=ContentSettings(content_type=file.content_type)
+            )
+
+            return jsonify("Feedback uploaded to Blob Storage succesfully")
+        else:
+            return jsonify({"error": "No file provided"}), 400
+
+    except Exception as error:
+        return error_response(error, "/feedback")
 
 
 @bp.route("/ask", methods=["POST"])

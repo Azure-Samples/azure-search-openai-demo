@@ -19,3 +19,36 @@
     flex-direction: column;
     justify-content: flex-end;
 }
+
+.questionInputButtonsContainer button {
+    align-self: flex-end;
+}
+
+.uploadContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 1rem;
+    text-align: center;
+    align-items: center;
+}
+
+.uploadContainer button {
+    margin: auto auto;
+    display: block;
+    /* font-size: 22px; */
+    padding: 0.5em 2em;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    background: rgba(115, 118, 225, 1);
+    color: white;
+    font-weight: 600;
+    border-radius: 5px;
+    border: solid 1px rgba(115, 118, 225, 1);
+}
+
+.uploadContainer button:hover {
+    cursor: pointer;
+    background-color: transparent;
+    color: rgba(115, 118, 225, 1);
+    border: solid 1px rgba(115, 118, 225, 1);
+    transition: all 0.3s ease;
+}

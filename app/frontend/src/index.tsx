@@ -66,10 +66,6 @@ const router = createHashRouter([
                 lazy: () => import("./pages/eval/EvalBatch")
             },
             {
-                path: "summarize",
-                lazy: () => import("./pages/summarize/Summarize")
-            },
-            {
                 path: "*",
                 lazy: () => import("./pages/NoPage")
             }
