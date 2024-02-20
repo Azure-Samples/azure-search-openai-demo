@@ -16,10 +16,9 @@ from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob import ContentSettings
-from azure.search.documents.indexes import SearchIndexerClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -137,12 +136,22 @@ async def content():
                 file.stream.read(), content_settings=ContentSettings(content_type=file.content_type)
             )
 
+            AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
+            azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+            search_indexer_client = SearchIndexerClient(
+                endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+                credential=azure_credential,
+            )
+            indexers = await search_indexer_client.get_indexers()
+            indexer = indexers[0]
+            await search_indexer_client.run_indexer(indexer.name)
+
             return jsonify("Feedback uploaded to Blob Storage succesfully")
         else:
             return jsonify({"error": "No file provided"}), 400
 
     except Exception as error:
-        return error_response(error, "/feedback")
+        return error_response(error, "/content")
 
 
 @bp.route("/ask", methods=["POST"])
@@ -403,6 +412,11 @@ async def setup_clients():
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         credential=search_credential,
     )
+    search_indexer_client = SearchIndexerClient(
+        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        credential=search_credential,
+    )
+    print(search_indexer_client)
 
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
