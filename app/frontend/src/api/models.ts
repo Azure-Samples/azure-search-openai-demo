@@ -116,3 +116,12 @@ export type ExperimentList = {
 export type DocumentList = {
     documents: string[];
 };
+
+export type IUploadFormData = {
+    formData: FormData;
+};
+
+export type IUploadResponse = {
+    success: boolean;
+    message?: string;
+};

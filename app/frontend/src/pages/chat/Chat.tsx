@@ -56,6 +56,8 @@ const Chat = () => {
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
+    const [docFilter, setDocFilter] = useState<string[] | null>(null);
+
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
@@ -346,6 +348,7 @@ const Chat = () => {
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
+                            onSetDocFilter={setDocFilter}
                         />
                     </div>
                 </div>

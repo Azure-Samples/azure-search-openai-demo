@@ -124,12 +124,13 @@ export async function getDocApi(id: string, idToken: string | undefined): Promis
     return response.data;
 }
 
-export async function postDocApi(file: File, idToken: string | undefined): Promise<any> {
+export async function uploadFileApi(request: FormData, idToken: string | undefined): Promise<any> {
     try {
-        const formData = new FormData();
-        formData.append("file", file);
+        // const formData = new FormData();
+        // formData.append("file", file);
 
-        const response = await axios.post(`${BACKEND_URI}/content`, formData, {
+        // TODO :: we're sending it to wrong endpoint on purpose, bcs currently not working properly
+        const response = await axios.post(`${BACKEND_URI}/upload`, request, {
             headers: {
                 ...getHeaders(idToken),
                 "Content-Type": "multipart/form-data"
