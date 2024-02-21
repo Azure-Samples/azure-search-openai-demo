@@ -6,9 +6,9 @@ from urllib.parse import urljoin
 import aiohttp
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import (
-    CaptionResult,
+    QueryCaptionResult,
     QueryType,
-    RawVectorQuery,
+    VectorizedQuery,
     VectorQuery,
 )
 from openai import AsyncOpenAI
@@ -28,7 +28,7 @@ class Document:
     sourcefile: Optional[str]
     oids: Optional[List[str]]
     groups: Optional[List[str]]
-    captions: List[CaptionResult]
+    captions: List[QueryCaptionResult]
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
@@ -41,16 +41,18 @@ class Document:
             "sourcefile": self.sourcefile,
             "oids": self.oids,
             "groups": self.groups,
-            "captions": [
-                {
-                    "additional_properties": caption.additional_properties,
-                    "text": caption.text,
-                    "highlights": caption.highlights,
-                }
-                for caption in self.captions
-            ]
-            if self.captions
-            else [],
+            "captions": (
+                [
+                    {
+                        "additional_properties": caption.additional_properties,
+                        "text": caption.text,
+                        "highlights": caption.highlights,
+                    }
+                    for caption in self.captions
+                ]
+                if self.captions
+                else []
+            ),
         }
 
     @classmethod
@@ -95,7 +97,7 @@ class Approach:
         self.openai_host = openai_host
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
-        exclude_category = overrides.get("exclude_category") or None
+        exclude_category = overrides.get("exclude_category")
         security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
         filters = []
         if exclude_category:
@@ -145,7 +147,7 @@ class Approach:
                         sourcefile=document.get("sourcefile"),
                         oids=document.get("oids"),
                         groups=document.get("groups"),
-                        captions=cast(List[CaptionResult], document.get("@search.captions")),
+                        captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
                     )
                 )
         return documents
@@ -185,7 +187,7 @@ class Approach:
             input=q,
         )
         query_vector = embedding.data[0].embedding
-        return RawVectorQuery(vector=query_vector, k=50, fields="embedding")
+        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")
 
     async def compute_image_embedding(self, q: str):
         endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
@@ -201,7 +203,7 @@ class Approach:
             ) as response:
                 json = await response.json()
                 image_query_vector = json["vector"]
-        return RawVectorQuery(vector=image_query_vector, k=50, fields="imageEmbedding")
+        return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding")
 
     async def run(
         self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}

@@ -1,0 +1,91 @@
+# Run when commits are pushed to mainline branch (main or master)
+# Set this to the mainline branch you are using
+trigger:
+  - main
+  - master
+
+# Azure Pipelines workflow to deploy to Azure using azd
+# To configure required secrets and service connection for connecting to Azure, simply run `azd pipeline config --provider azdo`
+# Task "Install azd" needs to install setup-azd extension for azdo - https://marketplace.visualstudio.com/items?itemName=ms-azuretools.azd
+# See below for alternative task to install azd if you can't install above task in your organization
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: setup-azd@0
+    displayName: Install azd
+
+  # If you can't install above task in your organization, you can comment it and uncomment below task to install azd
+  # - task: Bash@3
+  #   displayName: Install azd
+  #   inputs:
+  #     targetType: 'inline'
+  #     script: |
+  #       curl -fsSL https://aka.ms/install-azd.sh | bash
+
+  # azd delegate auth to az to use service connection with AzureCLI@2
+  - pwsh: |
+      azd config set auth.useAzCliAuth "true"
+    displayName: Configure AZD to Use AZ CLI Authentication.
+
+  - task: AzureCLI@2
+    displayName: Provision Infrastructure
+    inputs:
+      # azconnection is the service connection created by azd. You can change it to any service connection you have in your organization.
+      azureSubscription: azconnection
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        azd provision --no-prompt
+    env:
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+      AZURE_ENV_NAME: $(AZURE_ENV_NAME)
+      AZURE_LOCATION: $(AZURE_LOCATION)
+      AZD_INITIAL_ENVIRONMENT_CONFIG: $(AZD_INITIAL_ENVIRONMENT_CONFIG)
+      AZURE_OPENAI_SERVICE: $(AZURE_OPENAI_SERVICE)
+      AZURE_OPENAI_RESOURCE_GROUP: $(AZURE_OPENAI_RESOURCE_GROUP)
+      AZURE_FORMRECOGNIZER_SERVICE: $(AZURE_FORMRECOGNIZER_SERVICE)
+      AZURE_FORMRECOGNIZER_RESOURCE_GROUP: $(AZURE_FORMRECOGNIZER_RESOURCE_GROUP)
+      AZURE_FORMRECOGNIZER_SKU: $(AZURE_FORMRECOGNIZER_SKU)
+      AZURE_SEARCH_INDEX: $(AZURE_SEARCH_INDEX)
+      AZURE_SEARCH_SERVICE: $(AZURE_SEARCH_SERVICE)
+      AZURE_SEARCH_SERVICE_RESOURCE_GROUP: $(AZURE_SEARCH_SERVICE_RESOURCE_GROUP)
+      AZURE_SEARCH_SERVICE_LOCATION: $(AZURE_SEARCH_SERVICE_LOCATION)
+      AZURE_SEARCH_SERVICE_SKU: $(AZURE_SEARCH_SERVICE_SKU)
+      AZURE_SEARCH_QUERY_LANGUAGE: $(AZURE_SEARCH_QUERY_LANGUAGE)
+      AZURE_SEARCH_QUERY_SPELLER: $(AZURE_SEARCH_QUERY_SPELLER)
+      AZURE_SEARCH_SEMANTIC_RANKER: $(AZURE_SEARCH_SEMANTIC_RANKER)
+      AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
+      AZURE_STORAGE_RESOURCE_GROUP: $(AZURE_STORAGE_RESOURCE_GROUP)
+      AZURE_STORAGE_SKU: $(AZURE_STORAGE_SKU)
+      AZURE_APP_SERVICE_SKU: $(AZURE_APP_SERVICE_SKU)
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: $(AZURE_OPENAI_CHATGPT_DEPLOYMENT)
+      AZURE_OPENAI_EMB_DEPLOYMENT: $(AZURE_OPENAI_EMB_DEPLOYMENT)
+      OPENAI_HOST: $(OPENAI_HOST)
+      OPENAI_API_KEY: $(OPENAI_API_KEY)
+      OPENAI_ORGANIZATION: $(OPENAI_ORGANIZATION)
+      AZURE_USE_APPLICATION_INSIGHTS: $(AZURE_USE_APPLICATION_INSIGHTS)
+      USE_VECTORS: $(USE_VECTORS)
+      USE_GPT4V: $(USE_GPT4V)
+      AZURE_VISION_ENDPOINT: $(AZURE_VISION_ENDPOINT)
+      VISION_SECRET_NAME: $(VISION_SECRET_NAME)
+      AZURE_KEY_VAULT_NAME: $(AZURE_KEY_VAULT_NAME)
+      AZURE_USE_AUTHENTICATION: $(AZURE_USE_AUTHENTICATION)
+      AZURE_ENFORCE_ACCESS_CONTROL: $(AZURE_ENFORCE_ACCESS_CONTROL)
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_AUTH_TENANT_ID: $(AZURE_AUTH_TENANT_ID)
+      AZURE_SERVER_APP_ID: $(AZURE_SERVER_APP_ID)
+      AZURE_CLIENT_APP_ID: $(AZURE_CLIENT_APP_ID)
+      ALLOWED_ORIGIN: $(ALLOWED_ORIGIN)
+      AZURE_SERVER_APP_SECRET: $(AZURE_SERVER_APP_SECRET)
+      AZURE_CLIENT_APP_SECRET: $(AZURE_CLIENT_APP_SECRET)
+
+  - task: AzureCLI@2
+    displayName: Deploy Application
+    inputs:
+      azureSubscription: azconnection
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        azd deploy --no-prompt

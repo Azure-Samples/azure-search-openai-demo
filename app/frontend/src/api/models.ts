@@ -80,4 +80,6 @@ export type ChatAppRequest = {
 
 export type Config = {
     showGPT4VOptions: boolean;
+    showSemanticRankerOption: boolean;
+    showVectorOption: boolean;
 };

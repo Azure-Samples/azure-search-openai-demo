@@ -35,27 +35,53 @@ if [ -n "$AZURE_VISION_KEY" ]; then
   visionKeyArg="--visionkey $AZURE_VISION_KEY"
 fi
 
-visionKeyVaultName=""
+keyVaultName=""
 if [ -n "$AZURE_KEY_VAULT_NAME" ]; then
-  visionKeyVaultName="--visionKeyVaultName $AZURE_KEY_VAULT_NAME"
+  keyVaultName="--keyvaultname $AZURE_KEY_VAULT_NAME"
 fi
 
-visionKeyVaultkey=""
+visionSecretNameArg=""
 if [ -n "$VISION_SECRET_NAME" ]; then
-  visionKeyVaultkey="--visionKeyVaultkey $VISION_SECRET_NAME"
+  visionSecretNameArg="--visionsecretname $VISION_SECRET_NAME"
+fi
+
+searchSecretNameArg=""
+if [ -n "$AZURE_SEARCH_SECRET_NAME" ]; then
+  searchSecretNameArg="--searchsecretname $AZURE_SEARCH_SECRET_NAME"
 fi
 
 if [ "$USE_GPT4V" = true ]; then
   searchImagesArg="--searchimages"
 fi
 
-./scripts/.venv/bin/python ./scripts/prepdocs.py \
-'./data/*' $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg $searchAnalyzerNameArg \
-$aclArg  --storageaccount "$AZURE_STORAGE_ACCOUNT" \
-$searchImagesArg $visionEndpointArg $visionKeyArg $visionKeyVaultkey $visionKeyVaultName \
---container "$AZURE_STORAGE_CONTAINER" --searchservice "$AZURE_SEARCH_SERVICE" \
---openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT" \
---openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" --index "$AZURE_SEARCH_INDEX" \
---formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
---tenantid "$AZURE_TENANT_ID" --openaihost "$OPENAI_HOST" \
---openaikey "$OPENAI_API_KEY" -v
+if [ "$USE_VECTORS" = false ]; then
+  disableVectorsArg="--novectors"
+fi
+
+if [ "$USE_LOCAL_PDF_PARSER" = true ]; then
+  localPdfParserArg="--localpdfparser"
+fi
+
+if [ -n "$AZURE_TENANT_ID" ]; then
+  tenantArg="--tenantid $AZURE_TENANT_ID"
+fi
+
+if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
+  integratedVectorizationArg="--useintvectorization $USE_FEATURE_INT_VECTORIZATION"
+fi
+
+./scripts/.venv/bin/python ./scripts/prepdocs.py './data/*' --verbose \
+--subscriptionid $AZURE_SUBSCRIPTION_ID  \
+--storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
+--searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \
+$searchAnalyzerNameArg $searchSecretNameArg \
+--openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
+--openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
+--openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
+--documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
+$searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
+$adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
+$tenantArg $aclArg \
+$disableVectorsArg $localPdfParserArg \
+$keyVaultName \
+$integratedVectorizationArg

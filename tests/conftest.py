@@ -23,6 +23,7 @@ from openai.types.chat.chat_completion import (
 from openai.types.create_embedding_response import Usage
 
 import app
+import core
 from core.authentication import AuthenticationHelper
 
 from .mocks import (
@@ -263,6 +264,8 @@ def mock_env(monkeypatch, request, mock_get_secret):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
@@ -302,6 +305,7 @@ async def auth_client(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_confidential_client_success,
+    mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
     mock_get_secret,
@@ -327,6 +331,14 @@ async def auth_client(
             client.config = quart_app.config
 
             yield client
+
+
+@pytest.fixture
+def mock_validate_token_success(monkeypatch):
+    async def mock_validate_access_token(self, token):
+        pass
+
+    monkeypatch.setattr(core.authentication.AuthenticationHelper, "validate_access_token", mock_validate_access_token)
 
 
 @pytest.fixture

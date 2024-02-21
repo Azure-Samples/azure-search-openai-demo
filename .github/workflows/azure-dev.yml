@@ -1,0 +1,110 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    # Run when commits are pushed to mainline branch (main or master)
+    # Set this to the mainline branch you are using
+    branches:
+      - main
+      - master
+
+# GitHub Actions workflow to deploy to Azure using azd
+# To configure required secrets for connecting to Azure, simply run `azd pipeline config`
+
+# Set up permissions for deploying with secretless Azure federated credentials
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # azd required
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      # project specific
+      AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
+      AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
+      AZURE_FORMRECOGNIZER_SERVICE: ${{ vars.AZURE_FORMRECOGNIZER_SERVICE }}
+      AZURE_FORMRECOGNIZER_RESOURCE_GROUP: ${{ vars.AZURE_FORMRECOGNIZER_RESOURCE_GROUP }}
+      AZURE_FORMRECOGNIZER_SKU: ${{ vars.AZURE_FORMRECOGNIZER_SKU }}
+      AZURE_SEARCH_INDEX: ${{ vars.AZURE_SEARCH_INDEX }}
+      AZURE_SEARCH_SERVICE: ${{ vars.AZURE_SEARCH_SERVICE }}
+      AZURE_SEARCH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SEARCH_SERVICE_RESOURCE_GROUP }}
+      AZURE_SEARCH_SERVICE_LOCATION: ${{ vars.AZURE_SEARCH_SERVICE_LOCATION }}
+      AZURE_SEARCH_SERVICE_SKU: ${{ vars.AZURE_SEARCH_SERVICE_SKU }}
+      AZURE_SEARCH_QUERY_LANGUAGE: ${{ vars.AZURE_SEARCH_QUERY_LANGUAGE }}
+      AZURE_SEARCH_QUERY_SPELLER: ${{ vars.AZURE_SEARCH_QUERY_SPELLER }}
+      AZURE_SEARCH_SEMANTIC_RANKER: ${{ vars.AZURE_SEARCH_SEMANTIC_RANKER }}
+      AZURE_STORAGE_ACCOUNT: ${{ vars.AZURE_STORAGE_ACCOUNT }}
+      AZURE_STORAGE_RESOURCE_GROUP: ${{ vars.AZURE_STORAGE_RESOURCE_GROUP }}
+      AZURE_STORAGE_SKU: ${{ vars.AZURE_STORAGE_SKU }}
+      AZURE_APP_SERVICE_SKU: ${{ vars.AZURE_APP_SERVICE_SKU }}
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT }}
+      AZURE_OPENAI_EMB_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT }}
+      OPENAI_HOST: ${{ vars.OPENAI_HOST }}
+      OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+      OPENAI_ORGANIZATION: ${{ vars.OPENAI_ORGANIZATION }}
+      AZURE_USE_APPLICATION_INSIGHTS: ${{ vars.AZURE_USE_APPLICATION_INSIGHTS }}
+      USE_VECTORS: ${{ vars.USE_VECTORS }}
+      USE_GPT4V: ${{ vars.USE_GPT4V }}
+      AZURE_VISION_ENDPOINT: ${{ vars.AZURE_VISION_ENDPOINT }}
+      VISION_SECRET_NAME: ${{ vars.VISION_SECRET_NAME }}
+      AZURE_KEY_VAULT_NAME: ${{ vars.AZURE_KEY_VAULT_NAME }}
+      AZURE_USE_AUTHENTICATION: ${{ vars.AZURE_USE_AUTHENTICATION }}
+      AZURE_ENFORCE_ACCESS_CONTROL: ${{ vars.AZURE_ENFORCE_ACCESS_CONTROL }}
+      AZURE_AUTH_TENANT_ID: ${{ vars.AZURE_AUTH_TENANT_ID }}
+      AZURE_SERVER_APP_ID: ${{ vars.AZURE_SERVER_APP_ID }}
+      AZURE_CLIENT_APP_ID: ${{ vars.AZURE_CLIENT_APP_ID }}
+      ALLOWED_ORIGIN: ${{ vars.ALLOWED_ORIGIN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install azd
+        uses: Azure/setup-azd@v0.1.0
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Log in with Azure (Federated Credentials)
+        if: ${{ env.AZURE_CLIENT_ID != '' }}
+        run: |
+          azd auth login `
+            --client-id "$Env:AZURE_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:AZURE_TENANT_ID"
+        shell: pwsh
+
+      - name: Log in with Azure (Client Credentials)
+        if: ${{ env.AZURE_CREDENTIALS != '' }}
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          azd auth login `
+            --client-id "$($info.clientId)" `
+            --client-secret "$($info.clientSecret)" `
+            --tenant-id "$($info.tenantId)"
+        shell: pwsh
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Provision Infrastructure
+        run: azd provision --no-prompt
+        env:
+          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+          AZURE_SERVER_APP_SECRET: ${{ secrets.AZURE_SERVER_APP_SECRET }}
+          AZURE_CLIENT_APP_SECRET: ${{ secrets.AZURE_CLIENT_APP_SECRET }}
+
+      - name: Deploy Application
+        run: azd deploy --no-prompt

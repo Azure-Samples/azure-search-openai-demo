@@ -37,7 +37,7 @@ class ChatApproach(Approach, ABC):
     Make sure the last question ends with ">>".
     """
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge.
+    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
     You have access to Azure AI Search index with 100's of documents.
     Generate a search query based on the conversation and the new question.
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
@@ -70,12 +70,17 @@ class ChatApproach(Approach, ABC):
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
-        if function_call := response_message.function_call:
-            if function_call.name == "search_sources":
-                arg = json.loads(function_call.arguments)
-                search_query = arg.get("search_query", self.NO_RESPONSE)
-                if search_query != self.NO_RESPONSE:
-                    return search_query
+
+        if response_message.tool_calls:
+            for tool in response_message.tool_calls:
+                if tool.type != "function":
+                    continue
+                function = tool.function
+                if function.name == "search_sources":
+                    arg = json.loads(function.arguments)
+                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    if search_query != self.NO_RESPONSE:
+                        return search_query
         elif query_text := response_message.content:
             if query_text.strip() != self.NO_RESPONSE:
                 return query_text
@@ -102,13 +107,16 @@ class ChatApproach(Approach, ABC):
         append_index = len(few_shots) + 1
 
         message_builder.insert_message(self.USER, user_content, index=append_index)
-        total_token_count = message_builder.count_tokens_for_message(dict(message_builder.messages[-1]))  # type: ignore
+
+        total_token_count = 0
+        for existing_message in message_builder.messages:
+            total_token_count += message_builder.count_tokens_for_message(existing_message)
 
         newest_to_oldest = list(reversed(history[:-1]))
         for message in newest_to_oldest:
             potential_message_count = message_builder.count_tokens_for_message(message)
             if (total_token_count + potential_message_count) > max_tokens:
-                logging.debug("Reached max tokens of %d, history will be truncated", max_tokens)
+                logging.info("Reached max tokens of %d, history will be truncated", max_tokens)
                 break
             message_builder.insert_message(message["role"], message["content"], index=append_index)
             total_token_count += potential_message_count

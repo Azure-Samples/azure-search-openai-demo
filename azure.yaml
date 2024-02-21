@@ -13,13 +13,52 @@ services:
         windows:
           shell: pwsh
           run:  cd ../frontend;npm install;npm run build
-          interactive: true
+          interactive: false
           continueOnError: false
         posix:
           shell: sh
           run:  cd ../frontend;npm install;npm run build
-          interactive: true
+          interactive: false
           continueOnError: false
+pipeline:
+  variables:
+      - AZURE_OPENAI_SERVICE
+      - AZURE_OPENAI_RESOURCE_GROUP
+      - AZURE_FORMRECOGNIZER_SERVICE
+      - AZURE_FORMRECOGNIZER_RESOURCE_GROUP
+      - AZURE_FORMRECOGNIZER_SKU
+      - AZURE_SEARCH_INDEX
+      - AZURE_SEARCH_SERVICE
+      - AZURE_SEARCH_SERVICE_RESOURCE_GROUP
+      - AZURE_SEARCH_SERVICE_LOCATION
+      - AZURE_SEARCH_SERVICE_SKU
+      - AZURE_SEARCH_QUERY_LANGUAGE
+      - AZURE_SEARCH_QUERY_SPELLER
+      - AZURE_SEARCH_SEMANTIC_RANKER
+      - AZURE_STORAGE_ACCOUNT
+      - AZURE_STORAGE_RESOURCE_GROUP
+      - AZURE_STORAGE_SKU
+      - AZURE_APP_SERVICE_SKU
+      - AZURE_OPENAI_CHATGPT_DEPLOYMENT
+      - AZURE_OPENAI_EMB_DEPLOYMENT
+      - OPENAI_HOST
+      - OPENAI_API_KEY
+      - OPENAI_ORGANIZATION
+      - AZURE_USE_APPLICATION_INSIGHTS
+      - USE_VECTORS
+      - USE_GPT4V
+      - AZURE_VISION_ENDPOINT
+      - VISION_SECRET_NAME
+      - AZURE_KEY_VAULT_NAME
+      - AZURE_USE_AUTHENTICATION
+      - AZURE_ENFORCE_ACCESS_CONTROL
+      - AZURE_AUTH_TENANT_ID
+      - AZURE_SERVER_APP_ID
+      - AZURE_CLIENT_APP_ID
+      - ALLOWED_ORIGIN
+  secrets:
+      - AZURE_SERVER_APP_SECRET
+      - AZURE_CLIENT_APP_SECRET
 hooks:
     preprovision:
       windows:

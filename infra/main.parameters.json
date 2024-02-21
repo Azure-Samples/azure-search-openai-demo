@@ -23,14 +23,17 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "formRecognizerServiceName": {
-      "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
+    "documentIntelligenceServiceName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
     },
-    "formRecognizerResourceGroupName": {
-      "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
+    "documentIntelligenceResourceGroupName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP}"
     },
-    "formRecognizerSkuName": {
-      "value": "S0"
+    "documentIntelligenceSkuName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SKU=S0}"
+    },
+    "documentIntelligenceResourceGroupLocation": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_LOCATION}"
     },
     "searchIndexName": {
       "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
@@ -53,6 +56,9 @@
     "searchQuerySpeller": {
       "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
     },
+    "searchServiceSemanticRankerLevel": {
+      "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
@@ -62,14 +68,20 @@
     "storageSkuName": {
       "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
     },
+    "appServiceSkuName": {
+      "value": "${AZURE_APP_SERVICE_SKU=B1}"
+    },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
     },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
     },
-    "openAiHost":{
+    "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
+    },
+    "azureOpenAiCustomUrl":{
+      "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
@@ -79,6 +91,9 @@
     },
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
+    },
+    "useVectors": {
+      "value": "${USE_VECTORS=true}"
     },
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
@@ -109,6 +124,15 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "useIntegratedVectorization": {
+      "value": "${USE_FEATURE_INT_VECTORIZATION}"
+    },
+    "runningOnGh": {
+      "value": "${GITHUB_ACTIONS}"
+    },
+    "runningOnAdo": {
+      "value": "${TF_BUILD}"
     }
   }
 }
