@@ -103,15 +103,6 @@ class BlobManager:
             new_img.paste(original_img, (0, text_height))
 
             # Draw the text on the white area
-            font = None
-            try:
-                font = ImageFont.truetype("arial.ttf", 20)
-            except OSError:
-                try:
-                    font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
-                except OSError:
-                    print("Unable to find arial.ttf or FreeMono.ttf, using default font")
-
             draw = ImageDraw.Draw(new_img)
             text = f"SourceFileName:{blob_name}"
 
