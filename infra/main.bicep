@@ -446,9 +446,10 @@ module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
   }
 }
 
-module documentIntelligenceRoleUser 'core/security/role.bicep' = {
-  scope: documentIntelligenceResourceGroup
-  name: 'documentintelligence-role-user'
+// For both document intelligence and computer vision
+module cognitiveServicesRoleUser 'core/security/role.bicep' = {
+  scope: resourceGroup
+  name: 'cognitiveservices-role-user'
   params: {
     principalId: principalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
@@ -572,9 +573,10 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   }
 }
 
-module openAiRoleBackennd 'core/security/role.bicep' = if (useGPT4V) {
-  scope: computerVisionResourceGroup
-  name: 'cv-role-backend'
+// For computer vision access by the backend
+module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+  scope: resourceGroup
+  name: 'cognitiveservices-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
