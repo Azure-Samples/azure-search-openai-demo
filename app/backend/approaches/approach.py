@@ -1,6 +1,7 @@
 import os
+from abc import ABC
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator, List, Optional, Union, cast
+from typing import Any, AsyncGenerator, Awaitable, Callable, List, Optional, Union, cast
 from urllib.parse import urljoin
 
 import aiohttp
@@ -75,7 +76,7 @@ class ThoughtStep:
     props: Optional[dict[str, Any]] = None
 
 
-class Approach:
+class Approach(ABC):
     def __init__(
         self,
         search_client: SearchClient,
@@ -86,6 +87,8 @@ class Approach:
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         openai_host: str,
+        vision_endpoint: str,
+        vision_token_provider: Callable[[], Awaitable[str]],
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -95,6 +98,8 @@ class Approach:
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.openai_host = openai_host
+        self.vision_endpoint = vision_endpoint
+        self.vision_token_provider = vision_token_provider
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         exclude_category = overrides.get("exclude_category")
