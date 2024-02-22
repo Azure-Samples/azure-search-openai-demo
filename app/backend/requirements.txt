@@ -354,6 +354,11 @@ yarl==1.9.4
 zipp==3.17.0
     # via importlib-metadata
 aiohttp
+aiofiles
+PyMuPDF
+pypdf
+azure-ai-formrecognizer
+azure-storage-file-datalake
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

@@ -19,3 +19,10 @@ cryptography
 python-jose[cryptography]
 Pillow
 types-Pillow
+aiohttp
+aiofiles
+PyMuPDF
+pypdf
+azure-ai-formrecognizer
+azure-storage-file-datalake
+

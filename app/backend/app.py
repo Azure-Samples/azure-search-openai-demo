@@ -7,8 +7,16 @@ import os
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 from datetime import datetime
+from argparse import Namespace
+from upload.prepdocs import setup_file_strategy
+from upload.prepdocs import main as init_prepdocs
+from upload.uploadargs import get_upload_args
+
 import aiohttp
+import aiofiles
 import asyncio
+import tempfile
+
 
 
 from azure.core.credentials import AzureKeyCredential
@@ -297,8 +305,37 @@ async def post_payload_handler(session, payload):
             pass
     finally: 
         await session.close()
-
-
+        
+@bp.route('/upload', methods=['POST'])
+async def upload():
+    try:
+        logging.info("I'm here")
+        files = await request.files
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_dir_path = Path(temp_dir.name)
+        
+        for file_key in files.keys():
+            file = files[file_key]
+            filename = file.filename
+            temp_file_path = temp_dir_path / filename
+            logging.info("Current File: %s", filename)
+            file_contents = file.read()
+            async with aiofiles.open(temp_file_path, 'wb') as temp_file:
+                await temp_file.write(file_contents)
+        
+        args = Namespace()
+        args.files =  f"{str(temp_dir_path)}/*"
+        args = get_upload_args(args)
+        
+        azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+        ingestion_strategy = await setup_file_strategy(azure_credential, args)
+        await init_prepdocs(ingestion_strategy, azure_credential, args)
+        temp_dir.cleanup()
+        return jsonify("File succesfully uploaded"), 202
+    except Exception as error:
+        logging.exception("Error", error)
+        return jsonify({"error": error}), 415
+        
 @bp.route("/config", methods=["GET"])
 def config():
     return jsonify(
