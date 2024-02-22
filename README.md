@@ -142,6 +142,9 @@ Then bring down the project code:
 
 1. Create a new folder and switch to it in the terminal
 1. Run `azd auth login`
+  1.1 in Codespaces you have to type `azd auth login --use-device-code`
+   <img width="342" alt="image" src="https://github.com/Azure-Samples/azure-search-openai-demo/assets/1814314/2730ba2d-4037-48fd-a3cb-fab7d07a28f8">
+
 1. Run `azd init -t azure-search-openai-demo`
     * note that this command will initialize a git repository and you do not need to clone this repository
 
@@ -153,6 +156,7 @@ Follow these steps to provision Azure resources and deploy the application code:
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
     * **Important**: Beware that the resources created by this command will incur immediate costs, primarily from the AI Search resource. These resources may accrue costs even if you interrupt the command before it is fully executed. You can run `azd down` or delete the resources manually to avoid unnecessary spending.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
+
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
 It will look like the following:
 
