@@ -46,11 +46,12 @@ param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 param useGPT4V bool = false
 
+param keyVaultResourceGroupName string = ''
 param keyVaultServiceName string = ''
 param searchServiceSecretName string = 'searchServiceSecret'
 
 @description('Location for the OpenAI resource group')
-@allowed(['canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral'])
+@allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral' ])
 @metadata({
   azd: {
     type: 'location'
@@ -68,7 +69,7 @@ param documentIntelligenceResourceGroupName string = ''
 // Limited regions for new version:
 // https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
 @description('Location for the Document Intelligence resource group')
-@allowed(['eastus', 'westus2', 'westeurope'])
+@allowed([ 'eastus', 'westus2', 'westeurope' ])
 @metadata({
   azd: {
     type: 'location'
@@ -164,6 +165,10 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
 
+resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(keyVaultResourceGroupName)) {
+  name: !empty(keyVaultResourceGroupName) ? keyVaultResourceGroupName : resourceGroup.name
+}
+
 // Monitor application with Azure Monitor
 module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) {
   name: 'monitoring'
@@ -176,7 +181,6 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
   }
 }
 
-
 module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicationInsights) {
   name: 'application-insights-dashboard'
   scope: resourceGroup
@@ -186,7 +190,6 @@ module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicati
     applicationInsightsName: useApplicationInsights ? monitoring.outputs.applicationInsightsName : ''
   }
 }
-
 
 // Create an App Service Plan to group applications under the same payment plan and SKU
 module appServicePlan 'core/host/appserviceplan.bicep' = {
@@ -218,7 +221,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
@@ -354,7 +357,6 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   }
 }
 
-
 // Currently, we only need Key Vault for storing Search service key,
 // which is only used for free tier
 module keyVault 'core/security/keyvault.bicep' = if (useKeyVault) {
@@ -386,7 +388,6 @@ module secrets 'secrets.bicep' = if (useKeyVault) {
     searchServiceSecretName: searchServiceSecretName
   }
 }
-
 
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
@@ -433,7 +434,7 @@ module storage 'core/storage/storage-account.bicep' = {
 }
 
 // USER ROLES
-var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User': 'ServicePrincipal'
+var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
 
 module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
   scope: openAiResourceGroup
@@ -527,7 +528,6 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (openAiHost == 'a
   }
 }
 
-
 module storageRoleBackend 'core/security/role.bicep' = {
   scope: storageResourceGroup
   name: 'storage-role-backend'
@@ -568,6 +568,16 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module openAiRoleBackennd 'core/security/role.bicep' = if (useGPT4V) {
+  scope: computerVisionResourceGroup
+  name: 'cv-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'ServicePrincipal'
   }
 }
