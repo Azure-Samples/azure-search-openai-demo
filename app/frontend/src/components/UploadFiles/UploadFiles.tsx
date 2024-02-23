@@ -6,11 +6,33 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { IUploadResponse, uploadFileApi } from "../../api";
 import { Button, Tooltip } from "@fluentui/react-components";
 
-const UploadFiles = () => {
+import { PuffLoader } from "react-spinners";
+import { useMutation } from "react-query";
+
+interface Props {
+    setUploadedFiles: (files: File[]) => void;
+}
+const UploadFiles = ({ setUploadedFiles }: Props) => {
     const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [uploadedFile, setUploadedFile] = useState<IUploadResponse>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const mutation = useMutation<any, Error, FormData>(formData => uploadFileApi(formData, undefined), {
+        onSettled: (data, error) => {
+            // This callback is called whether the mutation succeeds or fails
+            setIsLoading(false);
+
+            if (error) {
+                console.log("Mutation failed:", error);
+            } else {
+                console.log("Mutation successful:", data);
+                setUploadedFile(data); // Assuming you have a state variable for uploaded files
+            }
+
+            setSelectedFiles([]);
+        }
+    });
 
     const handleClick = () => {
         setIsCalloutVisible(!isCalloutVisible);
@@ -37,23 +59,27 @@ const UploadFiles = () => {
         const formData = new FormData();
         // Append each file to the FormData
         selectedFiles.forEach((file, index) => {
-            formData.append(`files`, file);
+            formData.append(`file${index}`, file);
         });
 
-        try {
-            const request: FormData = formData;
-            const response: IUploadResponse = await uploadFileApi(request, undefined);
-            setUploadedFile(response);
-            setIsLoading(false);
-        } catch (error) {
-            setIsLoading(false);
-        }
+        console.log("Before mutation: ", mutation);
 
-        setSelectedFiles([]);
+        try {
+            const response: IUploadResponse = await mutation.mutateAsync(formData);
+            setUploadedFiles(selectedFiles);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setSelectedFiles([]);
+        }
     };
 
     const addIcon: IIconProps = { iconName: "Add" };
     const Remove: IIconProps = { iconName: "delete" };
+
+    if (isLoading) {
+        return <PuffLoader color="rgba(115, 118, 225, 1)" loading={isLoading} size={50} className={styles.loader} />;
+    }
 
     return (
         <div className={`${styles.container}`}>
@@ -97,7 +123,7 @@ const UploadFiles = () => {
                             )}
 
                             {/* Show a loading message while files are being uploaded */}
-                            {isLoading && <div className={styles.padding8}>{"uploading files..."}</div>}
+                            {mutation.isLoading && <div className={styles.padding8}>{"uploading files..."}</div>}
                             {uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
                             {/* Display the list of selected files */}
 

@@ -17,6 +17,7 @@
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.37.3",
     "@fluentui/react-icons": "^2.0.221",
+    "@fluentui/react-spinner": "^9.3.42",
     "@react-spring/web": "^9.7.3",
     "axios": "^1.6.7",
     "dompurify": "^3.0.6",
@@ -25,6 +26,7 @@
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.18.0",
+    "react-spinners": "^0.13.8",
     "react-syntax-highlighter": "^15.5.0",
     "scheduler": "^0.20.2",
     "uuid": "^9.0.1"

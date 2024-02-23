@@ -37,7 +37,7 @@ export default defineConfig({
             "/experiment": "http://localhost:50505",
             "/documents": "http://localhost:50505",
             "/document": "http://localhost:50505",
-            "/content": "http://localhost:50505"
+            "/upload": "http://localhost:50505"
         }
     }
 });

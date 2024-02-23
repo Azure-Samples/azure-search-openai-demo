@@ -18,7 +18,6 @@ import asyncio
 import tempfile
 
 
-
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -128,40 +127,6 @@ async def content_file(path: str):
     await blob.readinto(blob_file)
     blob_file.seek(0)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
-
-
-@bp.route("/content", methods=["POST"])
-async def content():
-
-    try:
-        files = await request.files
-        file = files.get("file")
-
-        if file:
-            blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
-            blob_name = file.filename
-
-            blob_client = blob_container_client.get_blob_client(blob_name)
-            await blob_client.upload_blob(
-                file.stream.read(), content_settings=ContentSettings(content_type=file.content_type)
-            )
-
-            AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
-            azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
-            search_indexer_client = SearchIndexerClient(
-                endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-                credential=azure_credential,
-            )
-            indexers = await search_indexer_client.get_indexers()
-            indexer = indexers[0]
-            await search_indexer_client.run_indexer(indexer.name)
-
-            return jsonify("Feedback uploaded to Blob Storage succesfully")
-        else:
-            return jsonify({"error": "No file provided"}), 400
-
-    except Exception as error:
-        return error_response(error, "/content")
 
 
 @bp.route("/ask", methods=["POST"])
@@ -319,12 +284,14 @@ async def experiment():
         return jsonify(result)
     except Exception as error:
         return error_response(error, "/experiment_list")
-    
-@bp.route('/batchevaluate', methods=['POST'])
+
+
+@bp.route("/batchevaluate", methods=["POST"])
 async def batchevaluate():
     request_json = await request.get_json()
     message, _ = await start_evaluation(request_json)
     return jsonify({"status": message}), 202
+
 
 async def start_evaluation(payload):
     session = aiohttp.ClientSession()
@@ -333,35 +300,37 @@ async def start_evaluation(payload):
         return "Evaluation started, fetch /experiment_list for results", task
     except Exception as error:
         return f"Evaluation did not start, error: {error}", task
-        
+
+
 async def post_payload_handler(session, payload):
-    try: 
-        async with session.post('https://rageval.azurewebsites.net/api/evaluate', json=payload):
+    try:
+        async with session.post("https://rageval.azurewebsites.net/api/evaluate", json=payload):
             pass
-    finally: 
+    finally:
         await session.close()
-        
-@bp.route('/upload', methods=['POST'])
+
+
+@bp.route("/upload", methods=["POST"])
 async def upload():
     try:
-        logging.info("I'm here")
+        logging.info("Uploading Files...")
         files = await request.files
         temp_dir = tempfile.TemporaryDirectory()
         temp_dir_path = Path(temp_dir.name)
-        
+
         for file_key in files.keys():
             file = files[file_key]
             filename = file.filename
             temp_file_path = temp_dir_path / filename
             logging.info("Current File: %s", filename)
             file_contents = file.read()
-            async with aiofiles.open(temp_file_path, 'wb') as temp_file:
+            async with aiofiles.open(temp_file_path, "wb") as temp_file:
                 await temp_file.write(file_contents)
-        
+
         args = Namespace()
-        args.files =  f"{str(temp_dir_path)}/*"
+        args.files = f"{str(temp_dir_path)}/*"
         args = get_upload_args(args)
-        
+
         azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         ingestion_strategy = await setup_file_strategy(azure_credential, args)
         await init_prepdocs(ingestion_strategy, azure_credential, args)
@@ -370,7 +339,8 @@ async def upload():
     except Exception as error:
         logging.exception("Error", error)
         return jsonify({"error": error}), 415
-        
+
+
 @bp.route("/documents", methods=["GET"])
 async def documents():
     try:

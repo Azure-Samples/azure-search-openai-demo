@@ -27,6 +27,13 @@
 .submit {
     background: var(--primary);
     border-radius: 6px;
+    border: 1px solid var(--primary);
+}
+.submit:hover {
+    background: white;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    transition: all 0.3s ease;
 }
 .btn_action i {
     color: var(--dark-color);

@@ -56,7 +56,7 @@ const Chat = () => {
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
-    const [docFilter, setDocFilter] = useState<string[] | null>(null);
+    const [docFilter, setDocFilter] = useState<string>();
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
@@ -149,7 +149,8 @@ const Chat = () => {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput
+                        gpt4v_input: gpt4vInput,
+                        document_filter: docFilter
                     }
                 },
                 // ChatAppProtocol: Client must pass on any session state received from the server
@@ -263,6 +264,8 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    console.log("DocFilter", docFilter);
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -348,7 +351,7 @@ const Chat = () => {
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
-                            onSetDocFilter={setDocFilter}
+                            setDocFilter={setDocFilter}
                         />
                     </div>
                 </div>
