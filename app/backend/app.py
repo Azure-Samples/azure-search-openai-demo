@@ -162,6 +162,7 @@ async def chat(auth_claims: Dict[str, Any]):
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
+    context.auth_claims = auth_claims
     context["auth_claims"] = auth_claims
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
@@ -181,16 +182,11 @@ async def chat(auth_claims: Dict[str, Any]):
             return jsonify(result)
         else:
             response = await make_response(format_as_ndjson(result))
-            response.timeout = None  # type: ignore
+            response.timeout += None  # type: ignore
             response.mimetype = "application/json-lines"
             return response
     except Exception as error:
         return error_response(error, "/chat", getattr(error, "status_code", 500))
-
-
-@bp.errorhandler(500)
-def handle_bad_request(e):
-    return e
 
 
 # Send MSAL.js settings to the client UI
