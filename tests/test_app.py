@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 import quart.testing.app
 from httpx import Request, Response
-from openai import BadRequestError
+from openai import BadRequestError, RateLimitError
 
 import app
 
@@ -14,6 +14,16 @@ import app
 def fake_response(http_code):
     return Response(http_code, request=Request(method="get", url="https://foo.bar/"))
 
+
+ratelimit_response = RateLimitError(
+    message="Rate limit is exceeded. Try again in 1 seconds.",
+    body={
+        "message": "Rate limit is exceeded. Try again in 1 seconds.",
+        "code": "429",
+        "status": 429,
+    },
+    response=Response(429, request=Request(method="get", url="https://foo.bar/"), json={"error": {"code": "429"}}),
+)
 
 # See https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/content-filter
 filtered_response = BadRequestError(
@@ -112,6 +122,23 @@ async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot,
     assert response.status_code == 400
     result = await response.get_json()
     assert "Exception in /ask: The response was filtered" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_handle_exception_ratelimit(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(side_effect=ratelimit_response),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
+    )
+    assert response.status_code == 429
+    result = await response.get_json()
+    assert "Exception in /ask: Rate limit is exceeded. Try again in 1 seconds." in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

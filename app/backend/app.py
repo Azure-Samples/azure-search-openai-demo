@@ -136,7 +136,7 @@ async def ask(auth_claims: Dict[str, Any]):
         )
         return jsonify(r)
     except Exception as error:
-        return error_response(error, "/ask")
+        return error_response(error, "/ask", getattr(error, "status_code", 500))
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -185,7 +185,12 @@ async def chat(auth_claims: Dict[str, Any]):
             response.mimetype = "application/json-lines"
             return response
     except Exception as error:
-        return error_response(error, "/chat")
+        return error_response(error, "/chat", getattr(error, "status_code", 500))
+
+
+@bp.errorhandler(500)
+def handle_bad_request(e):
+    return e
 
 
 # Send MSAL.js settings to the client UI
