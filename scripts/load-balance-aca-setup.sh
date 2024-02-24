@@ -4,8 +4,8 @@
 # for use with ACA load balancer https://github.com/Azure-Samples/openai-aca-lb
 
 # Fill in your resource group name and container app name:
-resourceGroupName="lb-aca-rg"
-containerAppName="lb-aca-t5bgpwpdsq2a-ca"
+resourceGroupName="your-resource-group-name"
+containerAppName="your-container-app-name"
 
 if [ -z "$(az account show)" ]; then
     echo "You are not logged in. Please run 'az login' or 'az login --use-device-code' first."
