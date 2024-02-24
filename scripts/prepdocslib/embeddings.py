@@ -192,15 +192,17 @@ class ImageEmbeddings:
     To learn more, please visit https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-image-api
     """
 
-    def __init__(self, credential: str, endpoint: str, verbose: bool = False):
-        self.credential = credential
+    def __init__(self, endpoint: str, token_provider: Callable[[], Awaitable[str]], verbose: bool = False):
+        self.token_provider = token_provider
         self.endpoint = endpoint
         self.verbose = verbose
 
     async def create_embeddings(self, blob_urls: List[str]) -> List[List[float]]:
-        headers = {"Ocp-Apim-Subscription-Key": self.credential}
-        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
         endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
+        headers = {"Content-Type": "application/json"}
+        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
+        headers["Authorization"] = "Bearer " + await self.token_provider()
+
         embeddings: List[List[float]] = []
         async with aiohttp.ClientSession(headers=headers) as session:
             for blob_url in blob_urls:

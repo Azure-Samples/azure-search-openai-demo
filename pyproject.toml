@@ -4,7 +4,7 @@ lint.select = ["E", "F", "I", "UP"]
 lint.ignore = ["E501", "E701"] # line too long, multiple statements on one line
 src = ["app/backend", "scripts"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-local-folder = ["scripts"]
 
 [tool.black]
