@@ -2,7 +2,7 @@ from typing import Any, AsyncGenerator, Callable, Union
 
 import aiohttp
 from inspect import iscoroutine
-
+from azure.monitor.events.extension import track_event
 from approaches.appresources import AppResources
 from approaches.approach import Approach
 from approaches.flow.flow import States, FirstState
@@ -35,7 +35,7 @@ class ChatReadRetrieveReadApproach(Approach):
         chat_input = ChatInputNotWait
         out_final = None
         while (chat_input == ChatInputNotWait):
-            print(state_id)
+            track_event("ChatReadRetrieveReadApproach", {"state_id": state_id, "history": history[-1]["content"], "session_user_id": request_context.session_user_id, "client_ip": request_context.client_ip, "vars": session_state["vars"]})
             if not (state.action_before is None):
                 coroutine_action_before = state.action_before(request_context, history[-1]["content"])
                 if iscoroutine(coroutine_action_before):

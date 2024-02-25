@@ -8,15 +8,18 @@ from pathlib import Path
 from typing import AsyncGenerator
 
 import aiohttp
+from SpanEnrichingProcessor import SpanEnrichingProcessorCB
 import openai
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables.aio import TableServiceClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.monitor.events.extension import track_event
 from azure.storage.blob.aio import BlobServiceClient
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+from opentelemetry import trace
 from quart import (
     Blueprint,
     Quart,
@@ -263,13 +266,7 @@ def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
     app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
-
-    # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
-    default_level = "INFO"  # In development, log more verbosely
-    if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
-        default_level = "WARNING"
-    logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
-
+    track_event("Test event", {})
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)
         cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
