@@ -20,6 +20,7 @@ from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from quart import (
     Blueprint,
     Quart,
@@ -411,8 +412,10 @@ def create_app():
         configure_azure_monitor()
         # This tracks HTTP requests made by aiohttp:
         AioHttpClientInstrumentor().instrument()
-        # This tracks HTTP requests made by httpx/openai:
+        # This tracks HTTP requests made by httpx:
         HTTPXClientInstrumentor().instrument()
+        # This tracks OpenAI SDK requests:
+        OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
         app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
