@@ -15,7 +15,7 @@ from openai import AsyncOpenAI
 from core.authentication import AuthenticationHelper
 from text import nonewlines
 
-
+# wh_note : second step
 @dataclass
 class Document:
     id: Optional[str]

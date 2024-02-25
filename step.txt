@@ -1,0 +1,20 @@
+#Setup
+wh-resource-group koreacentral
+wh-rg-demo eastus2
+
+azd auth login --use-device-code
+
+azd env set AZURE_RESOURCE_GROUP wh-rg-demo
+azd env set AZURE_LOCATION eastus2
+
+
+#data_ingestion
+https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/docs/data_ingestion.md
+
+Indexing additional documents : 
+./scripts/prepdocs.sh
+
+Removing documents : 
+To remove all documents, use the --removeall flag. 
+Open either scripts/prepdocs.sh or scripts/prepdocs.ps1 and add --removeall to the command 
+at the bottom of the file. Then run the script as usual.

@@ -154,7 +154,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps(error_dict(error))
 
-
+# wh_note : first step
 @bp.route("/chat", methods=["POST"])
 @authenticated
 async def chat(auth_claims: Dict[str, Any]):
@@ -171,6 +171,7 @@ async def chat(auth_claims: Dict[str, Any]):
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
+        # messages 안에 배열로 chat 내용 포함
         result = await approach.run(
             request_json["messages"],
             stream=request_json.get("stream", False),
