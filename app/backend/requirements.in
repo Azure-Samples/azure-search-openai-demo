@@ -9,8 +9,10 @@ azure-storage-blob
 uvicorn
 aiohttp
 azure-monitor-opentelemetry
+azure-monitor-events-extension
 opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 msal
 msal-extensions
+    
