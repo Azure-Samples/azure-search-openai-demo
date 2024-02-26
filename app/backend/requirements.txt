@@ -65,7 +65,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==42.0.5
+cryptography==42.0.4
     # via
     #   -r requirements.in
     #   azure-identity
@@ -132,7 +132,7 @@ markupsafe==2.1.5
     #   jinja2
     #   quart
     #   werkzeug
-msal==1.27.0
+msal==1.26.0
     # via
     #   -r requirements.in
     #   azure-identity
