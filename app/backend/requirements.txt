@@ -36,7 +36,7 @@ azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
 azure-identity==1.15.0
     # via -r requirements.in
-azure-keyvault-secrets==4.8.0
+azure-keyvault-secrets==4.7.0
     # via -r requirements.in
 azure-monitor-opentelemetry==1.2.0
     # via -r requirements.in
