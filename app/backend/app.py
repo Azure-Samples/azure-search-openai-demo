@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 
+import httpx
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -19,7 +20,10 @@ from azure.storage.blob.aio import BlobServiceClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.httpx import (
+    AsyncOpenTelemetryTransport,
+    HTTPXClientInstrumentor,
+)
 from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from quart import (
     Blueprint,
@@ -60,6 +64,10 @@ bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
+
+httpx_transport = httpx.HTTPTransport()
+telemetry_transport = AsyncOpenTelemetryTransport(httpx_transport)
+http_client = httpx.Client(transport=telemetry_transport)
 
 
 @bp.route("/")
@@ -311,13 +319,19 @@ async def setup_clients():
             api_version="2023-07-01-preview",
             azure_endpoint=endpoint,
             azure_ad_token_provider=token_provider,
+            http_client=http_client,
         )
     elif OPENAI_HOST == "local":
-        openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
+        openai_client = AsyncOpenAI(
+            base_url=os.environ["OPENAI_BASE_URL"],
+            api_key="no-key-required",
+            http_client=http_client,
+        )
     else:
         openai_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
+            http_client=http_client,
         )
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
@@ -346,7 +360,6 @@ async def setup_clients():
     )
 
     if USE_GPT4V:
-
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
@@ -414,6 +427,8 @@ def create_app():
         AioHttpClientInstrumentor().instrument()
         # This tracks HTTP requests made by httpx:
         HTTPXClientInstrumentor().instrument()
+        # This tracks openai SDK HTTP requests
+        HTTPXClientInstrumentor.instrument_client(http_client)
         # This tracks OpenAI SDK requests:
         OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
