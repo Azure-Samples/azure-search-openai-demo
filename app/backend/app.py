@@ -65,9 +65,9 @@ bp = Blueprint("routes", __name__, static_folder="static")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
-httpx_transport = httpx.HTTPTransport()
+httpx_transport = httpx.AsyncHTTPTransport()
 telemetry_transport = AsyncOpenTelemetryTransport(httpx_transport)
-http_client = httpx.Client(transport=telemetry_transport)
+http_client = httpx.AsyncClient(transport=telemetry_transport)
 
 
 @bp.route("/")
