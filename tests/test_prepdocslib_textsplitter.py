@@ -83,7 +83,7 @@ def test_sentencetextsplitter_split_pages():
 def pytest_generate_tests(metafunc):
     """Parametrize the test_doc fixture with all the pdf files in the test-data directory."""
     if "test_doc" in metafunc.fixturenames:
-            metafunc.parametrize("test_doc", [pdf for pdf in Path("tests", "test-data").glob("*.pdf")])
+        metafunc.parametrize("test_doc", [pdf for pdf in Path("tests", "test-data").glob("*.pdf")])
 
 
 @pytest.mark.asyncio
@@ -91,7 +91,7 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
     text_splitter = SentenceTextSplitter(False, True)
     cl100k = tiktoken.get_encoding("cl100k_base")
     pdf_parser = LocalPdfParser()
-    
+
     shutil.copy(str(test_doc.absolute()), tmp_path)
 
     list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"), verbose=True)
@@ -115,4 +115,4 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
             token_lengths.append(len(cl100k.encode(section.split_page.text)))
         # verify that none of the numbers in token_lengths are above 500
         assert all([x <= 500 for x in token_lengths]), token_lengths
-    assert processed >= 1
+    assert processed == 1
