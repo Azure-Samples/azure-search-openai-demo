@@ -112,7 +112,7 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
         for section in sections:
             assert len(section.split_page.text) <= (text_splitter.max_section_length * 1.2)
             # Verify the number of tokens is below 500
-            token_lengths.append(len(cl100k.encode(section.split_page.text)))
+            token_lengths.append((len(cl100k.encode(section.split_page.text)), len(section.split_page.text)))
         # verify that none of the numbers in token_lengths are above 500
-        assert all([x <= 500 for x in token_lengths]), (test_doc.name, token_lengths)
+        assert all([tok_len <= 500 for tok_len, _ in token_lengths]), (test_doc.name, token_lengths)
     assert processed == 1

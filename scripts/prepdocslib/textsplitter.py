@@ -1,6 +1,8 @@
 from abc import ABC
 from typing import Generator, List
 
+import tiktoken
+
 from .page import Page, SplitPage
 
 
@@ -16,16 +18,92 @@ class TextSplitter(ABC):
             yield  # pragma: no cover - this is necessary for mypy to type check
 
 
+STANDARD_LINE_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
+CJK_LINE_BREAKS = [
+    "。",
+    "、",
+    "，",
+    "；",
+    "：",
+    "（",
+    "）",
+    "【",
+    "】",
+    "「",
+    "」",
+    "『",
+    "』",
+    "〔",
+    "〕",
+    "〈",
+    "〉",
+    "《",
+    "》",
+    "〖",
+    "〗",
+    "〘",
+    "〙",
+    "〚",
+    "〛",
+    "〝",
+    "〞",
+    "〟",
+    "〰",
+    "〾",
+    "〿",
+    "–",
+    "—",
+    "‘",
+    "’",
+    "‚",
+    "‛",
+    "“",
+    "”",
+    "„",
+    "‟",
+    "‹",
+    "›",
+    "‽",
+    "⁇",
+    "⁈",
+    "⁉",
+    "⸮",
+    "ⸯ",
+    "。",
+    "々",
+    "〻",
+    "〼",
+]
+cl100k = tiktoken.get_encoding("cl100k_base")
+
+
+def split_page_by_max_tokens(page_num: int, text: str, max_tokens: int) -> Generator[SplitPage, None, None]:
+    """
+    Splits page by tokens
+    """
+    tokens = cl100k.encode(text)
+    if len(tokens) < max_tokens:
+        yield SplitPage(page_num=page_num, text=text)
+    else:
+        # Split page in half and call function again
+        # TODO : Overlap first and second half
+        first_half = text[: len(text) // 2]
+        second_half = text[len(text) // 2 :]
+        yield from split_page_by_max_tokens(page_num, first_half, max_tokens)
+        yield from split_page_by_max_tokens(page_num, second_half, max_tokens)
+
+
 class SentenceTextSplitter(TextSplitter):
     """
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, has_image_embeddings: bool, verbose: bool = False):
-        self.sentence_endings = [".", "!", "?"]
-        self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
+    def __init__(self, has_image_embeddings: bool, verbose: bool = False, max_tokens_per_section: int = 500):
+        self.sentence_endings = [".", "!", "?"] + ["。", "！", "？"]
+        self.word_breaks = STANDARD_LINE_BREAKS + CJK_LINE_BREAKS
         self.max_section_length = 1000
         self.sentence_search_limit = 100
+        self.max_tokens_per_section = max_tokens_per_section
         self.section_overlap = 100
         self.verbose = verbose
         self.has_image_embeddings = has_image_embeddings
@@ -49,7 +127,9 @@ class SentenceTextSplitter(TextSplitter):
 
         length = len(all_text)
         if length <= self.max_section_length:
-            yield SplitPage(page_num=find_page(0), text=all_text)
+            yield from split_page_by_max_tokens(
+                page_num=find_page(0), text=all_text, max_tokens=self.max_tokens_per_section
+            )
             return
 
         start = 0
@@ -91,7 +171,9 @@ class SentenceTextSplitter(TextSplitter):
                 start += 1
 
             section_text = all_text[start:end]
-            yield SplitPage(page_num=find_page(start), text=section_text)
+            yield from split_page_by_max_tokens(
+                page_num=find_page(start), text=section_text, max_tokens=self.max_tokens_per_section
+            )
 
             last_table_start = section_text.rfind("<table")
             if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind("</table"):
@@ -107,7 +189,9 @@ class SentenceTextSplitter(TextSplitter):
                 start = end - self.section_overlap
 
         if start + self.section_overlap < end:
-            yield SplitPage(page_num=find_page(start), text=all_text[start:end])
+            yield from split_page_by_max_tokens(
+                page_num=find_page(start), text=all_text[start:end], max_tokens=self.max_tokens_per_section
+            )
 
 
 class SimpleTextSplitter(TextSplitter):
