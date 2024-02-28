@@ -70,6 +70,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
     sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=args.searchimages)
     file_processors = {
         ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
+        ".html": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
         ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
