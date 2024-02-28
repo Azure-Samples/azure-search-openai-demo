@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+import tiktoken
 
 from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
 from scripts.prepdocslib.page import Page
@@ -77,3 +78,32 @@ def test_sentencetextsplitter_split_pages():
     assert split_pages[2].page_num == 2
     assert split_pages[2].text == 'e page"}'
     assert len(split_pages[2].text) <= max_object_length
+
+
+@pytest.mark.asyncio
+async def test_sentencetextsplitter_multilang(tmp_path):
+    text_splitter = SentenceTextSplitter(False, True)
+    cl100k = tiktoken.get_encoding("cl100k_base")
+    pdf_parser = LocalPdfParser()
+    for pdf in Path("tests", "test-data").glob("*.pdf"):
+        shutil.copy(str(pdf.absolute()), tmp_path)
+
+    list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"), verbose=True)
+    files = list_file_strategy.list()
+    processed = 0
+    async for file in files:
+        pages = [page async for page in pdf_parser.parse(content=file.content)]
+        assert pages
+        sections = [
+            Section(split_page, content=file, category="test category")
+            for split_page in text_splitter.split_pages(pages)
+        ]
+        assert sections
+        processed += 1
+
+        # Verify the size of the sections
+        for section in sections:
+            assert len(section.split_page.text) <= (text_splitter.max_section_length * 1.2)
+            # Verify the number of tokens is below 500
+            assert len(cl100k.encode(section.split_page.text)) <= 500
+    assert processed >= 1
