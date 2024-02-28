@@ -4,6 +4,7 @@
 
 echo 'Running "prepdocs.py"'
 
+
 if [ -n "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
   adlsGen2StorageAccountArg="--datalakestorageaccount $AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
   adlsGen2FilesystemPathArg=""
@@ -69,8 +70,8 @@ fi
 if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
   integratedVectorizationArg="--useintvectorization $USE_FEATURE_INT_VECTORIZATION"
 fi
-
-./scripts/.venv/bin/python ./scripts/prepdocs.py './data/*' --verbose \
+#/workspaces/azure-search-openai-demo/scripts/.venv/bin/streamlit
+./scripts/.venv/bin/python /workspaces/azure-search-openai-demo/scripts/.venv/bin/streamlit run ./scripts/prepdocs.py -- './data/*' --verbose \
 --subscriptionid $AZURE_SUBSCRIPTION_ID  \
 --storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \

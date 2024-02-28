@@ -1,11 +1,16 @@
 import argparse
 import asyncio
+import streamlit as st
 from typing import Any, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
 from azure.keyvault.secrets.aio import SecretClient
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+
+AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=triyamadlspoc;AccountKey=x+PvCaWF3xrRub308EXBYifGe31IzQa9fXMbHQPMsYSj0oRmMfXoTkAHY0x66VAR1nys2sZz1lKl+AStckli+A==;EndpointSuffix=core.windows.net"
+CONTAINER_NAME = "openai"
 
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.embeddings import (
@@ -33,6 +38,10 @@ from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 def is_key_empty(key):
     return key is None or len(key.strip()) == 0
+
+# Azure Search OpenAI Demo
+st.title("Azure Search OpenAI Demo")
+
 
 
 async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> Strategy:
@@ -112,7 +121,16 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
             token_provider=get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default"),
             verbose=args.verbose,
         )
+    # File uploader
+    blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
+    container_client = blob_service_client.get_container_client(CONTAINER_NAME)
+    uploaded_file  = st.file_uploader("Upload a file", accept_multiple_files=False)
+    if uploaded_file is not None:
+        # Upload the file to Azure Blob Storage
+        blob_client = container_client.get_blob_client(uploaded_file.name)
+        blob_client.upload_blob(uploaded_file)
 
+    st.write("File uploaded successfully.")
     print("Processing files...")
     list_file_strategy: ListFileStrategy
     if args.datalakestorageaccount:
@@ -244,12 +262,12 @@ if __name__ == "__main__":
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
     parser.add_argument(
-        "--datalakestorageaccount", required=False, help="Optional. Azure Data Lake Storage Gen2 Account name"
+        "--datalakestorageaccount", required=True, help="Optional. Azure Data Lake Storage Gen2 Account name"
     )
     parser.add_argument(
         "--datalakefilesystem",
-        required=False,
-        default="gptkbcontainer",
+        required=True,
+        default="openai",
         help="Optional. Azure Data Lake Storage Gen2 filesystem name",
     )
     parser.add_argument(
