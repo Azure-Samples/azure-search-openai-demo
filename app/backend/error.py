@@ -9,7 +9,7 @@ Error type: {error_type}
 """
 ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
 
-ERROR_MESSAGE_LENGTH = """Your message exceeded the context length limit for this OpenAI model. Please shorten your message or retrieve less sources from the search index."""
+ERROR_MESSAGE_LENGTH = """Your message exceeded the context length limit for this OpenAI model. Please shorten your message or change your settings to retrieve fewer search results."""
 
 
 def error_dict(error: Exception) -> dict:
