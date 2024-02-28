@@ -19,7 +19,10 @@ from azure.storage.blob.aio import BlobServiceClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.httpx import (
+    HTTPXClientInstrumentor,
+)
+from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from quart import (
     Blueprint,
     Quart,
@@ -312,7 +315,10 @@ async def setup_clients():
             azure_ad_token_provider=token_provider,
         )
     elif OPENAI_HOST == "local":
-        openai_client = AsyncOpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key="no-key-required")
+        openai_client = AsyncOpenAI(
+            base_url=os.environ["OPENAI_BASE_URL"],
+            api_key="no-key-required",
+        )
     else:
         openai_client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,
@@ -345,7 +351,6 @@ async def setup_clients():
     )
 
     if USE_GPT4V:
-
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
@@ -411,8 +416,10 @@ def create_app():
         configure_azure_monitor()
         # This tracks HTTP requests made by aiohttp:
         AioHttpClientInstrumentor().instrument()
-        # This tracks HTTP requests made by httpx/openai:
+        # This tracks HTTP requests made by httpx:
         HTTPXClientInstrumentor().instrument()
+        # This tracks OpenAI SDK requests:
+        OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
         app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
 
