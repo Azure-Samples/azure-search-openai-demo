@@ -86,9 +86,9 @@ def split_page_by_max_tokens(page_num: int, text: str, max_tokens: int) -> Gener
         yield SplitPage(page_num=page_num, text=text)
     else:
         # Split page in half and call function again
-        # TODO : Overlap first and second half
-        first_half = text[: len(text) // 2]
-        second_half = text[len(text) // 2 :]
+        # Overlap first and second halves by 5%
+        first_half = text[: int(len(text) // 2.05)]
+        second_half = text[int(len(text) // 1.95) :]
         yield from split_page_by_max_tokens(page_num, first_half, max_tokens)
         yield from split_page_by_max_tokens(page_num, second_half, max_tokens)
 
