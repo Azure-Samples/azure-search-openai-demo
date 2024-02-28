@@ -1,32 +1,41 @@
+from abc import ABC
 from typing import Generator, List
 
-from .pdfparser import Page
+from .page import Page, SplitPage
 
 
-class SplitPage:
+class TextSplitter(ABC):
     """
-    A section of a page that has been split into a smaller chunk.
+    Splits a list of pages into smaller chunks
+    :param pages: The pages to split
+    :return: A generator of SplitPage
     """
 
-    def __init__(self, page_num: int, text: str):
-        self.page_num = page_num
-        self.text = text
+    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+        if False:
+            yield  # pragma: no cover - this is necessary for mypy to type check
 
 
-class TextSplitter:
+class SentenceTextSplitter(TextSplitter):
     """
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, verbose: bool = False):
+    def __init__(self, has_image_embeddings: bool, verbose: bool = False):
         self.sentence_endings = [".", "!", "?"]
         self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
         self.max_section_length = 1000
         self.sentence_search_limit = 100
         self.section_overlap = 100
         self.verbose = verbose
+        self.has_image_embeddings = has_image_embeddings
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+        # Chunking is disabled when using GPT4V. To be updated in the future.
+        if self.has_image_embeddings:
+            for i, page in enumerate(pages):
+                yield SplitPage(page_num=i, text=page.text)
+
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):
@@ -35,7 +44,14 @@ class TextSplitter:
             return pages[num_pages - 1].page_num
 
         all_text = "".join(page.text for page in pages)
+        if len(all_text.strip()) == 0:
+            return
+
         length = len(all_text)
+        if length <= self.max_section_length:
+            yield SplitPage(page_num=find_page(0), text=all_text)
+            return
+
         start = 0
         end = length
         while start + self.section_overlap < length:
@@ -92,3 +108,29 @@ class TextSplitter:
 
         if start + self.section_overlap < end:
             yield SplitPage(page_num=find_page(start), text=all_text[start:end])
+
+
+class SimpleTextSplitter(TextSplitter):
+    """
+    Class that splits pages into smaller chunks based on a max object length. It is not aware of the content of the page.
+    This is required because embedding models may not be able to analyze an entire page at once
+    """
+
+    def __init__(self, max_object_length: int = 1000, verbose: bool = False):
+        self.max_object_length = max_object_length
+        self.verbose = verbose
+
+    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+        all_text = "".join(page.text for page in pages)
+        if len(all_text.strip()) == 0:
+            return
+
+        length = len(all_text)
+        if length <= self.max_object_length:
+            yield SplitPage(page_num=0, text=all_text)
+            return
+
+        # its too big, so we need to split it
+        for i in range(0, length, self.max_object_length):
+            yield SplitPage(page_num=i // self.max_object_length, text=all_text[i : i + self.max_object_length])
+        return

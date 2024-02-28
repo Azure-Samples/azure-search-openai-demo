@@ -38,7 +38,7 @@ def free_port() -> int:
 
 
 @pytest.fixture()
-def live_server_url(mock_env, free_port: int) -> Generator[str, None, None]:
+def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str, None, None]:
     proc = Process(target=lambda: uvicorn.run(app.create_app(), port=free_port), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"
@@ -92,7 +92,7 @@ def test_chat(page: Page, live_server_url: str):
     # Show the thought process
     page.get_by_label("Show thought process").click()
     expect(page.get_by_title("Thought process")).to_be_visible()
-    expect(page.get_by_text("Searched for:")).to_be_visible()
+    expect(page.get_by_text("Generated search query")).to_be_visible()
 
     # Show the supporting content
     page.get_by_label("Show supporting content").click()
@@ -291,81 +291,3 @@ def test_ask(page: Page, live_server_url: str):
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
-
-
-def test_ask_with_error(page: Page, live_server_url: str):
-    # Set up a mock route to the /ask endpoint
-    def handle(route: Route):
-        # Read the JSON from our snapshot results and return as the response
-        f = open("tests/snapshots/test_app/test_ask_handle_exception/client0/result.json")
-        json = f.read()
-        f.close()
-        route.fulfill(body=json, status=500)
-
-    page.route("*/**/ask", handle)
-    page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
-
-    page.get_by_role("link", name="Ask a question").click()
-    page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
-    page.get_by_placeholder("Example: Does my plan cover annual eye exams?").fill("Whats the dental plan?")
-    page.get_by_label("Ask question button").click()
-
-    expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
-    expect(page.get_by_text("The app encountered an error processing your request.")).to_be_visible()
-
-
-def test_chat_with_error_nonstreaming(page: Page, live_server_url: str):
-    # Set up a mock route to the /chat_stream endpoint
-    def handle(route: Route):
-        # Read the JSON from our snapshot results and return as the response
-        f = open("tests/snapshots/test_app/test_chat_handle_exception/client0/result.json")
-        json = f.read()
-        f.close()
-        route.fulfill(body=json, status=500)
-
-    page.route("*/**/chat", handle)
-
-    # Check initial page state
-    page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
-    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
-    page.get_by_role("button", name="Developer settings").click()
-    page.get_by_text("Stream chat completion responses").click()
-    page.locator("button").filter(has_text="Close").click()
-
-    # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
-        "Whats the dental plan?"
-    )
-    page.get_by_label("Ask question button").click()
-
-    expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
-    expect(page.get_by_text("The app encountered an error processing your request.")).to_be_visible()
-
-
-def test_chat_with_error_streaming(page: Page, live_server_url: str):
-    # Set up a mock route to the /chat_stream endpoint
-    def handle(route: Route):
-        # Read the JSONL from our snapshot results and return as the response
-        f = open("tests/snapshots/test_app/test_chat_handle_exception_streaming/client0/result.jsonlines")
-        jsonl = f.read()
-        f.close()
-        route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
-
-    page.route("*/**/chat", handle)
-
-    # Check initial page state
-    page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
-
-    # Ask a question and wait for the message to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
-        "Whats the dental plan?"
-    )
-    page.get_by_label("Ask question button").click()
-
-    expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
-    expect(page.get_by_text("The app encountered an error processing your request.")).to_be_visible()

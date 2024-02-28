@@ -1,21 +1,21 @@
 exclude: '^tests/snapshots/'
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
     -   id: check-yaml
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.289
+    rev: v0.1.14
     hooks:
     -   id: ruff
 -   repo: https://github.com/psf/black
-    rev: 23.9.1
+    rev: 24.1.0
     hooks:
     -   id: black
 -   repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.3
+    rev: v3.1.0
     hooks:
     - id: prettier
       types_or: [css, javascript, ts, tsx, html]

@@ -1,14 +1,14 @@
 const BACKEND_URI = "";
 
-import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest } from "./models";
-import { useLogin } from "../authConfig";
+import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config } from "./models";
+import { useLogin, appServicesToken } from "../authConfig";
 
-function getHeaders(idToken: string | undefined): Record<string, string> {
+export function getHeaders(idToken: string | undefined): Record<string, string> {
     var headers: Record<string, string> = {
         "Content-Type": "application/json"
     };
-    // If using login, add the id token of the logged in account as the authorization
-    if (useLogin) {
+    // If using login and not using app services, add the id token of the logged in account as the authorization
+    if (useLogin && appServicesToken == null) {
         if (idToken) {
             headers["Authorization"] = `Bearer ${idToken}`;
         }
@@ -30,6 +30,15 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
     }
 
     return parsedResponse as ChatAppResponse;
+}
+
+export async function configApi(idToken: string | undefined): Promise<Config> {
+    const response = await fetch(`${BACKEND_URI}/config`, {
+        method: "GET",
+        headers: getHeaders(idToken)
+    });
+
+    return (await response.json()) as Config;
 }
 
 export async function chatApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {

@@ -15,7 +15,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
  - [Code of Conduct](#coc)
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
- - [Submission Guidelines](#submit)
+ - [Submitting a PR](#submit-pr)
  - [Running Tests](#tests)
  - [Code Style](#style)
 
