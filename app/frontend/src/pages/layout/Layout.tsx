@@ -30,13 +30,13 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
+                                <a href="https://github.com/Ravi-kumar-G/ChatApp" target={"_blank"} title="Github repository link">
                                     <img
                                         src={triyamlog}
                                         alt="Triyam logo"
                                         aria-label="Link to github repository"
-                                        width="40px"
-                                        height="40px"
+                                        width="60px"
+                                        height="60px"
                                         className={styles.githubLogo}
                                     />
                                 </a>
