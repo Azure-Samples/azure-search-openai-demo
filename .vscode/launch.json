@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Quart",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
