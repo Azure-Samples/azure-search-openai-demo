@@ -1,6 +1,7 @@
-from bs4 import BeautifulSoup
 import re
 from typing import IO, AsyncGenerator
+
+from bs4 import BeautifulSoup
 
 from .page import Page
 from .parser import Parser
@@ -19,21 +20,22 @@ def cleanup_data(data: str) -> str:
 
     return output.strip()
 
+
 class LocalHTMLParser(Parser):
     """Parses HTML text into Page objects."""
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         """Parses the given content.
+        To learn more, please visit https://pypi.org/project/beautifulsoup4/
         Args:
-            content (str): The content to parse.
-            file_name (str): The file name associated with the content.
+            content (IO): The content to parse.
         Returns:
-            Document: The parsed document.
+            Page: The parsed html Page.
         """
         data = content.read()
-        soup = BeautifulSoup(data, 'html.parser')
+        soup = BeautifulSoup(data, "html.parser")
 
-        # Parse the content as it is without any formatting changes
+        # Get text only from html file
         result = soup.get_text()
 
         yield Page(0, 0, text=cleanup_data(result))
