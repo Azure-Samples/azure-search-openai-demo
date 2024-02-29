@@ -42,6 +42,8 @@ azure-storage-blob==12.19.0
     #   azure-storage-file-datalake
 azure-storage-file-datalake==12.14.0
     # via -r requirements.in
+beautifulsoup4==4.12.3
+    # via -r requirements.in
 certifi==2024.2.2
     # via
     #   httpcore
