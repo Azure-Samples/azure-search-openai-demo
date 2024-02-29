@@ -8,7 +8,7 @@ from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
 from scripts.prepdocslib.page import Page
 from scripts.prepdocslib.pdfparser import LocalPdfParser
 from scripts.prepdocslib.searchmanager import Section
-from scripts.prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
+from scripts.prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter, ENCODING_MODEL
 
 
 def test_sentencetextsplitter_split_empty_pages():
@@ -89,7 +89,7 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
     text_splitter = SentenceTextSplitter(False, True)
-    cl100k = tiktoken.get_encoding("cl100k_base")
+    bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
     pdf_parser = LocalPdfParser()
 
     shutil.copy(str(test_doc.absolute()), tmp_path)
@@ -112,7 +112,10 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
         for section in sections:
             assert len(section.split_page.text) <= (text_splitter.max_section_length * 1.2)
             # Verify the number of tokens is below 500
-            token_lengths.append((len(cl100k.encode(section.split_page.text)), len(section.split_page.text)))
+            token_lengths.append((len(bpe.encode(section.split_page.text)), len(section.split_page.text)))
         # verify that none of the numbers in token_lengths are above 500
-        assert all([tok_len <= 500 for tok_len, _ in token_lengths]), (test_doc.name, token_lengths)
+        assert all([tok_len <= text_splitter.max_tokens_per_section for tok_len, _ in token_lengths]), (
+            test_doc.name,
+            token_lengths,
+        )
     assert processed == 1
