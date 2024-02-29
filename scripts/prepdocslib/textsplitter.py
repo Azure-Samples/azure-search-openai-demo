@@ -75,6 +75,9 @@ CJK_SENTENCE_ENDINGS = ["。", "！", "？", "‼", "⁇", "⁈", "⁉"]
 # NB: text-embedding-3-XX is the same BPE as text-embedding-ada-002
 bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
 
+DEFAULT_OVERLAP_PERCENT = 10  # See semantic search article for 10% overlap performance
+DEFAULT_SECTION_LENGTH = 1000  # Roughly 400-500 tokens for English
+
 
 class SentenceTextSplitter(TextSplitter):
     """
@@ -84,10 +87,10 @@ class SentenceTextSplitter(TextSplitter):
     def __init__(self, has_image_embeddings: bool, verbose: bool = False, max_tokens_per_section: int = 500):
         self.sentence_endings = STANDARD_SENTENCE_ENDINGS + CJK_SENTENCE_ENDINGS
         self.word_breaks = STANDARD_WORD_BREAKS + CJK_WORD_BREAKS
-        self.max_section_length = 1000  # Rougly 500 tokens in English
+        self.max_section_length = DEFAULT_SECTION_LENGTH
         self.sentence_search_limit = 100
         self.max_tokens_per_section = max_tokens_per_section
-        self.section_overlap = 100  # Character overlap of 10%
+        self.section_overlap = self.max_section_length // DEFAULT_OVERLAP_PERCENT
         self.verbose = verbose
         self.has_image_embeddings = has_image_embeddings
 
@@ -121,9 +124,9 @@ class SentenceTextSplitter(TextSplitter):
                 second_half = text[split_position + 1 :]
             else:
                 # Split page in half and call function again
-                # Overlap first and second halves by 5%
-                first_half = text[: int(len(text) // 2.05)]
-                second_half = text[int(len(text) // 1.95) :]
+                # Overlap first and second halves by DEFAULT_OVERLAP_PERCENT%
+                first_half = text[: int(len(text) // (2.0 + (DEFAULT_OVERLAP_PERCENT / 100)))]
+                second_half = text[int(len(text) // (1.0 - (DEFAULT_OVERLAP_PERCENT / 100))) :]
             yield from self.split_page_by_max_tokens(page_num, first_half)
             yield from self.split_page_by_max_tokens(page_num, second_half)
 
