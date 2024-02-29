@@ -12,6 +12,7 @@ tenacity
 azure-keyvault-secrets
 Pillow
 PyMuPDF
+types-beautifulsoup4
 types-Pillow
 cryptography
 python-jose[cryptography]
