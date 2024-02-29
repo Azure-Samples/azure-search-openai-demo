@@ -8,7 +8,11 @@ from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
 from scripts.prepdocslib.page import Page
 from scripts.prepdocslib.pdfparser import LocalPdfParser
 from scripts.prepdocslib.searchmanager import Section
-from scripts.prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter, ENCODING_MODEL
+from scripts.prepdocslib.textsplitter import (
+    ENCODING_MODEL,
+    SentenceTextSplitter,
+    SimpleTextSplitter,
+)
 
 
 def test_sentencetextsplitter_split_empty_pages():
