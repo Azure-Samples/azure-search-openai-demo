@@ -117,8 +117,8 @@ class SentenceTextSplitter(TextSplitter):
                     pos += 1
 
             if split_position > 0:
-                first_half = text[:split_position + 1]
-                second_half = text[split_position + 1:]
+                first_half = text[: split_position + 1]
+                second_half = text[split_position + 1 :]
             else:
                 # Split page in half and call function again
                 # Overlap first and second halves by 5%
