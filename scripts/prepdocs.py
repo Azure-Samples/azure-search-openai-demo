@@ -49,6 +49,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         verbose=args.verbose,
     )
 
+    html_parser: Parser
     pdf_parser: Parser
     doc_int_parser: DocumentAnalysisParser
 
@@ -68,12 +69,16 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         pdf_parser = LocalPdfParser()
     else:
         pdf_parser = doc_int_parser
+    if args.localhtmlparser or args.documentintelligenceservice is None:
+        html_parser = LocalHTMLParser()
+    else:
+        html_parser = doc_int_parser
     sentence_text_splitter = SentenceTextSplitter(
         has_image_embeddings=args.searchimages
     )
     file_processors = {
         ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
-        ".html": FileProcessor(LocalHTMLParser(), sentence_text_splitter),
+        ".html": FileProcessor(html_parser, sentence_text_splitter),
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
         ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
@@ -400,6 +405,11 @@ if __name__ == "__main__":
         "--localpdfparser",
         action="store_true",
         help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Document Intelligence service to extract text, tables and layout from the documents",
+    )
+    parser.add_argument(
+        "--localhtmlparser",
+        action="store_true",
+        help="Use Beautiful soap local HTML parser instead of Azure Document Intelligence service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
         "--documentintelligenceservice",
