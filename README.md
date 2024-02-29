@@ -224,6 +224,16 @@ If your existing resource is in one of those regions, then you can re-use it by 
 You can also use existing Azure AI Document Intelligence and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
 
 
+### Using local resources
+
+If you want to decrease the charges by using local resources, you can set these `azd` environment values.
+
+#### Local files parsers
+
+1. Run `azd env set USE_LOCAL_PDF_PARSER true`
+1. Run `azd env set USE_LOCAL_HTML_PARSER true`
+
+
 ### Deploying again
 
 If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
