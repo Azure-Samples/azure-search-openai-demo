@@ -99,12 +99,33 @@ class SentenceTextSplitter(TextSplitter):
         """
         tokens = bpe.encode(text)
         if len(tokens) <= self.max_tokens_per_section:
+            # Section is already within max tokens, return
             yield SplitPage(page_num=page_num, text=text)
         else:
-            # Split page in half and call function again
-            # Overlap first and second halves by 5%
-            first_half = text[: int(len(text) // 2.05)]
-            second_half = text[int(len(text) // 1.95) :]
+            # Start from the center and try and find the closest sentence ending by spiralling outward.
+            # IF we get to the outer thirds, then just split in half with a 5% overlap
+            start = int(len(text) // 2)
+            pos = 0
+            boundary = int(len(text) // 3)
+            split_position = -1
+            while start + pos < boundary:
+                if text[start - pos] in self.sentence_endings:
+                    split_position = start - pos
+                    break
+                elif text[start + pos] in self.sentence_endings:
+                    split_position = start + pos
+                    break
+                else:
+                    pos += 1
+
+            if split_position > 0:
+                first_half = text[:split_position]
+                second_half = text[split_position:]
+            else:
+                # Split page in half and call function again
+                # Overlap first and second halves by 5%
+                first_half = text[: int(len(text) // 2.05)]
+                second_half = text[int(len(text) // 1.95) :]
             yield from self.split_page_by_max_tokens(page_num, first_half)
             yield from self.split_page_by_max_tokens(page_num, second_half)
 
