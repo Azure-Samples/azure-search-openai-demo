@@ -16,11 +16,11 @@ from prepdocslib.embeddings import (
 )
 from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import FileStrategy
+from prepdocslib.htmlparser import LocalHTMLParser
 from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.jsonparser import JsonParser
-from prepdocslib.htmlparser import LocalHTMLParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
@@ -68,7 +68,9 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         pdf_parser = LocalPdfParser()
     else:
         pdf_parser = doc_int_parser
-    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=args.searchimages)
+    sentence_text_splitter = SentenceTextSplitter(
+        has_image_embeddings=args.searchimages
+    )
     file_processors = {
         ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
         ".html": FileProcessor(LocalHTMLParser(), sentence_text_splitter),
@@ -87,7 +89,9 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
     embeddings: Optional[OpenAIEmbeddings] = None
     if use_vectors and args.openaihost != "openai":
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
-            credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
+            credential
+            if is_key_empty(args.openaikey)
+            else AzureKeyCredential(args.openaikey)
         )
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service=args.openaiservice,
@@ -111,14 +115,18 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
     if args.searchimages:
         image_embeddings = ImageEmbeddings(
             endpoint=args.visionendpoint,
-            token_provider=get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default"),
+            token_provider=get_bearer_token_provider(
+                credential, "https://cognitiveservices.azure.com/.default"
+            ),
             verbose=args.verbose,
         )
 
     print("Processing files...")
     list_file_strategy: ListFileStrategy
     if args.datalakestorageaccount:
-        adls_gen2_creds = credential if is_key_empty(args.datalakekey) else args.datalakekey
+        adls_gen2_creds = (
+            credential if is_key_empty(args.datalakekey) else args.datalakekey
+        )
         print(f"Using Data Lake Gen2 Storage Account {args.datalakestorageaccount}")
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=args.datalakestorageaccount,
@@ -129,7 +137,9 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         )
     else:
         print(f"Using local files in {args.files}")
-        list_file_strategy = LocalListFileStrategy(path_pattern=args.files, verbose=args.verbose)
+        list_file_strategy = LocalListFileStrategy(
+            path_pattern=args.files, verbose=args.verbose
+        )
 
     if args.removeall:
         document_action = DocumentAction.RemoveAll
@@ -151,7 +161,9 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
     )
 
 
-async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: Any) -> Strategy:
+async def setup_intvectorizer_strategy(
+    credential: AsyncTokenCredential, args: Any
+) -> Strategy:
     storage_creds = credential if is_key_empty(args.storagekey) else args.storagekey
     blob_manager = BlobManager(
         endpoint=f"https://{args.storageaccount}.blob.core.windows.net",
@@ -168,7 +180,9 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
     embeddings: Union[AzureOpenAIEmbeddingService, None] = None
     if use_vectors and args.openaihost != "openai":
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
-            credential if is_key_empty(args.openaikey) else AzureKeyCredential(args.openaikey)
+            credential
+            if is_key_empty(args.openaikey)
+            else AzureKeyCredential(args.openaikey)
         )
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service=args.openaiservice,
@@ -182,7 +196,9 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
     print("Processing files...")
     list_file_strategy: ListFileStrategy
     if args.datalakestorageaccount:
-        adls_gen2_creds = credential if is_key_empty(args.datalakekey) else args.datalakekey
+        adls_gen2_creds = (
+            credential if is_key_empty(args.datalakekey) else args.datalakekey
+        )
         print(f"Using Data Lake Gen2 Storage Account {args.datalakestorageaccount}")
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=args.datalakestorageaccount,
@@ -193,7 +209,9 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
         )
     else:
         print(f"Using local files in {args.files}")
-        list_file_strategy = LocalListFileStrategy(path_pattern=args.files, verbose=args.verbose)
+        list_file_strategy = LocalListFileStrategy(
+            path_pattern=args.files, verbose=args.verbose
+        )
 
     if args.removeall:
         document_action = DocumentAction.RemoveAll
@@ -218,7 +236,10 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
     search_key = args.searchkey
     if args.keyvaultname and args.searchsecretname:
-        key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
+        key_vault_client = SecretClient(
+            vault_url=f"https://{args.keyvaultname}.vault.azure.net",
+            credential=credential,
+        )
         search_key = (await key_vault_client.get_secret(args.searchsecretname)).value
         await key_vault_client.close()
 
@@ -246,7 +267,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
     parser.add_argument(
-        "--datalakestorageaccount", required=False, help="Optional. Azure Data Lake Storage Gen2 Account name"
+        "--datalakestorageaccount",
+        required=False,
+        help="Optional. Azure Data Lake Storage Gen2 Account name",
     )
     parser.add_argument(
         "--datalakefilesystem",
@@ -260,27 +283,38 @@ if __name__ == "__main__":
         help="Optional. Azure Data Lake Storage Gen2 filesystem path containing files to index. If omitted, index the entire filesystem",
     )
     parser.add_argument(
-        "--datalakekey", required=False, help="Optional. Use this key when authenticating to Azure Data Lake Gen2"
+        "--datalakekey",
+        required=False,
+        help="Optional. Use this key when authenticating to Azure Data Lake Gen2",
     )
     parser.add_argument(
-        "--useacls", action="store_true", help="Store ACLs from Azure Data Lake Gen2 Filesystem in the search index"
+        "--useacls",
+        action="store_true",
+        help="Store ACLs from Azure Data Lake Gen2 Filesystem in the search index",
     )
     parser.add_argument(
-        "--category", help="Value for the category field in the search index for all sections indexed in this run"
+        "--category",
+        help="Value for the category field in the search index for all sections indexed in this run",
     )
     parser.add_argument(
-        "--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage"
+        "--skipblobs",
+        action="store_true",
+        help="Skip uploading individual pages to Azure Blob Storage",
     )
     parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
     parser.add_argument("--container", help="Azure Blob Storage container name")
-    parser.add_argument("--storageresourcegroup", help="Azure blob storage resource group")
+    parser.add_argument(
+        "--storageresourcegroup", help="Azure blob storage resource group"
+    )
     parser.add_argument(
         "--storagekey",
         required=False,
         help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
-        "--tenantid", required=False, help="Optional. Use this to define the Azure directory where to authenticate)"
+        "--tenantid",
+        required=False,
+        help="Optional. Use this to define the Azure directory where to authenticate)",
     )
     parser.add_argument(
         "--subscriptionid",
@@ -316,14 +350,21 @@ if __name__ == "__main__":
         default="en.microsoft",
         help="Optional. Name of the Azure AI Search analyzer to use for the content field in the index",
     )
-    parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
-    parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
+    parser.add_argument(
+        "--openaihost",
+        help="Host of the API used to compute embeddings ('azure' or 'openai')",
+    )
+    parser.add_argument(
+        "--openaiservice",
+        help="Name of the Azure OpenAI service used to compute embeddings",
+    )
     parser.add_argument(
         "--openaideployment",
         help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)",
     )
     parser.add_argument(
-        "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)"
+        "--openaimodelname",
+        help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)",
     )
     parser.add_argument(
         "--novectors",
@@ -331,14 +372,20 @@ if __name__ == "__main__":
         help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)",
     )
     parser.add_argument(
-        "--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections"
+        "--disablebatchvectors",
+        action="store_true",
+        help="Don't compute embeddings in batch for the sections",
     )
     parser.add_argument(
         "--openaikey",
         required=False,
         help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure). This is required only when using non-Azure endpoints.",
     )
-    parser.add_argument("--openaiorg", required=False, help="This is required only when using non-Azure endpoints.")
+    parser.add_argument(
+        "--openaiorg",
+        required=False,
+        help="This is required only when using non-Azure endpoints.",
+    )
     parser.add_argument(
         "--remove",
         action="store_true",
@@ -397,7 +444,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
-    use_int_vectorization = args.useintvectorization and args.useintvectorization.lower() == "true"
+    use_int_vectorization = (
+        args.useintvectorization and args.useintvectorization.lower() == "true"
+    )
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (
@@ -410,8 +459,12 @@ if __name__ == "__main__":
     asyncio.set_event_loop(loop)
     ingestion_strategy = None
     if use_int_vectorization:
-        ingestion_strategy = loop.run_until_complete(setup_intvectorizer_strategy(azd_credential, args))
+        ingestion_strategy = loop.run_until_complete(
+            setup_intvectorizer_strategy(azd_credential, args)
+        )
     else:
-        ingestion_strategy = loop.run_until_complete(setup_file_strategy(azd_credential, args))
+        ingestion_strategy = loop.run_until_complete(
+            setup_file_strategy(azd_credential, args)
+        )
     loop.run_until_complete(main(ingestion_strategy, azd_credential, args))
     loop.close()
