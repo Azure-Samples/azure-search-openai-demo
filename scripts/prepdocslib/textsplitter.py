@@ -108,7 +108,7 @@ class SentenceTextSplitter(TextSplitter):
             pos = 0
             boundary = int(len(text) // 3)
             split_position = -1
-            while start + pos < boundary:
+            while start - pos > boundary:
                 if text[start - pos] in self.sentence_endings:
                     split_position = start - pos
                     break
@@ -119,8 +119,8 @@ class SentenceTextSplitter(TextSplitter):
                     pos += 1
 
             if split_position > 0:
-                first_half = text[:split_position]
-                second_half = text[split_position:]
+                first_half = text[:split_position + 1]
+                second_half = text[split_position + 1:]
             else:
                 # Split page in half and call function again
                 # Overlap first and second halves by 5%
