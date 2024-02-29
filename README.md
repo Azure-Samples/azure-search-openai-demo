@@ -34,6 +34,7 @@ urlFragment: azure-search-openai-demo
     - [Local environment](#local-environment)
   - [Deploying](#deploying)
   - [Using existing Azure resources](#using-existing-azure-resources)
+  - [Using local resources](#using-local-resources)
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
@@ -232,7 +233,6 @@ If you want to decrease the charges by using local resources, you can set these 
 
 1. Run `azd env set USE_LOCAL_PDF_PARSER true`
 1. Run `azd env set USE_LOCAL_HTML_PARSER true`
-
 
 ### Deploying again
 
