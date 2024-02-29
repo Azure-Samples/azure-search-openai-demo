@@ -14,8 +14,11 @@ def cleanup_data(data: str) -> str:
     Returns:
         str: The cleaned up data.
     """
+    # match two or more newlines and replace them with one new line
     output = re.sub(r"\n{2,}", "\n", data)
+    # match two or more spaces that are not newlines and replace them with one space
     output = re.sub(r"[^\S\n]{2,}", " ", output)
+    # match two or more hyphens and replace them with two hyphens
     output = re.sub(r"-{2,}", "--", output)
 
     return output.strip()
