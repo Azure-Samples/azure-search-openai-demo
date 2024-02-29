@@ -10,9 +10,9 @@ from .parser import Parser
 def cleanup_data(data: str) -> str:
     """Cleans up the given content using regexes
     Args:
-        content (str): The content to clean up.
+        data: (str): The data to clean up.
     Returns:
-        str: The cleaned up content.
+        str: The cleaned up data.
     """
     output = re.sub(r"\n{2,}", "\n", data)
     output = re.sub(r"[^\S\n]{2,}", " ", output)
