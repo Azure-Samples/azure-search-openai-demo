@@ -60,10 +60,14 @@ class FileStrategy(Strategy):
                             print(f"Skipping '{file.filename()}'.")
                         continue
                     if search_info.verbose:
-                        print(f"Parsing '{file.filename()}'")
+                        print(f"Ingesting '{file.filename()}'")
                     pages = [page async for page in processor.parser.parse(content=file.content)]
                     if search_info.verbose:
-                        print(f"Splitting '{file.filename()}' into sections")
+                        print(f"\tSplitting '{file.filename()}' into sections")
+                        if self.image_embeddings:
+                            print(
+                                "\tWarning: Each page will be split into smaller chunks of text, but images will be of the entire page."
+                            )
                     sections = [
                         Section(split_page, content=file, category=self.category)
                         for split_page in processor.splitter.split_pages(pages)

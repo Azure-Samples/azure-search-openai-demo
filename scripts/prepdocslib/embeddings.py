@@ -97,7 +97,9 @@ class OpenAIEmbeddings(ABC):
                     emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
                     embeddings.extend([data.embedding for data in emb_response.data])
                     if self.verbose:
-                        print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
+                        print(
+                            f"\tComputed embeddings for batch. Batch size: {len(batch.texts)} Token count: {batch.token_length}"
+                        )
 
         return embeddings
 

@@ -47,7 +47,7 @@ class DocumentAnalysisParser(Parser):
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         if self.verbose:
-            print(f"Extracting text from '{content.name}' using Azure Document Intelligence")
+            print(f"\tExtracting text from '{content.name}' using Azure Document Intelligence")
 
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential

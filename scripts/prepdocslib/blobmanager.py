@@ -57,8 +57,11 @@ class BlobManager:
                 print(f"\tUploading blob for whole file -> {blob_name}")
                 await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
 
-            if self.store_page_images and os.path.splitext(file.content.name)[1].lower() == ".pdf":
-                return await self.upload_pdf_blob_images(service_client, container_client, file)
+            if self.store_page_images:
+                if os.path.splitext(file.content.name)[1].lower() == ".pdf":
+                    return await self.upload_pdf_blob_images(service_client, container_client, file)
+                elif self.verbose:
+                    print(f"\tFile {file.content.name} is not a PDF, skipping image upload")
 
         return None
 
