@@ -21,7 +21,6 @@ async def test_htmlparser_single_obj():
     file.name = "test.json"
     htmlparser = LocalHTMLParser()
     pages = [page async for page in htmlparser.parse(file)]
-    print(pages[0].text)
     assert len(pages) == 1
     assert pages[0].page_num == 0
     assert pages[0].offset == 0
