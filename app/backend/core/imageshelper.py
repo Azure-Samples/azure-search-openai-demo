@@ -33,6 +33,7 @@ async def download_blob_as_base64(blob_container_client: ContainerClient, file_p
         img = base64.b64encode(await blob.readall()).decode("utf-8")
         return f"data:image/png;base64,{img}"
     except ResourceNotFoundError:
+        logging.warning(f"No blob exists for {image_filename}")
         return None
 
 

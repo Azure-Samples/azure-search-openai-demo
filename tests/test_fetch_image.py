@@ -95,3 +95,7 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
     test_document.sourcepage = "notfound.pdf"
     image_url = await fetch_image(blob_container_client, test_document)
     assert image_url is None
+
+    test_document.sourcepage = ""
+    image_url = await fetch_image(blob_container_client, test_document)
+    assert image_url is None
