@@ -10,6 +10,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
+* [Using local parsers](#using-local-parsers)
 
 ## Using GPT-4
 
@@ -56,3 +57,10 @@ For an alternate frontend that's written in Web Components and deployed to Stati
 [azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
 on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
 Both these repositories adhere to the same [HTTP protocol for RAG chat apps](https://github.com/Azure-Samples/ai-chat-app-protocol).
+
+## Using local parsers
+
+If you want to decrease the charges by using local parsers instead of Azure Document Intelligence, you can set environment variables before running the [data ingestion script](/docs/data_ingestion.md). Note that local parsers will generally be not as sophisticated.
+
+1. Run `azd env set USE_LOCAL_PDF_PARSER true` to use the local PDF parser.
+1. Run `azd env set USE_LOCAL_HTML_PARSER true` to use the local HTML parser.

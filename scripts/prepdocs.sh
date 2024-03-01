@@ -62,6 +62,10 @@ if [ "$USE_LOCAL_PDF_PARSER" = true ]; then
   localPdfParserArg="--localpdfparser"
 fi
 
+if [ "$USE_LOCAL_HTML_PARSER" = true ]; then
+  localHtmlParserArg="--localhtmlparser"
+fi
+
 if [ -n "$AZURE_TENANT_ID" ]; then
   tenantArg="--tenantid $AZURE_TENANT_ID"
 fi
@@ -82,6 +86,6 @@ $searchAnalyzerNameArg $searchSecretNameArg \
 $searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
-$disableVectorsArg $localPdfParserArg \
+$disableVectorsArg $localPdfParserArg $localHtmlParserArg \
 $keyVaultName \
 $integratedVectorizationArg
