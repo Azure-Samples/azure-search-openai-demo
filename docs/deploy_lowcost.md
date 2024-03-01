@@ -2,18 +2,9 @@
 
 This AI RAG chat application is designed to be easily deployed using the Azure Developer CLI, which provisions the infrastructure according to the Bicep files in the `infra` folder. Those files describe each of the Azure resources needed, and configures their SKU (pricing tier) and other parameters. Many Azure services offer a free tier, but the infrastructure files in this project do *not* default to the free tier as there are often limitations in that tier.
 
-However, if your goal is to minimize costs while prototyping your application, follow these steps below _before_ deploying the application.
+However, if your goal is to minimize costs while prototyping your application, follow the steps below _before_ running `azd up`. Once you've gone through these steps, return to the [deployment steps](../README.md#deploying).
 
 [📺 Live stream: Deploying from a free account](https://www.youtube.com/watch?v=nlIyos0RXHw)
-
-1. Create a new azd environment for the free resource group:
-
-    ```shell
-    azd env new
-    ```
-
-    Enter a name that will be used for the resource group.
-    This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
 
 2. Use the free tier of App Service:
 
