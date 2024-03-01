@@ -28,7 +28,7 @@ def test_sentencetextsplitter_split_small_pages():
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_list_parse_and_split(tmp_path):
     text_splitter = SentenceTextSplitter(False, True)
-    pdf_parser = LocalPdfParser()
+    pdf_parser = LocalPdfParser(verbose=True)
     for pdf in Path("data").glob("*.pdf"):
         shutil.copy(str(pdf.absolute()), tmp_path)
 
