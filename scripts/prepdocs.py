@@ -254,9 +254,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
     parser.add_argument(
-        "--datalakestorageaccount",
-        required=False,
-        help="Optional. Azure Data Lake Storage Gen2 Account name",
+        "--datalakestorageaccount", required=False, help="Optional. Azure Data Lake Storage Gen2 Account name"
     )
     parser.add_argument(
         "--datalakefilesystem",
@@ -270,23 +268,16 @@ if __name__ == "__main__":
         help="Optional. Azure Data Lake Storage Gen2 filesystem path containing files to index. If omitted, index the entire filesystem",
     )
     parser.add_argument(
-        "--datalakekey",
-        required=False,
-        help="Optional. Use this key when authenticating to Azure Data Lake Gen2",
+        "--datalakekey", required=False, help="Optional. Use this key when authenticating to Azure Data Lake Gen2"
     )
     parser.add_argument(
-        "--useacls",
-        action="store_true",
-        help="Store ACLs from Azure Data Lake Gen2 Filesystem in the search index",
+        "--useacls", action="store_true", help="Store ACLs from Azure Data Lake Gen2 Filesystem in the search index"
     )
     parser.add_argument(
-        "--category",
-        help="Value for the category field in the search index for all sections indexed in this run",
+        "--category", help="Value for the category field in the search index for all sections indexed in this run"
     )
     parser.add_argument(
-        "--skipblobs",
-        action="store_true",
-        help="Skip uploading individual pages to Azure Blob Storage",
+        "--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage"
     )
     parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
     parser.add_argument("--container", help="Azure Blob Storage container name")
@@ -297,9 +288,7 @@ if __name__ == "__main__":
         help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
-        "--tenantid",
-        required=False,
-        help="Optional. Use this to define the Azure directory where to authenticate)",
+        "--tenantid", required=False, help="Optional. Use this to define the Azure directory where to authenticate)"
     )
     parser.add_argument(
         "--subscriptionid",
@@ -335,21 +324,14 @@ if __name__ == "__main__":
         default="en.microsoft",
         help="Optional. Name of the Azure AI Search analyzer to use for the content field in the index",
     )
-    parser.add_argument(
-        "--openaihost",
-        help="Host of the API used to compute embeddings ('azure' or 'openai')",
-    )
-    parser.add_argument(
-        "--openaiservice",
-        help="Name of the Azure OpenAI service used to compute embeddings",
-    )
+    parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
+    parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
     parser.add_argument(
         "--openaideployment",
         help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)",
     )
     parser.add_argument(
-        "--openaimodelname",
-        help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)",
+        "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)"
     )
     parser.add_argument(
         "--novectors",
@@ -357,20 +339,14 @@ if __name__ == "__main__":
         help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)",
     )
     parser.add_argument(
-        "--disablebatchvectors",
-        action="store_true",
-        help="Don't compute embeddings in batch for the sections",
+        "--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections"
     )
     parser.add_argument(
         "--openaikey",
         required=False,
         help="Optional. Use this Azure OpenAI account key instead of the current user identity to login (use az login to set current user for Azure). This is required only when using non-Azure endpoints.",
     )
-    parser.add_argument(
-        "--openaiorg",
-        required=False,
-        help="This is required only when using non-Azure endpoints.",
-    )
+    parser.add_argument("--openaiorg", required=False, help="This is required only when using non-Azure endpoints.")
     parser.add_argument(
         "--remove",
         action="store_true",
