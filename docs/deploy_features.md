@@ -10,7 +10,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
-* [Using local parsers](#using-local-resources)
+* [Using local parsers](#using-local-parsers)
 
 ## Using GPT-4
 

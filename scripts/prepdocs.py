@@ -223,10 +223,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
 async def main(strategy: Strategy, credential: AsyncTokenCredential, args: Any):
     search_key = args.searchkey
     if args.keyvaultname and args.searchsecretname:
-        key_vault_client = SecretClient(
-            vault_url=f"https://{args.keyvaultname}.vault.azure.net",
-            credential=credential,
-        )
+        key_vault_client = SecretClient(vault_url=f"https://{args.keyvaultname}.vault.azure.net", credential=credential)
         search_key = (await key_vault_client.get_secret(args.searchsecretname)).value
         await key_vault_client.close()
 
