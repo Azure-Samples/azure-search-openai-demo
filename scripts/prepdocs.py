@@ -66,11 +66,11 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
             verbose=args.verbose,
         )
     if args.localpdfparser or args.documentintelligenceservice is None:
-        pdf_parser = LocalPdfParser()
+        pdf_parser = LocalPdfParser(verbose=args.verbose)
     else:
         pdf_parser = doc_int_parser
     if args.localhtmlparser or args.documentintelligenceservice is None:
-        html_parser = LocalHTMLParser()
+        html_parser = LocalHTMLParser(verbose=args.verbose)
     else:
         html_parser = doc_int_parser
     sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=args.searchimages)

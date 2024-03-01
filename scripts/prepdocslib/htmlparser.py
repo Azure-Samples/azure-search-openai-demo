@@ -35,6 +35,9 @@ class LocalHTMLParser(Parser):
         Returns:
             Page: The parsed html Page.
         """
+        if self.verbose:
+            print(f"\tExtracting text from '{content.name}' using local HTML parser (BeautifulSoup)")
+
         data = content.read()
         soup = BeautifulSoup(data, "html.parser")
 
