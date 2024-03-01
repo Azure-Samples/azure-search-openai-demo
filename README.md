@@ -33,8 +33,6 @@ urlFragment: azure-search-openai-demo
     - [VS Code Dev Containers](#vs-code-dev-containers)
     - [Local environment](#local-environment)
   - [Deploying](#deploying)
-  - [Using existing Azure resources](#using-existing-azure-resources)
-  - [Using local resources](#using-local-resources)
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
@@ -176,16 +174,6 @@ It will look like the following:
 !['Output from running azd up'](docs/images/endpoint.png)
 
 > NOTE: It may take 5-10 minutes after you see 'SUCCESS' for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page. See [guide on debugging App Service deployments](docs/appservice.md).
-
-
-### Using local resources
-
-If you want to decrease the charges by using local resources, you can set these `azd` environment values.
-
-#### Local files parsers
-
-1. Run `azd env set USE_LOCAL_PDF_PARSER true`
-1. Run `azd env set USE_LOCAL_HTML_PARSER true`
 
 ### Deploying again
 
