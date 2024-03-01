@@ -45,7 +45,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     azd env set AZURE_DOCUMENTINTELLIGENCE_SKU F0
     ```
 
-    **Limitaion for PDF files:**
+    **Limitation for PDF files:**
 
       The free tier will only scan the first two pages of each PDF.
       In our sample documents, those first two pages are just title pages,
