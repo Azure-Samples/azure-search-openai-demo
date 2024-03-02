@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 import tiktoken
+import json 
 
 from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
 from scripts.prepdocslib.page import Page
@@ -31,7 +32,7 @@ def test_sentencetextsplitter_split_small_pages():
 
 
 @pytest.mark.asyncio
-async def test_sentencetextsplitter_list_parse_and_split(tmp_path):
+async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
     text_splitter = SentenceTextSplitter(False, True)
     pdf_parser = LocalPdfParser()
     for pdf in Path("data").glob("*.pdf"):
@@ -40,6 +41,7 @@ async def test_sentencetextsplitter_list_parse_and_split(tmp_path):
     list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"), verbose=True)
     files = list_file_strategy.list()
     processed = 0
+    results = {}
     async for file in files:
         pages = [page async for page in pdf_parser.parse(content=file.content)]
         assert pages
@@ -48,8 +50,10 @@ async def test_sentencetextsplitter_list_parse_and_split(tmp_path):
             for split_page in text_splitter.split_pages(pages)
         ]
         assert sections
+        results[file.filename()] = [section.split_page.text for section in sections]
         processed += 1
     assert processed > 1
+    snapshot.assert_match(json.dumps(results), 'text_splitter_sections.txt')
 
 
 def test_simpletextsplitter_split_empty_pages():
