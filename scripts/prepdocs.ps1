@@ -82,7 +82,8 @@ $argumentList = "./scripts/prepdocs.py $dataArg --verbose " + `
 "$tenantArg $aclArg " + `
 "$disableVectorsArg $localPdfParserArg " + `
 "$keyVaultName " + `
-"$integratedVectorizationArg "
+"$integratedVectorizationArg "  + `
+#"--removeall" Add this to remove all documents from index
 
 $argumentList
 
