@@ -29,21 +29,35 @@ However, if your goal is to minimize costs while prototyping your application, f
     3. The free tier does not support Managed Identity (keyless API access),
     so the Bicep will use Azure Key Vault to securely store the key instead.
 
-4. Use the free tier of Azure Document Intelligence (used in analyzing PDFs):
+4. Use the free tier of Azure Document Intelligence (used in analyzing files):
 
+    
     ```shell
     azd env set AZURE_DOCUMENTINTELLIGENCE_SKU F0
     ```
 
-    Limitation: The free tier will only scan the first two pages of each PDF.
-    In our sample documents, those first two pages are just title pages,
-    so you won't be able to get answers from the documents.
-    You can either use your own documents that are only 2-pages long,
-    or you can use a local Python package for PDF parsing by setting:
+    **Limitation for PDF files:**
 
-    ```shell
-    azd env set USE_LOCAL_PDF_PARSER true
-    ```
+      The free tier will only scan the first two pages of each PDF.
+      In our sample documents, those first two pages are just title pages,
+      so you won't be able to get answers from the documents.
+      You can either use your own documents that are only 2-pages long,
+      or you can use a local Python package for PDF parsing by setting:
+
+      ```shell
+      azd env set USE_LOCAL_PDF_PARSER true
+      ```
+
+    **Limitation for HTML files:**
+
+      The free tier will only scan the first two pages of each HTML file.
+      So, you might not get very accurate answers from the files.
+      You can either use your own files that are only 2-pages long,
+      or you can use a local Python package for HTML parsing by setting:
+
+      ```shell
+      azd env set USE_LOCAL_HTML_PARSER true
+      ```
 
 5. Turn off Azure Monitor (Application Insights):
 
