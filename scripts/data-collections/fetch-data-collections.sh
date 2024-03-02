@@ -1,16 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 
 # Processes PDF link collections in current directory,
 # and downloads them to respective subfolders 
 
 # Check that required commands exist on user system
-if ! command -v wget &> /dev/null;
+if ! command -v wget >/dev/null 2>&1;
 then
   echo "This script needs wget to run!"
   exit 1
 fi
 
-if ! command -v basename &> /dev/null;
+if ! command -v basename >/dev/null 2>&1;
 then
   echo "This script needs basename to run!"
   exit 1
