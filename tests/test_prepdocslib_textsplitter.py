@@ -123,3 +123,39 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
             token_lengths,
         )
     assert processed == 1
+
+
+def test_split_tables():
+    t = SentenceTextSplitter(has_image_embeddings=False, verbose=True)
+
+    test_text_without_table = """Contoso Electronics is a leader in the aerospace industry, providing advanced electronic
+components for both commercial and military aircraft. We specialize in creating cutting-
+edge systems that are both reliable and efficient. Our mission is to provide the highest
+quality aircraft components to our customers, while maintaining a commitment to safety
+and excellence. We are proud to have built a strong reputation in the aerospace industry
+and strive to continually improve our products and services. Our experienced team of
+engineers and technicians are dedicated to providing the best products and services to our
+customers. With our commitment to excellence, we are sure to remain a leader in the
+aerospace industry for years to come. At Contoso Electronics, we strive to ensure our employees are getting the feedback they
+need to continue growing and developing in their roles. We understand that performance
+reviews are a key part of this process and it is important to us that they are conducted in an
+effective and efficient manner <fable> Performance reviews are conducted annually and are an important part of your career
+development. During the review, your supervisor will discuss your performance over the
+past year and provide feedback on areas for improvement. They will also provide you with
+an opportunity to discuss your goals and objectives for the upcoming year.
+</table>
+ """
+    test_text_with_table = test_text_without_table.replace("<fable>", "<table>")
+
+    split_pages_with_table = list(t.split_pages(pages=[Page(page_num=0, offset=0, text=test_text_with_table)]))
+    split_pages_without_table = list(t.split_pages(pages=[Page(page_num=0, offset=0, text=test_text_without_table)]))
+
+    assert len(split_pages_with_table) == 2
+
+    assert split_pages_with_table[0].text != split_pages_without_table[0].text
+
+    # The table algorithm should move the start of the second section to include the table start
+    # but only in the test text that has a table tag..
+    assert "<table" in split_pages_with_table[0].text
+    assert "<table" in split_pages_with_table[1].text
+    assert split_pages_with_table[1].text != split_pages_without_table[1].text
