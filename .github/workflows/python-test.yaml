@@ -3,12 +3,18 @@ name: Python check
 on:
   push:
     branches: [ main ]
-    paths:
-      - "**.py"
+    paths-ignore:
+      - "**.md"
+      - ".azdo/**"
+      - ".devcontainer/**"
+      - ".github/**"
   pull_request:
     branches: [ main ]
     paths:
-      - "**.py"
+      - "**.md"
+      - ".azdo/**"
+      - ".devcontainer/**"
+      - ".github/**"
   workflow_call:
 
 jobs:
