@@ -10,7 +10,7 @@ on:
       - ".github/**"
   pull_request:
     branches: [ main ]
-    paths:
+    paths-ignore:
       - "**.md"
       - ".azdo/**"
       - ".devcontainer/**"
