@@ -42,7 +42,7 @@ the number of replicas by changing `replicaCount` in `infra/core/search/search-s
 or manually scaling it from the Azure Portal.
 
 The search service can handle fairly large indexes, but it does have per-SKU limits on storage sizes, maximum vector dimensions, etc.
-See the [service limits document](https://learn.microsoft.com/en-us/azure/search/search-limits-quotas-capacity) for more details.
+See the [service limits document](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity) for more details.
 
 ### Azure App Service
 
