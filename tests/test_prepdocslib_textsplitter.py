@@ -53,7 +53,9 @@ async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
         results[file.filename()] = [section.split_page.text for section in sections]
         processed += 1
     assert processed > 1
-    snapshot.assert_match(json.dumps(results), "text_splitter_sections.txt")
+    # Sort results by key
+    results = {k: results[k] for k in sorted(results)}
+    snapshot.assert_match(json.dumps(results, indent=2), "text_splitter_sections.txt")
 
 
 def test_simpletextsplitter_split_empty_pages():
