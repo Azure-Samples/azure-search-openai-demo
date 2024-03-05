@@ -39,4 +39,4 @@ fi
 
 azd env set OPENAI_HOST azure_custom
 azd env set AZURE_OPENAI_CUSTOM_URL $fqdn
-echo "Set OPENAI_HOST to azure_custom and AZURE_OPENAI_CUSTOM_URL to $fqdn"
+echo "Successfully set OPENAI_HOST to azure_custom and AZURE_OPENAI_CUSTOM_URL to $fqdn"
