@@ -2,18 +2,9 @@
 
 This AI RAG chat application is designed to be easily deployed using the Azure Developer CLI, which provisions the infrastructure according to the Bicep files in the `infra` folder. Those files describe each of the Azure resources needed, and configures their SKU (pricing tier) and other parameters. Many Azure services offer a free tier, but the infrastructure files in this project do *not* default to the free tier as there are often limitations in that tier.
 
-However, if your goal is to minimize costs while prototyping your application, follow these steps below _before_ deploying the application.
+However, if your goal is to minimize costs while prototyping your application, follow the steps below _before_ running `azd up`. Once you've gone through these steps, return to the [deployment steps](../README.md#deploying).
 
 [📺 Live stream: Deploying from a free account](https://www.youtube.com/watch?v=nlIyos0RXHw)
-
-1. Create a new azd environment for the free resource group:
-
-    ```shell
-    azd env new
-    ```
-
-    Enter a name that will be used for the resource group.
-    This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
 
 2. Use the free tier of App Service:
 
@@ -38,21 +29,35 @@ However, if your goal is to minimize costs while prototyping your application, f
     3. The free tier does not support Managed Identity (keyless API access),
     so the Bicep will use Azure Key Vault to securely store the key instead.
 
-4. Use the free tier of Azure Document Intelligence (used in analyzing PDFs):
+4. Use the free tier of Azure Document Intelligence (used in analyzing files):
 
+    
     ```shell
     azd env set AZURE_DOCUMENTINTELLIGENCE_SKU F0
     ```
 
-    Limitation: The free tier will only scan the first two pages of each PDF.
-    In our sample documents, those first two pages are just title pages,
-    so you won't be able to get answers from the documents.
-    You can either use your own documents that are only 2-pages long,
-    or you can use a local Python package for PDF parsing by setting:
+    **Limitation for PDF files:**
 
-    ```shell
-    azd env set USE_LOCAL_PDF_PARSER true
-    ```
+      The free tier will only scan the first two pages of each PDF.
+      In our sample documents, those first two pages are just title pages,
+      so you won't be able to get answers from the documents.
+      You can either use your own documents that are only 2-pages long,
+      or you can use a local Python package for PDF parsing by setting:
+
+      ```shell
+      azd env set USE_LOCAL_PDF_PARSER true
+      ```
+
+    **Limitation for HTML files:**
+
+      The free tier will only scan the first two pages of each HTML file.
+      So, you might not get very accurate answers from the files.
+      You can either use your own files that are only 2-pages long,
+      or you can use a local Python package for HTML parsing by setting:
+
+      ```shell
+      azd env set USE_LOCAL_HTML_PARSER true
+      ```
 
 5. Turn off Azure Monitor (Application Insights):
 

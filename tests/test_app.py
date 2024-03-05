@@ -30,6 +30,16 @@ filtered_response = BadRequestError(
     ),
 )
 
+contextlength_response = BadRequestError(
+    message="This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages.",
+    body={
+        "message": "This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages.",
+        "code": "context_length_exceeded",
+        "status": 400,
+    },
+    response=Response(400, request=Request(method="get", url="https://foo.bar/"), json={"error": {"code": "429"}}),
+)
+
 
 def thoughts_contains_text(thoughts, text):
     found = False
@@ -112,6 +122,26 @@ async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot,
     assert response.status_code == 400
     result = await response.get_json()
     assert "Exception in /ask: The response was filtered" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_handle_exception_contextlength(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(side_effect=contextlength_response),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "Super long message with lots of sources.", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert (
+        "Exception in /ask: This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages."
+        in caplog.text
+    )
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

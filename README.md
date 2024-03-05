@@ -20,7 +20,7 @@ urlFragment: azure-search-openai-demo
 > [!IMPORTANT]
 > As of November 15, 2023, Azure Cognitive Search has been renamed to Azure AI Search.
 
-### Announcing [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one in [**Python**](https://aka.ms/azai/py/code). Learn more at  https://aka.ms/azai.
+### Announcing [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one ([**Python**](https://aka.ms/azai/py/code)). Learn more at  https://aka.ms/azai.
 
 ## Table of Contents
 
@@ -33,7 +33,6 @@ urlFragment: azure-search-openai-demo
     - [VS Code Dev Containers](#vs-code-dev-containers)
     - [Local environment](#local-environment)
   - [Deploying](#deploying)
-  - [Using existing Azure resources](#using-existing-azure-resources)
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
 - [Enabling optional features](#enabling-optional-features)
@@ -54,7 +53,7 @@ urlFragment: azure-search-openai-demo
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
-This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access the ChatGPT model (gpt-35-turbo), and Azure AI Search for data indexing and retrieval.
+This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access a GPT model (gpt-35-turbo), and Azure AI Search for data indexing and retrieval.
 
 The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
 
@@ -64,7 +63,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 * Chat and Q&A interfaces
 * Explores various options to help users evaluate the trustworthiness of responses with citations, tracking of source content, etc.
-* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (ChatGPT) and retriever (AI Search)
+* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (OpenAI) and retriever (AI Search)
 * Settings directly in the UX to tweak the behavior and experiment with options
 * Performance tracing and monitoring with Application Insights
 
@@ -90,7 +89,7 @@ Pricing varies per region and usage, so it isn't possible to predict exact costs
 However, you can try the [Azure pricing calculator](https://azure.com/e/8ffbe5b1919c4c72aed89b022294df76) for the resources below.
 
 - Azure App Service: Basic Tier with 1 CPU core, 1.75 GB RAM. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/app-service/linux/)
-- Azure OpenAI: Standard tier, ChatGPT and Ada models. Pricing per 1K tokens used, and at least 1K tokens are used per question. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
+- Azure OpenAI: Standard tier, GPT and Ada models. Pricing per 1K tokens used, and at least 1K tokens are used per question. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
 - Azure AI Document Intelligence: SO (Standard) tier using pre-built layout. Pricing per document page, sample documents have 261 pages total. [Pricing](https://azure.microsoft.com/pricing/details/form-recognizer/)
 - Azure AI Search: Standard tier, 1 replica, free level of semantic search. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/search/)
 - Azure Blob Storage: Standard tier with ZRS (Zone-redundant storage). Pricing per storage and read operations. [Pricing](https://azure.microsoft.com/pricing/details/storage/blobs/)
@@ -114,6 +113,8 @@ You can run this repo virtually by using GitHub Codespaces, which will open a we
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 
+Once the codespace opens (this may take several minutes), open a terminal window.
+
 #### VS Code Dev Containers
 
 A related option is VS Code Dev Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
@@ -121,108 +122,58 @@ A related option is VS Code Dev Containers, which will open the project in your 
 1. Start Docker Desktop (install it if not already installed)
 1. Open the project:
     [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
-1. In the VS Code window that opens, once the project files show up (this may take several minutes), open a terminal window
-1. Run `azd auth login`
-1. Now you can follow the instructions in [Deploying](#deploying) below
+1. In the VS Code window that opens, once the project files show up (this may take several minutes), open a terminal window.
 
 #### Local environment
 
-First install the required tools:
+1. Install the required tools:
 
-* [Azure Developer CLI](https://aka.ms/azure-dev/install)
-* [Python 3.9, 3.10, or 3.11](https://www.python.org/downloads/)
-  * **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
-  * **Important**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.
-* [Node.js 14+](https://nodejs.org/en/download/)
-* [Git](https://git-scm.com/downloads)
-* [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
-  * **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
+    * [Azure Developer CLI](https://aka.ms/azure-dev/install)
+    * [Python 3.9, 3.10, or 3.11](https://www.python.org/downloads/)
+      * **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
+      * **Important**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.
+    * [Node.js 14+](https://nodejs.org/en/download/)
+    * [Git](https://git-scm.com/downloads)
+    * [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
+      * **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
 
-Then bring down the project code:
+2. Create a new folder and switch to it in the terminal.
+3. Run this command to download the project code:
 
-1. Create a new folder and switch to it in the terminal
-1. Run `azd auth login`
-1. Run `azd init -t azure-search-openai-demo`
-    * note that this command will initialize a git repository and you do not need to clone this repository
+    ```shell
+    azd init -t azure-search-openai-demo
+    ```
+
+    Note that this command will initialize a git repository, so you do not need to clone this repository.
 
 ### Deploying
 
 Follow these steps to provision Azure resources and deploy the application code:
 
-1. (Optional) This is the point where you can customize the deployment by setting environment variables, in order to [use existing resources](#using-existing-azure-resources), [enable optional features](#enabling-optional-features), or [deploy to free tiers](docs/deploy_lowcost.md).
+1. Login to your Azure account:
+
+    ```shell
+    azd auth login
+    ```
+
+1. Create a new azd environment:
+
+    ```shell
+    azd env new
+    ```
+
+    Enter a name that will be used for the resource group.
+    This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
+1. (Optional) This is the point where you can customize the deployment by setting environment variables, in order to [use existing resources](docs/deploy_existing.md), [enable optional features (such as auth or vision)](docs/deploy_existing.md), or [deploy to free tiers](docs/deploy_lowcost.md).
 1. Run `azd up` - This will provision Azure resources and deploy this sample to those resources, including building the search index based on the files found in the `./data` folder.
     * **Important**: Beware that the resources created by this command will incur immediate costs, primarily from the AI Search resource. These resources may accrue costs even if you interrupt the command before it is fully executed. You can run `azd down` or delete the resources manually to avoid unnecessary spending.
     * You will be prompted to select two locations, one for the majority of resources and one for the OpenAI resource, which is currently a short list. That location list is based on the [OpenAI model availability table](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability) and may become outdated as availability changes.
 1. After the application has been successfully deployed you will see a URL printed to the console.  Click that URL to interact with the application in your browser.
 It will look like the following:
 
-!['Output from running azd up'](assets/endpoint.png)
+!['Output from running azd up'](docs/images/endpoint.png)
 
-> NOTE: It may take 5-10 minutes for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page. See [guide on debugging App Service deployments](docs/appservice.md).
-
-### Using existing Azure resources
-
-If you already have existing Azure resources, you can re-use those by setting `azd` environment values.
-
-#### Existing resource group
-
-1. Run `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
-1. Run `azd env set AZURE_LOCATION {Location of existing resource group}`
-
-#### Existing OpenAI resource
-
-##### Azure OpenAI:
-
-1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
-1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
-1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing ChatGPT deployment}`. Only needed if your ChatGPT deployment is not the default 'chat'.
-1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing GPT embedding deployment}`. Only needed if your embeddings deployment is not the default 'embedding'.
-
-When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, make sure to select the same location as the existing OpenAI resource group.
-
-##### Openai.com OpenAI:
-
-1. Run `azd env set OPENAI_HOST openai`
-2. Run `azd env set OPENAI_ORGANIZATION {Your OpenAI organization}`
-3. Run `azd env set OPENAI_API_KEY {Your OpenAI API key}`
-4. Run `azd up`
-
-You can retrieve your OpenAI key by checking [your user page](https://platform.openai.com/account/api-keys) and your organization by navigating to [your organization page](https://platform.openai.com/account/org-settings).
-Learn more about creating an OpenAI free trial at [this link](https://openai.com/pricing).
-Do *not* check your key into source control.
-
-When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, you can select any location as it will not be used.
-
-
-#### Existing Azure AI Search resource
-
-1. Run `azd env set AZURE_SEARCH_SERVICE {Name of existing Azure AI Search service}`
-1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
-1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
-  then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
-1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. If you specify the free tier, then your app will no longer be able to use semantic ranker, and it will use keys instead of managed identity for accessing the search service. Be advised that [search SKUs cannot be changed](https://learn.microsoft.com/azure/search/search-sku-tier#tier-upgrade-or-downgrade). ([See other possible SKU values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
-1. If you have an existing index that is set up with all the expected fields, then run `azd env set AZURE_SEARCH_INDEX {Name of existing index}`. Otherwise, the `azd up` command will create a new index.
-
-You can also customize the search service (new or existing) for non-English searches:
-
-1. To configure the language of the search query to a value other than "en-US", run `azd env set AZURE_SEARCH_QUERY_LANGUAGE {Name of query language}`. ([See other possible values](https://learn.microsoft.com/rest/api/searchservice/preview-api/search-documents#queryLanguage))
-1. To turn off the spell checker, run `azd env set AZURE_SEARCH_QUERY_SPELLER none`. Consult [this table](https://learn.microsoft.com/rest/api/searchservice/preview-api/search-documents#queryLanguage) to determine if spell checker is supported for your query language.
-1. To configure the name of the analyzer to use for a searchable text field to a value other than "en.microsoft", run `azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}`. ([See other possible values](https://learn.microsoft.com/dotnet/api/microsoft.azure.search.models.field.analyzer?view=azure-dotnet-legacy&viewFallbackFrom=azure-dotnet))
-
-#### Existing Azure Document Intelligence resource
-
-In order to support analysis of many document formats, this repository uses a preview version of Azure Document Intelligence (formerly Form Recognizer) that is only available in [limited regions](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout).
-If your existing resource is in one of those regions, then you can re-use it by setting the following environment variables:
-
-1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SERVICE {Name of existing Azure AI Document Intelligence service}`
-1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_LOCATION {Location of existing service}`
-1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}`
-1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SKU {SKU of existing service, defaults to S0}`
-
-#### Other existing Azure resources
-
-You can also use existing Azure AI Document Intelligence and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
-
+> NOTE: It may take 5-10 minutes after you see 'SUCCESS' for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page. See [guide on debugging App Service deployments](docs/appservice.md).
 
 ### Deploying again
 
@@ -246,54 +197,6 @@ either you or they can follow these steps:
    They will need the azd environment name, subscription ID, and location to run this command. You can find those values in your `.azure/{env name}/.env` file.  This will populate their azd environment's `.env` file with all the settings needed to run the app locally.
 1. Set the environment variable `AZURE_PRINCIPAL_ID` either in that `.env` file or in the active shell to their Azure ID, which they can get with `az ad signed-in-user show`.
 1. Run `./scripts/roles.ps1` or `.scripts/roles.sh` to assign all of the necessary roles to the user.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Once the script runs, they should be able to run the app locally.
-
-## Enabling optional features
-
-### Using GPT-4
-
-We generally find that most developers are able to get high quality answers using GPT 3.5. However, if you want to try GPT-4, you can do so by following these steps:
-
-* In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'.
-* You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
-
-### Enabling GPT-4 Turbo with Vision
-
-This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](docs/gpt4v.md) page.
-
-### Enabling Integrated Vectorization
-
-Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in/ba-p/3960809#:~:text=Integrated%20vectorization%20is%20a%20new%20feature%20of%20Azure,pull-indexers%2C%20and%20vectorization%20of%20text%20queries%20through%20vectorizers). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
-
-To enable integrated vectorization with this sample:
-
-1. If you've previously deployed, delete the existing search index.
-2. Run `azd env set USE_FEATURE_INT_VECTORIZATION true`
-3. Run `azd up` to update system and user roles
-4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
-
-### Enabling authentication
-
-By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data.  You can require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
-
-To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
-
-### Enabling login and document level access control
-
-By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./docs/login_and_acl.md).
-
-### Enabling CORS for an alternate frontend
-
-By default, the deployed Azure web app will only allow requests from the same origin.  To enable CORS for a frontend hosted on a different origin, run:
-
-1. Run `azd env set ALLOWED_ORIGIN https://<your-domain.com>`
-2. Run `azd up`
-
-For the frontend code, change `BACKEND_URI` in `api.ts` to point at the deployed backend URL, so that all fetch requests will be sent to the deployed backend.
-
-For an alternate frontend that's written in Web Components and deployed to Static Web Apps, check out
-[azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
-on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
-Both these repositories adhere to the same [HTTP protocol for RAG chat apps](https://github.com/Azure-Samples/ai-chat-app-protocol).
 
 ## Running locally
 

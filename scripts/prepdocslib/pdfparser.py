@@ -18,6 +18,9 @@ class LocalPdfParser(Parser):
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
+        if self.verbose:
+            print(f"\tExtracting text from '{content.name}' using local PDF parser (pypdf)")
+
         reader = PdfReader(content)
         pages = reader.pages
         offset = 0
@@ -29,7 +32,7 @@ class LocalPdfParser(Parser):
 
 class DocumentAnalysisParser(Parser):
     """
-    Concrete parser backed by Azure AI Document Intelligence that can parse PDFS into pages
+    Concrete parser backed by Azure AI Document Intelligence that can parse many document formats into pages
     To learn more, please visit https://learn.microsoft.com/azure/ai-services/document-intelligence/overview
     """
 

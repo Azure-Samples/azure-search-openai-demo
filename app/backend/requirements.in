@@ -13,6 +13,7 @@ opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-httpx
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
+opentelemetry-instrumentation-openai
 msal
 azure-keyvault-secrets
 cryptography

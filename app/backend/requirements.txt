@@ -21,9 +21,7 @@ asgiref==3.7.2
 attrs==23.2.0
     # via aiohttp
 azure-common==1.1.28
-    # via
-    #   azure-keyvault-secrets
-    #   azure-search-documents
+    # via azure-search-documents
 azure-core==1.30.0
     # via
     #   azure-core-tracing-opentelemetry
@@ -156,7 +154,7 @@ oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==1.12.0
     # via -r requirements.in
-opentelemetry-api==1.22.0
+opentelemetry-api==1.23.0
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
@@ -168,13 +166,14 @@ opentelemetry-api==1.22.0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-httpx
+    #   opentelemetry-instrumentation-openai
     #   opentelemetry-instrumentation-psycopg2
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-instrumentation==0.43b0
+opentelemetry-instrumentation==0.44b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -183,48 +182,51 @@ opentelemetry-instrumentation==0.43b0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-httpx
+    #   opentelemetry-instrumentation-openai
     #   opentelemetry-instrumentation-psycopg2
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
-opentelemetry-instrumentation-aiohttp-client==0.43b0
+opentelemetry-instrumentation-aiohttp-client==0.44b0
     # via -r requirements.in
-opentelemetry-instrumentation-asgi==0.43b0
+opentelemetry-instrumentation-asgi==0.44b0
     # via
     #   -r requirements.in
     #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-dbapi==0.43b0
+opentelemetry-instrumentation-dbapi==0.44b0
     # via opentelemetry-instrumentation-psycopg2
-opentelemetry-instrumentation-django==0.43b0
+opentelemetry-instrumentation-django==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-fastapi==0.43b0
+opentelemetry-instrumentation-fastapi==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-flask==0.43b0
+opentelemetry-instrumentation-flask==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-httpx==0.43b0
+opentelemetry-instrumentation-httpx==0.44b0
     # via -r requirements.in
-opentelemetry-instrumentation-psycopg2==0.43b0
+opentelemetry-instrumentation-openai==0.12.5
+    # via -r requirements.in
+opentelemetry-instrumentation-psycopg2==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-requests==0.43b0
+opentelemetry-instrumentation-requests==0.44b0
     # via
     #   -r requirements.in
     #   azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib==0.43b0
+opentelemetry-instrumentation-urllib==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib3==0.43b0
+opentelemetry-instrumentation-urllib3==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-wsgi==0.43b0
+opentelemetry-instrumentation-wsgi==0.44b0
     # via
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-flask
 opentelemetry-resource-detector-azure==0.1.3
     # via azure-monitor-opentelemetry
-opentelemetry-sdk==1.22.0
+opentelemetry-sdk==1.23.0
     # via
     #   azure-monitor-opentelemetry-exporter
     #   opentelemetry-resource-detector-azure
-opentelemetry-semantic-conventions==0.43b0
+opentelemetry-semantic-conventions==0.44b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -238,13 +240,16 @@ opentelemetry-semantic-conventions==0.43b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-util-http==0.43b0
+opentelemetry-semantic-conventions-ai==0.0.20
+    # via opentelemetry-instrumentation-openai
+opentelemetry-util-http==0.44b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
+    #   opentelemetry-instrumentation-httpx
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3

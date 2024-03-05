@@ -57,6 +57,10 @@ if ($env:USE_LOCAL_PDF_PARSER -eq $true) {
   $localPdfParserArg = "--localpdfparser"
 }
 
+if ($env:USE_LOCAL_HTML_PARSER -eq $true) {
+  $localHtmlParserArg = "--localhtmlparser"
+}
+
 if ($env:AZURE_TENANT_ID) {
   $tenantArg = "--tenantid $env:AZURE_TENANT_ID"
 }
@@ -80,7 +84,7 @@ $argumentList = "./scripts/prepdocs.py $dataArg --verbose " + `
 "$searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg " + `
 "$adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg  " + `
 "$tenantArg $aclArg " + `
-"$disableVectorsArg $localPdfParserArg " + `
+"$disableVectorsArg $localPdfParserArg $localHtmlParserArg " + `
 "$keyVaultName " + `
 "$integratedVectorizationArg "
 
