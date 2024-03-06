@@ -116,7 +116,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        messages = self.get_messages_from_history(
+        query_messages = self.get_messages_from_history(
             system_prompt=self.query_prompt_template,
             model_id=self.chatgpt_model,
             history=history,
@@ -126,7 +126,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=messages,  # type: ignore
+            messages=query_messages,  # type: ignore
             # Azure Open AI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             temperature=0.0,  # Minimize creativity for search query generation
@@ -179,16 +179,38 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             "data_points": data_points,
             "thoughts": [
                 ThoughtStep(
-                    "Original user query",
-                    original_user_query,
+                    "Prompt to generate search query",
+                    [str(message) for message in query_messages],
+                    (
+                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                        if self.chatgpt_deployment
+                        else {"model": self.chatgpt_model}
+                    ),
                 ),
                 ThoughtStep(
-                    "Generated search query",
+                    "Search using generated search query",
                     query_text,
-                    {"use_semantic_captions": use_semantic_captions, "has_vector": has_vector},
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "top": top,
+                        "filter": filter,
+                        "has_vector": has_vector,
+                    },
                 ),
-                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
-                ThoughtStep("Prompt", [str(message) for message in messages]),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    [str(message) for message in messages],
+                    (
+                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                        if self.chatgpt_deployment
+                        else {"model": self.chatgpt_model}
+                    ),
+                ),
             ],
         }
 

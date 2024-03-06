@@ -40,7 +40,8 @@
 .tStep {
     color: #123bb6;
     position: relative;
-    font-size: 12px;
+    font-size: 14px;
+    margin-bottom: 8px;
 }
 
 .tCodeBlock {
@@ -53,6 +54,7 @@
     font-size: 12px;
     padding: 3px 10px;
     border-radius: 10px;
+    margin-bottom: 8px;
 }
 
 .citationImg {
