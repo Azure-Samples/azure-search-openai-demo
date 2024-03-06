@@ -11,9 +11,13 @@
                     {
                         "description": "What is the capital of France?",
                         "props": {
-                            "use_semantic_captions": false
+                            "filter": null,
+                            "has_vector": true,
+                            "top": 3,
+                            "use_semantic_captions": false,
+                            "use_semantic_ranker": null
                         },
-                        "title": "Search Query"
+                        "title": "Search using user query"
                     },
                     {
                         "description": [
@@ -32,12 +36,14 @@
                                 "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
                                 "imageEmbedding": null,
                                 "oids": null,
+                                "reranker_score": 3.4577205181121826,
+                                "score": 0.03279569745063782,
                                 "sourcefile": "Benefit_Options.pdf",
                                 "sourcepage": "Benefit_Options-2.pdf"
                             }
                         ],
                         "props": null,
-                        "title": "Results"
+                        "title": "Search results"
                     },
                     {
                         "description": [
@@ -46,8 +52,10 @@
                             "{'role': 'assistant', 'content': 'In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].'}",
                             "{'role': 'user', 'content': 'What is the capital of France?\\nSources:\\n Benefit_Options-2.pdf: There is a whistleblower policy.'}"
                         ],
-                        "props": null,
-                        "title": "Prompt"
+                        "props": {
+                            "model": "gpt-35-turbo"
+                        },
+                        "title": "Prompt to generate answer"
                     }
                 ]
             },
