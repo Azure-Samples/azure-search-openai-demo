@@ -77,6 +77,12 @@
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
     },
+    "embeddingModelName": {
+      "value": "${AZURE_OPENAI_EMB_MODEL_NAME=text-embedding-ada-002}"
+    },
+    "embeddingModelVersion": {
+      "value": "${AZURE_OPENAI_EMB_MODEL_VERSION=2}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },

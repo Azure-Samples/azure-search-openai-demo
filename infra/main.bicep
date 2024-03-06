@@ -92,6 +92,7 @@ param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
+param embeddingModelVersion string = '1'
 param gpt4vModelName string = 'gpt-4'
 param gpt4vDeploymentName string = 'gpt-4v'
 param gpt4vModelVersion string = 'vision-preview'
@@ -290,7 +291,7 @@ var defaultOpenAiDeployments = [
     model: {
       format: 'OpenAI'
       name: embeddingModelName
-      version: '2'
+      version: embeddingModelVersion
     }
     sku: {
       name: 'Standard'

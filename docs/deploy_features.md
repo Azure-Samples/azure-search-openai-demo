@@ -19,6 +19,20 @@ We generally find that most developers are able to get high quality answers usin
 * In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'.
 * You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
 
+## Using ada-3 embedding models
+
+By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the ada 3 embedding models, you can do so by following these steps:
+
+* Run one of the following commands to set the desired model:
+
+    `azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small`
+    `azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-large`
+
+* Run `azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1`
+* If you have already done a deployment, you'll also need to change the deployment name, by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`.
+
+Note that the code currently assumes output dimensions from the embedding model are 1024. If you use a different model, you may need to adjust the code accordingly.
+
 ## Enabling GPT-4 Turbo with Vision
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](docs/gpt4v.md) page.
