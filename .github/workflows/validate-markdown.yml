@@ -31,45 +31,9 @@ jobs:
           directory: ./
           guide-url: 'https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/CONTRIBUTING.md'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-  check-paths-tracking:
-    if: ${{ always() }}
-    needs: check-broken-paths
-    name: Check Paths Have Tracking
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Run Check paths tracking
-        id: check-paths-tracking
-        uses: john0isaac/action-check-markdown@v1.0.6
-        with:
-          command: check_paths_tracking
-          directory: ./
-          guide-url: 'https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/CONTRIBUTING.md'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-  check-urls-tracking:
-    if: ${{ always() }}
-    needs: check-paths-tracking
-    name: Check URLs Have Tracking
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Run Check URLs tracking
-        id: check-urls-tracking
-        uses: john0isaac/action-check-markdown@v1.0.6
-        with:
-          command: check_urls_tracking
-          directory: ./
-          guide-url: 'https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/CONTRIBUTING.md'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
   check-urls-locale:
     if: ${{ always() }}
-    needs: check-urls-tracking
+    needs: check-broken-paths
     name: Check URLs Don't Have Locale
     runs-on: ubuntu-latest
     steps:
