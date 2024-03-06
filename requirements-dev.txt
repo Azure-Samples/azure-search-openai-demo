@@ -9,6 +9,7 @@ coverage
 playwright
 pytest-cov
 pytest-playwright
+pytest-snapshot
 pre-commit
 locust
 pip-tools

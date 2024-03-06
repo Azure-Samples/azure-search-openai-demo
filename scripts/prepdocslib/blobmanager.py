@@ -6,7 +6,11 @@ from typing import List, Optional, Union
 
 import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.storage.blob import BlobSasPermissions, UserDelegationKey, generate_blob_sas
+from azure.storage.blob import (
+    BlobSasPermissions,
+    UserDelegationKey,
+    generate_blob_sas,
+)
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from PIL import Image, ImageDraw, ImageFont
 from pypdf import PdfReader
@@ -23,15 +27,21 @@ class BlobManager:
         self,
         endpoint: str,
         container: str,
+        account: str,
         credential: Union[AsyncTokenCredential, str],
+        resourceGroup: str,
+        subscriptionId: str,
         store_page_images: bool = False,
         verbose: bool = False,
     ):
         self.endpoint = endpoint
         self.credential = credential
+        self.account = account
         self.container = container
         self.store_page_images = store_page_images
         self.verbose = verbose
+        self.resourceGroup = resourceGroup
+        self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
     async def upload_blob(self, file: File) -> Optional[List[str]]:
@@ -51,6 +61,9 @@ class BlobManager:
                 return await self.upload_pdf_blob_images(service_client, container_client, file)
 
         return None
+
+    def get_managedidentity_connectionstring(self):
+        return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
     async def upload_pdf_blob_images(
         self, service_client: BlobServiceClient, container_client: ContainerClient, file: File

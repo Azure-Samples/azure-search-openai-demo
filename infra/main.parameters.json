@@ -23,14 +23,17 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "formRecognizerServiceName": {
-      "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
+    "documentIntelligenceServiceName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
     },
-    "formRecognizerResourceGroupName": {
-      "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
+    "documentIntelligenceResourceGroupName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP}"
     },
-    "formRecognizerSkuName": {
-      "value": "${AZURE_FORMRECOGNIZER_SKU=S0}"
+    "documentIntelligenceSkuName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SKU=S0}"
+    },
+    "documentIntelligenceResourceGroupLocation": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_LOCATION}"
     },
     "searchIndexName": {
       "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
@@ -74,8 +77,11 @@
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
     },
-    "openAiHost":{
+    "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
+    },
+    "azureOpenAiCustomUrl":{
+      "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
@@ -118,6 +124,15 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "useIntegratedVectorization": {
+      "value": "${USE_FEATURE_INT_VECTORIZATION}"
+    },
+    "runningOnGh": {
+      "value": "${GITHUB_ACTIONS}"
+    },
+    "runningOnAdo": {
+      "value": "${TF_BUILD}"
     }
   }
 }

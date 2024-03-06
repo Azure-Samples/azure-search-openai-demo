@@ -4,6 +4,10 @@ This sample is designed to be a starting point for your own production applicati
 but you should do a thorough review of the security and performance before deploying
 to production. Here are some things to consider:
 
+* [Azure resource configuration](#azure-resource-configuration)
+* [Additional security measures](#additional-security-measures)
+* [Load testing](#load-testing)
+
 ## Azure resource configuration
 
 ### OpenAI Capacity
@@ -36,6 +40,9 @@ to "standard" or disable semantic search entirely in the `/app/backend/approache
 If you see errors about search service capacity being exceeded, you may find it helpful to increase
 the number of replicas by changing `replicaCount` in `infra/core/search/search-services.bicep`
 or manually scaling it from the Azure Portal.
+
+The search service can handle fairly large indexes, but it does have per-SKU limits on storage sizes, maximum vector dimensions, etc.
+See the [service limits document](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity) for more details.
 
 ### Azure App Service
 
@@ -89,6 +96,6 @@ From there, you can keep increasing the number of users to simulate your expecte
 
 Here's an example loadtest for 50 users and a spawn rate of 1 per second:
 
-![Screenshot of Locust charts showing 5 requests per second](screenshot_locust.png)
+![Screenshot of Locust charts showing 5 requests per second](images/screenshot_locust.png)
 
 After each test, check the local or App Service logs to see if there are any errors.

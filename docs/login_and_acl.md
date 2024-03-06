@@ -20,17 +20,17 @@
 
 This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Azure Active Directory (Azure AD) groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
-![AppLoginArchitecture](./docs/applogincomponents.png)
+![AppLoginArchitecture](./images/applogincomponents.png)
 
 ## Requirements
 
 **IMPORTANT:** In order to add optional login and document level access control, you'll need the following in addition to the normal sample requirements
 
-* **Azure account permissions**: Your Azure account must have [permission to manage applications in Azure AD](https://learn.microsoft.com/en-us/azure/active-directory/roles/permissions-reference#cloud-application-administrator).
+* **Azure account permissions**: Your Azure account must have [permission to manage applications in Azure AD](https://learn.microsoft.com/azure/active-directory/roles/permissions-reference#cloud-application-administrator).
 
 ## Setting up Azure AD Apps
 
-Two Azure AD apps must be registered in order to make the optional login and document level access control system work correctly. One app is for the client UI. The client UI is implemented as a [single page application](https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration). The other app is for the API server. The API server uses a [confidential client](https://learn.microsoft.com/azure/active-directory/develop/msal-client-applications) to call the [Microsoft Graph API](https://learn.microsoft.com/graph/use-the-api).
+Two Azure AD apps must be registered in order to make the optional login and document level access control system work correctly. One app is for the client UI. The client UI is implemented as a [single page application](https://learn.microsoft.com/azure/active-directory/develop/scenario-spa-app-registration). The other app is for the API server. The API server uses a [confidential client](https://learn.microsoft.com/azure/active-directory/develop/msal-client-applications) to call the [Microsoft Graph API](https://learn.microsoft.com/graph/use-the-api).
 
 ### Automatic Setup
 
@@ -57,7 +57,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Select **Register** to create the application
 * In the app's registration screen, find the **Application (client) ID**.
   * Run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_ID <Application (client) ID>`.
-* Azure Active Directory (Azure AD) supports three types of credentials to authenticate an app using the [client credentials](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow): passwords (app secrets), certificates, and federated identity credentials. For a higher level of security, either [certificates](https://learn.microsoft.com/azure/active-directory/develop/howto-create-self-signed-certificate) or federated identity credentials are recommended. This sample currently uses an app secret for ease of provisioning.
+* Azure Active Directory (Azure AD) supports three types of credentials to authenticate an app using the [client credentials](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow): passwords (app secrets), certificates, and federated identity credentials. For a higher level of security, either [certificates](https://learn.microsoft.com/azure/active-directory/develop/howto-create-self-signed-certificate) or federated identity credentials are recommended. This sample currently uses an app secret for ease of provisioning.
 * Select **Certificates & secrets** in the left hand menu.
 * In the **Client secrets** section, select **New client secret**.
   * Type a description, for example `Azure Search OpenAI Chat Key`.
@@ -196,12 +196,12 @@ The following environment variables are used to setup the optional login and doc
 * `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
 * `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Azure AD based login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
-* `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
+* `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
 * `AZURE_AUTH_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. Defaults to `AZURE_TENANT_ID` if not defined.
 * `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
-* `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
-* `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
+* `AZURE_ADLS_GEN2_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
+* `AZURE_ADLS_GEN2_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
 
 ### Authentication behavior by environment
 

@@ -62,20 +62,30 @@ if [ "$USE_LOCAL_PDF_PARSER" = true ]; then
   localPdfParserArg="--localpdfparser"
 fi
 
+if [ "$USE_LOCAL_HTML_PARSER" = true ]; then
+  localHtmlParserArg="--localhtmlparser"
+fi
+
 if [ -n "$AZURE_TENANT_ID" ]; then
   tenantArg="--tenantid $AZURE_TENANT_ID"
 fi
 
+if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
+  integratedVectorizationArg="--useintvectorization $USE_FEATURE_INT_VECTORIZATION"
+fi
+
 ./scripts/.venv/bin/python ./scripts/prepdocs.py './data/*' --verbose \
---storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER"  \
+--subscriptionid $AZURE_SUBSCRIPTION_ID  \
+--storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \
 $searchAnalyzerNameArg $searchSecretNameArg \
 --openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
 --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
---formrecognizerservice "$AZURE_FORMRECOGNIZER_SERVICE" \
+--documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
 $searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
-$disableVectorsArg $localPdfParserArg \
-$keyVaultName
+$disableVectorsArg $localPdfParserArg $localHtmlParserArg \
+$keyVaultName \
+$integratedVectorizationArg

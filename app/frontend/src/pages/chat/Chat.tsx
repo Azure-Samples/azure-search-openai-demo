@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -32,6 +32,7 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
+    const [temperature, setTemperature] = useState<number>(0.3);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -145,6 +146,7 @@ const Chat = () => {
                         prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
+                        temperature: temperature,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -200,6 +202,14 @@ const Chat = () => {
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
+    };
+
+    const onTemperatureChange = (
+        newValue: number,
+        range?: [number, number],
+        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
+    ) => {
+        setTemperature(newValue);
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -371,6 +381,18 @@ const Chat = () => {
                         multiline
                         autoAdjustHeight
                         onChange={onPromptTemplateChange}
+                    />
+
+                    <Slider
+                        className={styles.chatSettingsSeparator}
+                        label="Temperature"
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        defaultValue={temperature}
+                        onChange={onTemperatureChange}
+                        showValue
+                        snapToStep
                     />
 
                     <SpinButton
