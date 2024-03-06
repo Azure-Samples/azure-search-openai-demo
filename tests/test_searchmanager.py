@@ -76,7 +76,7 @@ def embeddings_service(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_create_index_doesnt_exist_yet(monkeypatch, search_info, embeddings_service):
+async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
     indexes = []
 
     async def mock_create_index(self, index):
@@ -89,10 +89,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info, embedding
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
-    manager = SearchManager(
-        search_info,
-        embeddings=embeddings_service,
-    )
+    manager = SearchManager(search_info)
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
@@ -100,7 +97,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info, embedding
 
 
 @pytest.mark.asyncio
-async def test_create_index_using_int_vectorization(monkeypatch, search_info, embeddings_service):
+async def test_create_index_using_int_vectorization(monkeypatch, search_info):
     indexes = []
 
     async def mock_create_index(self, index):
@@ -113,7 +110,7 @@ async def test_create_index_using_int_vectorization(monkeypatch, search_info, em
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
-    manager = SearchManager(search_info, embeddings=embeddings_service, use_int_vectorization=True)
+    manager = SearchManager(search_info, use_int_vectorization=True)
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
@@ -121,7 +118,7 @@ async def test_create_index_using_int_vectorization(monkeypatch, search_info, em
 
 
 @pytest.mark.asyncio
-async def test_create_index_does_exist(monkeypatch, search_info, embeddings_service):
+async def test_create_index_does_exist(monkeypatch, search_info):
     indexes = []
 
     async def mock_create_index(self, index):
@@ -133,16 +130,13 @@ async def test_create_index_does_exist(monkeypatch, search_info, embeddings_serv
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
-    manager = SearchManager(
-        search_info,
-        embeddings=embeddings_service,
-    )
+    manager = SearchManager(search_info)
     await manager.create_index()
     assert len(indexes) == 0, "It should not have created a new index"
 
 
 @pytest.mark.asyncio
-async def test_create_index_acls(monkeypatch, search_info, embeddings_service):
+async def test_create_index_acls(monkeypatch, search_info):
     indexes = []
 
     async def mock_create_index(self, index):
@@ -157,7 +151,6 @@ async def test_create_index_acls(monkeypatch, search_info, embeddings_service):
 
     manager = SearchManager(
         search_info,
-        embeddings=embeddings_service,
         use_acls=True,
     )
     await manager.create_index()
@@ -167,7 +160,7 @@ async def test_create_index_acls(monkeypatch, search_info, embeddings_service):
 
 
 @pytest.mark.asyncio
-async def test_update_content(monkeypatch, search_info, embeddings_service):
+async def test_update_content(monkeypatch, search_info):
     async def mock_upload_documents(self, documents):
         assert len(documents) == 1
         assert documents[0]["id"] == "file-foo_pdf-666F6F2E706466-page-0"
@@ -178,10 +171,7 @@ async def test_update_content(monkeypatch, search_info, embeddings_service):
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
 
-    manager = SearchManager(
-        search_info,
-        embeddings=embeddings_service,
-    )
+    manager = SearchManager(search_info)
 
     test_io = io.BytesIO(b"test content")
     test_io.name = "test/foo.pdf"
@@ -202,7 +192,7 @@ async def test_update_content(monkeypatch, search_info, embeddings_service):
 
 
 @pytest.mark.asyncio
-async def test_update_content_many(monkeypatch, search_info, embeddings_service):
+async def test_update_content_many(monkeypatch, search_info):
     ids = []
 
     async def mock_upload_documents(self, documents):
@@ -210,10 +200,7 @@ async def test_update_content_many(monkeypatch, search_info, embeddings_service)
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
 
-    manager = SearchManager(
-        search_info,
-        embeddings=embeddings_service,
-    )
+    manager = SearchManager(search_info)
 
     # create 1500 sections for 500 pages
     sections = []
@@ -310,7 +297,7 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
 
 
 @pytest.mark.asyncio
-async def test_remove_content(monkeypatch, search_info, embeddings_service):
+async def test_remove_content(monkeypatch, search_info):
     class AsyncSearchResultsIterator:
         def __init__(self):
             self.results = [
@@ -354,10 +341,7 @@ async def test_remove_content(monkeypatch, search_info, embeddings_service):
 
     monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
 
-    manager = SearchManager(
-        search_info,
-        embeddings=embeddings_service,
-    )
+    manager = SearchManager(search_info)
 
     await manager.remove_content("foo.pdf")
 

@@ -181,6 +181,7 @@ async def setup_intvectorizer_strategy(credential: AsyncTokenCredential, args: A
             open_ai_service=args.openaiservice,
             open_ai_deployment=args.openaideployment,
             open_ai_model_name=args.openaimodelname,
+            open_ai_dimensions=args.openaidimensions,
             credential=azure_open_ai_credential,
             disable_batch=args.disablebatchvectors,
             verbose=args.verbose,
