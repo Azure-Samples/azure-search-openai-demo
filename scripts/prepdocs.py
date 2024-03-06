@@ -21,6 +21,7 @@ from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.jsonparser import JsonParser
+from prepdocslib.markdownparser import MarkdownParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
@@ -87,6 +88,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".md": FileProcessor(MarkdownParser(), sentence_text_splitter),
     }
     use_vectors = not args.novectors
     embeddings: Optional[OpenAIEmbeddings] = None
