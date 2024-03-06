@@ -21,12 +21,12 @@ from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.jsonparser import JsonParser
-from prepdocslib.markdownparser import MarkdownParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
+from prepdocslib.markdownparser import MarkdownParser
 from prepdocslib.parser import Parser
 from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy

@@ -25,6 +25,6 @@ class MarkdownParser(Parser):
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         data = content.read()
-        decoded_data = data.decode('utf-8')
+        decoded_data = data.decode("utf-8")
         text = cleanup_data(decoded_data)
         yield Page(0, 0, text=text)

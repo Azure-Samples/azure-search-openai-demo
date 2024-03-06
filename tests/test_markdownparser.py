@@ -1,4 +1,5 @@
 import io
+
 import pytest
 
 from scripts.prepdocslib.markdownparser import MarkdownParser
@@ -14,19 +15,22 @@ async def test_markdownparser_remove_new_lines():
         
 
         and this is paragraph 2
-        """)
+        """
+    )
     parser = MarkdownParser()
     pages = [page async for page in parser.parse(file)]
     assert len(pages) == 1
     assert pages[0].page_num == 0
     assert pages[0].offset == 0
-    assert pages[0].text == '# Markdown Example with multiple empty lines\n this is paragraph 1\n \n and this is paragraph 2'
+    assert (
+        pages[0].text
+        == "# Markdown Example with multiple empty lines\n this is paragraph 1\n \n and this is paragraph 2"
+    )
 
 
 @pytest.mark.asyncio
 async def test_markdownparser_remove_white_spaces():
-    file = io.BytesIO(
-        b"              Test multiple  white spaces                  ")
+    file = io.BytesIO(b"              Test multiple  white spaces                  ")
     parser = MarkdownParser()
     pages = [page async for page in parser.parse(file)]
     assert pages[0].text == "Test multiple white spaces"
