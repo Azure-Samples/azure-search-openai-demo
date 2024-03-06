@@ -5,6 +5,7 @@ This document covers optional features that can be enabled in the deployed Azure
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 * [Using GPT-4](#using-gpt-4)
+* [Using ada-3 embedding models](#using-ada-3-embedding-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
