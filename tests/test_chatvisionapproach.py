@@ -54,6 +54,7 @@ def chat_approach(openai_client, mock_confidential_client_success):
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",
         embedding_model="text-",
+        embedding_dimensions=1536,
         sourcepage_field="",
         content_field="",
         query_language="en-us",

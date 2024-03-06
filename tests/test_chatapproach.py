@@ -16,6 +16,7 @@ def chat_approach():
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model="text-",
+        embedding_dimensions=1536,
         sourcepage_field="",
         content_field="",
         query_language="en-us",
