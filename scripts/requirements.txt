@@ -19,10 +19,8 @@ attrs==23.2.0
 azure-ai-documentintelligence==1.0.0b1
     # via -r requirements.in
 azure-common==1.1.28
-    # via
-    #   azure-keyvault-secrets
-    #   azure-search-documents
-azure-core==1.30.0
+    # via azure-search-documents
+azure-core==1.30.1
     # via
     #   azure-ai-documentintelligence
     #   azure-identity
@@ -32,11 +30,11 @@ azure-core==1.30.0
     #   azure-storage-file-datalake
 azure-identity==1.15.0
     # via -r requirements.in
-azure-keyvault-secrets==4.7.0
+azure-keyvault-secrets==4.8.0
     # via -r requirements.in
 azure-search-documents==11.6.0b1
     # via -r requirements.in
-azure-storage-blob==12.19.0
+azure-storage-blob==12.19.1
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
@@ -53,7 +51,7 @@ cffi==1.16.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-cryptography==42.0.4
+cryptography==42.0.5
     # via
     #   -r requirements.in
     #   azure-identity
@@ -88,7 +86,7 @@ isodate==0.6.1
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
-msal==1.26.0
+msal==1.27.0
     # via
     #   azure-identity
     #   msal-extensions
@@ -103,11 +101,11 @@ numpy==1.26.4
     #   openai
     #   pandas
     #   pandas-stubs
-openai[datalib]==1.12.0
+openai[datalib]==1.13.3
     # via -r requirements.in
 packaging==23.2
     # via msal-extensions
-pandas==2.2.0
+pandas==2.2.1
     # via openai
 pandas-stubs==2.2.0.240218
     # via openai
@@ -121,21 +119,19 @@ pyasn1==0.5.1
     #   rsa
 pycparser==2.21
     # via cffi
-pydantic==2.6.1
+pydantic==2.6.3
     # via openai
-pydantic-core==2.16.2
+pydantic-core==2.16.3
     # via pydantic
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
-pymupdf==1.23.25
+    # via msal
+pymupdf==1.23.26
     # via -r requirements.in
 pymupdfb==1.23.22
     # via pymupdf
-pypdf==4.0.2
+pypdf==4.1.0
     # via -r requirements.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via pandas
 python-jose[cryptography]==3.3.0
     # via -r requirements.in
@@ -156,7 +152,7 @@ six==1.16.0
     #   ecdsa
     #   isodate
     #   python-dateutil
-sniffio==1.3.0
+sniffio==1.3.1
     # via
     #   anyio
     #   httpx
@@ -177,7 +173,7 @@ types-pillow==10.2.0.20240213
     # via -r requirements.in
 types-pytz==2024.1.0.20240203
     # via pandas-stubs
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   azure-core
     #   azure-keyvault-secrets
