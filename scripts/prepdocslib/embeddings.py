@@ -115,7 +115,9 @@ class OpenAIEmbeddings(ABC):
             before_sleep=self.before_retry_sleep,
         ):
             with attempt:
-                emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text, dimensions=256)
+                emb_response = await client.embeddings.create(
+                    model=self.open_ai_model_name, input=text, dimensions=self.open_ai_dimensions
+                )
 
         return emb_response.data[0].embedding
 

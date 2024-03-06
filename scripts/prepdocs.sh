@@ -58,8 +58,8 @@ if [ "$USE_VECTORS" = false ]; then
   disableVectorsArg="--novectors"
 fi
 
-if [ "$OPENAI_EMB_DIMENSIONS" = false ]; then
-  openAiDimensionsArg="--openaidimensions"
+if [ -n "$AZURE_OPENAI_EMB_DIMENSIONS" ]; then
+  openAiDimensionsArg="--openaidimensions $AZURE_OPENAI_EMB_DIMENSIONS"
 fi
 
 if [ "$USE_LOCAL_PDF_PARSER" = true ]; then

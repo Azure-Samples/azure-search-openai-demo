@@ -53,8 +53,8 @@ if ($env:USE_VECTORS -eq $false) {
   $disableVectorsArg="--novectors"
 }
 
-if ($env:OPENAI_EMB_DIMENSIONS) {
-  $openaiDimensionsArg = "--openaidimensions $env:OPENAI_EMB_DIMENSIONS"
+if ($env:AZURE_OPENAI_EMB_DIMENSIONS) {
+  $openaiDimensionsArg = "--openaidimensions $env:AZURE_OPENAI_EMB_DIMENSIONS"
 }
 
 if ($env:USE_LOCAL_PDF_PARSER -eq $true) {
