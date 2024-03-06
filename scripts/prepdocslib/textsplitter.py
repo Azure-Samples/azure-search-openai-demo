@@ -1,6 +1,8 @@
 from abc import ABC
 from typing import Generator, List
 
+import tiktoken
+
 from .page import Page, SplitPage
 
 
@@ -16,19 +18,117 @@ class TextSplitter(ABC):
             yield  # pragma: no cover - this is necessary for mypy to type check
 
 
+ENCODING_MODEL = "text-embedding-ada-002"
+
+STANDARD_WORD_BREAKS = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
+
+# See W3C document https://www.w3.org/TR/jlreq/#cl-01
+CJK_WORD_BREAKS = [
+    "、",
+    "，",
+    "；",
+    "：",
+    "（",
+    "）",
+    "【",
+    "】",
+    "「",
+    "」",
+    "『",
+    "』",
+    "〔",
+    "〕",
+    "〈",
+    "〉",
+    "《",
+    "》",
+    "〖",
+    "〗",
+    "〘",
+    "〙",
+    "〚",
+    "〛",
+    "〝",
+    "〞",
+    "〟",
+    "〰",
+    "–",
+    "—",
+    "‘",
+    "’",
+    "‚",
+    "‛",
+    "“",
+    "”",
+    "„",
+    "‟",
+    "‹",
+    "›",
+]
+
+STANDARD_SENTENCE_ENDINGS = [".", "!", "?"]
+
+# See CL05 and CL06, based on JIS X 4051:2004
+# https://www.w3.org/TR/jlreq/#cl-04
+CJK_SENTENCE_ENDINGS = ["。", "！", "？", "‼", "⁇", "⁈", "⁉"]
+
+# NB: text-embedding-3-XX is the same BPE as text-embedding-ada-002
+bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
+
+DEFAULT_OVERLAP_PERCENT = 10  # See semantic search article for 10% overlap performance
+DEFAULT_SECTION_LENGTH = 1000  # Roughly 400-500 tokens for English
+
+
 class SentenceTextSplitter(TextSplitter):
     """
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, has_image_embeddings: bool, verbose: bool = False):
-        self.sentence_endings = [".", "!", "?"]
-        self.word_breaks = [",", ";", ":", " ", "(", ")", "[", "]", "{", "}", "\t", "\n"]
-        self.max_section_length = 1000
+    def __init__(self, has_image_embeddings: bool, verbose: bool = False, max_tokens_per_section: int = 500):
+        self.sentence_endings = STANDARD_SENTENCE_ENDINGS + CJK_SENTENCE_ENDINGS
+        self.word_breaks = STANDARD_WORD_BREAKS + CJK_WORD_BREAKS
+        self.max_section_length = DEFAULT_SECTION_LENGTH
         self.sentence_search_limit = 100
-        self.section_overlap = 100
+        self.max_tokens_per_section = max_tokens_per_section
+        self.section_overlap = self.max_section_length // DEFAULT_OVERLAP_PERCENT
         self.verbose = verbose
         self.has_image_embeddings = has_image_embeddings
+
+    def split_page_by_max_tokens(self, page_num: int, text: str) -> Generator[SplitPage, None, None]:
+        """
+        Recursively splits page by maximum number of tokens to better handle languages with higher token/word ratios.
+        """
+        tokens = bpe.encode(text)
+        if len(tokens) <= self.max_tokens_per_section:
+            # Section is already within max tokens, return
+            yield SplitPage(page_num=page_num, text=text)
+        else:
+            # Start from the center and try and find the closest sentence ending by spiralling outward.
+            # IF we get to the outer thirds, then just split in half with a 5% overlap
+            start = int(len(text) // 2)
+            pos = 0
+            boundary = int(len(text) // 3)
+            split_position = -1
+            while start - pos > boundary:
+                if text[start - pos] in self.sentence_endings:
+                    split_position = start - pos
+                    break
+                elif text[start + pos] in self.sentence_endings:
+                    split_position = start + pos
+                    break
+                else:
+                    pos += 1
+
+            if split_position > 0:
+                first_half = text[: split_position + 1]
+                second_half = text[split_position + 1 :]
+            else:
+                # Split page in half and call function again
+                # Overlap first and second halves by DEFAULT_OVERLAP_PERCENT%
+                first_half = text[: int(len(text) // (2.0 + (DEFAULT_OVERLAP_PERCENT / 100)))]
+                second_half = text[int(len(text) // (1.0 - (DEFAULT_OVERLAP_PERCENT / 100))) :]
+            yield from self.split_page_by_max_tokens(page_num, first_half)
+            yield from self.split_page_by_max_tokens(page_num, second_half)
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
         # Chunking is disabled when using GPT4V. To be updated in the future.
@@ -49,7 +149,7 @@ class SentenceTextSplitter(TextSplitter):
 
         length = len(all_text)
         if length <= self.max_section_length:
-            yield SplitPage(page_num=find_page(0), text=all_text)
+            yield from self.split_page_by_max_tokens(page_num=find_page(0), text=all_text)
             return
 
         start = 0
@@ -91,7 +191,7 @@ class SentenceTextSplitter(TextSplitter):
                 start += 1
 
             section_text = all_text[start:end]
-            yield SplitPage(page_num=find_page(start), text=section_text)
+            yield from self.split_page_by_max_tokens(page_num=find_page(start), text=section_text)
 
             last_table_start = section_text.rfind("<table")
             if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind("</table"):
@@ -107,7 +207,7 @@ class SentenceTextSplitter(TextSplitter):
                 start = end - self.section_overlap
 
         if start + self.section_overlap < end:
-            yield SplitPage(page_num=find_page(start), text=all_text[start:end])
+            yield from self.split_page_by_max_tokens(page_num=find_page(start), text=all_text[start:end])
 
 
 class SimpleTextSplitter(TextSplitter):

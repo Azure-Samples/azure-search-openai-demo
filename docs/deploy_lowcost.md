@@ -6,6 +6,21 @@ However, if your goal is to minimize costs while prototyping your application, f
 
 [📺 Live stream: Deploying from a free account](https://www.youtube.com/watch?v=nlIyos0RXHw)
 
+1. Log in to your Azure account using the Azure Developer CLI:
+
+    ```shell
+    azd auth login
+    ```
+
+1. Create a new azd environment for the free resource group:
+
+    ```shell
+    azd env new
+    ```
+
+    Enter a name that will be used for the resource group.
+    This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
+
 2. Use the free tier of App Service:
 
     ```shell
@@ -91,7 +106,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     so the benefits of vector search would typically outweigh the costs, but it is possible to disable vector support.
     If you do so, the application will fall back to a keyword search, which is less accurate.
 
-7. Once you've made the desired customizations, follow the steps in [to run `azd up`](../README.md#deploying-from-scratch). We recommend using "eastus" as the region, for availability reasons.
+7. Once you've made the desired customizations, follow the steps in the README [to run `azd up`](../README.md#deploying-from-scratch). We recommend using "eastus" as the region, for availability reasons.
 
 ## Reducing costs locally
 

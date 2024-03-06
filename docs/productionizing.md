@@ -41,6 +41,9 @@ If you see errors about search service capacity being exceeded, you may find it 
 the number of replicas by changing `replicaCount` in `infra/core/search/search-services.bicep`
 or manually scaling it from the Azure Portal.
 
+The search service can handle fairly large indexes, but it does have per-SKU limits on storage sizes, maximum vector dimensions, etc.
+See the [service limits document](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity) for more details.
+
 ### Azure App Service
 
 The default app service plan uses the `Basic` SKU with 1 CPU core and 1.75 GB RAM.

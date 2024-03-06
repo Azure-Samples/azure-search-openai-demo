@@ -42,7 +42,7 @@ To then limit access to a specific set of users or groups, you can follow the st
 
 ## Enabling login and document level access control
 
-By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./docs/login_and_acl.md).
+By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](docs/login_and_acl.md).
 
 ## Enabling CORS for an alternate frontend
 
