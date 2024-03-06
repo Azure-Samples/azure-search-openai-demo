@@ -44,7 +44,7 @@ azure-monitor-opentelemetry-exporter==1.0.0b23
     # via azure-monitor-opentelemetry
 azure-search-documents==11.6.0b1
     # via -r requirements.in
-azure-storage-blob==12.19.0
+azure-storage-blob==12.19.1
     # via -r requirements.in
 blinker==1.7.0
     # via
@@ -79,7 +79,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.18.0
     # via python-jose
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.2
     # via quart
@@ -111,7 +111,7 @@ idna==3.6
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.0.1
+importlib-metadata==6.11.0
     # via opentelemetry-api
 isodate==0.6.1
     # via
