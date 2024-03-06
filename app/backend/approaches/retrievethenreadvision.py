@@ -132,11 +132,11 @@ class RetrieveThenReadVisionApproach(Approach):
 
         # Append user message
         message_builder.insert_message("user", user_content)
-        messages = message_builder.messages
+        updated_messages = message_builder.messages
         chat_completion = (
             await self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-                messages=messages,
+                messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
                 max_tokens=1024,
                 n=1,
@@ -168,7 +168,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in messages],
+                    [str(message) for message in updated_messages],
                     (
                         {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
                         if self.gpt4v_deployment
