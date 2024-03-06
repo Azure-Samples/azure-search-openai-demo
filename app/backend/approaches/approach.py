@@ -86,6 +86,7 @@ class Approach(ABC):
         query_speller: Optional[str],
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
+        embedding_dimensions: int,
         openai_host: str,
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
@@ -97,6 +98,7 @@ class Approach(ABC):
         self.query_speller = query_speller
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
+        self.embedding_dimensions = embedding_dimensions
         self.openai_host = openai_host
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
@@ -190,6 +192,7 @@ class Approach(ABC):
             # Azure Open AI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
             input=q,
+            dimensions=self.embedding_dimensions,
         )
         query_vector = embedding.data[0].embedding
         return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")

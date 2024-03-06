@@ -35,8 +35,11 @@ class OpenAIEmbeddings(ABC):
 
     SUPPORTED_BATCH_AOAI_MODEL = {"text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16}}
 
-    def __init__(self, open_ai_model_name: str, disable_batch: bool = False, verbose: bool = False):
+    def __init__(
+        self, open_ai_model_name: str, open_ai_dimensions: int, disable_batch: bool = False, verbose: bool = False
+    ):
         self.open_ai_model_name = open_ai_model_name
+        self.open_ai_dimensions = open_ai_dimensions
         self.disable_batch = disable_batch
         self.verbose = verbose
 
@@ -94,7 +97,9 @@ class OpenAIEmbeddings(ABC):
                 before_sleep=self.before_retry_sleep,
             ):
                 with attempt:
-                    emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
+                    emb_response = await client.embeddings.create(
+                        model=self.open_ai_model_name, input=batch.texts, dimensions=self.open_ai_dimensions
+                    )
                     embeddings.extend([data.embedding for data in emb_response.data])
                     if self.verbose:
                         print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
@@ -110,7 +115,7 @@ class OpenAIEmbeddings(ABC):
             before_sleep=self.before_retry_sleep,
         ):
             with attempt:
-                emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text)
+                emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text, dimensions=256)
 
         return emb_response.data[0].embedding
 
@@ -132,11 +137,12 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_service: str,
         open_ai_deployment: str,
         open_ai_model_name: str,
+        open_ai_dimensions: int,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         disable_batch: bool = False,
         verbose: bool = False,
     ):
-        super().__init__(open_ai_model_name, disable_batch, verbose)
+        super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch, verbose)
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
         self.credential = credential
@@ -173,12 +179,13 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
     def __init__(
         self,
         open_ai_model_name: str,
+        open_ai_dimensions: int,
         credential: str,
         organization: Optional[str] = None,
         disable_batch: bool = False,
         verbose: bool = False,
     ):
-        super().__init__(open_ai_model_name, disable_batch, verbose)
+        super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch, verbose)
         self.credential = credential
         self.organization = organization
 

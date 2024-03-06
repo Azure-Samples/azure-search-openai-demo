@@ -98,6 +98,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
             open_ai_service=args.openaiservice,
             open_ai_deployment=args.openaideployment,
             open_ai_model_name=args.openaimodelname,
+            open_ai_dimensions=args.openaidimensions,
             credential=azure_open_ai_credential,
             disable_batch=args.disablebatchvectors,
             verbose=args.verbose,
@@ -105,6 +106,7 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
     elif use_vectors:
         embeddings = OpenAIEmbeddingService(
             open_ai_model_name=args.openaimodelname,
+            open_ai_dimensions=args.openaidimensions,
             credential=args.openaikey,
             organization=args.openaiorg,
             disable_batch=args.disablebatchvectors,
@@ -329,6 +331,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)"
+    )
+    parser.add_argument(
+        "--openaidimensions",
+        required=False,
+        default=1536,
+        help="Dimensions for the embedding model (defaults to 1536 for 'text-embedding-ada-002')",
     )
     parser.add_argument(
         "--novectors",

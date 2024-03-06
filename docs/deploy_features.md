@@ -28,10 +28,13 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
     `azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small`
     `azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-large`
 
+* Specify the desired dimensions of the model:
+
+    `azd env set AZURE_OPENAI_EMB_DIMENSIONS 256`
+
 * Run `azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1`
 * If you have already done a deployment, you'll also need to change the deployment name, by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`.
-
-Note that the code currently assumes output dimensions from the embedding model are 1024. If you use a different model, you may need to adjust the code accordingly.
+* If you have already created an index, you'll need to create a new index. You can either delete the current index in the Azure Portal, or create a new index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`.
 
 ## Enabling GPT-4 Turbo with Vision
 
@@ -47,6 +50,8 @@ To enable integrated vectorization with this sample:
 2. Run `azd env set USE_FEATURE_INT_VECTORIZATION true`
 3. Run `azd up` to update system and user roles
 4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
+
+This feature is not currently compatible with GPT4-vision or the newer ada models.
 
 ## Enabling authentication
 

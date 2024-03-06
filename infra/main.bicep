@@ -91,8 +91,9 @@ param chatGptModelName string = startsWith(openAiHost, 'azure') ? 'gpt-35-turbo'
 param chatGptModelVersion string = '0613'
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
-param embeddingModelName string = 'text-embedding-ada-002'
-param embeddingModelVersion string = '1'
+param embeddingModelName string // Set in main.parameters.json
+param embeddingModelVersion string // Set in main.parameters.json
+param embeddingDimensions int // Set in main.parameters.json
 param gpt4vModelName string = 'gpt-4'
 param gpt4vDeploymentName string = 'gpt-4v'
 param gpt4vModelVersion string = 'vision-preview'
@@ -245,6 +246,7 @@ module backend 'core/host/appservice.bicep' = {
       OPENAI_HOST: openAiHost
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
+      AZURE_OPENAI_EMB_DIMENSIONS: embeddingDimensions
       AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI

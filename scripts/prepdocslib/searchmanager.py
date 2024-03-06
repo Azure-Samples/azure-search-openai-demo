@@ -91,7 +91,7 @@ class SearchManager:
                     filterable=False,
                     sortable=False,
                     facetable=False,
-                    vector_search_dimensions=1536,
+                    vector_search_dimensions=self.embeddings.open_ai_dimensions,
                     vector_search_profile_name="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),

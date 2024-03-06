@@ -80,6 +80,9 @@
     "embeddingModelName": {
       "value": "${AZURE_OPENAI_EMB_MODEL_NAME=text-embedding-ada-002}"
     },
+    "embeddingDimensions": {
+      "value": "${AZURE_OPENAI_EMB_DIMENSIONS=1536}"
+    },
     "embeddingModelVersion": {
       "value": "${AZURE_OPENAI_EMB_MODEL_VERSION=2}"
     },
