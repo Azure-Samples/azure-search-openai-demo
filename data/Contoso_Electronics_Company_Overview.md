@@ -43,6 +43,6 @@ Recognizing the hard work and dedication of our employees is at the core of our 
 
 ## Join Us!
 
-Contoso Electronics is always on the lookout for talented individuals who share our passion for innovation. If you're ready to be part of a dynamic team shaping the future of technology, check out our [careers page](https://careers.microsoft.com/) for exciting opportunities.
+Contoso Electronics is always on the lookout for talented individuals who share our passion for innovation. If you're ready to be part of a dynamic team shaping the future of technology, check out our [careers page](http://www.contoso.com) for exciting opportunities.
 
-[Learn more about Contoso Electronics!](https://www.microsoft.com)
+[Learn more about Contoso Electronics!](http://www.contoso.com)
