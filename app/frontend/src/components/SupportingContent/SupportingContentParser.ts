@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 type ParsedSupportingContentItem = {
     title: string;
     content: string;
@@ -8,7 +10,7 @@ export function parseSupportingContentItem(item: string): ParsedSupportingConten
     // Example: "sdp_corporate.pdf: this is the content that follows".
     const parts = item.split(": ");
     const title = parts[0];
-    const content = parts.slice(1).join(": ");
+    const content = DOMPurify.sanitize(parts.slice(1).join(": "));
 
     return {
         title,

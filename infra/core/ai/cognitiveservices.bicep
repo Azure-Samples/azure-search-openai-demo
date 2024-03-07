@@ -6,9 +6,19 @@ param tags object = {}
 param customSubDomainName string = name
 param deployments array = []
 param kind string = 'OpenAI'
+
+@allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 param sku object = {
   name: 'S0'
+}
+
+param allowedIpRules array = []
+param networkAcls object = empty(allowedIpRules) ? {
+  defaultAction: 'Allow'
+} : {
+  ipRules: allowedIpRules
+  defaultAction: 'Deny'
 }
 
 resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -19,6 +29,7 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
+    networkAcls: networkAcls
   }
   sku: sku
 }

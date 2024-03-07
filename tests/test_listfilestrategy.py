@@ -4,8 +4,8 @@ import os
 import tempfile
 
 import pytest
-from conftest import MockAzureCredential
 
+from .mocks import MockAzureCredential
 from scripts.prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     File,
@@ -17,6 +17,12 @@ def test_file_filename():
     empty = io.BytesIO()
     empty.name = "test/foo.pdf"
     assert File(empty).filename() == "foo.pdf"
+
+
+def test_file_file_extension():
+    empty = io.BytesIO()
+    empty.name = "test/foo.pdf"
+    assert File(empty).file_extension() == ".pdf"
 
 
 def test_file_contextmanager():

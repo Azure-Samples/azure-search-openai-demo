@@ -4,143 +4,187 @@
 #
 #    pip-compile requirements.in
 #
-aiohttp==3.8.6
-    # via openai
+aiohttp==3.9.3
+    # via -r requirements.in
 aiosignal==1.3.1
     # via aiohttp
-async-timeout==4.0.3
+annotated-types==0.6.0
+    # via pydantic
+anyio==4.3.0
+    # via
+    #   httpx
+    #   openai
+attrs==23.2.0
     # via aiohttp
-attrs==23.1.0
-    # via aiohttp
-azure-ai-formrecognizer==3.3.2
+azure-ai-documentintelligence==1.0.0b1
     # via -r requirements.in
 azure-common==1.1.28
+    # via azure-search-documents
+azure-core==1.30.1
     # via
-    #   azure-ai-formrecognizer
-    #   azure-search-documents
-azure-core==1.29.5
-    # via
-    #   azure-ai-formrecognizer
+    #   azure-ai-documentintelligence
     #   azure-identity
+    #   azure-keyvault-secrets
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
-    #   msrest
 azure-identity==1.15.0
     # via -r requirements.in
-azure-search-documents==11.4.0b6
+azure-keyvault-secrets==4.8.0
     # via -r requirements.in
-azure-storage-blob==12.19.0
+azure-search-documents==11.6.0b1
+    # via -r requirements.in
+azure-storage-blob==12.19.1
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
 azure-storage-file-datalake==12.14.0
     # via -r requirements.in
-certifi==2023.7.22
+beautifulsoup4==4.12.3
+    # via -r requirements.in
+certifi==2024.2.2
     # via
-    #   msrest
+    #   httpcore
+    #   httpx
     #   requests
 cffi==1.16.0
     # via cryptography
 charset-normalizer==3.3.2
+    # via requests
+cryptography==42.0.5
     # via
-    #   aiohttp
-    #   requests
-cryptography==41.0.5
-    # via
+    #   -r requirements.in
     #   azure-identity
     #   azure-storage-blob
     #   msal
     #   pyjwt
-et-xmlfile==1.1.0
-    # via openpyxl
-frozenlist==1.4.0
+    #   python-jose
+distro==1.9.0
+    # via openai
+ecdsa==0.18.0
+    # via python-jose
+frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-idna==3.4
+h11==0.14.0
+    # via httpcore
+httpcore==1.0.4
+    # via httpx
+httpx==0.27.0
+    # via openai
+idna==3.6
     # via
+    #   anyio
+    #   httpx
     #   requests
     #   yarl
 isodate==0.6.1
     # via
+    #   azure-ai-documentintelligence
+    #   azure-keyvault-secrets
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
-    #   msrest
-msal==1.25.0
+msal==1.27.0
     # via
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.0.0
+msal-extensions==1.1.0
     # via azure-identity
-msrest==0.7.1
-    # via azure-ai-formrecognizer
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==1.26.1
+numpy==1.26.4
     # via
     #   openai
     #   pandas
     #   pandas-stubs
-oauthlib==3.2.2
-    # via requests-oauthlib
-openai[datalib]==0.28.1
+openai[datalib]==1.13.3
     # via -r requirements.in
-openpyxl==3.1.2
+packaging==23.2
+    # via msal-extensions
+pandas==2.2.1
     # via openai
-pandas==2.1.2
+pandas-stubs==2.2.0.240218
     # via openai
-pandas-stubs==2.1.1.230928
-    # via openai
+pillow==10.2.0
+    # via -r requirements.in
 portalocker==2.8.2
     # via msal-extensions
+pyasn1==0.5.1
+    # via
+    #   python-jose
+    #   rsa
 pycparser==2.21
     # via cffi
+pydantic==2.6.3
+    # via openai
+pydantic-core==2.16.3
+    # via pydantic
 pyjwt[crypto]==2.8.0
     # via msal
-pypdf==3.17.0
+pymupdf==1.23.26
     # via -r requirements.in
-python-dateutil==2.8.2
+pymupdfb==1.23.22
+    # via pymupdf
+pypdf==4.1.0
+    # via -r requirements.in
+python-dateutil==2.9.0.post0
     # via pandas
-pytz==2023.3.post1
+python-jose[cryptography]==3.3.0
+    # via -r requirements.in
+pytz==2024.1
     # via pandas
-regex==2023.10.3
+regex==2023.12.25
     # via tiktoken
 requests==2.31.0
     # via
     #   azure-core
     #   msal
-    #   msrest
-    #   openai
-    #   requests-oauthlib
     #   tiktoken
-requests-oauthlib==1.3.1
-    # via msrest
+rsa==4.9
+    # via python-jose
 six==1.16.0
     # via
     #   azure-core
+    #   ecdsa
     #   isodate
     #   python-dateutil
+sniffio==1.3.1
+    # via
+    #   anyio
+    #   httpx
+    #   openai
+soupsieve==2.5
+    # via beautifulsoup4
 tenacity==8.2.3
     # via -r requirements.in
-tiktoken==0.5.1
+tiktoken==0.6.0
     # via -r requirements.in
-tqdm==4.66.1
+tqdm==4.66.2
     # via openai
-types-pytz==2023.3.1.1
+types-beautifulsoup4==4.12.0.20240229
+    # via -r requirements.in
+types-html5lib==1.1.11.20240228
+    # via types-beautifulsoup4
+types-pillow==10.2.0.20240213
+    # via -r requirements.in
+types-pytz==2024.1.0.20240203
     # via pandas-stubs
-typing-extensions==4.8.0
+typing-extensions==4.10.0
     # via
-    #   azure-ai-formrecognizer
     #   azure-core
+    #   azure-keyvault-secrets
     #   azure-storage-blob
     #   azure-storage-file-datalake
-tzdata==2023.3
+    #   openai
+    #   pydantic
+    #   pydantic-core
+tzdata==2024.1
     # via pandas
-urllib3==2.0.7
+urllib3==2.2.1
     # via requests
-yarl==1.9.2
+yarl==1.9.4
     # via aiohttp

@@ -1,19 +1,11 @@
-from enum import Enum
-from typing import Optional
+from typing import List, Optional
 
 from .blobmanager import BlobManager
-from .embeddings import OpenAIEmbeddings
+from .embeddings import ImageEmbeddings, OpenAIEmbeddings
+from .fileprocessor import FileProcessor
 from .listfilestrategy import ListFileStrategy
-from .pdfparser import PdfParser
 from .searchmanager import SearchManager, Section
-from .strategy import SearchInfo, Strategy
-from .textsplitter import TextSplitter
-
-
-class DocumentAction(Enum):
-    Add = 0
-    Remove = 1
-    RemoveAll = 2
+from .strategy import DocumentAction, SearchInfo, Strategy
 
 
 class FileStrategy(Strategy):
@@ -25,43 +17,63 @@ class FileStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
-        pdf_parser: PdfParser,
-        text_splitter: TextSplitter,
+        file_processors: dict[str, FileProcessor],
         document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
+        image_embeddings: Optional[ImageEmbeddings] = None,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
-        self.pdf_parser = pdf_parser
-        self.text_splitter = text_splitter
+        self.file_processors = file_processors
         self.document_action = document_action
         self.embeddings = embeddings
+        self.image_embeddings = image_embeddings
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
 
     async def setup(self, search_info: SearchInfo):
-        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
+        search_manager = SearchManager(
+            search_info,
+            self.search_analyzer_name,
+            self.use_acls,
+            False,
+            self.embeddings,
+            search_images=self.image_embeddings is not None,
+        )
         await search_manager.create_index()
 
     async def run(self, search_info: SearchInfo):
-        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, self.embeddings)
+        search_manager = SearchManager(search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings)
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    pages = [page async for page in self.pdf_parser.parse(content=file.content)]
+                    key = file.file_extension()
+                    processor = self.file_processors.get(key)
+                    if processor is None:
+                        # skip file if no parser is found
+                        if search_info.verbose:
+                            print(f"Skipping '{file.filename()}'.")
+                        continue
+                    if search_info.verbose:
+                        print(f"Parsing '{file.filename()}'")
+                    pages = [page async for page in processor.parser.parse(content=file.content)]
                     if search_info.verbose:
                         print(f"Splitting '{file.filename()}' into sections")
                     sections = [
                         Section(split_page, content=file, category=self.category)
-                        for split_page in self.text_splitter.split_pages(pages)
+                        for split_page in processor.splitter.split_pages(pages)
                     ]
-                    await search_manager.update_content(sections)
-                    await self.blob_manager.upload_blob(file)
+
+                    blob_sas_uris = await self.blob_manager.upload_blob(file)
+                    blob_image_embeddings: Optional[List[List[float]]] = None
+                    if self.image_embeddings and blob_sas_uris:
+                        blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                    await search_manager.update_content(sections, blob_image_embeddings)
                 finally:
                     if file:
                         file.close()

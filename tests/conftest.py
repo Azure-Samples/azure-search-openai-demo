@@ -1,49 +1,111 @@
 import argparse
 import json
 import os
-from collections import namedtuple
 from unittest import mock
 
 import aiohttp
 import azure.storage.filedatalake
 import azure.storage.filedatalake.aio
 import msal
-import openai
 import pytest
 import pytest_asyncio
-from azure.core.credentials_async import AsyncTokenCredential
+from azure.keyvault.secrets.aio import SecretClient
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.models import SearchField, SearchIndex
+from azure.storage.blob.aio import ContainerClient
+from openai.types import CreateEmbeddingResponse, Embedding
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai.types.chat.chat_completion import (
+    ChatCompletionMessage,
+    Choice,
+)
+from openai.types.create_embedding_response import Usage
 
 import app
+import core
 from core.authentication import AuthenticationHelper
 
-MockToken = namedtuple("MockToken", ["token", "expires_on"])
+from .mocks import (
+    MockAsyncSearchResultsIterator,
+    MockAzureCredential,
+    MockBlobClient,
+    MockKeyVaultSecretClient,
+    MockResponse,
+    mock_computervision_response,
+)
+
+MockSearchIndex = SearchIndex(
+    name="test",
+    fields=[
+        SearchField(name="oids", type="Collection(Edm.String)"),
+        SearchField(name="groups", type="Collection(Edm.String)"),
+    ],
+)
 
 
-class MockAzureCredential(AsyncTokenCredential):
-    async def get_token(self, uri):
-        return MockToken("mock_token", 9999999999)
+async def mock_search(self, *args, **kwargs):
+    self.filter = kwargs.get("filter")
+    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
+
+
+@pytest.fixture
+def mock_get_secret(monkeypatch):
+    monkeypatch.setattr(SecretClient, "get_secret", MockKeyVaultSecretClient().get_secret)
+
+
+@pytest.fixture
+def mock_compute_embeddings_call(monkeypatch):
+    def mock_post(*args, **kwargs):
+        if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
+            return mock_computervision_response()
+        else:
+            raise Exception("Unexpected URL for mock call to ClientSession.post()")
+
+    monkeypatch.setattr(aiohttp.ClientSession, "post", mock_post)
 
 
 @pytest.fixture
 def mock_openai_embedding(monkeypatch):
     async def mock_acreate(*args, **kwargs):
-        if openai.api_type == "openai":
-            assert kwargs.get("deployment_id") is None
-        else:
-            assert kwargs.get("deployment_id") is not None
-        return {"data": [{"embedding": [0.1, 0.2, 0.3]}]}
+        return CreateEmbeddingResponse(
+            object="list",
+            data=[
+                Embedding(
+                    embedding=[
+                        0.0023064255,
+                        -0.009327292,
+                        -0.0028842222,
+                    ],
+                    index=0,
+                    object="embedding",
+                )
+            ],
+            model="text-embedding-ada-002",
+            usage=Usage(prompt_tokens=8, total_tokens=8),
+        )
 
-    monkeypatch.setattr(openai.Embedding, "acreate", mock_acreate)
+    def patch(openai_client):
+        monkeypatch.setattr(openai_client.embeddings, "create", mock_acreate)
+
+    return patch
 
 
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
         def __init__(self, answer: str):
+            chunk_id = "test-id"
+            model = "gpt-35-turbo"
             self.responses = [
-                {"object": "chat.completion.chunk", "choices": []},
-                {"object": "chat.completion.chunk", "choices": [{"delta": {"role": "assistant"}}]},
+                {"object": "chat.completion.chunk", "choices": [], "id": chunk_id, "model": model, "created": 1},
+                {
+                    "object": "chat.completion.chunk",
+                    "choices": [{"delta": {"role": "assistant"}, "index": 0, "finish_reason": None}],
+                    "id": chunk_id,
+                    "model": model,
+                    "created": 1,
+                },
             ]
             # Split at << to simulate chunked responses
             if answer.find("<<") > -1:
@@ -51,20 +113,46 @@ def mock_openai_chatcompletion(monkeypatch):
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"role": "assistant", "content": parts[0] + "<<"}}],
+                        "choices": [
+                            {
+                                "delta": {"role": "assistant", "content": parts[0] + "<<"},
+                                "index": 0,
+                                "finish_reason": None,
+                            }
+                        ],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"role": "assistant", "content": parts[1]}}],
+                        "choices": [
+                            {"delta": {"role": "assistant", "content": parts[1]}, "index": 0, "finish_reason": None}
+                        ],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
+                    }
+                )
+                self.responses.append(
+                    {
+                        "object": "chat.completion.chunk",
+                        "choices": [{"delta": {"role": None, "content": None}, "index": 0, "finish_reason": "stop"}],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
             else:
                 self.responses.append(
                     {
                         "object": "chat.completion.chunk",
-                        "choices": [{"delta": {"content": answer}}],
+                        "choices": [{"delta": {"content": answer}, "index": 0, "finish_reason": None}],
+                        "id": chunk_id,
+                        "model": model,
+                        "created": 1,
                     }
                 )
 
@@ -73,18 +161,19 @@ def mock_openai_chatcompletion(monkeypatch):
 
         async def __anext__(self):
             if self.responses:
-                return self.responses.pop(0)
+                return ChatCompletionChunk.model_validate(self.responses.pop(0))
             else:
                 raise StopAsyncIteration
 
     async def mock_acreate(*args, **kwargs):
-        if openai.api_type == "openai":
-            assert kwargs.get("deployment_id") is None
-        else:
-            assert kwargs.get("deployment_id") is not None
         messages = kwargs["messages"]
-        if messages[-1]["content"] == "Generate search query for: What is the capital of France?":
+        last_question = messages[-1]["content"]
+        if last_question == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
+        elif last_question == "Generate search query for: Are interest rates high?":
+            answer = "interest rates"
+        elif isinstance(last_question, list) and last_question[2].get("image_url"):
+            answer = "From the provided sources, the impact of interest rates and GDP growth on financial markets can be observed through the line graph. [Financial Market Analysis Report 2023-7.png]"
         else:
             answer = "The capital of France is Paris. [Benefit_Options-2.pdf]."
             if messages[0]["content"].find("Generate 3 very brief follow-up questions") > -1:
@@ -92,67 +181,48 @@ def mock_openai_chatcompletion(monkeypatch):
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer)
         else:
-            return openai.util.convert_to_openai_object(
-                {"object": "chat.completion", "choices": [{"message": {"role": "assistant", "content": answer}}]}
+            return ChatCompletion(
+                object="chat.completion",
+                choices=[
+                    Choice(
+                        message=ChatCompletionMessage(role="assistant", content=answer), finish_reason="stop", index=0
+                    )
+                ],
+                id="test-123",
+                created=0,
+                model="test-model",
             )
 
-    monkeypatch.setattr(openai.ChatCompletion, "acreate", mock_acreate)
+    def patch(openai_client):
+        monkeypatch.setattr(openai_client.chat.completions, "create", mock_acreate)
+
+    return patch
 
 
 @pytest.fixture
 def mock_acs_search(monkeypatch):
-    class Caption:
-        def __init__(self, text):
-            self.text = text
-
-    class AsyncSearchResultsIterator:
-        def __init__(self):
-            self.num = 1
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            if self.num == 1:
-                self.num = 0
-                return {
-                    "sourcepage": "Benefit_Options-2.pdf",
-                    "sourcefile": "Benefit_Options.pdf",
-                    "content": "There is a whistleblower policy.",
-                    "embeddings": [],
-                    "category": None,
-                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
-                    "@search.score": 0.03279569745063782,
-                    "@search.reranker_score": 3.4577205181121826,
-                    "@search.highlights": None,
-                    "@search.captions": [Caption("Caption: A whistleblower policy.")],
-                }
-            else:
-                raise StopAsyncIteration
-
-    async def mock_search(*args, **kwargs):
-        return AsyncSearchResultsIterator()
-
     monkeypatch.setattr(SearchClient, "search", mock_search)
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    async def mock_get_index(*args, **kwargs):
+        return MockSearchIndex
+
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
 
 
 @pytest.fixture
 def mock_acs_search_filter(monkeypatch):
-    class AsyncSearchResultsIterator:
-        def __init__(self):
-            self.num = 1
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            raise StopAsyncIteration
-
-    async def mock_search(self, *args, **kwargs):
-        self.filter = kwargs.get("filter")
-        return AsyncSearchResultsIterator()
-
     monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    async def mock_get_index(*args, **kwargs):
+        return MockSearchIndex
+
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+
+
+@pytest.fixture
+def mock_blob_container_client(monkeypatch):
+    monkeypatch.setattr(ContainerClient, "get_blob_client", lambda *args, **kwargs: MockBlobClient())
 
 
 envs = [
@@ -166,6 +236,11 @@ envs = [
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "USE_GPT4V": "true",
+        "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
+        "VISION_SECRET_NAME": "mysecret",
+        "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
+        "AZURE_KEY_VAULT_NAME": "mykeyvault",
     },
 ]
 
@@ -185,10 +260,12 @@ auth_envs = [
 
 
 @pytest.fixture(params=envs, ids=["client0", "client1"])
-def mock_env(monkeypatch, request):
+def mock_env(monkeypatch, request, mock_get_secret):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
@@ -204,12 +281,21 @@ def mock_env(monkeypatch, request):
 
 
 @pytest_asyncio.fixture()
-async def client(monkeypatch, mock_env, mock_openai_chatcompletion, mock_openai_embedding, mock_acs_search, request):
+async def client(
+    monkeypatch,
+    mock_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
+    mock_blob_container_client,
+    mock_compute_embeddings_call,
+):
     quart_app = app.create_app()
 
     async with quart_app.test_app() as test_app:
-        quart_app.config.update({"TESTING": True})
-
+        test_app.app.config.update({"TESTING": True})
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
 
 
@@ -219,8 +305,10 @@ async def auth_client(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_confidential_client_success,
+    mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
+    mock_get_secret,
     request,
 ):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
@@ -237,10 +325,20 @@ async def auth_client(
 
         async with quart_app.test_app() as test_app:
             quart_app.config.update({"TESTING": True})
+            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
             client = test_app.test_client()
             client.config = quart_app.config
 
             yield client
+
+
+@pytest.fixture
+def mock_validate_token_success(monkeypatch):
+    async def mock_validate_access_token(self, token):
+        pass
+
+    monkeypatch.setattr(core.authentication.AuthenticationHelper, "validate_access_token", mock_validate_access_token)
 
 
 @pytest.fixture
@@ -302,24 +400,6 @@ def mock_confidential_client_overage(monkeypatch):
         pass
 
     monkeypatch.setattr(msal.ConfidentialClientApplication, "__init__", mock_init)
-
-
-class MockResponse:
-    def __init__(self, text, status):
-        self.text = text
-        self.status = status
-
-    async def text(self):
-        return self._text
-
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
-
-    async def __aenter__(self):
-        return self
-
-    async def json(self):
-        return json.loads(self.text)
 
 
 @pytest.fixture

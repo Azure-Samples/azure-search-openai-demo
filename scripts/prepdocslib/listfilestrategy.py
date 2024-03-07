@@ -11,7 +11,6 @@ from azure.storage.filedatalake.aio import (
 )
 
 from .blobmanager import BlobManager
-from .file import File
 
 
 class ListFileStrategy(ABC):
