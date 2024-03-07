@@ -26,16 +26,33 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
 
 * Run one of the following commands to set the desired model:
 
-    `azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small`
-    `azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-large`
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small
+    ```
 
-* Specify the desired dimensions of the model:
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-large
+    ```
 
-    `azd env set AZURE_OPENAI_EMB_DIMENSIONS 256`
+* Specify the desired dimensions of the model: (from 256-3072, model dependent)
 
-* Run `azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1`
-* If you have already done a deployment, you'll also need to change the deployment name, by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`.
-* If you have already created an index, you'll need to create a new index. You can either delete the current index in the Azure Portal, or create a new index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`.
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 256
+    ```
+
+* Set the model version to "1" (the only version as of March 2024):
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1
+    ```
+
+If you have already done a deployment:
+
+* You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
+* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
+
+> ![NOTE]
+> The ada-3 models are not currently supported by the integrated vectorization feature.
 
 ## Enabling GPT-4 Turbo with Vision
 
