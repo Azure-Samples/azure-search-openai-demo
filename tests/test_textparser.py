@@ -12,7 +12,7 @@ async def test_textparser_remove_new_lines():
         # Text Example with multiple empty lines
         this is paragraph 1
 
-        
+
 
         and this is paragraph 2
         """
@@ -24,7 +24,7 @@ async def test_textparser_remove_new_lines():
     assert pages[0].offset == 0
     assert (
         pages[0].text
-        == "# Text Example with multiple empty lines\n this is paragraph 1\n \n and this is paragraph 2"
+        == "# Text Example with multiple empty lines\n this is paragraph 1\n and this is paragraph 2"
     )
 
 
