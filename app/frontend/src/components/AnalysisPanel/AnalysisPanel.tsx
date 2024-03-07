@@ -1,5 +1,4 @@
 import { Stack, Pivot, PivotItem } from "@fluentui/react";
-import SyntaxHighlighter from "react-syntax-highlighter";
 
 import styles from "./AnalysisPanel.module.css";
 
