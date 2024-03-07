@@ -18,22 +18,26 @@ from auth_common import (
 
 
 async def create_application(auth_headers: Dict[str, str], app_payload: Dict[str, Any]) -> Tuple[str, str]:
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
-        async with session.post("https://graph.microsoft.com/v1.0/applications", json=app_payload) as response:
-            if response.status != 201:
-                raise Exception(await response.json())
-            response_json = await response.json()
-            object_id = response_json["id"]
-            client_id = response_json["appId"]
+    try:
+        async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
+            async with session.post("https://graph.microsoft.com/v1.0/applications", json=app_payload) as response:
+                if response.status != 201:
+                    raise Exception(await response.json())
+                response_json = await response.json()
+                object_id = response_json["id"]
+                client_id = response_json["appId"]
 
-        async with session.post(
-            "https://graph.microsoft.com/v1.0/servicePrincipals",
-            json={"appId": client_id, "displayName": app_payload["displayName"]},
-        ) as response:
-            if response.status != 201:
-                raise Exception(await response.json())
+            async with session.post(
+                "https://graph.microsoft.com/v1.0/servicePrincipals",
+                json={"appId": client_id, "displayName": app_payload["displayName"]},
+            ) as response:
+                if response.status != 201:
+                    raise Exception(await response.json())
 
-    return object_id, client_id
+        return object_id, client_id
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None, None
 
 
 async def add_client_secret(auth_headers: Dict[str, str], object_id: str):
