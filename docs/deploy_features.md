@@ -28,7 +28,7 @@ We generally find that most developers are able to get high quality answers usin
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
     ```
 
-* You may also need to adjust the capacity in `infra/main.bicep` depending on how much TPM your account is allowed.
+You may also need to adjust the capacity in `infra/main.bicep` depending on how much TPM your account is allowed.
 
 > [!NOTE]
 > To revert back to GPT 3.5, use this command `azd env set USE_GPT4 false`, then redeploy the application using `azd provision`.
