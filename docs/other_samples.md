@@ -30,14 +30,17 @@ Feature comparison:
 | --- | --- | --- |
 | RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
 | Vector support | ✅ Yes | ✅ Yes |
-| Data ingestion | ✅ Yes (PDF) | ✅ Yes (PDF, TXT, MD, HTML) |
+| Data ingestion | ✅ Yes (Many formats) | ✅ Yes (Many formats) |
 | Persistent chat history | ❌ No (browser tab only) | ✅ Yes, in CosmosDB |
+| User feedback | ❌ No | Yes |
+| GPT-4-vision |  ✅ Yes | ❌ No |
+| Auth + ACL |  ✅ Yes | ✅ Yes |
 
 Technology comparison:
 
 | Tech | azure-search-openai-demo | sample-app-aoai-chatGPT |
 | --- | --- | --- |
 | Frontend | React | React |
-| Backend | Python (Quart) | Python (Flask) |
-| Vector DB | Azure AI Search | Azure AI Search |
+| Backend | Python (Quart) | Python (Quart) |
+| Vector DB | Azure AI Search | Azure AI Search, CosmosDB Mongo vCore, ElasticSearch, Pinecone, AzureML |
 | Deployment | Azure Developer CLI (azd) | Azure Portal, az, azd |
