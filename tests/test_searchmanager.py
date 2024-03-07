@@ -8,6 +8,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from openai.types.create_embedding_response import Usage
 
+from .mocks import MOCK_EMBEDDING_DIMENSIONS, MOCK_EMBEDDING_MODEL_NAME
 from scripts.prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from scripts.prepdocslib.listfilestrategy import File
 from scripts.prepdocslib.searchmanager import SearchManager, Section
@@ -66,8 +67,8 @@ def embeddings_service(monkeypatch):
     embeddings = AzureOpenAIEmbeddingService(
         open_ai_service="x",
         open_ai_deployment="x",
-        open_ai_model_name="text-ada-003",
-        open_ai_dimensions=1536,
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=AzureKeyCredential("test"),
         disable_batch=True,
     )
@@ -260,8 +261,8 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
     embeddings = AzureOpenAIEmbeddingService(
         open_ai_service="x",
         open_ai_deployment="x",
-        open_ai_model_name="text-ada-003",
-        open_ai_dimensions=1536,
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=AzureKeyCredential("test"),
         disable_batch=True,
     )

@@ -5,7 +5,11 @@ import tenacity
 from httpx import Request, Response
 from openai.types.create_embedding_response import Usage
 
-from .mocks import MockAzureCredential
+from .mocks import (
+    MOCK_EMBEDDING_DIMENSIONS,
+    MOCK_EMBEDDING_MODEL_NAME,
+    MockAzureCredential,
+)
 from scripts.prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     OpenAIEmbeddingService,
@@ -53,8 +57,8 @@ async def test_compute_embedding_success(monkeypatch):
     embeddings = AzureOpenAIEmbeddingService(
         open_ai_service="x",
         open_ai_deployment="x",
-        open_ai_model_name="text-ada-003",
-        open_ai_dimensions=1536,
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=MockAzureCredential(),
         disable_batch=False,
     )
@@ -70,8 +74,8 @@ async def test_compute_embedding_success(monkeypatch):
     embeddings = AzureOpenAIEmbeddingService(
         open_ai_service="x",
         open_ai_deployment="x",
-        open_ai_model_name="text-ada-003",
-        open_ai_dimensions=1536,
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=MockAzureCredential(),
         disable_batch=True,
     )
@@ -85,8 +89,8 @@ async def test_compute_embedding_success(monkeypatch):
     ]
 
     embeddings = OpenAIEmbeddingService(
-        open_ai_model_name="text-ada-003",
-        open_ai_dimensions=1536,
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=MockAzureCredential(),
         organization="org",
         disable_batch=False,
@@ -101,8 +105,8 @@ async def test_compute_embedding_success(monkeypatch):
     ]
 
     embeddings = OpenAIEmbeddingService(
-        open_ai_model_name="text-ada-003",
-        open_ai_dimensions=1536,
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=MockAzureCredential(),
         organization="org",
         disable_batch=True,
@@ -139,8 +143,8 @@ async def test_compute_embedding_ratelimiterror_batch(monkeypatch, capsys):
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service="x",
             open_ai_deployment="x",
-            open_ai_model_name="text-embedding-ada-002",
-            open_ai_dimensions=1536,
+            open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
             credential=MockAzureCredential(),
             disable_batch=False,
             verbose=True,
@@ -158,8 +162,8 @@ async def test_compute_embedding_ratelimiterror_single(monkeypatch, capsys):
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service="x",
             open_ai_deployment="x",
-            open_ai_model_name="text-embedding-ada-002",
-            open_ai_dimensions=1536,
+            open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
             credential=MockAzureCredential(),
             disable_batch=True,
             verbose=True,
@@ -186,8 +190,8 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service="x",
             open_ai_deployment="x",
-            open_ai_model_name="text-embedding-ada-002",
-            open_ai_dimensions=1536,
+            open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
             credential=MockAzureCredential(),
             disable_batch=False,
             verbose=True,
@@ -199,8 +203,8 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
         embeddings = AzureOpenAIEmbeddingService(
             open_ai_service="x",
             open_ai_deployment="x",
-            open_ai_model_name="text-embedding-ada-002",
-            open_ai_dimensions=1536,
+            open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
             credential=MockAzureCredential(),
             disable_batch=True,
             verbose=True,
