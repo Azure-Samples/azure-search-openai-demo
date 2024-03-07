@@ -41,17 +41,13 @@ contextlength_response = BadRequestError(
 )
 
 
-def thoughts_contains_text(thoughts, text):
-    found = False
-    for thought in thoughts:
-        description = thought["description"]
-        if isinstance(description, str) and text in description:
-            found = True
-            break
-        elif isinstance(description, list) and any(text in item for item in description):
-            found = True
-            break
-    return found
+def thought_contains_text(thought, text):
+    description = thought["description"]
+    if isinstance(description, str) and text in description:
+        return True
+    elif isinstance(description, list) and any(text in item for item in description):
+        return True
+    return False
 
 
 @pytest.mark.asyncio
@@ -511,7 +507,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "performance review")
+    assert thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "performance review")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -539,7 +535,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "Is there a dress code?")
+    assert not thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "Is there a dress code?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 

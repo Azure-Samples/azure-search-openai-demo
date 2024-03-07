@@ -98,7 +98,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         user_query_request = "Generate search query for: " + original_user_query
 
-        messages = self.get_messages_from_history(
+        query_messages = self.get_messages_from_history(
             system_prompt=self.query_prompt_template,
             model_id=self.gpt4v_model,
             history=history,
@@ -109,7 +109,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=messages,
+            messages=query_messages,
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=100,
             n=1,
@@ -178,16 +178,38 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             "data_points": data_points,
             "thoughts": [
                 ThoughtStep(
-                    "Original user query",
-                    original_user_query,
+                    "Prompt to generate search query",
+                    [str(message) for message in query_messages],
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
                 ),
                 ThoughtStep(
-                    "Generated search query",
+                    "Search using generated search query",
                     query_text,
-                    {"use_semantic_captions": use_semantic_captions, "vector_fields": vector_fields},
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "top": top,
+                        "filter": filter,
+                        "vector_fields": vector_fields,
+                    },
                 ),
-                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
-                ThoughtStep("Prompt", [str(message) for message in messages]),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    [str(message) for message in messages],
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
+                ),
             ],
         }
 
