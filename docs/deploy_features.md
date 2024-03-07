@@ -36,7 +36,7 @@ You may also need to adjust the capacity in `infra/main.bicep` depending on how 
 > - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT <YOUR-DEPLOYMENT-NAME>` to use the name for your GPT-3 deployment.
 > - `azd provision` to update the provisioned resources.
 >
-> Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
+> Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse an old GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
 
 ## Enabling GPT-4 Turbo with Vision
 
