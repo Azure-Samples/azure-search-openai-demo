@@ -31,9 +31,12 @@ We generally find that most developers are able to get high quality answers usin
 You may also need to adjust the capacity in `infra/main.bicep` depending on how much TPM your account is allowed.
 
 > [!NOTE]
-> To revert back to GPT 3.5, use this command `azd env set USE_GPT4 false`, then redeploy the application using `azd provision`.
+> To revert back to GPT 3.5, run the following commands:
+> - `azd env set USE_GPT4 false` to disable GPT-4.
+> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT <YOUR-DEPLOYMENT-NAME>` to use the name for your GPT-3 deployment.
+> - `azd provision` to update the provisioned resources.
 >
-> This does not delete your GPT-4 deployment; it just makes your application use GPT 3.5. If you want to delete it, you can go to your Azure OpenAI studio.
+> Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
 
 ## Enabling GPT-4 Turbo with Vision
 
