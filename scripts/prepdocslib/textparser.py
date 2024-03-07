@@ -20,8 +20,8 @@ def cleanup_data(data: str) -> str:
     return output.strip()
 
 
-class MarkdownParser(Parser):
-    """Parses Markdown text into a Page object."""
+class TextParser(Parser):
+    """Parses simple text into a Page object."""
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         data = content.read()
