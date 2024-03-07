@@ -95,6 +95,9 @@
     "useVectors": {
       "value": "${USE_VECTORS=true}"
     },
+    "useGPT4":{
+      "value": "${USE_GPT4=false}"
+    },
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
