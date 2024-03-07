@@ -30,6 +30,8 @@ class Document:
     oids: Optional[List[str]]
     groups: Optional[List[str]]
     captions: List[QueryCaptionResult]
+    score: Optional[float] = None
+    reranker_score: Optional[float] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
@@ -54,6 +56,8 @@ class Document:
                 if self.captions
                 else []
             ),
+            "score": self.score,
+            "reranker_score": self.reranker_score,
         }
 
     @classmethod
@@ -153,6 +157,8 @@ class Approach(ABC):
                         oids=document.get("oids"),
                         groups=document.get("groups"),
                         captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
+                        score=document.get("@search.score"),
+                        reranker_score=document.get("@search.reranker_score"),
                     )
                 )
         return documents
