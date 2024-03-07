@@ -22,10 +22,7 @@ async def test_textparser_remove_new_lines():
     assert len(pages) == 1
     assert pages[0].page_num == 0
     assert pages[0].offset == 0
-    assert (
-        pages[0].text
-        == "# Text Example with multiple empty lines\n this is paragraph 1\n and this is paragraph 2"
-    )
+    assert pages[0].text == "# Text Example with multiple empty lines\n this is paragraph 1\n and this is paragraph 2"
 
 
 @pytest.mark.asyncio
