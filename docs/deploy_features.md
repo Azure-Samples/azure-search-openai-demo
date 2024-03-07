@@ -16,8 +16,18 @@ You should typically enable these features before running `azd up`. Once you've 
 
 We generally find that most developers are able to get high quality answers using GPT 3.5. However, if you want to try GPT-4, you can do so by following these steps:
 
-* In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'.
-* You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
+* Execute the following command inside your terminal:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
+    ```
+
+* You may also need to adjust the capacity in `infra/main.bicep` depending on how much TPM your account is allowed.
+
+> [!NOTE]
+> To revert back to GPT 3.5, use this command `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat`, then redeploy the application using `azd provision`.
+>
+> This does not delete your GPT-4 deployment; it just makes your application use GPT 3.5. If you want to delete it, you can go to your Azure OpenAI studio.
 
 ## Enabling GPT-4 Turbo with Vision
 
