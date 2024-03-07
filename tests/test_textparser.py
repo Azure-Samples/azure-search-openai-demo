@@ -48,7 +48,7 @@ async def test_textparser_full():
 
 
         ## Subheading
-        Some more text here with a link to Azure.  Here's a the linked to [Azure](https://azure.microsoft.com/).
+        Some more text here with a link to Azure.  Here's a the link to [Azure](https://azure.microsoft.com/).
         """
     )
     file.name = "test.md"
@@ -59,5 +59,5 @@ async def test_textparser_full():
     assert pages[0].offset == 0
     assert (
         pages[0].text
-        == "# Text Example\n Some short text here, with bullets:\n * write code\n * test code\n * merge code\n ## Subheading\n Some more text here with a link to Azure. Here's a the linked to [Azure](https://azure.microsoft.com/)."
+        == "# Text Example\n Some short text here, with bullets:\n * write code\n * test code\n * merge code\n ## Subheading\n Some more text here with a link to Azure. Here's a the link to [Azure](https://azure.microsoft.com/)."
     )
