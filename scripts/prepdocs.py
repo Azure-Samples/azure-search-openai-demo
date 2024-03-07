@@ -29,6 +29,7 @@ from prepdocslib.listfilestrategy import (
 from prepdocslib.parser import Parser
 from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
+from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 
@@ -87,6 +88,8 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
         ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".md": FileProcessor(TextParser(), sentence_text_splitter),
+        ".txt": FileProcessor(TextParser(), sentence_text_splitter),
     }
     use_vectors = not args.novectors
     embeddings: Optional[OpenAIEmbeddings] = None
