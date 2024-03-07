@@ -1,5 +1,4 @@
 import { Stack, Pivot, PivotItem } from "@fluentui/react";
-import SyntaxHighlighter from "react-syntax-highlighter";
 
 import styles from "./AnalysisPanel.module.css";
 
@@ -65,7 +64,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 case "png":
                     return <img src={citation} className={styles.citationImg} alt="Citation Image" />;
                 case "md":
-                    return <MarkdownViewer src={citation} />;
+                    return <MarkdownViewer src={activeCitation} />;
                 default:
                     return <iframe title="Citation" src={citation} width="100%" height={citationHeight} />;
             }
