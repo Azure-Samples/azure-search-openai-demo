@@ -337,6 +337,7 @@ if __name__ == "__main__":
         "--openaidimensions",
         required=False,
         default=1536,
+        type=int,
         help="Dimensions for the embedding model (defaults to 1536 for 'text-embedding-ada-002')",
     )
     parser.add_argument(
