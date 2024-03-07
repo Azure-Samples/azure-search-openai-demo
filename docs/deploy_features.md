@@ -24,7 +24,7 @@ We generally find that most developers are able to get high quality answers usin
 
 By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
 
-* Run one of the following commands to set the desired model:
+1. Run one of the following commands to set the desired model:
 
     ```shell
     azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small
@@ -34,22 +34,25 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
     azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-large
     ```
 
-* Specify the desired dimensions of the model: (from 256-3072, model dependent)
+2. Specify the desired dimensions of the model: (from 256-3072, model dependent)
 
     ```shell
     azd env set AZURE_OPENAI_EMB_DIMENSIONS 256
     ```
 
-* Set the model version to "1" (the only version as of March 2024):
+3. Set the model version to "1" (the only version as of March 2024):
 
     ```shell
     azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1
     ```
 
+3. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
+
 If you have already deployed:
 
 * You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
 * You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
+* If your OpenAI resource is not in one of the supported regions, you should delete `openAiResourceGroupLocation` from `.azure/YOUR-ENV-NAME/config.json`. When running `azd up`, you will be prompted to select a new region.
 
 > ![NOTE]
 > The text-embedding-3 models are not currently supported by the integrated vectorization feature.
