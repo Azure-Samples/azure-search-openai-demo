@@ -5,7 +5,7 @@ This document covers optional features that can be enabled in the deployed Azure
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 * [Using GPT-4](#using-gpt-4)
-* [Using ada-3 embedding models](#using-ada-3-embedding-models)
+* [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
@@ -20,9 +20,9 @@ We generally find that most developers are able to get high quality answers usin
 * In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'.
 * You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
 
-## Using ada-3 embedding models
+## Using text-embedding-3 models
 
-By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the ada 3 embedding models, you can do so by following these steps:
+By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
 
 * Run one of the following commands to set the desired model:
 
@@ -46,13 +46,13 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
     azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1
     ```
 
-If you have already done a deployment:
+If you have already deployed:
 
 * You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
 * You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
 
 > ![NOTE]
-> The ada-3 models are not currently supported by the integrated vectorization feature.
+> The text-embedding-3 models are not currently supported by the integrated vectorization feature.
 
 ## Enabling GPT-4 Turbo with Vision
 
@@ -69,7 +69,7 @@ To enable integrated vectorization with this sample:
 3. Run `azd up` to update system and user roles
 4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
 
-This feature is not currently compatible with GPT4-vision or the newer ada models.
+This feature is not currently compatible with GPT4-vision or the newer text-embedding-3 models.
 
 ## Enabling authentication
 
