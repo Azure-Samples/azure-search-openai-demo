@@ -23,6 +23,18 @@
     "openAiSkuName": {
       "value": "S0"
     },
+    "computerVisionServiceName": {
+      "value": "${AZURE_COMPUTER_VISION_SERVICE}"
+    },
+    "computerVisionResourceGroupName": {
+      "value": "${AZURE_COMPUTER_VISION_RESOURCE_GROUP}"
+    },
+    "computerVisionResourceGroupLocation": {
+      "value": "${AZURE_COMPUTER_VISION_LOCATION}"
+    },
+    "computerVisionSkuName": {
+      "value": "${AZURE_COMPUTER_VISION_SKU=Standard_F0}"
+    },
     "documentIntelligenceServiceName": {
       "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
     },
