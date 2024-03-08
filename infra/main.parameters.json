@@ -128,6 +128,9 @@
     "useIntegratedVectorization": {
       "value": "${USE_FEATURE_INT_VECTORIZATION}"
     },
+    "useUserUpload": {
+      "value": "${USE_USER_UPLOAD}"
+    },
     "runningOnGh": {
       "value": "${GITHUB_ACTIONS}"
     },

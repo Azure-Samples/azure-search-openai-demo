@@ -49,9 +49,7 @@ export function Component(): JSX.Element {
     const client = useLogin ? useMsal().instance : undefined;
 
     const getConfig = async () => {
-        const token = client ? await getToken(client) : undefined;
-
-        configApi(token).then(config => {
+        configApi().then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);

@@ -6,6 +6,7 @@ tiktoken
 tenacity
 azure-search-documents==11.6.0b1
 azure-storage-blob
+azure-storage-file-datalake
 uvicorn
 aiohttp
 azure-monitor-opentelemetry

@@ -31,6 +31,7 @@ azure-core==1.30.1
     #   azure-monitor-opentelemetry-exporter
     #   azure-search-documents
     #   azure-storage-blob
+    #   azure-storage-file-datalake
     #   msrest
 azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
@@ -45,6 +46,10 @@ azure-monitor-opentelemetry-exporter==1.0.0b23
 azure-search-documents==11.6.0b1
     # via -r requirements.in
 azure-storage-blob==12.19.1
+    # via
+    #   -r requirements.in
+    #   azure-storage-file-datalake
+azure-storage-file-datalake==12.14.0
     # via -r requirements.in
 blinker==1.7.0
     # via
@@ -118,6 +123,7 @@ isodate==0.6.1
     #   azure-keyvault-secrets
     #   azure-search-documents
     #   azure-storage-blob
+    #   azure-storage-file-datalake
     #   msrest
 itsdangerous==2.1.2
     # via
@@ -331,6 +337,7 @@ typing-extensions==4.10.0
     #   azure-core
     #   azure-keyvault-secrets
     #   azure-storage-blob
+    #   azure-storage-file-datalake
     #   openai
     #   opentelemetry-sdk
     #   pydantic

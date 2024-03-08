@@ -1,0 +1,68 @@
+:root {
+    --primary: #7376e1;
+    --white-color: #fff;
+    --dark-color: #000;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+.SubmitContainer {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--primary);
+}
+.btn {
+    background: var(--primary);
+    border-radius: 6px;
+    padding: 8px;
+    width: 160px;
+}
+.submit {
+    background: var(--primary);
+    border-radius: 6px;
+}
+.btn label {
+    color: var(--white-color);
+    text-align: center;
+}
+.btn_action i {
+    color: var(--dark-color);
+}
+.chooseFiles {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+.callout {
+    padding: 16px;
+    min-height: 100px;
+}
+.list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.item {
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.info {
+    text-align: center;
+    padding: 4px;
+    font-size: 0.8rem;
+    font-style: italic;
+}

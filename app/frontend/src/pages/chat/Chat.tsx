@@ -23,6 +23,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
@@ -62,11 +63,10 @@ const Chat = () => {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
+    const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
 
     const getConfig = async () => {
-        const token = client ? await getToken(client) : undefined;
-
-        configApi(token).then(config => {
+        configApi().then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
@@ -74,6 +74,7 @@ const Chat = () => {
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
             }
+            setShowUserUpload(config.showUserUpload);
         });
     };
 
@@ -272,6 +273,7 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
+                {showUserUpload && <UploadFile className={styles.commandButton} />}
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>

@@ -16,6 +16,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.filedatalake.aio import DataLakeServiceClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -52,6 +53,8 @@ from config import (
     CONFIG_OPENAI_CLIENT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_USER_BLOB_CONTAINER_CLIENT,
+    CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
 from core.authentication import AuthenticationHelper
@@ -205,8 +208,28 @@ def config():
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
+            "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
         }
     )
+
+
+# Define the route for file upload (accepts POST and GET requests)
+@bp.post("/upload")
+@authenticated
+async def upload(auth_claims: dict[str, Any]):
+    files = await request.files
+    if "files" not in files:
+        # If no files were included in the request, return an error response
+        return jsonify({"message": "No file part in the request", "status": "failed"}), 400
+
+    user_oid = auth_claims["oid"]
+    for file in files.getlist("files"):
+        user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+        user_directory_client = user_blob_container_client.get_directory_client(user_oid)
+        await user_directory_client.set_access_control(owner=user_oid)
+        file_client = user_directory_client.get_file_client(file.filename)
+        await file_client.upload_data(file, overwrite=True, metadata={"UploadedBy": user_oid})
+    return jsonify({"message": "File(s) uploaded successfully", "status": "success"}), 200
 
 
 @bp.before_app_serving
@@ -214,6 +237,8 @@ async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
+    AZURE_USERSTORAGE_ACCOUNT = os.environ["AZURE_USERSTORAGE_ACCOUNT"]
+    AZURE_USERSTORAGE_CONTAINER = os.environ["AZURE_USERSTORAGE_CONTAINER"]
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     SEARCH_SECRET_NAME = os.getenv("SEARCH_SECRET_NAME")
@@ -251,6 +276,7 @@ async def setup_clients():
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
+    USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
 
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -285,6 +311,11 @@ async def setup_clients():
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
     blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+
+    user_blob_client = DataLakeServiceClient(
+        account_url=f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net", credential=azure_credential
+    )
+    user_blob_container_client = user_blob_client.get_file_system_client(AZURE_USERSTORAGE_CONTAINER)
 
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
@@ -328,11 +359,13 @@ async def setup_clients():
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT] = user_blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
+    current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
@@ -406,6 +439,7 @@ async def setup_clients():
 async def close_clients():
     await current_app.config[CONFIG_SEARCH_CLIENT].close()
     await current_app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
+    await current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
 
 
 def create_app():
