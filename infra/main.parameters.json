@@ -33,7 +33,7 @@
       "value": "${AZURE_COMPUTER_VISION_LOCATION}"
     },
     "computerVisionSkuName": {
-      "value": "${AZURE_COMPUTER_VISION_SKU=Standard_F0}"
+      "value": "${AZURE_COMPUTER_VISION_SKU}"
     },
     "documentIntelligenceServiceName": {
       "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
