@@ -597,11 +597,11 @@ output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = (isAzureOpenAiHost) ? openAi.outputs.name : ''
-output AZURE_OPENAI_RESOURCE_GROUP string = (isAzureOpenAiHost) ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (isAzureOpenAiHost) ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT string = (isAzureOpenAiHost) ? embeddingDeploymentName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT string = (isAzureOpenAiHost) ? gpt4vDeploymentName : ''
+output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
+output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGptDeploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embeddingDeploymentName : ''
+output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymentName : ''
 
 // Used only with non-Azure OpenAI deployments
 output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
