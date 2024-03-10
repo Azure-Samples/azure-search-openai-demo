@@ -90,7 +90,7 @@ param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentVersion string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30
 param chatGpt4vDeploymentCapacity int = 10
-param chatGptModel object = (useGPT4) ? { name: 'gpt-4', version: startsWith(openAiHost, 'azure') ? !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125-Preview' : !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125-preview' } : { name: startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo', version: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613' }
+param chatGptModel object = (useGPT4) ? { name: 'gpt-4', version: isAzureOpenAiHost ? !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125-Preview' : !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125-preview' } : { name: isAzureOpenAiHost ? 'gpt-35-turbo' : 'gpt-3.5-turbo', version: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613' }
 param embeddingDeploymentName string // Set in main.parameters.json
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
