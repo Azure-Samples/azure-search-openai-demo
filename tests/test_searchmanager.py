@@ -8,11 +8,11 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from openai.types.create_embedding_response import Usage
 
-from scripts.prepdocslib.embeddings import AzureOpenAIEmbeddingService
-from scripts.prepdocslib.listfilestrategy import File
-from scripts.prepdocslib.searchmanager import SearchManager, Section
-from scripts.prepdocslib.strategy import SearchInfo
-from scripts.prepdocslib.textsplitter import SplitPage
+from prepdocslib.embeddings import AzureOpenAIEmbeddingService
+from prepdocslib.listfilestrategy import File
+from prepdocslib.searchmanager import SearchManager, Section
+from prepdocslib.strategy import SearchInfo
+from prepdocslib.textsplitter import SplitPage
 
 
 class MockEmbeddingsClient:

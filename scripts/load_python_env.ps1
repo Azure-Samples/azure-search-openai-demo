@@ -4,13 +4,13 @@ if (-not $pythonCmd) {
   $pythonCmd = Get-Command python3 -ErrorAction SilentlyContinue
 }
 
-Write-Host 'Creating python virtual environment "scripts/.venv"'
-Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./scripts/.venv" -Wait -NoNewWindow
+Write-Host 'Creating python virtual environment ".venv"'
+Start-Process -FilePath ($pythonCmd).Source -ArgumentList "-m venv ./.venv" -Wait -NoNewWindow
 
-$venvPythonPath = "./scripts/.venv/scripts/python.exe"
+$venvPythonPath = "./.venv/scripts/python.exe"
 if (Test-Path -Path "/usr") {
   # fallback to Linux venv path
-  $venvPythonPath = "./scripts/.venv/bin/python"
+  $venvPythonPath = "./.venv/bin/python"
 }
 
 Write-Host 'Installing dependencies from "requirements.txt" into virtual environment'

@@ -85,7 +85,6 @@ export type Config = {
     showUserUpload: boolean;
 };
 
-export type FileUploadResponse = {
-    success: boolean;
+export type SimpleAPIResponse = {
     message?: string;
 };

@@ -31,7 +31,9 @@ export default defineConfig({
             "/ask": "http://127.0.0.1:50505",
             "/chat": "http://127.0.0.1:50505",
             "/config": "http://127.0.0.1:50505",
-            "/upload": "http://127.0.0.1:50505"
+            "/upload": "http://127.0.0.1:50505",
+            "/delete_uploaded": "http://127.0.0.1:50505",
+            "/list_uploaded": "http://127.0.0.1:50505"
         }
     }
 });

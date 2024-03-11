@@ -32,7 +32,7 @@ def authenticated_path(route_fn: Callable[[str], Any]):
         if not authorized:
             abort(403)
 
-        return await route_fn(path)
+        return await route_fn(path, auth_claims)
 
     return auth_handler
 

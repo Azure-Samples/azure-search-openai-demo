@@ -131,6 +131,12 @@
     "useUserUpload": {
       "value": "${USE_USER_UPLOAD}"
     },
+    "useLocalPdfParser": {
+      "value": "${USE_LOCAL_PDF_PARSER}"
+    },
+    "useLocalHtmlParser": {
+      "value": "${USE_LOCAL_HTML_PARSER}"
+    },
     "runningOnGh": {
       "value": "${GITHUB_ACTIONS}"
     },

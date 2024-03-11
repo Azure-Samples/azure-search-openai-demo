@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./UploadFile.module.css";
 import { IIconProps, Callout, ActionButton, PrimaryButton, Label, IconButton, Text } from "@fluentui/react";
-import { FileUploadResponse, uploadFileApi } from "../../api";
+import { SimpleAPIResponse, uploadFileApi, deleteUploadedFileApi, listUploadedFilesApi } from "../../api";
 import { useMsal } from "@azure/msal-react";
 import { useLogin, getToken } from "../../authConfig";
 
@@ -12,9 +12,10 @@ interface Props {
 export const UploadFile: React.FC<Props> = ({ className }: Props) => {
     // State variables to manage the component behavior
     const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(false);
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [uploadedFile, setUploadedFile] = useState<FileUploadResponse>();
+    const [isUploading, setIsUploading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [uploadedFile, setUploadedFile] = useState<SimpleAPIResponse>();
+    const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
     if (!useLogin) {
         console.error("This component requires useLogin to be true");
@@ -24,52 +25,62 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
     const client = useMsal().instance;
 
     // Handler for the "Upload Files" button click
-    const handleButtonClick = () => {
+    const handleButtonClick = async () => {
         setIsCalloutVisible(!isCalloutVisible); // Toggle the Callout visibility
-    };
 
-    // Handler for file input change event
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const selectedFileList: File[] = [];
-        if (e.target.files) {
-            // Extract the selected files and store them in the state
-            for (let i = 0; i < e.target.files.length; i++) {
-                selectedFileList.push(e.target.files.item(i)!);
-            }
-        }
-        setSelectedFiles(selectedFileList);
-    };
-
-    // Handler for removing a selected file from the list
-    const handleRemoveFile = (fileToRemove: File) => {
-        const filteredFiles = selectedFiles.filter(file => file !== fileToRemove);
-        setSelectedFiles(filteredFiles);
-    };
-
-    // Handler for the form submission (file upload)
-    const handleUploadFile = async (ev: FormEvent) => {
-        ev.preventDefault();
-        setIsLoading(true); // Start the loading state
-        const formData = new FormData();
-        // Append each file to the FormData
-        selectedFiles.forEach((file, index) => {
-            formData.append(`files`, file);
-        });
-
+        // Update uploaded files by calling the API
         try {
-            const request: FormData = formData;
             const idToken = await getToken(client);
             if (!idToken) {
                 throw new Error("No authentication token available");
             }
-            const response: FileUploadResponse = await uploadFileApi(request, idToken);
-            setUploadedFile(response);
+            listUploadedFilesApi(idToken).then(files => setUploadedFiles(files));
             setIsLoading(false);
         } catch (error) {
+            console.error(error);
             setIsLoading(false);
         }
+    };
 
-        setSelectedFiles([]);
+    const handleRemoveFile = async (filename: string) => {
+        try {
+            const idToken = await getToken(client);
+            if (!idToken) {
+                throw new Error("No authentication token available");
+            }
+            await deleteUploadedFileApi(filename, idToken);
+            const newFiles = uploadedFiles.filter(file => file !== filename);
+            // To discuss: We could also poll the list endpoint here
+            setUploadedFiles(newFiles);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Handler for the form submission (file upload)
+    const handleUploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        if (!e.target.files || e.target.files.length === 0) {
+            return;
+        }
+        setIsUploading(true); // Start the loading state
+        const file: File = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const idToken = await getToken(client);
+            if (!idToken) {
+                throw new Error("No authentication token available");
+            }
+            const response: SimpleAPIResponse = await uploadFileApi(formData, idToken);
+            setUploadedFile(response);
+            uploadedFiles.push(file.name);
+            setIsUploading(false);
+        } catch (error) {
+            console.error(error);
+            setIsUploading(false);
+        }
     };
 
     const addIcon: IIconProps = { iconName: "Add" };
@@ -79,7 +90,7 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
         <div className={`${styles.container} ${className ?? ""}`}>
             <div>
                 <ActionButton className={styles.btn_action} id="calloutButton" iconProps={addIcon} allowDisabledFocus onClick={handleButtonClick}>
-                    Upload File
+                    Manage file uploads
                 </ActionButton>
 
                 {isCalloutVisible && (
@@ -91,48 +102,37 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
                         onDismiss={() => setIsCalloutVisible(false)}
                         setInitialFocus
                     >
-                        <form onSubmit={handleUploadFile} encType="multipart/form-data">
-                            {/* Show the file input only if no files are selected */}
-                            {selectedFiles.length === 0 && (
-                                <>
-                                    <div className={styles.btn}>
-                                        <Label>Choose file</Label>
-                                        <input accept=".pdf" className={styles.chooseFiles} type="file" multiple onChange={handleFileChange} />
-                                    </div>
-                                </>
-                            )}
-
-                            {/* Show the upload button and the number of selected files if files are selected */}
-                            {selectedFiles.length > 0 && (
-                                <div className={styles.SubmitContainer}>
-                                    <Label>Selected Files ({selectedFiles.length})</Label>
-                                    <PrimaryButton className={styles.submit} type="submit">
-                                        Submit
-                                    </PrimaryButton>
-                                </div>
-                            )}
-
-                            {/* Show a loading message while files are being uploaded */}
-                            {isLoading && <div className={styles.padding8}>{"Uploading files..."}</div>}
-                            {uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
-                            {/* Display the list of selected files */}
-
-                            {selectedFiles.map((item, index) => {
-                                return (
-                                    <div key={index} className={styles.list}>
-                                        <div className={styles.item}>{item.name}</div>
-                                        {/* Button to remove a file from the list */}
-                                        <IconButton
-                                            className={styles.delete}
-                                            onClick={() => handleRemoveFile(item)}
-                                            iconProps={Remove}
-                                            title="Remove file"
-                                            ariaLabel="Remove file"
-                                        />
-                                    </div>
-                                );
-                            })}
+                        <form encType="multipart/form-data">
+                            <div>
+                                <Label>Upload file:</Label>
+                                <input accept=".pdf" className={styles.chooseFiles} type="file" onChange={handleUploadFile} />
+                            </div>
                         </form>
+
+                        {/* Show a loading message while files are being uploaded */}
+                        {isUploading && <div className={styles.padding8}>{"Uploading files..."}</div>}
+                        {uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
+                        {/* Display the list of already uploaded */}
+
+                        <h3>Previously uploaded files:</h3>
+
+                        {isLoading && <Text>Loading...</Text>}
+                        {!isLoading && uploadedFiles.length === 0 && <Text>No files uploaded yet</Text>}
+                        {uploadedFiles.map((filename, index) => {
+                            return (
+                                <div key={index} className={styles.list}>
+                                    <div className={styles.item}>{filename}</div>
+                                    {/* Button to remove a file from the list */}
+                                    <IconButton
+                                        className={styles.delete}
+                                        onClick={() => handleRemoveFile(filename)}
+                                        iconProps={Remove}
+                                        title="Remove file"
+                                        ariaLabel="Remove file"
+                                    />
+                                </div>
+                            );
+                        })}
                     </Callout>
                 )}
             </div>

@@ -1,3 +1,5 @@
+import logging
+
 import openai
 import openai.types
 import pytest
@@ -5,11 +7,12 @@ import tenacity
 from httpx import Request, Response
 from openai.types.create_embedding_response import Usage
 
-from .mocks import MockAzureCredential
-from scripts.prepdocslib.embeddings import (
+from prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     OpenAIEmbeddingService,
 )
+
+from .mocks import MockAzureCredential
 
 
 class MockEmbeddingsClient:
@@ -123,37 +126,37 @@ async def create_rate_limit_client(*args, **kwargs):
 
 
 @pytest.mark.asyncio
-async def test_compute_embedding_ratelimiterror_batch(monkeypatch, capsys):
-    monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
-    with pytest.raises(tenacity.RetryError):
-        embeddings = AzureOpenAIEmbeddingService(
-            open_ai_service="x",
-            open_ai_deployment="x",
-            open_ai_model_name="text-embedding-ada-002",
-            credential=MockAzureCredential(),
-            disable_batch=False,
-        )
-        monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
-        await embeddings.create_embeddings(texts=["foo"])
-    captured = capsys.readouterr()
-    assert captured.out.count("Rate limited on the OpenAI embeddings API") == 14
+async def test_compute_embedding_ratelimiterror_batch(monkeypatch, caplog):
+    with caplog.at_level(logging.INFO):
+        monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
+        with pytest.raises(tenacity.RetryError):
+            embeddings = AzureOpenAIEmbeddingService(
+                open_ai_service="x",
+                open_ai_deployment="x",
+                open_ai_model_name="text-embedding-ada-002",
+                credential=MockAzureCredential(),
+                disable_batch=False,
+            )
+            monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
+            await embeddings.create_embeddings(texts=["foo"])
+        assert caplog.text.count("Rate limited on the OpenAI embeddings API") == 14
 
 
 @pytest.mark.asyncio
-async def test_compute_embedding_ratelimiterror_single(monkeypatch, capsys):
-    monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
-    with pytest.raises(tenacity.RetryError):
-        embeddings = AzureOpenAIEmbeddingService(
-            open_ai_service="x",
-            open_ai_deployment="x",
-            open_ai_model_name="text-embedding-ada-002",
-            credential=MockAzureCredential(),
-            disable_batch=True,
-        )
-        monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
-        await embeddings.create_embeddings(texts=["foo"])
-    captured = capsys.readouterr()
-    assert captured.out.count("Rate limited on the OpenAI embeddings API") == 14
+async def test_compute_embedding_ratelimiterror_single(monkeypatch, caplog):
+    with caplog.at_level(logging.INFO):
+        monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
+        with pytest.raises(tenacity.RetryError):
+            embeddings = AzureOpenAIEmbeddingService(
+                open_ai_service="x",
+                open_ai_deployment="x",
+                open_ai_model_name="text-embedding-ada-002",
+                credential=MockAzureCredential(),
+                disable_batch=True,
+            )
+            monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
+            await embeddings.create_embeddings(texts=["foo"])
+        assert caplog.text.count("Rate limited on the OpenAI embeddings API") == 14
 
 
 class AuthenticationErrorMockEmbeddingsClient:

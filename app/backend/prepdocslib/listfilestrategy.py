@@ -35,7 +35,10 @@ class File:
     def filename_to_id(self):
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())
         filename_hash = base64.b16encode(self.filename().encode("utf-8")).decode("ascii")
-        return f"file-{filename_ascii}-{filename_hash}"
+        acls_hash = ""
+        if self.acls:
+            acls_hash = base64.b16encode(str(self.acls).encode("utf-8")).decode("ascii")
+        return f"file-{filename_ascii}-{filename_hash}{acls_hash}"
 
     def close(self):
         if self.content:

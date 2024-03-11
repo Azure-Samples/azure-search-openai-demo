@@ -4,9 +4,10 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 
+from prepdocslib.blobmanager import BlobManager
+from prepdocslib.listfilestrategy import File
+
 from .mocks import MockAzureCredential
-from scripts.prepdocslib.blobmanager import BlobManager
-from scripts.prepdocslib.listfilestrategy import File
 
 
 @pytest.fixture

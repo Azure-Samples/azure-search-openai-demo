@@ -180,11 +180,7 @@ class SearchManager:
             else:
                 logger.info(f"Search index {self.search_info.index_name} already exists")
 
-    async def update_content(
-        self,
-        sections: List[Section],
-        image_embeddings: Optional[List[List[float]]] = None,
-    ):
+    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -223,7 +219,7 @@ class SearchManager:
 
                 await search_client.upload_documents(documents)
 
-    async def remove_content(self, path: Optional[str] = None):
+    async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
         logger.info(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
         async with self.search_info.create_search_client() as search_client:
             while True:
@@ -231,9 +227,12 @@ class SearchManager:
                 result = await search_client.search("", filter=filter, top=1000, include_total_count=True)
                 if await result.get_count() == 0:
                     break
-                removed_docs = await search_client.delete_documents(
-                    documents=[{"id": document["id"]} async for document in result]
-                )
+                documents_to_remove = []
+                async for document in result:
+                    # If only_oid is set, only remove documents that have only this oid
+                    if not only_oid or document["oids"] == [only_oid]:
+                        documents_to_remove.append({"id": document["id"]})
+                removed_docs = await search_client.delete_documents(documents_to_remove)
                 logger.info(f"\tRemoved {len(removed_docs)} sections from index")
                 # It can take a few seconds for search results to reflect changes, so wait a bit
                 await asyncio.sleep(2)

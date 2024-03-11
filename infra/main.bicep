@@ -128,6 +128,8 @@ param useIntegratedVectorization bool = false
 
 @description('Enable user document upload feature')
 param useUserUpload bool = false
+param useLocalPdfParser bool = false
+param useLocalHtmlParser bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
@@ -275,6 +277,11 @@ module backend 'core/host/appservice.bicep' = {
       USE_VECTORS: useVectors
       USE_GPT4V: useGPT4V
       USE_USER_UPLOAD: useUserUpload
+      AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
+      AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
+      AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
+      USE_LOCAL_PDF_PARSER: useLocalPdfParser
+      USE_LOCAL_HTML_PARSER: useLocalHtmlParser
     }
   }
 }

@@ -1,6 +1,6 @@
 const BACKEND_URI = "";
 
-import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, FileUploadResponse } from "./models";
+import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, SimpleAPIResponse } from "./models";
 import { useLogin, appServicesToken } from "../authConfig";
 
 export function getHeaders(idToken: string | undefined): Record<string, string> {
@@ -49,22 +49,46 @@ export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
 }
 
-export async function uploadFileApi(request: FormData, idToken: string): Promise<FileUploadResponse> {
-    // Send a POST request to the "/upload" endpoint with the provided form data
+export async function uploadFileApi(request: FormData, idToken: string): Promise<SimpleAPIResponse> {
     const response = await fetch("/upload", {
         method: "POST",
         headers: getHeaders(idToken),
         body: request
     });
 
-    // Check if the response status is not "OK".
     if (!response.ok) {
         throw new Error(`Uploading files failed: ${response.statusText}`);
     }
 
-    // Parse the JSON response into the IUploadResponse type.
-    const dataResponse: FileUploadResponse = await response.json();
+    const dataResponse: SimpleAPIResponse = await response.json();
+    return dataResponse;
+}
 
-    // Return the parsed data as the result of the Promise.
+export async function deleteUploadedFileApi(filename: string, idToken: string): Promise<SimpleAPIResponse> {
+    const response = await fetch("/delete_uploaded", {
+        method: "POST",
+        headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
+        body: JSON.stringify({ filename })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Deleting file failed: ${response.statusText}`);
+    }
+
+    const dataResponse: SimpleAPIResponse = await response.json();
+    return dataResponse;
+}
+
+export async function listUploadedFilesApi(idToken: string): Promise<string[]> {
+    const response = await fetch(`/list_uploaded`, {
+        method: "GET",
+        headers: getHeaders(idToken)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Listing files failed: ${response.statusText}`);
+    }
+
+    const dataResponse: string[] = await response.json();
     return dataResponse;
 }

@@ -22,3 +22,7 @@ cryptography
 python-jose[cryptography]
 Pillow
 types-Pillow
+pypdf
+PyMuPDF
+beautifulsoup4
+types-beautifulsoup4

@@ -96,38 +96,29 @@ class FileStrategy(Strategy):
 class UploadUserFileStrategy:
     """
     Strategy for ingesting a file that has already been uploaded to a ADLS2 storage account
-    TODO: Image embeddings are not currently supported
     """
 
     def __init__(
         self,
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
-        document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
-        search_analyzer_name: Optional[str] = None,
-        use_acls: bool = False,
     ):
         self.file_processors = file_processors
-        self.document_action = document_action
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
-        self.search_analyzer_name = search_analyzer_name
         self.search_info = search_info
-        self.use_acls = use_acls
+        self.search_manager = SearchManager(self.search_info, None, True, False, self.embeddings)
 
-    async def setup(self):
-        logger.info("No setup required for FileUploadStrategy")
+    async def add_file(self, file: File):
+        if self.image_embeddings:
+            logging.warning("Image embeddings are not currently supported for the user upload feature")
+        sections = await parse_file(file, self.file_processors)
+        await self.search_manager.update_content(sections)
 
-    async def run(self, file: File):
-        search_manager = SearchManager(
-            self.search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings
-        )
-        if self.document_action == DocumentAction.Add:
-            sections = await parse_file(file, self.file_processors)
-            # TODO: blob_sas_uris = await self.blob_manager.upload_blob(file)
-            # blob_image_embeddings: Optional[List[List[float]]] = None
-            # if self.image_embeddings and blob_sas_uris:
-            #    blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-            await search_manager.update_content(sections)  # , blob_image_embeddings)
+    async def remove_file(self, filename: str, oid: str):
+        if filename is None or filename == "":
+            logging.warning("Filename is required to remove a file")
+            return
+        await self.search_manager.remove_content(filename, oid)
