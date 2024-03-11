@@ -78,12 +78,10 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
     return (
         <div className={`${styles.container} ${className ?? ""}`}>
             <div>
-                {/* "Upload Files" button */}
                 <ActionButton className={styles.btn_action} id="calloutButton" iconProps={addIcon} allowDisabledFocus onClick={handleButtonClick}>
-                    Upload Files
+                    Upload File
                 </ActionButton>
 
-                {/* Callout to display the file selection and upload form */}
                 {isCalloutVisible && (
                     <Callout
                         role="dialog"
@@ -98,10 +96,9 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
                             {selectedFiles.length === 0 && (
                                 <>
                                     <div className={styles.btn}>
-                                        <Label>Choose files</Label>
+                                        <Label>Choose file</Label>
                                         <input accept=".pdf" className={styles.chooseFiles} type="file" multiple onChange={handleFileChange} />
                                     </div>
-                                    <Text className={styles.info}>Please upload only pdf</Text>
                                 </>
                             )}
 
@@ -116,7 +113,7 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
                             )}
 
                             {/* Show a loading message while files are being uploaded */}
-                            {isLoading && <div className={styles.padding8}>{"uploading files..."}</div>}
+                            {isLoading && <div className={styles.padding8}>{"Uploading files..."}</div>}
                             {uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
                             {/* Display the list of selected files */}
 

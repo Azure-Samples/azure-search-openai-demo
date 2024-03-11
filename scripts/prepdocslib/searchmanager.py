@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from typing import List, Optional
 
@@ -24,6 +25,8 @@ from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import SplitPage
+
+logger = logging.getLogger("ingester")
 
 
 class Section:
@@ -60,8 +63,7 @@ class SearchManager:
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
-        if self.search_info.verbose:
-            print(f"Ensuring search index {self.search_info.index_name} exists")
+        logger.info(f"Ensuring search index {self.search_info.index_name} exists")
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
@@ -173,12 +175,10 @@ class SearchManager:
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
-                if self.search_info.verbose:
-                    print(f"Creating {self.search_info.index_name} search index")
+                logger.info(f"Creating {self.search_info.index_name} search index")
                 await search_index_client.create_index(index)
             else:
-                if self.search_info.verbose:
-                    print(f"Search index {self.search_info.index_name} already exists")
+                logger.info(f"Search index {self.search_info.index_name} already exists")
 
     async def update_content(
         self,
@@ -224,8 +224,7 @@ class SearchManager:
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: Optional[str] = None):
-        if self.search_info.verbose:
-            print(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
+        logger.info(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
@@ -235,7 +234,6 @@ class SearchManager:
                 removed_docs = await search_client.delete_documents(
                     documents=[{"id": document["id"]} async for document in result]
                 )
-                if self.search_info.verbose:
-                    print(f"\tRemoved {len(removed_docs)} sections from index")
+                logger.info(f"\tRemoved {len(removed_docs)} sections from index")
                 # It can take a few seconds for search results to reflect changes, so wait a bit
                 await asyncio.sleep(2)

@@ -132,7 +132,6 @@ async def test_compute_embedding_ratelimiterror_batch(monkeypatch, capsys):
             open_ai_model_name="text-embedding-ada-002",
             credential=MockAzureCredential(),
             disable_batch=False,
-            verbose=True,
         )
         monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
         await embeddings.create_embeddings(texts=["foo"])
@@ -150,7 +149,6 @@ async def test_compute_embedding_ratelimiterror_single(monkeypatch, capsys):
             open_ai_model_name="text-embedding-ada-002",
             credential=MockAzureCredential(),
             disable_batch=True,
-            verbose=True,
         )
         monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
         await embeddings.create_embeddings(texts=["foo"])
@@ -177,7 +175,6 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
             open_ai_model_name="text-embedding-ada-002",
             credential=MockAzureCredential(),
             disable_batch=False,
-            verbose=True,
         )
         monkeypatch.setattr(embeddings, "create_client", create_auth_error_limit_client)
         await embeddings.create_embeddings(texts=["foo"])
@@ -189,7 +186,6 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
             open_ai_model_name="text-embedding-ada-002",
             credential=MockAzureCredential(),
             disable_batch=True,
-            verbose=True,
         )
         monkeypatch.setattr(embeddings, "create_client", create_auth_error_limit_client)
         await embeddings.create_embeddings(texts=["foo"])

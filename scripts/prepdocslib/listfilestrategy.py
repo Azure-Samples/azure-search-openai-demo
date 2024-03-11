@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import logging
 import os
 import re
 import tempfile
@@ -11,6 +12,8 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
+
+logger = logging.getLogger("ingester")
 
 
 class File:
@@ -58,9 +61,8 @@ class LocalListFileStrategy(ListFileStrategy):
     Concrete strategy for listing files that are located in a local filesystem
     """
 
-    def __init__(self, path_pattern: str, verbose: bool = False):
+    def __init__(self, path_pattern: str):
         self.path_pattern = path_pattern
-        self.verbose = verbose
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async for p in self._list_paths(self.path_pattern):
@@ -95,8 +97,7 @@ class LocalListFileStrategy(ListFileStrategy):
                 stored_hash = md5_f.read()
 
         if stored_hash and stored_hash.strip() == existing_hash.strip():
-            if self.verbose:
-                print(f"Skipping {path}, no changes detected.")
+            logger.info(f"Skipping {path}, no changes detected.")
             return True
 
         # Write the hash
@@ -117,13 +118,11 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_filesystem: str,
         data_lake_path: str,
         credential: Union[AsyncTokenCredential, str],
-        verbose: bool = False,
     ):
         self.data_lake_storage_account = data_lake_storage_account
         self.data_lake_filesystem = data_lake_filesystem
         self.data_lake_path = data_lake_path
         self.credential = credential
-        self.verbose = verbose
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async with DataLakeServiceClient(
@@ -167,8 +166,8 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["groups"].append(acl_parts[1])
                     yield File(content=open(temp_file_path, "rb"), acls=acls)
                 except Exception as data_lake_exception:
-                    print(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")
+                    logger.error(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")
                     try:
                         os.remove(temp_file_path)
                     except Exception as file_delete_exception:
-                        print(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
+                        logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")

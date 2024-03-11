@@ -1,14 +1,21 @@
 import html
+import logging
 from typing import IO, AsyncGenerator, Union
 
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentTable
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from pypdf import PdfReader
+
+try:
+    from pypdf import PdfReader
+except ImportError:
+    PdfReader = None
 
 from .page import Page
 from .parser import Parser
+
+logger = logging.getLogger("ingester")
 
 
 class LocalPdfParser(Parser):
@@ -18,8 +25,7 @@ class LocalPdfParser(Parser):
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        if self.verbose:
-            print(f"\tExtracting text from '{content.name}' using local PDF parser (pypdf)")
+        logger.info(f"\tExtracting text from '{content.name}' using local PDF parser (pypdf)")
 
         reader = PdfReader(content)
         pages = reader.pages
@@ -37,20 +43,14 @@ class DocumentAnalysisParser(Parser):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
-        model_id="prebuilt-layout",
-        verbose: bool = False,
+        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], model_id="prebuilt-layout"
     ):
         self.model_id = model_id
         self.endpoint = endpoint
         self.credential = credential
-        self.verbose = verbose
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        if self.verbose:
-            print(f"Extracting text from '{content.name}' using Azure Document Intelligence")
+        logger.info(f"Extracting text from '{content.name}' using Azure Document Intelligence")
 
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential

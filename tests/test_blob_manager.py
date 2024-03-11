@@ -15,7 +15,6 @@ def blob_manager(monkeypatch):
         endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
-        verbose=True,
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
         resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
@@ -77,7 +76,6 @@ async def test_upload_and_remove(monkeypatch, mock_env, blob_manager):
 async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
-        print(f.content.name)
         filename = os.path.basename(f.content.name)
 
         # Set up mocks used by upload_blob

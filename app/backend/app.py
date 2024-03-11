@@ -4,6 +4,7 @@ import json
 import logging
 import mimetypes
 import os
+import sys
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 
@@ -50,6 +51,7 @@ from config import (
     CONFIG_CHAT_APPROACH,
     CONFIG_CHAT_VISION_APPROACH,
     CONFIG_GPT4V_DEPLOYED,
+    CONFIG_INGESTER,
     CONFIG_OPENAI_CLIENT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -60,6 +62,16 @@ from config import (
 from core.authentication import AuthenticationHelper
 from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../scripts"))
+
+from prepdocs import (  # noqa: E402
+    setup_embeddings_service,
+    setup_file_processors,
+    setup_search_info,
+)
+from prepdocslib.filestrategy import UploadUserFileStrategy  # noqa: E402
+from prepdocslib.listfilestrategy import File  # noqa: E402
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -228,7 +240,13 @@ async def upload(auth_claims: dict[str, Any]):
         user_directory_client = user_blob_container_client.get_directory_client(user_oid)
         await user_directory_client.set_access_control(owner=user_oid)
         file_client = user_directory_client.get_file_client(file.filename)
-        await file_client.upload_data(file, overwrite=True, metadata={"UploadedBy": user_oid})
+        file_io = file
+        file_io.name = file.filename
+        file_io = io.BufferedReader(file_io)
+        await file_client.upload_data(file_io, overwrite=True, metadata={"UploadedBy": user_oid})
+        ingester = current_app.config[CONFIG_INGESTER]
+        file_io.seek(0)
+        await ingester.run(File(content=file_io, acls={"oids": [user_oid]}))
     return jsonify({"message": "File(s) uploaded successfully", "status": "success"}), 200
 
 
@@ -237,8 +255,8 @@ async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
-    AZURE_USERSTORAGE_ACCOUNT = os.environ["AZURE_USERSTORAGE_ACCOUNT"]
-    AZURE_USERSTORAGE_CONTAINER = os.environ["AZURE_USERSTORAGE_CONTAINER"]
+    AZURE_USERSTORAGE_ACCOUNT = os.environ.get("AZURE_USERSTORAGE_ACCOUNT")
+    AZURE_USERSTORAGE_CONTAINER = os.environ.get("AZURE_USERSTORAGE_CONTAINER")
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     SEARCH_SECRET_NAME = os.getenv("SEARCH_SECRET_NAME")
@@ -327,6 +345,39 @@ async def setup_clients():
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
     )
+
+    # Set up ingester
+    file_processors = setup_file_processors(
+        azure_credential=azure_credential,
+        document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),  # todo: bicep
+        local_pdf_parser=os.getenv("LOCAL_PDF_PARSER", "").lower() == "true",  # todo: bicep
+        local_html_parser=os.getenv("LOCAL_HTML_PARSER", "").lower() == "true",  # todo: bicep
+        search_images=USE_GPT4V,
+    )
+    search_info = await setup_search_info(
+        search_service=AZURE_SEARCH_SERVICE,
+        index_name=AZURE_SEARCH_INDEX,
+        azure_credential=azure_credential,
+        search_key=search_key,
+    )
+    text_embeddings_service = setup_embeddings_service(
+        azure_credential=azure_credential,
+        openai_host=OPENAI_HOST,
+        openai_model_name=OPENAI_EMB_MODEL,
+        openai_service=AZURE_OPENAI_SERVICE,
+        openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        openai_key=OPENAI_API_KEY,
+        openai_org=OPENAI_ORGANIZATION,
+        disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
+    )
+    ingester = UploadUserFileStrategy(
+        search_info=search_info,
+        embeddings=text_embeddings_service,
+        file_processors=file_processors,
+        use_acls=True,
+        search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),  # TODO: bicep
+    )
+    current_app.config[CONFIG_INGESTER] = ingester
 
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
