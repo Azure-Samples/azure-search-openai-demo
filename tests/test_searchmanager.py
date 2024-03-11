@@ -34,7 +34,6 @@ def search_info():
         endpoint="https://testsearchclient.blob.core.windows.net",
         credential=AzureKeyCredential("test"),
         index_name="test",
-        verbose=True,
     )
 
 
