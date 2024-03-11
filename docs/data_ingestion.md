@@ -50,7 +50,7 @@ You can also remove individual documents by using the `--remove` flag. Open eith
 
 Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in/ba-p/3960809#:~:text=Integrated%20vectorization%20is%20a%20new%20feature%20of%20Azure,pull-indexers%2C%20and%20vectorization%20of%20text%20queries%20through%20vectorizers). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
 
-See [this notebook](https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/azure-search-integrated-vectorization-sample.ipynb) to understand the process of setting up integrated vectorization.
+See [this notebook](https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/integrated-vectorization/azure-search-integrated-vectorization-sample.ipynb) to understand the process of setting up integrated vectorization.
 We have integrated that code into our `prepdocs` script, so you can use it without needing to understand the details.
 
 This feature cannot be used on existing index. You need to create a new index or drop and recreate an existing index.
