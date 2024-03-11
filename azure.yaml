@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: azure-search-openai-demo
+name: rag-chat-1
 metadata:
   template: azure-search-openai-demo@0.0.2-beta
 services:
-  backend:
+  ragapp1:
     project: ./app/backend
     language: py
     host: appservice

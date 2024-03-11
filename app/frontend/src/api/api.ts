@@ -41,6 +41,7 @@ export async function configApi(idToken: string | undefined): Promise<Config> {
     return (await response.json()) as Config;
 }
 
+// fetch to the chat URI so that it is handled by the route in app.py
 export async function chatApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {
     return await fetch(`${BACKEND_URI}/chat`, {
         method: "POST",

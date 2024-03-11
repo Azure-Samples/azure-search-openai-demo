@@ -11,6 +11,12 @@
     "location": {
       "value": "${AZURE_LOCATION}"
     },
+    "appServicePlanName": {
+      "value": "${AZURE_APP_SERVICE_PLAN_NAME}"
+    },
+    "backendServiceName": {
+      "value": "${AZURE_APP_SERVICE_NAME}"
+    },    
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
     },

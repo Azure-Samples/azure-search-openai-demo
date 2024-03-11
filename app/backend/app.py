@@ -157,7 +157,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps(error_dict(error))
 
-
+# chat route that comes from api.ts, post request that processes the parameters
 @bp.route("/chat", methods=["POST"])
 @authenticated
 async def chat(auth_claims: Dict[str, Any]):
