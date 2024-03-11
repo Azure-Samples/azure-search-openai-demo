@@ -5,7 +5,7 @@ import os
 import re
 from typing import List, Optional, Union
 
-import fitz
+import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
     BlobSasPermissions,
