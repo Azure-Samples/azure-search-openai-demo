@@ -81,12 +81,12 @@
     bottom: 0;
     flex: 0 0 100px;
     padding-top: 12px;
-    padding-bottom: 24px;
+    padding-bottom: 48px;
     padding-left: 24px;
     padding-right: 24px;
     width: 100%;
     max-width: 1028px;
-    background-color: white;
+    background-color: #fefeff;
 }
 
 .chatAnalysisPanel {

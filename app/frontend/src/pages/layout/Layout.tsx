@@ -1,6 +1,7 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
 import github from "../../assets/github.svg";
+import octime from "../../../public/logo_octime.png";
 
 import styles from "./Layout.module.css";
 
@@ -45,7 +46,7 @@ const Layout = () => {
                     {/*<h4 className={styles.headerRightText}>CZ-12/03/24</h4>*/}
                     {useLogin && <LoginButton />}
                     <Link to="https://www.octime.com" className={styles.headerTitleContainer} target={"_blank"}>
-                        <h4 className={styles.headerRightText}>Groupe Octime</h4>
+                        <img src={octime} alt="Github logo" aria-label="Link to github repository" height="40px" />
                     </Link>
                 </div>
             </header>
