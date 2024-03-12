@@ -216,7 +216,11 @@ class SearchManager:
                         texts=[section.split_page.text for section in batch]
                     )
                     for i, document in enumerate(documents):
-                        document["embedding"] = embeddings[i]
+                        if embeddings[i] is not None:
+                            document["embedding"] = embeddings[i]
+                        else:
+                            print(f"Warning: No embedding for document {i}. Assigning default value.")
+                            document["embedding"] = [0.1] * 1536
                 if image_embeddings:
                     for i, (document, section) in enumerate(zip(documents, batch)):
                         document["imageEmbedding"] = image_embeddings[section.split_page.page_num]

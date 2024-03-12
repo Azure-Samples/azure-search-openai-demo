@@ -7,7 +7,7 @@ import tiktoken
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
-from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError
+from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError, BadRequestError
 from tenacity import (
     AsyncRetrying,
     retry_if_exception_type,
@@ -94,8 +94,13 @@ class OpenAIEmbeddings(ABC):
                 before_sleep=self.before_retry_sleep,
             ):
                 with attempt:
-                    emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
-                    embeddings.extend([data.embedding for data in emb_response.data])
+                    try:
+                        emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
+                        embeddings.extend([data.embedding for data in emb_response.data])
+                    except BadRequestError as e:
+                        print(f"Error creating embeddings for batch: {e}. Moving on to the next batch.")
+                        # Add None to embeddings list for each text in the current batch
+                        embeddings.extend([None] * len(batch.texts))
                     if self.verbose:
                         print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
 
