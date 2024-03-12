@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Bicep for linting
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
           inlineScript: az config set bicep.use_binary_from_path=false && az bicep build -f infra/main.bicep --stdout
           
