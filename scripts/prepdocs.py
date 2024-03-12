@@ -35,7 +35,7 @@ from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 logger = logging.getLogger("ingester")
 
 
-def clean_key_if_exists(key: str | None) -> str | None:
+def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
     """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
     if key is not None and key.strip() != "":
         return key.strip()
@@ -46,9 +46,9 @@ async def setup_search_info(
     search_service: str,
     index_name: str,
     azure_credential: AsyncTokenCredential,
-    search_key: str | None = None,
-    key_vault_name: str | None = None,
-    search_secret_name: str | None = None,
+    search_key: Union[str, None] = None,
+    key_vault_name: Union[str, None] = None,
+    search_secret_name: Union[str, None] = None,
 ) -> SearchInfo:
     if key_vault_name and search_secret_name:
         key_vault_client = SecretClient(
@@ -75,7 +75,7 @@ def setup_blob_manager(
     storage_resource_group: str,
     subscription_id: str,
     search_images: bool,
-    storage_key: str | None = None,
+    storage_key: Union[str, None] = None,
 ):
     storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
     return BlobManager(
@@ -91,11 +91,11 @@ def setup_blob_manager(
 
 def setup_list_file_strategy(
     azure_credential: AsyncTokenCredential,
-    local_files: str | None,
-    datalake_storage_account: str | None,
-    datalake_filesystem: str | None,
-    datalake_path: str | None,
-    datalake_key: str | None,
+    local_files: Union[str, None],
+    datalake_storage_account: Union[str, None],
+    datalake_filesystem: Union[str, None],
+    datalake_path: Union[str, None],
+    datalake_key: Union[str, None],
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
@@ -123,8 +123,8 @@ def setup_embeddings_service(
     openai_model_name: str,
     openai_service: str,
     openai_deployment: str,
-    openai_key: str | None,
-    openai_org: str | None,
+    openai_key: Union[str, None],
+    openai_org: Union[str, None],
     disable_vectors: bool = False,
     disable_batch_vectors: bool = False,
 ):
@@ -156,8 +156,8 @@ def setup_embeddings_service(
 
 def setup_file_processors(
     azure_credential: AsyncTokenCredential,
-    document_intelligence_service: str | None,
-    document_intelligence_key: str | None = None,
+    document_intelligence_service: Union[str, None],
+    document_intelligence_key: Union[str, None] = None,
     local_pdf_parser: bool = False,
     local_html_parser: bool = False,
     search_images: bool = False,
@@ -203,8 +203,8 @@ def setup_file_processors(
 
 
 def setup_image_embeddings_service(
-    azure_credential: AsyncTokenCredential, vision_endpoint: str | None, search_images: bool
-) -> ImageEmbeddings | None:
+    azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], search_images: bool
+) -> Union[ImageEmbeddings, None]:
     image_embeddings_service: Optional[ImageEmbeddings] = None
     if search_images:
         if vision_endpoint is None:
