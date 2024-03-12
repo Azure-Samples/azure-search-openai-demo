@@ -125,6 +125,35 @@ async def test_upload_and_remove_all(monkeypatch, mock_env, blob_manager):
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+async def test_get_blob_hash(monkeypatch, mock_env, blob_manager):
+    blob_name = "test_blob"
+
+    # Set up mocks used by get_blob_hash
+    async def mock_exists(*args, **kwargs):
+        return True
+
+    monkeypatch.setattr("azure.storage.blob.aio.BlobClient.exists", mock_exists)
+
+    async def mock_get_blob_properties(*args, **kwargs):
+        class MockBlobProperties:
+            class MockContentSettings:
+                content_md5 = b"\x14\x0c\xdd\x8f\xd2\x74\x3d\x3b\xf1\xd1\xe2\x43\x01\xe4\xa0\x11"
+
+            content_settings = MockContentSettings()
+
+        return MockBlobProperties()
+
+    monkeypatch.setattr("azure.storage.blob.aio.BlobClient.get_blob_properties", mock_get_blob_properties)
+
+    blob_hash = await blob_manager.get_blob_hash(blob_name)
+
+    # The expected hash is the hex encoding of the mock content MD5
+    expected_hash = "140cdd8fd2743d3bf1d1e24301e4a011"
+    assert blob_hash == expected_hash
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)

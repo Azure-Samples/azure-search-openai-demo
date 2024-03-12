@@ -23,6 +23,7 @@ from prepdocslib.integratedvectorizerstrategy import (
 from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
+    BlobListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
@@ -134,6 +135,11 @@ async def setup_file_strategy(credential: AsyncTokenCredential, args: Any) -> St
             data_lake_path=args.datalakepath,
             credential=adls_gen2_creds,
             verbose=args.verbose,
+        )
+    elif args.blobstoragehashcheck:
+        print("Using Blob Storage Account files to get hashes of existing files")
+        list_file_strategy = BlobListFileStrategy(
+            path_pattern=args.files, blob_manager=blob_manager, verbose=args.verbose
         )
     else:
         print(f"Using local files in {args.files}")
@@ -255,6 +261,12 @@ if __name__ == "__main__":
     parser.add_argument("files", nargs="?", help="Files to be processed")
     parser.add_argument(
         "--datalakestorageaccount", required=False, help="Optional. Azure Data Lake Storage Gen2 Account name"
+    )
+    parser.add_argument(
+        "--blobstoragehashcheck",
+        action="store_true",
+        required=False,
+        help="Optional. Use files from this Azure Blob Storage account for hash comparisons, rather than using local files.",
     )
     parser.add_argument(
         "--datalakefilesystem",
