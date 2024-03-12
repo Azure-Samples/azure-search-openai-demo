@@ -3,6 +3,7 @@
     flex: 1;
     flex-direction: column;
     align-items: center;
+    color: rgb(3, 82, 141);
 }
 
 .askTopSection {

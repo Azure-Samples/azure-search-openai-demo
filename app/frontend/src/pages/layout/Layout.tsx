@@ -14,7 +14,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>TIMOO</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
@@ -25,7 +25,7 @@ const Layout = () => {
                             </li>
                             <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Ask a question
+                                    Ask
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
@@ -42,8 +42,11 @@ const Layout = () => {
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
+                    {/*<h4 className={styles.headerRightText}>CZ-12/03/24</h4>*/}
                     {useLogin && <LoginButton />}
+                    <Link to="https://www.octime.com" className={styles.headerTitleContainer} target={"_blank"}>
+                        <h4 className={styles.headerRightText}>Groupe Octime</h4>
+                    </Link>
                 </div>
             </header>
 
