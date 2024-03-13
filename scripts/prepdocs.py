@@ -51,11 +51,10 @@ async def setup_search_info(
     search_secret_name: Union[str, None] = None,
 ) -> SearchInfo:
     if key_vault_name and search_secret_name:
-        key_vault_client = SecretClient(
+        async with SecretClient(
             vault_url=f"https://{key_vault_name}.vault.azure.net", credential=azure_credential
-        )
-        search_key = (await key_vault_client.get_secret(search_secret_name)).value
-        await key_vault_client.close()
+        ) as key_vault_client:
+            search_key = (await key_vault_client.get_secret(search_secret_name)).value
 
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
@@ -378,8 +377,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.verbose:
-        # set formatter to only show the message
         logging.basicConfig(format="%(message)s")
+        # We only set the level to INFO for our logger,
+        # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.INFO)
 
     use_int_vectorization = args.useintvectorization and args.useintvectorization.lower() == "true"
