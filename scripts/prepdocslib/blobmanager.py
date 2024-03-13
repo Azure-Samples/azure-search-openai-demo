@@ -1,5 +1,6 @@
 import datetime
 import io
+import logging
 import os
 import re
 from typing import List, Optional, Union
@@ -17,6 +18,8 @@ from pypdf import PdfReader
 
 from .listfilestrategy import File
 
+logger = logging.getLogger("ingester")
+
 
 class BlobManager:
     """
@@ -32,14 +35,12 @@ class BlobManager:
         resourceGroup: str,
         subscriptionId: str,
         store_page_images: bool = False,
-        verbose: bool = False,
     ):
         self.endpoint = endpoint
         self.credential = credential
         self.account = account
         self.container = container
         self.store_page_images = store_page_images
-        self.verbose = verbose
         self.resourceGroup = resourceGroup
         self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
@@ -54,7 +55,7 @@ class BlobManager:
             # Re-open and upload the original file
             with open(file.content.name, "rb") as reopened_file:
                 blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                print(f"\tUploading blob for whole file -> {blob_name}")
+                logger.info(f"\tUploading blob for whole file -> {blob_name}")
                 await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
 
             if self.store_page_images and os.path.splitext(file.content.name)[1].lower() == ".pdf":
@@ -83,12 +84,11 @@ class BlobManager:
             try:
                 font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
             except OSError:
-                print("\tUnable to find arial.ttf or FreeMono.ttf, using default font")
+                logger.info("\tUnable to find arial.ttf or FreeMono.ttf, using default font")
 
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
-            if self.verbose:
-                print(f"\tConverting page {i} to image and uploading -> {blob_name}")
+            logger.info(f"\tConverting page {i} to image and uploading -> {blob_name}")
 
             doc = fitz.open(file.content.name)
             page = doc.load_page(i)
@@ -154,8 +154,7 @@ class BlobManager:
                     )
                 ) or (path is not None and blob_path == os.path.basename(path)):
                     continue
-                if self.verbose:
-                    print(f"\tRemoving blob {blob_path}")
+                logger.info(f"\tRemoving blob {blob_path}")
                 await container_client.delete_blob(blob_path)
 
     @classmethod

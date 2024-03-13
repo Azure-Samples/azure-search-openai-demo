@@ -15,7 +15,6 @@ def blob_manager(monkeypatch):
         endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
-        verbose=True,
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
         resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
