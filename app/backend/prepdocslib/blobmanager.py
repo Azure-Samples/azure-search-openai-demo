@@ -5,11 +5,7 @@ import os
 import re
 from typing import List, Optional, Union
 
-try:
-    import fitz  # type: ignore
-except ImportError:
-    fitz = None
-
+import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
     BlobSasPermissions,
@@ -18,11 +14,7 @@ from azure.storage.blob import (
 )
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from PIL import Image, ImageDraw, ImageFont
-
-try:
-    from pypdf import PdfReader
-except ImportError:
-    PdfReader = None
+from pypdf import PdfReader
 
 from .listfilestrategy import File
 

@@ -17,7 +17,7 @@ from prepdocslib.textsplitter import (
 
 
 def test_sentencetextsplitter_split_empty_pages():
-    t = SentenceTextSplitter(False)
+    t = SentenceTextSplitter(has_image_embeddings=False)
 
     assert list(t.split_pages([])) == []
 
@@ -33,7 +33,7 @@ def test_sentencetextsplitter_split_small_pages():
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
-    text_splitter = SentenceTextSplitter(False)
+    text_splitter = SentenceTextSplitter(has_image_embeddings=False)
     pdf_parser = LocalPdfParser()
     for pdf in Path("data").glob("*.pdf"):
         shutil.copy(str(pdf.absolute()), tmp_path)
@@ -59,7 +59,7 @@ async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
 
 
 def test_simpletextsplitter_split_empty_pages():
-    t = SimpleTextSplitter(True)
+    t = SimpleTextSplitter()
 
     assert list(t.split_pages([])) == []
 
@@ -98,7 +98,7 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
-    text_splitter = SentenceTextSplitter(False, True)
+    text_splitter = SentenceTextSplitter(has_image_embeddings=False)
     bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
     pdf_parser = LocalPdfParser()
 

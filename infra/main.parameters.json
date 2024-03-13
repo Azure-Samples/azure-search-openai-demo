@@ -83,6 +83,9 @@
     "azureOpenAiCustomUrl":{
       "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },
+    "azureOpenAiApiVersion":{
+      "value": "${AZURE_OPENAI_API_VERSION}"
+    },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
     },

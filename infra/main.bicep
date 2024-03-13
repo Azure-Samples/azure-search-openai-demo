@@ -43,7 +43,9 @@ param appServiceSkuName string // Set in main.parameters.json
 
 @allowed([ 'azure', 'openai', 'azure_custom' ])
 param openAiHost string // Set in main.parameters.json
+param isAzureOpenAiHost bool = startsWith(openAiHost, 'azure')
 param azureOpenAiCustomUrl string = ''
+param azureOpenAiApiVersion string = ''
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
@@ -251,11 +253,12 @@ module backend 'core/host/appservice.bicep' = {
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
+      AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
       AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
       AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
-      AZURE_OPENAI_SERVICE: openAiHost == 'azure' ? openAi.outputs.name : ''
+      AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
@@ -328,7 +331,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-module openAi 'core/ai/cognitiveservices.bicep' = if (openAiHost == 'azure') {
+module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -477,7 +480,7 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
 // USER ROLES
 var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
 
-module openAiRoleUser 'core/security/role.bicep' = if (openAiHost == 'azure') {
+module openAiRoleUser 'core/security/role.bicep' = if (isAzureOpenAiHost) {
   scope: openAiResourceGroup
   name: 'openai-role-user'
   params: {
@@ -560,7 +563,7 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = if (!useSearchServi
 }
 
 // SYSTEM IDENTITIES
-module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure') {
+module openAiRoleBackend 'core/security/role.bicep' = if (isAzureOpenAiHost) {
   scope: openAiResourceGroup
   name: 'openai-role-backend'
   params: {
@@ -570,7 +573,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (openAiHost == 'azure')
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (openAiHost == 'azure' && useIntegratedVectorization) {
+module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && useIntegratedVectorization) {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
@@ -658,11 +661,12 @@ output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = (openAiHost == 'azure') ? openAi.outputs.name : ''
-output AZURE_OPENAI_RESOURCE_GROUP string = (openAiHost == 'azure') ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = (openAiHost == 'azure') ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT string = (openAiHost == 'azure') ? embeddingDeploymentName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT string = (openAiHost == 'azure') ? gpt4vDeploymentName : ''
+output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
+output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
+output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGptDeploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embeddingDeploymentName : ''
+output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymentName : ''
 
 // Used only with non-Azure OpenAI deployments
 output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''

@@ -73,7 +73,7 @@ $searchAnalyzerNameArg $searchSecretNameArg \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
 --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
 --documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
-$searchImagesArg $visionEndpointArg  \
+$searchImagesArg $visionEndpointArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
 $disableVectorsArg $localPdfParserArg $localHtmlParserArg \

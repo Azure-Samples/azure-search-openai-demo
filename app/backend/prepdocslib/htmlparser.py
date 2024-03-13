@@ -2,10 +2,7 @@ import logging
 import re
 from typing import IO, AsyncGenerator
 
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    BeautifulSoup = None
+from bs4 import BeautifulSoup
 
 from .page import Page
 from .parser import Parser

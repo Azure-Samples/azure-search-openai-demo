@@ -1,5 +1,5 @@
 import logging
-from typing import IO, List, Optional
+from typing import List, Optional
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
@@ -11,12 +11,14 @@ from .strategy import DocumentAction, SearchInfo, Strategy
 logger = logging.getLogger("ingester")
 
 
-async def parse_file(file: IO, file_processors: dict[str, FileProcessor], category: Optional[str] = None):
+async def parse_file(
+    file: File, file_processors: dict[str, FileProcessor], category: Optional[str] = None
+) -> List[Section]:
     key = file.file_extension()
     processor = file_processors.get(key)
     if processor is None:
         logger.info(f"Skipping '{file.filename()}', no parser found.")
-        return
+        return []
     logger.info(f"Parsing '{file.filename()}'")
     pages = [page async for page in processor.parser.parse(content=file.content)]
     logger.info(f"Splitting '{file.filename()}' into sections")
@@ -75,11 +77,12 @@ class FileStrategy(Strategy):
             async for file in files:
                 try:
                     sections = await parse_file(file, self.file_processors, self.category)
-                    blob_sas_uris = await self.blob_manager.upload_blob(file)
-                    blob_image_embeddings: Optional[List[List[float]]] = None
-                    if self.image_embeddings and blob_sas_uris:
-                        blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                    await search_manager.update_content(sections, blob_image_embeddings)
+                    if sections:
+                        blob_sas_uris = await self.blob_manager.upload_blob(file)
+                        blob_image_embeddings: Optional[List[List[float]]] = None
+                        if self.image_embeddings and blob_sas_uris:
+                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                        await search_manager.update_content(sections, blob_image_embeddings)
                 finally:
                     if file:
                         file.close()
@@ -115,7 +118,8 @@ class UploadUserFileStrategy:
         if self.image_embeddings:
             logging.warning("Image embeddings are not currently supported for the user upload feature")
         sections = await parse_file(file, self.file_processors)
-        await self.search_manager.update_content(sections)
+        if sections:
+            await self.search_manager.update_content(sections)
 
     async def remove_file(self, filename: str, oid: str):
         if filename is None or filename == "":

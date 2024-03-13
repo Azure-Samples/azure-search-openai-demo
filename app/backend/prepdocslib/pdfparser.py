@@ -6,11 +6,7 @@ from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentTable
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-
-try:
-    from pypdf import PdfReader
-except ImportError:
-    PdfReader = None
+from pypdf import PdfReader
 
 from .page import Page
 from .parser import Parser
