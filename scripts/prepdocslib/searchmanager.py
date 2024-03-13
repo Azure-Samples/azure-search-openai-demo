@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from typing import List, Optional
 
@@ -24,6 +25,8 @@ from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import SplitPage
+
+logger = logging.getLogger("ingester")
 
 
 class Section:
@@ -60,8 +63,7 @@ class SearchManager:
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
-        if self.search_info.verbose:
-            print(f"Ensuring search index {self.search_info.index_name} exists")
+        logger.info("Ensuring search index %s exists", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
@@ -173,18 +175,12 @@ class SearchManager:
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
-                if self.search_info.verbose:
-                    print(f"Creating {self.search_info.index_name} search index")
+                logger.info("Creating %s search index", self.search_info.index_name)
                 await search_index_client.create_index(index)
             else:
-                if self.search_info.verbose:
-                    print(f"Search index {self.search_info.index_name} already exists")
+                logger.info("Search index %s already exists", self.search_info.index_name)
 
-    async def update_content(
-        self,
-        sections: List[Section],
-        image_embeddings: Optional[List[List[float]]] = None,
-    ):
+    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -223,19 +219,22 @@ class SearchManager:
 
                 await search_client.upload_documents(documents)
 
-    async def remove_content(self, path: Optional[str] = None):
-        if self.search_info.verbose:
-            print(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
+    async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
+        logger.info(
+            "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
+        )
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
                 result = await search_client.search("", filter=filter, top=1000, include_total_count=True)
                 if await result.get_count() == 0:
                     break
-                removed_docs = await search_client.delete_documents(
-                    documents=[{"id": document["id"]} async for document in result]
-                )
-                if self.search_info.verbose:
-                    print(f"\tRemoved {len(removed_docs)} sections from index")
+                documents_to_remove = []
+                async for document in result:
+                    # If only_oid is set, only remove documents that have only this oid
+                    if not only_oid or document["oids"] == [only_oid]:
+                        documents_to_remove.append({"id": document["id"]})
+                removed_docs = await search_client.delete_documents(documents_to_remove)
+                logger.info("Removed %d sections from index", len(removed_docs))
                 # It can take a few seconds for search results to reflect changes, so wait a bit
                 await asyncio.sleep(2)

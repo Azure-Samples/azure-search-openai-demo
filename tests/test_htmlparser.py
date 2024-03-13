@@ -65,7 +65,7 @@ async def test_htmlparser_full():
         """
     )
     file.name = "test.json"
-    htmlparser = LocalHTMLParser(verbose=True)
+    htmlparser = LocalHTMLParser()
     pages = [page async for page in htmlparser.parse(file)]
     assert len(pages) == 1
     assert pages[0].page_num == 0
