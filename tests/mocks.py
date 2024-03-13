@@ -130,6 +130,9 @@ class MockAsyncSearchResultsIterator:
             raise StopAsyncIteration
         return MockAsyncPageIterator(self.data.pop(0))
 
+    async def get_count(self):
+        return len(self.data)
+
     def by_page(self):
         return self
 
