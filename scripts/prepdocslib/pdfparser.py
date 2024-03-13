@@ -21,7 +21,7 @@ class LocalPdfParser(Parser):
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        logger.info(f"\tExtracting text from '{content.name}' using local PDF parser (pypdf)")
+        logger.info("Extracting text from '%s' using local PDF parser (pypdf)", content.name)
 
         reader = PdfReader(content)
         pages = reader.pages
@@ -46,7 +46,7 @@ class DocumentAnalysisParser(Parser):
         self.credential = credential
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        logger.info(f"Extracting text from '{content.name}' using Azure Document Intelligence")
+        logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
 
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential

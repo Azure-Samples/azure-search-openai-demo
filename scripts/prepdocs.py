@@ -101,7 +101,7 @@ def setup_list_file_strategy(
         if datalake_filesystem is None or datalake_path is None:
             raise ValueError("DataLake file system and path are required when using Azure Data Lake Gen2")
         adls_gen2_creds: Union[AsyncTokenCredential, str] = azure_credential if datalake_key is None else datalake_key
-        logger.info(f"Using Data Lake Gen2 Storage Account {datalake_storage_account}")
+        logger.info("Using Data Lake Gen2 Storage Account: %s", datalake_storage_account)
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=datalake_storage_account,
             data_lake_filesystem=datalake_filesystem,
@@ -109,7 +109,7 @@ def setup_list_file_strategy(
             credential=adls_gen2_creds,
         )
     elif local_files:
-        logger.info(f"Using local files in {local_files}")
+        logger.info("Using local files: %s", local_files)
         list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
     else:
         raise ValueError("Either local_files or datalake_storage_account must be provided.")

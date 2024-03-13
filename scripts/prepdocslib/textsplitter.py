@@ -133,11 +133,6 @@ class SentenceTextSplitter(TextSplitter):
             yield from self.split_page_by_max_tokens(page_num, second_half)
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
-        # Chunking is disabled when using GPT4V. To be updated in the future.
-        if self.has_image_embeddings:
-            for i, page in enumerate(pages):
-                yield SplitPage(page_num=i, text=page.text)
-
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):
