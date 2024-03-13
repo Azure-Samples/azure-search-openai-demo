@@ -20,7 +20,7 @@ azure-ai-documentintelligence==1.0.0b1
     # via -r requirements.in
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.30.1
+azure-core==1.29.5
     # via
     #   azure-ai-documentintelligence
     #   azure-identity

@@ -3,15 +3,15 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
+    "Comment accéder à mon planning mensuel ?",
+    "Puis-je modifier les couleurs de mon planning?",
+    "Est ce que Octime recrute actuellement ?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
-    "Compare the impact of interest rates and GDP in financial markets.",
-    "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-    "Can you identify any correlation between oil prices and stock market trends?"
+    "Peux-tu me montrer à quoi ressemble le module alerteur ?",
+    "Montre moi l'écran des remplacements stp",
+    "Est-ce que je peux paramétrer du SSO pour l'accès à Octime?"
 ];
 
 interface Props {
