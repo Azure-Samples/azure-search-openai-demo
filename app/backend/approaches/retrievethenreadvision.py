@@ -132,11 +132,11 @@ class RetrieveThenReadVisionApproach(Approach):
 
         # Append user message
         message_builder.insert_message("user", user_content)
-
+        updated_messages = message_builder.messages
         chat_completion = (
             await self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-                messages=message_builder.messages,
+                messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
                 max_tokens=1024,
                 n=1,
@@ -152,12 +152,29 @@ class RetrieveThenReadVisionApproach(Approach):
             "data_points": data_points,
             "thoughts": [
                 ThoughtStep(
-                    "Search Query",
+                    "Search using user query",
                     query_text,
-                    {"use_semantic_captions": use_semantic_captions, "vector_fields": vector_fields},
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "top": top,
+                        "filter": filter,
+                        "vector_fields": vector_fields,
+                    },
                 ),
-                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
-                ThoughtStep("Prompt", [str(message) for message in message_builder.messages]),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    [str(message) for message in updated_messages],
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
+                ),
             ],
         }
         chat_completion["choices"][0]["context"] = extra_info

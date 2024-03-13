@@ -33,14 +33,8 @@ urlFragment: azure-search-openai-demo
     - [VS Code Dev Containers](#vs-code-dev-containers)
     - [Local environment](#local-environment)
   - [Deploying](#deploying)
-  - [Using existing Azure resources](#using-existing-azure-resources)
   - [Deploying again](#deploying-again)
 - [Sharing environments](#sharing-environments)
-- [Enabling optional features](#enabling-optional-features)
-  - [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
-  - [Enabling authentication](#enabling-authentication)
-  - [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
-  - [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 - [Using the app](#using-the-app)
 - [Running locally](#running-locally)
 - [Monitoring with Application Insights](#monitoring-with-application-insights)
@@ -175,7 +169,6 @@ It will look like the following:
 !['Output from running azd up'](docs/images/endpoint.png)
 
 > NOTE: It may take 5-10 minutes after you see 'SUCCESS' for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page. See [guide on debugging App Service deployments](docs/appservice.md).
-
 
 ### Deploying again
 

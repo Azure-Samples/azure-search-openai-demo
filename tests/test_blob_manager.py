@@ -15,7 +15,6 @@ def blob_manager(monkeypatch):
         endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
-        verbose=True,
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
         resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
@@ -152,12 +151,11 @@ async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager)
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
-async def test_upload_blob_no_image(monkeypatch, mock_env, capsys):
+async def test_upload_blob_no_image(monkeypatch, mock_env, caplog):
     blob_manager = BlobManager(
         endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
-        verbose=True,
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
         resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
@@ -180,9 +178,9 @@ async def test_upload_blob_no_image(monkeypatch, mock_env, capsys):
 
         monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.upload_blob", mock_upload_blob)
 
-        await blob_manager.upload_blob(f)
-
-        assert "skipping image upload" in capsys.readouterr().out
+        with caplog.at_level("INFO"):
+            await blob_manager.upload_blob(f)
+            assert "skipping image upload" in caplog.text
 
 
 @pytest.mark.asyncio
