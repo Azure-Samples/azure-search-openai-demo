@@ -97,7 +97,11 @@ class OpenAIEmbeddings(ABC):
                 with attempt:
                     emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
                     embeddings.extend([data.embedding for data in emb_response.data])
-                    logger.info(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
+                    logger.info(
+                        "Computed embeddings in batch. Batch size: %d, Token count: %d",
+                        len(batch.texts),
+                        batch.token_length,
+                    )
 
         return embeddings
 
@@ -111,6 +115,7 @@ class OpenAIEmbeddings(ABC):
         ):
             with attempt:
                 emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text)
+                logger.info("Computed embedding for text section. Character count: %d", len(text))
 
         return emb_response.data[0].embedding
 

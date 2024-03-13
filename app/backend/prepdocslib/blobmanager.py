@@ -55,11 +55,14 @@ class BlobManager:
             # Re-open and upload the original file
             with open(file.content.name, "rb") as reopened_file:
                 blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                logger.info(f"\tUploading blob for whole file -> {blob_name}")
+                logger.info("Uploading blob for whole file -> %s", blob_name)
                 await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
 
-            if self.store_page_images and os.path.splitext(file.content.name)[1].lower() == ".pdf":
-                return await self.upload_pdf_blob_images(service_client, container_client, file)
+            if self.store_page_images:
+                if os.path.splitext(file.content.name)[1].lower() == ".pdf":
+                    return await self.upload_pdf_blob_images(service_client, container_client, file)
+                else:
+                    logger.info("File %s is not a PDF, skipping image upload", file.content.name)
 
         return None
 
@@ -84,11 +87,11 @@ class BlobManager:
             try:
                 font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
             except OSError:
-                logger.info("\tUnable to find arial.ttf or FreeMono.ttf, using default font")
+                logger.info("Unable to find arial.ttf or FreeMono.ttf, using default font")
 
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
-            logger.info(f"\tConverting page {i} to image and uploading -> {blob_name}")
+            logger.info("Converting page %s to image and uploading -> %s", i, blob_name)
 
             doc = fitz.open(file.content.name)
             page = doc.load_page(i)
@@ -154,7 +157,7 @@ class BlobManager:
                     )
                 ) or (path is not None and blob_path == os.path.basename(path)):
                     continue
-                logger.info(f"\tRemoving blob {blob_path}")
+                logger.info("Removing blob %s", blob_path)
                 await container_client.delete_blob(blob_path)
 
     @classmethod

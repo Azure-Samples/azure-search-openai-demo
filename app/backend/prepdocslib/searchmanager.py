@@ -63,7 +63,7 @@ class SearchManager:
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
-        logger.info(f"Ensuring search index {self.search_info.index_name} exists")
+        logger.info("Ensuring search index %s exists", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
             fields = [
@@ -175,10 +175,10 @@ class SearchManager:
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
-                logger.info(f"Creating {self.search_info.index_name} search index")
+                logger.info("Creating %s search index", self.search_info.index_name)
                 await search_index_client.create_index(index)
             else:
-                logger.info(f"Search index {self.search_info.index_name} already exists")
+                logger.info("Search index %s already exists", self.search_info.index_name)
 
     async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
         MAX_BATCH_SIZE = 1000
@@ -220,7 +220,9 @@ class SearchManager:
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
-        logger.info(f"Removing sections from '{path or '<all>'}' from search index '{self.search_info.index_name}'")
+        logger.info(
+            "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
+        )
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
@@ -233,6 +235,6 @@ class SearchManager:
                     if not only_oid or document["oids"] == [only_oid]:
                         documents_to_remove.append({"id": document["id"]})
                 removed_docs = await search_client.delete_documents(documents_to_remove)
-                logger.info(f"\tRemoved {len(removed_docs)} sections from index")
+                logger.info("Removed %d sections from index", len(removed_docs))
                 # It can take a few seconds for search results to reflect changes, so wait a bit
                 await asyncio.sleep(2)
