@@ -15,14 +15,13 @@ AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
 
 
 class RetrieveThenReadApproach(Approach):
-    """
-    Simple retrieve-then-read implementation, using the AI Search and OpenAI APIs directly. It first retrieves
+    """Simple retrieve-then-read implementation, using the AI Search and OpenAI APIs directly. It first retrieves
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
 
     system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+        "You are an intelligent assistant helping Contoso Inc employees with their legal support questions and employee handbook questions. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
         + "For tabular information return it as an html table. Do not return markdown format. "
@@ -32,15 +31,12 @@ class RetrieveThenReadApproach(Approach):
 
     # shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+'Can I have a copy of the incorporation certificate for Company Name?'
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+Anonymised KB.pdf:To receive a copy of the incorporation documents of Company Name, please submit your request via the form here and specify for which entity this is required and the purpose. Your request will be routed to the legal team for approval. Incorporation documents are confidential in nature, and therefore each release needs to be assessed and approved by the legal team.
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "To receive a copy of the incorporation documents of Company Name, please submit your request via the form here and specify for which entity this is required and the purpose. Your request will be routed to the legal team for approval. Incorporation documents are confidential in nature, and therefore each release needs to be assessed and approved by the legal team.[Anonymised KB.pdf]."
 
     def __init__(
         self,
