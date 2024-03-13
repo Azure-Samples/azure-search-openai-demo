@@ -23,19 +23,12 @@ updates:
 
   # Maintain dependencies for pip
   - package-ecosystem: "pip"
-    directory: "/app/backend"
+    directory: "/"
     schedule:
       interval: "weekly"
     groups:
       python-requirements:
         patterns:
           - "*"
-
-  - package-ecosystem: "pip"
-    directory: "/scripts"
-    schedule:
-      interval: "weekly"
-    groups:
-      python-requirements:
-        patterns:
-          - "*"
+    ignore:
+      - dependency-name: azure-search-documents

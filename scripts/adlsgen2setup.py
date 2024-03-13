@@ -99,6 +99,9 @@ class AdlsGen2Setup:
                                 await directory_client.update_access_control_recursive(
                                     acl=f"group:{groups[group_name]}:r-x"
                                 )
+                        if "oids" in access_control:
+                            for oid in access_control["oids"]:
+                                await directory_client.update_access_control_recursive(acl=f"user:{oid}:r-x")
                 finally:
                     for directory_client in directories.values():
                         await directory_client.close()

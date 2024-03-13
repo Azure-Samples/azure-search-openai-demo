@@ -1,10 +1,22 @@
 // Refactored from https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/1-Authentication/1-sign-in/SPA/src/authConfig.js
 
-import { AuthenticationResult, IPublicClientApplication } from "@azure/msal-browser";
+import { IPublicClientApplication } from "@azure/msal-browser";
+
+const appServicesAuthTokenUrl = ".auth/me";
+const appServicesAuthTokenRefreshUrl = ".auth/refresh";
+const appServicesAuthLogoutUrl = ".auth/logout?post_logout_redirect_uri=/";
+
+interface AppServicesToken {
+    id_token: string;
+    access_token: string;
+    user_claims: Record<string, any>;
+}
 
 interface AuthSetup {
     // Set to true if login elements should be shown in the UI
     useLogin: boolean;
+    // Set to true if access control is enforced by the application
+    requireAccessControl: boolean;
     /**
      * Configuration object to be passed to MSAL instance on creation.
      * For a full list of MSAL.js configuration parameters, visit:
@@ -50,6 +62,8 @@ const authSetup = await fetchAuthSetup();
 
 export const useLogin = authSetup.useLogin;
 
+export const requireAccessControl = authSetup.requireAccessControl;
+
 /**
  * Configuration object to be passed to MSAL instance on creation.
  * For a full list of MSAL.js configuration parameters, visit:
@@ -72,14 +86,65 @@ export const getRedirectUri = () => {
     return window.location.origin + authSetup.msalConfig.auth.redirectUri;
 };
 
+// Get an access token if a user logged in using app services authentication
+// Returns null if the app doesn't support app services authentication
+const getAppServicesToken = (): Promise<AppServicesToken | null> => {
+    return fetch(appServicesAuthTokenRefreshUrl).then(r => {
+        if (r.ok) {
+            return fetch(appServicesAuthTokenUrl).then(r => {
+                if (r.ok) {
+                    return r.json().then(json => {
+                        if (json.length > 0) {
+                            return {
+                                id_token: json[0]["id_token"] as string,
+                                access_token: json[0]["access_token"] as string,
+                                user_claims: json[0]["user_claims"].reduce((acc: Record<string, any>, item: Record<string, any>) => {
+                                    acc[item.typ] = item.val;
+                                    return acc;
+                                }, {}) as Record<string, any>
+                            };
+                        }
+
+                        return null;
+                    });
+                }
+
+                return null;
+            });
+        }
+
+        return null;
+    });
+};
+
+export const appServicesToken = await getAppServicesToken();
+
+// Sign out of app services
+// Learn more at https://learn.microsoft.com/azure/app-service/configure-authentication-customize-sign-in-out#sign-out-of-a-session
+export const appServicesLogout = () => {
+    window.location.href = appServicesAuthLogoutUrl;
+};
+
+// Determine if the user is logged in
+// The user may have logged in either using the app services login or the on-page login
+export const isLoggedIn = (client: IPublicClientApplication | undefined): boolean => {
+    return client?.getActiveAccount() != null || appServicesToken != null;
+};
+
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
-export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult | undefined> => {
+// Use the access token from app services login if available
+export const getToken = (client: IPublicClientApplication): Promise<string | undefined> => {
+    if (appServicesToken) {
+        return Promise.resolve(appServicesToken.access_token);
+    }
+
     return client
         .acquireTokenSilent({
             ...tokenRequest,
             redirectUri: getRedirectUri()
         })
+        .then(r => r.accessToken)
         .catch(error => {
             console.log(error);
             return undefined;
