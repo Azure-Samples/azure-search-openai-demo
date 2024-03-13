@@ -202,7 +202,6 @@ def mock_openai_chatcompletion(monkeypatch):
 @pytest.fixture
 def mock_acs_search(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
-    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     async def mock_get_index(*args, **kwargs):
         return MockSearchIndex
