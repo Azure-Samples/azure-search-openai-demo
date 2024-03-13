@@ -123,6 +123,8 @@ class Approach(ABC):
         vectors: List[VectorQuery],
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
+        min_search_score: Optional[float],
+        min_reranker_score: Optional[float],
     ) -> List[Document]:
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if use_semantic_ranker and query_text:
@@ -157,11 +159,17 @@ class Approach(ABC):
                         oids=document.get("oids"),
                         groups=document.get("groups"),
                         captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
-                        score=document.get("@search.score"),
-                        reranker_score=document.get("@search.reranker_score"),
+                        score=document.get("@search.score", 0.0),
+                        reranker_score=document.get("@search.reranker_score", 0.0),
                     )
                 )
-        return documents
+
+            qualified_documents = [
+                doc for doc in documents
+                if doc.search_score >= min_search_score and doc.reranker_score >= min_reranker_score
+            ]
+
+        return qualified_documents
 
     def get_sources_content(
         self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool

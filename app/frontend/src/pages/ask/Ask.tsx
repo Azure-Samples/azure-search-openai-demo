@@ -22,6 +22,8 @@ export function Component(): JSX.Element {
     const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
     const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
+    const [minRerankerScore, setMinRerankerScore] = useState<number>(0);
+    const [minSearchScore, setMinSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -92,6 +94,8 @@ export function Component(): JSX.Element {
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         temperature: temperature,
+                        min_reranker_score: minRerankerScore,
+                        min_search_score: minSearchScore,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -132,6 +136,22 @@ export function Component(): JSX.Element {
         event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
     ) => {
         setTemperature(newValue);
+    };
+
+    const onMinSearchScoreChange = (
+        newValue: number,
+        range?: [number, number],
+        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
+    ) => {
+        setMinSearchScore(newValue);
+    };
+
+    const onMinRerankerScoreChange = (
+        newValue: number,
+        range?: [number, number],
+        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
+    ) => {
+        setMinRerankerScore(newValue);
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -255,6 +275,30 @@ export function Component(): JSX.Element {
                     step={0.1}
                     defaultValue={temperature}
                     onChange={onTemperatureChange}
+                    showValue
+                    snapToStep
+                />
+
+                <Slider
+                    className={styles.chatSettingsSeparator}
+                    label="Min Search Score"
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    defaultValue={minSearchScore}
+                    onChange={onMinSearchScoreChange}
+                    showValue
+                    snapToStep
+                />
+
+                <Slider
+                    className={styles.chatSettingsSeparator}
+                    label="Min Reranker Score"
+                    min={1}
+                    max={4}
+                    step={0.1}
+                    defaultValue={minRerankerScore}
+                    onChange={onMinRerankerScoreChange}
                     showValue
                     snapToStep
                 />
