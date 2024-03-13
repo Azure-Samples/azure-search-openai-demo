@@ -54,7 +54,7 @@ async def setup_search_info(
         async with SecretClient(
             vault_url=f"https://{key_vault_name}.vault.azure.net", credential=azure_credential
         ) as key_vault_client:
-            search_key = (await key_vault_client.get_secret(search_secret_name)).value
+            search_key = (await key_vault_client.get_secret(search_secret_name)).value  # type: ignore[attr-defined]
 
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
