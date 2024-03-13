@@ -234,8 +234,8 @@ envs = [
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
-        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
-        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT_NAME": "test-ada",
         "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
         "VISION_SECRET_NAME": "mysecret",
@@ -248,8 +248,8 @@ auth_envs = [
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
-        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
-        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT_NAME": "test-ada",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
         "AZURE_SERVER_APP_SECRET": "SECRET",
@@ -268,7 +268,7 @@ def mock_env(monkeypatch, request, mock_get_secret):
         monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
-        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL_NAME", "gpt-35-turbo")
         monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
         for key, value in request.param.items():
             monkeypatch.setenv(key, value)
@@ -315,7 +315,7 @@ async def auth_client(
     monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
     monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
-    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL_NAME", "gpt-35-turbo")
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
 

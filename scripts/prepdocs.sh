@@ -70,7 +70,7 @@ fi
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \
 $searchAnalyzerNameArg $searchSecretNameArg \
 --openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
---openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
+--openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT_NAME"  \
 --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
 --documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
 $searchImagesArg $visionEndpointArg \

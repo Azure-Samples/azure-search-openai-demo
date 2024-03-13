@@ -46,7 +46,6 @@ param azureOpenAiApiVersion string = ''
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
-param useGPT4 bool = false
 param useGPT4V bool = false
 
 param keyVaultResourceGroupName string = ''
@@ -87,17 +86,18 @@ param computerVisionResourceGroupName string = ''
 param computerVisionResourceGroupLocation string = 'eastus' // Vision vectorize API is yet to be deployed globally
 param computerVisionSkuName string = 'S1'
 
-param chatGptDeploymentName string // Set in main.parameters.json
-param chatGptDeploymentVersion string // Set in main.parameters.json
+param chatGptModelName string = startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+param chatGptDeploymentName string = 'chat'
+param chatGptDeploymentVersion string = '0613'
 param chatGptDeploymentCapacity int = 30
-param chatGpt4vDeploymentCapacity int = 10
-param chatGptModel object = (useGPT4) ? { name: 'gpt-4', version: isAzureOpenAiHost ? !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125-Preview' : !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125-preview' } : { name: isAzureOpenAiHost ? 'gpt-35-turbo' : 'gpt-3.5-turbo', version: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613' }
-param embeddingDeploymentName string // Set in main.parameters.json
-param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
+param embeddingDeploymentName string = 'embedding'
+param embeddingDeploymentVersion string = '2'
+param embeddingDeploymentCapacity int = 30
 param gpt4vModelName string = 'gpt-4'
 param gpt4vDeploymentName string = 'gpt-4v'
 param gpt4vModelVersion string = 'vision-preview'
+param gpt4vDeploymentCapacity int = 10
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -248,12 +248,12 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
       AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
-      AZURE_OPENAI_CHATGPT_MODEL: chatGptModel.name
+      AZURE_OPENAI_CHATGPT_MODEL_NAME: chatGptModelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
       AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
-      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME: chatGptDeploymentName
+      AZURE_OPENAI_EMB_DEPLOYMENT_NAME: embeddingDeploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
       // Used only with non-Azure OpenAI deployments
       OPENAI_API_KEY: openAiApiKey
@@ -281,8 +281,8 @@ var defaultOpenAiDeployments = [
     name: chatGptDeploymentName
     model: {
       format: 'OpenAI'
-      name: chatGptModel.name
-      version: chatGptModel.version
+      name: chatGptModelName
+      version: chatGptModelVersion
     }
     sku: {
       name: 'Standard'
@@ -596,15 +596,15 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
-output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModel.name
+output AZURE_OPENAI_CHATGPT_MODEL_NAME string = chatGptModelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
 output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embeddingDeploymentName : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME string = isAzureOpenAiHost ? chatGptDeploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT_NAME string = isAzureOpenAiHost ? embeddingDeploymentName : ''
 output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymentName : ''
 
 // Used only with non-Azure OpenAI deployments

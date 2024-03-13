@@ -71,14 +71,29 @@
     "appServiceSkuName": {
       "value": "${AZURE_APP_SERVICE_SKU=B1}"
     },
-    "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+    "chatGptModelName":{
+      "value": "${AZURE_OPENAI_CHATGPT_MODEL_NAME}"
     },
-    "chatGptDeploymentVersion": {
-      "value": "${AZURE_OPENAI_CHATGPT_VERSION}"
+    "chatGptDeploymentName": {
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME}"
+    },
+    "chatGptDeploymentVersion":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
+    },
+    "chatGptDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
+    },
+    "embeddingModelName":{
+      "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
     },
     "embeddingDeploymentName": {
-      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_NAME}"
+    },
+    "embeddingDeploymentVersion":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
+    },
+    "embeddingDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
@@ -100,9 +115,6 @@
     },
     "useVectors": {
       "value": "${USE_VECTORS=true}"
-    },
-    "useGPT4":{
-      "value": "${USE_GPT4=false}"
     },
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
