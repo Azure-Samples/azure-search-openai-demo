@@ -1,6 +1,6 @@
 # Additional documentation
 
-Consult the main [README](../README.md) for general information about the project.
+Consult the main [README](/README.md) for general information about the project.
 These are advanced topics that are not necessary for a basic deployment.
 
 * [Deploying with the Azure Developer CLI](azd.md)

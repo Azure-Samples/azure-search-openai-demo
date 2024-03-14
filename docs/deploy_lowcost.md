@@ -2,7 +2,7 @@
 
 This AI RAG chat application is designed to be easily deployed using the Azure Developer CLI, which provisions the infrastructure according to the Bicep files in the `infra` folder. Those files describe each of the Azure resources needed, and configures their SKU (pricing tier) and other parameters. Many Azure services offer a free tier, but the infrastructure files in this project do *not* default to the free tier as there are often limitations in that tier.
 
-However, if your goal is to minimize costs while prototyping your application, follow the steps below _before_ running `azd up`. Once you've gone through these steps, return to the [deployment steps](../README.md#deploying).
+However, if your goal is to minimize costs while prototyping your application, follow the steps below _before_ running `azd up`. Once you've gone through these steps, return to the [deployment steps](/README.md#deploying).
 
 [📺 Live stream: Deploying from a free account](https://www.youtube.com/watch?v=nlIyos0RXHw)
 
@@ -38,7 +38,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     Limitations:
     1. You are only allowed one free search service across all regions.
     If you have one already, either delete that service or follow instructions to
-    reuse your [existing search service](../README.md#existing-azure-ai-search-resource).
+    reuse your [existing search service](/README.md#existing-azure-ai-search-resource).
     2. The free tier does not support semantic ranker, so the app UI will no longer display
     the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid/ba-p/3929167).
     3. The free tier does not support Managed Identity (keyless API access),
@@ -46,7 +46,7 @@ However, if your goal is to minimize costs while prototyping your application, f
 
 4. Use the free tier of Azure Document Intelligence (used in analyzing files):
 
-    
+
     ```shell
     azd env set AZURE_DOCUMENTINTELLIGENCE_SKU F0
     ```
@@ -106,7 +106,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     so the benefits of vector search would typically outweigh the costs, but it is possible to disable vector support.
     If you do so, the application will fall back to a keyword search, which is less accurate.
 
-7. Once you've made the desired customizations, follow the steps in the README [to run `azd up`](../README.md#deploying-from-scratch). We recommend using "eastus" as the region, for availability reasons.
+7. Once you've made the desired customizations, follow the steps in the README [to run `azd up`](/README.md#deploying-from-scratch). We recommend using "eastus" as the region, for availability reasons.
 
 ## Reducing costs locally
 

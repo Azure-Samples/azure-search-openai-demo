@@ -2,7 +2,7 @@
 # Deploying with existing Azure resources
 
 If you already have existing Azure resources, you can re-use those by setting `azd` environment values.
-You should set these values before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
+You should set these values before running `azd up`. Once you've set them, return to the [deployment steps](/README.md#deploying).
 
 * [Existing resource group](#existing-resource-group)
 * [Existing OpenAI resource](#existing-openai-resource)
