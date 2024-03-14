@@ -234,8 +234,8 @@ envs = [
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
-        "AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME": "test-chatgpt",
-        "AZURE_OPENAI_EMB_DEPLOYMENT_NAME": "test-ada",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
         "VISION_SECRET_NAME": "mysecret",
@@ -248,8 +248,8 @@ auth_envs = [
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
-        "AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME": "test-chatgpt",
-        "AZURE_OPENAI_EMB_DEPLOYMENT_NAME": "test-ada",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
         "AZURE_SERVER_APP_SECRET": "SECRET",

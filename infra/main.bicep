@@ -252,8 +252,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
       AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME: chatGptDeploymentName
-      AZURE_OPENAI_EMB_DEPLOYMENT_NAME: embeddingDeploymentName
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
+      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
       // Used only with non-Azure OpenAI deployments
       OPENAI_API_KEY: openAiApiKey
@@ -603,8 +603,8 @@ output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
 output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT_NAME string = isAzureOpenAiHost ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT_NAME string = isAzureOpenAiHost ? embeddingDeploymentName : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGptDeploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embeddingDeploymentName : ''
 output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymentName : ''
 
 // Used only with non-Azure OpenAI deployments
