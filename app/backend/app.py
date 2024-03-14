@@ -308,9 +308,10 @@ async def setup_clients():
         else:
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
 
-        # Store on app.config for later use inside requests
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
+
         openai_client = AsyncAzureOpenAI(
-            api_version="2023-07-01-preview",
+            api_version=api_version,
             azure_endpoint=endpoint,
             azure_ad_token_provider=token_provider,
         )

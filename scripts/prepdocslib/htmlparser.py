@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import IO, AsyncGenerator
 
@@ -5,6 +6,8 @@ from bs4 import BeautifulSoup
 
 from .page import Page
 from .parser import Parser
+
+logger = logging.getLogger("ingester")
 
 
 def cleanup_data(data: str) -> str:
@@ -35,8 +38,7 @@ class LocalHTMLParser(Parser):
         Returns:
             Page: The parsed html Page.
         """
-        if self.verbose:
-            print(f"\tExtracting text from '{content.name}' using local HTML parser (BeautifulSoup)")
+        logger.info("Extracting text from '%s' using local HTML parser (BeautifulSoup)", content.name)
 
         data = content.read()
         soup = BeautifulSoup(data, "html.parser")

@@ -1,3 +1,4 @@
+import logging
 from abc import ABC
 from typing import Awaitable, Callable, List, Optional, Union
 from urllib.parse import urljoin
@@ -15,6 +16,8 @@ from tenacity import (
     wait_random_exponential,
 )
 from typing_extensions import TypedDict
+
+logger = logging.getLogger("ingester")
 
 
 class EmbeddingBatch:
@@ -35,17 +38,15 @@ class OpenAIEmbeddings(ABC):
 
     SUPPORTED_BATCH_AOAI_MODEL = {"text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16}}
 
-    def __init__(self, open_ai_model_name: str, disable_batch: bool = False, verbose: bool = False):
+    def __init__(self, open_ai_model_name: str, disable_batch: bool = False):
         self.open_ai_model_name = open_ai_model_name
         self.disable_batch = disable_batch
-        self.verbose = verbose
 
     async def create_client(self) -> AsyncOpenAI:
         raise NotImplementedError
 
     def before_retry_sleep(self, retry_state):
-        if self.verbose:
-            print("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+        logger.info("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
     def calculate_token_length(self, text: str):
         encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
@@ -96,8 +97,11 @@ class OpenAIEmbeddings(ABC):
                 with attempt:
                     emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
                     embeddings.extend([data.embedding for data in emb_response.data])
-                    if self.verbose:
-                        print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
+                    logger.info(
+                        "Computed embeddings in batch. Batch size: %d, Token count: %d",
+                        len(batch.texts),
+                        batch.token_length,
+                    )
 
         return embeddings
 
@@ -111,6 +115,7 @@ class OpenAIEmbeddings(ABC):
         ):
             with attempt:
                 emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text)
+                logger.info("Computed embedding for text section. Character count: %d", len(text))
 
         return emb_response.data[0].embedding
 
@@ -134,9 +139,8 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_model_name: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         disable_batch: bool = False,
-        verbose: bool = False,
     ):
-        super().__init__(open_ai_model_name, disable_batch, verbose)
+        super().__init__(open_ai_model_name, disable_batch)
         self.open_ai_service = open_ai_service
         self.open_ai_deployment = open_ai_deployment
         self.credential = credential
@@ -171,14 +175,9 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
     """
 
     def __init__(
-        self,
-        open_ai_model_name: str,
-        credential: str,
-        organization: Optional[str] = None,
-        disable_batch: bool = False,
-        verbose: bool = False,
+        self, open_ai_model_name: str, credential: str, organization: Optional[str] = None, disable_batch: bool = False
     ):
-        super().__init__(open_ai_model_name, disable_batch, verbose)
+        super().__init__(open_ai_model_name, disable_batch)
         self.credential = credential
         self.organization = organization
 
@@ -192,10 +191,9 @@ class ImageEmbeddings:
     To learn more, please visit https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-image-api
     """
 
-    def __init__(self, endpoint: str, token_provider: Callable[[], Awaitable[str]], verbose: bool = False):
+    def __init__(self, endpoint: str, token_provider: Callable[[], Awaitable[str]]):
         self.token_provider = token_provider
         self.endpoint = endpoint
-        self.verbose = verbose
 
     async def create_embeddings(self, blob_urls: List[str]) -> List[List[float]]:
         endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
@@ -221,5 +219,4 @@ class ImageEmbeddings:
         return embeddings
 
     def before_retry_sleep(self, retry_state):
-        if self.verbose:
-            print("Rate limited on the Vision embeddings API, sleeping before retrying...")
+        logger.info("Rate limited on the Vision embeddings API, sleeping before retrying...")

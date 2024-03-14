@@ -30,19 +30,9 @@ if [ -n "$AZURE_VISION_ENDPOINT" ]; then
   visionEndpointArg="--visionendpoint $AZURE_VISION_ENDPOINT"
 fi
 
-visionKeyArg=""
-if [ -n "$AZURE_VISION_KEY" ]; then
-  visionKeyArg="--visionkey $AZURE_VISION_KEY"
-fi
-
 keyVaultName=""
 if [ -n "$AZURE_KEY_VAULT_NAME" ]; then
   keyVaultName="--keyvaultname $AZURE_KEY_VAULT_NAME"
-fi
-
-visionSecretNameArg=""
-if [ -n "$VISION_SECRET_NAME" ]; then
-  visionSecretNameArg="--visionsecretname $VISION_SECRET_NAME"
 fi
 
 searchSecretNameArg=""
@@ -83,7 +73,7 @@ $searchAnalyzerNameArg $searchSecretNameArg \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
 --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
 --documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
-$searchImagesArg $visionEndpointArg $visionKeyArg $visionSecretNameArg \
+$searchImagesArg $visionEndpointArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
 $disableVectorsArg $localPdfParserArg $localHtmlParserArg \
