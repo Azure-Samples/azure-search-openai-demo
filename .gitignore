@@ -1,5 +1,6 @@
 # Azure az webapp deployment details
 .azure
+.data
 *_env
 
 # Byte-compiled / optimized / DLL files
