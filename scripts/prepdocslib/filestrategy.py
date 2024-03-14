@@ -12,16 +12,21 @@ logger = logging.getLogger("ingester")
 
 
 async def parse_file(
-    file: File, file_processors: dict[str, FileProcessor], category: Optional[str] = None
+    file: File,
+    file_processors: dict[str, FileProcessor],
+    category: Optional[str] = None,
+    image_embeddings: Optional[ImageEmbeddings] = None,
 ) -> List[Section]:
     key = file.file_extension()
     processor = file_processors.get(key)
     if processor is None:
-        logger.info(f"Skipping '{file.filename()}', no parser found.")
+        logger.info("Skipping '%s', no parser found.", file.filename())
         return []
-    logger.info(f"Parsing '{file.filename()}'")
+    logger.info("Ingesting '%s'", file.filename())
     pages = [page async for page in processor.parser.parse(content=file.content)]
-    logger.info(f"Splitting '{file.filename()}' into sections")
+    logger.info("Splitting '%s' into sections", file.filename())
+    if image_embeddings:
+        logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
     ]
@@ -76,7 +81,7 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    sections = await parse_file(file, self.file_processors, self.category)
+                    sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
                     if sections:
                         blob_sas_uris = await self.blob_manager.upload_blob(file)
                         blob_image_embeddings: Optional[List[List[float]]] = None
