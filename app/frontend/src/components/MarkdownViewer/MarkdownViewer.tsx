@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MarkdownPreview from "@uiw/react-markdown-preview";
-import rehypeAnchorOnClick from "./AnchorLinksHandler";
+import { marked } from 'marked';
 import styles from "./MarkdownViewer.module.css";
 import { Spinner, SpinnerSize, MessageBar, MessageBarType, Link, IconButton } from "@fluentui/react";
 
@@ -9,9 +8,14 @@ interface MarkdownViewerProps {
 }
 
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
-    const [markdownContent, setMarkdownContent] = useState<string>("");
+    const [content, setContent] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
+
+    const removeAnchorLinks = (html: string) => {
+        const ancorLinksRegex =/<a\s+(?:[^>]*?\s+)?href=['"](#[^"']*?)['"][^>]*?>/g
+        return html.replace(ancorLinksRegex, "");
+    }
 
     useEffect(() => {
         const fetchMarkdown = async () => {
@@ -23,7 +27,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
                 }
 
                 const markdownText = await response.text();
-                setMarkdownContent(markdownText);
+                const parsedHtml = await marked.parse(markdownText)
+                const cleanedHtml = removeAnchorLinks(parsedHtml);
+                setContent(cleanedHtml);
             } catch (error: any) {
                 setError(error);
             } finally {
@@ -60,11 +66,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
                         href={src}
                         download
                     />
-                    <MarkdownPreview
+                    <div
                         className={`${styles.markdown} ${styles.markdownViewer}`}
-                        source={markdownContent}
-                        rehypePlugins={[[rehypeAnchorOnClick]]}
-                    />
+                        dangerouslySetInnerHTML={{ __html: content }} />
                 </div>
             )}
         </div>
