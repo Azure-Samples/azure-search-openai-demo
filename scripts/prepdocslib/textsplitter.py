@@ -101,6 +101,7 @@ class SentenceTextSplitter(TextSplitter):
         Recursively splits page by maximum number of tokens to better handle languages with higher token/word ratios.
         """
         tokens = bpe.encode(text)
+        assert text != ""
         if len(tokens) <= self.max_tokens_per_section:
             # Section is already within max tokens, return
             yield SplitPage(page_num=page_num, text=text)
@@ -127,8 +128,10 @@ class SentenceTextSplitter(TextSplitter):
             else:
                 # Split page in half and call function again
                 # Overlap first and second halves by DEFAULT_OVERLAP_PERCENT%
-                first_half = text[: int(len(text) // (2.0 + (DEFAULT_OVERLAP_PERCENT / 100)))]
-                second_half = text[int(len(text) // (1.0 - (DEFAULT_OVERLAP_PERCENT / 100))) :]
+                middle = int(len(text) // 2)
+                overlap = int(len(text) * (DEFAULT_OVERLAP_PERCENT / 100))
+                first_half = text[: middle + overlap]
+                second_half = text[middle - overlap :]
             yield from self.split_page_by_max_tokens(page_num, first_half)
             yield from self.split_page_by_max_tokens(page_num, second_half)
 
