@@ -101,7 +101,6 @@ class SentenceTextSplitter(TextSplitter):
         Recursively splits page by maximum number of tokens to better handle languages with higher token/word ratios.
         """
         tokens = bpe.encode(text)
-        assert text != ""
         if len(tokens) <= self.max_tokens_per_section:
             # Section is already within max tokens, return
             yield SplitPage(page_num=page_num, text=text)
