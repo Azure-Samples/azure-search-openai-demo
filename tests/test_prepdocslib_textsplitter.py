@@ -211,5 +211,5 @@ async def test_textsplitter_output_verify(test_doc, tmp_path):
             diff = difflib.ndiff(original_content, merged_sections)
             # Check all lines in diff are either unchanged or added (duplicate lines)
             for line in diff:
-                assert line[0] in (" ", "+"), line[1]
+                assert line[0] in (" ", "+"), line
         assert processed == 1
