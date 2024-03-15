@@ -198,6 +198,11 @@ async def test_textsplitter_output_verify(test_doc, tmp_path):
             assert sections
             processed += 1
 
+            for section in sections:
+                assert section.split_page.text != ""
+                assert len(section.split_page.text) <= (text_splitter.max_section_length * 1.2)
+                assert len(bpe.encode(section.split_page.text)) <= text_splitter.max_tokens_per_section
+
             # Verify the merged sections equal the input text
             original_content = "".join([page.text for page in pages])
             merged_sections = "".join([section.split_page.text for section in sections])
