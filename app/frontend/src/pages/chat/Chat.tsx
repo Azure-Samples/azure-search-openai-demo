@@ -406,7 +406,7 @@ const Chat = () => {
                     />
 
                     <SpinButton
-                        className={styles.askSettingsSeparator}
+                        className={styles.chatSettingsSeparator}
                         label="Minimum search score"
                         min={0}
                         step={0.01}
@@ -415,7 +415,7 @@ const Chat = () => {
                     />
 
                     <SpinButton
-                        className={styles.askSettingsSeparator}
+                        className={styles.chatSettingsSeparator}
                         label="Minimum reranker score"
                         min={1}
                         max={4}
