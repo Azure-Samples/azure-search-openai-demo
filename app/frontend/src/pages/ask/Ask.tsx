@@ -139,11 +139,11 @@ export function Component(): JSX.Element {
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumSearchScore(parseInt(newValue || "0"));
+        setMinimumSearchScore(parseFloat(newValue || "0"));
     };
 
     const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumRerankerScore(parseInt(newValue || "0"));
+        setMinimumRerankerScore(parseFloat(newValue || "0"));
     };
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
         setRetrieveCount(parseInt(newValue || "3"));

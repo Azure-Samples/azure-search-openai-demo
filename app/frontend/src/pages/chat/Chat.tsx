@@ -149,6 +149,8 @@ const Chat = () => {
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         temperature: temperature,
+                        minimum_reranker_score: minimumRerankerScore,
+                        minimum_search_score: minimumSearchScore,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -215,11 +217,11 @@ const Chat = () => {
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumSearchScore(parseInt(newValue || "0"));
+        setMinimumSearchScore(parseFloat(newValue || "0"));
     };
 
     const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumRerankerScore(parseInt(newValue || "0"));
+        setMinimumRerankerScore(parseFloat(newValue || "0"));
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
