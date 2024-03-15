@@ -78,3 +78,5 @@ If you want to decrease the charges by using local parsers instead of Azure Docu
 
 1. Run `azd env set USE_LOCAL_PDF_PARSER true` to use the local PDF parser.
 1. Run `azd env set USE_LOCAL_HTML_PARSER true` to use the local HTML parser.
+
+The local parsers will be used the next time you run the data ingestion script. To use these parsers for the user document upload system, you'll need to run `azd provision` to update the web app to use the local parsers.

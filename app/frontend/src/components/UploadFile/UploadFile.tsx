@@ -116,7 +116,7 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
 
                         {/* Show a loading message while files are being uploaded */}
                         {isUploading && <div className={styles.padding8}>{"Uploading files..."}</div>}
-                        {uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
+                        {!isUploading && uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
                         {/* Display the list of already uploaded */}
 
                         <h3>Previously uploaded files:</h3>
