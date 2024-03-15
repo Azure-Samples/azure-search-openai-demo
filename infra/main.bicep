@@ -282,7 +282,7 @@ var defaultOpenAiDeployments = [
     model: {
       format: 'OpenAI'
       name: chatGptModelName
-      version: chatGptModelVersion
+      version: chatGptDeploymentVersion
     }
     sku: {
       name: 'Standard'
@@ -313,7 +313,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
       }
       sku: {
         name: 'Standard'
-        capacity: chatGpt4vDeploymentCapacity
+        capacity: gpt4vDeploymentCapacity
       }
     }
   ] : [])
