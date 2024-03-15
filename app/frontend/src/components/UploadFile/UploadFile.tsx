@@ -24,7 +24,7 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
 
     const client = useMsal().instance;
 
-    // Handler for the "Upload Files" button click
+    // Handler for the "Manage file uploads" button
     const handleButtonClick = async () => {
         setIsCalloutVisible(!isCalloutVisible); // Toggle the Callout visibility
 
@@ -105,7 +105,12 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
                         <form encType="multipart/form-data">
                             <div>
                                 <Label>Upload file:</Label>
-                                <input accept=".pdf" className={styles.chooseFiles} type="file" onChange={handleUploadFile} />
+                                <input
+                                    accept=".txt, .md, .json, .jpg, .jpeg, .bmp, .heic, .tiff, .pdf, .docx, .xlsx, .pptx, .html"
+                                    className={styles.chooseFiles}
+                                    type="file"
+                                    onChange={handleUploadFile}
+                                />
                             </div>
                         </form>
 

@@ -9,6 +9,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
+* [Enabling user document upload](#enabling-user-document-upload)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 * [Using local parsers](#using-local-parsers)
 
@@ -18,6 +19,8 @@ We generally find that most developers are able to get high quality answers usin
 
 * In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'.
 * You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
+
+Then run `azd up` to provision the GPT-4 model.
 
 ## Enabling GPT-4 Turbo with Vision
 
@@ -43,6 +46,17 @@ To then limit access to a specific set of users or groups, you can follow the st
 ## Enabling login and document level access control
 
 By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](docs/login_and_acl.md).
+
+## Enabling user document upload
+
+You can enable an optional user document upload system to allow users to upload their own documents and chat with them. This feature requires you to first [enable login and document level access control](docs/login_and_acl.md). Then you can enable the optional user document upload system by setting an azd environment variable:
+
+`azd env set USE_USER_UPLOAD true`
+
+Then you'll need to run `azd up` to provision a DataLake Storage 2 account for storing the user-uploaded documents.
+When the user uploads a document, it will be stored in a directory in that account with the same name as the user's Entra object id,
+and will have ACLs associated with that directory. When the ingester runs, it will also set the `oids` of the indexed chunks to the user's Entra object id.
+
 
 ## Enabling CORS for an alternate frontend
 

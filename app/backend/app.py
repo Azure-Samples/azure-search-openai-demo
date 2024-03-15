@@ -61,13 +61,14 @@ from config import (
 from core.authentication import AuthenticationHelper
 from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
-from prepdocs import (  # noqa: E402
+from prepdocs import (
+    clean_key_if_exists,
     setup_embeddings_service,
     setup_file_processors,
     setup_search_info,
 )
-from prepdocslib.filestrategy import UploadUserFileStrategy  # noqa: E402
-from prepdocslib.listfilestrategy import File  # noqa: E402
+from prepdocslib.filestrategy import UploadUserFileStrategy
+from prepdocslib.listfilestrategy import File
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -403,7 +404,7 @@ async def setup_clients():
             search_service=AZURE_SEARCH_SERVICE,
             index_name=AZURE_SEARCH_INDEX,
             azure_credential=azure_credential,
-            search_key=search_key,
+            search_key=clean_key_if_exists(search_key),
         )
         text_embeddings_service = setup_embeddings_service(
             azure_credential=azure_credential,
@@ -411,7 +412,7 @@ async def setup_clients():
             openai_model_name=OPENAI_EMB_MODEL,
             openai_service=AZURE_OPENAI_SERVICE,
             openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            openai_key=OPENAI_API_KEY,
+            openai_key=clean_key_if_exists(OPENAI_API_KEY),
             openai_org=OPENAI_ORGANIZATION,
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
         )

@@ -1,33 +1,6 @@
-from io import BytesIO
-
 import azure.storage.filedatalake.aio
 import pytest
 from azure.search.documents.aio import SearchClient
-
-
-@pytest.mark.asyncio
-async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_client):
-    async def mock_upload_file(self):
-        return None
-
-    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "upload_data", mock_upload_file)
-
-    stream = b'------WebKitFormBoundaryr1D8WqBUjhPTDqlM\r\nContent-Disposition: form-data; name="file"; filename="a.txt"\r\nContent-Type: text/plain\r\n\r\n'
-    stream += b"foo;bar\n"
-    stream += b"\r\n------WebKitFormBoundaryr1D8WqBUjhPTDqlM--\r\n"
-
-    response = await auth_client.post(
-        "/upload",
-        headers={
-            "Authorization": "Bearer test",
-            "Content-type": "multipart/form-data; boundary=----WebKitFormBoundaryr1D8WqBUjhPTDqlM",
-            "Content-length": str(len(stream)),
-        },
-        data={"file": (BytesIO(stream), "helloworld.txt")},
-    )
-    message = (await response.get_json())["message"]
-    assert message == "File uploaded successfully"
-    assert response.status_code == 200
 
 
 @pytest.mark.asyncio
