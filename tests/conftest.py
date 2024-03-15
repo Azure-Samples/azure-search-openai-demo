@@ -250,6 +250,8 @@ auth_envs = [
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_USE_AUTHENTICATION": "true",
+        "AZURE_USER_STORAGE_ACCOUNT": "test-user-storage-account",
+        "AZURE_USER_STORAGE_CONTAINER": "test-user-storage-container",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
         "AZURE_SERVER_APP_SECRET": "SECRET",
         "AZURE_CLIENT_APP_ID": "CLIENT_APP",

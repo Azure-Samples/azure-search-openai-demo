@@ -123,8 +123,8 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
             try:
                 user_oid = auth_claims["oid"]
                 user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-                user_directory_client = user_blob_container_client.get_directory_client(user_oid)
-                await user_directory_client.set_access_control(owner=user_oid)
+                user_directory_client: FileSystemClient = user_blob_container_client.get_directory_client(user_oid)
+                # Should we do an additional check on access control here?
                 file_client = user_directory_client.get_file_client(path)
                 blob = await file_client.download_file()
             except ResourceNotFoundError:

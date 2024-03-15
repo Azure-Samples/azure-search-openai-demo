@@ -1,5 +1,6 @@
 import json
 from collections import namedtuple
+from io import BytesIO
 from typing import Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -29,6 +30,9 @@ class MockBlob:
 
     async def readall(self):
         return b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
+
+    async def readinto(self, buffer: BytesIO):
+        buffer.write(b"test")
 
 
 class MockKeyVaultSecret:
