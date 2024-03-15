@@ -2,7 +2,7 @@
 # Enabling optional features
 
 This document covers optional features that can be enabled in the deployed Azure resources.
-You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](/README.md#deploying).
+You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 * [Using GPT-4](#using-gpt-4)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
@@ -36,7 +36,7 @@ To enable integrated vectorization with this sample:
 
 ## Enabling authentication
 
-By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data. If you'd like to automatically setup authentication and user login as part of the `azd up` process, see [this guide](/docs/login_and_acl.md).
+By default, the deployed Azure web app will have no authentication or access restrictions enabled, meaning anyone with routable network access to the web app can chat with your indexed data. If you'd like to automatically setup authentication and user login as part of the `azd up` process, see [this guide](./login_and_acl.md).
 
 Alternatively, you can manually require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
 
@@ -44,7 +44,7 @@ To then limit access to a specific set of users or groups, you can follow the st
 
 ## Enabling login and document level access control
 
-By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](/docs/login_and_acl.md).
+By default, the deployed Azure web app allows users to chat with all your indexed data. You can enable an optional login system using Azure Active Directory to restrict access to indexed data based on the logged in user. Enable the optional login and document level access control system by following [this guide](./login_and_acl.md).
 
 ## Enabling CORS for an alternate frontend
 
@@ -62,7 +62,7 @@ Both these repositories adhere to the same [HTTP protocol for RAG chat apps](htt
 
 ## Using local parsers
 
-If you want to decrease the charges by using local parsers instead of Azure Document Intelligence, you can set environment variables before running the [data ingestion script](/docs/data_ingestion.md). Note that local parsers will generally be not as sophisticated.
+If you want to decrease the charges by using local parsers instead of Azure Document Intelligence, you can set environment variables before running the [data ingestion script](./data_ingestion.md). Note that local parsers will generally be not as sophisticated.
 
 1. Run `azd env set USE_LOCAL_PDF_PARSER true` to use the local PDF parser.
 1. Run `azd env set USE_LOCAL_HTML_PARSER true` to use the local HTML parser.

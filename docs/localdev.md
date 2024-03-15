@@ -1,6 +1,6 @@
 # Local development of Chat App
 
-You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](/README.md#azure-deployment) above.
+You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](../README.md#azure-deployment) above.
 
 1. Run `azd auth login`
 2. Change dir to `app`

@@ -56,7 +56,7 @@ and scale up the maximum/minimum based on load.
 
 * **Authentication**: By default, the deployed app is publicly accessible.
   We recommend restricting access to authenticated users.
-  See [Enabling authentication](/docs/deploy_features.md#enabling-authentication) to learn how to enable authentication.
+  See [Enabling authentication](./deploy_features.md#enabling-authentication) to learn how to enable authentication.
 * **Networking**: We recommend deploying inside a Virtual Network. If the app is only for
   internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
   for firewalls and other forms of protection.
