@@ -1,9 +1,12 @@
+import logging
 from abc import ABC
 from typing import Generator, List
 
 import tiktoken
 
 from .page import Page, SplitPage
+
+logger = logging.getLogger("ingester")
 
 
 class TextSplitter(ABC):
@@ -84,14 +87,13 @@ class SentenceTextSplitter(TextSplitter):
     Class that splits pages into smaller chunks. This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, has_image_embeddings: bool, verbose: bool = False, max_tokens_per_section: int = 500):
+    def __init__(self, has_image_embeddings: bool, max_tokens_per_section: int = 500):
         self.sentence_endings = STANDARD_SENTENCE_ENDINGS + CJK_SENTENCE_ENDINGS
         self.word_breaks = STANDARD_WORD_BREAKS + CJK_WORD_BREAKS
         self.max_section_length = DEFAULT_SECTION_LENGTH
         self.sentence_search_limit = 100
         self.max_tokens_per_section = max_tokens_per_section
         self.section_overlap = self.max_section_length // DEFAULT_OVERLAP_PERCENT
-        self.verbose = verbose
         self.has_image_embeddings = has_image_embeddings
 
     def split_page_by_max_tokens(self, page_num: int, text: str) -> Generator[SplitPage, None, None]:
@@ -125,17 +127,14 @@ class SentenceTextSplitter(TextSplitter):
             else:
                 # Split page in half and call function again
                 # Overlap first and second halves by DEFAULT_OVERLAP_PERCENT%
-                first_half = text[: int(len(text) // (2.0 + (DEFAULT_OVERLAP_PERCENT / 100)))]
-                second_half = text[int(len(text) // (1.0 - (DEFAULT_OVERLAP_PERCENT / 100))) :]
+                middle = int(len(text) // 2)
+                overlap = int(len(text) * (DEFAULT_OVERLAP_PERCENT / 100))
+                first_half = text[: middle + overlap]
+                second_half = text[middle - overlap :]
             yield from self.split_page_by_max_tokens(page_num, first_half)
             yield from self.split_page_by_max_tokens(page_num, second_half)
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
-        # Chunking is disabled when using GPT4V. To be updated in the future.
-        if self.has_image_embeddings:
-            for i, page in enumerate(pages):
-                yield SplitPage(page_num=i, text=page.text)
-
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):
@@ -198,10 +197,9 @@ class SentenceTextSplitter(TextSplitter):
                 # If the section ends with an unclosed table, we need to start the next section with the table.
                 # If table starts inside sentence_search_limit, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
                 # If last table starts inside section_overlap, keep overlapping
-                if self.verbose:
-                    print(
-                        f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}"
-                    )
+                logger.info(
+                    f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}"
+                )
                 start = min(end - self.section_overlap, start + last_table_start)
             else:
                 start = end - self.section_overlap
@@ -216,9 +214,8 @@ class SimpleTextSplitter(TextSplitter):
     This is required because embedding models may not be able to analyze an entire page at once
     """
 
-    def __init__(self, max_object_length: int = 1000, verbose: bool = False):
+    def __init__(self, max_object_length: int = 1000):
         self.max_object_length = max_object_length
-        self.verbose = verbose
 
     def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
         all_text = "".join(page.text for page in pages)

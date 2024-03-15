@@ -47,6 +47,17 @@ def test_file_filename_to_id():
     assert File(empty).filename_to_id() == "file-______pdf-E38395E382A1E382A4E383ABE5908D2E706466"
 
 
+def test_file_filename_to_id_acls():
+    empty = io.BytesIO()
+    empty.name = "foo.pdf"
+    filename_id = File(empty).filename_to_id()
+    filename_id2 = File(empty, acls={"oids": ["A-USER-ID"]}).filename_to_id()
+    filename_id3 = File(empty, acls={"groups": ["A-GROUP-ID"]}).filename_to_id()
+    filename_id4 = File(empty, acls={"oids": ["A-USER-ID"], "groups": ["A-GROUP-ID"]}).filename_to_id()
+    # Assert that all filenames are unique
+    assert len(set([filename_id, filename_id2, filename_id3, filename_id4])) == 4
+
+
 @pytest.mark.asyncio
 async def test_locallistfilestrategy():
     with tempfile.TemporaryDirectory() as tmpdirname:
