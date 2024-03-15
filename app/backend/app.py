@@ -121,9 +121,6 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
         logging.info("Path not found in general Blob container: %s", path)
         if current_app.config[CONFIG_USER_UPLOAD_ENABLED]:
             try:
-                # todo: loading indicator
-                # potentially check ADLS2 after, undecorate
-                # dont think about naming collissions
                 user_oid = auth_claims["oid"]
                 user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
                 user_directory_client = user_blob_container_client.get_directory_client(user_oid)

@@ -30,6 +30,5 @@
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "remote.autoForwardPortsFallback": 0
+    "python.testing.pytestEnabled": true
 }

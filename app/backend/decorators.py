@@ -9,7 +9,7 @@ from core.authentication import AuthError
 from error import error_response
 
 
-def authenticated_path(route_fn: Callable[[str], Any]):
+def authenticated_path(route_fn: Callable[[str, Dict[str, Any]], Any]):
     """
     Decorator for routes that request a specific file that might require access control enforcement
     """
