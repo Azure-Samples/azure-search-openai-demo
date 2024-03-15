@@ -193,7 +193,7 @@ class Approach(ABC):
 
     async def compute_text_embedding(self, q: str):
         embedding = await self.openai_client.embeddings.create(
-            # Azure Open AI takes the deployment name as the model name
+            # Azure OpenAI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
             input=q,
         )
