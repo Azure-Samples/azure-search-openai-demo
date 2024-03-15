@@ -294,7 +294,7 @@ var defaultOpenAiDeployments = [
     model: {
       format: 'OpenAI'
       name: embeddingModelName
-      version: '2'
+      version: embeddingDeploymentVersion
     }
     sku: {
       name: 'Standard'
