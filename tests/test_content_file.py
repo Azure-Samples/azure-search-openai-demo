@@ -98,7 +98,7 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
 
 
 @pytest.mark.asyncio
-async def test_content_file_user_upload(monkeypatch, auth_client, mock_blob_container_client):
+async def test_content_file_useruploaded_found(monkeypatch, auth_client, mock_blob_container_client):
 
     class MockBlobClient:
         async def download_blob(self):
@@ -119,3 +119,23 @@ async def test_content_file_user_upload(monkeypatch, auth_client, mock_blob_cont
     response = await auth_client.get("/content/userdoc.pdf", headers={"Authorization": "Bearer test"})
     assert response.status_code == 200
     assert len(downloaded_files) == 1
+
+
+@pytest.mark.asyncio
+async def test_content_file_useruploaded_notfound(monkeypatch, auth_client, mock_blob_container_client):
+
+    class MockBlobClient:
+        async def download_blob(self):
+            raise ResourceNotFoundError(MockAiohttpClientResponse404("userdoc.pdf", b""))
+
+    monkeypatch.setattr(
+        azure.storage.blob.aio.ContainerClient, "get_blob_client", lambda *args, **kwargs: MockBlobClient()
+    )
+
+    async def mock_download_file(self):
+        raise ResourceNotFoundError(MockAiohttpClientResponse404("userdoc.pdf", b""))
+
+    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "download_file", mock_download_file)
+
+    response = await auth_client.get("/content/userdoc.pdf", headers={"Authorization": "Bearer test"})
+    assert response.status_code == 404
