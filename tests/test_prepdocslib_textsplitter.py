@@ -1,6 +1,7 @@
 import json
 import shutil
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 import tiktoken
@@ -98,6 +99,10 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
+    """
+    Tests all the documents in test-data which includes short stories in different languages and
+    scripts.
+    """
     text_splitter = SentenceTextSplitter(has_image_embeddings=False)
     bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
     pdf_parser = LocalPdfParser()
@@ -165,3 +170,35 @@ an opportunity to discuss your goals and objectives for the upcoming year.
     assert "<table" in split_pages_with_table[0].text
     assert "<table" in split_pages_with_table[1].text
     assert split_pages_with_table[1].text != split_pages_without_table[1].text
+
+
+@pytest.mark.asyncio
+async def test_textsplitter_output_verify(test_doc, tmp_path):
+    """
+    Tests all the documents in test-data but without overlap. Verify that the output equals the input
+    """
+    with patch("scripts.prepdocslib.textsplitter.DEFAULT_OVERLAP_PERCENT", 0.0):
+        text_splitter = SentenceTextSplitter(has_image_embeddings=False)
+        bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
+        pdf_parser = LocalPdfParser()
+
+        shutil.copy(str(test_doc.absolute()), tmp_path)
+
+        list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"))
+        files = list_file_strategy.list()
+        processed = 0
+        async for file in files:
+            pages = [page async for page in pdf_parser.parse(content=file.content)]
+            assert pages
+            sections = [
+                Section(split_page, content=file, category="test category")
+                for split_page in text_splitter.split_pages(pages)
+            ]
+            assert sections
+            processed += 1
+
+            # Verify the merged sections equal the input text
+            original_content = "".join([page.text for page in pages])
+            merged_sections = "".join([section.split_page.text for section in sections])
+            assert merged_sections == original_content
+        assert processed == 1
