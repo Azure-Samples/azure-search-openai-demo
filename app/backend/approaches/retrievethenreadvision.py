@@ -89,8 +89,8 @@ class RetrieveThenReadVisionApproach(Approach):
 
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
-        min_search_score = overrides.get("min_search_score", 0.0)
-        min_reranker_score = overrides.get("min_reranker_score", 0.0)      
+        minimum_search_score = overrides.get("minimum_search_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)      
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = overrides.get("semantic_ranker") and has_text
 
@@ -109,7 +109,7 @@ class RetrieveThenReadVisionApproach(Approach):
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         query_text = q if has_text else None
 
-        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions, min_search_score, min_reranker_score)
+        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions, minimum_search_score, minimum_reranker_score)
 
         image_list: list[ChatCompletionContentPartImageParam] = []
         user_content: list[ChatCompletionContentPartParam] = [{"text": q, "type": "text"}]
