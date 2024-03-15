@@ -291,3 +291,23 @@ def test_ask(page: Page, live_server_url: str):
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+
+def test_upload(page: Page, live_server_url: str):
+    # Set up a mock route to the /upload endpoint
+    def handle(route: Route):
+        # Read the JSON from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_upload_rtr_hybrid/client0/result.json")
+        json = f.read()
+        f.close()
+        route.fulfill(body=json, status=200)
+
+    page.route("*/**/upload", handle)
+    page.goto(live_server_url)
+
+    # Upload a file
+    page.get_by_role("button", name="Manage file uploads").click()
+    page.locator('input[type="file"]').click()
+    page.locator('input[type="file"]').set_input_files(
+        "(Poster) Online visualization of recursive Python functions (1).pdf"
+    )
