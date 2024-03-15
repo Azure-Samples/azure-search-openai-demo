@@ -20,9 +20,7 @@ In order to ingest a document format, we need a tool that can turn it into text.
 | ------ | ------------------------------------ | ------------------------ |
 | PDF    | Yes (DI or local with PyPDF)         | Yes                      |
 | HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
-| DOCX   | Yes (DI)                             | Yes                      |
-| PPTX   | Yes (DI)                             | Yes                      |
-| XLSX   | Yes (DI)                             | Yes                      |
+| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
 | Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
 | TXT    | Yes (Local)                          | Yes                      |
 | JSON   | Yes (Local)                          | Yes                      |
