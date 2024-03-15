@@ -1,19 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMsal } from "@azure/msal-react";
 import { Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
+import { isLoggedIn, requireAccessControl } from "../../authConfig";
 
 import styles from "./QuestionInput.module.css";
 
 interface Props {
     onSend: (question: string) => void;
     disabled: boolean;
+    initQuestion?: string;
     placeholder?: string;
     clearOnSend?: boolean;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Props) => {
+export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion }: Props) => {
     const [question, setQuestion] = useState<string>("");
+
+    useEffect(() => {
+        initQuestion && setQuestion(initQuestion);
+    }, [initQuestion]);
 
     const sendQuestion = () => {
         if (disabled || !question.trim()) {
@@ -42,12 +49,19 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend }: Pr
         }
     };
 
-    const sendQuestionDisabled = disabled || !question.trim();
+    const { instance } = useMsal();
+    const disableRequiredAccessControl = requireAccessControl && !isLoggedIn(instance);
+    const sendQuestionDisabled = disabled || !question.trim() || disableRequiredAccessControl;
+
+    if (disableRequiredAccessControl) {
+        placeholder = "Please login to continue...";
+    }
 
     return (
         <Stack horizontal className={styles.questionInputContainer}>
             <TextField
                 className={styles.questionInputTextArea}
+                disabled={disableRequiredAccessControl}
                 placeholder={placeholder}
                 multiline
                 resizable={false}

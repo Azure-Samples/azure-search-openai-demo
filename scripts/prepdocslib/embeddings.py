@@ -1,11 +1,13 @@
 import time
 from abc import ABC
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
+from urllib.parse import urljoin
 
-import openai
+import aiohttp
 import tiktoken
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError
 from tenacity import (
     AsyncRetrying,
     retry_if_exception_type,
@@ -37,7 +39,7 @@ class OpenAIEmbeddings(ABC):
         self.disable_batch = disable_batch
         self.verbose = verbose
 
-    async def create_embedding_arguments(self) -> dict[str, Any]:
+    async def create_client(self) -> AsyncOpenAI:
         raise NotImplementedError
 
     def before_retry_sleep(self, retry_state):
@@ -82,34 +84,34 @@ class OpenAIEmbeddings(ABC):
     async def create_embedding_batch(self, texts: List[str]) -> List[List[float]]:
         batches = self.split_text_into_batches(texts)
         embeddings = []
+        client = await self.create_client()
         for batch in batches:
             async for attempt in AsyncRetrying(
-                retry=retry_if_exception_type(openai.error.RateLimitError),
+                retry=retry_if_exception_type(RateLimitError),
                 wait=wait_random_exponential(min=15, max=60),
                 stop=stop_after_attempt(15),
                 before_sleep=self.before_retry_sleep,
             ):
                 with attempt:
-                    emb_args = await self.create_embedding_arguments()
-                    emb_response = await openai.Embedding.acreate(**emb_args, input=batch.texts)
-                    embeddings.extend([data["embedding"] for data in emb_response["data"]])
+                    emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=batch.texts)
+                    embeddings.extend([data.embedding for data in emb_response.data])
                     if self.verbose:
                         print(f"Batch Completed. Batch size  {len(batch.texts)} Token count {batch.token_length}")
 
         return embeddings
 
     async def create_embedding_single(self, text: str) -> List[float]:
+        client = await self.create_client()
         async for attempt in AsyncRetrying(
-            retry=retry_if_exception_type(openai.error.RateLimitError),
+            retry=retry_if_exception_type(RateLimitError),
             wait=wait_random_exponential(min=15, max=60),
             stop=stop_after_attempt(15),
             before_sleep=self.before_retry_sleep,
         ):
             with attempt:
-                emb_args = await self.create_embedding_arguments()
-                emb_response = await openai.Embedding.acreate(**emb_args, input=text)
+                emb_response = await client.embeddings.create(model=self.open_ai_model_name, input=text)
 
-        return emb_response["data"][0]["embedding"]
+        return emb_response.data[0].embedding
 
     async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
         if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
@@ -139,18 +141,13 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.credential = credential
         self.cached_token: Optional[AccessToken] = None
 
-    async def create_embedding_arguments(self) -> dict[str, Any]:
-        return {
-            "model": self.open_ai_model_name,
-            "deployment_id": self.open_ai_deployment,
-            "api_type": self.get_api_type(),
-            "api_key": await self.wrap_credential(),
-            "api_version": "2023-05-15",
-            "api_base": f"https://{self.open_ai_service}.openai.azure.com",
-        }
-
-    def get_api_type(self) -> str:
-        return "azure_ad" if isinstance(self.credential, AsyncTokenCredential) else "azure"
+    async def create_client(self) -> AsyncOpenAI:
+        return AsyncAzureOpenAI(
+            azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
+            azure_deployment=self.open_ai_deployment,
+            api_key=await self.wrap_credential(),
+            api_version="2023-05-15",
+        )
 
     async def wrap_credential(self) -> str:
         if isinstance(self.credential, AzureKeyCredential):
@@ -162,7 +159,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
 
             return self.cached_token.token
 
-        raise Exception("Invalid credential type")
+        raise TypeError("Invalid credential type")
 
 
 class OpenAIEmbeddingService(OpenAIEmbeddings):
@@ -183,10 +180,42 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
         self.credential = credential
         self.organization = organization
 
-    async def create_embedding_arguments(self) -> dict[str, Any]:
-        return {
-            "model": self.open_ai_model_name,
-            "api_key": self.credential,
-            "api_type": "openai",
-            "organization": self.organization,
-        }
+    async def create_client(self) -> AsyncOpenAI:
+        return AsyncOpenAI(api_key=self.credential, organization=self.organization)
+
+
+class ImageEmbeddings:
+    """
+    Class for using image embeddings from Azure AI Vision
+    To learn more, please visit https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-image-api
+    """
+
+    def __init__(self, credential: str, endpoint: str, verbose: bool = False):
+        self.credential = credential
+        self.endpoint = endpoint
+        self.verbose = verbose
+
+    async def create_embeddings(self, blob_urls: List[str]) -> List[List[float]]:
+        headers = {"Ocp-Apim-Subscription-Key": self.credential}
+        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
+        endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
+        embeddings: List[List[float]] = []
+        async with aiohttp.ClientSession(headers=headers) as session:
+            for blob_url in blob_urls:
+                async for attempt in AsyncRetrying(
+                    retry=retry_if_exception_type(Exception),
+                    wait=wait_random_exponential(min=15, max=60),
+                    stop=stop_after_attempt(15),
+                    before_sleep=self.before_retry_sleep,
+                ):
+                    with attempt:
+                        body = {"url": blob_url}
+                        async with session.post(url=endpoint, params=params, json=body) as resp:
+                            resp_json = await resp.json()
+                            embeddings.append(resp_json["vector"])
+
+        return embeddings
+
+    def before_retry_sleep(self, retry_state):
+        if self.verbose:
+            print("Rate limited on the Vision embeddings API, sleeping before retrying...")

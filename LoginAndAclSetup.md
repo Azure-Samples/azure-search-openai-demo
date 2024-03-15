@@ -4,6 +4,7 @@
 
 - [Requirements](#requirements)
 - [Setting up Azure AD Apps](#setting-up-azure-ad-apps)
+  - [Automatic Setup](#automatic-setup)
   - [Manual Setup](#manual-setup)
     - [Server App](#server-app)
     - [Client App](#client-app)
@@ -15,6 +16,7 @@
   - [Azure Data Lake Storage Gen2 Prep Docs](#azure-data-lake-storage-gen2-prep-docs)
   - [Manually managing Document Level Access Control](#manually-managing-document-level-access-control)
 - [Environment Variables Reference](#environment-variables-reference)
+  - [Authentication Behavior by Environment](#authentication-behavior-by-environment)
 
 This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Azure Active Directory (Azure AD) groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
@@ -30,6 +32,16 @@ This guide demonstrates how to add an optional login and document level access c
 
 Two Azure AD apps must be registered in order to make the optional login and document level access control system work correctly. One app is for the client UI. The client UI is implemented as a [single page application](https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration). The other app is for the API server. The API server uses a [confidential client](https://learn.microsoft.com/azure/active-directory/develop/msal-client-applications) to call the [Microsoft Graph API](https://learn.microsoft.com/graph/use-the-api).
 
+### Automatic Setup
+
+The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
+
+1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
+1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
+1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`.
+1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
+2. Run `azd up` to deploy the app.
+
 ### Manual Setup
 
 The following instructions explain how to setup the two apps using the Azure Portal.
@@ -40,7 +52,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Select the Azure AD Service.
 * In the left hand menu, select **Application Registrations**.
 * Select **New Registration**.
-  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo API`.
+  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Chat API`.
   * Under **Supported account types**, select **Accounts in this organizational directory only**.
 * Select **Register** to create the application
 * In the app's registration screen, find the **Application (client) ID**.
@@ -48,7 +60,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Azure Active Directory (Azure AD) supports three types of credentials to authenticate an app using the [client credentials](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow): passwords (app secrets), certificates, and federated identity credentials. For a higher level of security, either [certificates](https://learn.microsoft.com/azure/active-directory/develop/howto-create-self-signed-certificate) or federated identity credentials are recommended. This sample currently uses an app secret for ease of provisioning.
 * Select **Certificates & secrets** in the left hand menu.
 * In the **Client secrets** section, select **New client secret**.
-  * Type a description, for example `Azure Search OpenAI Demo Key`.
+  * Type a description, for example `Azure Search OpenAI Chat Key`.
   * Select one of the available key durations.
   * The generated key value will be displayed after you select **Add**.
   * Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
@@ -64,10 +76,10 @@ The following instructions explain how to setup the two apps using the Azure Por
   * Fill in the values as indicated:
     * For **Scope name**, use **access_as_user**.
     * For **Who can consent?**, select **Admins and users**.
-    * For **Admin consent display name**, type **Access Azure Search OpenAI Demo API**.
-    * For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Demo API as the signed-in user.**.
-    * For **User consent display name**, type **Access Azure Search OpenAI Demo API**.
-    * For **User consent description**, type **Allow the app to access Azure Search OpenAI Demo API on your behalf**.
+    * For **Admin consent display name**, type **Access Azure Search OpenAI Chat API**.
+    * For **Admin consent description**, type **Allows the app to access Azure Search OpenAI Chat API as the signed-in user.**.
+    * For **User consent display name**, type **Access Azure Search OpenAI Chat API**.
+    * For **User consent description**, type **Allow the app to access Azure Search OpenAI Chat API on your behalf**.
     * Leave **State** set to **Enabled**.
     * Select **Add scope** at the bottom to save the scope.
 * (Optional) Enable group claims. Include which Azure AD groups the user is part of as part of the login in the [optional claims](https://learn.microsoft.com/azure/active-directory/develop/optional-claims). The groups are used for [optional security filtering](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) in the search results.
@@ -83,7 +95,7 @@ The following instructions explain how to setup the two apps using the Azure Por
 * Select the Azure AD Service.
 * In the left hand menu, select **Application Registrations**.
 * Select **New Registration**.
-  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Demo Web App`.
+  * In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Chat Web App`.
   * Under **Supported account types**, select **Accounts in this organizational directory only**.
   * Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
     * If you are running the sample locally, use `http://localhost:50505/redirect`.
@@ -97,7 +109,7 @@ The following instructions explain how to setup the two apps using the Azure Por
   * Select **Save**
 * In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [On Behalf Of Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow#protocol-diagram) to work.
   * Select **Add a permission**, and then **My APIs**.
-  * In the list of applications, select your server application **Azure Search OpenAI Demo API**
+  * In the list of applications, select your server application **Azure Search OpenAI Chat API**
   * Ensure **Delegated permissions** is selected.
   * In the **Select permissions** section, select the **access_as_user** permission
   * Select **Add permissions**.
@@ -166,26 +178,42 @@ Manually enable document level access control on a search index and manually set
 Run `azd up` or use `azd env set` to manually set `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` environment variables prior to running the script.
 
 The script supports the following commands. Note that the syntax is the same regardless of whether [manageacl.ps1](./scripts/manageacl.ps1) or [manageacl.sh](./scripts/manageacl.sh) is used.
-* `./scripts/manageacls.ps1 --enable-acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index. Does nothing if these fields already exist.
-  * Example usage: `./scripts/manageacls.ps1 --enable-acls`
-* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action view`: Prints access control values associated with either User IDs or Group IDs for a specific document.
-  * Example to view all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action view`.
-* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for a specific document.
-  * Example to add a Group ID to the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
-* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
-  * Example to remove all Group IDs from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action remove_all`.
-* `./scripts/manageacls.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
-  * Example to remove a specific User ID from the Benefit_Options PDF: `./scripts/manageacls.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+* `./scripts/manageacl.ps1 --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index. Does nothing if these fields already exist.
+  * Example usage: `../scripts/manageacl.ps1 --acl-action enable_acls`
+* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action view`: Prints access control values associated with either User IDs or Group IDs for a specific document.
+  * Example to view all Group IDs from the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action view`.
+* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for a specific document.
+  * Example to add a Group ID to the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
+  * Example to remove all Group IDs from the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action remove_all`.
+* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
+  * Example to remove a specific User ID from the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
 
 ## Environment Variables Reference
 
 The following environment variables are used to setup the optional login and document level access control:
 
 * `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
+* `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Azure AD based login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
 * `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
-* `AZURE_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. This is set automatically by `azd up`.
+* `AZURE_AUTH_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-find-tenant) associated with the Azure AD used for login and document level access control. Defaults to `AZURE_TENANT_ID` if not defined.
 * `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 * `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [setup](#azure-data-lake-storage-gen2-setup) and [prep docs](#azure-data-lake-storage-gen2-prep-docs) scripts.
 * `AZURE_ADLS_GEN2_STORAGE_FILESYSTEM_PATH`: (Optional) Name of existing path in a [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Only used with the optional Data Lake Storage Gen2 [prep docs](#azure-data-lake-storage-gen2-prep-docs) script.
+
+### Authentication behavior by environment
+
+This application uses an in-memory token cache. User sessions are only available in memory while the application is running. When the application server is restarted, all users will need to log-in again.
+
+The following table describes the impact of the `AZURE_USE_AUTHENTICATION` and `AZURE_ENFORCE_ACCESS_CONTROL` variables depending on the environment you are deploying the application in:
+
+| AZURE_USE_AUTHENTICATION | AZURE_ENFORCE_ACCESS_CONTROL | Environment | Default Behavior |
+|-|-|-|-|
+| True | False | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
+| True | True | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User must use access control |
+| True | False | Local or Codespaces | Do not use integrated auth <br /> Can use app without login <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
+| True | True | Local or Codespaces | Do not use integrated auth <br /> Cannot use app without login <br /> Behavior is chat box is greyed out with default “Please login message” <br /> User must use login button to make chat box usable <br /> User must use access control when logged in |
+| False | False | All | No login or access control |
+| False | True | All | Invalid setting |

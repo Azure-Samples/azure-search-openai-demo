@@ -1,4 +1,13 @@
 import unicodedata
+from typing import List, Union
+
+from openai.types.chat import (
+    ChatCompletionAssistantMessageParam,
+    ChatCompletionContentPartParam,
+    ChatCompletionMessageParam,
+    ChatCompletionSystemMessageParam,
+    ChatCompletionUserMessageParam,
+)
 
 from .modelhelper import num_tokens_from_messages
 
@@ -16,22 +25,41 @@ class MessageBuilder:
     """
 
     def __init__(self, system_content: str, chatgpt_model: str):
-        self.messages = [{"role": "system", "content": self.normalize_content(system_content)}]
+        self.messages: list[ChatCompletionMessageParam] = [
+            ChatCompletionSystemMessageParam(role="system", content=unicodedata.normalize("NFC", system_content))
+        ]
         self.model = chatgpt_model
 
-    def insert_message(self, role: str, content: str, index: int = 1):
+    def insert_message(self, role: str, content: Union[str, List[ChatCompletionContentPartParam]], index: int = 1):
         """
         Inserts a message into the conversation at the specified index,
         or at index 1 (after system message) if no index is specified.
         Args:
-            role (str): The role of the message sender (either "user" or "system").
-            content (str): The content of the message.
+            role (str): The role of the message sender (either "user", "system", or "assistant").
+            content (str | List[ChatCompletionContentPartParam]): The content of the message.
             index (int): The index at which to insert the message.
         """
-        self.messages.insert(index, {"role": role, "content": self.normalize_content(content)})
+        message: ChatCompletionMessageParam
+        if role == "user":
+            message = ChatCompletionUserMessageParam(role="user", content=self.normalize_content(content))
+        elif role == "system" and isinstance(content, str):
+            message = ChatCompletionSystemMessageParam(role="system", content=unicodedata.normalize("NFC", content))
+        elif role == "assistant" and isinstance(content, str):
+            message = ChatCompletionAssistantMessageParam(
+                role="assistant", content=unicodedata.normalize("NFC", content)
+            )
+        else:
+            raise ValueError(f"Invalid role: {role}")
+        self.messages.insert(index, message)
 
     def count_tokens_for_message(self, message: dict[str, str]):
         return num_tokens_from_messages(message, self.model)
 
-    def normalize_content(self, content: str):
-        return unicodedata.normalize("NFC", content)
+    def normalize_content(self, content: Union[str, List[ChatCompletionContentPartParam]]):
+        if isinstance(content, str):
+            return unicodedata.normalize("NFC", content)
+        elif isinstance(content, list):
+            for part in content:
+                if "image_url" not in part:
+                    part["text"] = unicodedata.normalize("NFC", part["text"])
+            return content

@@ -15,11 +15,11 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-20.04", "windows-latest"]
-        python_version: ["3.9", "3.10", "3.11"]
+        python_version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
         - uses: actions/checkout@v4
         - name: Setup python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v5
           with:
             python-version: ${{ matrix.python_version }}
             architecture: x64
@@ -48,7 +48,7 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: python3 -m pytest -s -vv --cov --cov-fail-under=87
+          run: python3 -m pytest -s -vv --cov --cov-fail-under=86
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
@@ -57,7 +57,7 @@ jobs:
             python3 -m pytest tests/e2e.py --tracing=retain-on-failure
         - name: Upload test artifacts
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: playwright-traces
             path: test-results

@@ -1,9 +1,8 @@
 metadata description = 'Creates an Application Insights instance based on an existing Log Analytics workspace.'
 param name string
-param dashboardName string
+param dashboardName string = ''
 param location string = resourceGroup().location
 param tags object = {}
-param includeDashboard bool = true
 param logAnalyticsWorkspaceId string
 
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
@@ -17,7 +16,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-module applicationInsightsDashboard 'applicationinsights-dashboard.bicep' = if (includeDashboard) {
+module applicationInsightsDashboard 'applicationinsights-dashboard.bicep' =  if (!empty(dashboardName)) {
   name: 'application-insights-dashboard'
   params: {
     name: dashboardName

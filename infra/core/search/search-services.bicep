@@ -1,4 +1,4 @@
-metadata description = 'Creates an Azure Cognitive Search instance.'
+metadata description = 'Creates an Azure AI Search instance.'
 param name string
 param location string = resourceGroup().location
 param tags object = {}
@@ -42,7 +42,8 @@ resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   name: name
   location: location
   tags: tags
-  identity: {
+  // The free tier does not support managed identity
+  identity: (sku.name == 'free') ? null : {
     type: 'SystemAssigned'
   }
   properties: {
