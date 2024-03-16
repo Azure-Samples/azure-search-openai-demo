@@ -2,8 +2,15 @@ import json
 
 import pytest
 from openai.types.chat import ChatCompletion
-
+from azure.search.documents.aio import SearchClient
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from .mocks import (
+    MockAsyncSearchResultsIterator
+)
+
+
+async def mock_search(*args, **kwargs):
+    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
 @pytest.fixture
@@ -297,3 +304,31 @@ def test_get_messages_from_history_few_shots(chat_approach):
     assert messages[4]["role"] == "assistant"
     assert messages[5]["role"] == "user"
     assert messages[5]["content"] == user_query_request
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("minimum_search_score,minimum_reranker_score,expected_result_count", [
+    (0, 0, 1),
+    (0, 2, 1),
+    (0.03, 0, 1),
+    (0.03, 2, 1),
+    (1, 0, 0),
+    (0, 4, 0),
+    (1, 4, 0),
+])
+async def test_search_results_filtering_by_scores(monkeypatch, chat_approach, minimum_search_score, minimum_reranker_score, expected_result_count):
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    filtered_results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_semantic_ranker=True,
+        use_semantic_captions=True,
+        minimum_search_score=minimum_search_score,
+        minimum_reranker_score=minimum_reranker_score,
+    )
+
+    assert len(filtered_results) == expected_result_count, f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
