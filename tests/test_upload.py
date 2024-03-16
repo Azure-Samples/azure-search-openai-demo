@@ -1,6 +1,98 @@
-import azure.storage.filedatalake.aio
+from io import BytesIO
+
 import pytest
 from azure.search.documents.aio import SearchClient
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient
+from openai.types.create_embedding_response import (
+    CreateEmbeddingResponse,
+    Embedding,
+    Usage,
+)
+from quart.datastructures import FileStorage
+
+from prepdocslib.embeddings import AzureOpenAIEmbeddingService
+
+from .mocks import MockClient, MockEmbeddingsClient
+
+
+@pytest.mark.asyncio
+async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_client):
+    async def mock_directory_set_access_control(self, *args, **kwargs):
+        assert kwargs.get("owner") == "OID_X"
+        return None
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "set_access_control", mock_directory_set_access_control)
+
+    def mock_directory_get_file_client(self, *args, **kwargs):
+        path = kwargs.get("file")
+        if path in self.files:
+            return self.files[path]
+        self.files[path] = DataLakeFileClient(path)
+        return self.files[path]
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "get_file_client", mock_directory_get_file_client)
+
+    async def mock_upload_file(self, *args, **kwargs):
+        assert kwargs.get("overwrite") is True
+        assert kwargs.get("metadata") == {"UploadedBy": "OID_X"}
+        return None
+
+    monkeypatch.setattr(DataLakeFileClient, "upload_data", mock_upload_file)
+
+    async def mock_create_client(self, *args, **kwargs):
+        # From https://platform.openai.com/docs/api-reference/embeddings/create
+        return MockClient(
+            embeddings_client=MockEmbeddingsClient(
+                create_embedding_response=CreateEmbeddingResponse(
+                    object="list",
+                    data=[
+                        Embedding(
+                            embedding=[
+                                0.0023064255,
+                                -0.009327292,
+                                -0.0028842222,
+                            ],
+                            index=0,
+                            object="embedding",
+                        )
+                    ],
+                    model="text-embedding-ada-002",
+                    usage=Usage(prompt_tokens=8, total_tokens=8),
+                )
+            )
+        )
+
+    documents_uploaded = []
+
+    async def mock_upload_documents(self, documents):
+        documents_uploaded.extend(documents)
+
+    monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
+    monkeypatch.setattr(AzureOpenAIEmbeddingService, "create_client", mock_create_client)
+
+    stream = b'------WebKitFormBoundaryr1D8WqBUjhPTDqlM\r\nContent-Disposition: form-data; name="file"; filename="a.txt"\r\nContent-Type: text/plain\r\n\r\n'
+    stream += b"foo;bar\n"
+    stream += b"\r\n------WebKitFormBoundaryr1D8WqBUjhPTDqlM--\r\n"
+
+    response = await auth_client.post(
+        "/upload",
+        headers={
+            "Authorization": "Bearer test",
+            "Content-type": "multipart/form-data; boundary=----WebKitFormBoundaryr1D8WqBUjhPTDqlM",
+            "Content-length": str(len(stream)),
+        },
+        files={"file": FileStorage(BytesIO(stream), filename="a.txt")},
+    )
+    message = (await response.get_json())["message"]
+    assert message == "File uploaded successfully"
+    assert response.status_code == 200
+    assert len(documents_uploaded) == 1
+    assert documents_uploaded[0]["id"] == "file-a_txt-612E7478747B276F696473273A205B274F49445F58275D7D-page-0"
+    assert documents_uploaded[0]["sourcepage"] == "a.txt"
+    assert documents_uploaded[0]["sourcefile"] == "a.txt"
+    assert documents_uploaded[0]["embedding"] == [0.0023064255, -0.009327292, -0.0028842222]
+    assert documents_uploaded[0]["category"] is None
+    assert documents_uploaded[0]["oids"] == ["OID_X"]
 
 
 @pytest.mark.asyncio
@@ -16,7 +108,7 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
     async def mock_delete_file(self):
         return None
 
-    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "delete_file", mock_delete_file)
+    monkeypatch.setattr(DataLakeFileClient, "delete_file", mock_delete_file)
 
     class AsyncSearchResultsIterator:
         def __init__(self):

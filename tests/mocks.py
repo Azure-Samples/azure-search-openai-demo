@@ -3,6 +3,7 @@ from collections import namedtuple
 from io import BytesIO
 from typing import Optional
 
+import openai.types
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.models import (
     VectorQuery,
@@ -157,6 +158,19 @@ class MockResponse:
 
     async def json(self):
         return json.loads(self.text)
+
+
+class MockEmbeddingsClient:
+    def __init__(self, create_embedding_response: openai.types.CreateEmbeddingResponse):
+        self.create_embedding_response = create_embedding_response
+
+    async def create(self, *args, **kwargs) -> openai.types.CreateEmbeddingResponse:
+        return self.create_embedding_response
+
+
+class MockClient:
+    def __init__(self, embeddings_client):
+        self.embeddings = embeddings_client
 
 
 def mock_computervision_response():

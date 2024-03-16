@@ -14,18 +14,7 @@ from prepdocslib.searchmanager import SearchManager, Section
 from prepdocslib.strategy import SearchInfo
 from prepdocslib.textsplitter import SplitPage
 
-
-class MockEmbeddingsClient:
-    def __init__(self, create_embedding_response: openai.types.CreateEmbeddingResponse):
-        self.create_embedding_response = create_embedding_response
-
-    async def create(self, *args, **kwargs) -> openai.types.CreateEmbeddingResponse:
-        return self.create_embedding_response
-
-
-class MockClient:
-    def __init__(self, embeddings_client):
-        self.embeddings = embeddings_client
+from .mocks import MockClient, MockEmbeddingsClient
 
 
 @pytest.fixture
