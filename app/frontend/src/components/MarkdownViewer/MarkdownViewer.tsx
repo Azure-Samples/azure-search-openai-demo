@@ -12,8 +12,12 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
+    /**
+   * Anchor links are not handled well by 'marked' and result in HTTP 404 errors as the URL they point to does not exist.
+   * This function removes them from the resulted HTML.
+   */
     const removeAnchorLinks = (html: string) => {
-        const ancorLinksRegex =/<a\s+(?:[^>]*?\s+)?href=['"](#[^"']*?)['"][^>]*?>/g
+        const ancorLinksRegex = /<a\s+(?:[^>]*?\s+)?href=['"](#[^"']*?)['"][^>]*?>/g
         return html.replace(ancorLinksRegex, "");
     }
 
