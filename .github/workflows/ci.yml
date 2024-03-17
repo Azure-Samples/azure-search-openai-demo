@@ -1,0 +1,27 @@
+name: Lint and Format
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install azd
+        uses: Azure/setup-azd@v0.1.0
+        with:
+          version: '1.6.1'
+
+      - name: Deploy mh-assistant
+        run: azd up -e mh-assistant-production
