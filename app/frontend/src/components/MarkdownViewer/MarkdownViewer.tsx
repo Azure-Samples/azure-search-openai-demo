@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { marked } from 'marked';
+import { marked } from "marked";
 import styles from "./MarkdownViewer.module.css";
 import { Spinner, SpinnerSize, MessageBar, MessageBarType, Link, IconButton } from "@fluentui/react";
 
@@ -13,13 +13,13 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
     const [error, setError] = useState<Error | null>(null);
 
     /**
-   * Anchor links are not handled well by 'marked' and result in HTTP 404 errors as the URL they point to does not exist.
-   * This function removes them from the resulted HTML.
-   */
+     * Anchor links are not handled well by 'marked' and result in HTTP 404 errors as the URL they point to does not exist.
+     * This function removes them from the resulted HTML.
+     */
     const removeAnchorLinks = (html: string) => {
-        const ancorLinksRegex = /<a\s+(?:[^>]*?\s+)?href=['"](#[^"']*?)['"][^>]*?>/g
+        const ancorLinksRegex = /<a\s+(?:[^>]*?\s+)?href=['"](#[^"']*?)['"][^>]*?>/g;
         return html.replace(ancorLinksRegex, "");
-    }
+    };
 
     useEffect(() => {
         const fetchMarkdown = async () => {
@@ -31,7 +31,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
                 }
 
                 const markdownText = await response.text();
-                const parsedHtml = await marked.parse(markdownText)
+                const parsedHtml = await marked.parse(markdownText);
                 const cleanedHtml = removeAnchorLinks(parsedHtml);
                 setContent(cleanedHtml);
             } catch (error: any) {
@@ -70,9 +70,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
                         href={src}
                         download
                     />
-                    <div
-                        className={`${styles.markdown} ${styles.markdownViewer}`}
-                        dangerouslySetInnerHTML={{ __html: content }} />
+                    <div className={`${styles.markdown} ${styles.markdownViewer}`} dangerouslySetInnerHTML={{ __html: content }} />
                 </div>
             )}
         </div>
