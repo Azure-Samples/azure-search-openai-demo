@@ -17,13 +17,13 @@ from scripts.prepdocslib.textsplitter import (
 
 
 def test_sentencetextsplitter_split_empty_pages():
-    t = SentenceTextSplitter(False, True)
+    t = SentenceTextSplitter(has_image_embeddings=False)
 
     assert list(t.split_pages([])) == []
 
 
 def test_sentencetextsplitter_split_small_pages():
-    t = SentenceTextSplitter(has_image_embeddings=False, verbose=True)
+    t = SentenceTextSplitter(has_image_embeddings=False)
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text="Not a large page")]))
     assert len(split_pages) == 1
@@ -33,12 +33,12 @@ def test_sentencetextsplitter_split_small_pages():
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
-    text_splitter = SentenceTextSplitter(False, True)
-    pdf_parser = LocalPdfParser(verbose=True)
+    text_splitter = SentenceTextSplitter(has_image_embeddings=False)
+    pdf_parser = LocalPdfParser()
     for pdf in Path("data").glob("*.pdf"):
         shutil.copy(str(pdf.absolute()), tmp_path)
 
-    list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"), verbose=True)
+    list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"))
     files = list_file_strategy.list()
     processed = 0
     results = {}
@@ -59,13 +59,13 @@ async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
 
 
 def test_simpletextsplitter_split_empty_pages():
-    t = SimpleTextSplitter(True)
+    t = SimpleTextSplitter()
 
     assert list(t.split_pages([])) == []
 
 
 def test_simpletextsplitter_split_small_pages():
-    t = SimpleTextSplitter(verbose=True)
+    t = SimpleTextSplitter()
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
     assert len(split_pages) == 1
@@ -75,7 +75,7 @@ def test_simpletextsplitter_split_small_pages():
 
 def test_sentencetextsplitter_split_pages():
     max_object_length = 10
-    t = SimpleTextSplitter(max_object_length=max_object_length, verbose=True)
+    t = SimpleTextSplitter(max_object_length=max_object_length)
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
     assert len(split_pages) == 3
@@ -98,13 +98,13 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
-    text_splitter = SentenceTextSplitter(False, True)
+    text_splitter = SentenceTextSplitter(has_image_embeddings=False)
     bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
     pdf_parser = LocalPdfParser()
 
     shutil.copy(str(test_doc.absolute()), tmp_path)
 
-    list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"), verbose=True)
+    list_file_strategy = LocalListFileStrategy(path_pattern=str(tmp_path / "*"))
     files = list_file_strategy.list()
     processed = 0
     async for file in files:
@@ -120,6 +120,7 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
         # Verify the size of the sections
         token_lengths = []
         for section in sections:
+            assert section.split_page.text != ""
             assert len(section.split_page.text) <= (text_splitter.max_section_length * 1.2)
             # Verify the number of tokens is below 500
             token_lengths.append((len(bpe.encode(section.split_page.text)), len(section.split_page.text)))
@@ -132,7 +133,7 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
 
 
 def test_split_tables():
-    t = SentenceTextSplitter(has_image_embeddings=False, verbose=True)
+    t = SentenceTextSplitter(has_image_embeddings=False)
 
     test_text_without_table = """Contoso Electronics is a leader in the aerospace industry, providing advanced electronic
 components for both commercial and military aircraft. We specialize in creating cutting-

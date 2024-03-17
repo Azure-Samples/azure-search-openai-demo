@@ -7,6 +7,7 @@ to production. Here are some things to consider:
 * [Azure resource configuration](#azure-resource-configuration)
 * [Additional security measures](#additional-security-measures)
 * [Load testing](#load-testing)
+* [Evaluation](#evaluation)
 
 ## Azure resource configuration
 
@@ -23,7 +24,7 @@ If the maximum TPM isn't enough for your expected load, you have a few options:
 
 * Use a backoff mechanism to retry the request. This is helpful if you're running into a short-term quota due to bursts of activity but aren't over long-term quota. The [tenacity](https://tenacity.readthedocs.io/en/latest/) library is a good option for this, and this [pull request](https://github.com/Azure-Samples/azure-search-openai-demo/pull/500) shows how to apply it to this app.
 
-* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management following [this blog post](https://www.raffertyuy.com/raztype/azure-openai-load-balancing/) or [this repository](https://github.com/andredewes/apim-aoai-smart-loadbalancing). Another approach is to use [LiteLLM's load balancer](https://docs.litellm.ai/docs/providers/azure#azure-api-load-balancing) with Azure Cache for Redis.
+* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management using [the openai-apim-lb repo](https://github.com/Azure-Samples/openai-apim-lb) or with Azure Container Apps using [the openai-aca-lb repo](https://github.com/Azure-Samples/openai-aca-lb). Another approach is to use [LiteLLM's load balancer](https://docs.litellm.ai/docs/providers/azure#azure-api-load-balancing) with Azure Cache for Redis.
 
 ### Azure Storage
 
@@ -55,7 +56,7 @@ and scale up the maximum/minimum based on load.
 
 * **Authentication**: By default, the deployed app is publicly accessible.
   We recommend restricting access to authenticated users.
-  See [Enabling authentication](../README.md#enabling-authentication) to learn how to enable authentication.
+  See [Enabling authentication](./deploy_features.md#enabling-authentication) to learn how to enable authentication.
 * **Networking**: We recommend deploying inside a Virtual Network. If the app is only for
   internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
   for firewalls and other forms of protection.
@@ -99,3 +100,7 @@ Here's an example loadtest for 50 users and a spawn rate of 1 per second:
 ![Screenshot of Locust charts showing 5 requests per second](images/screenshot_locust.png)
 
 After each test, check the local or App Service logs to see if there are any errors.
+
+## Evaluation
+
+Before you make your chat app available to users, you'll want to rigorously evaluate the answer quality. You can use tools in [the AI RAG Chat evaluator](https://github.com/Azure-Samples/ai-rag-chat-evaluator) repository to run evaluations, review results, and compare answers across runs.
