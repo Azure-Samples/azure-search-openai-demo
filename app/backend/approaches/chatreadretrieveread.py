@@ -127,7 +127,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=query_messages,  # type: ignore
-            # Azure Open AI takes the deployment name as the model name
+            # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=100,  # Setting too low risks malformed JSON, setting too high may affect performance
@@ -215,7 +215,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(
-            # Azure Open AI takes the deployment name as the model name
+            # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature", 0.3),
