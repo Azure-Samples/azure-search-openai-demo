@@ -638,8 +638,8 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   }
 }
 
-// For computer vision access by the backend
-module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+// For computer vision or document intelligence access by the backend
+module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V || useUserUpload) {
   scope: resourceGroup
   name: 'cognitiveservices-role-backend'
   params: {
