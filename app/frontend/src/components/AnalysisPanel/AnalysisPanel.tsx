@@ -6,6 +6,7 @@ import { SupportingContent } from "../SupportingContent";
 import { ChatAppResponse } from "../../api";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 import { ThoughtProcess } from "./ThoughtProcess";
+import { MarkdownViewer } from "../MarkdownViewer";
 import { useMsal } from "@azure/msal-react";
 import { getHeaders } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
@@ -53,6 +54,22 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
         fetchCitation();
     }, []);
 
+    const renderFileViewer = () => {
+        if (!activeCitation) {
+            return null;
+        }
+
+        const fileExtension = activeCitation.split(".").pop()?.toLowerCase();
+        switch (fileExtension) {
+            case "png":
+                return <img src={citation} className={styles.citationImg} alt="Citation Image" />;
+            case "md":
+                return <MarkdownViewer src={activeCitation} />;
+            default:
+                return <iframe title="Citation" src={citation} width="100%" height={citationHeight} />;
+        }
+    };
+
     return (
         <Pivot
             className={className}
@@ -78,11 +95,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText="Citation"
                 headerButtonProps={isDisabledCitationTab ? pivotItemDisabledStyle : undefined}
             >
-                {activeCitation?.endsWith(".png") ? (
-                    <img src={citation} className={styles.citationImg} />
-                ) : (
-                    <iframe title="Citation" src={citation} width="100%" height={citationHeight} />
-                )}
+                {renderFileViewer()}
             </PivotItem>
         </Pivot>
     );
