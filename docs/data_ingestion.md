@@ -2,6 +2,7 @@
 
 This guide provides more details for using the `prepdocs` script to index documents for the Chat App.
 
+- [Supported document formats](#supported-document-formats)
 - [Overview of the manual indexing process](#overview-of-the-manual-indexing-process)
   - [Chunking](#chunking)
   - [Indexing additional documents](#indexing-additional-documents)
@@ -10,6 +11,22 @@ This guide provides more details for using the `prepdocs` script to index docume
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
+
+## Supported document formats
+
+In order to ingest a document format, we need a tool that can turn it into text. By default, use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
+
+| Format | Manual indexing                      | Integrated Vectorization |
+| ------ | ------------------------------------ | ------------------------ |
+| PDF    | Yes (DI or local with PyPDF)         | Yes                      |
+| HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
+| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
+| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
+| TXT    | Yes (Local)                          | Yes                      |
+| JSON   | Yes (Local)                          | Yes                      |
+| CSV    | Yes (Local)                          | Yes                      |
+
+The Blob indexer used by the Integrated Vectorization approach also supports a few [additional formats](https://learn.microsoft.com/azure/search/search-howto-indexing-azure-blob-storage#supported-document-formats).
 
 ## Overview of the manual indexing process
 

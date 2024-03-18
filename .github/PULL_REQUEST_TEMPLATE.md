@@ -37,7 +37,7 @@ check the box below and notify the tutorial author. A Microsoft employee can do 
 
 ## Code quality checklist
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md#submit-pr) for more details.
+See [CONTRIBUTING.md](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/CONTRIBUTING.md#submit-pr) for more details.
 
 - [ ] The current tests all pass (`python -m pytest`).
 - [ ] I added tests that prove my fix is effective or that my feature works
