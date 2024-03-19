@@ -115,7 +115,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         updated_messages = message_builder.messages
         chat_completion = (
             await self.openai_client.chat.completions.create(
-                # Azure Open AI takes the deployment name as the model name
+                # Azure OpenAI takes the deployment name as the model name
                 model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
                 messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
