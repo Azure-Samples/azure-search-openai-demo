@@ -464,10 +464,6 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
     sku: {
       name: storageSkuName
     }
-    deleteRetentionPolicy: {
-      enabled: true
-      days: 2
-    }
     containers: [
       {
         name: userStorageContainerName
