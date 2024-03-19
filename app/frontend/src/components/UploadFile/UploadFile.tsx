@@ -1,15 +1,19 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import styles from "./UploadFile.module.css";
-import { IIconProps, Callout, ActionButton, PrimaryButton, Label, IconButton, Text } from "@fluentui/react";
-import { SimpleAPIResponse, uploadFileApi, deleteUploadedFileApi, listUploadedFilesApi } from "../../api";
+import React, { useState, ChangeEvent } from "react";
+import { Callout, Label, Text } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
+import { Add24Regular, Delete24Regular } from "@fluentui/react-icons";
 import { useMsal } from "@azure/msal-react";
+
+import { SimpleAPIResponse, uploadFileApi, deleteUploadedFileApi, listUploadedFilesApi } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
+import styles from "./UploadFile.module.css";
 
 interface Props {
     className?: string;
+    disabled?: boolean;
 }
 
-export const UploadFile: React.FC<Props> = ({ className }: Props) => {
+export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
     // State variables to manage the component behavior
     const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(false);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -18,8 +22,7 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
     const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
     if (!useLogin) {
-        console.error("This component requires useLogin to be true");
-        return null;
+        throw new Error("The UploadFile component requires useLogin to be true");
     }
 
     const client = useMsal().instance;
@@ -83,15 +86,12 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
         }
     };
 
-    const addIcon: IIconProps = { iconName: "Add" };
-    const Remove: IIconProps = { iconName: "delete" };
-
     return (
         <div className={`${styles.container} ${className ?? ""}`}>
             <div>
-                <ActionButton className={styles.btn_action} id="calloutButton" iconProps={addIcon} allowDisabledFocus onClick={handleButtonClick}>
+                <Button className={styles.btn_action} id="calloutButton" icon={<Add24Regular />} disabled={disabled} onClick={handleButtonClick}>
                     Manage file uploads
-                </ActionButton>
+                </Button>
 
                 {isCalloutVisible && (
                     <Callout
@@ -128,12 +128,11 @@ export const UploadFile: React.FC<Props> = ({ className }: Props) => {
                                 <div key={index} className={styles.list}>
                                     <div className={styles.item}>{filename}</div>
                                     {/* Button to remove a file from the list */}
-                                    <IconButton
+                                    <Button
                                         className={styles.delete}
                                         onClick={() => handleRemoveFile(filename)}
-                                        iconProps={Remove}
+                                        icon={<Delete24Regular />}
                                         title="Remove file"
-                                        ariaLabel="Remove file"
                                     />
                                 </div>
                             );

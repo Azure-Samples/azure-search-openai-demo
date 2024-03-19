@@ -340,11 +340,10 @@ async def setup_clients():
     # Fetch any necessary secrets from Key Vault
     search_key = None
     if AZURE_KEY_VAULT_NAME:
-        key_vault_client = SecretClient(
+        async with SecretClient(
             vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
-        )
-        search_key = SEARCH_SECRET_NAME and (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
-        await key_vault_client.close()
+        ) as key_vault_client:
+            search_key = SEARCH_SECRET_NAME and (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
 
     # Set up clients for AI Search and Storage
     search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
@@ -356,11 +355,10 @@ async def setup_clients():
         credential=search_credential,
     )
 
-    blob_client = BlobServiceClient(
+    async with BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
-    )
-    blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
-    await blob_client.close()
+    ) as blob_client:
+        blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Set up authentication helper
     search_index = None
@@ -383,10 +381,10 @@ async def setup_clients():
 
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
-        user_blob_client = DataLakeServiceClient(
+        async with DataLakeServiceClient(
             account_url=f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net", credential=azure_credential
-        )
-        user_blob_container_client = user_blob_client.get_file_system_client(AZURE_USERSTORAGE_CONTAINER)
+        ) as user_blob_client:
+            user_blob_container_client = user_blob_client.get_file_system_client(AZURE_USERSTORAGE_CONTAINER)
         current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT] = user_blob_container_client
 
         # Set up ingester

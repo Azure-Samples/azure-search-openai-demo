@@ -294,7 +294,39 @@ def test_ask(page: Page, live_server_url: str):
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
 
 
-def test_upload(page: Page, live_server_url: str):
+def test_upload_hidden(page: Page, live_server_url: str):
+
+    def handle_auth_setup(route: Route):
+        with open("tests/snapshots/test_authenticationhelper/test_auth_setup/result.json") as f:
+            auth_setup = json.load(f)
+            route.fulfill(body=json.dumps(auth_setup), status=200)
+
+    page.route("*/**/auth_setup", handle_auth_setup)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": False,
+                    "showVectorOption": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+
+    expect(page).to_have_title("GPT + Enterprise data | Sample")
+
+    expect(page.get_by_role("button", name="Clear chat")).to_be_visible()
+    expect(page.get_by_role("button", name="Manage file uploads")).not_to_be_visible()
+
+
+def test_upload_disabled(page: Page, live_server_url: str):
 
     def handle_auth_setup(route: Route):
         with open("tests/snapshots/test_authenticationhelper/test_auth_setup/result.json") as f:
@@ -318,23 +350,10 @@ def test_upload(page: Page, live_server_url: str):
 
     page.route("*/**/config", handle_config)
 
-    def handle_upload(route: Route):
-        print("Upload was called")
-        route.fulfill(body=json.dumps({"message": "File uploaded successfully"}), status=200)
-
-    page.route("*/**/upload", handle_upload)
-
     page.goto(live_server_url)
 
     expect(page).to_have_title("GPT + Enterprise data | Sample")
 
-    # Upload a file
-    expect(page.get_by_role("button", name="Manage file uploads")).to_be_enabled()
-    page.get_by_role("button", name="Manage file uploads").click()
-    page.locator('input[type="file"]').click()
-    page.locator('input[type="file"]').set_input_files(
-        "(Poster) Online visualization of recursive Python functions (1).pdf"
-    )
-
-    # We can't test farther than this due to the call to get a Token,
-    # we need to determine how to mock that call in E2E tests.
+    expect(page.get_by_role("button", name="Manage file uploads")).to_be_visible()
+    expect(page.get_by_role("button", name="Manage file uploads")).to_be_disabled()
+    # We can't test actual file upload as we don't currently have isLoggedIn(client) mocked out

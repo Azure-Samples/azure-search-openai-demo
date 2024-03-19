@@ -189,7 +189,7 @@ export function Component(): JSX.Element {
         <div className={styles.askContainer}>
             <div className={styles.askTopSection}>
                 <div className={styles.commandsContainer}>
-                    {showUserUpload && <UploadFile className={styles.commandButton} />}
+                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
                     <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 </div>
                 <h1 className={styles.askTitle}>Ask your data</h1>
