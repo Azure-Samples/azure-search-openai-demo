@@ -18,6 +18,7 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
     const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(false);
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [deletionStatus, setDeletionStatus] = useState<{ [filename: string]: "pending" | "error" | "success" }>({});
     const [uploadedFile, setUploadedFile] = useState<SimpleAPIResponse>();
     const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
@@ -37,25 +38,35 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
             if (!idToken) {
                 throw new Error("No authentication token available");
             }
-            listUploadedFilesApi(idToken).then(files => setUploadedFiles(files));
-            setIsLoading(false);
+            listUploadedFiles(idToken);
         } catch (error) {
             console.error(error);
             setIsLoading(false);
         }
     };
 
+    const listUploadedFiles = async (idToken: string) => {
+        listUploadedFilesApi(idToken).then(files => {
+            setIsLoading(false);
+            setDeletionStatus({});
+            setUploadedFiles(files);
+        });
+    };
+
     const handleRemoveFile = async (filename: string) => {
+        setDeletionStatus({ ...deletionStatus, [filename]: "pending" });
+
         try {
             const idToken = await getToken(client);
             if (!idToken) {
                 throw new Error("No authentication token available");
             }
+
             await deleteUploadedFileApi(filename, idToken);
-            const newFiles = uploadedFiles.filter(file => file !== filename);
-            // To discuss: We could also poll the list endpoint here
-            setUploadedFiles(newFiles);
+            setDeletionStatus({ ...deletionStatus, [filename]: "success" });
+            listUploadedFiles(idToken);
         } catch (error) {
+            setDeletionStatus({ ...deletionStatus, [filename]: "error" });
             console.error(error);
         }
     };
@@ -78,8 +89,8 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
             }
             const response: SimpleAPIResponse = await uploadFileApi(formData, idToken);
             setUploadedFile(response);
-            uploadedFiles.push(file.name);
             setIsUploading(false);
+            listUploadedFiles(idToken);
         } catch (error) {
             console.error(error);
             setIsUploading(false);
@@ -89,7 +100,7 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
     return (
         <div className={`${styles.container} ${className ?? ""}`}>
             <div>
-                <Button className={styles.btn_action} id="calloutButton" icon={<Add24Regular />} disabled={disabled} onClick={handleButtonClick}>
+                <Button id="calloutButton" icon={<Add24Regular />} disabled={disabled} onClick={handleButtonClick}>
                     Manage file uploads
                 </Button>
 
@@ -115,10 +126,10 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
                         </form>
 
                         {/* Show a loading message while files are being uploaded */}
-                        {isUploading && <div className={styles.padding8}>{"Uploading files..."}</div>}
-                        {!isUploading && uploadedFile && <div className={styles.padding8}>{uploadedFile.message}</div>}
-                        {/* Display the list of already uploaded */}
+                        {isUploading && <Text>{"Uploading files..."}</Text>}
+                        {!isUploading && uploadedFile && <Text>{uploadedFile.message}</Text>}
 
+                        {/* Display the list of already uploaded */}
                         <h3>Previously uploaded files:</h3>
 
                         {isLoading && <Text>Loading...</Text>}
@@ -129,11 +140,15 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
                                     <div className={styles.item}>{filename}</div>
                                     {/* Button to remove a file from the list */}
                                     <Button
-                                        className={styles.delete}
-                                        onClick={() => handleRemoveFile(filename)}
                                         icon={<Delete24Regular />}
-                                        title="Remove file"
-                                    />
+                                        onClick={() => handleRemoveFile(filename)}
+                                        disabled={deletionStatus[filename] === "pending" || deletionStatus[filename] === "success"}
+                                    >
+                                        {!deletionStatus[filename] && "Delete file"}
+                                        {deletionStatus[filename] == "pending" && "Deleting file..."}
+                                        {deletionStatus[filename] == "error" && "Error deleting."}
+                                        {deletionStatus[filename] == "success" && "File deleted"}
+                                    </Button>
                                 </div>
                             );
                         })}

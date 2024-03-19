@@ -254,33 +254,36 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
     ]
 
 
+class AsyncSearchResultsIterator:
+    def __init__(self, results):
+        self.results = results
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if len(self.results) == 0:
+            raise StopAsyncIteration
+        return self.results.pop()
+
+    async def get_count(self):
+        return len(self.results)
+
+
 @pytest.mark.asyncio
 async def test_remove_content(monkeypatch, search_info):
-    class AsyncSearchResultsIterator:
-        def __init__(self):
-            self.results = [
-                {
-                    "@search.score": 1,
-                    "id": "file-foo_pdf-666F6F2E706466-page-0",
-                    "content": "test content",
-                    "category": "test",
-                    "sourcepage": "foo.pdf#page=1",
-                    "sourcefile": "foo.pdf",
-                }
-            ]
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            if len(self.results) == 0:
-                raise StopAsyncIteration
-            return self.results.pop()
-
-        async def get_count(self):
-            return len(self.results)
-
-    search_results = AsyncSearchResultsIterator()
+    search_results = AsyncSearchResultsIterator(
+        [
+            {
+                "@search.score": 1,
+                "id": "file-foo_pdf-666F6F2E706466-page-0",
+                "content": "test content",
+                "category": "test",
+                "sourcepage": "foo.pdf#page=1",
+                "sourcefile": "foo.pdf",
+            }
+        ]
+    )
 
     searched_filters = []
 
@@ -299,10 +302,7 @@ async def test_remove_content(monkeypatch, search_info):
 
     monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
 
-    manager = SearchManager(
-        search_info,
-    )
-
+    manager = SearchManager(search_info)
     await manager.remove_content("foo.pdf")
 
     assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"
@@ -312,51 +312,61 @@ async def test_remove_content(monkeypatch, search_info):
 
 
 @pytest.mark.asyncio
+async def test_remove_content_no_docs(monkeypatch, search_info):
+    search_results = AsyncSearchResultsIterator([])
+
+    async def mock_search(self, *args, **kwargs):
+        return search_results
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    deleted_calls = []
+
+    async def mock_delete_documents(self, documents):
+        deleted_calls.append(documents)
+        return documents
+
+    monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
+
+    manager = SearchManager(search_info)
+    await manager.remove_content("foobar.pdf")
+
+    assert len(deleted_calls) == 0, "It should have made zero calls to delete_documents"
+
+
+@pytest.mark.asyncio
 async def test_remove_content_only_oid(monkeypatch, search_info):
-    class AsyncSearchResultsIterator:
-        def __init__(self):
-            self.results = [
-                {
-                    "@search.score": 1,
-                    "id": "file-foo_pdf-666",
-                    "content": "test content",
-                    "category": "test",
-                    "sourcepage": "foo.pdf#page=1",
-                    "sourcefile": "foo.pdf",
-                    "oids": [],
-                },
-                {
-                    "@search.score": 1,
-                    "id": "file-foo_pdf-333",
-                    "content": "test content",
-                    "category": "test",
-                    "sourcepage": "foo.pdf#page=1",
-                    "sourcefile": "foo.pdf",
-                    "oids": ["A-USER-ID", "B-USER-ID"],
-                },
-                {
-                    "@search.score": 1,
-                    "id": "file-foo_pdf-222",
-                    "content": "test content",
-                    "category": "test",
-                    "sourcepage": "foo.pdf#page=1",
-                    "sourcefile": "foo.pdf",
-                    "oids": ["A-USER-ID"],
-                },
-            ]
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            if len(self.results) == 0:
-                raise StopAsyncIteration
-            return self.results.pop()
-
-        async def get_count(self):
-            return len(self.results)
-
-    search_results = AsyncSearchResultsIterator()
+    search_results = AsyncSearchResultsIterator(
+        [
+            {
+                "@search.score": 1,
+                "id": "file-foo_pdf-666",
+                "content": "test content",
+                "category": "test",
+                "sourcepage": "foo.pdf#page=1",
+                "sourcefile": "foo.pdf",
+                "oids": [],
+            },
+            {
+                "@search.score": 1,
+                "id": "file-foo_pdf-333",
+                "content": "test content",
+                "category": "test",
+                "sourcepage": "foo.pdf#page=1",
+                "sourcefile": "foo.pdf",
+                "oids": ["A-USER-ID", "B-USER-ID"],
+            },
+            {
+                "@search.score": 1,
+                "id": "file-foo_pdf-222",
+                "content": "test content",
+                "category": "test",
+                "sourcepage": "foo.pdf#page=1",
+                "sourcefile": "foo.pdf",
+                "oids": ["A-USER-ID"],
+            },
+        ]
+    )
 
     searched_filters = []
 
@@ -375,10 +385,7 @@ async def test_remove_content_only_oid(monkeypatch, search_info):
 
     monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
 
-    manager = SearchManager(
-        search_info,
-    )
-
+    manager = SearchManager(search_info)
     await manager.remove_content("foo.pdf", only_oid="A-USER-ID")
 
     assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"

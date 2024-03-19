@@ -234,6 +234,8 @@ class SearchManager:
                     # If only_oid is set, only remove documents that have only this oid
                     if not only_oid or document.get("oids") == [only_oid]:
                         documents_to_remove.append({"id": document["id"]})
+                if len(documents_to_remove) == 0:
+                    continue
                 removed_docs = await search_client.delete_documents(documents_to_remove)
                 logger.info("Removed %d sections from index", len(removed_docs))
                 # It can take a few seconds for search results to reflect changes, so wait a bit
