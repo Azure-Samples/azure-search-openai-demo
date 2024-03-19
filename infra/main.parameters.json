@@ -72,7 +72,7 @@
       "value": "${AZURE_APP_SERVICE_SKU=B1}"
     },
     "chatGptModelName":{
-      "value": "${AZURE_OPENAI_CHATGPT_MODEL_NAME}"
+      "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
     },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"

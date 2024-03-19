@@ -262,7 +262,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
       AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
-      AZURE_OPENAI_CHATGPT_MODEL_NAME: chatGpt.modelName
+      AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
       AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
@@ -610,7 +610,7 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embedding.modelName
-output AZURE_OPENAI_CHATGPT_MODEL_NAME string = chatGpt.modelName
+output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
