@@ -450,7 +450,6 @@ module storage 'core/storage/storage-account.bicep' = {
   }
 }
 
-
 module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
   name: 'user-storage'
   scope: storageResourceGroup
@@ -599,7 +598,6 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
   }
 }
 
-
 module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
@@ -630,6 +628,17 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Used to add/remove documents from index (required for user upload feature)
+module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload && !useSearchServiceKey) {
+  scope: searchServiceResourceGroup
+  name: 'search-contrib-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
     principalType: 'ServicePrincipal'
   }
 }
