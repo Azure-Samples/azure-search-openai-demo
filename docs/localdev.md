@@ -4,7 +4,8 @@ You can only run locally **after** having successfully run the `azd up` command.
 
 1. Run `azd auth login`
 2. Change dir to `app`
-3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
+3. Run `azd env new`.
+4. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
 
 ## Hot reloading frontend and backend files
 
