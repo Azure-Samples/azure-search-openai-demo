@@ -88,7 +88,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
-        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)      
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
 
@@ -136,7 +136,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         if not has_text:
             query_text = None
 
-        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions, minimum_search_score, minimum_reranker_score)
+        results = await self.search(
+            top,
+            query_text,
+            filter,
+            vectors,
+            use_semantic_ranker,
+            use_semantic_captions,
+            minimum_search_score,
+            minimum_reranker_score,
+        )
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
         content = "\n".join(sources_content)
 
