@@ -33,6 +33,8 @@ const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
+    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -147,6 +149,8 @@ const Chat = () => {
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         temperature: temperature,
+                        minimum_reranker_score: minimumRerankerScore,
+                        minimum_search_score: minimumSearchScore,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -210,6 +214,14 @@ const Chat = () => {
         event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
     ) => {
         setTemperature(newValue);
+    };
+
+    const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setMinimumSearchScore(parseFloat(newValue || "0"));
+    };
+
+    const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setMinimumRerankerScore(parseFloat(newValue || "0"));
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -393,6 +405,25 @@ const Chat = () => {
                         onChange={onTemperatureChange}
                         showValue
                         snapToStep
+                    />
+
+                    <SpinButton
+                        className={styles.chatSettingsSeparator}
+                        label="Minimum search score"
+                        min={0}
+                        step={0.01}
+                        defaultValue={minimumSearchScore.toString()}
+                        onChange={onMinimumSearchScoreChange}
+                    />
+
+                    <SpinButton
+                        className={styles.chatSettingsSeparator}
+                        label="Minimum reranker score"
+                        min={1}
+                        max={4}
+                        step={0.1}
+                        defaultValue={minimumRerankerScore.toString()}
+                        onChange={onMinimumRerankerScoreChange}
                     />
 
                     <SpinButton
