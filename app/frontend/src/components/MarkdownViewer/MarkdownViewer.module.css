@@ -1,0 +1,49 @@
+.downloadButton {
+    position: relative;
+    float: right;
+}
+
+.markdownViewer {
+    border-radius: 8px;
+    box-shadow:
+        #0000000d 0 0 0 1px,
+        #0000001a 0 2px 3px;
+    background-color: white;
+    margin: 20px 0;
+}
+
+.loading {
+    padding: 100px;
+    height: 100vh;
+    background-color: white;
+}
+
+.error {
+    height: 100vh;
+    background-color: white;
+}
+
+.markdown {
+    padding: 30px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #f6f8fa;
+}
+
+code {
+    display: block;
+    font-family: monospace;
+    padding: 10px;
+    background-color: #f6f8fa;
+}

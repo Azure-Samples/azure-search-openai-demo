@@ -1,6 +1,6 @@
 # Deploying with the Azure Developer CLI
 
-This guide includes advanced topics that are not necessary for a basic deployment. If you are new to the project, please consult the main [README](../README.md#deploying-from-scratch) for steps on deploying the project.
+This guide includes advanced topics that are not necessary for a basic deployment. If you are new to the project, please consult the main [README](../README.md#deploying) for steps on deploying the project.
 
 [📺 Watch: Deployment of your chat app](https://www.youtube.com/watch?v=mDFZdmn7nhk)
 
