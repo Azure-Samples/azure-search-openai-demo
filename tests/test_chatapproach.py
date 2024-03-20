@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from openai.types.chat import ChatCompletion
 
@@ -320,8 +321,22 @@ def test_get_messages_from_history_few_shots(chat_approach):
     ],
 )
 async def test_search_results_filtering_by_scores(
-    monkeypatch, chat_approach, minimum_search_score, minimum_reranker_score, expected_result_count
+    monkeypatch, minimum_search_score, minimum_reranker_score, expected_result_count
 ):
+
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model="text-",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+    )
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
