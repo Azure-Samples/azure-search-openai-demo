@@ -15,8 +15,8 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.filedatalake.aio import DataLakeServiceClient, FileSystemClient
+from azure.storage.blob.aio import ContainerClient
+from azure.storage.filedatalake.aio import FileSystemClient
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -114,7 +114,7 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
         path_parts = path.rsplit("#page=", 1)
         path = path_parts[0]
     logging.info("Opening file %s", path)
-    blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    blob_container_client: ContainerClient = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
     except ResourceNotFoundError:
@@ -355,10 +355,9 @@ async def setup_clients():
         credential=search_credential,
     )
 
-    async with BlobServiceClient(
-        account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
-    ) as blob_client:
-        blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+    blob_container_client = ContainerClient(
+        f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", AZURE_STORAGE_CONTAINER, credential=azure_credential
+    )
 
     # Set up authentication helper
     search_index = None
@@ -381,10 +380,11 @@ async def setup_clients():
 
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
-        async with DataLakeServiceClient(
-            account_url=f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net", credential=azure_credential
-        ) as user_blob_client:
-            user_blob_container_client = user_blob_client.get_file_system_client(AZURE_USERSTORAGE_CONTAINER)
+        user_blob_container_client = FileSystemClient(
+            f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net",
+            AZURE_USERSTORAGE_CONTAINER,
+            credential=azure_credential,
+        )
         current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT] = user_blob_container_client
 
         # Set up ingester
