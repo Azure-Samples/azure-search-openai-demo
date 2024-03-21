@@ -30,18 +30,24 @@ filtered_response = BadRequestError(
     ),
 )
 
+contextlength_response = BadRequestError(
+    message="This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages.",
+    body={
+        "message": "This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages.",
+        "code": "context_length_exceeded",
+        "status": 400,
+    },
+    response=Response(400, request=Request(method="get", url="https://foo.bar/"), json={"error": {"code": "429"}}),
+)
 
-def thoughts_contains_text(thoughts, text):
-    found = False
-    for thought in thoughts:
-        description = thought["description"]
-        if isinstance(description, str) and text in description:
-            found = True
-            break
-        elif isinstance(description, list) and any(text in item for item in description):
-            found = True
-            break
-    return found
+
+def thought_contains_text(thought, text):
+    description = thought["description"]
+    if isinstance(description, str) and text in description:
+        return True
+    elif isinstance(description, list) and any(text in item for item in description):
+        return True
+    return False
 
 
 @pytest.mark.asyncio
@@ -112,6 +118,26 @@ async def test_ask_handle_exception_contentsafety(client, monkeypatch, snapshot,
     assert response.status_code == 400
     result = await response.get_json()
     assert "Exception in /ask: The response was filtered" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_handle_exception_contextlength(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.retrievethenread.RetrieveThenReadApproach.run",
+        mock.Mock(side_effect=contextlength_response),
+    )
+
+    response = await client.post(
+        "/ask",
+        json={"messages": [{"content": "Super long message with lots of sources.", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert (
+        "Exception in /ask: This model's maximum context length is 4096 tokens. However, your messages resulted in 5069 tokens. Please reduce the length of the messages."
+        in caplog.text
+    )
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -481,7 +507,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "performance review")
+    assert thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "performance review")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -509,7 +535,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not thoughts_contains_text(result["choices"][0]["context"]["thoughts"], "Is there a dress code?")
+    assert not thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "Is there a dress code?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 

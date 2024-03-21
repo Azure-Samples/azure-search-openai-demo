@@ -49,7 +49,7 @@ def chat_approach(openai_client, mock_confidential_client_success):
         ),
         blob_container_client=None,
         vision_endpoint="endpoint",
-        vision_key="key",
+        vision_token_provider=lambda: "token",
         gpt4v_deployment="gpt-4v",
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",

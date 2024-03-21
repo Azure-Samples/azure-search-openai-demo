@@ -2,20 +2,37 @@
 
 This guide provides more details for using the `prepdocs` script to index documents for the Chat App.
 
+- [Supported document formats](#supported-document-formats)
 - [Overview of the manual indexing process](#overview-of-the-manual-indexing-process)
   - [Chunking](#chunking)
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Overview of Integrated Vectorization](#overview-of-integrated-vectorization)
-  - [Indexing additional documents](#indexing-additional-documents-1)
-  - [Removing documents](#removing-documents-1)
+  - [Indexing of additional documents](#indexing-of-additional-documents)
+  - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
+
+## Supported document formats
+
+In order to ingest a document format, we need a tool that can turn it into text. By default, use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
+
+| Format | Manual indexing                      | Integrated Vectorization |
+| ------ | ------------------------------------ | ------------------------ |
+| PDF    | Yes (DI or local with PyPDF)         | Yes                      |
+| HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
+| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
+| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
+| TXT    | Yes (Local)                          | Yes                      |
+| JSON   | Yes (Local)                          | Yes                      |
+| CSV    | Yes (Local)                          | Yes                      |
+
+The Blob indexer used by the Integrated Vectorization approach also supports a few [additional formats](https://learn.microsoft.com/azure/search/search-howto-indexing-azure-blob-storage#supported-document-formats).
 
 ## Overview of the manual indexing process
 
 The `scripts/prepdocs.py` script is responsible for both uploading and indexing documents. The typical usage is to call it using `scripts/prepdocs.sh` (Mac/Linux) or `scripts/prepdocs.ps1` (Windows), as these scripts will set up a Python virtual environment and pass in the required parameters based on the current `azd` environment. Whenever `azd up` or `azd provision` is run, the script is called automatically.
 
-![Diagram of the indexing process](diagram_prepdocs.png)
+![Diagram of the indexing process](images/diagram_prepdocs.png)
 
 The script uses the following steps to index documents:
 
@@ -50,7 +67,7 @@ You can also remove individual documents by using the `--remove` flag. Open eith
 
 Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in/ba-p/3960809#:~:text=Integrated%20vectorization%20is%20a%20new%20feature%20of%20Azure,pull-indexers%2C%20and%20vectorization%20of%20text%20queries%20through%20vectorizers). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
 
-See [this notebook](https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/azure-search-integrated-vectorization-sample.ipynb) to understand the process of setting up integrated vectorization.
+See [this notebook](https://github.com/Azure/azure-search-vector-samples/blob/main/demo-python/code/integrated-vectorization/azure-search-integrated-vectorization-sample.ipynb) to understand the process of setting up integrated vectorization.
 We have integrated that code into our `prepdocs` script, so you can use it without needing to understand the details.
 
 This feature cannot be used on existing index. You need to create a new index or drop and recreate an existing index.
@@ -64,7 +81,7 @@ To add additional documents to the index, first upload them to your data source 
 Then navigate to the Azure portal, find the index, and run it.
 The Azure AI Search indexer will identify the new documents and ingest them into the index.
 
-### Removing documents
+### Removal of documents
 
 To remove documents from the index, remove them from your data source (Blob storage, by default).
 Then navigate to the Azure portal, find the index, and run it.

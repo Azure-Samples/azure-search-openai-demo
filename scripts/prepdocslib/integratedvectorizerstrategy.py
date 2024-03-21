@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from azure.search.documents.indexes._generated.models import (
@@ -27,6 +28,8 @@ from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
 
+logger = logging.getLogger("ingester")
+
 
 class IntegratedVectorizerStrategy(Strategy):
     """
@@ -37,6 +40,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
+        search_info: SearchInfo,
         embeddings: Optional[AzureOpenAIEmbeddingService],
         subscription_id: str,
         search_service_user_assigned_id: str,
@@ -45,8 +49,8 @@ class IntegratedVectorizerStrategy(Strategy):
         use_acls: bool = False,
         category: Optional[str] = None,
     ):
-        if not embeddings:
-            raise Exception("Expecting AzureOpenAI embedding Service")
+        if not embeddings or not isinstance(embeddings, AzureOpenAIEmbeddingService):
+            raise Exception("Expecting AzureOpenAI embedding service")
 
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -57,6 +61,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
+        self.search_info = search_info
 
     async def create_embedding_skill(self, index_name: str):
         skillset_name = f"{index_name}-skillset"
@@ -114,9 +119,9 @@ class IntegratedVectorizerStrategy(Strategy):
 
         return skillset
 
-    async def setup(self, search_info: SearchInfo):
+    async def setup(self):
         search_manager = SearchManager(
-            search_info=search_info,
+            search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
             use_acls=self.use_acls,
             use_int_vectorization=True,
@@ -130,7 +135,7 @@ class IntegratedVectorizerStrategy(Strategy):
         await search_manager.create_index(
             vectorizers=[
                 AzureOpenAIVectorizer(
-                    name=f"{search_info.index_name}-vectorizer",
+                    name=f"{self.search_info.index_name}-vectorizer",
                     kind="azureOpenAI",
                     azure_open_ai_parameters=AzureOpenAIParameters(
                         resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
@@ -141,10 +146,10 @@ class IntegratedVectorizerStrategy(Strategy):
         )
 
         # create indexer client
-        ds_client = search_info.create_search_indexer_client()
+        ds_client = self.search_info.create_search_indexer_client()
         ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)
         data_source_connection = SearchIndexerDataSourceConnection(
-            name=f"{search_info.index_name}-blob",
+            name=f"{self.search_info.index_name}-blob",
             type="azureblob",
             connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
@@ -152,13 +157,13 @@ class IntegratedVectorizerStrategy(Strategy):
         )
 
         await ds_client.create_or_update_data_source_connection(data_source_connection)
-        print("Search indexer data source connection updated.")
+        logger.info("Search indexer data source connection updated.")
 
-        embedding_skillset = await self.create_embedding_skill(search_info.index_name)
+        embedding_skillset = await self.create_embedding_skill(self.search_info.index_name)
         await ds_client.create_or_update_skillset(embedding_skillset)
         await ds_client.close()
 
-    async def run(self, search_info: SearchInfo):
+    async def run(self):
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
@@ -175,25 +180,25 @@ class IntegratedVectorizerStrategy(Strategy):
             await self.blob_manager.remove_blob()
 
         # Create an indexer
-        indexer_name = f"{search_info.index_name}-indexer"
+        indexer_name = f"{self.search_info.index_name}-indexer"
 
         indexer = SearchIndexer(
             name=indexer_name,
             description="Indexer to index documents and generate embeddings",
-            skillset_name=f"{search_info.index_name}-skillset",
-            target_index_name=search_info.index_name,
-            data_source_name=f"{search_info.index_name}-blob",
+            skillset_name=f"{self.search_info.index_name}-skillset",
+            target_index_name=self.search_info.index_name,
+            data_source_name=f"{self.search_info.index_name}-blob",
             # Map the metadata_storage_name field to the title field in the index to display the PDF title in the search results
             field_mappings=[FieldMapping(source_field_name="metadata_storage_name", target_field_name="title")],
         )
 
-        indexer_client = search_info.create_search_indexer_client()
+        indexer_client = self.search_info.create_search_indexer_client()
         indexer_result = await indexer_client.create_or_update_indexer(indexer)
 
         # Run the indexer
         await indexer_client.run_indexer(indexer_name)
         await indexer_client.close()
 
-        print(
+        logger.info(
             f"Successfully created index, indexer: {indexer_result.name}, and skillset. Please navigate to search service in Azure Portal to view the status of the indexer."
         )

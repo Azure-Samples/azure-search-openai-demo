@@ -15,7 +15,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
  - [Code of Conduct](#coc)
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
- - [Submission Guidelines](#submit)
+ - [Submitting a PR](#submit-pr)
  - [Running Tests](#tests)
  - [Code Style](#style)
 
@@ -80,6 +80,12 @@ Install the pre-commit hooks:
 
 ```
 pre-commit install
+```
+
+Compile the JavaScript:
+
+```
+( cd ./app/frontend ; npm install ; npm run build )
 ```
 
 ## <a name="unit-tests"></a> Running unit tests

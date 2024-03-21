@@ -1,15 +1,17 @@
 import html
+import logging
 from typing import IO, AsyncGenerator, Union
 
-from azure.ai.formrecognizer import DocumentTable
-from azure.ai.formrecognizer.aio import DocumentAnalysisClient
+from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import DocumentTable
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from pypdf import PdfReader
 
 from .page import Page
 from .parser import Parser
-from .strategy import USER_AGENT
+
+logger = logging.getLogger("ingester")
 
 
 class LocalPdfParser(Parser):
@@ -19,6 +21,8 @@ class LocalPdfParser(Parser):
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
+        logger.info("Extracting text from '%s' using local PDF parser (pypdf)", content.name)
+
         reader = PdfReader(content)
         pages = reader.pages
         offset = 0
@@ -30,30 +34,26 @@ class LocalPdfParser(Parser):
 
 class DocumentAnalysisParser(Parser):
     """
-    Concrete parser backed by Azure AI Document Intelligence that can parse PDFS into pages
+    Concrete parser backed by Azure AI Document Intelligence that can parse many document formats into pages
     To learn more, please visit https://learn.microsoft.com/azure/ai-services/document-intelligence/overview
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
-        model_id="prebuilt-layout",
-        verbose: bool = False,
+        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], model_id="prebuilt-layout"
     ):
         self.model_id = model_id
         self.endpoint = endpoint
         self.credential = credential
-        self.verbose = verbose
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        if self.verbose:
-            print(f"Extracting text from '{content.name}' using Azure Document Intelligence")
+        logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
 
-        async with DocumentAnalysisClient(
-            endpoint=self.endpoint, credential=self.credential, headers={"x-ms-useragent": USER_AGENT}
-        ) as form_recognizer_client:
-            poller = await form_recognizer_client.begin_analyze_document(model_id=self.model_id, document=content)
+        async with DocumentIntelligenceClient(
+            endpoint=self.endpoint, credential=self.credential
+        ) as document_intelligence_client:
+            poller = await document_intelligence_client.begin_analyze_document(
+                model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
+            )
             form_recognizer_results = await poller.result()
 
             offset = 0

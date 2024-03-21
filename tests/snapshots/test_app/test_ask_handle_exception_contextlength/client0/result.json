@@ -1,0 +1,3 @@
+{
+    "error": "Your message exceeded the context length limit for this OpenAI model. Please shorten your message or change your settings to retrieve fewer search results."
+}

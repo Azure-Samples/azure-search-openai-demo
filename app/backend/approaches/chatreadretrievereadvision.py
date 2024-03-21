@@ -1,4 +1,4 @@
-from typing import Any, Coroutine, Optional, Union
+from typing import Any, Awaitable, Callable, Coroutine, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -40,7 +40,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_key: str,
+        vision_token_provider: Callable[[], Awaitable[str]]
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -55,7 +55,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
-        self.vision_key = vision_key
+        self.vision_token_provider = vision_token_provider
         self.chatgpt_token_limit = get_token_limit(gpt4v_model)
 
     @property
@@ -87,6 +87,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vector_fields = overrides.get("vector_fields", ["embedding"])
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
+        minimum_search_score = overrides.get("minimum_search_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
 
@@ -98,7 +100,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         user_query_request = "Generate search query for: " + original_user_query
 
-        messages = self.get_messages_from_history(
+        query_messages = self.get_messages_from_history(
             system_prompt=self.query_prompt_template,
             model_id=self.gpt4v_model,
             history=history,
@@ -109,7 +111,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=messages,
+            messages=query_messages,
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=100,
             n=1,
@@ -126,7 +128,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 vector = (
                     await self.compute_text_embedding(query_text)
                     if field == "embedding"
-                    else await self.compute_image_embedding(query_text, self.vision_endpoint, self.vision_key)
+                    else await self.compute_image_embedding(query_text)
                 )
                 vectors.append(vector)
 
@@ -134,7 +136,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         if not has_text:
             query_text = None
 
-        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions)
+        results = await self.search(
+            top,
+            query_text,
+            filter,
+            vectors,
+            use_semantic_ranker,
+            use_semantic_captions,
+            minimum_search_score,
+            minimum_reranker_score,
+        )
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
         content = "\n".join(sources_content)
 
@@ -178,16 +189,38 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             "data_points": data_points,
             "thoughts": [
                 ThoughtStep(
-                    "Original user query",
-                    original_user_query,
+                    "Prompt to generate search query",
+                    [str(message) for message in query_messages],
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
                 ),
                 ThoughtStep(
-                    "Generated search query",
+                    "Search using generated search query",
                     query_text,
-                    {"use_semantic_captions": use_semantic_captions, "vector_fields": vector_fields},
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "top": top,
+                        "filter": filter,
+                        "vector_fields": vector_fields,
+                    },
                 ),
-                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
-                ThoughtStep("Prompt", [str(message) for message in messages]),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    [str(message) for message in messages],
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
+                ),
             ],
         }
 
