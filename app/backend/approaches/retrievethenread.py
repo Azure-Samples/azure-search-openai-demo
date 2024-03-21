@@ -86,6 +86,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
+        minimum_search_score = overrides.get("minimum_search_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
@@ -95,7 +97,16 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         query_text = q if has_text else None
 
-        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions)
+        results = await self.search(
+            top,
+            query_text,
+            filter,
+            vectors,
+            use_semantic_ranker,
+            use_semantic_captions,
+            minimum_search_score,
+            minimum_reranker_score,
+        )
 
         user_content = [q]
 
@@ -115,7 +126,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         updated_messages = message_builder.messages
         chat_completion = (
             await self.openai_client.chat.completions.create(
-                # Azure Open AI takes the deployment name as the model name
+                # Azure OpenAI takes the deployment name as the model name
                 model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
                 messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
