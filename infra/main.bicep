@@ -9,17 +9,17 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param appServicePlanName string = ''
-param backendServiceName string = ''
-param resourceGroupName string = ''
+param appServicePlanName string // Set in main.parameters.json
+param backendServiceName string // Set in main.parameters.json
+param resourceGroupName string // Set in main.parameters.json
 
-param applicationInsightsDashboardName string = ''
-param applicationInsightsName string = ''
-param logAnalyticsName string = ''
+param applicationInsightsDashboardName string // Set in main.parameters.json
+param applicationInsightsName string // Set in main.parameters.json
+param logAnalyticsName string // Set in main.parameters.json
 
-param searchServiceName string = ''
-param searchServiceResourceGroupName string = ''
-param searchServiceLocation string = ''
+param searchServiceName string // Set in main.parameters.json
+param searchServiceResourceGroupName string // Set in main.parameters.json
+param searchServiceLocation string // Set in main.parameters.json
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed([ 'free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
 param searchServiceSkuName string // Set in main.parameters.json
@@ -30,8 +30,8 @@ param searchServiceSemanticRankerLevel string // Set in main.parameters.json
 var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : searchServiceSemanticRankerLevel
 param useSearchServiceKey bool = searchServiceSkuName == 'free'
 
-param storageAccountName string = ''
-param storageResourceGroupName string = ''
+param storageAccountName string // Set in main.parameters.json
+param storageResourceGroupName string // Set in main.parameters.json
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
@@ -66,25 +66,25 @@ param openAiSkuName string = 'S0'
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
-param documentIntelligenceServiceName string = ''
-param documentIntelligenceResourceGroupName string = ''
-// Limited regions for new version:
+param documentIntelligenceServiceName string // Set in main.parameters.json
+param documentIntelligenceResourceGroupName string // Set in main.parameters.json
 // https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
+// https://azure.microsoft.com/en-gb/explore/global-infrastructure/products-by-region/?products=cognitive-services
 @description('Location for the Document Intelligence resource group')
-@allowed([ 'eastus', 'westus2', 'westeurope' ])
+@allowed(['canadacentral', 'centralus', 'eastus', 'eastus2', 'northcentralus', 'southcentralus', 'westcentralus', 'westus', 'westus2', 'westus3'])
 @metadata({
   azd: {
     type: 'location'
   }
 })
-param documentIntelligenceResourceGroupLocation string
+param documentIntelligenceResourceGroupLocation string // Set in main.parameters.json
 
-param documentIntelligenceSkuName string = 'S0'
+param documentIntelligenceSkuName string // Set in main.parameters.json
 
-param computerVisionServiceName string = ''
-param computerVisionResourceGroupName string = ''
-param computerVisionResourceGroupLocation string = 'eastus' // Vision vectorize API is yet to be deployed globally
-param computerVisionSkuName string = 'S1'
+param computerVisionServiceName string // Set in main.parameters.json
+param computerVisionResourceGroupName string // Set in main.parameters.json
+param computerVisionResourceGroupLocation string // Set in main.parameters.json
+param computerVisionSkuName string // Set in main.parameters.json
 
 param chatGptDeploymentName string // Set in main.parameters.json
 param chatGptDeploymentCapacity int = 30

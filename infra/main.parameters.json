@@ -30,10 +30,10 @@
       "value": "${AZURE_COMPUTER_VISION_RESOURCE_GROUP}"
     },
     "computerVisionResourceGroupLocation": {
-      "value": "${AZURE_COMPUTER_VISION_LOCATION}"
+      "value": "${AZURE_COMPUTER_VISION_LOCATION=eastus}"
     },
     "computerVisionSkuName": {
-      "value": "${AZURE_COMPUTER_VISION_SKU=F0}"
+      "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
     },
     "documentIntelligenceServiceName": {
       "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
