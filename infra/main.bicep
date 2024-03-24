@@ -69,9 +69,8 @@ param openAiApiOrganization string = ''
 param documentIntelligenceServiceName string // Set in main.parameters.json
 param documentIntelligenceResourceGroupName string // Set in main.parameters.json
 // https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
-// https://azure.microsoft.com/en-gb/explore/global-infrastructure/products-by-region/?products=cognitive-services
 @description('Location for the Document Intelligence resource group')
-@allowed(['southafricanorth', 'eastasia', 'southeastasia', 'australiaeast', 'brazilsouth', 'canadacentral', 'northeurope', 'westeurope', 'francecentral', 'germanywestcentral', 'centralindia', 'japaneast', 'japanwest', 'koreacentral', 'norwayeast', 'qatarcentral', 'swedencentral', 'switzerlandnorth', 'uaenorth', 'uksouth', 'centralus', 'eastus', 'eastus2', 'northcentralus', 'southcentralus', 'westcentralus', 'westus', 'westus2', 'westus3'])
+@allowed([ 'eastus', 'westus2', 'westeurope' ])
 @metadata({
   azd: {
     type: 'location'
