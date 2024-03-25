@@ -86,11 +86,11 @@
     "embeddingModelName":{
       "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
     },
-    "embeddingDeploymentVersion":{
-      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
-    },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT}"
+    },
+    "embeddingDeploymentVersion":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
     },
     "embeddingDeploymentCapacity":{
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
