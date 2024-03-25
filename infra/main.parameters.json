@@ -71,26 +71,41 @@
     "appServiceSkuName": {
       "value": "${AZURE_APP_SERVICE_SKU=B1}"
     },
+    "chatGptModelName":{
+      "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
+    },
     "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
+    },
+    "chatGptDeploymentVersion":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
+    },
+    "chatGptDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
+    },
+    "embeddingModelName":{
+      "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
+    },
+    "embeddingDeploymentVersion":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
     },
     "embeddingDeploymentName": {
-      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=embedding}"
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT}"
     },
-    "embeddingModelName": {
-      "value": "${AZURE_OPENAI_EMB_MODEL_NAME=text-embedding-ada-002}"
+    "embeddingDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS=1536}"
-    },
-    "embeddingModelVersion": {
-      "value": "${AZURE_OPENAI_EMB_MODEL_VERSION=2}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
     "azureOpenAiCustomUrl":{
       "value": "${AZURE_OPENAI_CUSTOM_URL}"
+    },
+    "azureOpenAiApiVersion":{
+      "value": "${AZURE_OPENAI_API_VERSION}"
     },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"

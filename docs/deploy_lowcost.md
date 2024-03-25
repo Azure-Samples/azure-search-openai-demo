@@ -46,7 +46,7 @@ However, if your goal is to minimize costs while prototyping your application, f
 
 4. Use the free tier of Azure Document Intelligence (used in analyzing files):
 
-    
+
     ```shell
     azd env set AZURE_DOCUMENTINTELLIGENCE_SKU F0
     ```

@@ -125,6 +125,8 @@ class Approach(ABC):
         vectors: List[VectorQuery],
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
+        minimum_search_score: Optional[float],
+        minimum_reranker_score: Optional[float],
     ) -> List[Document]:
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if use_semantic_ranker and query_text:
@@ -163,7 +165,17 @@ class Approach(ABC):
                         reranker_score=document.get("@search.reranker_score"),
                     )
                 )
-        return documents
+
+            qualified_documents = [
+                doc
+                for doc in documents
+                if (
+                    (doc.score or 0) >= (minimum_search_score or 0)
+                    and (doc.reranker_score or 0) >= (minimum_reranker_score or 0)
+                )
+            ]
+
+        return qualified_documents
 
     def get_sources_content(
         self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool
@@ -195,7 +207,7 @@ class Approach(ABC):
 
     async def compute_text_embedding(self, q: str):
         embedding = await self.openai_client.embeddings.create(
-            # Azure Open AI takes the deployment name as the model name
+            # Azure OpenAI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
             input=q,
             dimensions=self.embedding_dimensions,
