@@ -41,6 +41,11 @@ class OpenAIEmbeddings(ABC):
         "text-embedding-3-small": {"token_limit": 8100, "max_batch_size": 16},
         "text-embedding-3-large": {"token_limit": 8100, "max_batch_size": 16},
     }
+    SUPPORTED_DIMENSIONS_MODEL = {
+        "text-embedding-ada-002": False,
+        "text-embedding-3-small": True,
+        "text-embedding-3-large": True,
+    }
 
     def __init__(self, open_ai_model_name: str, open_ai_dimensions: int, disable_batch: bool = False):
         self.open_ai_model_name = open_ai_model_name
@@ -88,7 +93,7 @@ class OpenAIEmbeddings(ABC):
 
         return batches
 
-    async def create_embedding_batch(self, texts: List[str]) -> List[List[float]]:
+    async def create_embedding_batch(self, texts: List[str], dimension_args: dict[str, int]) -> List[List[float]]:
         batches = self.split_text_into_batches(texts)
         embeddings = []
         client = await self.create_client()
@@ -101,7 +106,7 @@ class OpenAIEmbeddings(ABC):
             ):
                 with attempt:
                     emb_response = await client.embeddings.create(
-                        model=self.open_ai_model_name, input=batch.texts, dimensions=self.open_ai_dimensions
+                        model=self.open_ai_model_name, input=batch.texts, **dimension_args
                     )
                     embeddings.extend([data.embedding for data in emb_response.data])
                     logger.info(
@@ -112,7 +117,7 @@ class OpenAIEmbeddings(ABC):
 
         return embeddings
 
-    async def create_embedding_single(self, text: str) -> List[float]:
+    async def create_embedding_single(self, text: str, dimension_args: dict[str, int]) -> List[float]:
         client = await self.create_client()
         async for attempt in AsyncRetrying(
             retry=retry_if_exception_type(RateLimitError),
@@ -122,17 +127,22 @@ class OpenAIEmbeddings(ABC):
         ):
             with attempt:
                 emb_response = await client.embeddings.create(
-                    model=self.open_ai_model_name, input=text, dimensions=self.open_ai_dimensions
+                    model=self.open_ai_model_name, input=text, **dimension_args
                 )
                 logger.info("Computed embedding for text section. Character count: %d", len(text))
 
         return emb_response.data[0].embedding
 
     async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
+        dimension_args = (
+            OpenAIEmbeddings.SUPPORTED_DIMENSIONS_MODEL.get(self.open_ai_model_name)
+            and {"dimensions": self.open_ai_dimensions}
+            or {}
+        )
         if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
-            return await self.create_embedding_batch(texts)
+            return await self.create_embedding_batch(texts, dimension_args)
 
-        return [await self.create_embedding_single(text) for text in texts]
+        return [await self.create_embedding_single(text, dimension_args) for text in texts]
 
 
 class AzureOpenAIEmbeddingService(OpenAIEmbeddings):

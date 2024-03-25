@@ -206,11 +206,19 @@ class Approach(ABC):
             return sourcepage
 
     async def compute_text_embedding(self, q: str):
+        SUPPORTED_DIMENSIONS_MODEL = {
+            "text-embedding-ada-002": False,
+            "text-embedding-3-small": True,
+            "text-embedding-3-large": True,
+        }
+        dimensions_args = (
+            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
+        )
         embedding = await self.openai_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
             input=q,
-            dimensions=self.embedding_dimensions,
+            **dimensions_args,
         )
         query_vector = embedding.data[0].embedding
         return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")
