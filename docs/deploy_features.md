@@ -82,7 +82,7 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
 3. Set the model version to "1" (the only version as of March 2024):
 
     ```shell
-    azd env set AZURE_OPENAI_EMB_MODEL_VERSION 1
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
     ```
 
 3. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
