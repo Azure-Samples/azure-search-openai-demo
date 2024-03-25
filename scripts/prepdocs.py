@@ -444,7 +444,7 @@ if __name__ == "__main__":
         openai_model_name=args.openaimodelname,
         openai_service=args.openaiservice,
         openai_deployment=args.openaideployment,
-        open_ai_dimensions=args.openaidimensions,
+        openai_dimensions=args.openaidimensions,
         openai_key=clean_key_if_exists(args.openaikey),
         openai_org=args.openaiorg,
         disable_vectors=args.novectors,
