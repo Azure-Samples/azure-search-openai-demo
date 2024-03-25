@@ -86,17 +86,32 @@ param computerVisionResourceGroupName string = ''
 param computerVisionResourceGroupLocation string = 'eastus' // Vision vectorize API is yet to be deployed globally
 param computerVisionSkuName string = 'S1'
 
-param chatGptDeploymentName string // Set in main.parameters.json
-param chatGptDeploymentCapacity int = 30
-param chatGpt4vDeploymentCapacity int = 10
-param chatGptModelName string = startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
-param chatGptModelVersion string = '0613'
-param embeddingDeploymentName string // Set in main.parameters.json
-param embeddingDeploymentCapacity int = 30
-param embeddingModelName string = 'text-embedding-ada-002'
+param chatGptModelName string = ''
+param chatGptDeploymentName string = ''
+param chatGptDeploymentVersion string = ''
+param chatGptDeploymentCapacity int = 0
+var chatGpt = {
+  modelName: !empty(chatGptModelName) ? chatGptModelName : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
+  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
+  deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
+}
+
+param embeddingModelName string = ''
+param embeddingDeploymentName string = ''
+param embeddingDeploymentVersion string = ''
+param embeddingDeploymentCapacity int = 0
+var embedding = {
+  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
+  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
+  deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
+  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+}
+
 param gpt4vModelName string = 'gpt-4'
 param gpt4vDeploymentName string = 'gpt-4v'
 param gpt4vModelVersion string = 'vision-preview'
+param gpt4vDeploymentCapacity int = 10
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -246,13 +261,13 @@ module backend 'core/host/appservice.bicep' = {
       OPENAI_HOST: openAiHost
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
-      AZURE_OPENAI_EMB_MODEL_NAME: embeddingModelName
-      AZURE_OPENAI_CHATGPT_MODEL: chatGptModelName
+      AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
+      AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
       AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
-      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGptDeploymentName
-      AZURE_OPENAI_EMB_DEPLOYMENT: embeddingDeploymentName
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
+      AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
       // Used only with non-Azure OpenAI deployments
       OPENAI_API_KEY: openAiApiKey
@@ -277,27 +292,27 @@ module backend 'core/host/appservice.bicep' = {
 
 var defaultOpenAiDeployments = [
   {
-    name: chatGptDeploymentName
+    name: chatGpt.deploymentName
     model: {
       format: 'OpenAI'
-      name: chatGptModelName
-      version: chatGptModelVersion
+      name: chatGpt.modelName
+      version: chatGpt.deploymentVersion
     }
     sku: {
       name: 'Standard'
-      capacity: chatGptDeploymentCapacity
+      capacity: chatGpt.deploymentCapacity
     }
   }
   {
-    name: embeddingDeploymentName
+    name: embedding.deploymentName
     model: {
       format: 'OpenAI'
-      name: embeddingModelName
-      version: '2'
+      name: embedding.modelName
+      version: embedding.deploymentVersion
     }
     sku: {
       name: 'Standard'
-      capacity: embeddingDeploymentCapacity
+      capacity: embedding.deploymentCapacity
     }
   }
 ]
@@ -312,7 +327,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
       }
       sku: {
         name: 'Standard'
-        capacity: chatGpt4vDeploymentCapacity
+        capacity: gpt4vDeploymentCapacity
       }
     }
   ] : [])
@@ -594,16 +609,16 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost
-output AZURE_OPENAI_EMB_MODEL_NAME string = embeddingModelName
-output AZURE_OPENAI_CHATGPT_MODEL string = chatGptModelName
+output AZURE_OPENAI_EMB_MODEL_NAME string = embedding.modelName
+output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
 output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGptDeploymentName : ''
-output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embeddingDeploymentName : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
 output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymentName : ''
 
 // Used only with non-Azure OpenAI deployments

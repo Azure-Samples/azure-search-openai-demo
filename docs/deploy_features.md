@@ -16,8 +16,47 @@ You should typically enable these features before running `azd up`. Once you've 
 
 We generally find that most developers are able to get high quality answers using GPT 3.5. However, if you want to try GPT-4, you can do so by following these steps:
 
-* In `infra/main.bicep`, change `chatGptModelName` to 'gpt-4' instead of 'gpt-35-turbo'.
-* You may also need to adjust the capacity above that line depending on how much TPM your account is allowed.
+Execute the following commands inside your terminal:
+
+1. To set the name of the deployment, run this command with a new unique name.
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
+    ```
+
+1. To set the GPT model name to a **gpt-4** version from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate gpt model name.
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
+    ```
+
+1. To set the Azure OpenAI deploymemnt capacity, run this command with the desired capacity.
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 10
+    ```
+
+1. To set the Azure OpenAI deploymemnt version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0125-Preview
+    ```
+
+1. To updat the deployment with the new parameters, run this command.
+
+    ```bash
+    azd up
+    ```
+
+> [!NOTE]
+> To revert back to GPT 3.5, run the following commands:
+> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat` to set the name of your old GPT 3.5 deployment.
+> - `azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo` to set the name of your old GPT 3.5 model.
+> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 30` to set the capacity of your old GPT 3.5 deployment.
+> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0613` to set the version number of your old GPT 3.5.
+> - `azd up` to update the provisioned resources.
+>
+> Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse an old GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
 
 ## Enabling GPT-4 Turbo with Vision
 
