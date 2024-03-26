@@ -1,7 +1,17 @@
 import os
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator, Awaitable, Callable, List, Optional, Union, cast
+from typing import (
+    Any,
+    AsyncGenerator,
+    Awaitable,
+    Callable,
+    List,
+    Optional,
+    TypedDict,
+    Union,
+    cast,
+)
 from urllib.parse import urljoin
 
 import aiohttp
@@ -211,7 +221,11 @@ class Approach(ABC):
             "text-embedding-3-small": True,
             "text-embedding-3-large": True,
         }
-        dimensions_args = (
+
+        class ExtraArgs(TypedDict, total=False):
+            dimensions: int
+
+        dimensions_args: ExtraArgs = (
             {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
         )
         embedding = await self.openai_client.embeddings.create(
