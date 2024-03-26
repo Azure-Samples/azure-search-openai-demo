@@ -12,6 +12,8 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
   properties: {
     tenantId: subscription().tenantId
     sku: { family: 'A', name: 'standard' }
+    enablePurgeProtection: true
+    enableSoftDelete: true
     accessPolicies: !empty(principalId) ? [
       {
         objectId: principalId
