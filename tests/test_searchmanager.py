@@ -313,6 +313,7 @@ async def test_remove_content(monkeypatch, search_info):
 
 @pytest.mark.asyncio
 async def test_remove_content_no_docs(monkeypatch, search_info):
+
     search_results = AsyncSearchResultsIterator([])
 
     async def mock_search(self, *args, **kwargs):
@@ -392,3 +393,43 @@ async def test_remove_content_only_oid(monkeypatch, search_info):
     assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
     assert len(deleted_documents) == 1, "It should have deleted one document"
     assert deleted_documents[0]["id"] == "file-foo_pdf-222"
+
+
+@pytest.mark.asyncio
+async def test_remove_content_no_inf_loop(monkeypatch, search_info):
+
+    searched_filters = []
+
+    async def mock_search(self, *args, **kwargs):
+        self.filter = kwargs.get("filter")
+        searched_filters.append(self.filter)
+        return AsyncSearchResultsIterator(
+            [
+                {
+                    "@search.score": 1,
+                    "id": "file-foo_pdf-333",
+                    "content": "test content",
+                    "category": "test",
+                    "sourcepage": "foo.pdf#page=1",
+                    "sourcefile": "foo.pdf",
+                    "oids": ["A-USER-ID", "B-USER-ID"],
+                }
+            ]
+        )
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    deleted_documents = []
+
+    async def mock_delete_documents(self, documents):
+        deleted_documents.extend(documents)
+        return documents
+
+    monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
+
+    manager = SearchManager(search_info)
+    await manager.remove_content("foo.pdf", only_oid="A-USER-ID")
+
+    assert len(searched_filters) == 1, "It should have searched once"
+    assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
+    assert len(deleted_documents) == 0, "It should have deleted no documents"
