@@ -4,11 +4,15 @@
 If you already have existing Azure resources, or if you want to specify the exact name of new Azure Resource, you can do so by setting `azd` environment values.
 You should set these values before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
-* [Existing resource group](#existing-resource-group)
-* [Existing OpenAI resource](#existing-openai-resource)
-* [Existing Azure AI Search resource](#existing-azure-ai-search-resource)
-* [Existing Azure Document Intelligence resource](#existing-azure-document-intelligence-resource)
-* [Other existing Azure resources](#other-existing-azure-resources)
+* [Resource group](#resource-group)
+* [OpenAI resource](#openai-resource)
+* [Azure AI Search resource](#azure-ai-search-resource)
+* [Azure App Service Plan and App Service resources](#azure-app-service-plan-and-app-service-resources)
+* [Azure Application Insights and related resources](#azure-application-insights-and-related-resources)
+* [Azure Computer Vision resources](#azure-computer-vision-resources)
+* [Azure Document Intelligence resource](#azure-document-intelligence-resource)
+* [Other Azure resources](#other-azure-resources)
+
 
 ## Resource group
 
@@ -86,4 +90,4 @@ If your existing resource is in one of those regions, then you can re-use it by 
 
 ## Other Azure resources
 
-You can also use existing Azure AI Document Intelligence and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+You can also use existing Azure AI Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
