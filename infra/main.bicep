@@ -36,6 +36,9 @@ param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
+param userStorageAccountName string = ''
+param userStorageContainerName string = 'user-content'
+
 param appServiceSkuName string // Set in main.parameters.json
 
 @allowed([ 'azure', 'openai', 'azure_custom' ])
@@ -140,6 +143,11 @@ param useApplicationInsights bool = false
 param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
 param useIntegratedVectorization bool = false
+
+@description('Enable user document upload feature')
+param useUserUpload bool = false
+param useLocalPdfParser bool = false
+param useLocalHtmlParser bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
@@ -287,6 +295,12 @@ module backend 'core/host/appservice.bicep' = {
       ALLOWED_ORIGIN: allowedOrigin
       USE_VECTORS: useVectors
       USE_GPT4V: useGPT4V
+      USE_USER_UPLOAD: useUserUpload
+      AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
+      AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
+      AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
+      USE_LOCAL_PDF_PARSER: useLocalPdfParser
+      USE_LOCAL_HTML_PARSER: useLocalHtmlParser
     }
   }
 }
@@ -452,6 +466,28 @@ module storage 'core/storage/storage-account.bicep' = {
   }
 }
 
+module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
+  name: 'user-storage'
+  scope: storageResourceGroup
+  params: {
+    name: !empty(userStorageAccountName) ? userStorageAccountName : 'user${abbrs.storageStorageAccounts}${resourceToken}'
+    location: storageResourceGroupLocation
+    tags: tags
+    allowBlobPublicAccess: false
+    publicNetworkAccess: 'Enabled'
+    isHnsEnabled: true
+    sku: {
+      name: storageSkuName
+    }
+    containers: [
+      {
+        name: userStorageContainerName
+        publicAccess: 'None'
+      }
+    ]
+  }
+}
+
 // USER ROLES
 var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
 
@@ -488,10 +524,20 @@ module storageRoleUser 'core/security/role.bicep' = {
 
 module storageContribRoleUser 'core/security/role.bicep' = {
   scope: storageResourceGroup
-  name: 'storage-contribrole-user'
+  name: 'storage-contrib-role-user'
   params: {
     principalId: principalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    principalType: principalType
+  }
+}
+
+module storageOwnerRoleUser 'core/security/role.bicep' = if (useUserUpload) {
+  scope: storageResourceGroup
+  name: 'storage-owner-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
     principalType: principalType
   }
 }
@@ -558,6 +604,16 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
+module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
+  scope: storageResourceGroup
+  name: 'storage-owner-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+    principalType: 'ServicePrincipal'
+  }
+}
+
 module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
@@ -592,8 +648,19 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   }
 }
 
-// For computer vision access by the backend
-module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+// Used to add/remove documents from index (required for user upload feature)
+module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload && !useSearchServiceKey) {
+  scope: searchServiceResourceGroup
+  name: 'search-contrib-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// For computer vision or document intelligence access by the backend
+module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V || useUserUpload) {
   scope: resourceGroup
   name: 'cognitiveservices-role-backend'
   params: {
@@ -642,6 +709,10 @@ output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.princ
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.name : ''
+output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
+output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 

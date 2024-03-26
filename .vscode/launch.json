@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
-            "python": "${workspaceFolder}/app/backend/backend_env/bin/python",
+            "python": "${workspaceFolder}/.venv/bin/python",
             "env": {
                 "QUART_APP": "main:app",
                 "QUART_ENV": "development",
@@ -31,7 +31,16 @@
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}/app/frontend",
-        }
+        },
+        {
+            "name": "Python: Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "purpose": ["debug-test"],
+            "console": "integratedTerminal",
+            "justMyCode": false
+          }
     ],
     "inputs": [
         {

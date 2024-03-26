@@ -1,3 +1,4 @@
+import json
 import socket
 import time
 from contextlib import closing
@@ -291,3 +292,68 @@ def test_ask(page: Page, live_server_url: str):
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+
+def test_upload_hidden(page: Page, live_server_url: str):
+
+    def handle_auth_setup(route: Route):
+        with open("tests/snapshots/test_authenticationhelper/test_auth_setup/result.json") as f:
+            auth_setup = json.load(f)
+            route.fulfill(body=json.dumps(auth_setup), status=200)
+
+    page.route("*/**/auth_setup", handle_auth_setup)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": False,
+                    "showVectorOption": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+
+    expect(page).to_have_title("GPT + Enterprise data | Sample")
+
+    expect(page.get_by_role("button", name="Clear chat")).to_be_visible()
+    expect(page.get_by_role("button", name="Manage file uploads")).not_to_be_visible()
+
+
+def test_upload_disabled(page: Page, live_server_url: str):
+
+    def handle_auth_setup(route: Route):
+        with open("tests/snapshots/test_authenticationhelper/test_auth_setup/result.json") as f:
+            auth_setup = json.load(f)
+            route.fulfill(body=json.dumps(auth_setup), status=200)
+
+    page.route("*/**/auth_setup", handle_auth_setup)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": True,
+                    "showVectorOption": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+
+    expect(page).to_have_title("GPT + Enterprise data | Sample")
+
+    expect(page.get_by_role("button", name="Manage file uploads")).to_be_visible()
+    expect(page.get_by_role("button", name="Manage file uploads")).to_be_disabled()
+    # We can't test actual file upload as we don't currently have isLoggedIn(client) mocked out

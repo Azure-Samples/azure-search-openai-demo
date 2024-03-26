@@ -2,7 +2,7 @@ import io
 
 import pytest
 
-from scripts.prepdocslib.jsonparser import JsonParser
+from prepdocslib.jsonparser import JsonParser
 
 
 @pytest.mark.asyncio

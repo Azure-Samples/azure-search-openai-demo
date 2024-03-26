@@ -12,6 +12,7 @@ import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
+import { UploadFile } from "../../components/UploadFile";
 
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
@@ -38,6 +39,7 @@ export function Component(): JSX.Element {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
+    const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -51,9 +53,7 @@ export function Component(): JSX.Element {
     const client = useLogin ? useMsal().instance : undefined;
 
     const getConfig = async () => {
-        const token = client ? await getToken(client) : undefined;
-
-        configApi(token).then(config => {
+        configApi().then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
@@ -61,6 +61,7 @@ export function Component(): JSX.Element {
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
             }
+            setShowUserUpload(config.showUserUpload);
         });
     };
 
@@ -198,7 +199,10 @@ export function Component(): JSX.Element {
     return (
         <div className={styles.askContainer}>
             <div className={styles.askTopSection}>
-                <SettingsButton className={styles.settingsButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                <div className={styles.commandsContainer}>
+                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
+                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                </div>
                 <h1 className={styles.askTitle}>Ask your data</h1>
                 <div className={styles.askQuestionInput}>
                     <QuestionInput

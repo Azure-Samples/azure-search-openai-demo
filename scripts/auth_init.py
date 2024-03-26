@@ -142,7 +142,7 @@ def create_client_app_payload(server_app_id: str, server_app_permission_setup_pa
             "redirectUris": ["http://localhost:50505/.auth/login/aad/callback"],
             "implicitGrantSettings": {"enableIdTokenIssuance": True},
         },
-        "spa": {"redirectUris": ["http://localhost:50505/redirect"]},
+        "spa": {"redirectUris": ["http://localhost:50505/redirect", "http://localhost:5173/redirect"]},
         "requiredResourceAccess": [
             # access_as_user from server app
             {

@@ -31,6 +31,7 @@ async def main():
                 "spa": {
                     "redirectUris": [
                         "http://localhost:50505/redirect",
+                        "http://localhost:5173/redirect",
                         f"{uri}/redirect",
                     ]
                 },

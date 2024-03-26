@@ -16,15 +16,15 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-echo 'Creating python virtual environment "backend/backend_env"'
-python3 -m venv backend/backend_env
+cd ../
+echo 'Creating python virtual environment ".venv"'
+python3 -m venv .venv
 
 echo ""
 echo "Restoring backend python packages"
 echo ""
 
-cd backend
-./backend_env/bin/python -m pip install -r requirements.txt
+./.venv/bin/python -m pip install -r app/backend/requirements.txt
 if [ $? -ne 0 ]; then
     echo "Failed to restore backend python packages"
     exit $?
@@ -34,7 +34,7 @@ echo ""
 echo "Restoring frontend npm packages"
 echo ""
 
-cd ../frontend
+cd app/frontend
 npm install
 if [ $? -ne 0 ]; then
     echo "Failed to restore frontend npm packages"
@@ -59,7 +59,7 @@ cd ../backend
 
 port=50505
 host=localhost
-./backend_env/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
+../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
     exit $?

@@ -1,4 +1,3 @@
-import argparse
 import json
 import os
 from unittest import mock
@@ -27,6 +26,7 @@ import core
 from core.authentication import AuthenticationHelper
 
 from .mocks import (
+    MockAsyncPageIterator,
     MockAsyncSearchResultsIterator,
     MockAzureCredential,
     MockBlobClient,
@@ -202,7 +202,6 @@ def mock_openai_chatcompletion(monkeypatch):
 @pytest.fixture
 def mock_acs_search(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
-    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     async def mock_get_index(*args, **kwargs):
         return MockSearchIndex
@@ -251,6 +250,8 @@ auth_envs = [
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_USE_AUTHENTICATION": "true",
+        "AZURE_USER_STORAGE_ACCOUNT": "test-user-storage-account",
+        "AZURE_USER_STORAGE_CONTAINER": "test-user-storage-container",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
         "AZURE_SERVER_APP_SECRET": "SECRET",
         "AZURE_CLIENT_APP_ID": "CLIENT_APP",
@@ -316,6 +317,12 @@ async def auth_client(
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
     monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+    monkeypatch.setenv("USE_USER_UPLOAD", "true")
+    monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-userstorage-account")
+    monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-userstorage-container")
+    monkeypatch.setenv("USE_LOCAL_PDF_PARSER", "true")
+    monkeypatch.setenv("USE_LOCAL_HTML_PARSER", "true")
+    monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-documentintelligence-service")
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
 
@@ -517,26 +524,11 @@ def mock_data_lake_service_client(monkeypatch):
         self.directories["/"].child_directories = self.directories
         return self.directories["/"]
 
-    class AsyncListIterator:
-        def __init__(self, input_list):
-            self.input_list = input_list
-            self.index = 0
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            if self.index < len(self.input_list):
-                value = self.input_list[self.index]
-                self.index += 1
-                return value
-            else:
-                raise StopAsyncIteration
-
-    async def mock_get_paths(self, *args, **kwargs):
-        yield argparse.Namespace(is_directory=False, name="a.txt")
-        yield argparse.Namespace(is_directory=False, name="b.txt")
-        yield argparse.Namespace(is_directory=False, name="c.txt")
+    def mock_get_paths(self, *args, **kwargs):
+        paths = ["a.txt", "b.txt", "c.txt"]
+        if kwargs.get("path") == "OID_X":
+            paths = [f"OID_X/{path}" for path in paths]
+        return MockAsyncPageIterator([azure.storage.filedatalake.PathProperties(name=path) for path in paths])
 
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "get_file_client", mock_get_file_client)

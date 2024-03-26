@@ -84,4 +84,9 @@ export type Config = {
     showGPT4VOptions: boolean;
     showSemanticRankerOption: boolean;
     showVectorOption: boolean;
+    showUserUpload: boolean;
+};
+
+export type SimpleAPIResponse = {
+    message?: string;
 };

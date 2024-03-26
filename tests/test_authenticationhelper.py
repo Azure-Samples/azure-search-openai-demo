@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
@@ -79,52 +81,16 @@ async def test_list_groups_unauthorized(mock_list_groups_unauthorized, mock_vali
     assert exc_info.value.error == '{"error": "unauthorized"}'
 
 
-def test_auth_setup(mock_confidential_client_success, mock_validate_token_success):
+def test_auth_setup(mock_confidential_client_success, mock_validate_token_success, snapshot):
     helper = create_authentication_helper()
-    assert helper.get_auth_setup_for_client() == {
-        "useLogin": True,
-        "requireAccessControl": False,
-        "msalConfig": {
-            "auth": {
-                "clientId": "CLIENT_APP",
-                "authority": "https://login.microsoftonline.com/TENANT_ID",
-                "redirectUri": "/redirect",
-                "postLogoutRedirectUri": "/",
-                "navigateToLoginRequestUrl": False,
-            },
-            "cache": {"cacheLocation": "localStorage", "storeAuthStateInCookie": False},
-        },
-        "loginRequest": {
-            "scopes": [".default"],
-        },
-        "tokenRequest": {
-            "scopes": ["api://SERVER_APP/access_as_user"],
-        },
-    }
+    result = helper.get_auth_setup_for_client()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
-def test_auth_setup_required_access_control(mock_confidential_client_success, mock_validate_token_success):
+def test_auth_setup_required_access_control(mock_confidential_client_success, mock_validate_token_success, snapshot):
     helper = create_authentication_helper(require_access_control=True)
-    assert helper.get_auth_setup_for_client() == {
-        "useLogin": True,
-        "requireAccessControl": True,
-        "msalConfig": {
-            "auth": {
-                "clientId": "CLIENT_APP",
-                "authority": "https://login.microsoftonline.com/TENANT_ID",
-                "redirectUri": "/redirect",
-                "postLogoutRedirectUri": "/",
-                "navigateToLoginRequestUrl": False,
-            },
-            "cache": {"cacheLocation": "localStorage", "storeAuthStateInCookie": False},
-        },
-        "loginRequest": {
-            "scopes": [".default"],
-        },
-        "tokenRequest": {
-            "scopes": ["api://SERVER_APP/access_as_user"],
-        },
-    }
+    result = helper.get_auth_setup_for_client()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 def test_get_auth_token(mock_confidential_client_success, mock_validate_token_success):
