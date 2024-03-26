@@ -245,6 +245,11 @@ async def upload(auth_claims: dict[str, Any]):
     file = request_files.getlist("file")[0]
     user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
     user_directory_client = user_blob_container_client.get_directory_client(user_oid)
+    try:
+        await user_directory_client.get_directory_properties()
+    except ResourceNotFoundError:
+        current_app.logger.info("Creating directory for user %s", user_oid)
+        await user_directory_client.create_directory()
     await user_directory_client.set_access_control(owner=user_oid)
     file_client = user_directory_client.get_file_client(file.filename)
     file_io = file

@@ -18,8 +18,26 @@ from prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from .mocks import MockClient, MockEmbeddingsClient
 
 
+# parameterize for directory existing or not
 @pytest.mark.asyncio
-async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_client):
+@pytest.mark.parametrize("directory_exists", [True, False])
+async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_client, directory_exists):
+
+    async def mock_get_directory_properties(self, *args, **kwargs):
+        if directory_exists:
+            return None
+        else:
+            raise azure.core.exceptions.ResourceNotFoundError()
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "get_directory_properties", mock_get_directory_properties)
+
+    directory_created = [False]
+
+    async def mock_create_directory(self, *args, **kwargs):
+        directory_created[0] = True
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "create_directory", mock_create_directory)
+
     async def mock_directory_set_access_control(self, *args, **kwargs):
         assert kwargs.get("owner") == "OID_X"
         return None
@@ -96,6 +114,7 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
     assert documents_uploaded[0]["embedding"] == [0.0023064255, -0.009327292, -0.0028842222]
     assert documents_uploaded[0]["category"] is None
     assert documents_uploaded[0]["oids"] == ["OID_X"]
+    assert directory_created[0] == (not directory_exists)
 
 
 @pytest.mark.asyncio
