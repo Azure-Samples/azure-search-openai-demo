@@ -1,5 +1,8 @@
 from io import BytesIO
 
+import azure.core.exceptions
+import azure.storage.filedatalake
+import azure.storage.filedatalake.aio
 import pytest
 from azure.search.documents.aio import SearchClient
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient
@@ -100,6 +103,32 @@ async def test_list_uploaded(auth_client, monkeypatch, mock_data_lake_service_cl
     response = await auth_client.get("/list_uploaded", headers={"Authorization": "Bearer test"})
     assert response.status_code == 200
     assert (await response.get_json()) == ["a.txt", "b.txt", "c.txt"]
+
+
+@pytest.mark.asyncio
+async def test_list_uploaded_nopaths(auth_client, monkeypatch, mock_data_lake_service_client):
+    class MockResponse:
+        def __init__(self):
+            self.reason = "No path found"
+            self.status_code = 404
+
+    class MockAsyncIteratorError:
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            raise azure.core.exceptions.ResourceNotFoundError(
+                response=azure.core.exceptions.HttpResponseError(response=MockResponse())
+            )
+
+    def mock_get_paths(self, *args, **kwargs):
+        return MockAsyncIteratorError()
+
+    monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_paths", mock_get_paths)
+
+    response = await auth_client.get("/list_uploaded", headers={"Authorization": "Bearer test"})
+    assert response.status_code == 200
+    assert (await response.get_json()) == []
 
 
 @pytest.mark.asyncio

@@ -277,10 +277,14 @@ async def delete_uploaded(auth_claims: dict[str, Any]):
 async def list_uploaded(auth_claims: dict[str, Any]):
     user_oid = auth_claims["oid"]
     user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-    all_paths = user_blob_container_client.get_paths(path=user_oid)
     files = []
-    async for path in all_paths:
-        files.append(path.name.split("/", 1)[1])
+    try:
+        all_paths = user_blob_container_client.get_paths(path=user_oid)
+        async for path in all_paths:
+            files.append(path.name.split("/", 1)[1])
+    except ResourceNotFoundError as error:
+        if error.status_code != 404:
+            current_app.logger.exception("Error listing uploaded files", error)
     return jsonify(files), 200
 
 
