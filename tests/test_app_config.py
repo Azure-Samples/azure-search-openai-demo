@@ -114,7 +114,7 @@ async def test_app_config_for_client(client):
 async def test_app_visionkey_notfound(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_KEY_VAULT_NAME", "my_key_vault")
     monkeypatch.setenv("VISION_SECRET_NAME", "")
-    monkeypatch.setenv("SEARCH_SECRET_NAME", "search-secret-name")
+    monkeypatch.setenv("AZURE_SEARCH_SECRET_NAME", "search-secret-name")
 
     async def get_secret(*args, **kwargs):
         if args[1] == "vision-secret-name":
@@ -132,7 +132,7 @@ async def test_app_visionkey_notfound(monkeypatch, minimal_env):
 async def test_app_searchkey_notfound(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_KEY_VAULT_NAME", "my_key_vault")
     monkeypatch.setenv("VISION_SECRET_NAME", "vision-secret-name")
-    monkeypatch.setenv("SEARCH_SECRET_NAME", "")
+    monkeypatch.setenv("AZURE_SEARCH_SECRET_NAME", "")
 
     async def get_secret(*args, **kwargs):
         if args[1] == "search-secret-name":
