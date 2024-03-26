@@ -5,6 +5,7 @@ This document covers optional features that can be enabled in the deployed Azure
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 * [Using GPT-4](#using-gpt-4)
+* [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
@@ -58,6 +59,43 @@ Execute the following commands inside your terminal:
 >
 > Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse an old GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
 
+## Using text-embedding-3 models
+
+By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
+
+1. Run one of the following commands to set the desired model:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small
+    ```
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-large
+    ```
+
+2. Specify the desired dimensions of the model: (from 256-3072, model dependent)
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 256
+    ```
+
+3. Set the model version to "1" (the only version as of March 2024):
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
+    ```
+
+3. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
+
+If you have already deployed:
+
+* You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
+* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
+* If your OpenAI resource is not in one of the supported regions, you should delete `openAiResourceGroupLocation` from `.azure/YOUR-ENV-NAME/config.json`. When running `azd up`, you will be prompted to select a new region.
+
+> ![NOTE]
+> The text-embedding-3 models are not currently supported by the integrated vectorization feature.
+
 ## Enabling GPT-4 Turbo with Vision
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](docs/gpt4v.md) page.
@@ -72,6 +110,8 @@ To enable integrated vectorization with this sample:
 2. Run `azd env set USE_FEATURE_INT_VECTORIZATION true`
 3. Run `azd up` to update system and user roles
 4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
+
+This feature is not currently compatible with GPT4-vision or the newer text-embedding-3 models.
 
 ## Enabling authentication
 

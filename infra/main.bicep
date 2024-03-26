@@ -102,11 +102,13 @@ param embeddingModelName string = ''
 param embeddingDeploymentName string = ''
 param embeddingDeploymentVersion string = ''
 param embeddingDeploymentCapacity int = 0
+param embeddingDimensions int = 0
 var embedding = {
   modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+  dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
 param gpt4vModelName string = 'gpt-4'
@@ -263,6 +265,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
       AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
+      AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
       AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI

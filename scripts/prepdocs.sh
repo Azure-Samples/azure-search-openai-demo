@@ -48,6 +48,10 @@ if [ "$USE_VECTORS" = false ]; then
   disableVectorsArg="--novectors"
 fi
 
+if [ -n "$AZURE_OPENAI_EMB_DIMENSIONS" ]; then
+  openAiDimensionsArg="--openaidimensions $AZURE_OPENAI_EMB_DIMENSIONS"
+fi
+
 if [ "$USE_LOCAL_PDF_PARSER" = true ]; then
   localPdfParserArg="--localpdfparser"
 fi
@@ -69,7 +73,7 @@ fi
 --storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \
 $searchAnalyzerNameArg $searchSecretNameArg \
---openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" \
+--openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" $openAiDimensionsArg \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
 --openaikey "$OPENAI_API_KEY" --openaiorg "$OPENAI_ORGANIZATION" \
 --documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \

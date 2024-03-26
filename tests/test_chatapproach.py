@@ -7,7 +7,11 @@ from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 
-from .mocks import MockAsyncSearchResultsIterator
+from .mocks import (
+    MOCK_EMBEDDING_DIMENSIONS,
+    MOCK_EMBEDDING_MODEL_NAME,
+    MockAsyncSearchResultsIterator,
+)
 
 
 async def mock_search(*args, **kwargs):
@@ -23,7 +27,8 @@ def chat_approach():
         chatgpt_model="gpt-35-turbo",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
-        embedding_model="text-",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         sourcepage_field="",
         content_field="",
         query_language="en-us",
@@ -331,7 +336,8 @@ async def test_search_results_filtering_by_scores(
         chatgpt_model="gpt-35-turbo",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
-        embedding_model="text-",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         sourcepage_field="",
         content_field="",
         query_language="en-us",

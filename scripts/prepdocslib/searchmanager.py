@@ -60,6 +60,8 @@ class SearchManager:
         self.use_acls = use_acls
         self.use_int_vectorization = use_int_vectorization
         self.embeddings = embeddings
+        # Integrated vectorization uses the ada-002 model with 1536 dimensions
+        self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else 1536
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
@@ -93,7 +95,7 @@ class SearchManager:
                     filterable=False,
                     sortable=False,
                     facetable=False,
-                    vector_search_dimensions=1536,
+                    vector_search_dimensions=self.embedding_dimensions,
                     vector_search_profile_name="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
