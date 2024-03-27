@@ -16,7 +16,9 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import ContainerClient
+from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
 from azure.storage.filedatalake.aio import FileSystemClient
+from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -115,6 +117,7 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
         path = path_parts[0]
     logging.info("Opening file %s", path)
     blob_container_client: ContainerClient = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    blob: Union[BlobDownloader, DatalakeDownloader]
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
     except ResourceNotFoundError:
@@ -125,7 +128,7 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
                 user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
                 user_directory_client: FileSystemClient = user_blob_container_client.get_directory_client(user_oid)
                 file_client = user_directory_client.get_file_client(path)
-                blob = await file_client.download_file()  # type: ignore
+                blob = await file_client.download_file()
             except ResourceNotFoundError:
                 logging.exception("Path not found in DataLake: %s", path)
                 abort(404)
