@@ -117,7 +117,24 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "required": ["search_query"],
                     },
                 },
-            }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "search_by_filename",
+                    "description": "Retrieve a specific filename from the Azure AI Search index",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "filename": {
+                                "type": "string",
+                                "description": "The filename, like 'PerksPlus.pdf'",
+                            }
+                        },
+                        "required": ["filename"],
+                    },
+                },
+            },
         ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question

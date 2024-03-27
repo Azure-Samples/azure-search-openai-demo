@@ -139,6 +139,11 @@ class Approach(ABC):
         minimum_reranker_score: Optional[float],
     ) -> List[Document]:
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
+
+        if query_text.startswith("filename:"):
+            filter = f"sourcepage eq '{query_text[9:]}'"
+            results = await self.search_client.search("", filter=filter, top=top)
+            print(f"searching by filename: {query_text[9:]}")
         if use_semantic_ranker and query_text:
             results = await self.search_client.search(
                 search_text=query_text,
