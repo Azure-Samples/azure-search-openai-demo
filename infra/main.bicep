@@ -659,10 +659,22 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload &
   }
 }
 
-// For computer vision or document intelligence access by the backend
-module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V || useUserUpload) {
-  scope: resourceGroup
-  name: 'cognitiveservices-role-backend'
+
+// For computer vision access by the backend
+module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+  scope: computerVisionResourceGroup
+  name: 'computervision-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// For document intelligence access by the backend
+module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
+  scope: documentIntelligenceResourceGroup
+  name: 'documentintelligence-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
