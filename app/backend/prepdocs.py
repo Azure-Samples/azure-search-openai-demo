@@ -122,6 +122,7 @@ def setup_embeddings_service(
     openai_model_name: str,
     openai_service: str,
     openai_deployment: str,
+    openai_dimensions: int,
     openai_key: Union[str, None],
     openai_org: Union[str, None],
     disable_vectors: bool = False,
@@ -139,6 +140,7 @@ def setup_embeddings_service(
             open_ai_service=openai_service,
             open_ai_deployment=openai_deployment,
             open_ai_model_name=openai_model_name,
+            open_ai_dimensions=openai_dimensions,
             credential=azure_open_ai_credential,
             disable_batch=disable_batch_vectors,
         )
@@ -147,6 +149,7 @@ def setup_embeddings_service(
             raise ValueError("OpenAI key is required when using the non-Azure OpenAI API")
         return OpenAIEmbeddingService(
             open_ai_model_name=openai_model_name,
+            open_ai_dimensions=openai_dimensions,
             credential=openai_key,
             organization=openai_org,
             disable_batch=disable_batch_vectors,
@@ -309,6 +312,13 @@ if __name__ == "__main__":
         "--openaimodelname", help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)"
     )
     parser.add_argument(
+        "--openaidimensions",
+        required=False,
+        default=1536,
+        type=int,
+        help="Dimensions for the embedding model (defaults to 1536 for 'text-embedding-ada-002')",
+    )
+    parser.add_argument(
         "--novectors",
         action="store_true",
         help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)",
@@ -434,6 +444,7 @@ if __name__ == "__main__":
         openai_model_name=args.openaimodelname,
         openai_service=args.openaiservice,
         openai_deployment=args.openaideployment,
+        openai_dimensions=args.openaidimensions,
         openai_key=clean_key_if_exists(args.openaikey),
         openai_org=args.openaiorg,
         disable_vectors=args.novectors,

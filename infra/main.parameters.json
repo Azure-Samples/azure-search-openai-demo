@@ -113,6 +113,9 @@
     "embeddingDeploymentCapacity":{
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
+    "embeddingDimensions": {
+      "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
