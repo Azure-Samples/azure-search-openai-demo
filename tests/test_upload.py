@@ -91,18 +91,10 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
     monkeypatch.setattr(AzureOpenAIEmbeddingService, "create_client", mock_create_client)
 
-    stream = b'------WebKitFormBoundaryr1D8WqBUjhPTDqlM\r\nContent-Disposition: form-data; name="file"; filename="a.txt"\r\nContent-Type: text/plain\r\n\r\n'
-    stream += b"foo;bar\n"
-    stream += b"\r\n------WebKitFormBoundaryr1D8WqBUjhPTDqlM--\r\n"
-
     response = await auth_client.post(
         "/upload",
-        headers={
-            "Authorization": "Bearer test",
-            "Content-type": "multipart/form-data; boundary=----WebKitFormBoundaryr1D8WqBUjhPTDqlM",
-            "Content-length": str(len(stream)),
-        },
-        files={"file": FileStorage(BytesIO(stream), filename="a.txt")},
+        headers={"Authorization": "Bearer test"},
+        files={"file": FileStorage(BytesIO(b"foo;bar"), filename="a.txt")},
     )
     message = (await response.get_json())["message"]
     assert message == "File uploaded successfully"
