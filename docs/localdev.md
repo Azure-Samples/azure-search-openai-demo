@@ -44,8 +44,8 @@ Then, whenever you make changes to frontend files, the changes will be automatic
 ## Using a local OpenAI-compatible API
 
 You may want to save costs by developing against a local LLM server, such as
-[llamafile](https://github.com/Mozilla-Ocho/llamafile/). Note that a local LLM
-will generally be slower and not as sophisticated.
+[llamafile](https://github.com/Mozilla-Ocho/llamafile/) or [ollama](https://ollama.com/).
+Note that a local LLM will generally be slower and not as sophisticated.
 
 Once you've got your local LLM running and serving an OpenAI-compatible endpoint, set these environment variables:
 
@@ -65,3 +65,7 @@ If you're running inside a dev container, use this local URL instead:
 ```shell
 azd env set OPENAI_BASE_URL http://host.docker.internal:8080/v1
 ```
+
+> [!NOTE]
+> You must set this back to a non-local value ("azure", "azure_custom", or "openai")
+> before running `azd up` or `azd provision`, since the deployed backend can't access your local server.
