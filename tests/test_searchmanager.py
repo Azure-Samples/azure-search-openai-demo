@@ -8,6 +8,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from openai.types.create_embedding_response import Usage
 
+from .mocks import MOCK_EMBEDDING_DIMENSIONS, MOCK_EMBEDDING_MODEL_NAME
 from scripts.prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from scripts.prepdocslib.listfilestrategy import File
 from scripts.prepdocslib.searchmanager import SearchManager, Section
@@ -34,8 +35,44 @@ def search_info():
         endpoint="https://testsearchclient.blob.core.windows.net",
         credential=AzureKeyCredential("test"),
         index_name="test",
-        verbose=True,
     )
+
+
+@pytest.fixture
+def embeddings_service(monkeypatch):
+    async def mock_create_client(*args, **kwargs):
+        # From https://platform.openai.com/docs/api-reference/embeddings/create
+        return MockClient(
+            embeddings_client=MockEmbeddingsClient(
+                create_embedding_response=openai.types.CreateEmbeddingResponse(
+                    object="list",
+                    data=[
+                        openai.types.Embedding(
+                            embedding=[
+                                0.0023064255,
+                                -0.009327292,
+                                -0.0028842222,
+                            ],
+                            index=0,
+                            object="embedding",
+                        )
+                    ],
+                    model="text-embedding-ada-002",
+                    usage=Usage(prompt_tokens=8, total_tokens=8),
+                )
+            )
+        )
+
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        credential=AzureKeyCredential("test"),
+        disable_batch=True,
+    )
+    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
+    return embeddings
 
 
 @pytest.mark.asyncio
@@ -52,13 +89,32 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
-    manager = SearchManager(
-        search_info,
-    )
+    manager = SearchManager(search_info)
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
     assert len(indexes[0].fields) == 6
+
+
+@pytest.mark.asyncio
+async def test_create_index_using_int_vectorization(monkeypatch, search_info):
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    manager = SearchManager(search_info, use_int_vectorization=True)
+    await manager.create_index()
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+    assert len(indexes[0].fields) == 7
 
 
 @pytest.mark.asyncio
@@ -74,9 +130,7 @@ async def test_create_index_does_exist(monkeypatch, search_info):
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
-    manager = SearchManager(
-        search_info,
-    )
+    manager = SearchManager(search_info)
     await manager.create_index()
     assert len(indexes) == 0, "It should not have created a new index"
 
@@ -117,9 +171,7 @@ async def test_update_content(monkeypatch, search_info):
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
 
-    manager = SearchManager(
-        search_info,
-    )
+    manager = SearchManager(search_info)
 
     test_io = io.BytesIO(b"test content")
     test_io.name = "test/foo.pdf"
@@ -148,9 +200,7 @@ async def test_update_content_many(monkeypatch, search_info):
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
 
-    manager = SearchManager(
-        search_info,
-    )
+    manager = SearchManager(search_info)
 
     # create 1500 sections for 500 pages
     sections = []
@@ -210,7 +260,8 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
     embeddings = AzureOpenAIEmbeddingService(
         open_ai_service="x",
         open_ai_deployment="x",
-        open_ai_model_name="text-ada-003",
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         credential=AzureKeyCredential("test"),
         disable_batch=True,
     )
@@ -290,9 +341,7 @@ async def test_remove_content(monkeypatch, search_info):
 
     monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
 
-    manager = SearchManager(
-        search_info,
-    )
+    manager = SearchManager(search_info)
 
     await manager.remove_content("foo.pdf")
 
@@ -300,3 +349,79 @@ async def test_remove_content(monkeypatch, search_info):
     assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
     assert len(deleted_documents) == 1, "It should have deleted one document"
     assert deleted_documents[0]["id"] == "file-foo_pdf-666F6F2E706466-page-0"
+
+
+@pytest.mark.asyncio
+async def test_remove_content_only_oid(monkeypatch, search_info):
+    class AsyncSearchResultsIterator:
+        def __init__(self):
+            self.results = [
+                {
+                    "@search.score": 1,
+                    "id": "file-foo_pdf-666",
+                    "content": "test content",
+                    "category": "test",
+                    "sourcepage": "foo.pdf#page=1",
+                    "sourcefile": "foo.pdf",
+                    "oids": [],
+                },
+                {
+                    "@search.score": 1,
+                    "id": "file-foo_pdf-333",
+                    "content": "test content",
+                    "category": "test",
+                    "sourcepage": "foo.pdf#page=1",
+                    "sourcefile": "foo.pdf",
+                    "oids": ["A-USER-ID", "B-USER-ID"],
+                },
+                {
+                    "@search.score": 1,
+                    "id": "file-foo_pdf-222",
+                    "content": "test content",
+                    "category": "test",
+                    "sourcepage": "foo.pdf#page=1",
+                    "sourcefile": "foo.pdf",
+                    "oids": ["A-USER-ID"],
+                },
+            ]
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            if len(self.results) == 0:
+                raise StopAsyncIteration
+            return self.results.pop()
+
+        async def get_count(self):
+            return len(self.results)
+
+    search_results = AsyncSearchResultsIterator()
+
+    searched_filters = []
+
+    async def mock_search(self, *args, **kwargs):
+        self.filter = kwargs.get("filter")
+        searched_filters.append(self.filter)
+        return search_results
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    deleted_documents = []
+
+    async def mock_delete_documents(self, documents):
+        deleted_documents.extend(documents)
+        return documents
+
+    monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
+
+    manager = SearchManager(
+        search_info,
+    )
+
+    await manager.remove_content("foo.pdf", only_oid="A-USER-ID")
+
+    assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"
+    assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
+    assert len(deleted_documents) == 1, "It should have deleted one document"
+    assert deleted_documents[0]["id"] == "file-foo_pdf-222"

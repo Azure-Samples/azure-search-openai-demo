@@ -1,5 +1,5 @@
 import os
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Awaitable, Callable, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -48,12 +48,13 @@ class RetrieveThenReadVisionApproach(Approach):
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
+        embedding_dimensions: int,
         sourcepage_field: str,
         content_field: str,
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_key: str,
+        vision_token_provider: Callable[[], Awaitable[str]]
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -61,6 +62,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.auth_helper = auth_helper
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
+        self.embedding_dimensions = embedding_dimensions
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.gpt4v_deployment = gpt4v_deployment
@@ -68,7 +70,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
-        self.vision_key = vision_key
+        self.vision_token_provider = vision_token_provider
 
     async def run(
         self,
@@ -89,6 +91,8 @@ class RetrieveThenReadVisionApproach(Approach):
 
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
+        minimum_search_score = overrides.get("minimum_search_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         use_semantic_ranker = overrides.get("semantic_ranker") and has_text
 
@@ -100,19 +104,28 @@ class RetrieveThenReadVisionApproach(Approach):
                 vector = (
                     await self.compute_text_embedding(q)
                     if field == "embedding"
-                    else await self.compute_image_embedding(q, self.vision_endpoint, self.vision_key)
+                    else await self.compute_image_embedding(q)
                 )
                 vectors.append(vector)
 
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         query_text = q if has_text else None
 
-        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions)
+        results = await self.search(
+            top,
+            query_text,
+            filter,
+            vectors,
+            use_semantic_ranker,
+            use_semantic_captions,
+            minimum_search_score,
+            minimum_reranker_score,
+        )
 
         image_list: list[ChatCompletionContentPartImageParam] = []
         user_content: list[ChatCompletionContentPartParam] = [{"text": q, "type": "text"}]
 
-        template = overrides.get("prompt_template") or (self.system_chat_template_gpt4v)
+        template = overrides.get("prompt_template", self.system_chat_template_gpt4v)
         model = self.gpt4v_model
         message_builder = MessageBuilder(template, model)
 
@@ -132,12 +145,12 @@ class RetrieveThenReadVisionApproach(Approach):
 
         # Append user message
         message_builder.insert_message("user", user_content)
-
+        updated_messages = message_builder.messages
         chat_completion = (
             await self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-                messages=message_builder.messages,
-                temperature=overrides.get("temperature") or 0.3,
+                messages=updated_messages,
+                temperature=overrides.get("temperature", 0.3),
                 max_tokens=1024,
                 n=1,
             )
@@ -152,12 +165,29 @@ class RetrieveThenReadVisionApproach(Approach):
             "data_points": data_points,
             "thoughts": [
                 ThoughtStep(
-                    "Search Query",
+                    "Search using user query",
                     query_text,
-                    {"use_semantic_captions": use_semantic_captions, "vector_fields": vector_fields},
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "top": top,
+                        "filter": filter,
+                        "vector_fields": vector_fields,
+                    },
                 ),
-                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
-                ThoughtStep("Prompt", [str(message) for message in message_builder.messages]),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    [str(message) for message in updated_messages],
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
+                ),
             ],
         }
         chat_completion["choices"][0]["context"] = extra_info

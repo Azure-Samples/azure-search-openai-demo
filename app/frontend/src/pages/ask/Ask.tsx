@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Checkbox, Panel, DefaultButton, Spinner, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, Spinner, Slider, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
 
 import styles from "./Ask.module.css";
 
@@ -21,6 +21,9 @@ export function Component(): JSX.Element {
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
     const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
+    const [temperature, setTemperature] = useState<number>(0.3);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
+    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -90,6 +93,9 @@ export function Component(): JSX.Element {
                         prompt_template_suffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
+                        temperature: temperature,
+                        minimum_reranker_score: minimumRerankerScore,
+                        minimum_search_score: minimumSearchScore,
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
@@ -124,6 +130,21 @@ export function Component(): JSX.Element {
         setPromptTemplateSuffix(newValue || "");
     };
 
+    const onTemperatureChange = (
+        newValue: number,
+        range?: [number, number],
+        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
+    ) => {
+        setTemperature(newValue);
+    };
+
+    const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setMinimumSearchScore(parseFloat(newValue || "0"));
+    };
+
+    const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setMinimumRerankerScore(parseFloat(newValue || "0"));
+    };
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
         setRetrieveCount(parseInt(newValue || "3"));
     };
@@ -236,6 +257,38 @@ export function Component(): JSX.Element {
                     autoAdjustHeight
                     onChange={onPromptTemplateChange}
                 />
+
+                <Slider
+                    className={styles.chatSettingsSeparator}
+                    label="Temperature"
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    defaultValue={temperature}
+                    onChange={onTemperatureChange}
+                    showValue
+                    snapToStep
+                />
+
+                <SpinButton
+                    className={styles.askSettingsSeparator}
+                    label="Minimum search score"
+                    min={0}
+                    step={0.01}
+                    defaultValue={minimumSearchScore.toString()}
+                    onChange={onMinimumSearchScoreChange}
+                />
+
+                <SpinButton
+                    className={styles.askSettingsSeparator}
+                    label="Minimum reranker score"
+                    min={1}
+                    max={4}
+                    step={0.1}
+                    defaultValue={minimumRerankerScore.toString()}
+                    onChange={onMinimumRerankerScoreChange}
+                />
+
                 <SpinButton
                     className={styles.askSettingsSeparator}
                     label="Retrieve this many search results:"

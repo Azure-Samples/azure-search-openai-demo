@@ -6,10 +6,11 @@
     "configurations": [
         {
             "name": "Python: Quart",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
+            "python": "${workspaceFolder}/app/backend/backend_env/bin/python",
             "env": {
                 "QUART_APP": "main:app",
                 "QUART_ENV": "development",

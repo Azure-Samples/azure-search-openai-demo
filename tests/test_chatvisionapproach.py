@@ -3,12 +3,14 @@ import json
 import pytest
 from azure.search.documents.indexes.models import SearchField, SearchIndex
 from azure.search.documents.models import (
-    RawVectorQuery,
+    VectorizedQuery,
 )
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from core.authentication import AuthenticationHelper
+
+from .mocks import MOCK_EMBEDDING_DIMENSIONS, MOCK_EMBEDDING_MODEL_NAME
 
 
 class MockOpenAIClient:
@@ -49,11 +51,12 @@ def chat_approach(openai_client, mock_confidential_client_success):
         ),
         blob_container_client=None,
         vision_endpoint="endpoint",
-        vision_key="key",
+        vision_token_provider=lambda: "token",
         gpt4v_deployment="gpt-4v",
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",
-        embedding_model="text-",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         sourcepage_field="",
         content_field="",
         query_language="en-us",
@@ -139,7 +142,7 @@ async def test_compute_text_embedding(chat_approach, openai_client, mock_openai_
 
     result = await chat_approach.compute_text_embedding("test query")
 
-    assert isinstance(result, RawVectorQuery)
+    assert isinstance(result, VectorizedQuery)
     assert result.vector == [0.0023064255, -0.009327292, -0.0028842222]
-    assert result.k == 50
+    assert result.k_nearest_neighbors == 50
     assert result.fields == "embedding"

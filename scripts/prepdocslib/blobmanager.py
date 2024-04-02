@@ -1,17 +1,24 @@
 import datetime
 import io
+import logging
 import os
 import re
 from typing import List, Optional, Union
 
 import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.storage.blob import BlobSasPermissions, UserDelegationKey, generate_blob_sas
+from azure.storage.blob import (
+    BlobSasPermissions,
+    UserDelegationKey,
+    generate_blob_sas,
+)
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from PIL import Image, ImageDraw, ImageFont
 from pypdf import PdfReader
 
 from .listfilestrategy import File
+
+logger = logging.getLogger("ingester")
 
 
 class BlobManager:
@@ -23,15 +30,19 @@ class BlobManager:
         self,
         endpoint: str,
         container: str,
+        account: str,
         credential: Union[AsyncTokenCredential, str],
+        resourceGroup: str,
+        subscriptionId: str,
         store_page_images: bool = False,
-        verbose: bool = False,
     ):
         self.endpoint = endpoint
         self.credential = credential
+        self.account = account
         self.container = container
         self.store_page_images = store_page_images
-        self.verbose = verbose
+        self.resourceGroup = resourceGroup
+        self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
     async def upload_blob(self, file: File) -> Optional[List[str]]:
@@ -44,13 +55,19 @@ class BlobManager:
             # Re-open and upload the original file
             with open(file.content.name, "rb") as reopened_file:
                 blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                print(f"\tUploading blob for whole file -> {blob_name}")
+                logger.info("Uploading blob for whole file -> %s", blob_name)
                 await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
 
-            if self.store_page_images and os.path.splitext(file.content.name)[1].lower() == ".pdf":
-                return await self.upload_pdf_blob_images(service_client, container_client, file)
+            if self.store_page_images:
+                if os.path.splitext(file.content.name)[1].lower() == ".pdf":
+                    return await self.upload_pdf_blob_images(service_client, container_client, file)
+                else:
+                    logger.info("File %s is not a PDF, skipping image upload", file.content.name)
 
         return None
+
+    def get_managedidentity_connectionstring(self):
+        return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
     async def upload_pdf_blob_images(
         self, service_client: BlobServiceClient, container_client: ContainerClient, file: File
@@ -70,12 +87,11 @@ class BlobManager:
             try:
                 font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
             except OSError:
-                print("\tUnable to find arial.ttf or FreeMono.ttf, using default font")
+                logger.info("Unable to find arial.ttf or FreeMono.ttf, using default font")
 
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
-            if self.verbose:
-                print(f"\tConverting page {i} to image and uploading -> {blob_name}")
+            logger.info("Converting page %s to image and uploading -> %s", i, blob_name)
 
             doc = fitz.open(file.content.name)
             page = doc.load_page(i)
@@ -141,8 +157,7 @@ class BlobManager:
                     )
                 ) or (path is not None and blob_path == os.path.basename(path)):
                     continue
-                if self.verbose:
-                    print(f"\tRemoving blob {blob_path}")
+                logger.info("Removing blob %s", blob_path)
                 await container_client.delete_blob(blob_path)
 
     @classmethod

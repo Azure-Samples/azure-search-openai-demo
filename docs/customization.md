@@ -27,7 +27,7 @@ The frontend is built using [React](https://reactjs.org/) and [Fluent UI compone
 
 ## Customizing the backend
 
-The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder.
+The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder. The frontend and backend communicate using the [AI Chat App HTTP Protocol](https://github.com/Azure-Samples/ai-chat-app-protocol).
 
 ### Chat/Ask tabs
 
@@ -37,9 +37,9 @@ Typically, the primary backend code you'll want to customize is the `app/backend
 
 The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
 
-1. It uses the OpenAI ChatCompletion API to turn the user question into a good search query.
+1. It calls the OpenAI ChatCompletion API (with a temperature of 0) to turn the user question into a good search query.
 2. It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).
-3. It then combines the search results and original user question, and asks OpenAI ChatCompletion API to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
+3. It then combines the search results and original user question, and calls the OpenAI ChatCompletion API (with a temperature of 0.7) to answer the question based on the sources. It includes the last 4K of message history as well (or however many tokens are allowed by the deployed model).
 
 The `system_message_chat_conversation` variable is currently tailored to the sample data since it starts with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Change that to match your data.
 
@@ -56,7 +56,7 @@ If you followed the instructions in [docs/gpt4v.md](docs/gpt4v.md) to enable the
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
 1. It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
-2. It then combines the search results and user question, and asks OpenAI ChatCompletion API to answer the question based on the sources.
+2. It then combines the search results and user question, and calls the OpenAI ChatCompletion API (with a temperature of 0.3) to answer the question based on the sources.
 
 The `system_chat_template` variable is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Change that to match your data.
 
@@ -129,7 +129,7 @@ If the problem is with Azure AI Search (step 2 above), the first step is to chec
 
 You can change many of the search parameters in the "Developer settings" in the frontend and see if results improve for your queries. The most relevant options:
 
-![Screenshot of search options in developer settings](screenshot_searchoptions.png)
+![Screenshot of search options in developer settings](images/screenshot_searchoptions.png)
 
 #### Configuring parameters in the Azure Portal
 
@@ -159,7 +159,7 @@ You can also use the `highlight` parameter to see what text is being matched in 
 }
 ```
 
-![Screenshot of search explorer with highlighted results](screenshot_searchindex.png)
+![Screenshot of search explorer with highlighted results](images/screenshot_searchindex.png)
 
 The search explorer works well for testing text, but is harder to use with vectors, since you'd also need to compute the vector embedding and send it in. It is probably easier to use the app frontend for testing vectors/hybrid search.
 

@@ -52,6 +52,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_dimensions: int,
         sourcepage_field: str,
         content_field: str,
         query_language: str,
@@ -63,6 +64,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
+        self.embedding_dimensions = embedding_dimensions
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field
@@ -86,6 +88,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
         use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
         top = overrides.get("top", 3)
+        minimum_search_score = overrides.get("minimum_search_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
@@ -95,11 +99,20 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         # Only keep the text query if the retrieval mode uses text, otherwise drop it
         query_text = q if has_text else None
 
-        results = await self.search(top, query_text, filter, vectors, use_semantic_ranker, use_semantic_captions)
+        results = await self.search(
+            top,
+            query_text,
+            filter,
+            vectors,
+            use_semantic_ranker,
+            use_semantic_captions,
+            minimum_search_score,
+            minimum_reranker_score,
+        )
 
         user_content = [q]
 
-        template = overrides.get("prompt_template") or self.system_chat_template
+        template = overrides.get("prompt_template", self.system_chat_template)
         model = self.chatgpt_model
         message_builder = MessageBuilder(template, model)
 
@@ -112,13 +125,13 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         message_builder.insert_message("user", user_content)
         message_builder.insert_message("assistant", self.answer)
         message_builder.insert_message("user", self.question)
-
+        updated_messages = message_builder.messages
         chat_completion = (
             await self.openai_client.chat.completions.create(
-                # Azure Open AI takes the deployment name as the model name
+                # Azure OpenAI takes the deployment name as the model name
                 model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-                messages=message_builder.messages,
-                temperature=overrides.get("temperature") or 0.3,
+                messages=updated_messages,
+                temperature=overrides.get("temperature", 0.3),
                 max_tokens=1024,
                 n=1,
             )
@@ -129,14 +142,29 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             "data_points": data_points,
             "thoughts": [
                 ThoughtStep(
-                    "Search Query",
+                    "Search using user query",
                     query_text,
                     {
                         "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "top": top,
+                        "filter": filter,
+                        "has_vector": has_vector,
                     },
                 ),
-                ThoughtStep("Results", [result.serialize_for_results() for result in results]),
-                ThoughtStep("Prompt", [str(message) for message in message_builder.messages]),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    [str(message) for message in updated_messages],
+                    (
+                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                        if self.chatgpt_deployment
+                        else {"model": self.chatgpt_model}
+                    ),
+                ),
             ],
         }
 

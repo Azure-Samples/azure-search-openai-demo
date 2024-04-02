@@ -12,7 +12,7 @@ aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.6.0
     # via pydantic
-anyio==4.2.0
+anyio==4.3.0
     # via
     #   httpx
     #   openai
@@ -21,10 +21,8 @@ asgiref==3.7.2
 attrs==23.2.0
     # via aiohttp
 azure-common==1.1.28
-    # via
-    #   azure-keyvault-secrets
-    #   azure-search-documents
-azure-core==1.29.7
+    # via azure-search-documents
+azure-core==1.30.1
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-identity
@@ -38,21 +36,21 @@ azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
 azure-identity==1.15.0
     # via -r requirements.in
-azure-keyvault-secrets==4.7.0
+azure-keyvault-secrets==4.8.0
     # via -r requirements.in
-azure-monitor-opentelemetry==1.2.0
+azure-monitor-opentelemetry==1.3.0
     # via -r requirements.in
-azure-monitor-opentelemetry-exporter==1.0.0b21
+azure-monitor-opentelemetry-exporter==1.0.0b23
     # via azure-monitor-opentelemetry
-azure-search-documents==11.4.0b11
+azure-search-documents==11.6.0b1
     # via -r requirements.in
-azure-storage-blob==12.19.0
+azure-storage-blob==12.19.1
     # via -r requirements.in
 blinker==1.7.0
     # via
     #   flask
     #   quart
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   httpcore
     #   httpx
@@ -67,7 +65,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==42.0.1
+cryptography==42.0.5
     # via
     #   -r requirements.in
     #   azure-identity
@@ -83,7 +81,7 @@ ecdsa==0.18.0
     # via python-jose
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
-flask==3.0.1
+flask==3.0.2
     # via quart
 frozenlist==1.4.1
     # via
@@ -99,9 +97,9 @@ h2==4.1.0
     # via hypercorn
 hpack==4.0.0
     # via h2
-httpcore==1.0.2
+httpcore==1.0.4
     # via httpx
-httpx==0.26.0
+httpx==0.27.0
     # via openai
 hypercorn==0.16.0
     # via quart
@@ -129,12 +127,12 @@ jinja2==3.1.3
     # via
     #   flask
     #   quart
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via
     #   jinja2
     #   quart
     #   werkzeug
-msal==1.26.0
+msal==1.27.0
     # via
     #   -r requirements.in
     #   azure-identity
@@ -143,20 +141,20 @@ msal-extensions==1.1.0
     # via azure-identity
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   openai
     #   pandas
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.10.0
+openai[datalib]==1.13.3
     # via -r requirements.in
-opentelemetry-api==1.22.0
+opentelemetry-api==1.23.0
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
@@ -168,13 +166,14 @@ opentelemetry-api==1.22.0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-httpx
+    #   opentelemetry-instrumentation-openai
     #   opentelemetry-instrumentation-psycopg2
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-instrumentation==0.43b0
+opentelemetry-instrumentation==0.44b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -183,48 +182,51 @@ opentelemetry-instrumentation==0.43b0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-httpx
+    #   opentelemetry-instrumentation-openai
     #   opentelemetry-instrumentation-psycopg2
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
-opentelemetry-instrumentation-aiohttp-client==0.43b0
+opentelemetry-instrumentation-aiohttp-client==0.44b0
     # via -r requirements.in
-opentelemetry-instrumentation-asgi==0.43b0
+opentelemetry-instrumentation-asgi==0.44b0
     # via
     #   -r requirements.in
     #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-dbapi==0.43b0
+opentelemetry-instrumentation-dbapi==0.44b0
     # via opentelemetry-instrumentation-psycopg2
-opentelemetry-instrumentation-django==0.43b0
+opentelemetry-instrumentation-django==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-fastapi==0.43b0
+opentelemetry-instrumentation-fastapi==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-flask==0.43b0
+opentelemetry-instrumentation-flask==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-httpx==0.43b0
+opentelemetry-instrumentation-httpx==0.44b0
     # via -r requirements.in
-opentelemetry-instrumentation-psycopg2==0.43b0
+opentelemetry-instrumentation-openai==0.13.1
+    # via -r requirements.in
+opentelemetry-instrumentation-psycopg2==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-requests==0.43b0
+opentelemetry-instrumentation-requests==0.44b0
     # via
     #   -r requirements.in
     #   azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib==0.43b0
+opentelemetry-instrumentation-urllib==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib3==0.43b0
+opentelemetry-instrumentation-urllib3==0.44b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-wsgi==0.43b0
+opentelemetry-instrumentation-wsgi==0.44b0
     # via
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-flask
 opentelemetry-resource-detector-azure==0.1.3
     # via azure-monitor-opentelemetry
-opentelemetry-sdk==1.22.0
+opentelemetry-sdk==1.23.0
     # via
     #   azure-monitor-opentelemetry-exporter
     #   opentelemetry-resource-detector-azure
-opentelemetry-semantic-conventions==0.43b0
+opentelemetry-semantic-conventions==0.44b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -238,13 +240,16 @@ opentelemetry-semantic-conventions==0.43b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-util-http==0.43b0
+opentelemetry-semantic-conventions-ai==0.0.20
+    # via opentelemetry-instrumentation-openai
+opentelemetry-util-http==0.44b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
+    #   opentelemetry-instrumentation-httpx
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
@@ -253,10 +258,12 @@ packaging==23.2
     # via
     #   msal-extensions
     #   opentelemetry-instrumentation-flask
-pandas==2.2.0
+pandas==2.2.1
     # via openai
-pandas-stubs==2.1.4.231227
+pandas-stubs==2.2.0.240218
     # via openai
+pillow==10.2.0
+    # via -r requirements.in
 portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
@@ -267,17 +274,17 @@ pyasn1==0.5.1
     #   rsa
 pycparser==2.21
     # via cffi
-pydantic==2.6.0
+pydantic==2.6.3
     # via openai
-pydantic-core==2.16.1
+pydantic-core==2.16.3
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via msal
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via pandas
 python-jose[cryptography]==3.3.0
     # via -r requirements.in
-pytz==2023.4
+pytz==2024.1
     # via pandas
 quart==0.19.4
     # via
@@ -304,20 +311,22 @@ six==1.16.0
     #   ecdsa
     #   isodate
     #   python-dateutil
-sniffio==1.3.0
+sniffio==1.3.1
     # via
     #   anyio
     #   httpx
     #   openai
 tenacity==8.2.3
     # via -r requirements.in
-tiktoken==0.5.2
+tiktoken==0.6.0
     # via -r requirements.in
-tqdm==4.66.1
+tqdm==4.66.2
     # via openai
-types-pytz==2023.4.0.20240130
+types-pillow==10.2.0.20240213
+    # via -r requirements.in
+types-pytz==2024.1.0.20240203
     # via pandas-stubs
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   azure-core
     #   azure-keyvault-secrets
@@ -326,11 +335,11 @@ typing-extensions==4.9.0
     #   opentelemetry-sdk
     #   pydantic
     #   pydantic-core
-tzdata==2023.4
+tzdata==2024.1
     # via pandas
-urllib3==2.1.0
+urllib3==2.2.1
     # via requests
-uvicorn==0.27.0.post1
+uvicorn==0.27.1
     # via -r requirements.in
 werkzeug==3.0.1
     # via

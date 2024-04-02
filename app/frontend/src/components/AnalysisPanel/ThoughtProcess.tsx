@@ -12,26 +12,24 @@ interface Props {
 export const ThoughtProcess = ({ thoughts }: Props) => {
     return (
         <ul className={styles.tList}>
-            {thoughts.map(t => {
+            {thoughts.map((t, ind) => {
                 return (
-                    <li className={styles.tListItem}>
+                    <li className={styles.tListItem} key={ind}>
                         <div className={styles.tStep}>{t.title}</div>
+                        <Stack horizontal tokens={{ childrenGap: 5 }}>
+                            {t.props &&
+                                (Object.keys(t.props) || []).map((k: any) => (
+                                    <span className={styles.tProp}>
+                                        {k}: {JSON.stringify(t.props?.[k])}
+                                    </span>
+                                ))}
+                        </Stack>
                         {Array.isArray(t.description) ? (
                             <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock}>
                                 {JSON.stringify(t.description, null, 2)}
                             </SyntaxHighlighter>
                         ) : (
-                            <>
-                                <div>{t.description}</div>
-                                <Stack horizontal tokens={{ childrenGap: 5 }}>
-                                    {t.props &&
-                                        (Object.keys(t.props) || []).map((k: any) => (
-                                            <span className={styles.tProp}>
-                                                {k}: {JSON.stringify(t.props?.[k])}
-                                            </span>
-                                        ))}
-                                </Stack>
-                            </>
+                            <div>{t.description}</div>
                         )}
                     </li>
                 );
