@@ -28,14 +28,14 @@ Write-Host ""
 Write-Host "Restoring backend python packages"
 Write-Host ""
 
-Set-Location ../.
-$venvPythonPath = "./.venv/scripts/python.exe"
+$directory = Get-Location
+$venvPythonPath = "$directory/.venv/scripts/python.exe"
 if (Test-Path -Path "/usr") {
   # fallback to Linux venv path
-  $venvPythonPath = "./.venv/bin/python"
+  $venvPythonPath = "$directory/.venv/bin/python"
 }
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r requirements.txt" -Wait -NoNewWindow
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r backend/requirements.txt" -Wait -NoNewWindow
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore backend python packages"
     exit $LASTEXITCODE
@@ -44,7 +44,7 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host ""
 Write-Host "Restoring frontend npm packages"
 Write-Host ""
-Set-Location ../frontend
+Set-Location ./frontend
 npm install
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore frontend npm packages"
