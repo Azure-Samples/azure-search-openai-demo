@@ -13,7 +13,7 @@ if ($env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT) {
   $adlsGen2StorageAccountArg = "--datalakestorageaccount $env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
   $adlsGen2FilesystemPathArg = ""
   if ($env:AZURE_ADLS_GEN2_FILESYSTEM_PATH) {
-    $adlsGen2FilesystemPathArg = "--datalakefilesystempath $env:AZURE_ADLS_GEN2_FILESYSTEM_PATH"
+    $adlsGen2FilesystemPathArg = "--datalakepath $env:AZURE_ADLS_GEN2_FILESYSTEM_PATH"
   }
   $adlsGen2FilesystemArg = ""
   if ($env:AZURE_ADLS_GEN2_FILESYSTEM) {
