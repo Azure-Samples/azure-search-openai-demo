@@ -387,7 +387,6 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
-                    {" "}
                     <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
                         <TextField
                             className={styles.chatSettingsSeparator}
@@ -396,7 +395,7 @@ const Chat = () => {
                             multiline
                             autoAdjustHeight
                             onChange={onPromptTemplateChange}
-                        />{" "}
+                        />
                     </TooltipHost>
 
                     <Slider
@@ -421,15 +420,15 @@ const Chat = () => {
                     />
 
                     <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
-                    <SpinButton
-                        className={styles.chatSettingsSeparator}
-                        label="Minimum reranker score"
-                        min={1}
-                        max={4}
-                        step={0.1}
-                        defaultValue={minimumRerankerScore.toString()}
-                        onChange={onMinimumRerankerScoreChange}
-                    />
+                        <SpinButton
+                            className={styles.chatSettingsSeparator}
+                            label="Minimum reranker score"
+                            min={1}
+                            max={4}
+                            step={0.1}
+                            defaultValue={minimumRerankerScore.toString()}
+                            onChange={onMinimumRerankerScoreChange}
+                        />
                     </TooltipHost>
 
                     <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
