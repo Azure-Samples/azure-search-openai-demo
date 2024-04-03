@@ -1,13 +1,15 @@
 // Keep values less than 20 words.
 // Don't add links to the tooltips.
 export const toolTipText = {
-    approaches: "Retrieve first uses Azure Search. Read first uses LangChain.",
     promptTemplate: "Allows user to override the chatbot's prompt.",
-    promptTemplatePrefix: "Allows user to provide a prefix to the chatbot's prompt. For example, `Answer the following question as if I were in high school.`",
-    promptTemplateSuffix: "Allows user to provide a suffix to the chatbot's prompt. For example, `Return the first 50 words.`",
+    temperature: "Controls how creative the generated responses are.",
+    searchScore: "Controls the minumum relevancy score between the AI search responses and the question.",
+    rerankerScore:
+        "Controls the minumum relevancy score between the AI search responses and the question in a second step to improve the accuracy and relevancy of the response.",
     retrieveNumber: "Number of results affecting final answer",
     excludeCategory: "Example categories include ...",
-    useSemanticReranker: "Semantic ranker is a machine learning model to improve the relevance and accuracy of search results.",
+    useSemanticReranker:
+        "Add a second step that evalutes the minumum relevancy score between the AI search responses and the question then promote the most semantically relevant results.",
     useQueryContextSummaries:
         "Can improve the relevance and accuracy of search results by providing a more concise and focused summary of the most relevant information related to the query or context.",
     suggestFollowupQuestions: "Provide follow-up questions to continue conversation.",

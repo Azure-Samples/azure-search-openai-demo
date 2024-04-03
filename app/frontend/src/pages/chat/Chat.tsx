@@ -398,28 +398,32 @@ const Chat = () => {
                         />
                     </TooltipHost>
 
-                    <Slider
-                        className={styles.chatSettingsSeparator}
-                        label="Temperature"
-                        min={0}
-                        max={1}
-                        step={0.1}
-                        defaultValue={temperature}
-                        onChange={onTemperatureChange}
-                        showValue
-                        snapToStep
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.temperature}>
+                        <Slider
+                            className={styles.chatSettingsSeparator}
+                            label="Temperature"
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            defaultValue={temperature}
+                            onChange={onTemperatureChange}
+                            showValue
+                            snapToStep
+                        />
+                    </TooltipHost>
 
-                    <SpinButton
-                        className={styles.chatSettingsSeparator}
-                        label="Minimum search score"
-                        min={0}
-                        step={0.01}
-                        defaultValue={minimumSearchScore.toString()}
-                        onChange={onMinimumSearchScoreChange}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.searchScore}>
+                        <SpinButton
+                            className={styles.chatSettingsSeparator}
+                            label="Minimum search score"
+                            min={0}
+                            step={0.01}
+                            defaultValue={minimumSearchScore.toString()}
+                            onChange={onMinimumSearchScoreChange}
+                        />
+                    </TooltipHost>
 
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.rerankerScore}>
                         <SpinButton
                             className={styles.chatSettingsSeparator}
                             label="Minimum reranker score"
@@ -442,29 +446,39 @@ const Chat = () => {
                         />
                     </TooltipHost>
 
-                    <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.excludeCategory}>
+                        <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                    </TooltipHost>
 
                     {showSemanticRankerOption && (
+                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useSemanticReranker}>
+                            <Checkbox
+                                className={styles.chatSettingsSeparator}
+                                checked={useSemanticRanker}
+                                label="Use semantic ranker for retrieval"
+                                onChange={onUseSemanticRankerChange}
+                            />
+                        </TooltipHost>
+                    )}
+
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useQueryContextSummaries}>
                         <Checkbox
                             className={styles.chatSettingsSeparator}
-                            checked={useSemanticRanker}
-                            label="Use semantic ranker for retrieval"
-                            onChange={onUseSemanticRankerChange}
+                            checked={useSemanticCaptions}
+                            label="Use query-contextual summaries instead of whole documents"
+                            onChange={onUseSemanticCaptionsChange}
+                            disabled={!useSemanticRanker}
                         />
-                    )}
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticCaptions}
-                        label="Use query-contextual summaries instead of whole documents"
-                        onChange={onUseSemanticCaptionsChange}
-                        disabled={!useSemanticRanker}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSuggestFollowupQuestions}
-                        label="Suggest follow-up questions"
-                        onChange={onUseSuggestFollowupQuestionsChange}
-                    />
+                    </TooltipHost>
+
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.suggestFollowupQuestions}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useSuggestFollowupQuestions}
+                            label="Suggest follow-up questions"
+                            onChange={onUseSuggestFollowupQuestionsChange}
+                        />
+                    </TooltipHost>
 
                     {showGPT4VOptions && (
                         <GPT4VSettings
@@ -478,11 +492,13 @@ const Chat = () => {
                     )}
 
                     {showVectorOption && (
-                        <VectorSettings
-                            showImageOptions={useGPT4V && showGPT4VOptions}
-                            updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
-                            updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
-                        />
+                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrievalMode}>
+                            <VectorSettings
+                                showImageOptions={useGPT4V && showGPT4VOptions}
+                                updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                                updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                            />
+                        </TooltipHost>
                     )}
 
                     {useLogin && (
@@ -504,12 +520,14 @@ const Chat = () => {
                         />
                     )}
 
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={shouldStream}
-                        label="Stream chat completion responses"
-                        onChange={onShouldStreamChange}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.streamChat}>
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={shouldStream}
+                            label="Stream chat completion responses"
+                            onChange={onShouldStreamChange}
+                        />
+                    </TooltipHost>
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>
