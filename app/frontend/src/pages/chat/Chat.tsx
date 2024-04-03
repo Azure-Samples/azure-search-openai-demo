@@ -530,6 +530,7 @@ const Chat = () => {
                             onChange={onShouldStreamChange}
                         />
                     </TooltipHost>
+
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>
             </div>

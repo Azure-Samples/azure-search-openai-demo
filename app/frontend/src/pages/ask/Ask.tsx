@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Checkbox, Panel, DefaultButton, Spinner, Slider, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, Spinner, Slider, TextField, SpinButton, IDropdownOption, Dropdown, TooltipHost } from "@fluentui/react";
 
 import styles from "./Ask.module.css";
 
@@ -12,6 +12,7 @@ import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
+import { toolTipText, toolTipTextCalloutProps } from "../../i18n/tooltips.js";
 
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
@@ -249,90 +250,111 @@ export function Component(): JSX.Element {
                 onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                 isFooterAtBottom={true}
             >
-                <TextField
-                    className={styles.askSettingsSeparator}
-                    defaultValue={promptTemplate}
-                    label="Override prompt template"
-                    multiline
-                    autoAdjustHeight
-                    onChange={onPromptTemplateChange}
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                    <TextField
+                        className={styles.askSettingsSeparator}
+                        defaultValue={promptTemplate}
+                        label="Override prompt template"
+                        multiline
+                        autoAdjustHeight
+                        onChange={onPromptTemplateChange}
+                    />
+                </TooltipHost>
 
-                <Slider
-                    className={styles.chatSettingsSeparator}
-                    label="Temperature"
-                    min={0}
-                    max={1}
-                    step={0.1}
-                    defaultValue={temperature}
-                    onChange={onTemperatureChange}
-                    showValue
-                    snapToStep
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.temperature}>
+                    <Slider
+                        className={styles.chatSettingsSeparator}
+                        label="Temperature"
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        defaultValue={temperature}
+                        onChange={onTemperatureChange}
+                        showValue
+                        snapToStep
+                    />
+                </TooltipHost>
 
-                <SpinButton
-                    className={styles.askSettingsSeparator}
-                    label="Minimum search score"
-                    min={0}
-                    step={0.01}
-                    defaultValue={minimumSearchScore.toString()}
-                    onChange={onMinimumSearchScoreChange}
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.searchScore}>
+                    <SpinButton
+                        className={styles.askSettingsSeparator}
+                        label="Minimum search score"
+                        min={0}
+                        step={0.01}
+                        defaultValue={minimumSearchScore.toString()}
+                        onChange={onMinimumSearchScoreChange}
+                    />
+                </TooltipHost>
 
-                <SpinButton
-                    className={styles.askSettingsSeparator}
-                    label="Minimum reranker score"
-                    min={1}
-                    max={4}
-                    step={0.1}
-                    defaultValue={minimumRerankerScore.toString()}
-                    onChange={onMinimumRerankerScoreChange}
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.rerankerScore}>
+                    <SpinButton
+                        className={styles.askSettingsSeparator}
+                        label="Minimum reranker score"
+                        min={1}
+                        max={4}
+                        step={0.1}
+                        defaultValue={minimumRerankerScore.toString()}
+                        onChange={onMinimumRerankerScoreChange}
+                    />
+                </TooltipHost>
 
-                <SpinButton
-                    className={styles.askSettingsSeparator}
-                    label="Retrieve this many search results:"
-                    min={1}
-                    max={50}
-                    defaultValue={retrieveCount.toString()}
-                    onChange={onRetrieveCountChange}
-                />
-                <TextField className={styles.askSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
+                    <SpinButton
+                        className={styles.askSettingsSeparator}
+                        label="Retrieve this many search results:"
+                        min={1}
+                        max={50}
+                        defaultValue={retrieveCount.toString()}
+                        onChange={onRetrieveCountChange}
+                    />
+                </TooltipHost>
+
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.excludeCategory}>
+                    <TextField className={styles.askSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                </TooltipHost>
 
                 {showSemanticRankerOption && (
-                    <Checkbox
-                        className={styles.askSettingsSeparator}
-                        checked={useSemanticRanker}
-                        label="Use semantic ranker for retrieval"
-                        onChange={onUseSemanticRankerChange}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useSemanticReranker}>
+                        <Checkbox
+                            className={styles.askSettingsSeparator}
+                            checked={useSemanticRanker}
+                            label="Use semantic ranker for retrieval"
+                            onChange={onUseSemanticRankerChange}
+                        />
+                    </TooltipHost>
                 )}
 
-                <Checkbox
-                    className={styles.askSettingsSeparator}
-                    checked={useSemanticCaptions}
-                    label="Use query-contextual summaries instead of whole documents"
-                    onChange={onUseSemanticCaptionsChange}
-                    disabled={!useSemanticRanker}
-                />
+                <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useQueryContextSummaries}>
+                    <Checkbox
+                        className={styles.askSettingsSeparator}
+                        checked={useSemanticCaptions}
+                        label="Use query-contextual summaries instead of whole documents"
+                        onChange={onUseSemanticCaptionsChange}
+                        disabled={!useSemanticRanker}
+                    />
+                </TooltipHost>
 
                 {showGPT4VOptions && (
-                    <GPT4VSettings
-                        gpt4vInputs={gpt4vInput}
-                        isUseGPT4V={useGPT4V}
-                        updateUseGPT4V={useGPT4V => {
-                            setUseGPT4V(useGPT4V);
-                        }}
-                        updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useGPT4}>
+                        <GPT4VSettings
+                            gpt4vInputs={gpt4vInput}
+                            isUseGPT4V={useGPT4V}
+                            updateUseGPT4V={useGPT4V => {
+                                setUseGPT4V(useGPT4V);
+                            }}
+                            updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
+                        />
+                    </TooltipHost>
                 )}
 
                 {showVectorOption && (
-                    <VectorSettings
-                        showImageOptions={useGPT4V && showGPT4VOptions}
-                        updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
-                        updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrievalMode}>
+                        <VectorSettings
+                            showImageOptions={useGPT4V && showGPT4VOptions}
+                            updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                            updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                        />
+                    </TooltipHost>
                 )}
 
                 {useLogin && (
