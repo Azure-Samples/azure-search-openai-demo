@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider, TooltipHost } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -28,6 +28,7 @@ import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
+import { toolTipText, toolTipTextCalloutProps } from "../../i18n/tooltips.js";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -386,14 +387,17 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
-                    <TextField
-                        className={styles.chatSettingsSeparator}
-                        defaultValue={promptTemplate}
-                        label="Override prompt template"
-                        multiline
-                        autoAdjustHeight
-                        onChange={onPromptTemplateChange}
-                    />
+                    {" "}
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                        <TextField
+                            className={styles.chatSettingsSeparator}
+                            defaultValue={promptTemplate}
+                            label="Override prompt template"
+                            multiline
+                            autoAdjustHeight
+                            onChange={onPromptTemplateChange}
+                        />{" "}
+                    </TooltipHost>
 
                     <Slider
                         className={styles.chatSettingsSeparator}
@@ -416,6 +420,7 @@ const Chat = () => {
                         onChange={onMinimumSearchScoreChange}
                     />
 
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
                     <SpinButton
                         className={styles.chatSettingsSeparator}
                         label="Minimum reranker score"
@@ -425,15 +430,19 @@ const Chat = () => {
                         defaultValue={minimumRerankerScore.toString()}
                         onChange={onMinimumRerankerScoreChange}
                     />
+                    </TooltipHost>
 
-                    <SpinButton
-                        className={styles.chatSettingsSeparator}
-                        label="Retrieve this many search results:"
-                        min={1}
-                        max={50}
-                        defaultValue={retrieveCount.toString()}
-                        onChange={onRetrieveCountChange}
-                    />
+                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
+                        <SpinButton
+                            className={styles.chatSettingsSeparator}
+                            label="Retrieve this many search results:"
+                            min={1}
+                            max={50}
+                            defaultValue={retrieveCount.toString()}
+                            onChange={onRetrieveCountChange}
+                        />
+                    </TooltipHost>
+
                     <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
 
                     {showSemanticRankerOption && (
