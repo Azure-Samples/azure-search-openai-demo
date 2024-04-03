@@ -3,9 +3,9 @@
 export const toolTipText = {
     promptTemplate: "Allows user to override the chatbot's prompt.",
     temperature: "Controls how creative the generated responses are.",
-    searchScore: "Controls the minumum relevancy score between the AI search responses and the question.",
+    searchScore: "Controls the minumum relevancy score between the AI search results and the question.",
     rerankerScore:
-        "Controls the minumum relevancy score between the AI search responses and the question in a second step to improve the accuracy and relevancy of the response.",
+        "Controls the minumum relevancy score between the AI search results and the question in a second step to improve the accuracy and relevancy of the response.",
     retrieveNumber: "Number of results affecting final answer",
     excludeCategory: "Example categories include ...",
     useSemanticReranker:
