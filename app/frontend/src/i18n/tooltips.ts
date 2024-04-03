@@ -13,6 +13,7 @@ export const toolTipText = {
     useQueryContextSummaries:
         "Can improve the relevance and accuracy of search results by providing a more concise and focused summary of the most relevant information related to the query or context.",
     suggestFollowupQuestions: "Provide follow-up questions to continue conversation.",
+    useGPT4: "Controls whether to use GPT 4 Vision in responding or not to enable infromation extraction from images.",
     retrievalMode:
         "The retrieval mode choices determine how the chatbot retrieves and ranks responses based on semantic similarity to the user's query. `Vectors + Text, aka (Hybrid)` uses a combination of vector embeddings and text matching, `Vectors` uses only vector embeddings, and `Text` uses only text matching.",
     streamChat: "Continuously deliver responses as they are generated or wait until all responses are generated before delivering them."

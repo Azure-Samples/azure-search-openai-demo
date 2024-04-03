@@ -481,14 +481,16 @@ const Chat = () => {
                     </TooltipHost>
 
                     {showGPT4VOptions && (
-                        <GPT4VSettings
-                            gpt4vInputs={gpt4vInput}
-                            isUseGPT4V={useGPT4V}
-                            updateUseGPT4V={useGPT4V => {
-                                setUseGPT4V(useGPT4V);
-                            }}
-                            updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
-                        />
+                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useGPT4}>
+                            <GPT4VSettings
+                                gpt4vInputs={gpt4vInput}
+                                isUseGPT4V={useGPT4V}
+                                updateUseGPT4V={useGPT4V => {
+                                    setUseGPT4V(useGPT4V);
+                                }}
+                                updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
+                            />
+                        </TooltipHost>
                     )}
 
                     {showVectorOption && (
