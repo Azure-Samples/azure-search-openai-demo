@@ -71,7 +71,7 @@ param formRecognizerSkuName string = 'S0'
 
 param computerVisionServiceName string = ''
 param computerVisionResourceGroupName string = ''
-param computerVisionResourceGroupLocation string = 'eastus' // Vision vectorize API is yet to be deployed globally
+param computerVisionResourceGroupLocation string = 'swedencentral' // Vision vectorize API is yet to be deployed globally
 param computerVisionSkuName string = 'S1'
 
 param chatGptDeploymentName string // Set in main.parameters.json
