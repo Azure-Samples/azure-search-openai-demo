@@ -413,21 +413,27 @@ def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
 
+    def instrument_app():
+        # This tracks HTTP requests made by aiohttp:
+        AioHttpClientInstrumentor().instrument()
+        # This tracks HTTP requests made by httpx:
+        HTTPXClientInstrumentor().instrument()
+        # This tracks OpenAI SDK requests:
+        OpenAIInstrumentor().instrument()
+        # This middleware tracks app route requests:
+        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         configure_azure_monitor()
-    else:
-        from oltp_tracing import configure_oltp_grpc_tracing
-        configure_oltp_grpc_tracing()
-
-    # This tracks HTTP requests made by aiohttp:
-    AioHttpClientInstrumentor().instrument()
-    # This tracks HTTP requests made by httpx:
-    HTTPXClientInstrumentor().instrument()
-    # This tracks OpenAI SDK requests:
-    OpenAIInstrumentor().instrument()
-    # This middleware tracks app route requests:
-    app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
-
+        instrument_app()
+    elif os.getenv("OTLP_GRPC_ENDPOINT"):
+        from app.backend.otlp_tracing import configure_oltp_grpc_tracing
+        configure_oltp_grpc_tracing(endpoint=os.getenv("OTLP_GRPC_ENDPOINT"))
+        instrument_app()
+    elif os.getenv("OTLP_HTTP_ENDPOINT"):
+        from app.backend.otlp_tracing import configure_oltp_http_tracing
+        configure_oltp_http_tracing(endpoint=os.getenv("OTLP_HTTP_ENDPOINT"))
+        instrument_app()
 
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels

@@ -12,19 +12,6 @@ from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExp
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
-import httpx
-
-
-class RequestsHttpxAdapter(httpx.Client):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def post(self, verify=False, *args, **kwargs):
-        # We don't use verify here.
-        result = super().post(*args, **kwargs)
-        result.ok = result.status_code < 400
-        return result
-
 
 def configure_oltp_http_tracing(service_name: str = "azure-search-openai-demo", endpoint: str = "http://localhost:4318"):
     # Service name is required for most backends
@@ -43,6 +30,7 @@ def configure_oltp_http_tracing(service_name: str = "azure-search-openai-demo", 
     )
     meterProvider = MeterProvider(resource=resource, metric_readers=[reader])
     metrics.set_meter_provider(meterProvider)
+
 
 def configure_oltp_grpc_tracing(service_name: str = "azure-search-openai-demo", endpoint: str = "http://localhost:4317"):
     # Service name is required for most backends
