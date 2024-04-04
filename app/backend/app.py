@@ -416,8 +416,8 @@ def create_app():
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         configure_azure_monitor()
     else:
-        from oltp_tracing import configure_oltp_tracing
-        configure_oltp_tracing()
+        from oltp_tracing import configure_oltp_grpc_tracing
+        configure_oltp_grpc_tracing()
 
     # This tracks HTTP requests made by aiohttp:
     AioHttpClientInstrumentor().instrument()

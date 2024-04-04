@@ -103,7 +103,7 @@ hpack==4.0.0
     # via h2
 httpcore==1.0.4
     # via httpx
-httpx==0.27.0
+httpx[http2]==0.27.0
     # via openai
 hypercorn==0.16.0
     # via quart
@@ -186,6 +186,7 @@ opentelemetry-api==1.23.0
 opentelemetry-exporter-otlp-proto-common==1.23.0
     # via opentelemetry-exporter-otlp-proto-http
 opentelemetry-exporter-otlp-proto-http==1.23.0
+opentelemetry-exporter-otlp-proto-grpc==1.23.0
     # via -r requirements.in
 opentelemetry-instrumentation==0.44b0
     # via

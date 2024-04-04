@@ -25,4 +25,6 @@ types-Pillow
 # Arize Pheonix
 opentelemetry-semantic-conventions
 opentelemetry-exporter-otlp-proto-http
-openinference-instrumentation-openai
+opentelemetry-exporter-otlp-proto-grpc
+# openinference-instrumentation-openai
+httpx[http2]

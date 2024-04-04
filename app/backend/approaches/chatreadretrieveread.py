@@ -14,6 +14,8 @@ from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.modelhelper import get_token_limit
 
+from opentelemetry import metrics
+
 
 class ChatReadRetrieveReadApproach(ChatApproach):
     """
@@ -49,6 +51,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        self.meter_ratelimit_remaining_tokens = metrics.get_meter(__name__).create_gauge("openai.ratelimit-remaining-tokens", description="OpenAI tokens remaining in limit")
+        self.meter_ratelimit_remaining_requests = metrics.get_meter(__name__).create_gauge("openai.ratelimit-remaining-requests", description="OpenAI remaining requests")
 
     @property
     def system_message_chat_conversation(self):
@@ -128,7 +132,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             few_shots=self.query_prompt_few_shots,
         )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+        chat_completion_response = await self.openai_client.chat.completions.with_raw_response.create(
             messages=query_messages,  # type: ignore
             # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
@@ -138,6 +142,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             tools=tools,
             tool_choice="auto",
         )
+        self.meter_ratelimit_remaining_tokens.set(int(chat_completion_response.headers.get("x-ratelimit-remaining-tokens", 0)))
+        self.meter_ratelimit_remaining_requests.set(int(chat_completion_response.headers.get("x-ratelimit-remaining-requests", 0)))
+        chat_completion = chat_completion_response.parse()
 
         query_text = self.get_search_query(chat_completion, original_user_query)
 
