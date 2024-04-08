@@ -132,17 +132,25 @@ param clientAppSecret string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
-@description('IP or Subnet that is allowed access via the public network, must be used with usePrivateEndpoint')
-param allowedIp string = '' // For single host specific rules
+@description('IP or Subnet that is allowed access via the public network. Expectation is that the format is a comma-delimited list of CIDR IP rules')
+param allowedIp string = '' // For host specific rules
+
+@allowed([ 'None', 'AzurePortal' ])
+@description('If allowedIp is set, whether the Azure Portal is allowed to bypass the search service IP firewall.')
+param searchNetworkBypass string = 'None'
+
+@description('Public network access value for all deployed resources')
+@allowed(['enabled', 'disabled'])
+param publicNetworkAccess string = 'enabled'
+
+@description('Add a private endpoints for network connectivity')
+param usePrivateEndpoint bool = false
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
-
-@description('Use network isolation')
-param usePrivateEndpoint bool = false
 
 @description('Show options to use vector embeddings for searching in the app UI')
 param useVectors bool = false
@@ -157,6 +165,10 @@ var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServi
 var useKeyVault = useSearchServiceKey
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
+
+// Convert stringified ip rules into array format
+// ex: 127.0.0.1, 127.0.1.0/24
+var ipRules = !empty(allowedIp) ? map(split(allowedIp, ','), rule => trim(rule)) : []
 
 @description('Whether the deployment is running on GitHub Actions')
 param runningOnGh string = ''
@@ -191,8 +203,6 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
 
-var publicNetworkAccess = (usePrivateEndpoint && allowedIp == '') ? 'Disabled' : 'Enabled'
-var allowedIpRules = (allowedIp != '') ? [ { value: allowedIp } ] : []
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(keyVaultResourceGroupName)) {
   name: !empty(keyVaultResourceGroupName) ? keyVaultResourceGroupName : resourceGroup.name
 }
@@ -355,7 +365,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
     location: openAiResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
-    allowedIpRules: allowedIpRules
+    allowedIpRules: allowedIp
     sku: {
       name: openAiSkuName
     }
@@ -433,7 +443,6 @@ module searchService 'core/search/search-services.bicep' = {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
-    publicNetworkAccess: toLower(publicNetworkAccess) == 'enabled' ? 'enabled' : 'disabled'
     authOptions: {
       aadOrApiKey: {
         aadAuthFailureMode: 'http401WithBearerChallenge'
@@ -443,7 +452,11 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
-    allowedIpRules: allowedIpRules
+    publicNetworkAccess: toLower(publicNetworkAccess) == 'enabled' ? 'enabled' : 'disabled'
+    networkRuleSet: {
+      ipRules: ipRules
+      networkBypass: searchNetworkBypass
+    }
   }
 }
 
