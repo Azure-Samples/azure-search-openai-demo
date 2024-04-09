@@ -274,7 +274,7 @@ pandas==2.2.1
     # via openai
 pandas-stubs==2.2.0.240218
     # via openai
-pillow==10.2.0
+pillow==10.3.0
     # via -r requirements.in
 portalocker==2.8.2
     # via msal-extensions
@@ -291,7 +291,9 @@ pydantic==2.6.3
 pydantic-core==2.16.3
     # via pydantic
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 pymupdf==1.23.26
     # via -r requirements.in
 pymupdfb==1.23.22
