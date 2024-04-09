@@ -3,7 +3,7 @@ import datetime
 import os
 import random
 import subprocess
-from typing import Any, Dict, Tuple
+from typing import Tuple
 
 from azure.identity.aio import AzureDeveloperCliCredential
 from msgraph import GraphServiceClient
@@ -24,28 +24,27 @@ from msgraph.generated.models.web_application import WebApplication
 from auth_common import get_application, test_authentication_enabled
 
 
-async def create_application(graph_client: GraphServiceClient, app_payload: Dict[str, Any]) -> Tuple[str, str]:
-    request_body = Application(**app_payload)
-    app = await graph_client.applications.post(request_body)
+async def create_application(graph_client: GraphServiceClient, request_app: Application) -> Tuple[str, str]:
+    app = await graph_client.applications.post(request_app)
     object_id = app.id
     client_id = app.app_id
 
     # Create a service principal
-    request_body = ServicePrincipal(app_id=client_id, display_name=app.display_name)
-    await graph_client.service_principals.post(request_body)
+    request_principal = ServicePrincipal(app_id=client_id, display_name=app.display_name)
+    await graph_client.service_principals.post(request_principal)
     return object_id, client_id
 
 
 async def add_client_secret(graph_client: GraphServiceClient, app_id: str) -> str:
-    request_body = AddPasswordPostRequestBody(
+    request_password = AddPasswordPostRequestBody(
         password_credential=PasswordCredential(display_name="WebAppSecret"),
     )
-    result = await graph_client.applications.by_application_id(app_id).add_password.post(request_body)
+    result = await graph_client.applications.by_application_id(app_id).add_password.post(request_password)
     return result.secret_text
 
 
 async def create_or_update_application_with_secret(
-    graph_client: GraphServiceClient, app_id_env_var: str, app_secret_env_var: str, app: Application
+    graph_client: GraphServiceClient, app_id_env_var: str, app_secret_env_var: str, request_app: Application
 ) -> Tuple[str, str, bool]:
     app_id = os.getenv(app_id_env_var, "no-id")
     created_app = False
@@ -56,10 +55,10 @@ async def create_or_update_application_with_secret(
 
     if object_id:
         print("Application already exists, not creating new one")
-        await graph_client.applications.by_application_id(object_id).patch(app)
+        await graph_client.applications.by_application_id(object_id).patch(request_app)
     else:
         print("Creating application registration")
-        object_id, app_id = await create_application(graph_client, app)
+        object_id, app_id = await create_application(graph_client, request_app)
         update_azd_env(app_id_env_var, app_id)
         created_app = True
 
@@ -181,7 +180,7 @@ async def main():
         graph_client,
         app_id_env_var="AZURE_SERVER_APP_ID",
         app_secret_env_var="AZURE_SERVER_APP_SECRET",
-        app=server_app_initial(app_identifier),
+        request_app=server_app_initial(app_identifier),
     )
     print("Setting up server application permissions...")
     server_app_permission = server_app_permission_setup(server_app_id)
@@ -191,7 +190,7 @@ async def main():
         graph_client,
         app_id_env_var="AZURE_CLIENT_APP_ID",
         app_secret_env_var="AZURE_CLIENT_APP_SECRET",
-        app=client_app(server_app_id, server_app_permission, app_identifier),
+        request_app=client_app(server_app_id, server_app_permission, app_identifier),
     )
 
     print("Setting up server known client applications...")
