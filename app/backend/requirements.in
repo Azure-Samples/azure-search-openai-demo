@@ -20,6 +20,7 @@ msal
 azure-keyvault-secrets
 cryptography
 python-jose[cryptography]
+types-python-jose
 Pillow
 types-Pillow
 pypdf

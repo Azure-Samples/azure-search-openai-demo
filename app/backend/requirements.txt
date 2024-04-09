@@ -398,6 +398,10 @@ types-html5lib==1.1.11.20240228
     # via types-beautifulsoup4
 types-pillow==10.2.0.20240213
     # via -r requirements.in
+types-pyasn1==0.6.0.20240402
+    # via types-python-jose
+types-python-jose==3.3.4.20240106
+    # via -r requirements.in
 types-pytz==2024.1.0.20240203
     # via pandas-stubs
 typing-extensions==4.10.0

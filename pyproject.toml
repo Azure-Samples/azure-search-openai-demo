@@ -28,6 +28,7 @@ python_version = 3.9
 module = [
     "msal.*",
     "msgraph.*",
+    "kiota_abstractions.*",
     "kiota.*"
 ]
 ignore_missing_imports = true
