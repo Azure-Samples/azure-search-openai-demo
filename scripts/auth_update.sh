@@ -8,4 +8,4 @@ fi
 
 . ./scripts/load_python_env.sh
 
-./scripts/.venv/bin/python ./scripts/auth_update.py
+./.venv/bin/python ./scripts/auth_update.py

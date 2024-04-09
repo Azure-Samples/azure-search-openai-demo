@@ -67,6 +67,20 @@ async def test_index(client):
 
 
 @pytest.mark.asyncio
+async def test_redirect(client):
+    response = await client.get("/redirect")
+    assert response.status_code == 200
+    assert (await response.get_data()) == b""
+
+
+@pytest.mark.asyncio
+async def test_favicon(client):
+    response = await client.get("/favicon.ico")
+    assert response.status_code == 200
+    assert response.content_type == "image/vnd.microsoft.icon"
+
+
+@pytest.mark.asyncio
 async def test_cors_notallowed(client) -> None:
     response = await client.get("/", headers={"Origin": "https://quart.com"})
     assert "Access-Control-Allow-Origin" not in response.headers
