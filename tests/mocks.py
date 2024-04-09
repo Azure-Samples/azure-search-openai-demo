@@ -1,7 +1,9 @@
 import json
 from collections import namedtuple
+from io import BytesIO
 from typing import Optional
 
+import openai.types
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.models import (
     VectorQuery,
@@ -32,6 +34,9 @@ class MockBlob:
 
     async def readall(self):
         return b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
+
+    async def readinto(self, buffer: BytesIO):
+        buffer.write(b"test")
 
 
 class MockKeyVaultSecret:
@@ -133,6 +138,9 @@ class MockAsyncSearchResultsIterator:
             raise StopAsyncIteration
         return MockAsyncPageIterator(self.data.pop(0))
 
+    async def get_count(self):
+        return len(self.data)
+
     def by_page(self):
         return self
 
@@ -153,6 +161,19 @@ class MockResponse:
 
     async def json(self):
         return json.loads(self.text)
+
+
+class MockEmbeddingsClient:
+    def __init__(self, create_embedding_response: openai.types.CreateEmbeddingResponse):
+        self.create_embedding_response = create_embedding_response
+
+    async def create(self, *args, **kwargs) -> openai.types.CreateEmbeddingResponse:
+        return self.create_embedding_response
+
+
+class MockClient:
+    def __init__(self, embeddings_client):
+        self.embeddings = embeddings_client
 
 
 def mock_computervision_response():

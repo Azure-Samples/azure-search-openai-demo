@@ -7,14 +7,15 @@ import tenacity
 from httpx import Request, Response
 from openai.types.create_embedding_response import Usage
 
+from prepdocslib.embeddings import (
+    AzureOpenAIEmbeddingService,
+    OpenAIEmbeddingService,
+)
+
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
     MOCK_EMBEDDING_MODEL_NAME,
     MockAzureCredential,
-)
-from scripts.prepdocslib.embeddings import (
-    AzureOpenAIEmbeddingService,
-    OpenAIEmbeddingService,
 )
 
 

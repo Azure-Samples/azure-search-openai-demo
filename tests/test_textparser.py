@@ -2,7 +2,7 @@ import io
 
 import pytest
 
-from scripts.prepdocslib.textparser import TextParser
+from prepdocslib.textparser import TextParser
 
 
 @pytest.mark.asyncio
