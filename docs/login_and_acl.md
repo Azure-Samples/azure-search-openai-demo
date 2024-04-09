@@ -143,8 +143,8 @@ In both the chat and ask a question modes, under **Developer settings** optional
 
 The sample supports 2 main strategies for adding data with document level access control.
 
-* [Using the Add Documents API](#api-updates). Sample scripts are provided which directly use the [Add Documents API](https://learn.microsoft.com/en-us/rest/api/searchservice/documents/?view=rest-searchservice-2023-11-01&tabs=HTTP) to manage access control information on documents in the index.
-* [Using prepdocs and Azure Data Lake Storage Gen 2](#azure-data-lake-storage-gen2-setup). Sample scripts are provided which set up an [Azure Data Lake Storage Gen 2](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) account and set the [access control information](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-access-control) on files and folders stored there.
+* [Using the Add Documents API](#api-updates). Sample scripts are provided which directly use the [Add Documents API](https://learn.microsoft.com/rest/api/searchservice/documents/?view=rest-searchservice-2023-11-01&tabs=HTTP) to manage access control information on documents in the index.
+* [Using prepdocs and Azure Data Lake Storage Gen 2](#azure-data-lake-storage-gen2-setup). Sample scripts are provided which set up an [Azure Data Lake Storage Gen 2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) account and set the [access control information](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) on files and folders stored there.
 
 <a href="api-updates" ></a>
 
