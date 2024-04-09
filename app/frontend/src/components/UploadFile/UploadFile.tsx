@@ -20,6 +20,7 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [deletionStatus, setDeletionStatus] = useState<{ [filename: string]: "pending" | "error" | "success" }>({});
     const [uploadedFile, setUploadedFile] = useState<SimpleAPIResponse>();
+    const [uploadedFileError, setUploadedFileError] = useState<string>();
     const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
     if (!useLogin) {
@@ -90,10 +91,12 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
             const response: SimpleAPIResponse = await uploadFileApi(formData, idToken);
             setUploadedFile(response);
             setIsUploading(false);
+            setUploadedFileError(undefined);
             listUploadedFiles(idToken);
         } catch (error) {
             console.error(error);
             setIsUploading(false);
+            setUploadedFileError(`Error uploading file - please try again or contact admin.`);
         }
     };
 
@@ -127,6 +130,7 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
 
                         {/* Show a loading message while files are being uploaded */}
                         {isUploading && <Text>{"Uploading files..."}</Text>}
+                        {!isUploading && uploadedFileError && <Text>{uploadedFileError}</Text>}
                         {!isUploading && uploadedFile && <Text>{uploadedFile.message}</Text>}
 
                         {/* Display the list of already uploaded */}
