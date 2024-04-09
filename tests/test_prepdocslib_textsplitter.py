@@ -5,11 +5,11 @@ from pathlib import Path
 import pytest
 import tiktoken
 
-from scripts.prepdocslib.listfilestrategy import LocalListFileStrategy
-from scripts.prepdocslib.page import Page
-from scripts.prepdocslib.pdfparser import LocalPdfParser
-from scripts.prepdocslib.searchmanager import Section
-from scripts.prepdocslib.textsplitter import (
+from prepdocslib.listfilestrategy import LocalListFileStrategy
+from prepdocslib.page import Page
+from prepdocslib.pdfparser import LocalPdfParser
+from prepdocslib.searchmanager import Section
+from prepdocslib.textsplitter import (
     ENCODING_MODEL,
     SentenceTextSplitter,
     SimpleTextSplitter,

@@ -2,7 +2,7 @@ import io
 
 import pytest
 
-from scripts.prepdocslib.htmlparser import LocalHTMLParser
+from prepdocslib.htmlparser import LocalHTMLParser
 
 
 @pytest.mark.asyncio
