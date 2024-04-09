@@ -128,7 +128,7 @@ If you are running setup for the first time, ensure you have run `azd env set AZ
 
 Ensure you run `azd env set AZURE_USE_AUTHENTICATION` to enable the login UI once you have setup the two Azure AD apps before you deploy or run the application. The login UI will not appear unless all [required environment variables](#environment-variables-reference) have been setup.
 
-In both the chat and ask a question modes, under **Developer settings** optional **Use oid security filter** and **Use groups security filter** checkboxes will appear. The oid (User ID) filter maps to the `oids` field in the search index and the groups (Group ID) filter maps to the `groups` field in the search index. Once [data with access control information](#add-access-control-data) is present, the filters will restrict results for the logged in user correctly. If `AZURE_ENFORCE_ACCESS_CONTROL` has been set, then access control information is required to get any results at all.
+In both the chat and ask a question modes, under **Developer settings** optional **Use oid security filter** and **Use groups security filter** checkboxes will appear. The oid (User ID) filter maps to the `oids` field in the search index and the groups (Group ID) filter maps to the `groups` field in the search index. If `AZURE_ENFORCE_ACCESS_CONTROL` has been set, then both the **Use oid security filter** and **Use groups security filter** options are always enabled and cannot be disabled.
 
 ### Troubleshooting Azure AD Setup
 
