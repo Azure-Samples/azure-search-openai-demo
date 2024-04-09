@@ -8,7 +8,7 @@ if [ -n "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
   adlsGen2StorageAccountArg="--datalakestorageaccount $AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
   adlsGen2FilesystemPathArg=""
   if [ -n "$AZURE_ADLS_GEN2_FILESYSTEM_PATH" ]; then
-    adlsGen2FilesystemPathArg="--datalakefilesystempath $AZURE_ADLS_GEN2_FILESYSTEM_PATH"
+    adlsGen2FilesystemPathArg="--datalakepath $AZURE_ADLS_GEN2_FILESYSTEM_PATH"
   fi
   adlsGen2FilesystemArg=""
   if [ -n "$AZURE_ADLS_GEN2_FILESYSTEM" ]; then
