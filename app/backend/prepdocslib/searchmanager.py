@@ -228,14 +228,23 @@ class SearchManager:
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
-                result = await search_client.search("", filter=filter, top=1000, include_total_count=True)
-                if await result.get_count() == 0:
+                max_results = 1000
+                result = await search_client.search(
+                    search_text="", filter=filter, top=max_results, include_total_count=True
+                )
+                result_count = await result.get_count()
+                if result_count == 0:
                     break
                 documents_to_remove = []
                 async for document in result:
                     # If only_oid is set, only remove documents that have only this oid
-                    if not only_oid or document["oids"] == [only_oid]:
+                    if not only_oid or document.get("oids") == [only_oid]:
                         documents_to_remove.append({"id": document["id"]})
+                if len(documents_to_remove) == 0:
+                    if result_count < max_results:
+                        break
+                    else:
+                        continue
                 removed_docs = await search_client.delete_documents(documents_to_remove)
                 logger.info("Removed %d sections from index", len(removed_docs))
                 # It can take a few seconds for search results to reflect changes, so wait a bit

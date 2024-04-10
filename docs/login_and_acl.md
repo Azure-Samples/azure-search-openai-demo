@@ -12,8 +12,8 @@
     - [Testing](#testing)
   - [Troubleshooting Azure AD Setup](#troubleshooting-azure-ad-setup)
 - [Adding data with document level access control](#add-access-control-data)
-  -[Using the Add Documents API](#api-updates)
-  -[Azure Data Lake Storage Gen2 and prepdocs](#azure-data-lake-storage-gen2-setup)
+  - [Using the Add Documents API](#using-the-add-documents-api)
+  - [Azure Data Lake Storage Gen2 and prepdocs](#azure-data-lake-storage-gen2-setup)
 - [Environment Variables Reference](#environment-variables-reference)
   - [Authentication Behavior by Environment](#authentication-behavior-by-environment)
 
@@ -137,16 +137,12 @@ In both the chat and ask a question modes, under **Developer settings** optional
 * It's possible that your tenant admin has placed a restriction on consent to apps with [unverified publishers](https://learn.microsoft.com/azure/active-directory/develop/publisher-verification-overview). In this case, only admins may consent to the client and server apps, and normal user accounts are unable to use the login system until the admin consents on behalf of the entire organization.
 * It's possible that your tenant admin requires [admin approval of all new apps](https://learn.microsoft.com/azure/active-directory/manage-apps/manage-consent-requests). Regardless of whether you select the delegated or admin permissions, the app will not work without tenant admin consent.
 
-<a href="add-access-control-data" ></a>
-
 ## Adding data with document level access control
 
 The sample supports 2 main strategies for adding data with document level access control.
 
-* [Using the Add Documents API](#api-updates). Sample scripts are provided which use the Azure AI Search Service [Add Documents API](https://learn.microsoft.com/rest/api/searchservice/documents/?view=rest-searchservice-2023-11-01&tabs=HTTP) to directly manage access control information on _existing documents_ in the index.
+* [Using the Add Documents API](#using-the-add-documents-api). Sample scripts are provided which use the Azure AI Search Service [Add Documents API](https://learn.microsoft.com/rest/api/searchservice/documents/?view=rest-searchservice-2023-11-01&tabs=HTTP) to directly manage access control information on _existing documents_ in the index.
 * [Using prepdocs and Azure Data Lake Storage Gen 2](#azure-data-lake-storage-gen2-setup). Sample scripts are provided which set up an [Azure Data Lake Storage Gen 2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) account, set the [access control information](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) on files and folders stored there, and ingest those documents into the search index with their  access control information.
-
-<a href="api-updates" ></a>
 
 ### Using the Add Documents API
 
@@ -185,7 +181,7 @@ Note that this optional script may not work in Codespaces if your administrator 
 
 #### Azure Data Lake Storage Gen2 Prep Docs
 
-Once a Data Lake Storage Gen2 storage account has been setup with sample data and access control lists, [prepdocs.py](../scripts/prepdocs.py) can be used to automatically process PDFs in the storage account and store them with their [access control lists in the search index](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control).
+Once a Data Lake Storage Gen2 storage account has been setup with sample data and access control lists, [prepdocs.py](../app/backend/prepdocs.py) can be used to automatically process PDFs in the storage account and store them with their [access control lists in the search index](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control).
 
 To run this script with a Data Lake Storage Gen2 account, first set the following environment variables:
 
