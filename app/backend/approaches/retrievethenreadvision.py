@@ -1,4 +1,3 @@
-import os
 from typing import Any, AsyncGenerator, Awaitable, Callable, Optional, Union
 
 from azure.search.documents.aio import SearchClient
@@ -13,10 +12,6 @@ from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 from core.messagebuilder import MessageBuilder
-
-# Replace these with your own values, either in environment variables or directly here
-AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT")
-AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
 
 
 class RetrieveThenReadVisionApproach(Approach):
