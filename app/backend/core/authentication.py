@@ -8,7 +8,7 @@ import aiohttp
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchIndex
 from jose import jwt
-from jose.jwt.exceptions import ExpiredSignatureError, JWTClaimsError
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
 from tenacity import (
