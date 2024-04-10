@@ -20,9 +20,11 @@ msal
 azure-keyvault-secrets
 cryptography
 python-jose[cryptography]
+types-python-jose
 Pillow
 types-Pillow
 pypdf
 PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
+msgraph-sdk==1.1.0

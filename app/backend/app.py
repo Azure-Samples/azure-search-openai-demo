@@ -356,7 +356,7 @@ async def setup_clients():
             vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
         ) as key_vault_client:
             search_key = (
-                AZURE_SEARCH_SECRET_NAME and (await key_vault_client.get_secret(AZURE_SEARCH_SECRET_NAME)).value
+                AZURE_SEARCH_SECRET_NAME and (await key_vault_client.get_secret(AZURE_SEARCH_SECRET_NAME)).value  # type: ignore[attr-defined]
             )
 
     # Set up clients for AI Search and Storage
@@ -394,6 +394,10 @@ async def setup_clients():
 
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
+        if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:
+            raise ValueError(
+                "AZURE_USERSTORAGE_ACCOUNT and AZURE_USERSTORAGE_CONTAINER must be set when USE_USER_UPLOAD is true"
+            )
         user_blob_container_client = FileSystemClient(
             f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net",
             AZURE_USERSTORAGE_CONTAINER,
@@ -504,7 +508,8 @@ async def setup_clients():
 
     if USE_GPT4V:
         current_app.logger.info("USE_GPT4V is true, setting up GPT4V approach")
-
+        if not AZURE_OPENAI_GPT4V_MODEL:
+            raise ValueError("AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
@@ -565,7 +570,7 @@ def create_app():
         # This tracks OpenAI SDK requests:
         OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
-        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[assignment]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely
