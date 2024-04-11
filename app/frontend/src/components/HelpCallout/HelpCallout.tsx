@@ -12,7 +12,8 @@ const iconProps = { iconName: "Info" };
 
 interface IHelpCalloutProps {
     label: string | undefined;
-    id: string;
+    labelId: string;
+    fieldId: string | undefined;
     helpText: string;
 }
 
@@ -24,7 +25,9 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
     return (
         <>
             <Stack horizontal verticalAlign="center" tokens={stackTokens}>
-                <label id={props.id}>{props.label}</label>
+                <label id={props.labelId} htmlFor={props.fieldId}>
+                    {props.label}
+                </label>
                 <IconButton id={iconButtonId} iconProps={iconProps} title="Info" ariaLabel="Info" onClick={toggleIsCalloutVisible} styles={iconButtonStyles} />
             </Stack>
             {isCalloutVisible && (

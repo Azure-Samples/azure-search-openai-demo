@@ -141,7 +141,7 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.get_by_label("Retrieve this many search results:").fill("1")
     page.get_by_label("Exclude category").click()
     page.get_by_label("Exclude category").fill("dogs")
-    page.get_by_text("Use query-contextual summaries instead of whole documents").click()
+    page.get_by_text("Use semantic captions").click()
     page.get_by_text("Use semantic ranker for retrieval").click()
     page.get_by_text("Vectors + Text (Hybrid)").click()
     page.get_by_role("option", name="Vectors", exact=True).click()

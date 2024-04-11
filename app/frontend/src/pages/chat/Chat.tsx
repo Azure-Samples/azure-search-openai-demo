@@ -283,17 +283,29 @@ const Chat = () => {
 
     // IDs for form labels and their associated callouts
     const promptTemplateId = useId("promptTemplate");
+    const promptTemplateFieldId = useId("promptTemplateField");
     const temperatureId = useId("temperature");
+    const temperatureFieldId = useId("temperatureField");
     const searchScoreId = useId("searchScore");
+    const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
+    const rerankerScoreFieldId = useId("rerankerScoreField");
     const retrieveCountId = useId("retrieveCount");
+    const retrieveCountFieldId = useId("retrieveCountField");
     const excludeCategoryId = useId("excludeCategory");
+    const excludeCategoryFieldId = useId("excludeCategoryField");
     const semanticRankerId = useId("semanticRanker");
+    const semanticRankerFieldId = useId("semanticRankerField");
     const semanticCaptionsId = useId("semanticCaptions");
+    const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
+    const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
+    const useOidSecurityFilterFieldId = useId("useOidSecurityFilterField");
     const useGroupsSecurityFilterId = useId("useGroupsSecurityFilter");
+    const useGroupsSecurityFilterFieldId = useId("useGroupsSecurityFilterField");
     const shouldStreamId = useId("shouldStream");
+    const shouldStreamFieldId = useId("shouldStreamField");
 
     return (
         <div className={styles.container}>
@@ -402,6 +414,7 @@ const Chat = () => {
                     isFooterAtBottom={true}
                 >
                     <TextField
+                        id={promptTemplateFieldId}
                         className={styles.chatSettingsSeparator}
                         defaultValue={promptTemplate}
                         label="Override prompt template"
@@ -410,11 +423,17 @@ const Chat = () => {
                         onChange={onPromptTemplateChange}
                         aria-labelledby={promptTemplateId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout id={promptTemplateId} helpText={toolTipText.promptTemplate} label={props?.label} />
+                            <HelpCallout
+                                labelId={promptTemplateId}
+                                fieldId={promptTemplateFieldId}
+                                helpText={toolTipText.promptTemplate}
+                                label={props?.label}
+                            />
                         )}
                     />
 
                     <TextField
+                        id={temperatureFieldId}
                         className={styles.chatSettingsSeparator}
                         label="Temperature"
                         type="number"
@@ -425,11 +444,12 @@ const Chat = () => {
                         onChange={onTemperatureChange}
                         aria-labelledby={temperatureId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout id={temperatureId} helpText={toolTipText.temperature} label={props?.label} />
+                            <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={toolTipText.temperature} label={props?.label} />
                         )}
                     />
 
                     <TextField
+                        id={searchScoreFieldId}
                         className={styles.chatSettingsSeparator}
                         label="Minimum search score"
                         type="number"
@@ -439,12 +459,13 @@ const Chat = () => {
                         onChange={onMinimumSearchScoreChange}
                         aria-labelledby={searchScoreId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout id={searchScoreId} helpText={toolTipText.searchScore} label={props?.label} />
+                            <HelpCallout labelId={searchScoreId} fieldId={searchScoreFieldId} helpText={toolTipText.searchScore} label={props?.label} />
                         )}
                     />
 
                     {showSemanticRankerOption && (
                         <TextField
+                            id={rerankerScoreFieldId}
                             className={styles.chatSettingsSeparator}
                             label="Minimum reranker score"
                             type="number"
@@ -455,12 +476,18 @@ const Chat = () => {
                             onChange={onMinimumRerankerScoreChange}
                             aria-labelledby={rerankerScoreId}
                             onRenderLabel={(props: ITextFieldProps | undefined) => (
-                                <HelpCallout id={rerankerScoreId} helpText={toolTipText.rerankerScore} label={props?.label} />
+                                <HelpCallout
+                                    labelId={rerankerScoreId}
+                                    fieldId={rerankerScoreFieldId}
+                                    helpText={toolTipText.rerankerScore}
+                                    label={props?.label}
+                                />
                             )}
                         />
                     )}
 
                     <TextField
+                        id={retrieveCountFieldId}
                         className={styles.chatSettingsSeparator}
                         label="Retrieve this many search results:"
                         type="number"
@@ -470,34 +497,47 @@ const Chat = () => {
                         onChange={onRetrieveCountChange}
                         aria-labelledby={retrieveCountId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout id={retrieveCountId} helpText={toolTipText.retrieveNumber} label={props?.label} />
+                            <HelpCallout labelId={retrieveCountId} fieldId={retrieveCountFieldId} helpText={toolTipText.retrieveNumber} label={props?.label} />
                         )}
                     />
 
                     <TextField
+                        id={excludeCategoryFieldId}
                         className={styles.chatSettingsSeparator}
                         label="Exclude category"
                         onChange={onExcludeCategoryChanged}
                         aria-labelledby={excludeCategoryId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout id={excludeCategoryId} helpText={toolTipText.excludeCategory} label={props?.label} />
+                            <HelpCallout
+                                labelId={excludeCategoryId}
+                                fieldId={excludeCategoryFieldId}
+                                helpText={toolTipText.excludeCategory}
+                                label={props?.label}
+                            />
                         )}
                     />
 
                     {showSemanticRankerOption && (
                         <>
                             <Checkbox
+                                id={semanticRankerFieldId}
                                 className={styles.chatSettingsSeparator}
                                 checked={useSemanticRanker}
                                 label="Use semantic ranker for retrieval"
                                 onChange={onUseSemanticRankerChange}
                                 aria-labelledby={semanticRankerId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
-                                    <HelpCallout id={semanticRankerId} helpText={toolTipText.useSemanticReranker} label={props?.label} />
+                                    <HelpCallout
+                                        labelId={semanticRankerId}
+                                        fieldId={semanticRankerFieldId}
+                                        helpText={toolTipText.useSemanticReranker}
+                                        label={props?.label}
+                                    />
                                 )}
                             />
 
                             <Checkbox
+                                id={semanticCaptionsFieldId}
                                 className={styles.chatSettingsSeparator}
                                 checked={useSemanticCaptions}
                                 label="Use semantic captions"
@@ -505,20 +545,31 @@ const Chat = () => {
                                 disabled={!useSemanticRanker}
                                 aria-labelledby={semanticCaptionsId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
-                                    <HelpCallout id={semanticCaptionsId} helpText={toolTipText.useSemanticCaptions} label={props?.label} />
+                                    <HelpCallout
+                                        labelId={semanticCaptionsId}
+                                        fieldId={semanticCaptionsFieldId}
+                                        helpText={toolTipText.useSemanticCaptions}
+                                        label={props?.label}
+                                    />
                                 )}
                             />
                         </>
                     )}
 
                     <Checkbox
+                        id={suggestFollowupQuestionsFieldId}
                         className={styles.chatSettingsSeparator}
                         checked={useSuggestFollowupQuestions}
                         label="Suggest follow-up questions"
                         onChange={onUseSuggestFollowupQuestionsChange}
                         aria-labelledby={suggestFollowupQuestionsId}
                         onRenderLabel={(props: ICheckboxProps | undefined) => (
-                            <HelpCallout id={suggestFollowupQuestionsId} helpText={toolTipText.suggestFollowupQuestions} label={props?.label} />
+                            <HelpCallout
+                                labelId={suggestFollowupQuestionsId}
+                                fieldId={suggestFollowupQuestionsFieldId}
+                                helpText={toolTipText.suggestFollowupQuestions}
+                                label={props?.label}
+                            />
                         )}
                     />
 
@@ -544,6 +595,7 @@ const Chat = () => {
                     {useLogin && (
                         <>
                             <Checkbox
+                                id={useOidSecurityFilterFieldId}
                                 className={styles.chatSettingsSeparator}
                                 checked={useOidSecurityFilter || requireAccessControl}
                                 label="Use oid security filter"
@@ -551,10 +603,16 @@ const Chat = () => {
                                 onChange={onUseOidSecurityFilterChange}
                                 aria-labelledby={useOidSecurityFilterId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
-                                    <HelpCallout id={useOidSecurityFilterId} helpText={toolTipText.useOidSecurityFilter} label={props?.label} />
+                                    <HelpCallout
+                                        labelId={useOidSecurityFilterId}
+                                        fieldId={useOidSecurityFilterFieldId}
+                                        helpText={toolTipText.useOidSecurityFilter}
+                                        label={props?.label}
+                                    />
                                 )}
                             />
                             <Checkbox
+                                id={useGroupsSecurityFilterFieldId}
                                 className={styles.chatSettingsSeparator}
                                 checked={useGroupsSecurityFilter || requireAccessControl}
                                 label="Use groups security filter"
@@ -562,20 +620,26 @@ const Chat = () => {
                                 onChange={onUseGroupsSecurityFilterChange}
                                 aria-labelledby={useGroupsSecurityFilterId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
-                                    <HelpCallout id={useGroupsSecurityFilterId} helpText={toolTipText.useGroupsSecurityFilter} label={props?.label} />
+                                    <HelpCallout
+                                        labelId={useGroupsSecurityFilterId}
+                                        fieldId={useGroupsSecurityFilterFieldId}
+                                        helpText={toolTipText.useGroupsSecurityFilter}
+                                        label={props?.label}
+                                    />
                                 )}
                             />
                         </>
                     )}
 
                     <Checkbox
+                        id={shouldStreamFieldId}
                         className={styles.chatSettingsSeparator}
                         checked={shouldStream}
                         label="Stream chat completion responses"
                         onChange={onShouldStreamChange}
                         aria-labelledby={shouldStreamId}
                         onRenderLabel={(props: ICheckboxProps | undefined) => (
-                            <HelpCallout id={shouldStreamId} helpText={toolTipText.streamChat} label={props?.label} />
+                            <HelpCallout labelId={shouldStreamId} fieldId={shouldStreamFieldId} helpText={toolTipText.streamChat} label={props?.label} />
                         )}
                     />
 

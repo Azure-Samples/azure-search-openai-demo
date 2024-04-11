@@ -34,11 +34,14 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
     }, [showImageOptions]);
 
     const retrievalModeId = useId("retrievalMode");
+    const retrievalModeFieldId = useId("retrievalModeField");
     const vectorFieldsId = useId("vectorFields");
+    const vectorFieldsFieldId = useId("vectorFieldsField");
 
     return (
         <Stack className={styles.container} tokens={{ childrenGap: 10 }}>
             <Dropdown
+                id={retrievalModeFieldId}
                 label="Retrieval mode"
                 options={[
                     { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
@@ -49,12 +52,13 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
                 onChange={onRetrievalModeChange}
                 aria-labelledby={retrievalModeId}
                 onRenderLabel={(props: IDropdownProps | undefined) => (
-                    <HelpCallout id={retrievalModeId} helpText={toolTipText.retrievalMode} label={props?.label} />
+                    <HelpCallout labelId={retrievalModeId} fieldId={retrievalModeFieldId} helpText={toolTipText.retrievalMode} label={props?.label} />
                 )}
             />
 
             {showImageOptions && [RetrievalMode.Vectors, RetrievalMode.Hybrid].includes(retrievalMode) && (
                 <Dropdown
+                    id={vectorFieldsFieldId}
                     label="Vector fields (Multi-query vector search)"
                     options={[
                         { key: VectorFieldOptions.Embedding, text: "Text Embeddings", selected: vectorFieldOption === VectorFieldOptions.Embedding },
@@ -64,7 +68,7 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
                     onChange={onVectorFieldsChange}
                     aria-labelledby={vectorFieldsId}
                     onRenderLabel={(props: IDropdownProps | undefined) => (
-                        <HelpCallout id={vectorFieldsId} helpText={toolTipText.vectorFields} label={props?.label} />
+                        <HelpCallout labelId={vectorFieldsId} fieldId={vectorFieldsFieldId} helpText={toolTipText.vectorFields} label={props?.label} />
                     )}
                 />
             )}
