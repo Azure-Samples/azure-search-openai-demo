@@ -55,7 +55,7 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
 
             {showImageOptions && [RetrievalMode.Vectors, RetrievalMode.Hybrid].includes(retrievalMode) && (
                 <Dropdown
-                    label="Vector Fields (Multi-query vector search)"
+                    label="Vector fields (Multi-query vector search)"
                     options={[
                         { key: VectorFieldOptions.Embedding, text: "Text Embeddings", selected: vectorFieldOption === VectorFieldOptions.Embedding },
                         { key: VectorFieldOptions.ImageEmbedding, text: "Image Embeddings", selected: vectorFieldOption === VectorFieldOptions.ImageEmbedding },
@@ -64,7 +64,7 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
                     onChange={onVectorFieldsChange}
                     aria-labelledby={vectorFieldsId}
                     onRenderLabel={(props: IDropdownProps | undefined) => (
-                        <HelpCallout id={vectorFieldsId} helpText={toolTipText.retrievalMode} label={props?.label} />
+                        <HelpCallout id={vectorFieldsId} helpText={toolTipText.vectorFields} label={props?.label} />
                     )}
                 />
             )}

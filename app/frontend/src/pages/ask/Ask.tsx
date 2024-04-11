@@ -276,7 +276,7 @@ export function Component(): JSX.Element {
                     onChange={onTemperatureChange}
                     aria-labelledby={temperatureId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout id={temperatureId} helpText={toolTipText.searchScore} label={props?.label} />
+                        <HelpCallout id={temperatureId} helpText={toolTipText.temperature} label={props?.label} />
                     )}
                 />
 
@@ -356,7 +356,7 @@ export function Component(): JSX.Element {
                             disabled={!useSemanticRanker}
                             aria-labelledby={semanticCaptionsId}
                             onRenderLabel={(props: ICheckboxProps | undefined) => (
-                                <HelpCallout id={semanticCaptionsId} helpText={toolTipText.useQueryContextSummaries} label={props?.label} />
+                                <HelpCallout id={semanticCaptionsId} helpText={toolTipText.useSemanticCaptions} label={props?.label} />
                             )}
                         />
                     </>

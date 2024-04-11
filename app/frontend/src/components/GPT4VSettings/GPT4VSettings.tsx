@@ -45,25 +45,25 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
                 label="Use GPT-4 Turbo with Vision"
                 onChange={onuseGPT4V}
                 aria-labelledby={useGPT4VId}
-                onRenderLabel={(props: ICheckboxProps | undefined) => <HelpCallout id={useGPT4VId} helpText={toolTipText.useGPT4} label={props?.label} />}
+                onRenderLabel={(props: ICheckboxProps | undefined) => <HelpCallout id={useGPT4VId} helpText={toolTipText.useGPT4Vision} label={props?.label} />}
             />
             {useGPT4V && (
                 <Dropdown
                     selectedKey={vectorFieldOption}
-                    label="GPT-4 Turbo with Vision Inputs"
+                    label="GPT-4 Turbo with Vision inputs"
                     options={[
                         {
                             key: GPT4VInput.TextAndImages,
-                            text: "Images and text from index"
+                            text: "Images and text"
                         },
-                        { text: "Images only", key: GPT4VInput.Images },
-                        { text: "Text only", key: GPT4VInput.Texts }
+                        { text: "Images", key: GPT4VInput.Images },
+                        { text: "Text", key: GPT4VInput.Texts }
                     ]}
                     required
                     onChange={onSetGPT4VInput}
                     aria-labelledby={gpt4VInputId}
                     onRenderLabel={(props: IDropdownProps | undefined) => (
-                        <HelpCallout id={gpt4VInputId} helpText={toolTipText.retrievalMode} label={props?.label} />
+                        <HelpCallout id={gpt4VInputId} helpText={toolTipText.gpt4VisionInputs} label={props?.label} />
                     )}
                 />
             )}
