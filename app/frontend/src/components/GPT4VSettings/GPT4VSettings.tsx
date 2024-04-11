@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { Stack, Checkbox, IDropdownOption, Dropdown } from "@fluentui/react";
+import { Stack, Checkbox, ICheckboxProps, IDropdownOption, IDropdownProps, Dropdown } from "@fluentui/react";
+import { useId } from "@fluentui/react-hooks";
 
 import styles from "./GPT4VSettings.module.css";
 import { GPT4VInput } from "../../api";
+import { HelpCallout } from "../../components/HelpCallout";
+import { toolTipText } from "../../i18n/tooltips.js";
 
 interface Props {
     gpt4vInputs: GPT4VInput;
@@ -32,9 +35,18 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
         useGPT4V && updateGPT4VInputs(GPT4VInput.TextAndImages);
     }, [useGPT4V]);
 
+    const useGPT4VId = useId("useGPT4V");
+    const gpt4VInputId = useId("gpt4VInput");
+
     return (
         <Stack className={styles.container} tokens={{ childrenGap: 10 }}>
-            <Checkbox checked={useGPT4V} label="Use GPT-4 Turbo with Vision" onChange={onuseGPT4V} />
+            <Checkbox
+                checked={useGPT4V}
+                label="Use GPT-4 Turbo with Vision"
+                onChange={onuseGPT4V}
+                aria-labelledby={useGPT4VId}
+                onRenderLabel={(props: ICheckboxProps | undefined) => <HelpCallout id={useGPT4VId} helpText={toolTipText.useGPT4} label={props?.label} />}
+            />
             {useGPT4V && (
                 <Dropdown
                     selectedKey={vectorFieldOption}
@@ -49,6 +61,10 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
                     ]}
                     required
                     onChange={onSetGPT4VInput}
+                    aria-labelledby={gpt4VInputId}
+                    onRenderLabel={(props: IDropdownProps | undefined) => (
+                        <HelpCallout id={gpt4VInputId} helpText={toolTipText.retrievalMode} label={props?.label} />
+                    )}
                 />
             )}
         </Stack>

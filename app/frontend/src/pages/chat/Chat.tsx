@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider, TooltipHost } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
+import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
@@ -20,6 +21,7 @@ import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
+import { HelpCallout } from "../../components/HelpCallout";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
@@ -29,7 +31,7 @@ import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
-import { toolTipText, toolTipTextCalloutProps } from "../../i18n/tooltips.js";
+import { toolTipText } from "../../i18n/tooltips.js";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -210,12 +212,8 @@ const Chat = () => {
         setPromptTemplate(newValue || "");
     };
 
-    const onTemperatureChange = (
-        newValue: number,
-        range?: [number, number],
-        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
-    ) => {
-        setTemperature(newValue);
+    const onTemperatureChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setTemperature(parseFloat(newValue || "0"));
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -282,6 +280,20 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
+
+    // IDs for form labels and their associated callouts
+    const promptTemplateId = useId("promptTemplate");
+    const temperatureId = useId("temperature");
+    const searchScoreId = useId("searchScore");
+    const rerankerScoreId = useId("rerankerScore");
+    const retrieveCountId = useId("retrieveCount");
+    const excludeCategoryId = useId("excludeCategory");
+    const semanticRankerId = useId("semanticRanker");
+    const semanticCaptionsId = useId("semanticCaptions");
+    const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
+    const useOidSecurityFilterId = useId("useOidSecurityFilter");
+    const useGroupsSecurityFilterId = useId("useGroupsSecurityFilter");
+    const shouldStreamId = useId("shouldStream");
 
     return (
         <div className={styles.container}>
@@ -389,149 +401,183 @@ const Chat = () => {
                     onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
                     isFooterAtBottom={true}
                 >
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.promptTemplate}>
+                    <TextField
+                        className={styles.chatSettingsSeparator}
+                        defaultValue={promptTemplate}
+                        label="Override prompt template"
+                        multiline
+                        autoAdjustHeight
+                        onChange={onPromptTemplateChange}
+                        aria-labelledby={promptTemplateId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout id={promptTemplateId} helpText={toolTipText.promptTemplate} label={props?.label} />
+                        )}
+                    />
+
+                    <TextField
+                        className={styles.chatSettingsSeparator}
+                        label="Temperature"
+                        type="number"
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        defaultValue={temperature.toString()}
+                        onChange={onTemperatureChange}
+                        aria-labelledby={temperatureId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout id={temperatureId} helpText={toolTipText.searchScore} label={props?.label} />
+                        )}
+                    />
+
+                    <TextField
+                        className={styles.chatSettingsSeparator}
+                        label="Minimum search score"
+                        type="number"
+                        min={0}
+                        step={0.01}
+                        defaultValue={minimumSearchScore.toString()}
+                        onChange={onMinimumSearchScoreChange}
+                        aria-labelledby={searchScoreId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout id={searchScoreId} helpText={toolTipText.searchScore} label={props?.label} />
+                        )}
+                    />
+
+                    {showSemanticRankerOption && (
                         <TextField
                             className={styles.chatSettingsSeparator}
-                            defaultValue={promptTemplate}
-                            label="Override prompt template"
-                            multiline
-                            autoAdjustHeight
-                            onChange={onPromptTemplateChange}
-                        />
-                    </TooltipHost>
-
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.temperature}>
-                        <Slider
-                            className={styles.chatSettingsSeparator}
-                            label="Temperature"
-                            min={0}
-                            max={1}
-                            step={0.1}
-                            defaultValue={temperature}
-                            onChange={onTemperatureChange}
-                            showValue
-                            snapToStep
-                        />
-                    </TooltipHost>
-
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.searchScore}>
-                        <SpinButton
-                            className={styles.chatSettingsSeparator}
-                            label="Minimum search score"
-                            min={0}
-                            step={0.01}
-                            defaultValue={minimumSearchScore.toString()}
-                            onChange={onMinimumSearchScoreChange}
-                        />
-                    </TooltipHost>
-
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.rerankerScore}>
-                        <SpinButton
-                            className={styles.chatSettingsSeparator}
                             label="Minimum reranker score"
+                            type="number"
                             min={1}
                             max={4}
                             step={0.1}
                             defaultValue={minimumRerankerScore.toString()}
                             onChange={onMinimumRerankerScoreChange}
+                            aria-labelledby={rerankerScoreId}
+                            onRenderLabel={(props: ITextFieldProps | undefined) => (
+                                <HelpCallout id={rerankerScoreId} helpText={toolTipText.rerankerScore} label={props?.label} />
+                            )}
                         />
-                    </TooltipHost>
+                    )}
 
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrieveNumber}>
-                        <SpinButton
-                            className={styles.chatSettingsSeparator}
-                            label="Retrieve this many search results:"
-                            min={1}
-                            max={50}
-                            defaultValue={retrieveCount.toString()}
-                            onChange={onRetrieveCountChange}
-                        />
-                    </TooltipHost>
+                    <TextField
+                        className={styles.chatSettingsSeparator}
+                        label="Retrieve this many search results:"
+                        type="number"
+                        min={1}
+                        max={50}
+                        defaultValue={retrieveCount.toString()}
+                        onChange={onRetrieveCountChange}
+                        aria-labelledby={retrieveCountId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout id={retrieveCountId} helpText={toolTipText.retrieveNumber} label={props?.label} />
+                        )}
+                    />
 
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.excludeCategory}>
-                        <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                    </TooltipHost>
+                    <TextField
+                        className={styles.chatSettingsSeparator}
+                        label="Exclude category"
+                        onChange={onExcludeCategoryChanged}
+                        aria-labelledby={excludeCategoryId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout id={excludeCategoryId} helpText={toolTipText.excludeCategory} label={props?.label} />
+                        )}
+                    />
 
                     {showSemanticRankerOption && (
-                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useSemanticReranker}>
+                        <>
                             <Checkbox
                                 className={styles.chatSettingsSeparator}
                                 checked={useSemanticRanker}
                                 label="Use semantic ranker for retrieval"
                                 onChange={onUseSemanticRankerChange}
+                                aria-labelledby={semanticRankerId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout id={semanticRankerId} helpText={toolTipText.useSemanticReranker} label={props?.label} />
+                                )}
                             />
-                        </TooltipHost>
+
+                            <Checkbox
+                                className={styles.chatSettingsSeparator}
+                                checked={useSemanticCaptions}
+                                label="Use semantic captions"
+                                onChange={onUseSemanticCaptionsChange}
+                                disabled={!useSemanticRanker}
+                                aria-labelledby={semanticCaptionsId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout id={semanticCaptionsId} helpText={toolTipText.useQueryContextSummaries} label={props?.label} />
+                                )}
+                            />
+                        </>
                     )}
 
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useQueryContextSummaries}>
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useSemanticCaptions}
-                            label="Use query-contextual summaries instead of whole documents"
-                            onChange={onUseSemanticCaptionsChange}
-                            disabled={!useSemanticRanker}
-                        />
-                    </TooltipHost>
-
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.suggestFollowupQuestions}>
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useSuggestFollowupQuestions}
-                            label="Suggest follow-up questions"
-                            onChange={onUseSuggestFollowupQuestionsChange}
-                        />
-                    </TooltipHost>
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useSuggestFollowupQuestions}
+                        label="Suggest follow-up questions"
+                        onChange={onUseSuggestFollowupQuestionsChange}
+                        aria-labelledby={suggestFollowupQuestionsId}
+                        onRenderLabel={(props: ICheckboxProps | undefined) => (
+                            <HelpCallout id={suggestFollowupQuestionsId} helpText={toolTipText.suggestFollowupQuestions} label={props?.label} />
+                        )}
+                    />
 
                     {showGPT4VOptions && (
-                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.useGPT4}>
-                            <GPT4VSettings
-                                gpt4vInputs={gpt4vInput}
-                                isUseGPT4V={useGPT4V}
-                                updateUseGPT4V={useGPT4V => {
-                                    setUseGPT4V(useGPT4V);
-                                }}
-                                updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
-                            />
-                        </TooltipHost>
+                        <GPT4VSettings
+                            gpt4vInputs={gpt4vInput}
+                            isUseGPT4V={useGPT4V}
+                            updateUseGPT4V={useGPT4V => {
+                                setUseGPT4V(useGPT4V);
+                            }}
+                            updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
+                        />
                     )}
 
                     {showVectorOption && (
-                        <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.retrievalMode}>
-                            <VectorSettings
-                                showImageOptions={useGPT4V && showGPT4VOptions}
-                                updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
-                                updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                        <VectorSettings
+                            showImageOptions={useGPT4V && showGPT4VOptions}
+                            updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
+                            updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
+                        />
+                    )}
+
+                    {useLogin && (
+                        <>
+                            <Checkbox
+                                className={styles.chatSettingsSeparator}
+                                checked={useOidSecurityFilter || requireAccessControl}
+                                label="Use oid security filter"
+                                disabled={!isLoggedIn(client) || requireAccessControl}
+                                onChange={onUseOidSecurityFilterChange}
+                                aria-labelledby={useOidSecurityFilterId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout id={useOidSecurityFilterId} helpText={toolTipText.useOidSecurityFilter} label={props?.label} />
+                                )}
                             />
-                        </TooltipHost>
+                            <Checkbox
+                                className={styles.chatSettingsSeparator}
+                                checked={useGroupsSecurityFilter || requireAccessControl}
+                                label="Use groups security filter"
+                                disabled={!isLoggedIn(client) || requireAccessControl}
+                                onChange={onUseGroupsSecurityFilterChange}
+                                aria-labelledby={useGroupsSecurityFilterId}
+                                onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                    <HelpCallout id={useGroupsSecurityFilterId} helpText={toolTipText.useGroupsSecurityFilter} label={props?.label} />
+                                )}
+                            />
+                        </>
                     )}
 
-                    {useLogin && (
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useOidSecurityFilter || requireAccessControl}
-                            label="Use oid security filter"
-                            disabled={!isLoggedIn(client) || requireAccessControl}
-                            onChange={onUseOidSecurityFilterChange}
-                        />
-                    )}
-                    {useLogin && (
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={useGroupsSecurityFilter || requireAccessControl}
-                            label="Use groups security filter"
-                            disabled={!isLoggedIn(client) || requireAccessControl}
-                            onChange={onUseGroupsSecurityFilterChange}
-                        />
-                    )}
-
-                    <TooltipHost calloutProps={toolTipTextCalloutProps} content={toolTipText.streamChat}>
-                        <Checkbox
-                            className={styles.chatSettingsSeparator}
-                            checked={shouldStream}
-                            label="Stream chat completion responses"
-                            onChange={onShouldStreamChange}
-                        />
-                    </TooltipHost>
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={shouldStream}
+                        label="Stream chat completion responses"
+                        onChange={onShouldStreamChange}
+                        aria-labelledby={shouldStreamId}
+                        onRenderLabel={(props: ICheckboxProps | undefined) => (
+                            <HelpCallout id={shouldStreamId} helpText={toolTipText.streamChat} label={props?.label} />
+                        )}
+                    />
 
                     {useLogin && <TokenClaimsDisplay />}
                 </Panel>

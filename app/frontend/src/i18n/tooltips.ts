@@ -16,7 +16,9 @@ export const toolTipText = {
     useGPT4: "Controls whether to use GPT 4 Vision in responding or not to enable infromation extraction from images.",
     retrievalMode:
         "The retrieval mode choices determine how the chatbot retrieves and ranks responses based on semantic similarity to the user's query. `Vectors + Text, aka (Hybrid)` uses a combination of vector embeddings and text matching, `Vectors` uses only vector embeddings, and `Text` uses only text matching.",
-    streamChat: "Continuously deliver responses as they are generated or wait until all responses are generated before delivering them."
+    streamChat: "Continuously deliver responses as they are generated or wait until all responses are generated before delivering them.",
+    useOidSecurityFilter: "Filter search results based on the authenticated user's OID.",
+    useGroupsSecurityFilter: "Filter search results based on the authenticated user's groups."
 };
 
 // beak: triangle color
