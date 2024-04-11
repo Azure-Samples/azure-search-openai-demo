@@ -15,7 +15,7 @@ interface Props {
 
 export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions }: Props) => {
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
-    const [vectorFieldOption, setVectorFieldOption] = useState<VectorFieldOptions>(VectorFieldOptions.Embedding);
+    const [vectorFieldOption, setVectorFieldOption] = useState<VectorFieldOptions>(VectorFieldOptions.Both);
 
     const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined) => {
         setRetrievalMode(option?.data || RetrievalMode.Hybrid);
