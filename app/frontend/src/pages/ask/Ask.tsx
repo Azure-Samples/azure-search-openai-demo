@@ -14,7 +14,7 @@ import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
-import { toolTipText, toolTipTextCalloutProps } from "../../i18n/tooltips.js";
+import { toolTipText } from "../../i18n/tooltips.js";
 import { UploadFile } from "../../components/UploadFile";
 
 import { useMsal } from "@azure/msal-react";

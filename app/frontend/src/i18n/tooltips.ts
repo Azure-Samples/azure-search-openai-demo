@@ -20,15 +20,3 @@ export const toolTipText = {
     useOidSecurityFilter: "Filter search results based on the authenticated user's OID.",
     useGroupsSecurityFilter: "Filter search results based on the authenticated user's groups."
 };
-
-// beak: triangle color
-// beakCurtain: outer edge
-// calloutMain: content center
-// No style to control text color
-export const toolTipTextCalloutProps = {
-    styles: {
-        beak: { background: "#D3D3D3" },
-        beakCurtain: { background: "#D3D3D3" },
-        calloutMain: { background: "#D3D3D3" }
-    }
-};
