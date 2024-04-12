@@ -13,4 +13,4 @@ echo "AZURE_USE_AUTHENTICATION is set, proceeding with authentication setup..."
 
 . ./scripts/load_python_env.sh
 
-./scripts/.venv/bin/python ./scripts/auth_init.py
+./.venv/bin/python ./scripts/auth_init.py

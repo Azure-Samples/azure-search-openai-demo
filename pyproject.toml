@@ -26,6 +26,9 @@ python_version = 3.9
 
 [[tool.mypy.overrides]]
 module = [
-    "msal.*"
+    "msal.*",
+    "msgraph.*",
+    "kiota_abstractions.*",
+    "kiota.*"
 ]
 ignore_missing_imports = true

@@ -159,8 +159,8 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
 
     def __init__(
         self,
-        open_ai_service: str,
-        open_ai_deployment: str,
+        open_ai_service: Union[str, None],
+        open_ai_deployment: Union[str, None],
         open_ai_model_name: str,
         open_ai_dimensions: int,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
