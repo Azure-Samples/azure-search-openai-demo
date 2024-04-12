@@ -9,6 +9,7 @@ playwright
 pytest-cov
 pytest-playwright
 pytest-snapshot
+python-dotenv
 pre-commit
 locust
 pip-tools
