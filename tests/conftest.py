@@ -554,6 +554,9 @@ def mock_data_lake_service_client(monkeypatch):
         self.path = kwargs.get("file_path")
         self.acl = ""
 
+    def mock_url(self, *args, **kwargs):
+        return f"https://test.blob.core.windows.net/{self.path}"
+
     def mock_download_file(self, *args, **kwargs):
         return azure.storage.filedatalake.StorageStreamDownloader(None)
 
@@ -581,6 +584,7 @@ def mock_data_lake_service_client(monkeypatch):
     )
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__init__", mock_init_file)
+    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "url", property(mock_url))
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__aenter__", mock_aenter)
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__aexit__", mock_aexit)
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "download_file", mock_download_file_aio)

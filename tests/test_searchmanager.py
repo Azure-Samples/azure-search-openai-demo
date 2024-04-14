@@ -86,7 +86,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
-    assert len(indexes[0].fields) == 6
+    assert len(indexes[0].fields) == 7
 
 
 @pytest.mark.asyncio
@@ -107,7 +107,7 @@ async def test_create_index_using_int_vectorization(monkeypatch, search_info):
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
-    assert len(indexes[0].fields) == 7
+    assert len(indexes[0].fields) == 8
 
 
 @pytest.mark.asyncio
@@ -149,7 +149,7 @@ async def test_create_index_acls(monkeypatch, search_info):
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
-    assert len(indexes[0].fields) == 8
+    assert len(indexes[0].fields) == 9
 
 
 @pytest.mark.asyncio
