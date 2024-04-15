@@ -178,8 +178,10 @@ class ManageAcl:
     async def update_storage_urls(self, search_client: SearchClient):
         filter = "storageUrl eq ''"
         documents = await search_client.search("", filter=filter, select=["id", "storageUrl", "oids", "sourcefile"])
+        found_documents = []
         documents_to_merge = []
         async for document in documents:
+            found_documents.append(document)
             if len(document["oids"]) == 1:
                 logger.warning(
                     "Not updating storage URL of document %s as it has only one oid and may be user uploaded",
@@ -193,6 +195,8 @@ class ManageAcl:
         if len(documents_to_merge) > 0:
             logger.info("Updating storage URL for %d search documents", len(documents_to_merge))
             await search_client.merge_documents(documents=documents_to_merge)
+        elif len(found_documents) == 0:
+            logger.info("No documents found with empty storageUrl value")
         else:
             logger.info("Not updating any search documents")
 
@@ -260,8 +264,8 @@ if __name__ == "__main__":
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.INFO)
 
-    if not args.acl_type and args.acl_action != "enable_acls":
-        print("Must specify either --acl-type or --acl-action enable_acls")
+    if not args.acl_type and args.acl_action != "enable_acls" and args.acl_action != "update_storage_urls":
+        print("Must specify either --acl-type or --acl-action enable_acls or --acl-action update_storage_urls")
         exit(1)
 
     asyncio.run(main(args))

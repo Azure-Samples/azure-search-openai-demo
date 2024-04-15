@@ -145,7 +145,7 @@ If you are enabling this feature on an existing index, you should also update yo
 And then update existing search documents with the storage URL of the main Blob container:
 
 ```shell
-./scripts/manageacl.ps1  -v --acl-action update_storage_urls --url https://st12345.blob.core.windows.net/content/
+./scripts/manageacl.ps1  -v --acl-action update_storage_urls --url <https://YOUR-MAIN-STORAGE-ACCOUNT.blob.core.windows.net/content/>
 ```
 
 Going forward, all uploaded documents will have their `storageUrl` set in the search index.
