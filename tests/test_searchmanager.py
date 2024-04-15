@@ -31,43 +31,6 @@ def search_info():
     )
 
 
-@pytest.fixture
-def embeddings_service(monkeypatch):
-    async def mock_create_client(*args, **kwargs):
-        # From https://platform.openai.com/docs/api-reference/embeddings/create
-        return MockClient(
-            embeddings_client=MockEmbeddingsClient(
-                create_embedding_response=openai.types.CreateEmbeddingResponse(
-                    object="list",
-                    data=[
-                        openai.types.Embedding(
-                            embedding=[
-                                0.0023064255,
-                                -0.009327292,
-                                -0.0028842222,
-                            ],
-                            index=0,
-                            object="embedding",
-                        )
-                    ],
-                    model="text-embedding-ada-002",
-                    usage=Usage(prompt_tokens=8, total_tokens=8),
-                )
-            )
-        )
-
-    embeddings = AzureOpenAIEmbeddingService(
-        open_ai_service="x",
-        open_ai_deployment="x",
-        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
-        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        credential=AzureKeyCredential("test"),
-        disable_batch=True,
-    )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
-    return embeddings
-
-
 @pytest.mark.asyncio
 async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
     indexes = []

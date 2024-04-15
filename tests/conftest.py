@@ -1,5 +1,6 @@
 import json
 import os
+from typing import IO
 from unittest import mock
 
 import aiohttp
@@ -560,7 +561,7 @@ def mock_data_lake_service_client(monkeypatch):
     def mock_download_file(self, *args, **kwargs):
         return azure.storage.filedatalake.StorageStreamDownloader(None)
 
-    def mock_download_file_aio(self, *args, **kwargs):
+    async def mock_download_file_aio(self, *args, **kwargs):
         return azure.storage.filedatalake.aio.StorageStreamDownloader(None)
 
     async def mock_get_access_control(self, *args, **kwargs):
@@ -629,8 +630,9 @@ def mock_data_lake_service_client(monkeypatch):
     )
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeDirectoryClient, "close", mock_close_aio)
 
-    def mock_readinto(self, *args, **kwargs):
-        pass
+    def mock_readinto(self, stream: IO[bytes]):
+        stream.write(b"texttext")
+        return 8
 
     monkeypatch.setattr(azure.storage.filedatalake.StorageStreamDownloader, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.StorageStreamDownloader, "readinto", mock_readinto)
