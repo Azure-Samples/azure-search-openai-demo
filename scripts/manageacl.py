@@ -3,6 +3,7 @@ import asyncio
 import json
 import logging
 from typing import Any, Union
+from urllib.parse import urljoin
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -77,6 +78,8 @@ class ManageAcl:
                 await self.remove_all_acls(search_client)
             elif self.acl_action == "add":
                 await self.add_acl(search_client)
+            elif self.acl_action == "update_storage_urls":
+                await self.update_storage_urls(search_client)
             else:
                 raise Exception(f"Unknown action {self.acl_action}")
 
@@ -172,6 +175,27 @@ class ManageAcl:
                 )
             await search_index_client.create_or_update_index(index_definition)
 
+    async def update_storage_urls(self, search_client: SearchClient):
+        filter = "storageUrl eq ''"
+        documents = await search_client.search("", filter=filter, select=["id", "storageUrl", "oids", "sourcefile"])
+        documents_to_merge = []
+        async for document in documents:
+            if len(document["oids"]) == 1:
+                logger.warning(
+                    "Not updating storage URL of document %s as it has only one oid and may be user uploaded",
+                    document["id"],
+                )
+            else:
+                storage_url = urljoin(self.url, document["sourcefile"])
+                documents_to_merge.append({"id": document["id"], "storageUrl": storage_url})
+                logger.info("Adding storage URL %s for document %s", storage_url, document["id"])
+
+        if len(documents_to_merge) > 0:
+            logger.info("Updating storage URL for %d search documents", len(documents_to_merge))
+            await search_client.merge_documents(documents=documents_to_merge)
+        else:
+            logger.info("Not updating any search documents")
+
 
 async def main(args: Any):
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
@@ -220,7 +244,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--acl-action",
         required=False,
-        choices=["remove", "add", "view", "remove_all", "enable_acls"],
+        choices=["remove", "add", "view", "remove_all", "enable_acls", "update_storage_urls"],
         help="Optional. Whether to remove or add the ACL to the document, or enable acls on the index",
     )
     parser.add_argument("--acl", required=False, default=None, help="Optional. Value of ACL to add or remove.")

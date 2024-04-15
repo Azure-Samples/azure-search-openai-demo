@@ -172,6 +172,44 @@ async def test_add_acl(monkeypatch, caplog):
 
 
 @pytest.mark.asyncio
+async def test_update_storage_urls(monkeypatch, caplog):
+    async def mock_search(self, *args, **kwargs):
+        assert kwargs.get("filter") == "storageUrl eq ''"
+        assert kwargs.get("select") == ["id", "storageUrl", "oids", "sourcefile"]
+        return AsyncSearchResultsIterator(
+            [
+                {"id": 1, "oids": ["OID_EXISTS"], "storageUrl": "", "sourcefile": "a.txt"},
+                {"id": 2, "oids": [], "storageUrl": "", "sourcefile": "ab.txt"},
+            ]
+        )
+
+    merged_documents = []
+
+    async def mock_merge_documents(self, *args, **kwargs):
+        for document in kwargs.get("documents"):
+            merged_documents.append(document)
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+    monkeypatch.setattr(SearchClient, "merge_documents", mock_merge_documents)
+
+    command = ManageAcl(
+        service_name="SERVICE",
+        index_name="INDEX",
+        url="https://test.blob.core.windows.net/content/",
+        acl_action="update_storage_urls",
+        acl_type="",
+        acl="",
+        credentials=MockAzureCredential(),
+    )
+    with caplog.at_level(logging.INFO):
+        await command.run()
+        assert merged_documents == [{"id": 2, "storageUrl": "https://test.blob.core.windows.net/content/ab.txt"}]
+        assert "Not updating storage URL of document 1 as it has only one oid and may be user uploaded" in caplog.text
+        assert "Adding storage URL https://test.blob.core.windows.net/content/ab.txt for document 2" in caplog.text
+        assert "Updating storage URL for 1 search documents" in caplog.text
+
+
+@pytest.mark.asyncio
 async def test_enable_acls_with_missing_fields(monkeypatch, capsys):
     async def mock_get_index(self, *args, **kwargs):
         return SearchIndex(name="INDEX", fields=[])
