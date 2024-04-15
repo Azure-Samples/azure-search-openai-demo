@@ -448,6 +448,7 @@ module storage 'core/storage/storage-account.bicep' = {
     location: storageResourceGroupLocation
     tags: tags
     allowBlobPublicAccess: false
+    allowSharedKeyAccess: false
     publicNetworkAccess: 'Enabled'
     sku: {
       name: storageSkuName
@@ -473,6 +474,7 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
     location: storageResourceGroupLocation
     tags: tags
     allowBlobPublicAccess: false
+    allowSharedKeyAccess: false
     publicNetworkAccess: 'Enabled'
     isHnsEnabled: true
     sku: {

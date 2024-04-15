@@ -125,7 +125,7 @@ hypercorn==0.16.0
     # via quart
 hyperframe==6.0.1
     # via h2
-idna==3.6
+idna==3.7
     # via
     #   anyio
     #   httpx
@@ -333,7 +333,9 @@ pydantic==2.6.3
 pydantic-core==2.16.3
     # via pydantic
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 pymupdf==1.23.26
     # via -r requirements.in
 pymupdfb==1.23.22
