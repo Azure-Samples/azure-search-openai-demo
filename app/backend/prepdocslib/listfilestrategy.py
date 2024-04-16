@@ -4,8 +4,10 @@ import logging
 import os
 import re
 import tempfile
+import pytz
 from abc import ABC
 from glob import glob
+from datetime import datetime
 from typing import IO, AsyncGenerator, Dict, List, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -25,7 +27,11 @@ class File:
     def __init__(self, content: IO, acls: Optional[dict[str, list]] = None):
         self.content = content
         self.acls = acls or {}
-
+        
+    def filepath(self):
+        directory_path = os.path.dirname(self.content.name)
+        return directory_path.replace("\\","/")
+    
     def filename(self):
         return os.path.basename(self.content.name)
 
@@ -43,6 +49,11 @@ class File:
     def close(self):
         if self.content:
             self.content.close()
+
+    def modified_on_date(self):
+        mtime = os.path.getmtime(self.content.name)
+        tz_aware_datetime = datetime.fromtimestamp(mtime, pytz.utc)  # Zeitzone als UTC hinzufügen
+        return tz_aware_datetime
 
 
 class ListFileStrategy(ABC):

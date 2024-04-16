@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from datetime import datetime
 from typing import List, Optional
 
 from azure.search.documents.indexes.models import (
@@ -34,11 +35,12 @@ class Section:
     A section of a page that is stored in a search service. These sections are used as context by Azure OpenAI service
     """
 
-    def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
+    def __init__(self, split_page: SplitPage, content: File,modified_on  : Optional[datetime],filepath: Optional[str], category: Optional[str] = None):
         self.split_page = split_page
         self.content = content
         self.category = category
-
+        self.modified_on = modified_on
+        self.filepath = filepath
 
 class SearchManager:
     """
@@ -99,6 +101,8 @@ class SearchManager:
                     vector_search_profile_name="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="filepath", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="modified_on", type="Edm.DateTimeOffset", filterable=True, sortable=True),
                 SimpleField(
                     name="sourcepage",
                     type="Edm.String",
@@ -206,6 +210,8 @@ class SearchManager:
                         ),
                         "sourcefile": section.content.filename(),
                         **section.content.acls,
+                        "modified_on": section.content.modified_on_date().isoformat() if section.content.modified_on_date() else None,
+                        "filepath": section.content.filepath()
                     }
                     for section_index, section in enumerate(batch)
                 ]

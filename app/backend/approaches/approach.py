@@ -37,6 +37,7 @@ class Document:
     category: Optional[str]
     sourcepage: Optional[str]
     sourcefile: Optional[str]
+    modified_on: Optional[str]
     oids: Optional[List[str]]
     groups: Optional[List[str]]
     captions: List[QueryCaptionResult]
@@ -52,6 +53,7 @@ class Document:
             "category": self.category,
             "sourcepage": self.sourcepage,
             "sourcefile": self.sourcefile,
+            "modified_on": self.modified_on,
             "oids": self.oids,
             "groups": self.groups,
             "captions": (
@@ -139,8 +141,11 @@ class Approach(ABC):
         minimum_reranker_score: Optional[float],
     ) -> List[Document]:
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
+        semantic_results = None
+        vector_results = None
+
         if use_semantic_ranker and query_text:
-            results = await self.search_client.search(
+            semantic_results = await self.search_client.search(
                 search_text=query_text,
                 filter=filter,
                 query_type=QueryType.SEMANTIC,
@@ -152,29 +157,43 @@ class Approach(ABC):
                 vector_queries=vectors,
             )
         else:
-            results = await self.search_client.search(
+            vector_results = await self.search_client.search(
                 search_text=query_text or "", filter=filter, top=top, vector_queries=vectors
             )
+        fuction_filter = None
+        if filter and filter.startswith("modified_on"):
+            fuction_filter = await self.search_client.search(search_text=query_text or "", filter=filter, top=top)
+            print(f"\n\n\n########################################\nfilter by date: {fuction_filter}\n########################################\n\n\n")
+
+        if filter and filter.startswith("sourcefile eq"):
+            fuction_filter = await self.search_client.search(search_text=query_text or "", filter=filter, top=top)
+            print(f"\n\n\n########################################\nsearching by filename: {fuction_filter}\n########################################\n\n\n")
 
         documents = []
-        async for page in results.by_page():
-            async for document in page:
-                documents.append(
-                    Document(
-                        id=document.get("id"),
-                        content=document.get("content"),
-                        embedding=document.get("embedding"),
-                        image_embedding=document.get("imageEmbedding"),
-                        category=document.get("category"),
-                        sourcepage=document.get("sourcepage"),
-                        sourcefile=document.get("sourcefile"),
-                        oids=document.get("oids"),
-                        groups=document.get("groups"),
-                        captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
-                        score=document.get("@search.score"),
-                        reranker_score=document.get("@search.reranker_score"),
-                    )
-                )
+        if fuction_filter is not None:
+            semantic_results = None
+            vector_results = None
+        for results in [fuction_filter, semantic_results, vector_results]:
+            if results is not None:
+                async for page in results.by_page():
+                    async for document in page:
+                        documents.append(
+                            Document(
+                                id=document.get("id"),
+                                content=document.get("content"),
+                                embedding=document.get("embedding"),
+                                image_embedding=document.get("imageEmbedding"),
+                                category=document.get("category"),
+                                sourcepage=document.get("sourcepage"),
+                                sourcefile=document.get("sourcefile"),
+                                modified_on=document.get("modified_on"),
+                                oids=document.get("oids"),
+                                groups=document.get("groups"),
+                                captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
+                                score=document.get("@search.score"),
+                                reranker_score=document.get("@search.reranker_score"),
+                            )
+                        )
 
             qualified_documents = [
                 doc
@@ -199,7 +218,7 @@ class Approach(ABC):
             ]
         else:
             return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
+                (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "") + "; last modified on: " + nonewlines(doc.modified_on or "")
                 for doc in results
             ]
 
