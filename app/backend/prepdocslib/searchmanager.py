@@ -115,7 +115,7 @@ class SearchManager:
                     name="storageUrl",
                     type="Edm.String",
                     filterable=True,
-                    facetable=True,
+                    facetable=False,
                 ),
             ]
             if self.use_acls:

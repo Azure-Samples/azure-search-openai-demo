@@ -170,7 +170,7 @@ class ManageAcl:
                         name="storageUrl",
                         type="Edm.String",
                         filterable=True,
-                        facetable=True,
+                        facetable=False,
                     ),
                 )
             await search_index_client.create_or_update_index(index_definition)
