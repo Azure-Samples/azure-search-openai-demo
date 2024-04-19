@@ -136,6 +136,21 @@ Then you'll need to run `azd up` to provision an Azure Data Lake Storage Gen2 ac
 When the user uploads a document, it will be stored in a directory in that account with the same name as the user's Entra object id,
 and will have ACLs associated with that directory. When the ingester runs, it will also set the `oids` of the indexed chunks to the user's Entra object id.
 
+If you are enabling this feature on an existing index, you should also update your index to have the new `storageUrl` field:
+
+```shell
+./scripts/manageacl.ps1  -v --acl-action enable_acls
+```
+
+And then update existing search documents with the storage URL of the main Blob container:
+
+```shell
+./scripts/manageacl.ps1  -v --acl-action update_storage_urls --url <https://YOUR-MAIN-STORAGE-ACCOUNT.blob.core.windows.net/content/>
+```
+
+Going forward, all uploaded documents will have their `storageUrl` set in the search index.
+This is necessary to disambiguate user-uploaded documents from admin-uploaded documents.
+
 
 ## Enabling CORS for an alternate frontend
 
