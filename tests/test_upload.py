@@ -45,11 +45,9 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
     monkeypatch.setattr(DataLakeDirectoryClient, "set_access_control", mock_directory_set_access_control)
 
     def mock_directory_get_file_client(self, *args, **kwargs):
-        path = kwargs.get("file")
-        if path in self.files:
-            return self.files[path]
-        self.files[path] = DataLakeFileClient(path)
-        return self.files[path]
+        return azure.storage.filedatalake.aio.DataLakeFileClient(
+            account_url="https://test.blob.core.windows.net/", file_system_name="user-content", file_path=args[0]
+        )
 
     monkeypatch.setattr(DataLakeDirectoryClient, "get_file_client", mock_directory_get_file_client)
 
@@ -149,6 +147,13 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
         return None
 
     monkeypatch.setattr(DataLakeFileClient, "delete_file", mock_delete_file)
+
+    def mock_directory_get_file_client(self, *args, **kwargs):
+        return azure.storage.filedatalake.aio.DataLakeFileClient(
+            account_url="https://test.blob.core.windows.net/", file_system_name="user-content", file_path=args[0]
+        )
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "get_file_client", mock_directory_get_file_client)
 
     class AsyncSearchResultsIterator:
         def __init__(self):

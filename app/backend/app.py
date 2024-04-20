@@ -260,8 +260,8 @@ async def upload(auth_claims: dict[str, Any]):
     file_io = io.BufferedReader(file_io)
     await file_client.upload_data(file_io, overwrite=True, metadata={"UploadedBy": user_oid})
     file_io.seek(0)
-    ingester = current_app.config[CONFIG_INGESTER]
-    await ingester.add_file(File(content=file_io, acls={"oids": [user_oid]}))
+    ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
+    await ingester.add_file(File(content=file_io, acls={"oids": [user_oid]}, url=file_client.url))
     return jsonify({"message": "File uploaded successfully"}), 200
 
 

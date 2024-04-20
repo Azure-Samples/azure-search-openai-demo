@@ -111,6 +111,12 @@ class SearchManager:
                     filterable=True,
                     facetable=True,
                 ),
+                SimpleField(
+                    name="storageUrl",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=False,
+                ),
             ]
             if self.use_acls:
                 fields.append(
@@ -182,7 +188,9 @@ class SearchManager:
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
 
-    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
+    async def update_content(
+        self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
+    ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -209,6 +217,9 @@ class SearchManager:
                     }
                     for section_index, section in enumerate(batch)
                 ]
+                if url:
+                    for document in documents:
+                        document["storageUrl"] = url
                 if self.embeddings:
                     embeddings = await self.embeddings.create_embeddings(
                         texts=[section.split_page.text for section in batch]
