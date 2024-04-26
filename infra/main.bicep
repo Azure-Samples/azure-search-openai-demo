@@ -176,7 +176,9 @@ var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${te
 
 // Convert stringified ip rules into array format
 // ex: 127.0.0.1, 127.0.1.0/24
-var ipRules = !empty(allowedIp) ? map(split(allowedIp, ','), rule => trim(rule)) : []
+var trimmedRules = !empty(allowedIp) ? map(split(allowedIp, ','), rule => trim(rule)) : []
+// If the rule is just an IP address (no /), assume it's a full IP address and concatenate /32 
+var ipRules = map(trimmedRules, rule => contains(rule, '/') ? rule : '${rule}/32')
 
 @description('Whether the deployment is running on GitHub Actions')
 param runningOnGh string = ''
@@ -224,6 +226,7 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
     tags: tags
     applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
     logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
@@ -267,7 +270,7 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    allowInboundNetworkRange: allowedIp
+    ipRules: ipRules
     allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId

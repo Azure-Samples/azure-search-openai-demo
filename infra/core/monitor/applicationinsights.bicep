@@ -4,6 +4,10 @@ param dashboardName string = ''
 param location string = resourceGroup().location
 param tags object = {}
 param logAnalyticsWorkspaceId string
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccessForIngestion string = 'Enabled'
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccessForQuery string = 'Enabled'
 
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: name
@@ -13,6 +17,8 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   properties: {
     Application_Type: 'web'
     WorkspaceResourceId: logAnalyticsWorkspaceId
+    publicNetworkAccessForIngestion: publicNetworkAccessForIngestion
+    publicNetworkAccessForQuery: publicNetworkAccessForQuery
   }
 }
 

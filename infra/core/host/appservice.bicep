@@ -41,7 +41,7 @@ param scmDoBuildDuringDeployment bool = false
 param use32BitWorkerProcess bool = false
 param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
-param allowInboundNetworkRange string = ''
+param ipRules array = []
 param clientAppId string = ''
 param serverAppId string = ''
 @secure()
@@ -76,17 +76,19 @@ var coreConfig = {
   httpsOnly: true
 }
 
-var coreConfigWithNetworkRules = union(
-  !empty(allowInboundNetworkRange) ? {
-    ipSecurityRestrictions: [
+var allowedNetworkRules = [for (rule, i) in ipRules: {
+  ipAddress: rule
+  action: 'Allow'
+  tag: 'Default'
+  priority: 100 * i
+  description: 'Allow specificed network range'
+}]
+
+var networkRules = !empty(allowedNetworkRules) ? {
+  ipSecurityRestrictions: concat(
+    allowedNetworkRules,
+    [
       {
-        // If allowInboundNetworkRange contains a slash, it's already CIDR notation, otherwise append /32
-        ipAddress: contains(allowInboundNetworkRange, '/') ? allowInboundNetworkRange : '${allowInboundNetworkRange}/32'
-        action: 'Allow'
-        tag: 'Default'
-        priority: 100
-        description: 'Allow specified network range'
-      }, {
         ipAddress: 'Any'
         action: 'Deny'
         priority: 2147483647
@@ -94,10 +96,11 @@ var coreConfigWithNetworkRules = union(
         description: 'Deny all access'
       }
     ]
-    ipSecurityRestrictionsDefaultAction: 'Deny'
-  } : {},
-  coreConfig
-)
+  )
+  ipSecurityRestrictionsDefaultAction: 'Deny'  
+} : {}
+
+var coreConfigWithNetworkRules = union(coreConfig, networkRules)
 
 var coreProperties = {
   serverFarmId: appServicePlanId
