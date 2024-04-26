@@ -150,17 +150,46 @@ Manually enable document level access control on a search index and manually set
 
 Run `azd up` or use `azd env set` to manually set `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` environment variables prior to running the script.
 
-The script supports the following commands. Note that the syntax is the same regardless of whether [manageacl.ps1](../scripts/manageacl.ps1) or [manageacl.sh](../scripts/manageacl.sh) is used.
-* `./scripts/manageacl.ps1 --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index. Does nothing if these fields already exist.
-  * Example usage: `./scripts/manageacl.ps1 --acl-action enable_acls`
-* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action view`: Prints access control values associated with either User IDs or Group IDs for a specific document.
-  * Example to view all Group IDs from the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action view`.
-* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for a specific document.
-  * Example to add a Group ID to the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
-* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
-  * Example to remove all Group IDs from the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type groups --acl-action remove_all`.
-* `./scripts/manageacl.ps1 --document [name-of-pdf.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
-  * Example to remove a specific User ID from the Benefit_Options PDF: `./scripts/manageacl.ps1 --document Benefit_Options.pdf --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+The script supports the following commands. Note that the syntax is the same regardless of whether [manageacl.ps1](../scripts/manageacl.ps1) or [manageacl.sh](../scripts/manageacl.sh) is used. All commands support `-v` for verbose logging.
+* `./scripts/manageacl.ps1 --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index, as well as the `storageUrl` field for storing the Blob storage URL. Does nothing if these fields already exist.
+
+  Example usage:
+
+  ```shell
+  ./scripts/manageacl.ps1  -v --acl-action enable_acls
+  ```
+
+* `./scripts/manageacl.ps1 --acl-type [oids or groups]--acl-action view --url [https://url.pdf]`: Prints access control values associated with either User IDs or Group IDs for the document at the specified URL.
+
+  Example to view all Group IDs:
+
+  ```shell
+  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  ```
+
+* `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
+
+  Example to add a Group ID:
+
+  ```shell
+  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  ```
+
+* `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
+
+  Example to remove all Group IDs:
+
+  ```shell
+  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action remove_all --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  ```
+
+* `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
+
+  Example to remove a specific User ID:
+
+  ```shell
+  ./scripts/manageacl.ps1 -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  ```
 
 ### Azure Data Lake Storage Gen2 Setup
 

@@ -22,9 +22,10 @@ class File:
     This file might contain access control information about which users or groups can access it
     """
 
-    def __init__(self, content: IO, acls: Optional[dict[str, list]] = None):
+    def __init__(self, content: IO, acls: Optional[dict[str, list]] = None, url: Optional[str] = None):
         self.content = content
         self.acls = acls or {}
+        self.url = url
 
     def filename(self):
         return os.path.basename(self.content.name)
@@ -167,7 +168,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["oids"].append(acl_parts[1])
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
-                    yield File(content=open(temp_file_path, "rb"), acls=acls)
+                    yield File(content=open(temp_file_path, "rb"), acls=acls, url=file_client.url)
                 except Exception as data_lake_exception:
                     logger.error(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")
                     try:
