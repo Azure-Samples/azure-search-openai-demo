@@ -9,17 +9,17 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param appServicePlanName string = ''
-param backendServiceName string = ''
-param resourceGroupName string = ''
+param appServicePlanName string = '' // Set in main.parameters.json
+param backendServiceName string = '' // Set in main.parameters.json
+param resourceGroupName string = '' // Set in main.parameters.json
 
-param applicationInsightsDashboardName string = ''
-param applicationInsightsName string = ''
-param logAnalyticsName string = ''
+param applicationInsightsDashboardName string = '' // Set in main.parameters.json
+param applicationInsightsName string = '' // Set in main.parameters.json
+param logAnalyticsName string = '' // Set in main.parameters.json
 
-param searchServiceName string = ''
-param searchServiceResourceGroupName string = ''
-param searchServiceLocation string = ''
+param searchServiceName string = '' // Set in main.parameters.json
+param searchServiceResourceGroupName string = '' // Set in main.parameters.json
+param searchServiceLocation string = '' // Set in main.parameters.json
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed([ 'free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
 param searchServiceSkuName string // Set in main.parameters.json
@@ -30,11 +30,14 @@ param searchServiceSemanticRankerLevel string // Set in main.parameters.json
 var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : searchServiceSemanticRankerLevel
 param useSearchServiceKey bool = searchServiceSkuName == 'free'
 
-param storageAccountName string = ''
-param storageResourceGroupName string = ''
+param storageAccountName string = '' // Set in main.parameters.json
+param storageResourceGroupName string = '' // Set in main.parameters.json
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
+
+param userStorageAccountName string = ''
+param userStorageContainerName string = 'user-content'
 
 param appServiceSkuName string // Set in main.parameters.json
 
@@ -66,8 +69,9 @@ param openAiSkuName string = 'S0'
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
-param documentIntelligenceServiceName string = ''
-param documentIntelligenceResourceGroupName string = ''
+param documentIntelligenceServiceName string = '' // Set in main.parameters.json
+param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
+
 // Limited regions for new version:
 // https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
 @description('Location for the Document Intelligence resource group')
@@ -79,12 +83,12 @@ param documentIntelligenceResourceGroupName string = ''
 })
 param documentIntelligenceResourceGroupLocation string
 
-param documentIntelligenceSkuName string = 'S0'
+param documentIntelligenceSkuName string // Set in main.parameters.json
 
-param computerVisionServiceName string = ''
-param computerVisionResourceGroupName string = ''
-param computerVisionResourceGroupLocation string = 'eastus' // Vision vectorize API is yet to be deployed globally
-param computerVisionSkuName string = 'S1'
+param computerVisionServiceName string = '' // Set in main.parameters.json
+param computerVisionResourceGroupName string = '' // Set in main.parameters.json
+param computerVisionResourceGroupLocation string = '' // Set in main.parameters.json
+param computerVisionSkuName string // Set in main.parameters.json
 
 param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
@@ -101,11 +105,13 @@ param embeddingModelName string = ''
 param embeddingDeploymentName string = ''
 param embeddingDeploymentVersion string = ''
 param embeddingDeploymentCapacity int = 0
+param embeddingDimensions int = 0
 var embedding = {
   modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+  dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
 param gpt4vModelName string = 'gpt-4'
@@ -139,6 +145,11 @@ param useApplicationInsights bool = false
 param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
 param useIntegratedVectorization bool = false
+
+@description('Enable user document upload feature')
+param useUserUpload bool = false
+param useLocalPdfParser bool = false
+param useLocalHtmlParser bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
@@ -262,6 +273,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
       AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
+      AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
       AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
@@ -286,6 +298,12 @@ module backend 'core/host/appservice.bicep' = {
       ALLOWED_ORIGIN: allowedOrigin
       USE_VECTORS: useVectors
       USE_GPT4V: useGPT4V
+      USE_USER_UPLOAD: useUserUpload
+      AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
+      AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
+      AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
+      USE_LOCAL_PDF_PARSER: useLocalPdfParser
+      USE_LOCAL_HTML_PARSER: useLocalHtmlParser
     }
   }
 }
@@ -343,6 +361,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
       name: openAiSkuName
     }
     deployments: openAiDeployments
+    disableLocalAuth: true
   }
 }
 
@@ -414,11 +433,7 @@ module searchService 'core/search/search-services.bicep' = {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
-    authOptions: {
-      aadOrApiKey: {
-        aadAuthFailureMode: 'http401WithBearerChallenge'
-      }
-    }
+    disableLocalAuth: !useSearchServiceKey
     sku: {
       name: searchServiceSkuName
     }
@@ -434,6 +449,7 @@ module storage 'core/storage/storage-account.bicep' = {
     location: storageResourceGroupLocation
     tags: tags
     allowBlobPublicAccess: false
+    allowSharedKeyAccess: false
     publicNetworkAccess: 'Enabled'
     sku: {
       name: storageSkuName
@@ -445,6 +461,29 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }
+    ]
+  }
+}
+
+module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
+  name: 'user-storage'
+  scope: storageResourceGroup
+  params: {
+    name: !empty(userStorageAccountName) ? userStorageAccountName : 'user${abbrs.storageStorageAccounts}${resourceToken}'
+    location: storageResourceGroupLocation
+    tags: tags
+    allowBlobPublicAccess: false
+    allowSharedKeyAccess: false
+    publicNetworkAccess: 'Enabled'
+    isHnsEnabled: true
+    sku: {
+      name: storageSkuName
+    }
+    containers: [
+      {
+        name: userStorageContainerName
         publicAccess: 'None'
       }
     ]
@@ -487,10 +526,20 @@ module storageRoleUser 'core/security/role.bicep' = {
 
 module storageContribRoleUser 'core/security/role.bicep' = {
   scope: storageResourceGroup
-  name: 'storage-contribrole-user'
+  name: 'storage-contrib-role-user'
   params: {
     principalId: principalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    principalType: principalType
+  }
+}
+
+module storageOwnerRoleUser 'core/security/role.bicep' = if (useUserUpload) {
+  scope: storageResourceGroup
+  name: 'storage-owner-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
     principalType: principalType
   }
 }
@@ -557,6 +606,16 @@ module storageRoleBackend 'core/security/role.bicep' = {
   }
 }
 
+module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
+  scope: storageResourceGroup
+  name: 'storage-owner-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+    principalType: 'ServicePrincipal'
+  }
+}
+
 module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
@@ -591,10 +650,33 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   }
 }
 
+// Used to add/remove documents from index (required for user upload feature)
+module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload && !useSearchServiceKey) {
+  scope: searchServiceResourceGroup
+  name: 'search-contrib-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+
 // For computer vision access by the backend
-module cognitiveServicesRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
-  scope: resourceGroup
-  name: 'cognitiveservices-role-backend'
+module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+  scope: computerVisionResourceGroup
+  name: 'computervision-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// For document intelligence access by the backend
+module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
+  scope: documentIntelligenceResourceGroup
+  name: 'documentintelligence-role-backend'
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
@@ -641,6 +723,10 @@ output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.princ
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.name : ''
+output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
+output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 

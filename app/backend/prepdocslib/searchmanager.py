@@ -60,6 +60,8 @@ class SearchManager:
         self.use_acls = use_acls
         self.use_int_vectorization = use_int_vectorization
         self.embeddings = embeddings
+        # Integrated vectorization uses the ada-002 model with 1536 dimensions
+        self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else 1536
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
@@ -93,7 +95,7 @@ class SearchManager:
                     filterable=False,
                     sortable=False,
                     facetable=False,
-                    vector_search_dimensions=1536,
+                    vector_search_dimensions=self.embedding_dimensions,
                     vector_search_profile_name="embedding_config",
                 ),
                 SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
@@ -108,6 +110,12 @@ class SearchManager:
                     type="Edm.String",
                     filterable=True,
                     facetable=True,
+                ),
+                SimpleField(
+                    name="storageUrl",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=False,
                 ),
             ]
             if self.use_acls:
@@ -179,8 +187,22 @@ class SearchManager:
                 await search_index_client.create_index(index)
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
+                index_definition = await search_index_client.get_index(self.search_info.index_name)
+                if not any(field.name == "storageUrl" for field in index_definition.fields):
+                    logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
+                    index_definition.fields.append(
+                        SimpleField(
+                            name="storageUrl",
+                            type="Edm.String",
+                            filterable=True,
+                            facetable=False,
+                        ),
+                    )
+                    await search_index_client.create_or_update_index(index_definition)
 
-    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
+    async def update_content(
+        self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
+    ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -207,6 +229,9 @@ class SearchManager:
                     }
                     for section_index, section in enumerate(batch)
                 ]
+                if url:
+                    for document in documents:
+                        document["storageUrl"] = url
                 if self.embeddings:
                     embeddings = await self.embeddings.create_embeddings(
                         texts=[section.split_page.text for section in batch]
@@ -226,14 +251,23 @@ class SearchManager:
         async with self.search_info.create_search_client() as search_client:
             while True:
                 filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
-                result = await search_client.search("", filter=filter, top=1000, include_total_count=True)
-                if await result.get_count() == 0:
+                max_results = 1000
+                result = await search_client.search(
+                    search_text="", filter=filter, top=max_results, include_total_count=True
+                )
+                result_count = await result.get_count()
+                if result_count == 0:
                     break
                 documents_to_remove = []
                 async for document in result:
                     # If only_oid is set, only remove documents that have only this oid
-                    if not only_oid or document["oids"] == [only_oid]:
+                    if not only_oid or document.get("oids") == [only_oid]:
                         documents_to_remove.append({"id": document["id"]})
+                if len(documents_to_remove) == 0:
+                    if result_count < max_results:
+                        break
+                    else:
+                        continue
                 removed_docs = await search_client.delete_documents(documents_to_remove)
                 logger.info("Removed %d sections from index", len(removed_docs))
                 # It can take a few seconds for search results to reflect changes, so wait a bit

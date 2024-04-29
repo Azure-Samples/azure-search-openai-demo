@@ -1,4 +1,3 @@
-import os
 from typing import Any, AsyncGenerator, Optional, Union
 
 from azure.search.documents.aio import SearchClient
@@ -8,10 +7,6 @@ from openai import AsyncOpenAI
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.messagebuilder import MessageBuilder
-
-# Replace these with your own values, either in environment variables or directly here
-AZURE_STORAGE_ACCOUNT = os.getenv("AZURE_STORAGE_ACCOUNT")
-AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
 
 
 class RetrieveThenReadApproach(Approach):
@@ -52,6 +47,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_dimensions: int,
         sourcepage_field: str,
         content_field: str,
         query_language: str,
@@ -63,6 +59,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
+        self.embedding_dimensions = embedding_dimensions
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
         self.sourcepage_field = sourcepage_field

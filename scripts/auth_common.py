@@ -1,37 +1,16 @@
 import os
-from typing import Dict, Optional
+from typing import Optional
 
-import aiohttp
-from azure.core.credentials_async import AsyncTokenCredential
-
-TIMEOUT = 60
+from kiota_abstractions.api_error import APIError
+from msgraph import GraphServiceClient
 
 
-async def get_auth_headers(credential: AsyncTokenCredential):
-    token_result = await credential.get_token("https://graph.microsoft.com/.default")
-    return {"Authorization": f"Bearer {token_result.token}"}
-
-
-async def get_application(auth_headers: Dict[str, str], app_id: str) -> Optional[str]:
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
-        async with session.get(f"https://graph.microsoft.com/v1.0/applications(appId='{app_id}')") as response:
-            if response.status == 200:
-                response_json = await response.json()
-                return response_json["id"]
-
-    return None
-
-
-async def update_application(auth_headers: Dict[str, str], object_id: str, app_payload: object):
-    async with aiohttp.ClientSession(headers=auth_headers, timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as session:
-        async with session.patch(
-            f"https://graph.microsoft.com/v1.0/applications/{object_id}", json=app_payload
-        ) as response:
-            if not response.ok:
-                response_json = await response.json()
-                raise Exception(response_json)
-
-    return True
+async def get_application(graph_client: GraphServiceClient, client_id: str) -> Optional[str]:
+    try:
+        app = await graph_client.applications_with_app_id(client_id).get()
+        return app.id
+    except APIError:
+        return None
 
 
 def test_authentication_enabled():
