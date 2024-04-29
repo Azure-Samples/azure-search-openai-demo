@@ -427,11 +427,11 @@ def create_app():
         configure_azure_monitor()
         instrument_app()
     elif os.getenv("OTLP_GRPC_ENDPOINT"):
-        from app.backend.otlp_tracing import configure_oltp_grpc_tracing
+        from otlp_tracing import configure_oltp_grpc_tracing
         configure_oltp_grpc_tracing(endpoint=os.getenv("OTLP_GRPC_ENDPOINT"))
         instrument_app()
     elif os.getenv("OTLP_HTTP_ENDPOINT"):
-        from app.backend.otlp_tracing import configure_oltp_http_tracing
+        from otlp_tracing import configure_oltp_http_tracing
         configure_oltp_http_tracing(endpoint=os.getenv("OTLP_HTTP_ENDPOINT"))
         instrument_app()
 
