@@ -1,9 +1,9 @@
-metadata description = 'Creates a Shared Private Link between Azure Cognitive Search Service and another Azure resource.'
+metadata description = 'Creates a Shared Private Link between Azure Search Service and another Azure resource.'
 
 @description('The name of the shared private link.')
 param name string
 
-@description('The name of an existing Azure Cognitive Search Service.')
+@description('The name of an existing Azure Search Service.')
 param searchName string
 
 @description('The resource ID of the Azure resource to connect to.')
@@ -13,11 +13,11 @@ param resourceId string
 @description('Type of the Azure resource to connect to.')
 param groupId string
 
-resource search 'Microsoft.Search/searchServices@2021-04-01-preview' existing = {
+resource search 'Microsoft.Search/searchServices@2023-11-01' existing = {
   name: searchName
 }
 
-resource sharedPrivateLinkResources 'Microsoft.Search/searchServices/sharedPrivateLinkResources@2021-04-01-preview' = {
+resource sharedPrivateLinkResources 'Microsoft.Search/searchServices/sharedPrivateLinkResources@2023-11-01' = {
   name: name
   parent: search
   properties: {

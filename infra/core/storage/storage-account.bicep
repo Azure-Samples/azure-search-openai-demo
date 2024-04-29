@@ -23,13 +23,16 @@ param supportsHttpsTrafficOnly bool = true
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
+@allowed([ 'None', 'AzureServices'])
+param bypass string = 'AzureServices'
+param ipRules array = []
 
-param allowedIpRules array = []
-param networkAcls object = empty(allowedIpRules) ? {
-  bypass: 'AzureServices'
+var allowedIpRules = [for rule in ipRules: { value: rule }]
+var networkAcls = empty(allowedIpRules) ? {
+  bypass: bypass
   defaultAction: 'Allow'
 } : {
-  bypass: 'AzureServices'
+  bypass: bypass
   ipRules: allowedIpRules
   defaultAction: 'Deny'
 }

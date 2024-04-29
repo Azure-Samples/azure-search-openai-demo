@@ -13,16 +13,21 @@ param publicNetworkAccess string = 'Enabled'
 param sku object = {
   name: 'S0'
 }
+param ipRules array = []
+@allowed([ 'None', 'AzureServices'])
+param bypass string = 'AzureServices'
 
-param allowedIpRules array = []
-param networkAcls object = empty(allowedIpRules) ? {
+var allowedIpRules = [for rule in ipRules: { value: rule }]
+var networkAcls = empty(allowedIpRules) ? {
+  bypass: bypass
   defaultAction: 'Allow'
 } : {
+  bypass: bypass
   ipRules: allowedIpRules
   defaultAction: 'Deny'
 }
 
-resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+resource account 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
   name: name
   location: location
   tags: tags

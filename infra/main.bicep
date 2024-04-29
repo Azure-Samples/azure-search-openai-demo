@@ -138,9 +138,9 @@ param allowedOrigin string = '' // should start with https://, shouldn't end wit
 @description('IP or Subnet that is allowed access via the public network. Expectation is that the format is a comma-delimited list of CIDR IP rules')
 param allowedIp string = '' // For host specific rules
 
-@allowed([ 'None', 'AzurePortal' ])
-@description('If allowedIp is set, whether the Azure Portal is allowed to bypass the search service IP firewall.')
-param searchNetworkBypass string = 'None'
+@allowed([ 'None', 'AzureServices' ])
+@description('If allowedIp is set, whether azure services are allowed to bypass the storage and AI services firewall.')
+param bypass string = 'AzureServices'
 
 @description('Public network access value for all deployed resources')
 @allowed(['Enabled', 'Disabled'])
@@ -217,6 +217,9 @@ resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' e
   name: !empty(keyVaultResourceGroupName) ? keyVaultResourceGroupName : resourceGroup.name
 }
 
+// TODO: Setup AMPLS
+// https://learn.microsoft.com/en-us/azure/azure-monitor/logs/private-link-configure
+
 // Monitor application with Azure Monitor
 module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) {
   name: 'monitoring'
@@ -271,6 +274,7 @@ module backend 'core/host/appservice.bicep' = {
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     ipRules: ipRules
+    virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId
@@ -327,8 +331,6 @@ module backend 'core/host/appservice.bicep' = {
       USE_LOCAL_PDF_PARSER: useLocalPdfParser
       USE_LOCAL_HTML_PARSER: useLocalHtmlParser
     }
-    privateEndpointSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
-    useVnet: usePrivateEndpoint
   }
 }
 
@@ -382,7 +384,8 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
     location: openAiResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
-    allowedIpRules: ipRules
+    ipRules: ipRules
+    bypass: bypass
     sku: {
       name: openAiSkuName
     }
@@ -401,10 +404,11 @@ module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
     publicNetworkAccess: publicNetworkAccess
     location: documentIntelligenceResourceGroupLocation
     tags: tags
+    ipRules: ipRules
+    bypass: bypass
     sku: {
       name: documentIntelligenceSkuName
     }
-    allowedIpRules: ipRules
   }
 }
 
@@ -416,6 +420,8 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
     kind: 'ComputerVision'
     location: computerVisionResourceGroupLocation
     tags: tags
+    ipRules: ipRules
+    bypass: bypass
     sku: {
       name: computerVisionSkuName
     }
@@ -466,11 +472,8 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
-    publicNetworkAccess: toLower(publicNetworkAccess) == 'enabled' ? 'enabled' : 'disabled'
-    networkRuleSet: {
-      ipRules: ipRules
-      networkBypass: searchNetworkBypass
-    }
+    publicNetworkAccess: publicNetworkAccess
+    ipRules: ipRules
   }
 }
 
@@ -482,6 +485,8 @@ module storage 'core/storage/storage-account.bicep' = {
     location: storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
+    ipRules: ipRules
+    bypass: bypass
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
     sku: {
@@ -497,7 +502,6 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
-    allowedIpRules: ipRules
   }
 }
 
@@ -508,9 +512,11 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
     name: !empty(userStorageAccountName) ? userStorageAccountName : 'user${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
+    publicNetworkAccess: publicNetworkAccess
+    ipRules: ipRules
+    bypass: bypass
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
-    publicNetworkAccess: 'Enabled'
     isHnsEnabled: true
     sku: {
       name: storageSkuName

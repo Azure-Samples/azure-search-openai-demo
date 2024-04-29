@@ -9,7 +9,6 @@ param sku object = {
 
 param authOptions object = {}
 param disableLocalAuth bool = false
-param disabledDataExfiltrationOptions array = []
 param encryptionWithCmk object = {
   enforcement: 'Unspecified'
 }
@@ -18,12 +17,12 @@ param encryptionWithCmk object = {
   'highDensity'
 ])
 param hostingMode string = 'default'
-param networkRuleSet object
+param ipRules array = []
 @allowed([
-  'enabled'
-  'disabled'
+  'Enabled'
+  'Disabled'
 ])
-param publicNetworkAccess string = 'enabled'
+param publicNetworkAccess string = 'Enabled'
 param partitionCount int = 1
 param replicaCount int = 1
 @allowed([
@@ -37,7 +36,10 @@ var searchIdentityProvider = (sku.name == 'free') ? null : {
   type: 'SystemAssigned'
 }
 
-resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
+var networkRules = [for rule in ipRules: { value: rule }]
+var networkRuleSet = !empty(ipRules) ? { ipRules: networkRules } : null
+
+resource search 'Microsoft.Search/searchServices@2023-11-01' = {
   name: name
   location: location
   tags: tags
@@ -46,7 +48,6 @@ resource search 'Microsoft.Search/searchServices@2021-04-01-preview' = {
   properties: {
     authOptions: disableLocalAuth ? null : authOptions
     disableLocalAuth: disableLocalAuth
-    disabledDataExfiltrationOptions: disabledDataExfiltrationOptions
     encryptionWithCmk: encryptionWithCmk
     hostingMode: hostingMode
     networkRuleSet: networkRuleSet

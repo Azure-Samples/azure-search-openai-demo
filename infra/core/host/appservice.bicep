@@ -8,8 +8,7 @@ param applicationInsightsName string = ''
 param appServicePlanId string
 param keyVaultName string = ''
 param managedIdentity bool = !empty(keyVaultName)
-param privateEndpointSubnetId string = ''
-param useVnet bool = false
+param virtualNetworkSubnetId string = ''
 
 // Runtime Properties
 @allowed([
@@ -100,22 +99,16 @@ var networkRules = !empty(allowedNetworkRules) ? {
   ipSecurityRestrictionsDefaultAction: 'Deny'  
 } : {}
 
-var coreConfigWithNetworkRules = union(coreConfig, networkRules)
-
-var coreProperties = {
+var appServiceProperties = {
   serverFarmId: appServicePlanId
-  siteConfig: coreConfigWithNetworkRules
+  siteConfig: union(coreConfig, networkRules)
   clientAffinityEnabled: clientAffinityEnabled
   httpsOnly: true
-  vnetRouteAllEnabled: useVnet
+  // Always route traffic through the vnet
+  // See https://learn.microsoft.com/azure/app-service/configure-vnet-integration-routing#configure-application-routing
+  vnetRouteAllEnabled: !empty(virtualNetworkSubnetId)
+  virtualNetworkSubnetId: !empty(virtualNetworkSubnetId) ? virtualNetworkSubnetId : null
 }
-
-var appServiceProperties = union(
-  !empty(privateEndpointSubnetId) ? {
-    virtualNetworkSubnetId: privateEndpointSubnetId
-  } : {},
-  coreProperties
-)
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
