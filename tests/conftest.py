@@ -1,6 +1,6 @@
-import argparse
 import json
 import os
+from typing import IO
 from unittest import mock
 
 import aiohttp
@@ -27,6 +27,7 @@ import core
 from core.authentication import AuthenticationHelper
 
 from .mocks import (
+    MockAsyncPageIterator,
     MockAsyncSearchResultsIterator,
     MockAzureCredential,
     MockBlobClient,
@@ -202,7 +203,6 @@ def mock_openai_chatcompletion(monkeypatch):
 @pytest.fixture
 def mock_acs_search(monkeypatch):
     monkeypatch.setattr(SearchClient, "search", mock_search)
-    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     async def mock_get_index(*args, **kwargs):
         return MockSearchIndex
@@ -251,6 +251,8 @@ auth_envs = [
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_USE_AUTHENTICATION": "true",
+        "AZURE_USER_STORAGE_ACCOUNT": "test-user-storage-account",
+        "AZURE_USER_STORAGE_CONTAINER": "test-user-storage-container",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
         "AZURE_SERVER_APP_SECRET": "SECRET",
         "AZURE_CLIENT_APP_ID": "CLIENT_APP",
@@ -316,6 +318,12 @@ async def auth_client(
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
     monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+    monkeypatch.setenv("USE_USER_UPLOAD", "true")
+    monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-userstorage-account")
+    monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-userstorage-container")
+    monkeypatch.setenv("USE_LOCAL_PDF_PARSER", "true")
+    monkeypatch.setenv("USE_LOCAL_HTML_PARSER", "true")
+    monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-documentintelligence-service")
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
 
@@ -517,26 +525,11 @@ def mock_data_lake_service_client(monkeypatch):
         self.directories["/"].child_directories = self.directories
         return self.directories["/"]
 
-    class AsyncListIterator:
-        def __init__(self, input_list):
-            self.input_list = input_list
-            self.index = 0
-
-        def __aiter__(self):
-            return self
-
-        async def __anext__(self):
-            if self.index < len(self.input_list):
-                value = self.input_list[self.index]
-                self.index += 1
-                return value
-            else:
-                raise StopAsyncIteration
-
-    async def mock_get_paths(self, *args, **kwargs):
-        yield argparse.Namespace(is_directory=False, name="a.txt")
-        yield argparse.Namespace(is_directory=False, name="b.txt")
-        yield argparse.Namespace(is_directory=False, name="c.txt")
+    def mock_get_paths(self, *args, **kwargs):
+        paths = ["a.txt", "b.txt", "c.txt"]
+        if kwargs.get("path") == "OID_X":
+            paths = [f"OID_X/{path}" for path in paths]
+        return MockAsyncPageIterator([azure.storage.filedatalake.PathProperties(name=path) for path in paths])
 
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.FileSystemClient, "get_file_client", mock_get_file_client)
@@ -562,10 +555,13 @@ def mock_data_lake_service_client(monkeypatch):
         self.path = kwargs.get("file_path")
         self.acl = ""
 
+    def mock_url(self, *args, **kwargs):
+        return f"https://test.blob.core.windows.net/{self.path}"
+
     def mock_download_file(self, *args, **kwargs):
         return azure.storage.filedatalake.StorageStreamDownloader(None)
 
-    def mock_download_file_aio(self, *args, **kwargs):
+    async def mock_download_file_aio(self, *args, **kwargs):
         return azure.storage.filedatalake.aio.StorageStreamDownloader(None)
 
     async def mock_get_access_control(self, *args, **kwargs):
@@ -589,6 +585,7 @@ def mock_data_lake_service_client(monkeypatch):
     )
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__init__", mock_init_file)
+    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "url", property(mock_url))
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__aenter__", mock_aenter)
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__aexit__", mock_aexit)
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "download_file", mock_download_file_aio)
@@ -633,8 +630,9 @@ def mock_data_lake_service_client(monkeypatch):
     )
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeDirectoryClient, "close", mock_close_aio)
 
-    def mock_readinto(self, *args, **kwargs):
-        pass
+    def mock_readinto(self, stream: IO[bytes]):
+        stream.write(b"texttext")
+        return 8
 
     monkeypatch.setattr(azure.storage.filedatalake.StorageStreamDownloader, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.StorageStreamDownloader, "readinto", mock_readinto)

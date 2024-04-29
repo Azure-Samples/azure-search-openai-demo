@@ -1,21 +1,25 @@
 
 # Deploying with existing Azure resources
 
-If you already have existing Azure resources, you can re-use those by setting `azd` environment values.
+If you already have existing Azure resources, or if you want to specify the exact name of new Azure Resource, you can do so by setting `azd` environment values.
 You should set these values before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
-* [Existing resource group](#existing-resource-group)
-* [Existing OpenAI resource](#existing-openai-resource)
-* [Existing Azure AI Search resource](#existing-azure-ai-search-resource)
-* [Existing Azure Document Intelligence resource](#existing-azure-document-intelligence-resource)
-* [Other existing Azure resources](#other-existing-azure-resources)
+* [Resource group](#resource-group)
+* [OpenAI resource](#openai-resource)
+* [Azure AI Search resource](#azure-ai-search-resource)
+* [Azure App Service Plan and App Service resources](#azure-app-service-plan-and-app-service-resources)
+* [Azure Application Insights and related resources](#azure-application-insights-and-related-resources)
+* [Azure Computer Vision resources](#azure-computer-vision-resources)
+* [Azure Document Intelligence resource](#azure-document-intelligence-resource)
+* [Other Azure resources](#other-azure-resources)
 
-## Existing resource group
+
+## Resource group
 
 1. Run `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
 1. Run `azd env set AZURE_LOCATION {Location of existing resource group}`
 
-## Existing OpenAI resource
+## OpenAI resource
 
 ### Azure OpenAI:
 
@@ -40,7 +44,7 @@ Do *not* check your key into source control.
 When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, you can select any location as it will not be used.
 
 
-## Existing Azure AI Search resource
+## Azure AI Search resource
 
 1. Run `azd env set AZURE_SEARCH_SERVICE {Name of existing Azure AI Search service}`
 1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
@@ -55,7 +59,26 @@ You can also customize the search service (new or existing) for non-English sear
 1. To turn off the spell checker, run `azd env set AZURE_SEARCH_QUERY_SPELLER none`. Consult [this table](https://learn.microsoft.com/rest/api/searchservice/preview-api/search-documents#queryLanguage) to determine if spell checker is supported for your query language.
 1. To configure the name of the analyzer to use for a searchable text field to a value other than "en.microsoft", run `azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}`. ([See other possible values](https://learn.microsoft.com/dotnet/api/microsoft.azure.search.models.field.analyzer?view=azure-dotnet-legacy&viewFallbackFrom=azure-dotnet))
 
-## Existing Azure Document Intelligence resource
+## Azure App Service Plan and App Service resources
+
+1. Run `azd env set AZURE_APP_SERVICE_PLAN {Name of existing Azure App Service Plan}`
+1. Run `azd env set AZURE_APP_SERVICE {Name of existing Azure App Service}`.
+1. Run `azd env set AZURE_APP_SERVICE_SKU {SKU of Azure App Service, defaults to B1}`.
+
+## Azure Application Insights and related resources
+
+1. Run `azd env set AZURE_APPLICATION_INSIGHTS {Name of existing Azure App Insights}`.
+1. Run `azd env set AZURE_APPLICATION_INSIGHTS_DASHBOARD {Name of existing Azure App Insights Dashboard}`.
+1. Run `azd env set AZURE_LOG_ANALYTICS {Name of existing Azure Log Analytics Workspace Name}`.
+
+## Azure Computer Vision resources
+
+1. Run `azd env set AZURE_COMPUTER_VISION_SERVICE {Name of existing Azure Computer Vision Service Name}`
+1. Run `azd env set AZURE_COMPUTER_VISION_RESOURCE_GROUP {Name of existing Azure Computer Vision Resource Group Name}`
+1. Run `azd env set AZURE_COMPUTER_VISION_LOCATION {Name of existing Azure Computer Vision Location}`
+1. Run `azd env set AZURE_COMPUTER_VISION_SKU {SKU of Azure Computer Vision service, defaults to F0}`
+
+## Azure Document Intelligence resource
 
 In order to support analysis of many document formats, this repository uses a preview version of Azure Document Intelligence (formerly Form Recognizer) that is only available in [limited regions](https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout).
 If your existing resource is in one of those regions, then you can re-use it by setting the following environment variables:
@@ -65,6 +88,6 @@ If your existing resource is in one of those regions, then you can re-use it by 
 1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}`
 1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SKU {SKU of existing service, defaults to S0}`
 
-## Other existing Azure resources
+## Other Azure resources
 
-You can also use existing Azure AI Document Intelligence and Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+You can also use existing Azure AI Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.

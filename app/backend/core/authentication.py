@@ -8,6 +8,7 @@ import aiohttp
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchIndex
 from jose import jwt
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
 from tenacity import (
@@ -323,9 +324,9 @@ class AuthenticationHelper:
 
         try:
             jwt.decode(token, rsa_key, algorithms=["RS256"], audience=audience, issuer=issuer)
-        except jwt.ExpiredSignatureError as jwt_expired_exc:
+        except ExpiredSignatureError as jwt_expired_exc:
             raise AuthError({"code": "token_expired", "description": "token is expired"}, 401) from jwt_expired_exc
-        except jwt.JWTClaimsError as jwt_claims_exc:
+        except JWTClaimsError as jwt_claims_exc:
             raise AuthError(
                 {"code": "invalid_claims", "description": "incorrect claims," "please check the audience and issuer"},
                 401,

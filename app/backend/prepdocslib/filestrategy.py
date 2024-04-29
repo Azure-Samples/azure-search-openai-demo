@@ -87,7 +87,7 @@ class FileStrategy(Strategy):
                         blob_image_embeddings: Optional[List[List[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
                             blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await search_manager.update_content(sections, blob_image_embeddings)
+                        await search_manager.update_content(sections, blob_image_embeddings, url=file.url)
                 finally:
                     if file:
                         file.close()
@@ -124,7 +124,7 @@ class UploadUserFileStrategy:
             logging.warning("Image embeddings are not currently supported for the user upload feature")
         sections = await parse_file(file, self.file_processors)
         if sections:
-            await self.search_manager.update_content(sections)
+            await self.search_manager.update_content(sections, url=file.url)
 
     async def remove_file(self, filename: str, oid: str):
         if filename is None or filename == "":

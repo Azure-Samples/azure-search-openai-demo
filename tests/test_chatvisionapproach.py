@@ -10,6 +10,8 @@ from openai.types.chat import ChatCompletion
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
 from core.authentication import AuthenticationHelper
 
+from .mocks import MOCK_EMBEDDING_DIMENSIONS, MOCK_EMBEDDING_MODEL_NAME
+
 
 class MockOpenAIClient:
     def __init__(self):
@@ -53,7 +55,8 @@ def chat_approach(openai_client, mock_confidential_client_success):
         gpt4v_deployment="gpt-4v",
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",
-        embedding_model="text-",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
         sourcepage_field="",
         content_field="",
         query_language="en-us",

@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
@@ -30,7 +32,7 @@ class AsyncSearchResultsIterator:
 @pytest.mark.asyncio
 async def test_view_acl(monkeypatch, capsys):
     async def mock_search(self, *args, **kwargs):
-        assert kwargs.get("filter") == "sourcefile eq 'a.txt'"
+        assert kwargs.get("filter") == "storageUrl eq 'https://test.blob.core.windows.net/content/a.txt'"
         assert kwargs.get("select") == ["id", "oids"]
         return AsyncSearchResultsIterator([{"oids": ["OID_ACL"]}])
 
@@ -39,7 +41,7 @@ async def test_view_acl(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="a.txt",
+        url="https://test.blob.core.windows.net/content/a.txt",
         acl_action="view",
         acl_type="oids",
         acl="",
@@ -53,7 +55,7 @@ async def test_view_acl(monkeypatch, capsys):
 @pytest.mark.asyncio
 async def test_remove_acl(monkeypatch, capsys):
     async def mock_search(self, *args, **kwargs):
-        assert kwargs.get("filter") == "sourcefile eq 'a.txt'"
+        assert kwargs.get("filter") == "storageUrl eq 'https://test.blob.core.windows.net/content/a.txt'"
         assert kwargs.get("select") == ["id", "oids"]
         return AsyncSearchResultsIterator(
             [
@@ -74,7 +76,7 @@ async def test_remove_acl(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="a.txt",
+        url="https://test.blob.core.windows.net/content/a.txt",
         acl_action="remove",
         acl_type="oids",
         acl="OID_ACL_TO_REMOVE",
@@ -87,7 +89,7 @@ async def test_remove_acl(monkeypatch, capsys):
 @pytest.mark.asyncio
 async def test_remove_all_acl(monkeypatch, capsys):
     async def mock_search(self, *args, **kwargs):
-        assert kwargs.get("filter") == "sourcefile eq 'a.txt'"
+        assert kwargs.get("filter") == "storageUrl eq 'https://test.blob.core.windows.net/content/a.txt'"
         assert kwargs.get("select") == ["id", "oids"]
         return AsyncSearchResultsIterator(
             [
@@ -108,7 +110,7 @@ async def test_remove_all_acl(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="a.txt",
+        url="https://test.blob.core.windows.net/content/a.txt",
         acl_action="remove_all",
         acl_type="oids",
         acl="",
@@ -119,9 +121,9 @@ async def test_remove_all_acl(monkeypatch, capsys):
 
 
 @pytest.mark.asyncio
-async def test_add_acl(monkeypatch, capsys):
+async def test_add_acl(monkeypatch, caplog):
     async def mock_search(self, *args, **kwargs):
-        assert kwargs.get("filter") == "sourcefile eq 'a.txt'"
+        assert kwargs.get("filter") == "storageUrl eq 'https://test.blob.core.windows.net/content/a.txt'"
         assert kwargs.get("select") == ["id", "oids"]
         return AsyncSearchResultsIterator([{"id": 1, "oids": ["OID_EXISTS"]}, {"id": 2, "oids": ["OID_EXISTS"]}])
 
@@ -137,38 +139,49 @@ async def test_add_acl(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="a.txt",
+        url="https://test.blob.core.windows.net/content/a.txt",
         acl_action="add",
         acl_type="oids",
         acl="OID_EXISTS",
         credentials=MockAzureCredential(),
     )
-    await command.run()
-    assert merged_documents == [{"id": 2, "oids": ["OID_EXISTS"]}, {"id": 1, "oids": ["OID_EXISTS"]}]
+    with caplog.at_level(logging.INFO):
+        await command.run()
+        assert merged_documents == []
+        assert "Search document 1 already has oids acl OID_EXISTS" in caplog.text
+        assert "Search document 2 already has oids acl OID_EXISTS" in caplog.text
+        assert "Not updating any search documents" in caplog.text
 
     merged_documents.clear()
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="a.txt",
+        url="https://test.blob.core.windows.net/content/a.txt",
         acl_action="add",
         acl_type="oids",
         acl="OID_ADD",
         credentials=MockAzureCredential(),
     )
-    await command.run()
-    assert merged_documents == [
-        {"id": 2, "oids": ["OID_EXISTS", "OID_ADD"]},
-        {"id": 1, "oids": ["OID_EXISTS", "OID_ADD"]},
-    ]
+    with caplog.at_level(logging.INFO):
+        await command.run()
+        assert merged_documents == [
+            {"id": 2, "oids": ["OID_EXISTS", "OID_ADD"]},
+            {"id": 1, "oids": ["OID_EXISTS", "OID_ADD"]},
+        ]
+        assert "Adding acl OID_ADD to 2 search documents" in caplog.text
 
 
 @pytest.mark.asyncio
-async def test_add_acl_already_exists(monkeypatch, capsys):
+async def test_update_storage_urls(monkeypatch, caplog):
     async def mock_search(self, *args, **kwargs):
-        assert kwargs.get("filter") == "sourcefile eq 'a.txt'"
-        assert kwargs.get("select") == ["id", "oids"]
-        return AsyncSearchResultsIterator([{"id": 1, "oids": ["OID_EXISTS"]}, {"id": 2, "oids": ["OID_EXISTS"]}])
+        assert kwargs.get("filter") == "storageUrl eq ''"
+        assert kwargs.get("select") == ["id", "storageUrl", "oids", "sourcefile"]
+        return AsyncSearchResultsIterator(
+            [
+                {"id": 1, "oids": ["OID_EXISTS"], "storageUrl": "", "sourcefile": "a.txt"},
+                {"id": 2, "oids": [], "storageUrl": "", "sourcefile": "ab.txt"},
+            ]
+        )
 
     merged_documents = []
 
@@ -182,30 +195,18 @@ async def test_add_acl_already_exists(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="a.txt",
-        acl_action="add",
-        acl_type="oids",
-        acl="OID_EXISTS",
+        url="https://test.blob.core.windows.net/content/",
+        acl_action="update_storage_urls",
+        acl_type="",
+        acl="",
         credentials=MockAzureCredential(),
     )
-    await command.run()
-    assert merged_documents == [{"id": 2, "oids": ["OID_EXISTS"]}, {"id": 1, "oids": ["OID_EXISTS"]}]
-
-    merged_documents.clear()
-    command = ManageAcl(
-        service_name="SERVICE",
-        index_name="INDEX",
-        document="a.txt",
-        acl_action="add",
-        acl_type="oids",
-        acl="OID_ADD",
-        credentials=MockAzureCredential(),
-    )
-    await command.run()
-    assert merged_documents == [
-        {"id": 2, "oids": ["OID_EXISTS", "OID_ADD"]},
-        {"id": 1, "oids": ["OID_EXISTS", "OID_ADD"]},
-    ]
+    with caplog.at_level(logging.INFO):
+        await command.run()
+        assert merged_documents == [{"id": 2, "storageUrl": "https://test.blob.core.windows.net/content/ab.txt"}]
+        assert "Not updating storage URL of document 1 as it has only one oid and may be user uploaded" in caplog.text
+        assert "Adding storage URL https://test.blob.core.windows.net/content/ab.txt for document 2" in caplog.text
+        assert "Updating storage URL for 1 search documents" in caplog.text
 
 
 @pytest.mark.asyncio
@@ -224,7 +225,7 @@ async def test_enable_acls_with_missing_fields(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="",
+        url="",
         acl_action="enable_acls",
         acl_type="",
         acl="",
@@ -266,7 +267,7 @@ async def test_enable_acls_without_missing_fields(monkeypatch, capsys):
     command = ManageAcl(
         service_name="SERVICE",
         index_name="INDEX",
-        document="",
+        url="",
         acl_action="enable_acls",
         acl_type="",
         acl="",
@@ -279,9 +280,10 @@ async def test_enable_acls_without_missing_fields(monkeypatch, capsys):
 
 
 def validate_index(index):
-    assert len(index.fields) == 2
+    assert len(index.fields) == 3
     oids_field = None
     groups_field = None
+    storageurl_field = None
     for field in index.fields:
         if field.name == "oids":
             assert not oids_field
@@ -289,8 +291,12 @@ def validate_index(index):
         elif field.name == "groups":
             assert not groups_field
             groups_field = field
-    assert oids_field and groups_field
+        elif field.name == "storageUrl":
+            storageurl_field = field
+
+    assert oids_field and groups_field and storageurl_field
     assert oids_field.type == SearchFieldDataType.Collection(
         SearchFieldDataType.String
     ) and groups_field.type == SearchFieldDataType.Collection(SearchFieldDataType.String)
-    assert oids_field.filterable and groups_field.filterable
+    assert storageurl_field.type == SearchFieldDataType.String
+    assert oids_field.filterable and groups_field.filterable and storageurl_field.filterable
