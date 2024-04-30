@@ -18,16 +18,14 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
-def configure_oltp_grpc_tracing(service_name: str = "azure-search-openai-demo", endpoint=None, insecure=True, api_key=None):
+def configure_oltp_grpc_tracing(
+    service_name: str = "azure-search-openai-demo", endpoint=None, insecure=True, api_key=None
+):
     # Service name is required for most backends
-    resource = Resource(attributes={
-        SERVICE_NAME: service_name
-    })
+    resource = Resource(attributes={SERVICE_NAME: service_name})
 
     if api_key:
-        headers = {
-            "x-otlp-api-key": api_key
-        }
+        headers = {"x-otlp-api-key": api_key}
     else:
         headers = None
 
@@ -38,16 +36,12 @@ def configure_oltp_grpc_tracing(service_name: str = "azure-search-openai-demo", 
     trace.set_tracer_provider(traceProvider)
 
     # Configure Metrics
-    reader = PeriodicExportingMetricReader(
-        OTLPMetricExporter(endpoint=endpoint, insecure=insecure, headers=headers)
-    )
+    reader = PeriodicExportingMetricReader(OTLPMetricExporter(endpoint=endpoint, insecure=insecure, headers=headers))
     meterProvider = MeterProvider(resource=resource, metric_readers=[reader])
     metrics.set_meter_provider(meterProvider)
 
     # Configure Logging
-    logger_provider = LoggerProvider(
-        resource=resource
-    )
+    logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
 
     exporter = OTLPLogExporter(endpoint=endpoint, insecure=insecure, headers=headers)
