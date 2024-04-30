@@ -158,15 +158,15 @@ class AuthenticationHelper:
         # If no security filters are specified, don't return any filter
         security_filter = None
         if oid_security_filter and not groups_security_filter:
-            security_filter = f"({oid_security_filter})"
+            security_filter = f"{oid_security_filter}"
         elif groups_security_filter and not oid_security_filter:
-            security_filter = f"({groups_security_filter})"
+            security_filter = f"{groups_security_filter}"
         elif oid_security_filter and groups_security_filter:
             security_filter = f"({oid_security_filter} or {groups_security_filter})"
 
         # If public documents are allowed, append the public documents filter
         if self.allow_public_documents:
-            public_documents_filter = "(not groups/any() and not oids/any())"
+            public_documents_filter = "(not oids/any() and not groups/any())"
             if security_filter:
                 security_filter = f"({security_filter} or {public_documents_filter})"
             else:
