@@ -125,6 +125,7 @@ param authTenantId string = ''
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
 param enforceAccessControl bool = false
+param allowPublicDocuments bool = false
 param serverAppId string = ''
 @secure()
 param serverAppSecret string = ''
@@ -287,6 +288,7 @@ module backend 'core/host/appservice.bicep' = {
       // Optional login and document level access control system
       AZURE_USE_AUTHENTICATION: useAuthentication
       AZURE_ENFORCE_ACCESS_CONTROL: enforceAccessControl
+      AZURE_ALLOW_PUBLIC_DOCUMENTS: allowPublicDocuments
       AZURE_SERVER_APP_ID: serverAppId
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_ID: clientAppId

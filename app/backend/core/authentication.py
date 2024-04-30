@@ -41,6 +41,7 @@ class AuthenticationHelper:
         client_app_id: Optional[str],
         tenant_id: Optional[str],
         require_access_control: bool = False,
+        allow_public_documents: bool = False
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -62,12 +63,14 @@ class AuthenticationHelper:
             field_names = [field.name for field in search_index.fields] if search_index else []
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
             self.require_access_control = require_access_control
+            self.allow_public_documents = allow_public_documents
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
             self.has_auth_fields = False
             self.require_access_control = False
+            self.allow_public_documents = True
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
@@ -150,17 +153,26 @@ class AuthenticationHelper:
             else None
         )
 
-        # If only one security filter is specified, return that filter
+        # If only one security filter is specified, use that filter
         # If both security filters are specified, combine them with "or" so only 1 security filter needs to pass
         # If no security filters are specified, don't return any filter
+        security_filter = None
         if oid_security_filter and not groups_security_filter:
-            return oid_security_filter
+            security_filter = f"({oid_security_filter})"
         elif groups_security_filter and not oid_security_filter:
-            return groups_security_filter
+            security_filter = f"({groups_security_filter})"
         elif oid_security_filter and groups_security_filter:
-            return f"({oid_security_filter} or {groups_security_filter})"
-        else:
-            return None
+            security_filter = f"({oid_security_filter} or {groups_security_filter})"
+
+        # If public documents are allowed, append the public documents filter
+        if self.allow_public_documents:
+            public_documents_filter = "(not groups/any() and not oids/any())"
+            if security_filter:
+                security_filter = f"({security_filter} or {public_documents_filter})"
+            else:
+                security_filter = public_documents_filter
+
+        return security_filter
 
     @staticmethod
     async def list_groups(graph_resource_access_token: dict) -> list[str]:

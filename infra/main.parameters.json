@@ -155,6 +155,9 @@
     "enforceAccessControl": {
       "value": "${AZURE_ENFORCE_ACCESS_CONTROL=false}"
     },
+    "allowPublicDocuments": {
+      "value": "${AZURE_ALLOW_PUBLIC_DOCUMENTS=false}"
+    },
     "tenantId": {
       "value": "${AZURE_TENANT_ID}"
     },
