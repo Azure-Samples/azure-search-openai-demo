@@ -1,17 +1,13 @@
 import json
-import logging
 import re
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional, Union
 
 from openai.types.chat import (
     ChatCompletion,
-    ChatCompletionContentPartParam,
-    ChatCompletionMessageParam,
 )
 
 from approaches.approach import Approach
-from core.messagebuilder import MessageBuilder
 
 
 class ChatApproach(Approach, ABC):
@@ -88,39 +84,6 @@ class ChatApproach(Approach, ABC):
 
     def extract_followup_questions(self, content: str):
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
-
-    def get_messages_from_history(
-        self,
-        system_prompt: str,
-        model_id: str,
-        history: list[dict[str, str]],
-        user_content: Union[str, list[ChatCompletionContentPartParam]],
-        max_tokens: int,
-        few_shots=[],
-    ) -> list[ChatCompletionMessageParam]:
-        message_builder = MessageBuilder(system_prompt, model_id)
-
-        # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
-        for shot in reversed(few_shots):
-            message_builder.insert_message(shot.get("role"), shot.get("content"))
-
-        append_index = len(few_shots) + 1
-
-        message_builder.insert_message(self.USER, user_content, index=append_index)
-
-        total_token_count = 0
-        for existing_message in message_builder.messages:
-            total_token_count += message_builder.count_tokens_for_message(existing_message)
-
-        newest_to_oldest = list(reversed(history[:-1]))
-        for message in newest_to_oldest:
-            potential_message_count = message_builder.count_tokens_for_message(message)
-            if (total_token_count + potential_message_count) > max_tokens:
-                logging.info("Reached max tokens of %d, history will be truncated", max_tokens)
-                break
-            message_builder.insert_message(message["role"], message["content"], index=append_index)
-            total_token_count += potential_message_count
-        return message_builder.messages
 
     async def run_without_streaming(
         self,

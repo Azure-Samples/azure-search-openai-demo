@@ -199,6 +199,10 @@ numpy==1.26.4
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==1.13.3
+    # via
+    #   -r requirements.in
+    #   openai-messages-token-helper
+openai-messages-token-helper==0.0.6
     # via -r requirements.in
 opentelemetry-api==1.23.0
     # via
@@ -317,7 +321,9 @@ pandas-stubs==2.2.0.240218
 pendulum==3.0.0
     # via microsoft-kiota-serialization-json
 pillow==10.3.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai-messages-token-helper
 portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
@@ -389,7 +395,9 @@ std-uritemplate==0.0.55
 tenacity==8.2.3
     # via -r requirements.in
 tiktoken==0.6.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai-messages-token-helper
 time-machine==2.14.1
     # via pendulum
 tqdm==4.66.2
