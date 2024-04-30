@@ -19,7 +19,10 @@ param subnetId string
 param groupIds array = []
 
 @description('The ID of the private DNS zone to connect to')
-param dnsZoneId string
+param dnsZoneId string = ''
+
+@description('Private DNS Zone config, if dnsZoneId not specified')
+param privateDnsZoneConfigs array = []
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
   name: name
@@ -42,14 +45,14 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
   resource privateDnsZoneGroup 'privateDnsZoneGroups' = {
     name: '${name}-group'
     properties: {
-      privateDnsZoneConfigs: [
+      privateDnsZoneConfigs: !empty(dnsZoneId) ? [
         {
           name: 'config1'
           properties: {
             privateDnsZoneId: dnsZoneId
           }
         }
-      ]
+      ] : privateDnsZoneConfigs
     }
   }
 }

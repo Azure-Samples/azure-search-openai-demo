@@ -678,6 +678,33 @@ module searchRoleBackend 'core/security/role.bicep' = if (!useSearchServiceKey) 
   }
 }
 
+
+var environmentData = environment()
+var privateEndpointConnections = usePrivateEndpoint ? [
+  {
+    groupId: 'blob'
+    dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
+    resourceIds: concat(
+      [storage.outputs.id],
+      useUserUpload ? [userStorage.outputs.id] : []
+    )
+  }
+  {
+    groupId: 'account'
+    dnsZoneName: 'privatelink.openai.azure.com'
+    resourceIds: concat(
+      [openAi.outputs.id],
+      useGPT4V ? [computerVision.outputs.id] : [],
+      !useLocalPdfParser ? [documentIntelligence.outputs.id] : []
+    )
+  }
+  {
+    groupId: 'searchService'
+    dnsZoneNAme: 'privatelink.search.windows.net'
+    resourceIds: [ searchService.outputs.id ]
+  }
+] : []
+
 module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
   name: 'networks'
   scope: resourceGroup
@@ -686,13 +713,11 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     tags: tags
     resourceToken: resourceToken
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
-    appServicePlanId: appServicePlan.outputs.id
     appServicePlanName: appServicePlan.outputs.name
-    storageAccountId: storage.outputs.id
-    searchServiceId: searchService.outputs.id
+    privateEndpointConnections: privateEndpointConnections
     searchServiceName: searchService.outputs.name
-    openAiId: openAi.outputs.id
-    formRecognizerId: documentIntelligence.outputs.id
+    applicationInsightsId: monitoring.outputs.applicationInsightsId
+    logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
   }
 }
 
