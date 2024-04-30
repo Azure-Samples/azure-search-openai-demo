@@ -392,6 +392,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
 }
 
 // Formerly known as Form Recognizer
+// Does not support bypass
 module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
   name: 'documentintelligence'
   scope: documentIntelligenceResourceGroup
@@ -402,7 +403,6 @@ module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
     location: documentIntelligenceResourceGroupLocation
     tags: tags
     ipRules: ipRules
-    bypass: bypass
     sku: {
       name: documentIntelligenceSkuName
     }
