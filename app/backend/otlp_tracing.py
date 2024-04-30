@@ -18,7 +18,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
-def configure_oltp_grpc_tracing(service_name: str = "azure-search-openai-demo", endpoint: str = "http://localhost:4317", insecure=True, api_key=None):
+def configure_oltp_grpc_tracing(service_name: str = "azure-search-openai-demo", endpoint=None, insecure=True, api_key=None):
     # Service name is required for most backends
     resource = Resource(attributes={
         SERVICE_NAME: service_name
