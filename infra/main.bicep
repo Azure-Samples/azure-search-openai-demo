@@ -217,9 +217,6 @@ resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' e
   name: !empty(keyVaultResourceGroupName) ? keyVaultResourceGroupName : resourceGroup.name
 }
 
-// TODO: Setup AMPLS
-// https://learn.microsoft.com/en-us/azure/azure-monitor/logs/private-link-configure
-
 // Monitor application with Azure Monitor
 module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) {
   name: 'monitoring'

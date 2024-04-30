@@ -27,6 +27,14 @@ param resourceToken string
 @description('Name of the search service')
 param searchServiceName string
 
+@description('Ingestion access mode for Azure Monitor Private Link Scope')
+@allowed(['PrivateOnly', 'Open'])
+param monitorIngestionAccessMode string = 'PrivateOnly'
+
+@description('Query access mode for Azure Monitor Private Link Scope')
+@allowed(['PrivateOnly', 'Open'])
+param monitorQueryAccessMode string = 'Open'
+
 var abbrs = loadJsonContent('abbreviations.json')
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
@@ -120,8 +128,8 @@ resource monitorPrivateLinkScope 'microsoft.insights/privateLinkScopes@2021-07-0
     // https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security#private-link-access-modes-private-only-vs-open
     // Uses Private Link to communicate with resources in the AMPLS, but also allows traffic to continue to other resources
     accessModeSettings: {
-      ingestionAccessMode: 'PrivateOnly'
-      queryAccessMode: 'PrivateOnly'
+      ingestionAccessMode: monitorIngestionAccessMode
+      queryAccessMode: monitorQueryAccessMode
     }
   }
 
