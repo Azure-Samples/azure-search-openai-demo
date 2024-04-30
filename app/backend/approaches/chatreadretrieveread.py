@@ -8,13 +8,12 @@ from openai.types.chat import (
     ChatCompletionChunk,
     ChatCompletionToolParam,
 )
+from opentelemetry import metrics
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.modelhelper import get_token_limit
-
-from opentelemetry import metrics
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):

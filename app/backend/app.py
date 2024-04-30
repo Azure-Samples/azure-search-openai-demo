@@ -580,6 +580,7 @@ def create_app():
         configure_oltp_grpc_tracing(
             service_name=os.getenv("OTEL_SERVICE_NAME", "azure-search-openai-demo"),
             endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+            insecure=os.getenv("OTEL_EXPORTER_OTLP_TRACES_INSECURE", "true").lower() == "true",
             api_key=os.getenv("OTEL_EXPORTER_OTLP_TRACES_API_KEY"),
         )
         instrument_app()
