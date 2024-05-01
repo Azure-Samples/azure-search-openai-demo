@@ -166,8 +166,12 @@ def test_build_security_filters(mock_confidential_client_success, mock_validate_
         == "oids/any(g:search.in(g, ''))"
     )
     assert (
+        auth_helper.build_security_filters(overrides={}, auth_claims={})
+        is None
+    )
+    assert (
         auth_helper_allow_public_documents.build_security_filters(overrides={}, auth_claims={})
-        == "(not oids/any() and not groups/any())"
+        is None
     )
     assert (
         auth_helper_allow_public_documents.build_security_filters(
@@ -284,6 +288,33 @@ async def test_check_path_auth_allowed_sourcefile(
         == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf'))"
     )
 
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_public_sourcefile(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=True, allow_public_documents=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control_and_allow_public_documents.check_path_auth(
+            path="Benefit_Options.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert (
+        filter
+        == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any())) and ((sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf'))"
+    )
+
 
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_empty(
@@ -301,6 +332,30 @@ async def test_check_path_auth_allowed_empty(
 
     assert (
         await auth_helper_require_access_control.check_path_auth(
+            path="",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_public_empty(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=True, allow_public_documents=True)
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control_and_allow_public_documents.check_path_auth(
             path="",
             auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
             search_client=create_search_client(),
@@ -357,6 +412,34 @@ async def test_check_path_auth_allowed_without_access_control(
 
     assert (
         await auth_helper.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+    assert called_search is False
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_public_without_access_control(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=False, allow_public_documents=True)
+    filter = None
+    called_search = False
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        nonlocal called_search
+        filter = kwargs.get("filter")
+        called_search = True
+        return MockAsyncPageIterator(data=[])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control_and_allow_public_documents.check_path_auth(
             path="Benefit_Options-2.pdf",
             auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
             search_client=create_search_client(),
