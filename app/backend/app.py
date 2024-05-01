@@ -561,8 +561,7 @@ def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
 
-    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
-        configure_azure_monitor()
+    def instrument_app():
         # This tracks HTTP requests made by aiohttp:
         AioHttpClientInstrumentor().instrument()
         # This tracks HTTP requests made by httpx:
@@ -571,6 +570,20 @@ def create_app():
         OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
         app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[assignment]
+
+    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+        configure_azure_monitor()
+        instrument_app()
+    elif os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"):
+        from otlp_tracing import configure_oltp_grpc_tracing
+
+        configure_oltp_grpc_tracing(
+            service_name=os.getenv("OTEL_SERVICE_NAME", "azure-search-openai-demo"),
+            endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+            insecure=os.getenv("OTEL_EXPORTER_OTLP_TRACES_INSECURE", "true").lower() == "true",
+            api_key=os.getenv("OTEL_EXPORTER_OTLP_TRACES_API_KEY"),
+        )
+        instrument_app()
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely
