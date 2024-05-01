@@ -38,6 +38,7 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
 1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
 1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
 1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`.
+1. (Optional) To allow searching of documents with no access control configured, even when access control is required, run `azd env set AZURE_ALLOW_PUBLIC_DOCUMENTS true`.
 1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
 2. Run `azd up` to deploy the app.
 
@@ -225,7 +226,8 @@ Once the environment variables are set, run the script using the following comma
 The following environment variables are used to setup the optional login and document level access control:
 
 * `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
-* `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Azure AD based login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`
+* `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Azure AD based login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`.
+* `AZURE_ALLOW_PUBLIC_DOCS`: Allow searching of documents with no access control configured, even when access control is required.
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
 * `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
