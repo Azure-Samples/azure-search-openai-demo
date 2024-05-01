@@ -68,4 +68,4 @@ azd env set OPENAI_BASE_URL http://host.docker.internal:8080/v1
 
 ## (Optional) Running with OpenTelemetry tracing
 
-To run the service with OpenTelemetry tracing, you can use the local Aspire Dashboard, see [OpenTelemetry support](../opentelemetry.md) for details on starting the dashboard.
+To run the service with OpenTelemetry tracing, you can use the local Aspire Dashboard, see [OpenTelemetry support](opentelemetry.md) for details on starting the dashboard.
