@@ -27,7 +27,7 @@ def create_authentication_helper(require_access_control: bool = False, allow_pub
         client_app_id="CLIENT_APP",
         tenant_id="TENANT_ID",
         require_access_control=require_access_control,
-        allow_public_documents=allow_public_documents
+        allow_public_documents=allow_public_documents,
     )
 
 
@@ -115,7 +115,9 @@ def test_build_security_filters(mock_confidential_client_success, mock_validate_
     auth_helper = create_authentication_helper()
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
     auth_helper_allow_public_documents = create_authentication_helper(allow_public_documents=True)
-    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=True, allow_public_documents=True)
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(
+        require_access_control=True, allow_public_documents=True
+    )
     assert auth_helper.build_security_filters(overrides={}, auth_claims={}) is None
     assert (
         auth_helper_require_access_control.build_security_filters(overrides={}, auth_claims={})
@@ -165,44 +167,38 @@ def test_build_security_filters(mock_confidential_client_success, mock_validate_
         )
         == "oids/any(g:search.in(g, ''))"
     )
-    assert (
-        auth_helper.build_security_filters(overrides={}, auth_claims={})
-        is None
-    )
-    assert (
-        auth_helper_allow_public_documents.build_security_filters(overrides={}, auth_claims={})
-        is None
-    )
+    assert auth_helper.build_security_filters(overrides={}, auth_claims={}) is None
+    assert auth_helper_allow_public_documents.build_security_filters(overrides={}, auth_claims={}) is None
     assert (
         auth_helper_allow_public_documents.build_security_filters(
             overrides={"use_oid_security_filter": True, "use_groups_security_filter": True},
-            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
         )
         == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     assert (
         auth_helper_allow_public_documents.build_security_filters(
-            overrides={"use_oid_security_filter": True},
-            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+            overrides={"use_oid_security_filter": True}, auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
         )
         == "(oids/any(g:search.in(g, 'OID_X')) or (not oids/any() and not groups/any()))"
     )
     assert (
         auth_helper_allow_public_documents.build_security_filters(
             overrides={"use_groups_security_filter": True},
-            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
         )
         == "(groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')) or (not oids/any() and not groups/any()))"
     )
     assert (
         auth_helper_require_access_control_and_allow_public_documents.build_security_filters(
-            overrides={},
-            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+            overrides={}, auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
         )
         == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     assert (
-        auth_helper_require_access_control_and_allow_public_documents.build_security_filters(overrides={}, auth_claims={})
+        auth_helper_require_access_control_and_allow_public_documents.build_security_filters(
+            overrides={}, auth_claims={}
+        )
         == "((oids/any(g:search.in(g, '')) or groups/any(g:search.in(g, ''))) or (not oids/any() and not groups/any()))"
     )
 
@@ -288,11 +284,14 @@ async def test_check_path_auth_allowed_sourcefile(
         == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf'))"
     )
 
+
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_public_sourcefile(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=True, allow_public_documents=True)
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(
+        require_access_control=True, allow_public_documents=True
+    )
     filter = None
 
     async def mock_search(self, *args, **kwargs):
@@ -340,11 +339,14 @@ async def test_check_path_auth_allowed_empty(
     )
     assert filter is None
 
+
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_public_empty(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=True, allow_public_documents=True)
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(
+        require_access_control=True, allow_public_documents=True
+    )
     filter = None
 
     async def mock_search(self, *args, **kwargs):
@@ -421,11 +423,14 @@ async def test_check_path_auth_allowed_without_access_control(
     assert filter is None
     assert called_search is False
 
+
 @pytest.mark.asyncio
 async def test_check_path_auth_allowed_public_without_access_control(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(require_access_control=False, allow_public_documents=True)
+    auth_helper_require_access_control_and_allow_public_documents = create_authentication_helper(
+        require_access_control=False, allow_public_documents=True
+    )
     filter = None
     called_search = False
 

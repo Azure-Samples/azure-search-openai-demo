@@ -196,6 +196,7 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
+
 @pytest.mark.asyncio
 async def test_ask_rtr_text_filter_public_documents(auth_public_documents_client, snapshot):
     response = await auth_public_documents_client.post(
@@ -384,6 +385,7 @@ async def test_chat_text_filter(auth_client, snapshot):
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
 
 @pytest.mark.asyncio
 async def test_chat_text_filter_public_documents(auth_public_documents_client, snapshot):

@@ -391,7 +391,7 @@ async def setup_clients():
         client_app_id=AZURE_CLIENT_APP_ID,
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
-        allow_public_documents=AZURE_ALLOW_PUBLIC_DOCUMENTS
+        allow_public_documents=AZURE_ALLOW_PUBLIC_DOCUMENTS,
     )
 
     if USE_USER_UPLOAD:

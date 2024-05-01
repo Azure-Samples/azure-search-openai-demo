@@ -357,6 +357,7 @@ async def auth_client(
 
             yield client
 
+
 @pytest_asyncio.fixture(params=auth_public_envs)
 async def auth_public_documents_client(
     monkeypatch,

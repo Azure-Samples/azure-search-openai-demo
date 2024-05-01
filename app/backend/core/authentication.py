@@ -41,7 +41,7 @@ class AuthenticationHelper:
         client_app_id: Optional[str],
         tenant_id: Optional[str],
         require_access_control: bool = False,
-        allow_public_documents: bool = False
+        allow_public_documents: bool = False,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
