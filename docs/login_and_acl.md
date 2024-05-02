@@ -227,7 +227,7 @@ The following environment variables are used to setup the optional login and doc
 
 * `AZURE_USE_AUTHENTICATION`: Enables Azure AD based optional login and document level access control. Set to true before running `azd up`.
 * `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Azure AD based login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`.
-* `AZURE_ALLOW_PUBLIC_DOCS`: Allow searching of documents with no access control configured, even when access control is required.
+* `AZURE_ALLOW_PUBLIC_DOCS`: Allows authenticated users to search on documents that have no access controls assigned, even when access control is required.
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Azure AD app for the API server.
 * `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Azure AD API server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Azure AD app for the client UI.
