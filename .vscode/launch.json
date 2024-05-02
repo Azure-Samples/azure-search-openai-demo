@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Backend",
+            "name": "Python: Quart",
             "type": "debugpy",
             "request": "launch",
             "module": "quart",
@@ -26,14 +26,12 @@
             "envFile": "${input:dotEnvFilePath}",
         },
         {
-            "name": "Frontend",
-            "type": "node",
+            "name": "Frontend: watch",
+            "type": "node-terminal",
             "request": "launch",
+            "command": "npm run dev",
             "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run-script", "dev"],
-            "console": "integratedTerminal"
-          },
+        },
         {
             "name": "Python: Debug Tests",
             "type": "debugpy",
@@ -42,15 +40,8 @@
             "purpose": ["debug-test"],
             "console": "integratedTerminal",
             "justMyCode": false
-        }
+          }
     ],
-    "compounds": [
-        {
-          "name": "Frontend & Backend",
-          "configurations": ["Frontend", "Backend"],
-          "stopAll": true
-        }
-      ],
     "inputs": [
         {
             "id": "dotEnvFilePath",
