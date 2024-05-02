@@ -252,7 +252,6 @@ class AuthenticationHelper:
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
         # Start with the standard security filter for all queries
         security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
-        print(security_filter)
         # If there was no security filter or no path, then the path is allowed
         if not security_filter or len(path) == 0:
             return True
