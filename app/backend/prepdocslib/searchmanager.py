@@ -187,6 +187,18 @@ class SearchManager:
                 await search_index_client.create_index(index)
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
+                index_definition = await search_index_client.get_index(self.search_info.index_name)
+                if not any(field.name == "storageUrl" for field in index_definition.fields):
+                    logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
+                    index_definition.fields.append(
+                        SimpleField(
+                            name="storageUrl",
+                            type="Edm.String",
+                            filterable=True,
+                            facetable=False,
+                        ),
+                    )
+                    await search_index_client.create_or_update_index(index_definition)
 
     async def update_content(
         self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
