@@ -25,6 +25,7 @@ from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
+    SharepointListFileStrategy
 )
 from prepdocslib.parser import Parser
 from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
@@ -95,6 +96,10 @@ def setup_list_file_strategy(
     datalake_filesystem: Union[str, None],
     datalake_path: Union[str, None],
     datalake_key: Union[str, None],
+    sharepoint_site: Union[str, None],
+    graph_client_id: Union[str, None],
+    graph_client_secret: Union[str, None],
+    graph_tenant_id: Union[str, None]
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
@@ -111,8 +116,18 @@ def setup_list_file_strategy(
     elif local_files:
         logger.info("Using local files: %s", local_files)
         list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
+    elif sharepoint_site:
+        logger.info("Using sharepoint site %s", sharepoint_site)
+        if graph_client_id is None or graph_tenant_id is None or graph_client_secret is None:
+            raise ValueError("Either graph_client_id, graph_tenant_id and graph_client_secret must be provided for sharepoint import.")
+        list_file_strategy = SharepointListFileStrategy(
+            sharepoint_uri= sharepoint_site,
+            graph_client_id = graph_client_id,
+            graph_client_secret = graph_client_secret,
+            graph_tenant_id = graph_tenant_id
+        )
     else:
-        raise ValueError("Either local_files or datalake_storage_account must be provided.")
+        raise ValueError("Either local_files, datalake_storage_account or sharepoint_site must be provided.")
     return list_file_strategy
 
 
@@ -164,9 +179,9 @@ def setup_file_processors(
     local_html_parser: bool = False,
     search_images: bool = False,
 ):
-    html_parser: Parser
-    pdf_parser: Parser
-    doc_int_parser: DocumentAnalysisParser
+    html_parser: Parser = None
+    pdf_parser: Parser = None
+    doc_int_parser: DocumentAnalysisParser = None
 
     # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service is not None:
@@ -384,6 +399,27 @@ if __name__ == "__main__":
         help="Required if --useintvectorization is specified. Enable Integrated vectorizer indexer support which is in preview)",
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    parser.add_argument(
+        "--sharepointsite",
+        required=False,
+        help="Optional, URI of the Sharepoint site to load docs from",
+    )
+    parser.add_argument(
+        "--graphclientid",
+        required=False,
+        help="Optional, required if --sharepointsite is specified. Client ID for the Microsoft Graph API",
+    )
+    parser.add_argument(
+        "--graphclientsecret",
+        required=False,
+        help="Optional, required if --sharepointsite is specified. Client Secret for the Microsoft Graph API",
+    )
+    parser.add_argument(
+        "--graphtenantid",
+        required=False,
+        help="Optional, required if --sharepointsite is specified. Tenant ID for the Microsoft Graph API",
+    )
+
     args = parser.parse_args()
 
     if args.verbose:
@@ -437,6 +473,10 @@ if __name__ == "__main__":
         datalake_filesystem=args.datalakefilesystem,
         datalake_path=args.datalakepath,
         datalake_key=clean_key_if_exists(args.datalakekey),
+        sharepoint_site=args.sharepointsite,
+        graph_client_id=args.graphclientid,
+        graph_client_secret=args.graphclientsecret,
+        graph_tenant_id=args.graphtenantid,
     )
     openai_embeddings_service = setup_embeddings_service(
         azure_credential=azd_credential,

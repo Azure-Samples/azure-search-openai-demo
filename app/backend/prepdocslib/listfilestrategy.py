@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import json
 import logging
 import os
 import re
@@ -8,9 +9,14 @@ from abc import ABC
 from glob import glob
 from typing import IO, AsyncGenerator, Dict, List, Optional, Union
 
+from .sharepointhelper import SharePointHelper
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
+)
+from azure.identity import (
+    ClientSecretCredential,
+    get_bearer_token_provider,
 )
 
 logger = logging.getLogger("ingester")
@@ -59,6 +65,53 @@ class ListFileStrategy(ABC):
         if False:  # pragma: no cover - this is necessary for mypy to type check
             yield
 
+
+class SharepointListFileStrategy(ListFileStrategy):
+    """
+    Concrete strategy for listing files that are located in a Sharepoint instance
+    """
+
+    def __init__(
+            self,
+            sharepoint_uri: str,
+            graph_client_id: str,
+            graph_client_secret: str,
+            graph_tenant_id: str
+            ) -> None:
+        super().__init__()
+        self.sharepoint_uri = sharepoint_uri
+        self.graph_token_provider = get_bearer_token_provider(
+            ClientSecretCredential(
+                client_id= graph_client_id,
+                client_secret= graph_client_secret,
+                tenant_id= graph_tenant_id 
+            ),
+            "https://graph.microsoft.com/.default",
+        )
+        self.sharepoint_helper = SharePointHelper()
+    
+    async def list_paths(self) -> AsyncGenerator[str, None]:
+        token = self.graph_token_provider()
+        site_id = self.sharepoint_helper.get_site_id(self.sharepoint_uri, token)
+        for page in self.sharepoint_helper.get_page_headers(site_id, token):
+            yield page.source_url
+
+    async def list(self) -> AsyncGenerator[File, None]:
+        token = self.graph_token_provider()
+        site_id = self.sharepoint_helper.get_site_id(self.sharepoint_uri, token)
+        for page in self.sharepoint_helper.get_site_pages_as_json(site_id, token):
+            file_name = f'{page["title"]}.json'
+            temp_file_path = os.path.join(tempfile.gettempdir(), file_name)
+            try:
+                with open(temp_file_path, "w") as temp_file:
+                    temp_file.write(json.dumps(page))
+                yield File(content=open(temp_file_path, "rb"), url=page["source_url"])
+            except Exception as file_exception:
+                logger.error(f"\tGot an error while processing {page["title"]} -> {file_exception} --> skipping")
+                try:
+                    os.remove(temp_file_path)
+                except Exception as file_delete_exception:
+                    logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
 
 class LocalListFileStrategy(ListFileStrategy):
     """
