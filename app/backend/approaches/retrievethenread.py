@@ -3,6 +3,7 @@ from typing import Any, AsyncGenerator, Optional, Union
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionMessageParam
 from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
@@ -70,12 +71,14 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
 
     async def run(
         self,
-        messages: list[dict],
+        messages: list[ChatCompletionMessageParam],
         stream: bool = False,  # Stream is not used in this approach
         session_state: Any = None,
         context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         q = messages[-1]["content"]
+        if not isinstance(q, str):
+            raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]

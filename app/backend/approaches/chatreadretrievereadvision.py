@@ -8,6 +8,7 @@ from openai.types.chat import (
     ChatCompletionChunk,
     ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
+    ChatCompletionMessageParam,
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
@@ -79,7 +80,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
     async def run_until_final_call(
         self,
-        history: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
@@ -97,7 +98,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         include_gtpV_text = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         include_gtpV_images = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
-        original_user_query = history[-1]["content"]
+        original_user_query = messages[-1]["content"]
+        if not isinstance(original_user_query, str):
+            raise ValueError("The most recent message content must be a string.")
+        past_messages: list[ChatCompletionMessageParam] = messages[:-1]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         user_query_request = "Generate search query for: " + original_user_query
@@ -107,7 +111,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             model=self.gpt4v_model,
             system_prompt=self.query_prompt_template,
             few_shots=self.query_prompt_few_shots,
-            past_messages=history[:-1],
+            past_messages=past_messages,
             new_user_content=user_query_request,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
@@ -176,7 +180,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         messages = build_messages(
             model=self.gpt4v_model,
             system_prompt=system_message,
-            past_messages=history[:-1],
+            past_messages=messages[:-1],
             new_user_content=user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )

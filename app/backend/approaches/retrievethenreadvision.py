@@ -6,6 +6,7 @@ from openai import AsyncOpenAI
 from openai.types.chat import (
     ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
+    ChatCompletionMessageParam,
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
@@ -70,12 +71,15 @@ class RetrieveThenReadVisionApproach(Approach):
 
     async def run(
         self,
-        messages: list[dict],
+        messages: list[ChatCompletionMessageParam],
         stream: bool = False,  # Stream is not used in this approach
         session_state: Any = None,
         context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         q = messages[-1]["content"]
+        if not isinstance(q, str):
+            raise ValueError("The most recent message content must be a string.")
+
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
