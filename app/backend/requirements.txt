@@ -202,7 +202,7 @@ openai[datalib]==1.13.3
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
-openai-messages-token-helper==0.0.6
+openai-messages-token-helper==0.1.0
     # via -r requirements.in
 opentelemetry-api==1.23.0
     # via

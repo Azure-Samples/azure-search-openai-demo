@@ -125,9 +125,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_messages = build_messages(
             model=self.chatgpt_model,
             system_prompt=self.query_prompt_template,
+            tools=tools,
             few_shots=self.query_prompt_few_shots,
             past_messages=history[:-1],
-            new_user_message=user_query_request,
+            new_user_content=user_query_request,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
@@ -139,7 +140,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
             tools=tools,
-            tool_choice="auto",
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -183,7 +183,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             system_prompt=system_message,
             past_messages=history[:-1],
             # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
-            new_user_message=original_user_query + "\n\nSources:\n" + content,
+            new_user_content=original_user_query + "\n\nSources:\n" + content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 

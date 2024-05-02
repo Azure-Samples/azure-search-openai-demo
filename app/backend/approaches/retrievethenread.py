@@ -118,7 +118,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             model=self.chatgpt_model,
             system_prompt=overrides.get("prompt_template", self.system_chat_template),
             few_shots=[{"role": "user", "content": self.question}, {"role": "assistant", "content": self.answer}],
-            new_user_message=user_content,
+            new_user_content=user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 

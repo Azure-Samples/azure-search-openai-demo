@@ -108,7 +108,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             system_prompt=self.query_prompt_template,
             few_shots=self.query_prompt_few_shots,
             past_messages=history[:-1],
-            new_user_message=user_query_request,
+            new_user_content=user_query_request,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
@@ -177,7 +177,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             model=self.gpt4v_model,
             system_prompt=system_message,
             past_messages=history[:-1],
-            new_user_message=user_content,
+            new_user_content=user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 

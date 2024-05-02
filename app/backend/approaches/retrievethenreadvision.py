@@ -138,7 +138,7 @@ class RetrieveThenReadVisionApproach(Approach):
         updated_messages = build_messages(
             model=self.gpt4v_model,
             system_prompt=overrides.get("prompt_template", self.system_chat_template_gpt4v),
-            new_user_message=user_content,
+            new_user_content=user_content,
             max_tokens=self.gpt4v_token_limit - response_token_limit,
         )
         chat_completion = (
