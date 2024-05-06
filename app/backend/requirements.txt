@@ -425,7 +425,7 @@ urllib3==2.2.1
     # via requests
 uvicorn==0.27.1
     # via -r requirements.in
-werkzeug==3.0.1
+werkzeug==3.0.3
     # via
     #   flask
     #   quart
