@@ -250,7 +250,12 @@ class SearchManager:
         )
         async with self.search_info.create_search_client() as search_client:
             while True:
-                filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
+                filter = None
+                if path is not None:
+                    # Replace ' with '' to escape the single quote for the filter
+                    # https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax#escaping-special-characters-in-string-constants
+                    path_for_filter = os.path.basename(path).replace("'", "''")
+                    filter = f"sourcefile eq '{path_for_filter}'"
                 max_results = 1000
                 result = await search_client.search(
                     search_text="", filter=filter, top=max_results, include_total_count=True
