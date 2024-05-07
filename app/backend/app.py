@@ -15,7 +15,10 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob.aio import ContainerClient
+from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
+from azure.storage.filedatalake.aio import FileSystemClient
+from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -49,14 +52,25 @@ from config import (
     CONFIG_CHAT_APPROACH,
     CONFIG_CHAT_VISION_APPROACH,
     CONFIG_GPT4V_DEPLOYED,
+    CONFIG_INGESTER,
     CONFIG_OPENAI_CLIENT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_USER_BLOB_CONTAINER_CLIENT,
+    CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
 from core.authentication import AuthenticationHelper
 from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
+from prepdocs import (
+    clean_key_if_exists,
+    setup_embeddings_service,
+    setup_file_processors,
+    setup_search_info,
+)
+from prepdocslib.filestrategy import UploadUserFileStrategy
+from prepdocslib.listfilestrategy import File
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -88,7 +102,7 @@ async def assets(path):
 
 @bp.route("/content/<path>")
 @authenticated_path
-async def content_file(path: str):
+async def content_file(path: str, auth_claims: Dict[str, Any]):
     """
     Serve content files from blob storage from within the app to keep the example self-contained.
     *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
@@ -102,12 +116,24 @@ async def content_file(path: str):
         path_parts = path.rsplit("#page=", 1)
         path = path_parts[0]
     logging.info("Opening file %s", path)
-    blob_container_client = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    blob_container_client: ContainerClient = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    blob: Union[BlobDownloader, DatalakeDownloader]
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
     except ResourceNotFoundError:
-        logging.exception("Path not found: %s", path)
-        abort(404)
+        logging.info("Path not found in general Blob container: %s", path)
+        if current_app.config[CONFIG_USER_UPLOAD_ENABLED]:
+            try:
+                user_oid = auth_claims["oid"]
+                user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+                user_directory_client: FileSystemClient = user_blob_container_client.get_directory_client(user_oid)
+                file_client = user_directory_client.get_file_client(path)
+                blob = await file_client.download_file()
+            except ResourceNotFoundError:
+                logging.exception("Path not found in DataLake: %s", path)
+                abort(404)
+        else:
+            abort(404)
     if not blob.properties or not blob.properties.has_key("content_settings"):
         abort(404)
     mime_type = blob.properties["content_settings"]["content_type"]
@@ -205,8 +231,69 @@ def config():
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
+            "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
         }
     )
+
+
+@bp.post("/upload")
+@authenticated
+async def upload(auth_claims: dict[str, Any]):
+    request_files = await request.files
+    if "file" not in request_files:
+        # If no files were included in the request, return an error response
+        return jsonify({"message": "No file part in the request", "status": "failed"}), 400
+
+    user_oid = auth_claims["oid"]
+    file = request_files.getlist("file")[0]
+    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+    user_directory_client = user_blob_container_client.get_directory_client(user_oid)
+    try:
+        await user_directory_client.get_directory_properties()
+    except ResourceNotFoundError:
+        current_app.logger.info("Creating directory for user %s", user_oid)
+        await user_directory_client.create_directory()
+    await user_directory_client.set_access_control(owner=user_oid)
+    file_client = user_directory_client.get_file_client(file.filename)
+    file_io = file
+    file_io.name = file.filename
+    file_io = io.BufferedReader(file_io)
+    await file_client.upload_data(file_io, overwrite=True, metadata={"UploadedBy": user_oid})
+    file_io.seek(0)
+    ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
+    await ingester.add_file(File(content=file_io, acls={"oids": [user_oid]}, url=file_client.url))
+    return jsonify({"message": "File uploaded successfully"}), 200
+
+
+@bp.post("/delete_uploaded")
+@authenticated
+async def delete_uploaded(auth_claims: dict[str, Any]):
+    request_json = await request.get_json()
+    filename = request_json.get("filename")
+    user_oid = auth_claims["oid"]
+    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+    user_directory_client = user_blob_container_client.get_directory_client(user_oid)
+    file_client = user_directory_client.get_file_client(filename)
+    await file_client.delete_file()
+    ingester = current_app.config[CONFIG_INGESTER]
+    await ingester.remove_file(filename, user_oid)
+    return jsonify({"message": f"File {filename} deleted successfully"}), 200
+
+
+@bp.get("/list_uploaded")
+@authenticated
+async def list_uploaded(auth_claims: dict[str, Any]):
+    user_oid = auth_claims["oid"]
+    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+    files = []
+    try:
+        all_paths = user_blob_container_client.get_paths(path=user_oid)
+        async for path in all_paths:
+            files.append(path.name.split("/", 1)[1])
+    except ResourceNotFoundError as error:
+        if error.status_code != 404:
+            current_app.logger.exception("Error listing uploaded files", error)
+    return jsonify(files), 200
 
 
 @bp.before_app_serving
@@ -214,14 +301,17 @@ async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
+    AZURE_USERSTORAGE_ACCOUNT = os.environ.get("AZURE_USERSTORAGE_ACCOUNT")
+    AZURE_USERSTORAGE_CONTAINER = os.environ.get("AZURE_USERSTORAGE_CONTAINER")
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
-    SEARCH_SECRET_NAME = os.getenv("SEARCH_SECRET_NAME")
+    AZURE_SEARCH_SECRET_NAME = os.getenv("AZURE_SEARCH_SECRET_NAME")
     AZURE_KEY_VAULT_NAME = os.getenv("AZURE_KEY_VAULT_NAME")
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
+    OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", 1536))
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
     AZURE_OPENAI_GPT4V_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT4V_DEPLOYMENT")
@@ -251,6 +341,7 @@ async def setup_clients():
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
+    USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
 
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -261,11 +352,12 @@ async def setup_clients():
     # Fetch any necessary secrets from Key Vault
     search_key = None
     if AZURE_KEY_VAULT_NAME:
-        key_vault_client = SecretClient(
+        async with SecretClient(
             vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
-        )
-        search_key = SEARCH_SECRET_NAME and (await key_vault_client.get_secret(SEARCH_SECRET_NAME)).value
-        await key_vault_client.close()
+        ) as key_vault_client:
+            search_key = (
+                AZURE_SEARCH_SECRET_NAME and (await key_vault_client.get_secret(AZURE_SEARCH_SECRET_NAME)).value  # type: ignore[attr-defined]
+            )
 
     # Set up clients for AI Search and Storage
     search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
@@ -276,19 +368,22 @@ async def setup_clients():
         index_name=AZURE_SEARCH_INDEX,
         credential=search_credential,
     )
-    search_index_client = SearchIndexClient(
-        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-        credential=search_credential,
-    )
 
-    blob_client = BlobServiceClient(
-        account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
+    blob_container_client = ContainerClient(
+        f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", AZURE_STORAGE_CONTAINER, credential=azure_credential
     )
-    blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
 
     # Set up authentication helper
+    search_index = None
+    if AZURE_USE_AUTHENTICATION:
+        search_index_client = SearchIndexClient(
+            endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+            credential=search_credential,
+        )
+        search_index = await search_index_client.get_index(AZURE_SEARCH_INDEX)
+        await search_index_client.close()
     auth_helper = AuthenticationHelper(
-        search_index=(await search_index_client.get_index(AZURE_SEARCH_INDEX)) if AZURE_USE_AUTHENTICATION else None,
+        search_index=search_index,
         use_authentication=AZURE_USE_AUTHENTICATION,
         server_app_id=AZURE_SERVER_APP_ID,
         server_app_secret=AZURE_SERVER_APP_SECRET,
@@ -296,6 +391,49 @@ async def setup_clients():
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
     )
+
+    if USE_USER_UPLOAD:
+        current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
+        if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:
+            raise ValueError(
+                "AZURE_USERSTORAGE_ACCOUNT and AZURE_USERSTORAGE_CONTAINER must be set when USE_USER_UPLOAD is true"
+            )
+        user_blob_container_client = FileSystemClient(
+            f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net",
+            AZURE_USERSTORAGE_CONTAINER,
+            credential=azure_credential,
+        )
+        current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT] = user_blob_container_client
+
+        # Set up ingester
+        file_processors = setup_file_processors(
+            azure_credential=azure_credential,
+            document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
+            local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER", "").lower() == "true",
+            local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER", "").lower() == "true",
+            search_images=USE_GPT4V,
+        )
+        search_info = await setup_search_info(
+            search_service=AZURE_SEARCH_SERVICE,
+            index_name=AZURE_SEARCH_INDEX,
+            azure_credential=azure_credential,
+            search_key=clean_key_if_exists(search_key),
+        )
+        text_embeddings_service = setup_embeddings_service(
+            azure_credential=azure_credential,
+            openai_host=OPENAI_HOST,
+            openai_model_name=OPENAI_EMB_MODEL,
+            openai_service=AZURE_OPENAI_SERVICE,
+            openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+            openai_dimensions=OPENAI_EMB_DIMENSIONS,
+            openai_key=clean_key_if_exists(OPENAI_API_KEY),
+            openai_org=OPENAI_ORGANIZATION,
+            disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
+        )
+        ingester = UploadUserFileStrategy(
+            search_info=search_info, embeddings=text_embeddings_service, file_processors=file_processors
+        )
+        current_app.config[CONFIG_INGESTER] = ingester
 
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
@@ -334,6 +472,7 @@ async def setup_clients():
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
+    current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
@@ -345,6 +484,22 @@ async def setup_clients():
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
+    )
+
+    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
+        search_client=search_client,
+        openai_client=openai_client,
+        auth_helper=auth_helper,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        embedding_dimensions=OPENAI_EMB_DIMENSIONS,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -352,6 +507,9 @@ async def setup_clients():
     )
 
     if USE_GPT4V:
+        current_app.logger.info("USE_GPT4V is true, setting up GPT4V approach")
+        if not AZURE_OPENAI_GPT4V_MODEL:
+            raise ValueError("AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
@@ -365,6 +523,7 @@ async def setup_clients():
             gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
             embedding_model=OPENAI_EMB_MODEL,
             embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+            embedding_dimensions=OPENAI_EMB_DIMENSIONS,
             sourcepage_field=KB_FIELDS_SOURCEPAGE,
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -382,31 +541,20 @@ async def setup_clients():
             gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
             embedding_model=OPENAI_EMB_MODEL,
             embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+            embedding_dimensions=OPENAI_EMB_DIMENSIONS,
             sourcepage_field=KB_FIELDS_SOURCEPAGE,
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
         )
 
-    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
-        search_client=search_client,
-        openai_client=openai_client,
-        auth_helper=auth_helper,
-        chatgpt_model=OPENAI_CHATGPT_MODEL,
-        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        embedding_model=OPENAI_EMB_MODEL,
-        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-        sourcepage_field=KB_FIELDS_SOURCEPAGE,
-        content_field=KB_FIELDS_CONTENT,
-        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
-        query_speller=AZURE_SEARCH_QUERY_SPELLER,
-    )
-
 
 @bp.after_app_serving
 async def close_clients():
     await current_app.config[CONFIG_SEARCH_CLIENT].close()
     await current_app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
+    if current_app.config.get(CONFIG_USER_BLOB_CONTAINER_CLIENT):
+        await current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
 
 
 def create_app():
@@ -422,7 +570,7 @@ def create_app():
         # This tracks OpenAI SDK requests:
         OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
-        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[assignment]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely

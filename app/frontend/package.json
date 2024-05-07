@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@azure/msal-react": "^2.0.6",
-    "@azure/msal-browser": "^3.1.0",
+    "@azure/msal-browser": "^3.10.0",
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.37.3",
     "@fluentui/react-icons": "^2.0.221",
@@ -35,6 +35,6 @@
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "@types/react-syntax-highlighter": "^15.5.7",
-    "vite": "^4.5.2"
+    "vite": "^4.5.3"
   }
 }
