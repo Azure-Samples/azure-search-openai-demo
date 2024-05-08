@@ -334,8 +334,8 @@ async def test_remove_content(monkeypatch, search_info):
                 "id": "file-foo_pdf-666F6F2E706466-page-0",
                 "content": "test content",
                 "category": "test",
-                "sourcepage": "foo.pdf#page=1",
-                "sourcefile": "foo.pdf",
+                "sourcepage": "foo's bar.pdf#page=1",
+                "sourcefile": "foo's bar.pdf",
             }
         ]
     )
@@ -359,10 +359,10 @@ async def test_remove_content(monkeypatch, search_info):
 
     manager = SearchManager(search_info)
 
-    await manager.remove_content("foo.pdf")
+    await manager.remove_content("foo's bar.pdf")
 
     assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"
-    assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
+    assert searched_filters[0] == "sourcefile eq 'foo''s bar.pdf'"
     assert len(deleted_documents) == 1, "It should have deleted one document"
     assert deleted_documents[0]["id"] == "file-foo_pdf-666F6F2E706466-page-0"
 
