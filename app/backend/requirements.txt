@@ -53,15 +53,15 @@ azure-monitor-opentelemetry-exporter==1.0.0b25
     # via azure-monitor-opentelemetry
 azure-search-documents==11.6.0b1
     # via -r requirements.in
-azure-storage-blob==12.19.1
+azure-storage-blob==12.20.0
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
-azure-storage-file-datalake==12.14.0
+azure-storage-file-datalake==12.15.0
     # via -r requirements.in
 beautifulsoup4==4.12.3
     # via -r requirements.in
-blinker==1.8.1
+blinker==1.8.2
     # via
     #   flask
     #   quart
@@ -80,7 +80,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==42.0.6
+cryptography==42.0.7
     # via
     #   -r requirements.in
     #   azure-identity
@@ -94,7 +94,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -131,8 +131,10 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.1.0
-    # via opentelemetry-api
+importlib-metadata==7.0.0
+    # via
+    #   opentelemetry-api
+    #   opentelemetry-instrumentation-flask
 isodate==0.6.1
     # via
     #   azure-ai-documentintelligence
@@ -183,7 +185,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.2.0
+msgraph-sdk==1.1.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -198,7 +200,7 @@ numpy==1.26.4
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.25.2
+openai[datalib]==1.27.0
     # via -r requirements.in
 opentelemetry-api==1.24.0
     # via
@@ -253,7 +255,7 @@ opentelemetry-instrumentation-flask==0.45b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.45b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.17.1
+opentelemetry-instrumentation-openai==0.17.3
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.45b0
     # via azure-monitor-opentelemetry
@@ -287,6 +289,7 @@ opentelemetry-semantic-conventions==0.45b0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-httpx
+    #   opentelemetry-instrumentation-openai
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
@@ -322,6 +325,8 @@ portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
+psutil==5.9.8
+    # via azure-monitor-opentelemetry-exporter
 pyasn1==0.6.0
     # via
     #   python-jose
@@ -336,10 +341,8 @@ pyjwt[crypto]==2.8.0
     # via
     #   msal
     #   pyjwt
-pymupdf==1.24.2
+pymupdf==1.24.3
     # via -r requirements.in
-pymupdfb==1.24.1
-    # via pymupdf
 pypdf==4.2.0
     # via -r requirements.in
 python-dateutil==2.9.0.post0
@@ -386,7 +389,7 @@ soupsieve==2.5
     # via beautifulsoup4
 std-uritemplate==0.0.57
     # via microsoft-kiota-abstractions
-tenacity==8.2.3
+tenacity==8.3.0
     # via -r requirements.in
 tiktoken==0.6.0
     # via -r requirements.in

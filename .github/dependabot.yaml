@@ -30,5 +30,3 @@ updates:
       python-requirements:
         patterns:
           - "*"
-    ignore:
-      - dependency-name: azure-search-documents
