@@ -65,3 +65,7 @@ If you're running inside a dev container, use this local URL instead:
 ```shell
 azd env set OPENAI_BASE_URL http://host.docker.internal:8080/v1
 ```
+
+> [!NOTE]
+> You must set this back to a non-local value ("azure", "azure_custom", or "openai")
+> before running `azd up` or `azd provision`, since the deployed backend can't access your local server.

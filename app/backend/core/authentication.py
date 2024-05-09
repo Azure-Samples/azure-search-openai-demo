@@ -253,7 +253,10 @@ class AuthenticationHelper:
 
         # Filter down to only chunks that are from the specific source file
         # Sourcepage is used for GPT-4V
-        filter = f"{security_filter} and ((sourcefile eq '{path}') or (sourcepage eq '{path}'))"
+        # Replace ' with '' to escape the single quote for the filter
+        # https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax#escaping-special-characters-in-string-constants
+        path_for_filter = path.replace("'", "''")
+        filter = f"{security_filter} and ((sourcefile eq '{path_for_filter}') or (sourcepage eq '{path_for_filter}'))"
 
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
