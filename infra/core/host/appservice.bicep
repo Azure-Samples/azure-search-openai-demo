@@ -47,7 +47,7 @@ param serverAppId string = ''
 param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
 @allowed(['Enabled', 'Disabled'])
-param publicNetworkAccess string = Enabled
+param publicNetworkAccess string = 'Enabled'
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
 var loginEndpoint = environment().authentication.loginEndpoint

@@ -151,6 +151,8 @@ param usePrivateEndpoint bool = false
 
 @description('Provision a VM to use for private endpoint connectivity')
 param provisionVm bool = false
+param vmUserName string = ''
+param vmPassword string = ''
 param vmOSVersion string = '2022-datacenter-azure-edition'
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_DS1_v2'
@@ -731,8 +733,8 @@ module vm 'core/host/vm.bicep' = if (provisionVm && usePrivateEndpoint) {
   params: {
     name: '${abbrs.computeVirtualMachines}${resourceToken}'
     location: location
-    adminUsername: 'myadminone'
-    adminPassword: 'My$secretPassword!!!'
+    adminUsername: vmUserName
+    adminPassword: vmPassword
     nicId: isolation.outputs.nicId
     osVersion: vmOSVersion
     vmSize: vmSize
