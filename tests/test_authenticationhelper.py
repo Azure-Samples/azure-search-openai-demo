@@ -206,7 +206,7 @@ async def test_check_path_auth_allowed_sourcepage(
 
     assert (
         await auth_helper_require_access_control.check_path_auth(
-            path="Benefit_Options-2.pdf",
+            path="Benefit_Options-2's complement.pdf",
             auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
             search_client=create_search_client(),
         )
@@ -214,7 +214,7 @@ async def test_check_path_auth_allowed_sourcepage(
     )
     assert (
         filter
-        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options-2.pdf') or (sourcepage eq 'Benefit_Options-2.pdf'))"
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options-2''s complement.pdf') or (sourcepage eq 'Benefit_Options-2''s complement.pdf'))"
     )
 
 
