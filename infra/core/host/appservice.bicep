@@ -46,6 +46,8 @@ param serverAppId string = ''
 @secure()
 param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = Enabled
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
 var loginEndpoint = environment().authentication.loginEndpoint
@@ -108,6 +110,7 @@ var appServiceProperties = {
   // See https://learn.microsoft.com/azure/app-service/configure-vnet-integration-routing#configure-application-routing
   vnetRouteAllEnabled: !empty(virtualNetworkSubnetId)
   virtualNetworkSubnetId: !empty(virtualNetworkSubnetId) ? virtualNetworkSubnetId : null
+  publicNetworkAccess: publicNetworkAccess
 }
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {

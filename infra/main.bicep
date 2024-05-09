@@ -149,6 +149,12 @@ param publicNetworkAccess string = 'Enabled'
 @description('Add a private endpoints for network connectivity')
 param usePrivateEndpoint bool = false
 
+@description('Provision a VM to use for private endpoint connectivity')
+param provisionVm bool = false
+param vmOSVersion string = '2022-datacenter-azure-edition'
+@description('Size of the virtual machine.')
+param vmSize string = 'Standard_DS1_v2'
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -469,8 +475,9 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
-    publicNetworkAccess: publicNetworkAccess
+    publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
     ipRules: ipRules
+    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
   }
 }
 
@@ -712,9 +719,23 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
     appServicePlanName: appServicePlan.outputs.name
     privateEndpointConnections: privateEndpointConnections
-    searchServiceName: searchService.outputs.name
     applicationInsightsId: monitoring.outputs.applicationInsightsId
     logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+    provisionVm: provisionVm
+  }
+}
+
+module vm 'core/host/vm.bicep' = if (provisionVm && usePrivateEndpoint) {
+  name: 'vm'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.computeVirtualMachines}${resourceToken}'
+    location: location
+    adminUsername: 'myadminone'
+    adminPassword: 'My$secretPassword!!!'
+    nicId: isolation.outputs.nicId
+    osVersion: vmOSVersion
+    vmSize: vmSize
   }
 }
 

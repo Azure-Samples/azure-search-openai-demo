@@ -19,10 +19,10 @@ param encryptionWithCmk object = {
 param hostingMode string = 'default'
 param ipRules array = []
 @allowed([
-  'Enabled'
-  'Disabled'
+  'enabled'
+  'disabled'
 ])
-param publicNetworkAccess string = 'Enabled'
+param publicNetworkAccess string = 'enabled'
 param partitionCount int = 1
 param replicaCount int = 1
 @allowed([
@@ -31,6 +31,8 @@ param replicaCount int = 1
   'standard'
 ])
 param semanticSearch string = 'disabled'
+
+param sharedPrivateLinkStorageAccounts array = []
 
 var searchIdentityProvider = (sku.name == 'free') ? null : {
   type: 'SystemAssigned'
@@ -57,6 +59,17 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' = {
     semanticSearch: semanticSearch
   }
   sku: sku
+
+  resource sharedPrivateLinkResource 'sharedPrivateLinkResources@2023-11-01' = [for (resourceId, i) in sharedPrivateLinkStorageAccounts: {
+    name: 'search-shared-private-link-${i}'
+    properties: {
+      groupId: 'blob'
+      status: 'Approved'
+      provisioningState: 'Succeeded'
+      requestMessage: 'automatically created by the system'
+      privateLinkResourceId: resourceId
+    }
+  }]
 }
 
 output id string = search.id

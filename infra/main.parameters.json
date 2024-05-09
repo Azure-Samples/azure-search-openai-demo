@@ -188,6 +188,9 @@
     "bypass": {
       "value": "${AZURE_NETWORK_BYPASS=AzureServices}"
     },
+    "provisionVm": {
+      "value": "${AZURE_PROVISION_VM=false}"
+    },
     "useIntegratedVectorization": {
       "value": "${USE_FEATURE_INT_VECTORIZATION}"
     },

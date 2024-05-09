@@ -24,9 +24,6 @@ param logAnalyticsWorkspaceId string
 @description('A unique token to append to the end of all resource names')
 param resourceToken string
 
-@description('Name of the search service')
-param searchServiceName string
-
 @description('Ingestion access mode for Azure Monitor Private Link Scope')
 @allowed(['PrivateOnly', 'Open'])
 param monitorIngestionAccessMode string = 'PrivateOnly'
@@ -34,6 +31,8 @@ param monitorIngestionAccessMode string = 'PrivateOnly'
 @description('Query access mode for Azure Monitor Private Link Scope')
 @allowed(['PrivateOnly', 'Open'])
 param monitorQueryAccessMode string = 'Open'
+
+param provisionVm bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 
@@ -81,7 +80,40 @@ module vnet './core/networking/vnet.bicep' = {
           ]
         }
       }
+      {
+        name: 'vm-subnet'
+        properties: {
+          addressPrefix: '10.0.4.0/24'
+        }
+      }
     ]
+  }
+}
+
+module nic 'core/networking/nic.bicep' = if (provisionVm) {
+  name: 'nic'
+  params: {
+    name: '${abbrs.networkNetworkInterfaces}${resourceToken}'
+    location: location
+    subnetId: vnet.outputs.vnetSubnets[3].id
+  }
+}
+
+module publicIp 'core/networking/ip.bicep' = if (provisionVm) {
+  name: 'ip'
+  params: {
+    name: '${abbrs.networkPublicIPAddresses}${resourceToken}'
+    location: location
+  }
+}
+
+module bastion 'core/networking/bastion.bicep' = if (provisionVm) {
+  name: 'bastion'
+  params: {
+    name: '${abbrs.networkBastionHosts}${resourceToken}'
+    location: location
+    subnetId: vnet.outputs.vnetSubnets[1].id
+    publicIPId: publicIp.outputs.id
   }
 }
 
@@ -100,7 +132,7 @@ var privateEndpointInfo = [
   for (privateEndpointConnection, i) in privateEndpointConnections: map(privateEndpointConnection.resourceIds, resourceId => {
     dnsZoneIndex: i
     groupId: privateEndpointConnection.groupId
-    name: last(split(privateEndpointConnection.resourceId, '/'))
+    name: last(split(resourceId, '/'))
     resourceId: resourceId
   })
 ]
@@ -115,6 +147,7 @@ module privateEndpoints './core/networking/private-endpoint.bicep' = [for privat
     groupIds: [ privateEndpointInfo.groupId ]
     dnsZoneId: dnsZones[privateEndpointInfo.dnsZoneIndex].outputs.id
   }
+  dependsOn: [ dnsZones, vnet ]
 }]
 
 
@@ -122,7 +155,7 @@ module privateEndpoints './core/networking/private-endpoint.bicep' = [for privat
 // https://learn.microsoft.com/en-us/azure/azure-monitor/logs/private-link-security
 resource monitorPrivateLinkScope 'microsoft.insights/privateLinkScopes@2021-07-01-preview' = {
   name: 'mpls${resourceToken}'
-  location: location
+  location: 'global'
   tags: tags
   properties: {
     // https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security#private-link-access-modes-private-only-vs-open
@@ -211,19 +244,9 @@ module monitorPrivateEndpoint './core/networking/private-endpoint.bicep' = {
       }
     ]
   }
+  dependsOn: [ monitorDnsZones, dnsZones, vnet ]
 }
-
-// Create search shared private links for all storage accounts (blob)
-var searchBlobSharedPrivateLinkInfo = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')
-module searchBlobSharedPrivateLink './core/search/search-private-link.bicep' = [for info in searchBlobSharedPrivateLinkInfo: {
-  name: '${info.name}-search-shared-private-link'
-  params: {
-    name: '${info.name}${abbrs.privateLink}${resourceToken}'
-    groupId: info.groupId
-    searchName: searchServiceName
-    resourceId: info.resourceId
-  }
-}]
 
 output appSubnetId string = vnet.outputs.vnetSubnets[2].id
 output vnetName string = vnet.outputs.name
+output nicId string = nic.outputs.id

@@ -57,6 +57,5 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
   }
 }
 
-output fqdn string = privateEndpoint.properties.customDnsConfigs[0].fqdn
 output name string = privateEndpoint.name
 output id string = privateEndpoint.id
