@@ -4,6 +4,11 @@
 
 echo 'Running "prepdocs.py"'
 
+if [ -n "$AZURE_PUBLIC_NETWORK_ACCESS" ] && [ "$AZURE_PUBLIC_NETWORK_ACCESS" = "Disabled" ]; then
+  echo "AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting."
+  exit 0
+fi
+
 if [ -n "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
   adlsGen2StorageAccountArg="--datalakestorageaccount $AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
   adlsGen2FilesystemPathArg=""
@@ -67,6 +72,7 @@ fi
 if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
   integratedVectorizationArg="--useintvectorization $USE_FEATURE_INT_VECTORIZATION"
 fi
+
 
 ./.venv/bin/python ./app/backend/prepdocs.py './data/*' --verbose \
 --subscriptionid $AZURE_SUBSCRIPTION_ID  \
