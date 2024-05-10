@@ -152,6 +152,7 @@ param usePrivateEndpoint bool = false
 @description('Provision a VM to use for private endpoint connectivity')
 param provisionVm bool = false
 param vmUserName string = ''
+@secure()
 param vmPassword string = ''
 param vmOSVersion string = '2022-datacenter-azure-edition'
 @description('Size of the virtual machine.')
@@ -280,6 +281,7 @@ module backend 'core/host/appservice.bicep' = {
     managedIdentity: true
     ipRules: ipRules
     virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
+    publicNetworkAccess: publicNetworkAccess
     allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId
@@ -684,6 +686,18 @@ module searchRoleBackend 'core/security/role.bicep' = if (!useSearchServiceKey) 
   }
 }
 
+module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
+  name: 'networks'
+  scope: resourceGroup
+  params: {
+    location: location
+    tags: tags
+    resourceToken: resourceToken
+    vnetName: '${abbrs.virtualNetworks}${resourceToken}'
+    appServicePlanName: appServicePlan.outputs.name
+    provisionVm: provisionVm
+  }
+}
 
 var environmentData = environment()
 var privateEndpointConnections = usePrivateEndpoint ? [
@@ -706,24 +720,53 @@ var privateEndpointConnections = usePrivateEndpoint ? [
   }
   {
     groupId: 'searchService'
-    dnsZoneNAme: 'privatelink.search.windows.net'
+    dnsZoneName: 'privatelink.search.windows.net'
     resourceIds: [ searchService.outputs.id ]
+  }
+  {
+    groupId: 'sites'
+    dnsZoneName: 'privatelink.azurewebsites.net'
+    resourceIds: [ backend.outputs.id ]
   }
 ] : []
 
-module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
-  name: 'networks'
+module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
+  name: 'privateEndpoints'
   scope: resourceGroup
   params: {
     location: location
     tags: tags
     resourceToken: resourceToken
-    vnetName: '${abbrs.virtualNetworks}${resourceToken}'
-    appServicePlanName: appServicePlan.outputs.name
     privateEndpointConnections: privateEndpointConnections
     applicationInsightsId: monitoring.outputs.applicationInsightsId
     logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
-    provisionVm: provisionVm
+    vnetName: isolation.outputs.vnetName
+    vnetPeSubnetName: isolation.outputs.backendSubnetId
+  }
+}
+
+// Create PE between isolation and backend
+// Note that this must be created after isolation is created, to avoid a circular dependency
+// between backend and isolation
+module backendDnsZone 'core/networking/private-dns-zones.bicep' = if (usePrivateEndpoint) {
+  name: 'backendDnsZone'
+  scope: resourceGroup
+  params: {
+    dnsZoneName: 'privatelink.azurewebsites.net'
+    virtualNetworkName: isolation.outputs.vnetName
+  }
+}
+
+module backendPrivateEndpoint 'core/networking/private-endpoint.bicep' = if (usePrivateEndpoint) {
+  name: 'backendPrivateEndpoint'
+  scope: resourceGroup
+  params: {
+    name: 'backend${abbrs.privateEndpoint}${resourceToken}'
+    location: location
+    groupIds: [ 'sites' ]
+    serviceId: backend.outputs.id
+    subnetId: isolation.outputs.backendSubnetId
+    dnsZoneId: backendDnsZone.outputs.id
   }
 }
 
