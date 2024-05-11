@@ -40,6 +40,6 @@ azd env set AZURE_PUBLIC_NETWORK_ACCESS Disabled
 azd env set AZURE_PROVISION_VM true # Optional but recommended
 azd env set AZURE_VM_USERNAME myadminusername # https://learn.microsoft.com/azure/virtual-machines/windows/faq#what-are-the-username-requirements-when-creating-a-vm-
 azd env set AZURE_VM_PASSWORD mypassword # https://learn.microsoft.com/azure/virtual-machines/windows/faq#what-are-the-password-requirements-when-creating-a-vm-
-azd provision rerun
+azd provision
 ```
 4. Log into your new VM using [Azure Bastion](https://learn.microsoft.com/azure/bastion/tutorial-create-host-portal#connect). Validate the chat app is accessible from the virtual machine using a web browser.
