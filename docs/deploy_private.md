@@ -10,7 +10,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
 
 1. [Private Endpoints](https://azure.microsoft.com/pricing/details/private-link/)
   1. The exact number of private endpoints created depends on the [optional features](./deploy_features.md) used.
-1. [Private DNS Zones](https://azure.microsoft.com/en-in/pricing/details/dns/)
+1. [Private DNS Zones](https://azure.microsoft.com/pricing/details/dns/)
 1. (Optional, but recommended)[Azure Virtual Machines](https://azure.microsoft.com/pricing/details/virtual-machines/windows/)
 1. (Optional, but recommended)[Azure Bastion](https://azure.microsoft.com/pricing/details/azure-bastion/)
 
@@ -31,7 +31,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
 ```
 azd env set AZURE_USE_PRIVATE_ENDPOINT true
 azd env set AZURE_PUBLIC_NETWORK_ACCESS Enabled
-azd deploy
+azd up
 ```
 2. Validate that you can connect to the chat app and it's working as expected from the internet.
 3. Re-provision the app with public access disabled.
