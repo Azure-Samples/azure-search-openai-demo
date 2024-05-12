@@ -1,7 +1,7 @@
 {
     "useLogin": true,
-    "requireAccessControl": false,
-    "enableUnauthenticatedAccess": false,
+    "requireAccessControl": true,
+    "enableUnauthenticatedAccess": true,
     "msalConfig": {
         "auth": {
             "clientId": "CLIENT_APP",

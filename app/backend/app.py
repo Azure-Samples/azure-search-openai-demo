@@ -329,6 +329,7 @@ async def setup_clients():
     AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     AZURE_ENFORCE_ACCESS_CONTROL = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
+    AZURE_ENABLE_UNAUTHENTICATED_ACCESS = os.getenv("AZURE_ENABLE_UNAUTHENTICATED_ACCESS", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
     AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
@@ -391,7 +392,8 @@ async def setup_clients():
         client_app_id=AZURE_CLIENT_APP_ID,
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
-        allow_public_documents=AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS,
+        enable_global_documents=AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS,
+        enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
     if USE_USER_UPLOAD:

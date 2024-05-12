@@ -44,6 +44,7 @@ param serverAppId string = ''
 @secure()
 param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
+param enableUnauthenticatedAccess bool = false
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
 var loginEndpoint = environment().authentication.loginEndpoint
@@ -127,7 +128,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     properties: {
       globalValidation: {
         requireAuthentication: true
-        unauthenticatedClientAction: 'RedirectToLoginPage'
+        unauthenticatedClientAction: enableUnauthenticatedAccess ? 'AllowAnonymous' : 'RedirectToLoginPage'
         redirectToProvider: 'azureactivedirectory'
       }
       identityProviders: {
