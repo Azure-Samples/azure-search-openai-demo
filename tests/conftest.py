@@ -267,7 +267,7 @@ auth_public_envs = [
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_USE_AUTHENTICATION": "true",
-        "AZURE_ALLOW_PUBLIC_DOCUMENTS": "true",
+        "AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS": "true",
         "AZURE_USER_STORAGE_ACCOUNT": "test-user-storage-account",
         "AZURE_USER_STORAGE_CONTAINER": "test-user-storage-container",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
