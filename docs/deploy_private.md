@@ -2,7 +2,6 @@
 # Deploying with private access
 
 If you want to disable public access when deploying the Chat App, you can do so by setting `azd` environment values.
-You should set these values before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 ## Before you begin
 
@@ -22,7 +21,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
 1. `AZURE_USE_PRIVATE_ENDPOINT`: Controls deployment of [private endpoints](https://learn.microsoft.com/azure/private-link/private-endpoint-overview) which connect Azure resources to the virtual network.
   1. When set to 'true', ensures private endpoints are deployed for connectivity even when `AZURE_PUBLIC_NETWORK_ACCESS` is 'Disabled'.
   1. Note that private endpoints do not make the chat app accessible from the internet. Connections must be initiated from inside the virtual network.
-1. `AZURE_PROVISION_VM`: Controls deployment of a [virtual machine](https://learn.microsoft.com/azure/virtual-machines/overview) and [Azure Bastion](https://learn.microsoft.com/en-us/azure/bastion/bastion-overview). Azure Bastion allows you to securely connect to the virtual machine, without being connected virtual network. Since the virtual machine is connected to the virtual network, you are able to access the chat app.
+1. `AZURE_PROVISION_VM`: Controls deployment of a [virtual machine](https://learn.microsoft.com/azure/virtual-machines/overview) and [Azure Bastion](https://learn.microsoft.com/azure/bastion/bastion-overview). Azure Bastion allows you to securely connect to the virtual machine, without being connected virtual network. Since the virtual machine is connected to the virtual network, you are able to access the chat app.
   1. You must set `AZURE_VM_USERNAME` and `AZURE_VM_PASSWORD` to provision the built-in administrator account with the virtual machine so you can log in through Azure Bastion.
 
 ## Recommended deployment strategy for private access
@@ -31,7 +30,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
 ```
 azd env set AZURE_USE_PRIVATE_ENDPOINT true
 azd env set AZURE_PUBLIC_NETWORK_ACCESS Enabled
-azd deploy
+azd up
 ```
 2. Validate that you can connect to the chat app and it's working as expected from the internet.
 3. Re-provision the app with public access disabled.
@@ -40,6 +39,6 @@ azd env set AZURE_PUBLIC_NETWORK_ACCESS Disabled
 azd env set AZURE_PROVISION_VM true # Optional but recommended
 azd env set AZURE_VM_USERNAME myadminusername # https://learn.microsoft.com/azure/virtual-machines/windows/faq#what-are-the-username-requirements-when-creating-a-vm-
 azd env set AZURE_VM_PASSWORD mypassword # https://learn.microsoft.com/azure/virtual-machines/windows/faq#what-are-the-password-requirements-when-creating-a-vm-
-azd provision rerun
+azd provision
 ```
 4. Log into your new VM using [Azure Bastion](https://learn.microsoft.com/azure/bastion/tutorial-create-host-portal#connect). Validate the chat app is accessible from the virtual machine using a web browser.

@@ -40,7 +40,6 @@ param scmDoBuildDuringDeployment bool = false
 param use32BitWorkerProcess bool = false
 param ftpsState string = 'FtpsOnly'
 param healthCheckPath string = ''
-param ipRules array = []
 param clientAppId string = ''
 param serverAppId string = ''
 @secure()
@@ -73,37 +72,11 @@ var coreConfig = {
   cors: {
     allowedOrigins: union(allMsftAllowedOrigins, allowedOrigins)
   }
-  clientAffinityEnabled: clientAffinityEnabled
-  httpsOnly: true
 }
-
-var allowedNetworkRules = [for (rule, i) in ipRules: {
-  ipAddress: rule
-  action: 'Allow'
-  tag: 'Default'
-  priority: 100 * i
-  description: 'Allow specificed network range'
-}]
-
-var networkRules = !empty(allowedNetworkRules) ? {
-  ipSecurityRestrictions: concat(
-    allowedNetworkRules,
-    [
-      {
-        ipAddress: 'Any'
-        action: 'Deny'
-        priority: 2147483647
-        name: 'Deny all'
-        description: 'Deny all access'
-      }
-    ]
-  )
-  ipSecurityRestrictionsDefaultAction: 'Deny'  
-} : {}
 
 var appServiceProperties = {
   serverFarmId: appServicePlanId
-  siteConfig: union(coreConfig, networkRules)
+  siteConfig: coreConfig
   clientAffinityEnabled: clientAffinityEnabled
   httpsOnly: true
   // Always route traffic through the vnet

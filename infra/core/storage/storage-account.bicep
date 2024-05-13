@@ -25,16 +25,10 @@ param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
 @allowed([ 'None', 'AzureServices'])
 param bypass string = 'AzureServices'
-param ipRules array = []
 
-var allowedIpRules = [for rule in ipRules: { value: rule }]
-var networkAcls = empty(allowedIpRules) ? {
+var networkAcls = {
   bypass: bypass
   defaultAction: 'Allow'
-} : {
-  bypass: bypass
-  ipRules: allowedIpRules
-  defaultAction: 'Deny'
 }
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {

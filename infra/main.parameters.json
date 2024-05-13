@@ -176,9 +176,6 @@
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     },
-    "allowedIp": {
-      "value": "${ALLOWED_IP}"
-    },
     "publicNetworkAccess": {
       "value": "${AZURE_PUBLIC_NETWORK_ACCESS=Enabled}"
     },

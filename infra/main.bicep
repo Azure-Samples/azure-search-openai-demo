@@ -135,9 +135,6 @@ param clientAppSecret string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
-@description('IP or Subnet that is allowed access via the public network. Expectation is that the format is a comma-delimited list of CIDR IP rules')
-param allowedIp string = '' // For host specific rules
-
 @allowed([ 'None', 'AzureServices' ])
 @description('If allowedIp is set, whether azure services are allowed to bypass the storage and AI services firewall.')
 param bypass string = 'AzureServices'
@@ -182,12 +179,6 @@ var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServi
 var useKeyVault = useSearchServiceKey
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
-
-// Convert stringified ip rules into array format
-// ex: 127.0.0.1, 127.0.1.0/24
-var trimmedRules = !empty(allowedIp) ? map(split(allowedIp, ','), rule => trim(rule)) : []
-// If the rule is just an IP address (no /), assume it's a full IP address and concatenate /32 
-var ipRules = map(trimmedRules, rule => contains(rule, '/') ? rule : '${rule}/32')
 
 @description('Whether the deployment is running on GitHub Actions')
 param runningOnGh string = ''
@@ -279,7 +270,6 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    ipRules: ipRules
     virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     publicNetworkAccess: publicNetworkAccess
     allowedOrigins: [ allowedOrigin ]
@@ -391,7 +381,6 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
     location: openAiResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
-    ipRules: ipRules
     bypass: bypass
     sku: {
       name: openAiSkuName
@@ -412,7 +401,6 @@ module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
     publicNetworkAccess: publicNetworkAccess
     location: documentIntelligenceResourceGroupLocation
     tags: tags
-    ipRules: ipRules
     sku: {
       name: documentIntelligenceSkuName
     }
@@ -427,7 +415,6 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
     kind: 'ComputerVision'
     location: computerVisionResourceGroupLocation
     tags: tags
-    ipRules: ipRules
     bypass: bypass
     sku: {
       name: computerVisionSkuName
@@ -480,7 +467,6 @@ module searchService 'core/search/search-services.bicep' = {
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
     publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    ipRules: ipRules
     sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
   }
 }
@@ -493,7 +479,6 @@ module storage 'core/storage/storage-account.bicep' = {
     location: storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
-    ipRules: ipRules
     bypass: bypass
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
@@ -521,7 +506,6 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
     location: storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
-    ipRules: ipRules
     bypass: bypass
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false

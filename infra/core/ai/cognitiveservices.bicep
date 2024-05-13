@@ -17,14 +17,14 @@ param ipRules array = []
 @allowed([ 'None', 'AzureServices'])
 param bypass string = 'None'
 
-var allowedIpRules = [for rule in ipRules: { value: rule }]
-var networkAcls = empty(allowedIpRules) ? {
+var networkAcls = {
   defaultAction: 'Allow'
-} : {
-  ipRules: allowedIpRules
-  defaultAction: 'Deny'
 }
-var networkAclsWithBypass = union(networkAcls, { bypass: bypass })
+
+var networkAclsWithBypass = {
+  defaultAction: 'Allow'
+  bypass: bypass
+}
 
 resource account 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
   name: name

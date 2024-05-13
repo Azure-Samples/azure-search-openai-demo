@@ -17,7 +17,6 @@ param encryptionWithCmk object = {
   'highDensity'
 ])
 param hostingMode string = 'default'
-param ipRules array = []
 @allowed([
   'enabled'
   'disabled'
@@ -38,9 +37,6 @@ var searchIdentityProvider = (sku.name == 'free') ? null : {
   type: 'SystemAssigned'
 }
 
-var networkRules = [for rule in ipRules: { value: rule }]
-var networkRuleSet = !empty(ipRules) ? { ipRules: networkRules } : null
-
 resource search 'Microsoft.Search/searchServices@2023-11-01' = {
   name: name
   location: location
@@ -52,7 +48,6 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' = {
     disableLocalAuth: disableLocalAuth
     encryptionWithCmk: encryptionWithCmk
     hostingMode: hostingMode
-    networkRuleSet: networkRuleSet
     partitionCount: partitionCount
     publicNetworkAccess: publicNetworkAccess
     replicaCount: replicaCount
