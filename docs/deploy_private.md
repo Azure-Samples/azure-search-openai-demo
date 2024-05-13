@@ -22,7 +22,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
 1. `AZURE_USE_PRIVATE_ENDPOINT`: Controls deployment of [private endpoints](https://learn.microsoft.com/azure/private-link/private-endpoint-overview) which connect Azure resources to the virtual network.
   1. When set to 'true', ensures private endpoints are deployed for connectivity even when `AZURE_PUBLIC_NETWORK_ACCESS` is 'Disabled'.
   1. Note that private endpoints do not make the chat app accessible from the internet. Connections must be initiated from inside the virtual network.
-1. `AZURE_PROVISION_VM`: Controls deployment of a [virtual machine](https://learn.microsoft.com/azure/virtual-machines/overview) and [Azure Bastion](https://learn.microsoft.com/en-us/azure/bastion/bastion-overview). Azure Bastion allows you to securely connect to the virtual machine, without being connected virtual network. Since the virtual machine is connected to the virtual network, you are able to access the chat app.
+1. `AZURE_PROVISION_VM`: Controls deployment of a [virtual machine](https://learn.microsoft.com/azure/virtual-machines/overview) and [Azure Bastion](https://learn.microsoft.com/azure/bastion/bastion-overview). Azure Bastion allows you to securely connect to the virtual machine, without being connected virtual network. Since the virtual machine is connected to the virtual network, you are able to access the chat app.
   1. You must set `AZURE_VM_USERNAME` and `AZURE_VM_PASSWORD` to provision the built-in administrator account with the virtual machine so you can log in through Azure Bastion.
 
 ## Recommended deployment strategy for private access
