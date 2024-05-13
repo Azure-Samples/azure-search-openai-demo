@@ -5,6 +5,8 @@ param adminUsername string
 @secure()
 param adminPassword string
 param osVersion string = '2022-datacenter-azure-edition'
+param osPublisher string = 'MicrosoftWindowsServer'
+param osOffer string = 'WindowsServer'
 param nicId string
 param securityType string = 'TrustedLaunch'
 
@@ -30,8 +32,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
     }
     storageProfile: {
       imageReference: {
-        publisher: 'MicrosoftWindowsServer'
-        offer: 'WindowsServer'
+        publisher: osPublisher
+        offer: osOffer
         sku: osVersion
         version: 'latest'
       }

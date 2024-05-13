@@ -16,11 +16,11 @@ param privateEndpointConnections array
 param resourceToken string
 
 @description('Ingestion access mode for Azure Monitor Private Link Scope')
-@allowed(['PrivateOnly', 'Open'])
+@allowed([ 'PrivateOnly', 'Open' ])
 param monitorIngestionAccessMode string = 'PrivateOnly'
 
 @description('Query access mode for Azure Monitor Private Link Scope')
-@allowed(['PrivateOnly', 'Open'])
+@allowed([ 'PrivateOnly', 'Open' ])
 param monitorQueryAccessMode string = 'Open'
 
 @description('Resource ID of Application Insights for Azure Monitor Private Link Scope')

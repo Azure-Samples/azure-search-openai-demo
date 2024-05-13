@@ -45,18 +45,18 @@ param serverAppId string = ''
 @secure()
 param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
-@allowed(['Enabled', 'Disabled'])
+@allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
 var loginEndpoint = environment().authentication.loginEndpoint
 var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
-var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [loginEndpointFixed]) : msftAllowedOrigins
+var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [ loginEndpointFixed ]) : msftAllowedOrigins
 
 // .default must be the 1st scope for On-Behalf-Of-Flow combined consent to work properly
 // Please see https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#default-and-combined-consent
-var requiredScopes = ['api://${serverAppId}/.default', 'openid', 'profile', 'email', 'offline_access']
-var requiredAudiences = ['api://${serverAppId}']
+var requiredScopes = [ 'api://${serverAppId}/.default', 'openid', 'profile', 'email', 'offline_access' ]
+var requiredAudiences = [ 'api://${serverAppId}' ]
 
 var coreConfig = {
   linuxFxVersion: linuxFxVersion
@@ -101,7 +101,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
         ENABLE_ORYX_BUILD: string(enableOryxBuild)
       },
-      runtimeName == 'python' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
+      runtimeName == 'python' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true' } : {},
       !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
       !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
   }
@@ -150,7 +150,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
             openIdIssuer: authenticationIssuerUri
           }
           login: {
-            loginParameters: ['scope=${join(union(requiredScopes, additionalScopes), ' ')}']
+            loginParameters: [ 'scope=${join(union(requiredScopes, additionalScopes), ' ')}' ]
           }
           validation: {
             allowedAudiences: union(requiredAudiences, additionalAllowedAudiences)

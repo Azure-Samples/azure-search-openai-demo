@@ -38,4 +38,3 @@ output subnetids array = [for (name, i) in subnets: {
 output id string = vnet.id
 output name string = vnet.name
 output vnetSubnets array = vnet.properties.subnets
-

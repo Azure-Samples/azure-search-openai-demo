@@ -23,7 +23,7 @@ param supportsHttpsTrafficOnly bool = true
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
-@allowed([ 'None', 'AzureServices'])
+@allowed([ 'None', 'AzureServices' ])
 param bypass string = 'AzureServices'
 
 var networkAcls = {

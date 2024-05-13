@@ -140,7 +140,7 @@ param allowedOrigin string = '' // should start with https://, shouldn't end wit
 param bypass string = 'AzureServices'
 
 @description('Public network access value for all deployed resources')
-@allowed(['Enabled', 'Disabled'])
+@allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 
 @description('Add a private endpoints for network connectivity')
@@ -151,7 +151,9 @@ param provisionVm bool = false
 param vmUserName string = ''
 @secure()
 param vmPassword string = ''
-param vmOSVersion string = '2022-datacenter-azure-edition'
+param vmOsVersion string = '2022-datacenter-azure-edition'
+param vmOsPublisher string = 'MicrosoftWindowsServer'
+param vmOsOffer string = 'WindowsServer'
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_DS1_v2'
 
@@ -689,17 +691,17 @@ var privateEndpointConnections = usePrivateEndpoint ? [
     groupId: 'blob'
     dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
     resourceIds: concat(
-      [storage.outputs.id],
-      useUserUpload ? [userStorage.outputs.id] : []
+      [ storage.outputs.id ],
+      useUserUpload ? [ userStorage.outputs.id ] : []
     )
   }
   {
     groupId: 'account'
     dnsZoneName: 'privatelink.openai.azure.com'
     resourceIds: concat(
-      [openAi.outputs.id],
-      useGPT4V ? [computerVision.outputs.id] : [],
-      !useLocalPdfParser ? [documentIntelligence.outputs.id] : []
+      [ openAi.outputs.id ],
+      useGPT4V ? [ computerVision.outputs.id ] : [],
+      !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
     )
   }
   {
@@ -763,7 +765,9 @@ module vm 'core/host/vm.bicep' = if (provisionVm && usePrivateEndpoint) {
     adminUsername: vmUserName
     adminPassword: vmPassword
     nicId: isolation.outputs.nicId
-    osVersion: vmOSVersion
+    osVersion: vmOsVersion
+    osPublisher: vmOsPublisher
+    osOffer: vmOsOffer
     vmSize: vmSize
   }
 }
@@ -790,7 +794,6 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload &
     principalType: 'ServicePrincipal'
   }
 }
-
 
 // For computer vision access by the backend
 module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {

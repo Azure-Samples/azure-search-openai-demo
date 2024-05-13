@@ -4,7 +4,7 @@ param applicationInsightsName string
 param applicationInsightsDashboardName string = ''
 param location string = resourceGroup().location
 param tags object = {}
-@allowed(['Enabled', 'Disabled'])
+@allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 
 module logAnalytics 'loganalytics.bicep' = {

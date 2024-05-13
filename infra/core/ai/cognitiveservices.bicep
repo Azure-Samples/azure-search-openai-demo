@@ -14,7 +14,7 @@ param sku object = {
   name: 'S0'
 }
 param ipRules array = []
-@allowed([ 'None', 'AzureServices'])
+@allowed([ 'None', 'AzureServices' ])
 param bypass string = 'None'
 
 var networkAcls = {

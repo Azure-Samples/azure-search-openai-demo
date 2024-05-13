@@ -194,6 +194,15 @@
     "vmPassword": {
       "value": "${AZURE_VM_PASSWORD}"
     },
+    "vmOsVersion": {
+      "value": "${AZURE_VM_OS_VERSION}"
+    },
+    "vmOsPublisher": {
+      "value": "${AZURE_VM_OS_PUBLISHER}"
+    },
+    "vmOsOffer": {
+      "value": "${AZURE_VM_OS_OFFER}"
+    },
     "useIntegratedVectorization": {
       "value": "${USE_FEATURE_INT_VECTORIZATION}"
     },
