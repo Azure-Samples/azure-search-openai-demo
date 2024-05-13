@@ -96,11 +96,11 @@ module bastion 'core/networking/bastion.bicep' = if (provisionVm) {
     name: '${abbrs.networkBastionHosts}${resourceToken}'
     location: location
     subnetId: vnet.outputs.vnetSubnets[1].id
-    publicIPId: publicIp.outputs.id
+    publicIPId: provisionVm ? publicIp.outputs.id : ''
   }
 }
 
 output appSubnetId string = vnet.outputs.vnetSubnets[2].id
 output backendSubnetId string = vnet.outputs.vnetSubnets[0].id
 output vnetName string = vnet.outputs.name
-output nicId string = nic.outputs.id
+output nicId string = provisionVm ? nic.outputs.id : ''
