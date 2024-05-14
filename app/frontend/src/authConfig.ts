@@ -68,7 +68,7 @@ export const requireAccessControl = authSetup.requireAccessControl;
 
 export const enableUnauthenticatedAccess = authSetup.enableUnauthenticatedAccess;
 
-export const requireLogin = requireAccessControl && enableUnauthenticatedAccess;
+export const requireLogin = requireAccessControl && !enableUnauthenticatedAccess;
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
