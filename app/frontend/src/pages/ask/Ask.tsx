@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Checkbox, Panel, DefaultButton, Spinner, Slider, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
 
+import logoTelfMedium from "../../assets/logo-telf-medium.png";
+
 import styles from "./Ask.module.css";
 
 import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
@@ -203,6 +205,7 @@ export function Component(): JSX.Element {
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
                     <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 </div>
+                <img src={logoTelfMedium} alt="Telefonica logo" className={styles.askLogo} />
                 <h1 className={styles.askTitle}>Ask your data</h1>
                 <div className={styles.askQuestionInput}>
                     <QuestionInput

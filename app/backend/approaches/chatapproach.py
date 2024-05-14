@@ -30,11 +30,22 @@ class ChatApproach(Approach, ABC):
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<Are there exclusions for prescriptions?>>
-    <<Which pharmacies can be ordered from?>>
-    <<What is the limit for over-the-counter medication?>>
+    <<Qué tipos de modificaciones se pueden realizar en una RFX de GEP?>>
+    <<Cuál es el flujo de aprobación de una compra de global en ámbito corporativo?>>
+    <<How is conditioning a B2B purchase from a public client justified?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
+    """
+
+    # BACKUP
+    ORIGINAL_query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
+    You have access to Azure AI Search index with 100's of documents.
+    Generate a search query based on the conversation and the new question.
+    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
+    Do not include any text inside [] or <<>> in the search query terms.
+    Do not include any special characters like '+'.
+    If the question is not in English, translate the question to English before generating the search query.
+    If you cannot generate a search query, return just the number 0.
     """
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
@@ -43,7 +54,6 @@ class ChatApproach(Approach, ABC):
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
     Do not include any text inside [] or <<>> in the search query terms.
     Do not include any special characters like '+'.
-    If the question is not in English, translate the question to English before generating the search query.
     If you cannot generate a search query, return just the number 0.
     """
 
@@ -69,6 +79,15 @@ class ChatApproach(Approach, ABC):
             return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
+        """ Extract from ChatGTP embeddings response the values for user input vector search
+
+        Args:
+            chat_completion (ChatCompletion): _description_
+            user_query (str): User input text
+
+        Returns:
+            _type_: Returns the identified words for vector search query usage
+        """
         response_message = chat_completion.choices[0].message
 
         if response_message.tool_calls:
@@ -98,6 +117,19 @@ class ChatApproach(Approach, ABC):
         max_tokens: int,
         few_shots=[],
     ) -> list[ChatCompletionMessageParam]:
+        """ Compose the MessageBuilder object that contains the chat messages for mantain the behaviour of ChatGPT in the conversation
+
+        Args:
+            system_prompt (str): ChatGPT system prompt
+            model_id (str): _description_
+            history (list[dict[str, str]]): User input chat history
+            user_content (Union[str, list[ChatCompletionContentPartParam]]): Custom datasource data (vector index result or other info for ChatGTP response)
+            max_tokens (int): _description_
+            few_shots (list, optional): _description_. Defaults to [].
+
+        Returns:
+            list[ChatCompletionMessageParam]: _description_
+        """
         message_builder = MessageBuilder(system_prompt, model_id)
 
         # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
@@ -167,6 +199,7 @@ class ChatApproach(Approach, ABC):
 
         followup_questions_started = False
         followup_content = ""
+        # Async communication with ChatGPT, parse response and write to chat.
         async for event_chunk in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict

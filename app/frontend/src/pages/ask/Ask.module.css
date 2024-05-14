@@ -22,10 +22,15 @@
     margin-top: 20px;
 }
 
+.askLogo {
+    max-height: 120px;
+    margin-top: 80px;
+}
+
 .askTitle {
     font-size: 4rem;
     font-weight: 600;
-    margin-top: 130px;
+    margin-top: 25px;
 }
 
 @media only screen and (max-width: 800px) {

@@ -118,6 +118,15 @@ class Approach(ABC):
         self.vision_token_provider = vision_token_provider
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
+        """Generate Ai Search query filters section
+
+        Args:
+            overrides (dict[str, Any]): user configuration object
+            auth_claims (dict[str, Any]): user identification claims
+
+        Returns:
+            Optional[str]: all filters appended
+        """
         exclude_category = overrides.get("exclude_category")
         security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
         filters = []
@@ -138,6 +147,19 @@ class Approach(ABC):
         minimum_search_score: Optional[float],
         minimum_reranker_score: Optional[float],
     ) -> List[Document]:
+        """ Vector search in Azure Language index  
+
+        Args:
+            top (int): Max document results
+            query_text (Optional[str]): User input text keywords
+            filter (Optional[str]): _description_
+            vectors (List[VectorQuery]): User input keywords embedding vector
+            use_semantic_ranker (bool): Use semantic ranker 
+            use_semantic_captions (bool): _description_
+
+        Returns:
+            List[Document]: Document object list that contains query search response from vector (source, content, id..)
+        """
         # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
         if use_semantic_ranker and query_text:
             results = await self.search_client.search(
@@ -155,7 +177,7 @@ class Approach(ABC):
             results = await self.search_client.search(
                 search_text=query_text or "", filter=filter, top=top, vector_queries=vectors
             )
-
+        # Iterate through query search results and encapsulate each result in a Document object
         documents = []
         async for page in results.by_page():
             async for document in page:
@@ -190,6 +212,16 @@ class Approach(ABC):
     def get_sources_content(
         self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool
     ) -> list[str]:
+        """ Parse vector query response Documents
+
+        Args:
+            results (List[Document]): _description_
+            use_semantic_captions (bool): _description_
+            use_image_citation (bool): _description_
+
+        Returns:
+            list[str]: _description_
+        """
         if use_semantic_captions:
             return [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))
@@ -204,6 +236,15 @@ class Approach(ABC):
             ]
 
     def get_citation(self, sourcepage: str, use_image_citation: bool) -> str:
+        """ Parse citations from ChatGTP response, formatted as we asked in the system prompt
+
+        Args:
+            sourcepage (str): _description_
+            use_image_citation (bool): _description_
+
+        Returns:
+            str: _description_
+        """
         if use_image_citation:
             return sourcepage
         else:
@@ -216,6 +257,14 @@ class Approach(ABC):
             return sourcepage
 
     async def compute_text_embedding(self, q: str):
+        """ Pass user input keywords through OpenAI embedding model for text analysis, getting a vector to  create a query for vector search.
+
+        Args:
+            q (str): User input keywords
+
+        Returns:
+            VectorizedQuery: Vectorized query with user input text
+        """
         SUPPORTED_DIMENSIONS_MODEL = {
             "text-embedding-ada-002": False,
             "text-embedding-3-small": True,

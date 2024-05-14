@@ -195,6 +195,8 @@ async def chat(auth_claims: Dict[str, Any]):
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
+        
+        # Instantiate chat Approach object depending if we use gpt vision or not
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
         else:

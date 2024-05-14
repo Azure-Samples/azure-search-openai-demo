@@ -34,6 +34,9 @@ export default defineConfig({
             "/upload": "http://localhost:50505",
             "/delete_uploaded": "http://localhost:50505",
             "/list_uploaded": "http://localhost:50505"
+        },
+        watch: {
+            usePolling: true
         }
     }
 });

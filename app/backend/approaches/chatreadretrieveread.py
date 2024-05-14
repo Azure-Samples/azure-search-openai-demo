@@ -17,6 +17,7 @@ from core.modelhelper import get_token_limit
 
 class ChatReadRetrieveReadApproach(ChatApproach):
     """
+    --- Chat Mode Approach ---\n
     A multi-step approach that first uses OpenAI to turn the user's question into a search query,
     then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,
     original user question, and search results to OpenAI to generate a response.
@@ -54,7 +55,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
     @property
     def system_message_chat_conversation(self):
-        return """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
+        return """Assistant helps the company employees with their Telefónica's purchasing model questions. Be brief in your answers.
         Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
         For tabular information return it as an html table. Do not return markdown format. If the question is not in English, answer in the language used in the question.
         Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
@@ -121,6 +122,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
+        
+        # STEP 1.1: Retrieve messages from history to mantain a context
         query_messages = self.get_messages_from_history(
             system_prompt=self.query_prompt_template,
             model_id=self.chatgpt_model,
@@ -130,6 +133,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             few_shots=self.query_prompt_few_shots,
         )
 
+        # STEP 1.2: Initial chat completion model instantation with example prompts for behavior tweak and the user input. 
+        # Returns user input text keywords for vector search
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=query_messages,  # type: ignore
             # Azure OpenAI takes the deployment name as the model name
@@ -141,11 +146,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             tool_choice="auto",
         )
 
+        # STEP 1.3: Extract user input query words from chatgpt response
         query_text = self.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
-        # If retrieval mode includes vectors, compute an embedding for the query
+        # STEP 2.1 If retrieval mode includes vectors, compute an embedding from the query text
         vectors: list[VectorQuery] = []
         if has_vector:
             vectors.append(await self.compute_text_embedding(query_text))
@@ -154,6 +160,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         if not has_text:
             query_text = None
 
+        # STEP 2.2: Query user text/keywords vector embeddinds in Azure Language index returning a list of Document
         results = await self.search(
             top,
             query_text,
@@ -165,12 +172,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             minimum_reranker_score,
         )
 
+        # STEP 2.3: Parse, format and merge vector query results
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
         content = "\n".join(sources_content)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
-        # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
+        # STEP 3.1: Recover system default prompt and allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         system_message = self.get_system_prompt(
             overrides.get("prompt_template"),
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
@@ -178,6 +186,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         response_token_limit = 1024
         messages_token_limit = self.chatgpt_token_limit - response_token_limit
+        # STEP 3.2: Compose all chat history and system prompt (conversation context)
         messages = self.get_messages_from_history(
             system_prompt=system_message,
             model_id=self.chatgpt_model,
@@ -187,6 +196,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             max_tokens=messages_token_limit,
         )
 
+        # STEP -1: For visualization compose the json that represent all conversation as ThoughtSteps 
+        # (history by user and chatgpt and the vector search documents results)
         data_points = {"text": sources_content}
 
         extra_info = {
@@ -228,6 +239,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ],
         }
 
+        # STEP 3.3: Create object for send to ChatGTP the system prompt, the user question and vector search results for NL reponse to user
         chat_coroutine = self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,

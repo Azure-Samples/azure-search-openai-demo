@@ -35,6 +35,11 @@
     margin-bottom: 30px;
 }
 
+.chatEmptyLogo {
+    max-height: 120px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+}
 .chatEmptyStateSubtitle {
     font-weight: 600;
     margin-bottom: 10px;
