@@ -23,6 +23,10 @@ Deploying with public access disabled adds additional cost to your deployment. P
   1. Note that private endpoints do not make the chat app accessible from the internet. Connections must be initiated from inside the virtual network.
 1. `AZURE_PROVISION_VM`: Controls deployment of a [virtual machine](https://learn.microsoft.com/azure/virtual-machines/overview) and [Azure Bastion](https://learn.microsoft.com/azure/bastion/bastion-overview). Azure Bastion allows you to securely connect to the virtual machine, without being connected virtual network. Since the virtual machine is connected to the virtual network, you are able to access the chat app.
   1. You must set `AZURE_VM_USERNAME` and `AZURE_VM_PASSWORD` to provision the built-in administrator account with the virtual machine so you can log in through Azure Bastion.
+  1. By default, a server version of Windows is used for the VM. If you need to [enroll your device in Microsoft Intune](https://learn.microsoft.com/en-us/mem/intune/user-help/enroll-windows-10-device), you should use a desktop version of Windows by setting the following environment variables:
+    * `azd env set AZURE_VM_OS_PUBLISHER MicrosoftWindowsDesktop`
+    * `azd env set AZURE_VM_OS_OFFER Windows-11`
+    * `azd env set AZURE_VM_OS_VERSION win11-23h2-pro`
 
 ## Recommended deployment strategy for private access
 
