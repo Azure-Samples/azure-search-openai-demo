@@ -198,6 +198,32 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_ask_rtr_text_filter_public_documents(auth_public_documents_client, snapshot):
+    response = await auth_public_documents_client.post(
+        "/ask",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_text_semanticranker(client, snapshot):
     response = await client.post(
         "/ask",
@@ -356,6 +382,32 @@ async def test_chat_text_filter(auth_client, snapshot):
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_text_filter_public_documents(auth_public_documents_client, snapshot):
+    response = await auth_public_documents_client.post(
+        "/chat",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")

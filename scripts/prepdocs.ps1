@@ -8,6 +8,12 @@ if (Test-Path -Path "/usr") {
 
 Write-Host 'Running "prepdocs.py"'
 
+# if AZURE_PUBLIC_NETWORK_ACCESS env variable exists and is Disabled, exit immediately
+if ($env:AZURE_PUBLIC_NETWORK_ACCESS -eq "Disabled") {
+  Write-Host "AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting."
+  exit 0
+}
+
 # Optional Data Lake Storage Gen2 args if using sample data for login and access control
 if ($env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT) {
   $adlsGen2StorageAccountArg = "--datalakestorageaccount $env:AZURE_ADLS_GEN2_STORAGE_ACCOUNT"
