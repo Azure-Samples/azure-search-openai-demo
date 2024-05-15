@@ -12,6 +12,8 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
+* [Adding an OpenAI load balancer](#adding-an-openai-load-balancer)
+* [Deploying with private endpoints](#deploying-private)
 * [Using local parsers](#using-local-parsers)
 
 ## Using GPT-4
@@ -165,6 +167,18 @@ For an alternate frontend that's written in Web Components and deployed to Stati
 [azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
 on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
 Both these repositories adhere to the same [HTTP protocol for RAG chat apps](https://github.com/Azure-Samples/ai-chat-app-protocol).
+
+## Adding an OpenAI load balancer
+
+As discussed in more details in our [productionizing guide](docs/productionizing.md), you may want to consider implementing a load balancer between OpenAI instances if you are consistently going over the TPM limit.
+Fortunately, this repository is designed for easy integration with other repositories that create load balancers for OpenAI instances. For seamless integration instructions with this sample, please check:
+  * [Scale Azure OpenAI for Python with Azure API Management](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-api-management)
+  * [Scale Azure OpenAI for Python chat using RAG with Azure Container Apps](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-container-apps)
+
+
+## Deploying with private endpoints
+
+It is possible to deploy this app with public access disabled, using Azure private endpoints and private DNS Zones. For more details, read [the private deployment guide](docs/deploy_private.md). That requires a multi-stage provisioning, so you will need to do more than just `azd up` after setting the environment variables.
 
 ## Using local parsers
 
