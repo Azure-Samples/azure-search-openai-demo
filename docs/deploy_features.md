@@ -13,7 +13,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling user document upload](#enabling-user-document-upload)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
 * [Adding an OpenAI load balancer](#adding-an-openai-load-balancer)
-* [Deploying with private endpoints](#deploying-private)
+* [Deploying with private endpoints](#deploying-with-private-endpoints)
 * [Using local parsers](#using-local-parsers)
 
 ## Using GPT-4
