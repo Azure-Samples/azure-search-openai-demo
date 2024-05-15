@@ -3,7 +3,7 @@ import { useMsal } from "@azure/msal-react";
 import { Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
-import { isLoggedIn, requireAccessControl } from "../../authConfig";
+import { isLoggedIn, requireLogin } from "../../authConfig";
 
 import styles from "./QuestionInput.module.css";
 
@@ -50,8 +50,8 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     };
 
     const { instance } = useMsal();
-    const disableRequiredAccessControl = requireAccessControl && !isLoggedIn(instance);
-    const sendQuestionDisabled = disabled || !question.trim() || disableRequiredAccessControl;
+    const disableRequiredAccessControl = requireLogin && !isLoggedIn(instance);
+    const sendQuestionDisabled = disabled || !question.trim() || requireLogin;
 
     if (disableRequiredAccessControl) {
         placeholder = "Please login to continue...";
