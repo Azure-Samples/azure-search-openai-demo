@@ -51,7 +51,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
 
     const { instance } = useMsal();
     const disableRequiredAccessControl = requireLogin && !isLoggedIn(instance);
-    const sendQuestionDisabled = disabled || !question.trim() || requireLogin ;
+    const sendQuestionDisabled = disabled || !question.trim() || requireLogin;
 
     if (disableRequiredAccessControl) {
         placeholder = "Please login to continue...";
