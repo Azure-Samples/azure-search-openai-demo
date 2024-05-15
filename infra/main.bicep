@@ -254,6 +254,7 @@ module backend 'core/host/appservice.bicep' = {
     allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId
+    enableUnauthenticatedAccess: enableUnauthenticatedAccess
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
     authenticationIssuerUri: authenticationIssuerUri
     use32BitWorkerProcess: appServiceSkuName == 'F1'
