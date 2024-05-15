@@ -20,13 +20,16 @@ param isHnsEnabled bool = false
 param kind string = 'StorageV2'
 param minimumTlsVersion string = 'TLS1_2'
 param supportsHttpsTrafficOnly bool = true
-param networkAcls object = {
-  bypass: 'AzureServices'
-  defaultAction: 'Allow'
-}
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
+@allowed([ 'None', 'AzureServices' ])
+param bypass string = 'AzureServices'
+
+var networkAcls = {
+  bypass: bypass
+  defaultAction: 'Allow'
+}
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: name
@@ -62,5 +65,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
+output id string = storage.id
 output name string = storage.name
 output primaryEndpoints object = storage.properties.primaryEndpoints

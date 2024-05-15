@@ -137,6 +137,28 @@ param clientAppSecret string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
+@allowed([ 'None', 'AzureServices' ])
+@description('If allowedIp is set, whether azure services are allowed to bypass the storage and AI services firewall.')
+param bypass string = 'AzureServices'
+
+@description('Public network access value for all deployed resources')
+@allowed([ 'Enabled', 'Disabled' ])
+param publicNetworkAccess string = 'Enabled'
+
+@description('Add a private endpoints for network connectivity')
+param usePrivateEndpoint bool = false
+
+@description('Provision a VM to use for private endpoint connectivity')
+param provisionVm bool = false
+param vmUserName string = ''
+@secure()
+param vmPassword string = ''
+param vmOsVersion string = ''
+param vmOsPublisher string = ''
+param vmOsOffer string = ''
+@description('Size of the virtual machine.')
+param vmSize string = 'Standard_DS1_v2'
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -208,6 +230,7 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
     tags: tags
     applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
     logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
@@ -251,6 +274,8 @@ module backend 'core/host/appservice.bicep' = {
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
+    virtualNetworkSubnetId: isolation.outputs.appSubnetId
+    publicNetworkAccess: publicNetworkAccess
     allowedOrigins: [ allowedOrigin ]
     clientAppId: clientAppId
     serverAppId: serverAppId
@@ -362,6 +387,8 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiResourceGroupLocation
     tags: tags
+    publicNetworkAccess: publicNetworkAccess
+    bypass: bypass
     sku: {
       name: openAiSkuName
     }
@@ -371,12 +398,14 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
 }
 
 // Formerly known as Form Recognizer
+// Does not support bypass
 module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
   name: 'documentintelligence'
   scope: documentIntelligenceResourceGroup
   params: {
     name: !empty(documentIntelligenceServiceName) ? documentIntelligenceServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     kind: 'FormRecognizer'
+    publicNetworkAccess: publicNetworkAccess
     location: documentIntelligenceResourceGroupLocation
     tags: tags
     sku: {
@@ -393,6 +422,7 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
     kind: 'ComputerVision'
     location: computerVisionResourceGroupLocation
     tags: tags
+    bypass: bypass
     sku: {
       name: computerVisionSkuName
     }
@@ -443,6 +473,8 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
+    publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
+    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
   }
 }
 
@@ -453,9 +485,10 @@ module storage 'core/storage/storage-account.bicep' = {
     name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
+    publicNetworkAccess: publicNetworkAccess
+    bypass: bypass
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
-    publicNetworkAccess: 'Enabled'
     sku: {
       name: storageSkuName
     }
@@ -479,9 +512,10 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
     name: !empty(userStorageAccountName) ? userStorageAccountName : 'user${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
+    publicNetworkAccess: publicNetworkAccess
+    bypass: bypass
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
-    publicNetworkAccess: 'Enabled'
     isHnsEnabled: true
     sku: {
       name: storageSkuName
@@ -643,6 +677,82 @@ module searchRoleBackend 'core/security/role.bicep' = if (!useSearchServiceKey) 
   }
 }
 
+module isolation 'network-isolation.bicep' = {
+  name: 'networks'
+  scope: resourceGroup
+  params: {
+    location: location
+    tags: tags
+    resourceToken: resourceToken
+    vnetName: '${abbrs.virtualNetworks}${resourceToken}'
+    appServicePlanName: appServicePlan.outputs.name
+    provisionVm: provisionVm
+    usePrivateEndpoint: usePrivateEndpoint
+  }
+}
+
+var environmentData = environment()
+var privateEndpointConnections = usePrivateEndpoint ? [
+  {
+    groupId: 'blob'
+    dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
+    resourceIds: concat(
+      [ storage.outputs.id ],
+      useUserUpload ? [ userStorage.outputs.id ] : []
+    )
+  }
+  {
+    groupId: 'account'
+    dnsZoneName: 'privatelink.openai.azure.com'
+    resourceIds: concat(
+      [ openAi.outputs.id ],
+      useGPT4V ? [ computerVision.outputs.id ] : [],
+      !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
+    )
+  }
+  {
+    groupId: 'searchService'
+    dnsZoneName: 'privatelink.search.windows.net'
+    resourceIds: [ searchService.outputs.id ]
+  }
+  {
+    groupId: 'sites'
+    dnsZoneName: 'privatelink.azurewebsites.net'
+    resourceIds: [ backend.outputs.id ]
+  }
+] : []
+
+module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
+  name: 'privateEndpoints'
+  scope: resourceGroup
+  params: {
+    location: location
+    tags: tags
+    resourceToken: resourceToken
+    privateEndpointConnections: privateEndpointConnections
+    applicationInsightsId: monitoring.outputs.applicationInsightsId
+    logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+    vnetName: isolation.outputs.vnetName
+    vnetPeSubnetName: isolation.outputs.backendSubnetId
+  }
+}
+
+module vm 'core/host/vm.bicep' = if (provisionVm && usePrivateEndpoint) {
+  name: 'vm'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.computeVirtualMachines}${resourceToken}'
+    location: location
+    adminUsername: vmUserName
+    adminPassword: vmPassword
+    nicId: isolation.outputs.nicId
+    osVersion: vmOsVersion
+    osPublisher: vmOsPublisher
+    osOffer: vmOsOffer
+    vmSize: vmSize
+  }
+}
+
 // Used to read index definitions (required when using authentication)
 // https://learn.microsoft.com/azure/search/search-security-rbac
 module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthentication && !useSearchServiceKey) {
@@ -665,7 +775,6 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload &
     principalType: 'ServicePrincipal'
   }
 }
-
 
 // For computer vision access by the backend
 module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
