@@ -17,14 +17,16 @@ param resourceToken string
 
 param provisionVm bool = false
 
+param usePrivateEndpoint bool = false
+
 var abbrs = loadJsonContent('abbreviations.json')
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
   name: appServicePlanName
 }
 
-module vnet './core/networking/vnet.bicep' = {
-  name: vnetName
+module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
+  name: 'vnet'
   params: {
     name: vnetName
     location: location
@@ -73,16 +75,16 @@ module vnet './core/networking/vnet.bicep' = {
   }
 }
 
-module nic 'core/networking/nic.bicep' = if (provisionVm) {
+module nic 'core/networking/nic.bicep' = if (usePrivateEndpoint && provisionVm) {
   name: 'nic'
   params: {
     name: '${abbrs.networkNetworkInterfaces}${resourceToken}'
     location: location
-    subnetId: vnet.outputs.vnetSubnets[3].id
+    subnetId: usePrivateEndpoint ? vnet.outputs.vnetSubnets[3].id : ''
   }
 }
 
-module publicIp 'core/networking/ip.bicep' = if (provisionVm) {
+module publicIp 'core/networking/ip.bicep' = if (usePrivateEndpoint && provisionVm) {
   name: 'ip'
   params: {
     name: '${abbrs.networkPublicIPAddresses}${resourceToken}'
@@ -90,17 +92,17 @@ module publicIp 'core/networking/ip.bicep' = if (provisionVm) {
   }
 }
 
-module bastion 'core/networking/bastion.bicep' = if (provisionVm) {
+module bastion 'core/networking/bastion.bicep' = if (usePrivateEndpoint && provisionVm) {
   name: 'bastion'
   params: {
     name: '${abbrs.networkBastionHosts}${resourceToken}'
     location: location
-    subnetId: vnet.outputs.vnetSubnets[1].id
+    subnetId: usePrivateEndpoint ? vnet.outputs.vnetSubnets[1].id : ''
     publicIPId: provisionVm ? publicIp.outputs.id : ''
   }
 }
 
-output appSubnetId string = vnet.outputs.vnetSubnets[2].id
-output backendSubnetId string = vnet.outputs.vnetSubnets[0].id
-output vnetName string = vnet.outputs.name
-output nicId string = provisionVm ? nic.outputs.id : ''
+output appSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[2].id : ''
+output backendSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[0].id : ''
+output vnetName string = usePrivateEndpoint ? vnet.outputs.name : ''
+output nicId string = provisionVm && usePrivateEndpoint ? nic.outputs.id : ''

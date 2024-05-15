@@ -201,13 +201,13 @@
       "value": "${AZURE_VM_PASSWORD}"
     },
     "vmOsVersion": {
-      "value": "${AZURE_VM_OS_VERSION}"
+      "value": "${AZURE_VM_OS_VERSION=2022-datacenter-azure-edition}"
     },
     "vmOsPublisher": {
-      "value": "${AZURE_VM_OS_PUBLISHER}"
+      "value": "${AZURE_VM_OS_PUBLISHER=MicrosoftWindowsServer}"
     },
     "vmOsOffer": {
-      "value": "${AZURE_VM_OS_OFFER}"
+      "value": "${AZURE_VM_OS_OFFER=WindowsServer}"
     },
     "useIntegratedVectorization": {
       "value": "${USE_FEATURE_INT_VECTORIZATION}"
