@@ -6,7 +6,7 @@
 #
 aiofiles==23.2.1
     # via quart
-aiohttp==3.9.3
+aiohttp==3.9.4
     # via
     #   -r requirements.in
     #   microsoft-kiota-authentication-azure
