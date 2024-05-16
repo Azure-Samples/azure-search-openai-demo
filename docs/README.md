@@ -9,6 +9,7 @@ These are advanced topics that are not necessary for a basic deployment.
     * [Enabling optional features](deploy_features.md)
         * [Login and access control](login_and_acl.md)
         * [GPT-4 Turbo with Vision](gpt4v.md)
+        * [Private endpoints](deploy_private.md)
 * [Debugging the app on App Service](appservice.md)
 * [Local development](localdev.md)
 * [App customization](customization.md)
