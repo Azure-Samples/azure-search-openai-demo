@@ -473,6 +473,7 @@ const Chat = () => {
 
                     {showVectorOption && (
                         <VectorSettings
+                            defaultRetrievalMode={retrievalMode}
                             showImageOptions={useGPT4V && showGPT4VOptions}
                             updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
                             updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}
