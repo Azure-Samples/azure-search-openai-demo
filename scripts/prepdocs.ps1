@@ -37,14 +37,6 @@ if ($env:AZURE_VISION_ENDPOINT) {
   $visionEndpointArg = "--visionendpoint $env:AZURE_VISION_ENDPOINT"
 }
 
-# If any keys are stored in keyvault provide the keyvault name and secret name
-if ($env:AZURE_KEY_VAULT_NAME) {
-  $keyVaultName = "--keyvaultname $env:AZURE_KEY_VAULT_NAME"
-}
-if ($env:AZURE_SEARCH_SECRET_NAME) {
-  $searchSecretNameArg = "--searchsecretname $env:AZURE_SEARCH_SECRET_NAME"
-}
-
 if ($env:USE_GPT4V -eq $true) {
   $searchImagesArg = "--searchimages"
 }
@@ -80,7 +72,7 @@ $argumentList = "./app/backend/prepdocs.py $dataArg --verbose " + `
 "--subscriptionid $env:AZURE_SUBSCRIPTION_ID " + `
 "--storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --storageresourcegroup $env:AZURE_STORAGE_RESOURCE_GROUP " + `
 "--searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX " + `
-"$searchAnalyzerNameArg $searchSecretNameArg " + `
+"$searchAnalyzerNameArg " + `
 "--openaihost `"$env:OPENAI_HOST`" --openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" $openaiDimensionsArg " + `
 "--openaiservice `"$env:AZURE_OPENAI_SERVICE`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
 "--openaikey `"$env:OPENAI_API_KEY`" --openaiorg `"$env:OPENAI_ORGANIZATION`" " + `
@@ -89,7 +81,6 @@ $argumentList = "./app/backend/prepdocs.py $dataArg --verbose " + `
 "$adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg  " + `
 "$tenantArg $aclArg " + `
 "$disableVectorsArg $localPdfParserArg $localHtmlParserArg " + `
-"$keyVaultName " + `
 "$integratedVectorizationArg "
 
 $argumentList
