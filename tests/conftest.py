@@ -9,7 +9,6 @@ import azure.storage.filedatalake.aio
 import msal
 import pytest
 import pytest_asyncio
-from azure.keyvault.secrets.aio import SecretClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SearchField, SearchIndex
@@ -31,7 +30,6 @@ from .mocks import (
     MockAsyncSearchResultsIterator,
     MockAzureCredential,
     MockBlobClient,
-    MockKeyVaultSecretClient,
     MockResponse,
     mock_computervision_response,
 )
@@ -48,11 +46,6 @@ MockSearchIndex = SearchIndex(
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
-
-
-@pytest.fixture
-def mock_get_secret(monkeypatch):
-    monkeypatch.setattr(SecretClient, "get_secret", MockKeyVaultSecretClient().get_secret)
 
 
 @pytest.fixture
@@ -238,9 +231,7 @@ envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
-        "VISION_SECRET_NAME": "mysecret",
         "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
-        "AZURE_KEY_VAULT_NAME": "mykeyvault",
     },
 ]
 
@@ -280,7 +271,7 @@ auth_public_envs = [
 
 
 @pytest.fixture(params=envs, ids=["client0", "client1"])
-def mock_env(monkeypatch, request, mock_get_secret):
+def mock_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -328,7 +319,6 @@ async def auth_client(
     mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
-    mock_get_secret,
     request,
 ):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
@@ -368,7 +358,6 @@ async def auth_public_documents_client(
     mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
-    mock_get_secret,
     request,
 ):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
