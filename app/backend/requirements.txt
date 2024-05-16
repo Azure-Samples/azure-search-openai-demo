@@ -91,7 +91,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -128,8 +128,10 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.1.0
-    # via opentelemetry-api
+importlib-metadata==7.0.0
+    # via
+    #   opentelemetry-api
+    #   opentelemetry-instrumentation-flask
 isodate==0.6.1
     # via
     #   azure-ai-documentintelligence
@@ -179,7 +181,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.2.0
+msgraph-sdk==1.1.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -283,6 +285,7 @@ opentelemetry-semantic-conventions==0.45b0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-httpx
+    #   opentelemetry-instrumentation-openai
     #   opentelemetry-instrumentation-requests
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
@@ -318,6 +321,8 @@ portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
+psutil==5.9.8
+    # via azure-monitor-opentelemetry-exporter
 pyasn1==0.6.0
     # via
     #   python-jose
@@ -385,7 +390,9 @@ std-uritemplate==0.0.57
 tenacity==8.3.0
     # via -r requirements.in
 tiktoken==0.7.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   opentelemetry-instrumentation-openai
 time-machine==2.14.1
     # via pendulum
 tqdm==4.66.4

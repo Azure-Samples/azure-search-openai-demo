@@ -216,7 +216,7 @@ async def main(strategy: Strategy, setup_index: bool = True):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
-        epilog="Example: prepdocs.py '..\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v",
+        epilog="Example: prepdocs.py '.\\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v",
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
     parser.add_argument(
