@@ -5,7 +5,7 @@ import logging
 import mimetypes
 import os
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Union, cast
+from typing import Any, AsyncGenerator, Dict, Union, cast, List
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -19,7 +19,12 @@ from azure.storage.blob.aio import ContainerClient
 from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
 from azure.storage.filedatalake.aio import FileSystemClient
 from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
+# Using httpx.Client and httpx.AsyncClient avoids having to update openai to 1.17.1 or newer.
+# The openai properties for DefaultHttpxClient and DefaultAsyncHttpxClient are mere wrappers for httpx.Client and httpx.AsyncClient.
+# https://github.com/openai/openai-python/releases/tag/v1.17.0
+import httpx
 from openai import AsyncAzureOpenAI, AsyncOpenAI
+from openai_priority_loadbalancer import AsyncLoadBalancer, Backend
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import (
@@ -77,6 +82,10 @@ bp = Blueprint("routes", __name__, static_folder="static")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
+backends: List[Backend] = [
+    Backend("cog-w2og7ojyhvoq6.openai.azure.com", 1),
+    #Backend("oai-k9b2z6f8x1v3q.openai.azure.com", 1)
+]
 
 @bp.route("/")
 async def index():
@@ -452,10 +461,13 @@ async def setup_clients():
 
         api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
 
+        lb = AsyncLoadBalancer(backends)
+
         openai_client = AsyncAzureOpenAI(
             api_version=api_version,
             azure_endpoint=endpoint,
             azure_ad_token_provider=token_provider,
+            http_client = httpx.AsyncClient(transport = lb)        # Inject the load balancer as the transport in a new default httpx client
         )
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(

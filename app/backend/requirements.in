@@ -2,6 +2,7 @@ azure-identity
 quart
 quart-cors
 openai[datalib]>=1.3.7
+openai_priority_loadbalancer
 tiktoken
 tenacity
 azure-ai-documentintelligence
