@@ -4,6 +4,7 @@ import json
 import logging
 import mimetypes
 import os
+import httpx
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast, List
 
@@ -16,10 +17,6 @@ from azure.storage.blob.aio import ContainerClient
 from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
 from azure.storage.filedatalake.aio import FileSystemClient
 from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
-# Using httpx.Client and httpx.AsyncClient avoids having to update openai to 1.17.1 or newer.
-# The openai properties for DefaultHttpxClient and DefaultAsyncHttpxClient are mere wrappers for httpx.Client and httpx.AsyncClient.
-# https://github.com/openai/openai-python/releases/tag/v1.17.0
-import httpx
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from openai_priority_loadbalancer import AsyncLoadBalancer, Backend
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
@@ -79,6 +76,7 @@ bp = Blueprint("routes", __name__, static_folder="static")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
+# Data for the backends could be supplied through config. This data is simply here to illustrate usage.
 backends: List[Backend] = [
     Backend("cog-w2og7ojyhvoq6.openai.azure.com", 1),
     Backend("cog-kfdf7d5q443bu.openai.azure.com", 1),
