@@ -84,7 +84,7 @@ mimetypes.add_type("text/css", ".css")
 
 backends: List[Backend] = [
     Backend("cog-w2og7ojyhvoq6.openai.azure.com", 1),
-    #Backend("oai-k9b2z6f8x1v3q.openai.azure.com", 1)
+    Backend("cog-kfdf7d5q443bu.openai.azure.com", 1),
 ]
 
 @bp.route("/")
