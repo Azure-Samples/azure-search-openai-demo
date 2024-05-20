@@ -1,6 +1,6 @@
 ---
 name: ChatGPT + Enterprise data + private endpoints
-description: Disable public access to this Chat App with environment variables.
+description: Configure access to a RAG chat app so that it's only accessible from private endpoints.
 languages:
 - python
 - typescript
