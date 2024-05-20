@@ -1,6 +1,6 @@
 ---
 name: ChatGPT + Enterprise data + data ingestion
-description: Learn how to index your documents with the prepdocs script.
+description: Prepare your documents for a RAG chat app by ingesting them into Azure AI Search using either a Python script or integrated vectorization.
 languages:
 - python
 - typescript
