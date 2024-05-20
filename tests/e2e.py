@@ -79,7 +79,7 @@ def test_chat(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_role("button", name="Ask question button").click()
+    page.get_by_role("button", name="Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -153,7 +153,7 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_role("button", name="Ask question button").click()
+    page.get_by_role("button", name="Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -184,7 +184,7 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -217,7 +217,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -255,7 +255,7 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -288,7 +288,7 @@ def test_ask(page: Page, live_server_url: str):
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").fill("Whats the dental plan?")
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
