@@ -91,7 +91,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -128,7 +128,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.0.0
+importlib-metadata==7.1.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -181,7 +181,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.4.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -251,7 +251,7 @@ opentelemetry-instrumentation-flask==0.45b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.45b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.18.0
+opentelemetry-instrumentation-openai==0.18.2
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.45b0
     # via azure-monitor-opentelemetry
@@ -267,7 +267,7 @@ opentelemetry-instrumentation-wsgi==0.45b0
     # via
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-flask
-opentelemetry-resource-detector-azure==0.1.4
+opentelemetry-resource-detector-azure==0.1.5
     # via azure-monitor-opentelemetry
 opentelemetry-sdk==1.24.0
     # via
@@ -353,7 +353,7 @@ python-jose[cryptography]==3.3.0
     # via -r requirements.in
 pytz==2024.1
     # via pandas
-quart==0.19.5
+quart==0.19.6
     # via
     #   -r requirements.in
     #   quart-cors
@@ -401,7 +401,7 @@ types-beautifulsoup4==4.12.0.20240511
     # via -r requirements.in
 types-html5lib==1.1.11.20240228
     # via types-beautifulsoup4
-types-pillow==10.2.0.20240511
+types-pillow==10.2.0.20240520
     # via -r requirements.in
 types-pyasn1==0.6.0.20240402
     # via types-python-jose
