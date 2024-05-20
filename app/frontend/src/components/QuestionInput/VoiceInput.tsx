@@ -26,7 +26,7 @@ try {
         speechRecognition.interimResults = true;
     }
 } catch (err) {
-    console.log("SpeechRecognition not supported");
+    console.error("SpeechRecognition not supported");
     speechRecognition = null;
 }
 
@@ -47,7 +47,7 @@ export const VoiceInput = ({ updateQuestion }: Props) => {
             updateQuestion(input);
         };
         speechRecognition.onend = () => {
-            console.log("Speech recognition ended. In some browsers, the recording will stop automatically after a few seconds of silence.");
+            // NOTE: In some browsers (e.g. Chrome), the recording will stop automatically after a few seconds of silence.
             setIsRecording(false);
         };
         speechRecognition.onerror = (event: { error: string }) => {
@@ -67,7 +67,6 @@ export const VoiceInput = ({ updateQuestion }: Props) => {
 
         setIsRecording(true);
         speechRecognition.start();
-        console.log("Started recording");
     };
 
     const stopRecording = () => {
@@ -75,7 +74,6 @@ export const VoiceInput = ({ updateQuestion }: Props) => {
             console.error("SpeechRecognition not supported");
             return;
         }
-        console.log("Stopped recording");
         speechRecognition.stop();
         setIsRecording(false);
     };

@@ -165,8 +165,8 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
-@description('Use speech resource for reading out.')
-param useSpeechResource bool = false
+@description('Use speech service for reading out text.')
+param useSpeechService bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
 param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
@@ -298,8 +298,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
-      AZURE_SPEECH_RESOURCE_ID : useSpeechResource ? speechResourceID : ''
-      AZURE_SPEECH_REGION : useSpeechResource ? speechResourceGroupLocation : ''
+      AZURE_SPEECH_RESOURCE_ID : useSpeechService ? speechResourceID : ''
+      AZURE_SPEECH_REGION : useSpeechService ? speechResourceGroupLocation : ''
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
@@ -433,7 +433,7 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   }
 }
 
-module speechRecognizer 'core/ai/cognitiveservices.bicep' = if (useSpeechResource){
+module speechRecognizer 'core/ai/cognitiveservices.bicep' = if (useSpeechService){
   name: 'speechRecognizer'
   scope: speechResourceGroup
   params: {
@@ -825,8 +825,8 @@ output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymen
 output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
 output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
 
-output AZURE_SPEECH_RESOURCE_ID string = useSpeechResource ? speechResourceID : ''
-output AZURE_SPEECH_REGION string = useSpeechResource ? speechResourceGroupLocation : ''
+output AZURE_SPEECH_RESOURCE_ID string = useSpeechService ? speechResourceID : ''
+output AZURE_SPEECH_REGION string = useSpeechService ? speechResourceGroupLocation : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 

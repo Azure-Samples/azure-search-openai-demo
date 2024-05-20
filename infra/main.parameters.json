@@ -149,8 +149,8 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
-    "useSpeechResource": {
-      "value": "${USE_SPEECH_RESOURCE=false}"
+    "useSpeechService": {
+      "value": "${USE_SPEECH_SERVICE=false}"
     },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"

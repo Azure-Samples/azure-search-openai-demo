@@ -462,8 +462,8 @@ async def setup_clients():
     if os.getenv("AZURE_SPEECH_RESOURCE_ID"):
         speech_token = await azure_credential.get_token("https://cognitiveservices.azure.com/")
         current_app.config[CONFIG_SPEECH_TOKEN] = speech_token
+        current_app.config[CONFIG_CREDENTIAL] = azure_credential
 
-    current_app.config[CONFIG_CREDENTIAL] = azure_credential
     if OPENAI_HOST.startswith("azure"):
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
