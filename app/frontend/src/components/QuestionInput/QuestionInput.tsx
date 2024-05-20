@@ -14,9 +14,10 @@ interface Props {
     initQuestion?: string;
     placeholder?: string;
     clearOnSend?: boolean;
+    showSpeechInput?: boolean;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion }: Props) => {
+export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput }: Props) => {
     const [question, setQuestion] = useState<string>("");
 
     useEffect(() => {
@@ -76,7 +77,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
                     <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
                 </Tooltip>
             </div>
-            <VoiceInput updateQuestion={setQuestion} />
+            {showSpeechInput && <VoiceInput updateQuestion={setQuestion} />}
         </Stack>
     );
 };

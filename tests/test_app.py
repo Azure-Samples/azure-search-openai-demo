@@ -77,7 +77,7 @@ async def test_redirect(client):
 async def test_favicon(client):
     response = await client.get("/favicon.ico")
     assert response.status_code == 200
-    assert response.content_type == "image/x-icon"
+    assert response.content_type == "image/vnd.microsoft.icon"
 
 
 @pytest.mark.asyncio

@@ -56,6 +56,7 @@ from config import (
     CONFIG_OPENAI_CLIENT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_SPEECH_ENABLED,
     CONFIG_SPEECH_TOKEN,
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
@@ -260,6 +261,7 @@ def config():
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
+            "showSpeechIO": current_app.config[CONFIG_SPEECH_ENABLED],
         }
     )
 
@@ -499,6 +501,7 @@ async def setup_clients():
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
+    current_app.config[CONFIG_SPEECH_ENABLED] = os.getenv("USE_SPEECH_SERVICE", "").lower() == "true"
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes

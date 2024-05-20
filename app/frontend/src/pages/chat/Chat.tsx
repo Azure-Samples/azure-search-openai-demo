@@ -71,6 +71,7 @@ const Chat = () => {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
+    const [showSpeechIO, setShowSpeechIO] = useState<boolean>(false);
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -82,6 +83,7 @@ const Chat = () => {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
+            setShowSpeechIO(config.showSpeechIO);
         });
     };
 
@@ -341,7 +343,6 @@ const Chat = () => {
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
                                                 isStreaming={true}
-                                                isSpeaking={runningIndex === index}
                                                 key={index}
                                                 answer={streamedAnswer[1]}
                                                 isSelected={false}
@@ -350,7 +351,9 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                showSpeechOutput={showSpeechIO}
                                                 onSpeechSynthesisClicked={() => startOrStopSynthesis(streamedAnswer[2], index)}
+                                                isSpeaking={runningIndex === index}
                                             />
                                         </div>
                                     </div>
@@ -362,7 +365,6 @@ const Chat = () => {
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
                                                 isStreaming={false}
-                                                isSpeaking={runningIndex === index}
                                                 key={index}
                                                 answer={answer[1]}
                                                 isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
@@ -371,7 +373,9 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                showSpeechOutput={showSpeechIO}
                                                 onSpeechSynthesisClicked={() => startOrStopSynthesis(answer[2], index)}
+                                                isSpeaking={runningIndex === index}
                                             />
                                         </div>
                                     </div>
@@ -402,6 +406,7 @@ const Chat = () => {
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
+                            showSpeechInput={showSpeechIO}
                         />
                     </div>
                 </div>

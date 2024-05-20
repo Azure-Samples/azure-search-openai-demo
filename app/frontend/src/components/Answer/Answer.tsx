@@ -19,6 +19,7 @@ interface Props {
     onSpeechSynthesisClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
+    showSpeechOutput?: boolean;
 }
 
 export const Answer = ({
@@ -31,7 +32,8 @@ export const Answer = ({
     onSupportingContentClicked,
     onSpeechSynthesisClicked,
     onFollowupQuestionClicked,
-    showFollowupQuestions
+    showFollowupQuestions,
+    showSpeechOutput
 }: Props) => {
     const followupQuestions = answer.choices[0].context.followup_questions;
     const messageContent = answer.choices[0].message.content;
@@ -61,7 +63,7 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
-                        {isSpeaking && (
+                        {showSpeechOutput && isSpeaking && (
                             <IconButton
                                 style={{ color: "red" }}
                                 iconProps={{ iconName: "Volume3" }}
@@ -70,7 +72,7 @@ export const Answer = ({
                                 onClick={() => onSpeechSynthesisClicked()}
                             />
                         )}
-                        {!isSpeaking && (
+                        {showSpeechOutput && !isSpeaking && (
                             <IconButton
                                 style={{ color: "black" }}
                                 iconProps={{ iconName: "Volume3" }}
