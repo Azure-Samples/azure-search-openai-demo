@@ -23,15 +23,15 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
 ## Table of Contents
 
 - [Requirements](#requirements)
-- [Setting up Microsoft Entra ID Apps](#setting-up-azure-ad-apps)
+- [Setting up Microsoft Entra ID Apps](#setting-up-entra-id-apps)
   - [Automatic Setup](#automatic-setup)
   - [Manual Setup](#manual-setup)
-    - [Server App](#server-app)
+    - [Server App](#setting-up-the-server-app)
     - [Client App](#client-app)
     - [Configure Server App Known Client Applications](#configure-server-app-known-client-applications)
     - [Testing](#testing)
-  - [Troubleshooting Entra ID Setup](#troubleshooting-azure-ad-setup)
-- [Adding data with document level access control](#add-access-control-data)
+  - [Troubleshooting Entra ID Setup](#troubleshooting-entra-id-setup)
+- [Adding data with document level access control](#adding-data-with-document-level-access-control)
   - [Using the Add Documents API](#using-the-add-documents-api)
   - [Azure Data Lake Storage Gen2 and prepdocs](#azure-data-lake-storage-gen2-setup)
 - [Environment Variables Reference](#environment-variables-reference)
@@ -146,7 +146,7 @@ Consent from the user must be obtained for use of the client and server app. The
 
 #### Testing
 
-If you are running setup for the first time, ensure you have run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <YOUR-STORAGE_ACCOUNT>` before running `azd up`. If you do not set this environment variable, your index will not be initialized with access control support when `prepdocs` is run for the first time. To manually enable access control in your index, use the [manual setup script](#manually-managing-document-level-access-control).
+If you are running setup for the first time, ensure you have run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <YOUR-STORAGE_ACCOUNT>` before running `azd up`. If you do not set this environment variable, your index will not be initialized with access control support when `prepdocs` is run for the first time. To manually enable access control in your index, use the [manual setup script](#using-the-add-documents-api).
 
 Ensure you run `azd env set AZURE_USE_AUTHENTICATION` to enable the login UI once you have setup the two Entra ID apps before you deploy or run the application. The login UI will not appear unless all [required environment variables](#environment-variables-reference) have been setup.
 
