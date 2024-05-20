@@ -1,6 +1,6 @@
 ---
 name: ChatGPT + Enterprise data + document security
-description: This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users.
+description: This guide demonstrates how to add an optional login and document level access control system to a RAG chat app. This system can be used to restrict access to indexed data to specific users.
 languages:
 - python
 - typescript
