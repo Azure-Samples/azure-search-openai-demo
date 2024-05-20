@@ -14,7 +14,11 @@ products:
 page_type: sample
 urlFragment: azure-search-openai-demo-data-ingestion
 ---
+<!-- Original document: /docs/data_ingestion.md -->
+
 # Indexing documents for the Chat App
+
+The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on the data ingestion component.
 
 This guide provides more details for using the `prepdocs` script to index documents for the Chat App.
 
@@ -48,7 +52,7 @@ The Blob indexer used by the Integrated Vectorization approach also supports a f
 
 The [`prepdocs.py`](../../app/backend/prepdocs.py) script is responsible for both uploading and indexing documents. The typical usage is to call it using `scripts/prepdocs.sh` (Mac/Linux) or `scripts/prepdocs.ps1` (Windows), as these scripts will set up a Python virtual environment and pass in the required parameters based on the current `azd` environment. Whenever `azd up` or `azd provision` is run, the script is called automatically.
 
-![Diagram of the indexing process](../../docs/images/diagram_prepdocs.png)
+![Diagram of the indexing process](/docs/images/diagram_prepdocs.png)
 
 The script uses the following steps to index documents:
 

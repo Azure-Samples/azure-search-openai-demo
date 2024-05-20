@@ -14,16 +14,18 @@ products:
 page_type: sample
 urlFragment: azure-search-openai-demo-private-access
 ---
+<!-- Original document: /docs/deploy_private.md -->
+
 # Deploying with private access
 
-If you want to disable public access when deploying the Chat App, you can do so by setting `azd` environment values.
+The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring private endpoints.
 
 ## Before you begin
 
 Deploying with public access disabled adds additional cost to your deployment. Please see pricing for the following products:
 
 1. [Private Endpoints](https://azure.microsoft.com/pricing/details/private-link/)
-    1. The exact number of private endpoints created depends on the [optional features](../../docs/deploy_features.md) used.
+    1. The exact number of private endpoints created depends on the [optional features](/docs/deploy_features.md) used.
 1. [Private DNS Zones](https://azure.microsoft.com/pricing/details/dns/)
 1. (Optional, but recommended)[Azure Virtual Machines](https://azure.microsoft.com/pricing/details/virtual-machines/windows/)
 1. (Optional, but recommended)[Azure Bastion](https://azure.microsoft.com/pricing/details/azure-bastion/)

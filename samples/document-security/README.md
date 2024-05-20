@@ -14,7 +14,11 @@ products:
 page_type: sample
 urlFragment: azure-search-openai-demo-document-security
 ---
+<!-- Original document: /docs/login_and_acl.md -->
+
 # Setting up optional login and document level access control
+
+The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring login and access control.
 
 ## Table of Contents
 
@@ -35,7 +39,7 @@ urlFragment: azure-search-openai-demo-document-security
 
 This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra ID groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
-![AppLoginArchitecture](../../docs/images/applogincomponents.png)
+![AppLoginArchitecture](/docs/images/applogincomponents.png)
 
 ## Requirements
 
