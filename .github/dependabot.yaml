@@ -1,0 +1,34 @@
+version: 2
+updates:
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/app/frontend"
+    schedule:
+      interval: "weekly"
+    groups:
+      node-packages:
+        patterns:
+          - "*"
+
+  # Maintain dependencies for pip
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-requirements:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: azure-search-documents

@@ -6,10 +6,11 @@
     "configurations": [
         {
             "name": "Python: Quart",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
+            "python": "${workspaceFolder}/.venv/bin/python",
             "env": {
                 "QUART_APP": "main:app",
                 "QUART_ENV": "development",
@@ -26,28 +27,20 @@
         },
         {
             "name": "Frontend: watch",
-            "type": "node",
+            "type": "node-terminal",
             "request": "launch",
+            "command": "npm run dev",
             "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "watch"
-            ],
-            "console": "integratedTerminal",
         },
         {
-            "name": "Frontend: build",
-            "type": "node",
+            "name": "Python: Debug Tests",
+            "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "build"
-            ],
+            "program": "${file}",
+            "purpose": ["debug-test"],
             "console": "integratedTerminal",
-        }
+            "justMyCode": false
+          }
     ],
     "inputs": [
         {

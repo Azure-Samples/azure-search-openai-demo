@@ -23,14 +23,29 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "formRecognizerServiceName": {
-      "value": "${AZURE_FORMRECOGNIZER_SERVICE}"
+    "computerVisionServiceName": {
+      "value": "${AZURE_COMPUTER_VISION_SERVICE}"
     },
-    "formRecognizerResourceGroupName": {
-      "value": "${AZURE_FORMRECOGNIZER_RESOURCE_GROUP}"
+    "computerVisionResourceGroupName": {
+      "value": "${AZURE_COMPUTER_VISION_RESOURCE_GROUP}"
     },
-    "formRecognizerSkuName": {
-      "value": "S0"
+    "computerVisionResourceGroupLocation": {
+      "value": "${AZURE_COMPUTER_VISION_LOCATION=eastus}"
+    },
+    "computerVisionSkuName": {
+      "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
+    },
+    "documentIntelligenceServiceName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
+    },
+    "documentIntelligenceResourceGroupName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP}"
+    },
+    "documentIntelligenceSkuName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SKU=S0}"
+    },
+    "documentIntelligenceResourceGroupLocation": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_LOCATION}"
     },
     "searchIndexName": {
       "value": "${AZURE_SEARCH_INDEX=gptkbindex}"
@@ -47,6 +62,15 @@
     "searchServiceSkuName": {
       "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
     },
+    "searchQueryLanguage": {
+      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+    },
+    "searchQuerySpeller": {
+      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+    },
+    "searchServiceSemanticRankerLevel": {
+      "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
@@ -56,11 +80,50 @@
     "storageSkuName": {
       "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
     },
-    "chatGptDeploymentName": {
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=chat}"
+    "appServicePlanName": {
+      "value": "${AZURE_APP_SERVICE_PLAN}"
     },
-    "openAiHost":{
+    "appServiceSkuName": {
+      "value": "${AZURE_APP_SERVICE_SKU=B1}"
+    },
+    "backendServiceName": {
+      "value": "${AZURE_APP_SERVICE}"
+    },
+    "chatGptModelName":{
+      "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
+    },
+    "chatGptDeploymentName": {
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
+    },
+    "chatGptDeploymentVersion":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
+    },
+    "chatGptDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
+    },
+    "embeddingModelName":{
+      "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
+    },
+    "embeddingDeploymentName": {
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT}"
+    },
+    "embeddingDeploymentVersion":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
+    },
+    "embeddingDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
+    },
+    "embeddingDimensions": {
+      "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
+    },
+    "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
+    },
+    "azureOpenAiCustomUrl":{
+      "value": "${AZURE_OPENAI_CUSTOM_URL}"
+    },
+    "azureOpenAiApiVersion":{
+      "value": "${AZURE_OPENAI_API_VERSION}"
     },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
@@ -69,13 +132,109 @@
       "value": "${OPENAI_ORGANIZATION}"
     },
     "useApplicationInsights": {
-      "value": "${AZURE_USE_APPLICATION_INSIGHTS=false}"
+      "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
+    },
+    "applicationInsightsName": {
+      "value": "${AZURE_APPLICATION_INSIGHTS}"
+    },
+    "applicationInsightsDashboardName": {
+      "value": "${AZURE_APPLICATION_INSIGHTS_DASHBOARD}"
+    },
+    "logAnalyticsName": {
+      "value": "${AZURE_LOG_ANALYTICS}"
+    },
+    "useVectors": {
+      "value": "${USE_VECTORS=true}"
+    },
+    "useGPT4V": {
+      "value": "${USE_GPT4V=false}"
+    },
+    "useSpeechResource": {
+      "value": "${USE_SPEECH_RESOURCE=false}"
     },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
     },
     "speechResourceGroupName": {
       "value": "${AZURE_SPEECH_RESOURCE_GROUP}"
+    },
+    "useAuthentication": {
+      "value": "${AZURE_USE_AUTHENTICATION=false}"
+    },
+    "enforceAccessControl": {
+      "value": "${AZURE_ENFORCE_ACCESS_CONTROL=false}"
+    },
+    "enableGlobalDocuments": {
+      "value": "${AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS=false}"
+    },
+    "enableUnauthenticatedAccess": {
+      "value": "${AZURE_ENABLE_UNAUTHENTICATED_ACCESS=false}"
+    },
+    "tenantId": {
+      "value": "${AZURE_TENANT_ID}"
+    },
+    "authTenantId": {
+      "value": "${AZURE_AUTH_TENANT_ID}"
+    },
+    "serverAppId": {
+      "value": "${AZURE_SERVER_APP_ID}"
+    },
+    "serverAppSecret": {
+      "value": "${AZURE_SERVER_APP_SECRET}"
+    },
+    "clientAppId": {
+      "value": "${AZURE_CLIENT_APP_ID}"
+    },
+    "clientAppSecret": {
+      "value": "${AZURE_CLIENT_APP_SECRET}"
+    },
+    "allowedOrigin": {
+      "value": "${ALLOWED_ORIGIN}"
+    },
+    "publicNetworkAccess": {
+      "value": "${AZURE_PUBLIC_NETWORK_ACCESS=Enabled}"
+    },
+    "usePrivateEndpoint": {
+      "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"
+    },
+    "bypass": {
+      "value": "${AZURE_NETWORK_BYPASS=AzureServices}"
+    },
+    "provisionVm": {
+      "value": "${AZURE_PROVISION_VM=false}"
+    },
+    "vmUserName": {
+      "value": "${AZURE_VM_USERNAME}"
+    },
+    "vmPassword": {
+      "value": "${AZURE_VM_PASSWORD}"
+    },
+    "vmOsVersion": {
+      "value": "${AZURE_VM_OS_VERSION=2022-datacenter-azure-edition}"
+    },
+    "vmOsPublisher": {
+      "value": "${AZURE_VM_OS_PUBLISHER=MicrosoftWindowsServer}"
+    },
+    "vmOsOffer": {
+      "value": "${AZURE_VM_OS_OFFER=WindowsServer}"
+    },
+    "useIntegratedVectorization": {
+      "value": "${USE_FEATURE_INT_VECTORIZATION}"
+    },
+    "useUserUpload": {
+      "value": "${USE_USER_UPLOAD}"
+    },
+    "useLocalPdfParser": {
+      "value": "${USE_LOCAL_PDF_PARSER}"
+    },
+    "useLocalHtmlParser": {
+      "value": "${USE_LOCAL_HTML_PARSER}"
+    },
+    "runningOnGh": {
+      "value": "${GITHUB_ACTIONS}"
+    },
+    "runningOnAdo": {
+      "value": "${TF_BUILD}"
     }
   }
 }

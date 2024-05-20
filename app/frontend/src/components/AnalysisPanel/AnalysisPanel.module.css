@@ -4,3 +4,61 @@
     padding-top: 12px;
     padding-bottom: 12px;
 }
+
+.tList {
+    padding: 20px 20px 0 20px;
+    display: inline-block;
+    background: #e9e9e9;
+}
+
+.tListItem {
+    list-style: none;
+    margin: auto;
+    margin-left: 20px;
+    min-height: 50px;
+    border-left: 1px dashed #123bb6;
+    padding: 0 0 30px 30px;
+    position: relative;
+}
+
+.tListItem:last-child {
+    border-left: 0;
+}
+
+.tListItem::before {
+    position: absolute;
+    left: -18px;
+    top: -5px;
+    content: " ";
+    border: 8px solid #d1dbfa;
+    border-radius: 500%;
+    background: #123bb6;
+    height: 20px;
+    width: 20px;
+}
+
+.tStep {
+    color: #123bb6;
+    position: relative;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.tCodeBlock {
+    max-height: 300px;
+}
+
+.tProp {
+    background-color: #d7d7d7;
+    color: #333232;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.citationImg {
+    height: 450px;
+    max-width: 100%;
+    object-fit: contain;
+}

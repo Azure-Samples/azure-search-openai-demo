@@ -4,12 +4,12 @@ import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { AskResponse, getCitationFilePath } from "../../api";
+import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
-    answer: AskResponse;
+    answer: ChatAppResponse;
     isSelected?: boolean;
     isSpeaking?: boolean;
     isStreaming: boolean;
@@ -33,7 +33,9 @@ export const Answer = ({
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer.answer, isStreaming, onCitationClicked ), [answer]);
+    const followupQuestions = answer.choices[0].context.followup_questions;
+    const messageContent = answer.choices[0].message.content;
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
@@ -49,7 +51,7 @@ export const Answer = ({
                             title="Show thought process"
                             ariaLabel="Show thought process"
                             onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.thoughts}
+                            disabled={!answer.choices[0].context.thoughts?.length}
                         />
                         <IconButton
                             style={{ color: "black" }}
@@ -57,26 +59,26 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.data_points?.length}
+                            disabled={!answer.choices[0].context.data_points}
                         />
-                        {isSpeaking &&
-                            (<IconButton
+                        {isSpeaking && (
+                            <IconButton
                                 style={{ color: "red" }}
                                 iconProps={{ iconName: "Volume3" }}
                                 title="Speak answer"
                                 ariaLabel="Speak answer"
                                 onClick={() => onSpeechSynthesisClicked()}
-                            />)
-                        }
-                        {!isSpeaking &&
-                            (<IconButton
+                            />
+                        )}
+                        {!isSpeaking && (
+                            <IconButton
                                 style={{ color: "black" }}
                                 iconProps={{ iconName: "Volume3" }}
                                 title="Speak answer"
                                 ariaLabel="Speak answer"
                                 onClick={() => onSpeechSynthesisClicked()}
-                            />)
-                        }
+                            />
+                        )}
                     </div>
                 </Stack>
             </Stack.Item>
@@ -101,11 +103,11 @@ export const Answer = ({
                 </Stack.Item>
             )}
 
-            {!!parsedAnswer.followupQuestions.length && showFollowupQuestions && onFollowupQuestionClicked && (
+            {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <Stack.Item>
                     <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
                         <span className={styles.followupQuestionLearnMore}>Follow-up questions:</span>
-                        {parsedAnswer.followupQuestions.map((x, i) => {
+                        {followupQuestions.map((x, i) => {
                             return (
                                 <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>
                                     {`${x}`}

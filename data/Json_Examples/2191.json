@@ -1,0 +1,14 @@
+{
+  "AreaPath": "SmartHotel360",
+  "AssignedTo": null,
+  "Categories": null,
+  "ChangedDate": "2023-12-13T23:08:39.17Z",
+  "ClosedDate": null,
+  "CreatedDate": "2023-12-13T23:08:39.17Z",
+  "Description": "<div><p class=MsoNormal><span style=\"font-size:10.5pt;line-height:107%;font-family:&quot;Segoe UI&quot;, sans-serif;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-attachment:initial;background-origin:initial;background-clip:initial;\">If you have not picked up\nyour&nbsp;</span><span style=\"font-size:10.5pt;line-height:107%;font-family:&quot;Segoe UI&quot;, sans-serif;\">vehicle<span style=\"background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-attachment:initial;background-origin:initial;background-clip:initial;\">&nbsp;you can remove or cancel your&nbsp;</span></span>reservation<span style=\"background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-attachment:initial;background-origin:initial;background-clip:initial;\">&nbsp;by clicking here.</span> </p><p class=MsoNormal><span style=\"background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-attachment:initial;background-origin:initial;background-clip:initial;\"><br></span> </p> </div><div>1. Car reserved should have an option to cancel the request </div><div>2. Car driver should receive a notification about cancellation </div>",
+  "Id": 2191,
+  "State": "New",
+  "StateChangeDate": "2023-12-13T23:08:39.17Z",
+  "Tags": "Reservation",
+  "Title": "As a customer, I should be able to remove a car reservation "
+}

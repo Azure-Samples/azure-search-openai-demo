@@ -1,0 +1,244 @@
+[
+  {
+    "fields": {
+      "System.Id": 2348,
+      "System.State": "New",
+      "System.Title": "Provide related items or frequently bought together section when people browse or search",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2348,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2348"
+  },
+  {
+    "fields": {
+      "System.Id": 2349,
+      "System.State": "New",
+      "System.Title": "As tester, I need to test the website on all the relevant broswers and devices and be sure that it can handle our load.",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2349,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2349"
+  },
+  {
+    "fields": {
+      "System.Id": 2350,
+      "System.State": "New",
+      "System.Title": "As a customer, I should be able to put items to shopping cart",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2350,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2350"
+  },
+  {
+    "fields": {
+      "System.Id": 2351,
+      "System.State": "New",
+      "System.Title": "As a customer, I should be able to print my purchase order",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2351,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2351"
+  },
+  {
+    "fields": {
+      "System.Id": 2352,
+      "System.State": "New",
+      "System.Title": "As a customer, I would like to have a sort capabaility by price and customer ratings",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2352,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2352"
+  },
+  {
+    "fields": {
+      "System.Id": 2353,
+      "System.State": "New",
+      "System.Title": "Recommended products must be based on customer purchase pattern history",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2353,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2353"
+  },
+  {
+    "fields": {
+      "System.Id": 2354,
+      "System.State": "New",
+      "System.Title": "As a customer, I would like to save my addresses so that I can easily select the address for delivery",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2354,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2354"
+  },
+  {
+    "fields": {
+      "System.Id": 2355,
+      "System.State": "New",
+      "System.Title": "As marketer, I want to run an A|B test on alternative Web Sites using Application Insights.",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2355,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2355"
+  },
+  {
+    "fields": {
+      "System.AssignedTo": {
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/codebytes/_apis/GraphProfile/MemberAvatars/aad.ZDlhOGEyZjktMGZmZS03YjY4LTlkYjctNjk1ZWZiNGY2Nzg0"
+          }
+        },
+        "descriptor": "aad.ZDlhOGEyZjktMGZmZS03YjY4LTlkYjctNjk1ZWZiNGY2Nzg0",
+        "displayName": "Chris Ayers",
+        "id": "cd8258ec-ad87-4c0d-9026-e5e343447185",
+        "imageUrl": "https://dev.azure.com/codebytes/_apis/GraphProfile/MemberAvatars/aad.ZDlhOGEyZjktMGZmZS03YjY4LTlkYjctNjk1ZWZiNGY2Nzg0",
+        "uniqueName": "chrisayers@microsoft.com",
+        "url": "https://spsprodeus27.vssps.visualstudio.com/A6b854e9d-a8be-405d-a4cc-5eb8e7027155/_apis/Identities/cd8258ec-ad87-4c0d-9026-e5e343447185"
+      },
+      "System.Id": 2356,
+      "System.State": "Done",
+      "System.Title": "Provide customers the ability to track status of the package",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2356,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2356"
+  },
+  {
+    "fields": {
+      "System.AssignedTo": {
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/codebytes/_apis/GraphProfile/MemberAvatars/aad.ZDlhOGEyZjktMGZmZS03YjY4LTlkYjctNjk1ZWZiNGY2Nzg0"
+          }
+        },
+        "descriptor": "aad.ZDlhOGEyZjktMGZmZS03YjY4LTlkYjctNjk1ZWZiNGY2Nzg0",
+        "displayName": "Chris Ayers",
+        "id": "cd8258ec-ad87-4c0d-9026-e5e343447185",
+        "imageUrl": "https://dev.azure.com/codebytes/_apis/GraphProfile/MemberAvatars/aad.ZDlhOGEyZjktMGZmZS03YjY4LTlkYjctNjk1ZWZiNGY2Nzg0",
+        "uniqueName": "chrisayers@microsoft.com",
+        "url": "https://spsprodeus27.vssps.visualstudio.com/A6b854e9d-a8be-405d-a4cc-5eb8e7027155/_apis/Identities/cd8258ec-ad87-4c0d-9026-e5e343447185"
+      },
+      "System.Id": 2357,
+      "System.State": "Done",
+      "System.Title": "As a customer, I would like to have the ability to send my items as gift",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2357,
+    "relations": null,
+    "rev": 2,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2357"
+  },
+  {
+    "fields": {
+      "System.Id": 2358,
+      "System.State": "Committed",
+      "System.Title": "As a customer, I would like to store my credit card details securely",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2358,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2358"
+  },
+  {
+    "fields": {
+      "System.Id": 2359,
+      "System.State": "Committed",
+      "System.Title": "As a customer, I should be able to select different shipping option",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2359,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2359"
+  },
+  {
+    "fields": {
+      "System.Id": 2360,
+      "System.State": "Committed",
+      "System.Title": "As developer, I want to use Azure Machine Learning to provide a recommendations engine behind the website.",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2360,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2360"
+  },
+  {
+    "fields": {
+      "System.Id": 2361,
+      "System.State": "Committed",
+      "System.Title": "Provide tentative duration for shipping.",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2361,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2361"
+  },
+  {
+    "fields": {
+      "System.Id": 2362,
+      "System.State": "Approved",
+      "System.Title": "Notify the user about any changes made to the order",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2362,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2362"
+  },
+  {
+    "fields": {
+      "System.Id": 2363,
+      "System.State": "Approved",
+      "System.Title": "As a admin, I should be able to update prices on ad-hoc condition",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2363,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2363"
+  },
+  {
+    "fields": {
+      "System.Id": 2364,
+      "System.State": "Approved",
+      "System.Title": "As a customer, I would like to provide my feedback on items that I have purchased",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2364,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2364"
+  },
+  {
+    "fields": {
+      "System.Id": 2365,
+      "System.State": "Approved",
+      "System.Title": "As a customer, I would like to have a wishlist where I can add items for future purchase",
+      "System.WorkItemType": "Product Backlog Item"
+    },
+    "id": 2365,
+    "relations": null,
+    "rev": 1,
+    "url": "https://dev.azure.com/codebytes/_apis/wit/workItems/2365"
+  }
+]
