@@ -1,9 +1,11 @@
 import json
+import os
 import socket
 import time
 from contextlib import closing
 from multiprocessing import Process
 from typing import Generator
+from unittest import mock
 
 import pytest
 import requests
@@ -39,7 +41,23 @@ def free_port() -> int:
 
 
 def run_server(port: int):
-    uvicorn.run(app.create_app(), port=port)
+    with mock.patch.dict(
+        os.environ,
+        {
+            "AZURE_STORAGE_ACCOUNT": "test-storage-account",
+            "AZURE_STORAGE_CONTAINER": "test-storage-container",
+            "AZURE_STORAGE_RESOURCE_GROUP": "test-storage-rg",
+            "AZURE_SUBSCRIPTION_ID": "test-storage-subid",
+            "USE_SPEECH_SERVICE": "false",
+            "AZURE_SEARCH_INDEX": "test-search-index",
+            "AZURE_SEARCH_SERVICE": "test-search-service",
+            "AZURE_SPEECH_RESOURCE_ID": "test-id",
+            "AZURE_SPEECH_REGION": "eastus",
+            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-35-turbo",
+        },
+        clear=True,
+    ):
+        uvicorn.run(app.create_app(), port=port)
 
 
 @pytest.fixture()
