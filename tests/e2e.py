@@ -38,9 +38,13 @@ def free_port() -> int:
         return s.getsockname()[1]
 
 
+def run_server(port: int):
+    uvicorn.run(app.create_app(), port=port)
+
+
 @pytest.fixture()
 def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str, None, None]:
-    proc = Process(target=lambda: uvicorn.run(app.create_app(), port=free_port), daemon=True)
+    proc = Process(target=run_server, args=(free_port,), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"
     wait_for_server_ready(url, timeout=10.0, check_interval=0.5)

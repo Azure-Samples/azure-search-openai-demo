@@ -379,6 +379,7 @@ async def setup_clients():
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
+    USE_SPEECH = os.getenv("USE_SPEECH_SERVICE", "").lower() == "true"
 
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -461,7 +462,7 @@ async def setup_clients():
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
 
-    if os.getenv("AZURE_SPEECH_RESOURCE_ID"):
+    if USE_SPEECH:
         speech_token = await azure_credential.get_token("https://cognitiveservices.azure.com/")
         current_app.config[CONFIG_SPEECH_TOKEN] = speech_token
         current_app.config[CONFIG_CREDENTIAL] = azure_credential
@@ -501,7 +502,7 @@ async def setup_clients():
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
-    current_app.config[CONFIG_SPEECH_ENABLED] = os.getenv("USE_SPEECH_SERVICE", "").lower() == "true"
+    current_app.config[CONFIG_SPEECH_ENABLED] = bool(USE_SPEECH)
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
