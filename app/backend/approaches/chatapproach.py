@@ -1,30 +1,19 @@
 import json
-import logging
 import re
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional, Union
 
-from openai.types.chat import (
-    ChatCompletion,
-    ChatCompletionContentPartParam,
-    ChatCompletionMessageParam,
-)
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach
-from core.messagebuilder import MessageBuilder
 
 
 class ChatApproach(Approach, ABC):
-    # Chat roles
-    SYSTEM = "system"
-    USER = "user"
-    ASSISTANT = "assistant"
-
-    query_prompt_few_shots = [
-        {"role": USER, "content": "How did crypto do last year?"},
-        {"role": ASSISTANT, "content": "Summarize Cryptocurrency Market Dynamics from last year"},
-        {"role": USER, "content": "What are my health plans?"},
-        {"role": ASSISTANT, "content": "Show available health plans"},
+    query_prompt_few_shots: list[ChatCompletionMessageParam] = [
+        {"role": "user", "content": "How did crypto do last year?"},
+        {"role": "assistant", "content": "Summarize Cryptocurrency Market Dynamics from last year"},
+        {"role": "user", "content": "What are my health plans?"},
+        {"role": "assistant", "content": "Show available health plans"},
     ]
     NO_RESPONSE = "0"
 
@@ -53,7 +42,7 @@ class ChatApproach(Approach, ABC):
         pass
 
     @abstractmethod
-    async def run_until_final_call(self, history, overrides, auth_claims, should_stream) -> tuple:
+    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
     def get_system_prompt(self, override_prompt: Optional[str], follow_up_questions_prompt: str) -> str:
@@ -89,48 +78,15 @@ class ChatApproach(Approach, ABC):
     def extract_followup_questions(self, content: str):
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
 
-    def get_messages_from_history(
-        self,
-        system_prompt: str,
-        model_id: str,
-        history: list[dict[str, str]],
-        user_content: Union[str, list[ChatCompletionContentPartParam]],
-        max_tokens: int,
-        few_shots=[],
-    ) -> list[ChatCompletionMessageParam]:
-        message_builder = MessageBuilder(system_prompt, model_id)
-
-        # Add examples to show the chat what responses we want. It will try to mimic any responses and make sure they match the rules laid out in the system message.
-        for shot in reversed(few_shots):
-            message_builder.insert_message(shot.get("role"), shot.get("content"))
-
-        append_index = len(few_shots) + 1
-
-        message_builder.insert_message(self.USER, user_content, index=append_index)
-
-        total_token_count = 0
-        for existing_message in message_builder.messages:
-            total_token_count += message_builder.count_tokens_for_message(existing_message)
-
-        newest_to_oldest = list(reversed(history[:-1]))
-        for message in newest_to_oldest:
-            potential_message_count = message_builder.count_tokens_for_message(message)
-            if (total_token_count + potential_message_count) > max_tokens:
-                logging.info("Reached max tokens of %d, history will be truncated", max_tokens)
-                break
-            message_builder.insert_message(message["role"], message["content"], index=append_index)
-            total_token_count += potential_message_count
-        return message_builder.messages
-
     async def run_without_streaming(
         self,
-        history: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         session_state: Any = None,
     ) -> dict[str, Any]:
         extra_info, chat_coroutine = await self.run_until_final_call(
-            history, overrides, auth_claims, should_stream=False
+            messages, overrides, auth_claims, should_stream=False
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
         chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
@@ -144,18 +100,18 @@ class ChatApproach(Approach, ABC):
 
     async def run_with_streaming(
         self,
-        history: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         session_state: Any = None,
     ) -> AsyncGenerator[dict, None]:
         extra_info, chat_coroutine = await self.run_until_final_call(
-            history, overrides, auth_claims, should_stream=True
+            messages, overrides, auth_claims, should_stream=True
         )
         yield {
             "choices": [
                 {
-                    "delta": {"role": self.ASSISTANT},
+                    "delta": {"role": "assistant"},
                     "context": extra_info,
                     "session_state": session_state,
                     "finish_reason": None,
@@ -190,7 +146,7 @@ class ChatApproach(Approach, ABC):
             yield {
                 "choices": [
                     {
-                        "delta": {"role": self.ASSISTANT},
+                        "delta": {"role": "assistant"},
                         "context": {"followup_questions": followup_questions},
                         "finish_reason": None,
                         "index": 0,
@@ -200,7 +156,11 @@ class ChatApproach(Approach, ABC):
             }
 
     async def run(
-        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
+        self,
+        messages: list[ChatCompletionMessageParam],
+        stream: bool = False,
+        session_state: Any = None,
+        context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
