@@ -107,15 +107,27 @@ This section covers the integration of GPT-4 Vision with Azure AI Search. Learn 
 
 ## Enabling speech input/output
 
-You can optionally enable speech input/output by setting the `USE_SPEECH_SERVICE` environment variable.
+[📺 Watch a short video of speech input/output](https://www.youtube.com/watch?v=BwiHUjlLY_U)
+
+You can optionally enable speech input/output by setting the azd environment variables.
+
+The speech input feature uses the browser's built-in [Speech Recognition API](https://developer.mozilla.org/docs/Web/API/SpeechRecognition). It may not work in all browser/OS combinations. To enable speech input, run:
 
 ```shell
-azd env set USE_SPEECH_SERVICE true
+azd env set USE_SPEECH_INPUT true
 ```
 
-This will enable the app to use the browser's built-in [Speech Recognition API](https://developer.mozilla.org/docs/Web/API/SpeechRecognition) for speech input, and to use [Azure Speech Service](https://learn.microsoft.com/azure/ai-services/speech-service/overview) for speech-to-text. Additional costs will be incurred for using the Azure Speech Service. [See pricing](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/).
+The speech output feature uses [Azure Speech Service](https://learn.microsoft.com/azure/ai-services/speech-service/overview) for speech-to-text. Additional costs will be incurred for using the Azure Speech Service. [See pricing](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/). To enable speech output, run:
 
-[📺 Watch a short video of speech input/output](https://www.youtube.com/watch?v=BwiHUjlLY_U)
+```shell
+azd env set USE_SPEECH_OUTPUT true
+```
+
+To set [the voice](https://learn.microsoft.com/azure/ai-services/speech-service/language-support?tabs=tts) for the speech output, run:
+
+```shell
+azd env set AZURE_SPEECH_VOICE en-US-FableMultilingualNeuralHD
+```
 
 ## Enabling Integrated Vectorization
 

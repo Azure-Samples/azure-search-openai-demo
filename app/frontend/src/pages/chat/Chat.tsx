@@ -71,7 +71,8 @@ const Chat = () => {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
-    const [showSpeechIO, setShowSpeechIO] = useState<boolean>(false);
+    const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
+    const [showSpeechOutput, setShowSpeechOutput] = useState<boolean>(false);
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -83,7 +84,8 @@ const Chat = () => {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
-            setShowSpeechIO(config.showSpeechIO);
+            setShowSpeechInput(config.showSpeechInput);
+            setShowSpeechOutput(config.showSpeechOutput);
         });
     };
 
@@ -351,7 +353,7 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                                showSpeechOutput={showSpeechIO}
+                                                showSpeechOutput={showSpeechOutput}
                                                 onSpeechSynthesisClicked={() => startOrStopSynthesis(streamedAnswer[2], index)}
                                                 isSpeaking={runningIndex === index}
                                             />
@@ -373,7 +375,7 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                                showSpeechOutput={showSpeechIO}
+                                                showSpeechOutput={showSpeechOutput}
                                                 onSpeechSynthesisClicked={() => startOrStopSynthesis(answer[2], index)}
                                                 isSpeaking={runningIndex === index}
                                             />
@@ -406,7 +408,7 @@ const Chat = () => {
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
-                            showSpeechInput={showSpeechIO}
+                            showSpeechInput={showSpeechOutput}
                         />
                     </div>
                 </div>

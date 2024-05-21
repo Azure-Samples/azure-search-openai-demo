@@ -149,8 +149,11 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
-    "useSpeechService": {
-      "value": "${USE_SPEECH_SERVICE=false}"
+    "useSpeechInput": {
+      "value": "${USE_SPEECH_INPUT=false}"
+    },
+    "useSpeechOutput": {
+      "value": "${USE_SPEECH_OUTPUT=false}"
     },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"

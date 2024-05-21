@@ -13,7 +13,6 @@ param publicNetworkAccess string = 'Enabled'
 param sku object = {
   name: 'S0'
 }
-param ipRules array = []
 @allowed([ 'None', 'AzureServices' ])
 param bypass string = 'None'
 

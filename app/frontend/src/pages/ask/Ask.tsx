@@ -42,7 +42,8 @@ export function Component(): JSX.Element {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
-    const [showSpeechIO, setShowSpeechIO] = useState<boolean>(false);
+    const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
+    const [showSpeechOutput, setShowSpeechOutput] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -67,7 +68,8 @@ export function Component(): JSX.Element {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
-            setShowSpeechIO(config.showSpeechIO);
+            setShowSpeechInput(config.showSpeechInput);
+            setShowSpeechOutput(config.showSpeechOutput);
         });
     };
 
@@ -249,7 +251,7 @@ export function Component(): JSX.Element {
                         disabled={isLoading}
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}
-                        showSpeechInput={showSpeechIO}
+                        showSpeechInput={showSpeechInput}
                     />
                 </div>
             </div>
@@ -264,7 +266,7 @@ export function Component(): JSX.Element {
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
-                            showSpeechOutput={showSpeechIO}
+                            showSpeechOutput={showSpeechOutput}
                             isSpeaking={isSpeaking}
                             onSpeechSynthesisClicked={() => (isSpeaking ? stopSynthesis() : startSynthesis(speechUrl || null))}
                         />
