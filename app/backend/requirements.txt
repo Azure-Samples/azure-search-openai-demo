@@ -340,7 +340,9 @@ pydantic==2.7.1
 pydantic-core==2.18.2
     # via pydantic
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 pymupdf==1.24.4
     # via -r requirements.in
 pymupdfb==1.24.3
@@ -365,7 +367,7 @@ quart-cors==0.7.0
     # via -r requirements.in
 regex==2024.5.15
     # via tiktoken
-requests==2.31.0
+requests==2.32.2
     # via
     #   azure-core
     #   msal
