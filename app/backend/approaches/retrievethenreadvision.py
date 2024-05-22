@@ -6,12 +6,13 @@ from openai import AsyncOpenAI
 from openai.types.chat import (
     ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
+    ChatCompletionMessageParam,
 )
+from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
-from core.messagebuilder import MessageBuilder
 
 
 class RetrieveThenReadVisionApproach(Approach):
@@ -66,15 +67,19 @@ class RetrieveThenReadVisionApproach(Approach):
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
+        self.gpt4v_token_limit = get_token_limit(gpt4v_model)
 
     async def run(
         self,
-        messages: list[dict],
+        messages: list[ChatCompletionMessageParam],
         stream: bool = False,  # Stream is not used in this approach
         session_state: Any = None,
         context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         q = messages[-1]["content"]
+        if not isinstance(q, str):
+            raise ValueError("The most recent message content must be a string.")
+
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
@@ -120,12 +125,7 @@ class RetrieveThenReadVisionApproach(Approach):
         image_list: list[ChatCompletionContentPartImageParam] = []
         user_content: list[ChatCompletionContentPartParam] = [{"text": q, "type": "text"}]
 
-        template = overrides.get("prompt_template", self.system_chat_template_gpt4v)
-        model = self.gpt4v_model
-        message_builder = MessageBuilder(template, model)
-
         # Process results
-
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
 
         if include_gtpV_text:
@@ -138,15 +138,19 @@ class RetrieveThenReadVisionApproach(Approach):
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
 
-        # Append user message
-        message_builder.insert_message("user", user_content)
-        updated_messages = message_builder.messages
+        response_token_limit = 1024
+        updated_messages = build_messages(
+            model=self.gpt4v_model,
+            system_prompt=overrides.get("prompt_template", self.system_chat_template_gpt4v),
+            new_user_content=user_content,
+            max_tokens=self.gpt4v_token_limit - response_token_limit,
+        )
         chat_completion = (
             await self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
                 messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
-                max_tokens=1024,
+                max_tokens=response_token_limit,
                 n=1,
             )
         ).model_dump()

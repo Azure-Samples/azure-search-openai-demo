@@ -197,6 +197,10 @@ numpy==1.26.4
 oauthlib==3.2.2
     # via requests-oauthlib
 openai[datalib]==1.30.1
+    # via
+    #   -r requirements.in
+    #   openai-messages-token-helper
+openai-messages-token-helper==0.1.4
     # via -r requirements.in
 opentelemetry-api==1.24.0
     # via
@@ -251,7 +255,7 @@ opentelemetry-instrumentation-flask==0.45b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.45b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.18.0
+opentelemetry-instrumentation-openai==0.18.2
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.45b0
     # via azure-monitor-opentelemetry
@@ -267,7 +271,7 @@ opentelemetry-instrumentation-wsgi==0.45b0
     # via
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-flask
-opentelemetry-resource-detector-azure==0.1.4
+opentelemetry-resource-detector-azure==0.1.5
     # via azure-monitor-opentelemetry
 opentelemetry-sdk==1.24.0
     # via
@@ -316,7 +320,9 @@ pandas-stubs==2.2.2.240514
 pendulum==3.0.0
     # via microsoft-kiota-serialization-json
 pillow==10.3.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai-messages-token-helper
 portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
@@ -334,9 +340,7 @@ pydantic==2.7.1
 pydantic-core==2.18.2
     # via pydantic
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 pymupdf==1.24.4
     # via -r requirements.in
 pymupdfb==1.24.3
@@ -392,6 +396,7 @@ tenacity==8.3.0
 tiktoken==0.7.0
     # via
     #   -r requirements.in
+    #   openai-messages-token-helper
     #   opentelemetry-instrumentation-openai
 time-machine==2.14.1
     # via pendulum
