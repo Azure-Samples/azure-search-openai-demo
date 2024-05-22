@@ -230,7 +230,9 @@ Once the environment variables are set, run the script using the following comma
 The following environment variables are used to setup the optional login and document level access control:
 
 * `AZURE_USE_AUTHENTICATION`: Enables Entra ID login and document level access control. Set to true before running `azd up`.
-* `AZURE_ENFORCE_ACCESS_CONTROL`: Makes Entra ID login and document level access control required instead of optional. There is no way to use the app without an authenticated account. Set to true before running `azd up`
+* `AZURE_ENFORCE_ACCESS_CONTROL`: Enforces Entra ID based login and document level access control on documents with access control assigned. Set to true before running `azd up`. If `AZURE_ENFORCE_ACCESS_CONTROL` is enabled and `AZURE_ENABLE_UNAUTHENTICATED_ACCESS` is not enabled, then authentication is required to use the app.
+* `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS`: Allows users to search on documents that have no access controls assigned
+* `AZURE_ENABLE_UNAUTHENTICATED_ACCESS`: Allows unauthenticated users to access the chat app, even when `AZURE_ENFORCE_ACCESS_CONTROL` is enabled. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should be set to true to allow unauthenticated users to search on documents that have no access control assigned. Unauthenticated users cannot search on documents with access control assigned.
 * `AZURE_SERVER_APP_ID`: (Required) Application ID of the Microsoft Entra app for the API server.
 * `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Microsoft Entra server app.
 * `AZURE_CLIENT_APP_ID`: Application ID of the Microsoft Entra app for the client UI.
