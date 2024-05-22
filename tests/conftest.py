@@ -9,7 +9,6 @@ import azure.storage.filedatalake.aio
 import msal
 import pytest
 import pytest_asyncio
-from azure.keyvault.secrets.aio import SecretClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SearchField, SearchIndex
@@ -31,7 +30,6 @@ from .mocks import (
     MockAsyncSearchResultsIterator,
     MockAzureCredential,
     MockBlobClient,
-    MockKeyVaultSecretClient,
     MockResponse,
     mock_computervision_response,
 )
@@ -48,11 +46,6 @@ MockSearchIndex = SearchIndex(
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
-
-
-@pytest.fixture
-def mock_get_secret(monkeypatch):
-    monkeypatch.setattr(SecretClient, "get_secret", MockKeyVaultSecretClient().get_secret)
 
 
 @pytest.fixture
@@ -238,9 +231,7 @@ envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
-        "VISION_SECRET_NAME": "mysecret",
         "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
-        "AZURE_KEY_VAULT_NAME": "mykeyvault",
     },
 ]
 
@@ -260,9 +251,27 @@ auth_envs = [
     },
 ]
 
+auth_public_envs = [
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_USE_AUTHENTICATION": "true",
+        "AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS": "true",
+        "AZURE_ENABLE_UNAUTHENTICATED_ACCESS": "true",
+        "AZURE_USER_STORAGE_ACCOUNT": "test-user-storage-account",
+        "AZURE_USER_STORAGE_CONTAINER": "test-user-storage-container",
+        "AZURE_SERVER_APP_ID": "SERVER_APP",
+        "AZURE_SERVER_APP_SECRET": "SECRET",
+        "AZURE_CLIENT_APP_ID": "CLIENT_APP",
+        "AZURE_TENANT_ID": "TENANT_ID",
+    },
+]
+
 
 @pytest.fixture(params=envs, ids=["client0", "client1"])
-def mock_env(monkeypatch, request, mock_get_secret):
+def mock_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -310,7 +319,45 @@ async def auth_client(
     mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
-    mock_get_secret,
+    request,
+):
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+    monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+    monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+    monkeypatch.setenv("USE_USER_UPLOAD", "true")
+    monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-userstorage-account")
+    monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-userstorage-container")
+    monkeypatch.setenv("USE_LOCAL_PDF_PARSER", "true")
+    monkeypatch.setenv("USE_LOCAL_HTML_PARSER", "true")
+    monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-documentintelligence-service")
+    for key, value in request.param.items():
+        monkeypatch.setenv(key, value)
+
+    with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
+        mock_default_azure_credential.return_value = MockAzureCredential()
+        quart_app = app.create_app()
+
+        async with quart_app.test_app() as test_app:
+            quart_app.config.update({"TESTING": True})
+            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            client = test_app.test_client()
+            client.config = quart_app.config
+
+            yield client
+
+
+@pytest_asyncio.fixture(params=auth_public_envs)
+async def auth_public_documents_client(
+    monkeypatch,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_confidential_client_success,
+    mock_validate_token_success,
+    mock_list_groups_success,
+    mock_acs_search_filter,
     request,
 ):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")

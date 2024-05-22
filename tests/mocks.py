@@ -39,16 +39,6 @@ class MockBlob:
         buffer.write(b"test")
 
 
-class MockKeyVaultSecret:
-    def __init__(self, value):
-        self.value = value
-
-
-class MockKeyVaultSecretClient:
-    async def get_secret(self, secret_name):
-        return MockKeyVaultSecret("mysecret")
-
-
 class MockAsyncPageIterator:
     def __init__(self, data):
         self.data = data

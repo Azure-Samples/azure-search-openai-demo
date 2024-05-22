@@ -17,6 +17,8 @@ interface AuthSetup {
     useLogin: boolean;
     // Set to true if access control is enforced by the application
     requireAccessControl: boolean;
+    // Set to true if the application allows unauthenticated access (only applies for documents without access control)
+    enableUnauthenticatedAccess: boolean;
     /**
      * Configuration object to be passed to MSAL instance on creation.
      * For a full list of MSAL.js configuration parameters, visit:
@@ -63,6 +65,10 @@ const authSetup = await fetchAuthSetup();
 export const useLogin = authSetup.useLogin;
 
 export const requireAccessControl = authSetup.requireAccessControl;
+
+export const enableUnauthenticatedAccess = authSetup.enableUnauthenticatedAccess;
+
+export const requireLogin = requireAccessControl && !enableUnauthenticatedAccess;
 
 /**
  * Configuration object to be passed to MSAL instance on creation.

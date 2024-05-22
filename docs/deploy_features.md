@@ -12,6 +12,8 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
+* [Adding an OpenAI load balancer](#adding-an-openai-load-balancer)
+* [Deploying with private endpoints](#deploying-with-private-endpoints)
 * [Using local parsers](#using-local-parsers)
 
 ## Using GPT-4
@@ -52,11 +54,12 @@ Execute the following commands inside your terminal:
 
 > [!NOTE]
 > To revert back to GPT 3.5, run the following commands:
-> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat` to set the name of your old GPT 3.5 deployment.
-> - `azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo` to set the name of your old GPT 3.5 model.
-> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 30` to set the capacity of your old GPT 3.5 deployment.
-> - `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0613` to set the version number of your old GPT 3.5.
-> - `azd up` to update the provisioned resources.
+>
+> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat` to set the name of your old GPT 3.5 deployment.
+> * `azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo` to set the name of your old GPT 3.5 model.
+> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 30` to set the capacity of your old GPT 3.5 deployment.
+> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0613` to set the version number of your old GPT 3.5.
+> * `azd up` to update the provisioned resources.
 >
 > Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse an old GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
 
@@ -86,7 +89,7 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
     ```
 
-3. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
+4. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
 
 If you have already deployed:
 
@@ -151,7 +154,6 @@ And then update existing search documents with the storage URL of the main Blob 
 Going forward, all uploaded documents will have their `storageUrl` set in the search index.
 This is necessary to disambiguate user-uploaded documents from admin-uploaded documents.
 
-
 ## Enabling CORS for an alternate frontend
 
 By default, the deployed Azure web app will only allow requests from the same origin.  To enable CORS for a frontend hosted on a different origin, run:
@@ -165,6 +167,18 @@ For an alternate frontend that's written in Web Components and deployed to Stati
 [azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
 on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
 Both these repositories adhere to the same [HTTP protocol for RAG chat apps](https://github.com/Azure-Samples/ai-chat-app-protocol).
+
+## Adding an OpenAI load balancer
+
+As discussed in more details in our [productionizing guide](docs/productionizing.md), you may want to consider implementing a load balancer between OpenAI instances if you are consistently going over the TPM limit.
+Fortunately, this repository is designed for easy integration with other repositories that create load balancers for OpenAI instances. For seamless integration instructions with this sample, please check:
+
+* [Scale Azure OpenAI for Python with Azure API Management](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-api-management)
+* [Scale Azure OpenAI for Python chat using RAG with Azure Container Apps](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-container-apps)
+
+## Deploying with private endpoints
+
+It is possible to deploy this app with public access disabled, using Azure private endpoints and private DNS Zones. For more details, read [the private deployment guide](docs/deploy_private.md). That requires a multi-stage provisioning, so you will need to do more than just `azd up` after setting the environment variables.
 
 ## Using local parsers
 

@@ -37,7 +37,9 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
 
 1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
 1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
-1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`.
+1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`. Authentication is always required to search on documents with access control assigned, regardless of if unauthenticated access is enabled or not.
+1. (Optional) To allow authenticated users to search on documents that have no access controls assigned, even when access control is required, run `azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true`.
+1. (Optional) To allow unauthenticated users to use the app, even when access control is enforced, run `azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true`. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true if you want unauthenticated users to be able to search on documents with no access control.
 1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
 1. If your auth tenant ID is different from your currently logged in tenant ID, run `azd auth login --tenant-id <YOUR-TENANT-ID>` to login to the authentication tenant simultaneously.
 1. Run `azd up` to deploy the app.
@@ -142,7 +144,7 @@ In both the chat and ask a question modes, under **Developer settings** optional
 
 The sample supports 2 main strategies for adding data with document level access control.
 
-* [Using the Add Documents API](#using-the-add-documents-api). Sample scripts are provided which use the Azure AI Search Service [Add Documents API](https://learn.microsoft.com/rest/api/searchservice/documents/?view=rest-searchservice-2023-11-01&tabs=HTTP) to directly manage access control information on _existing documents_ in the index.
+* [Using the Add Documents API](#using-the-add-documents-api). Sample scripts are provided which use the Azure AI Search Service Add Documents API to directly manage access control information on _existing documents_ in the index.
 * [Using prepdocs and Azure Data Lake Storage Gen 2](#azure-data-lake-storage-gen2-setup). Sample scripts are provided which set up an [Azure Data Lake Storage Gen 2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) account, set the [access control information](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) on files and folders stored there, and ingest those documents into the search index with their  access control information.
 
 ### Using the Add Documents API

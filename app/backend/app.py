@@ -7,11 +7,8 @@ import os
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 
-from azure.core.credentials import AzureKeyCredential
-from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
-from azure.keyvault.secrets.aio import SecretClient
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
@@ -305,8 +302,6 @@ async def setup_clients():
     AZURE_USERSTORAGE_CONTAINER = os.environ.get("AZURE_USERSTORAGE_CONTAINER")
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
-    AZURE_SEARCH_SECRET_NAME = os.getenv("AZURE_SEARCH_SECRET_NAME")
-    AZURE_KEY_VAULT_NAME = os.getenv("AZURE_KEY_VAULT_NAME")
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
@@ -328,6 +323,8 @@ async def setup_clients():
     AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
     AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     AZURE_ENFORCE_ACCESS_CONTROL = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
+    AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
+    AZURE_ENABLE_UNAUTHENTICATED_ACCESS = os.getenv("AZURE_ENABLE_UNAUTHENTICATED_ACCESS", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
     AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
@@ -349,24 +346,11 @@ async def setup_clients():
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
     azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
-    # Fetch any necessary secrets from Key Vault
-    search_key = None
-    if AZURE_KEY_VAULT_NAME:
-        async with SecretClient(
-            vault_url=f"https://{AZURE_KEY_VAULT_NAME}.vault.azure.net", credential=azure_credential
-        ) as key_vault_client:
-            search_key = (
-                AZURE_SEARCH_SECRET_NAME and (await key_vault_client.get_secret(AZURE_SEARCH_SECRET_NAME)).value  # type: ignore[attr-defined]
-            )
-
     # Set up clients for AI Search and Storage
-    search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
-        AzureKeyCredential(search_key) if search_key else azure_credential
-    )
     search_client = SearchClient(
         endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
         index_name=AZURE_SEARCH_INDEX,
-        credential=search_credential,
+        credential=azure_credential,
     )
 
     blob_container_client = ContainerClient(
@@ -378,7 +362,7 @@ async def setup_clients():
     if AZURE_USE_AUTHENTICATION:
         search_index_client = SearchIndexClient(
             endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
-            credential=search_credential,
+            credential=azure_credential,
         )
         search_index = await search_index_client.get_index(AZURE_SEARCH_INDEX)
         await search_index_client.close()
@@ -390,6 +374,8 @@ async def setup_clients():
         client_app_id=AZURE_CLIENT_APP_ID,
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
+        enable_global_documents=AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS,
+        enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
     if USE_USER_UPLOAD:
@@ -414,10 +400,7 @@ async def setup_clients():
             search_images=USE_GPT4V,
         )
         search_info = await setup_search_info(
-            search_service=AZURE_SEARCH_SERVICE,
-            index_name=AZURE_SEARCH_INDEX,
-            azure_credential=azure_credential,
-            search_key=clean_key_if_exists(search_key),
+            search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
         )
         text_embeddings_service = setup_embeddings_service(
             azure_credential=azure_credential,
