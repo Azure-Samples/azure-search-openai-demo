@@ -12,67 +12,108 @@
 .headerContainer {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
+    justify-content: space-between; /* Changed to 'space-between' to spread items out */
+    padding: 0 1rem; /* Increased padding for touch targets */
 }
 
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    margin-right: 40px;
+    /* Removed right margin to allow more space */
     color: #f2f2f2;
     text-decoration: none;
 }
 
 .headerLogo {
-    height: 40px;
+    height: 2rem; /* Reduced height */
+    width: auto; /* Maintain aspect ratio */
 }
 
 .headerTitle {
-    margin-left: 12px;
+    margin-left: 0.5rem; /* Reduced margin */
     font-weight: 600;
 }
 
 .headerNavList {
-    display: flex;
-    list-style: none;
-    padding-left: 0;
+    z-index: 100;
+    display: none; /* Hide the nav list and replace with a hamburger icon on mobile */
 }
 
 .headerNavPageLink {
-    color: #f2f2f2;
-    text-decoration: none;
-    opacity: 0.75;
-
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    transition-duration: 500ms;
-    transition-property: opacity;
-}
-
-.headerNavPageLink:hover {
-    opacity: 1;
-}
-
-.headerNavPageLinkActive {
-    color: #f2f2f2;
-    text-decoration: none;
+    /* Styles can remain the same as they will be hidden on mobile */
 }
 
 .headerNavLeftMargin {
-    margin-left: 20px;
+    /* This can remain since it's related to desktop view */
 }
 
 .headerRightText {
-    font-weight: normal;
-    margin-left: 40px;
+    /* This text may also be hidden on mobile for space */
+    display: none;
 }
 
-.microsoftLogo {
-    height: 23px;
-    font-weight: 600;
-}
-
+.microsoftLogo,
 .githubLogo {
-    height: 20px;
+    /* These logos may need to be hidden or incorporated into a menu on mobile */
+    display: none;
+}
+
+.menuToggle {
+    background: none;
+    border: none;
+    color: #f2f2f2;
+    font-size: 1.5rem; /* Adjust size as needed */
+    cursor: pointer;
+}
+
+@media (min-width: 992px) {
+
+    .headerNavList {
+        display: flex;
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .headerNavPageLink {
+        color: #f2f2f2;
+        text-decoration: none;
+        opacity: 0.75;
+    
+        transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        transition-duration: 500ms;
+        transition-property: opacity;
+    }
+    
+    .headerNavPageLink:hover {
+        opacity: 1;
+    }
+    
+    .headerNavPageLinkActive {
+        color: #f2f2f2;
+        text-decoration: none;
+    }
+    
+    .headerNavLeftMargin {
+        margin-left: 1.25rem;
+    }
+    
+    .headerRightText {
+        font-weight: normal;
+        margin-left: 2.5rem;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    .microsoftLogo {
+        height: 1.25rem;
+        font-weight: 600;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    .githubLogo {
+        height: 1.25rem;
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
