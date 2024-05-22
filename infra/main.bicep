@@ -303,7 +303,7 @@ module backend 'core/host/appservice.bicep' = {
       // Optional login and document level access control system
       AZURE_USE_AUTHENTICATION: useAuthentication
       AZURE_ENFORCE_ACCESS_CONTROL: enforceAccessControl
-      AZURE_ENABLE_GLOBAL_DOCUMENTS: enableGlobalDocuments
+      AZURE_ENABLE_GLOBAL_DOCUMENTS_ACCESS: enableGlobalDocuments
       AZURE_ENABLE_UNAUTHENTICATED_ACCESS: enableUnauthenticatedAccess
       AZURE_SERVER_APP_ID: serverAppId
       AZURE_SERVER_APP_SECRET: serverAppSecret
