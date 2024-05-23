@@ -78,7 +78,7 @@ export function Component(): JSX.Element {
     }, []);
 
     useEffect(() => {
-        if (answer) {
+        if (answer && showSpeechOutput) {
             getSpeechApi(answer.choices[0].message.content).then(speechUrl => {
                 setSpeechUrl(speechUrl);
             });

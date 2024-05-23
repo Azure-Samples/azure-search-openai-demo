@@ -359,6 +359,37 @@ async def test_speech(client):
 
 
 @pytest.mark.asyncio
+async def test_speech_token_refresh(client_with_expiring_token):
+    # First time should create a brand new token
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
 async def test_speech_request_must_be_json(client):
     response = await client.post("/speech")
     assert response.status_code == 415

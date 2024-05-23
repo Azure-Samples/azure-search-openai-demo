@@ -3,10 +3,10 @@ import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
-
 import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
+import { SpeechOutput } from "./SpeechOutput";
 
 interface Props {
     answer: ChatAppResponse;
@@ -63,24 +63,7 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
-                        {showSpeechOutput && isSpeaking && (
-                            <IconButton
-                                style={{ color: "red" }}
-                                iconProps={{ iconName: "Volume3" }}
-                                title="Speak answer"
-                                ariaLabel="Speak answer"
-                                onClick={() => onSpeechSynthesisClicked()}
-                            />
-                        )}
-                        {showSpeechOutput && !isSpeaking && (
-                            <IconButton
-                                style={{ color: "black" }}
-                                iconProps={{ iconName: "Volume3" }}
-                                title="Speak answer"
-                                ariaLabel="Speak answer"
-                                onClick={() => onSpeechSynthesisClicked()}
-                            />
-                        )}
+                        {showSpeechOutput && <SpeechOutput isSpeaking={isSpeaking} onSpeechSynthesisClicked={onSpeechSynthesisClicked}></SpeechOutput>}
                     </div>
                 </Stack>
             </Stack.Item>

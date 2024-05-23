@@ -21,13 +21,15 @@ param searchServiceName string = '' // Set in main.parameters.json
 param searchServiceResourceGroupName string = '' // Set in main.parameters.json
 param searchServiceLocation string = '' // Set in main.parameters.json
 // The free tier does not support managed identity (required) or semantic search (optional)
-@allowed([ 'free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
+@allowed(['free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
-var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : searchServiceSemanticRankerLevel
+var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free')
+  ? 'disabled'
+  : searchServiceSemanticRankerLevel
 
 param storageAccountName string = '' // Set in main.parameters.json
 param storageResourceGroupName string = '' // Set in main.parameters.json
@@ -40,7 +42,7 @@ param userStorageContainerName string = 'user-content'
 
 param appServiceSkuName string // Set in main.parameters.json
 
-@allowed([ 'azure', 'openai', 'azure_custom' ])
+@allowed(['azure', 'openai', 'azure_custom'])
 param openAiHost string // Set in main.parameters.json
 param isAzureOpenAiHost bool = startsWith(openAiHost, 'azure')
 param azureOpenAiCustomUrl string = ''
@@ -166,9 +168,9 @@ param principalId string = ''
 param useApplicationInsights bool = false
 
 @description('Use speech recognition feature in browser')
-param useSpeechInput bool = false
-@description('Use speech service for reading out text')
-param useSpeechOutput bool = false
+param useSpeechInputBrowser bool = false
+@description('Use Azure speech service for reading out text')
+param useSpeechOutputAzure bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
 param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
@@ -182,10 +184,6 @@ param useLocalHtmlParser bool = false
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
-var speechResourceGroupNameString = !empty(speechResourceGroupName) ? speechResourceGroupName : resourceGroup.name
-var speechServiceNameString = !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
-var speechResourceID = '${subscription().id}/resourceGroups/${speechResourceGroupNameString}/providers/Microsoft.CognitiveServices/accounts/${speechServiceNameString}'
-var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServiceName : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
@@ -224,7 +222,7 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
 }
 
 resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechResourceGroupName)) {
-  name: speechResourceGroupNameString
+  name: !empty(speechResourceGroupName) ? speechResourceGroupName : resourceGroup.name
 }
 
 // Monitor application with Azure Monitor
@@ -300,10 +298,10 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
-      AZURE_SPEECH_RESOURCE_ID : useSpeechOutput ? speechResourceID : ''
-      AZURE_SPEECH_REGION : useSpeechOutput ? speechResourceGroupLocation : ''
-      USE_SPEECH_INPUT: useSpeechInput
-      USE_SPEECH_OUTPUT: useSpeechOutput
+      AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.id : ''
+      AZURE_SPEECH_REGION: useSpeechOutputAzure ? speechResourceGroupLocation : ''
+      USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
+      USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
@@ -426,7 +424,9 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   name: 'computerVision'
   scope: computerVisionResourceGroup
   params: {
-    name: computerVisionName
+    name: !empty(computerVisionServiceName)
+      ? computerVisionServiceName
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
     kind: 'ComputerVision'
     location: computerVisionResourceGroupLocation
     tags: tags
@@ -437,11 +437,11 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   }
 }
 
-module speechRecognizer 'core/ai/cognitiveservices.bicep' = if (useSpeechOutput) {
-  name: 'speechRecognizer'
+module speech 'core/ai/cognitiveservices.bicep' = if (useSpeechOutputAzure) {
+  name: 'speech-service'
   scope: speechResourceGroup
   params: {
-    name: speechServiceNameString
+    name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
     kind: 'SpeechServices'
     location: speechResourceGroupLocation
     tags: tags
@@ -829,8 +829,8 @@ output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymen
 output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
 output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
 
-output AZURE_SPEECH_RESOURCE_ID string = useSpeechOutput ? speechResourceID : ''
-output AZURE_SPEECH_REGION string = useSpeechOutput ? speechResourceGroupLocation : ''
+output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.id : ''
+output AZURE_SPEECH_REGION string = useSpeechOutputAzure ? speechResourceGroupLocation : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 

@@ -177,23 +177,23 @@ const Chat = () => {
             };
 
             const response = await chatApi(request, token);
-            let speechUrl = null;
+            let parsedResponse: ChatAppResponse;
             if (!response.body) {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
-                setAnswers([...answers, [question, parsedResponse, null]]);
-                speechUrl = await getSpeechApi(parsedResponse.choices[0].message.content);
-                setAnswers([...answers, [question, parsedResponse, speechUrl]]);
+                parsedResponse = await handleAsyncRequest(question, answers, response.body);
             } else {
-                const parsedResponse: ChatAppResponseOrError = await response.json();
+                let parsedResponseOrError: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
-                    throw Error(parsedResponse.error || "Unknown error");
+                    throw Error(parsedResponseOrError.error || "Unknown error");
                 }
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse, null]]);
-                speechUrl = await getSpeechApi((parsedResponse as ChatAppResponse).choices[0].message.content);
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse, speechUrl]]);
+                parsedResponse = parsedResponseOrError as ChatAppResponse;
+            }
+            setAnswers([...answers, [question, parsedResponse, null]]);
+            if (showSpeechOutput) {
+                const speechUrl = await getSpeechApi(parsedResponse.choices[0].message.content);
+                setAnswers([...answers, [question, parsedResponse, speechUrl]]);
             }
         } catch (e) {
             setError(e);
@@ -408,7 +408,7 @@ const Chat = () => {
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
-                            showSpeechInput={showSpeechOutput}
+                            showSpeechInput={showSpeechInput}
                         />
                     </div>
                 </div>

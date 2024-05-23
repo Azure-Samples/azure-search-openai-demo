@@ -30,7 +30,7 @@ try {
     speechRecognition = null;
 }
 
-export const VoiceInput = ({ updateQuestion }: Props) => {
+export const SpeechInput = ({ updateQuestion }: Props) => {
     const [isRecording, setIsRecording] = useState<boolean>(false);
 
     const startRecording = () => {

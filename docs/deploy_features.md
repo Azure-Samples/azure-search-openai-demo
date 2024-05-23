@@ -114,13 +114,13 @@ You can optionally enable speech input/output by setting the azd environment var
 The speech input feature uses the browser's built-in [Speech Recognition API](https://developer.mozilla.org/docs/Web/API/SpeechRecognition). It may not work in all browser/OS combinations. To enable speech input, run:
 
 ```shell
-azd env set USE_SPEECH_INPUT true
+azd env set USE_SPEECH_INPUT_BROWSER true
 ```
 
 The speech output feature uses [Azure Speech Service](https://learn.microsoft.com/azure/ai-services/speech-service/overview) for speech-to-text. Additional costs will be incurred for using the Azure Speech Service. [See pricing](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/). To enable speech output, run:
 
 ```shell
-azd env set USE_SPEECH_OUTPUT true
+azd env set USE_SPEECH_OUTPUT_AZURE true
 ```
 
 To set [the voice](https://learn.microsoft.com/azure/ai-services/speech-service/language-support?tabs=tts) for the speech output, run:

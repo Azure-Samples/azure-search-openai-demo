@@ -30,6 +30,7 @@ from .mocks import (
     MockAsyncPageIterator,
     MockAsyncSearchResultsIterator,
     MockAzureCredential,
+    MockAzureCredentialExpired,
     MockBlobClient,
     MockResponse,
     mock_computervision_response,
@@ -284,11 +285,11 @@ def mock_env(monkeypatch, request):
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
         monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
         monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
-        monkeypatch.setenv("USE_SPEECH_INPUT", "true")
-        monkeypatch.setenv("USE_SPEECH_OUTPUT", "true")
+        monkeypatch.setenv("USE_SPEECH_INPUT_BROWSER", "true")
+        monkeypatch.setenv("USE_SPEECH_OUTPUT_AZURE", "true")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
-        monkeypatch.setenv("AZURE_SPEECH_RESOURCE_ID", "test-id")
+        monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
         monkeypatch.setenv("AZURE_SPEECH_REGION", "eastus")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
         monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
@@ -317,6 +318,27 @@ async def client(
 
     async with quart_app.test_app() as test_app:
         test_app.app.config.update({"TESTING": True})
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        yield test_app.test_client()
+
+
+@pytest_asyncio.fixture()
+async def client_with_expiring_token(
+    monkeypatch,
+    mock_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
+    mock_speechsdk,
+    mock_blob_container_client,
+    mock_compute_embeddings_call,
+):
+    quart_app = app.create_app()
+
+    async with quart_app.test_app() as test_app:
+        test_app.app.config.update({"TESTING": True})
+        test_app.app.config.update({"azure_credential": MockAzureCredentialExpired()})
         mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()

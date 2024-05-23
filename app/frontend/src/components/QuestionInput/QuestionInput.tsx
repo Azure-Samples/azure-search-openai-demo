@@ -6,7 +6,7 @@ import { useMsal } from "@azure/msal-react";
 
 import { isLoggedIn, requireLogin } from "../../authConfig";
 import styles from "./QuestionInput.module.css";
-import { VoiceInput } from "./VoiceInput";
+import { SpeechInput } from "./SpeechInput";
 
 interface Props {
     onSend: (question: string) => void;
@@ -77,7 +77,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
                     <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
                 </Tooltip>
             </div>
-            {showSpeechInput && <VoiceInput updateQuestion={setQuestion} />}
+            {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
         </Stack>
     );
 };
