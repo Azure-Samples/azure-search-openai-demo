@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Slider } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
+import logo from "./logo-cap.png";
 
 import styles from "./Chat.module.css";
 
@@ -293,7 +294,7 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
+                            <img src={logo} alt="Chat-logo" width={120} height={120} />
                             <h1 className={styles.chatEmptyStateTitle}>¡Bienvenido a tu asistente virtual!</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>¿En que te puedo ayudar?</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
