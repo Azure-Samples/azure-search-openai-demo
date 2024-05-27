@@ -4,6 +4,7 @@ from io import BytesIO
 from typing import Optional
 
 import openai.types
+from azure.cognitiveservices.speech import ResultReason
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.search.documents.models import (
     VectorQuery,
@@ -202,15 +203,41 @@ def mock_computervision_response():
     )
 
 
-class Mock_Audio:
+class MockAudio:
     def __init__(self, audio_data):
         self.audio_data = audio_data
+        self.reason = ResultReason.SynthesizingAudioCompleted
 
     def read(self):
         return self.audio_data
 
 
-class SynthesisResult:
+class MockSpeechSynthesisCancellationDetails:
+    def __init__(self):
+        self.reason = "Canceled"
+        self.error_details = "The synthesis was canceled."
+
+
+class MockAudioCancelled:
+    def __init__(self, audio_data):
+        self.audio_data = audio_data
+        self.reason = ResultReason.Canceled
+        self.cancellation_details = MockSpeechSynthesisCancellationDetails()
+
+    def read(self):
+        return self.audio_data
+
+
+class MockAudioFailure:
+    def __init__(self, audio_data):
+        self.audio_data = audio_data
+        self.reason = ResultReason.NoMatch
+
+    def read(self):
+        return self.audio_data
+
+
+class MockSynthesisResult:
     def __init__(self, result):
         self.__result = result
 
@@ -218,5 +245,13 @@ class SynthesisResult:
         return self.__result
 
 
-def mock_speak_text_async(self, text):
-    return SynthesisResult(Mock_Audio("mock_audio_data"))
+def mock_speak_text_success(self, text):
+    return MockSynthesisResult(MockAudio("mock_audio_data"))
+
+
+def mock_speak_text_cancelled(self, text):
+    return MockSynthesisResult(MockAudioCancelled("mock_audio_data"))
+
+
+def mock_speak_text_failed(self, text):
+    return MockSynthesisResult(MockAudioFailure("mock_audio_data"))

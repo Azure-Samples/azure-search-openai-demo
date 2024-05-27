@@ -11,29 +11,27 @@ import { SpeechOutput } from "./SpeechOutput";
 interface Props {
     answer: ChatAppResponse;
     isSelected?: boolean;
-    isSpeaking?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
     onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
-    onSpeechSynthesisClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
     showSpeechOutput?: boolean;
+    speechUrl: string | null;
 }
 
 export const Answer = ({
     answer,
     isSelected,
-    isSpeaking,
     isStreaming,
     onCitationClicked,
     onThoughtProcessClicked,
     onSupportingContentClicked,
-    onSpeechSynthesisClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions,
-    showSpeechOutput
+    showSpeechOutput,
+    speechUrl
 }: Props) => {
     const followupQuestions = answer.choices[0].context.followup_questions;
     const messageContent = answer.choices[0].message.content;
@@ -63,7 +61,7 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
-                        {showSpeechOutput && <SpeechOutput isSpeaking={isSpeaking} onSpeechSynthesisClicked={onSpeechSynthesisClicked}></SpeechOutput>}
+                        {showSpeechOutput && <SpeechOutput url={speechUrl} />}
                     </div>
                 </Stack>
             </Stack.Item>

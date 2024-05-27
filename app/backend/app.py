@@ -8,7 +8,13 @@ import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 
-import azure.cognitiveservices.speech as speechsdk
+from azure.cognitiveservices.speech import (
+    ResultReason,
+    SpeechConfig,
+    SpeechSynthesisOutputFormat,
+    SpeechSynthesisResult,
+    SpeechSynthesizer,
+)
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -251,7 +257,9 @@ async def speech():
 
     speech_token = current_app.config.get(CONFIG_SPEECH_TOKEN)
     if speech_token is None or speech_token.expires_on < time.time() + 60:
-        speech_token = await current_app.config[CONFIG_CREDENTIAL].get_token("https://cognitiveservices.azure.com")
+        speech_token = await current_app.config[CONFIG_CREDENTIAL].get_token(
+            "https://cognitiveservices.azure.com/.default"
+        )
         current_app.config[CONFIG_SPEECH_TOKEN] = speech_token
 
     request_json = await request.get_json()
@@ -260,12 +268,22 @@ async def speech():
         auth_token = (
             "aad#" + current_app.config[CONFIG_SPEECH_SERVICE_ID] + "#" + current_app.config[CONFIG_SPEECH_TOKEN].token
         )
-        speech_config = speechsdk.SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_REGION])
+        speech_config = SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_REGION])
         speech_config.speech_synthesis_voice_name = current_app.config[CONFIG_SPEECH_VOICE]
-        speech_config.speech_synthesis_output_format = speechsdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
-        synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
-        result = synthesizer.speak_text_async(text).get()
-        return result.audio_data, 200, {"Content-Type": "audio/mp3"}
+        speech_config.speech_synthesis_output_format = SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+        synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+        result: SpeechSynthesisResult = synthesizer.speak_text_async(text).get()
+        if result.reason == ResultReason.SynthesizingAudioCompleted:
+            return result.audio_data, 200, {"Content-Type": "audio/mp3"}
+        elif result.reason == ResultReason.Canceled:
+            cancellation_details = result.cancellation_details
+            current_app.logger.error(
+                "Speech synthesis canceled: %s %s", cancellation_details.reason, cancellation_details.error_details
+            )
+            raise Exception("Speech synthesis canceled. Check logs for details.")
+        else:
+            current_app.logger.error("Unexpected result reason: %s", result.reason)
+            raise Exception("Speech synthesis failed. Check logs for details.")
     except Exception as e:
         logging.exception("Exception in /speech")
         return jsonify({"error": str(e)}), 500
@@ -377,7 +395,7 @@ async def setup_clients():
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_REGION = os.getenv("AZURE_SPEECH_REGION")
-    AZURE_SPEECH_VOICE = os.getenv("AZURE_SPEECH_VOICE")
+    AZURE_SPEECH_VOICE = os.getenv("AZURE_SPEECH_VOICE", "en-US-AndrewMultilingualNeural")
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
@@ -472,7 +490,7 @@ async def setup_clients():
             raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_REGION")
         current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
         current_app.config[CONFIG_SPEECH_REGION] = AZURE_SPEECH_REGION
-        current_app.config[CONFIG_SPEECH_VOICE] = AZURE_SPEECH_VOICE or "en-US-SaraNeural"
+        current_app.config[CONFIG_SPEECH_VOICE] = AZURE_SPEECH_VOICE
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_TOKEN] = None
         current_app.config[CONFIG_CREDENTIAL] = azure_credential

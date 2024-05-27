@@ -50,7 +50,7 @@ export function Component(): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
     const [answer, setAnswer] = useState<ChatAppResponse>();
-    const [speechUrl, setSpeechUrl] = useState<string | null>();
+    const [speechUrl, setSpeechUrl] = useState<string | null>(null);
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
@@ -267,8 +267,7 @@ export function Component(): JSX.Element {
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
                             showSpeechOutput={showSpeechOutput}
-                            isSpeaking={isSpeaking}
-                            onSpeechSynthesisClicked={() => (isSpeaking ? stopSynthesis() : startSynthesis(speechUrl || null))}
+                            speechUrl={speechUrl}
                         />
                     </div>
                 )}

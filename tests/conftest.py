@@ -4,7 +4,7 @@ from typing import IO
 from unittest import mock
 
 import aiohttp
-import azure.cognitiveservices.speech as speechsdk
+import azure.cognitiveservices.speech
 import azure.storage.filedatalake
 import azure.storage.filedatalake.aio
 import msal
@@ -34,7 +34,9 @@ from .mocks import (
     MockBlobClient,
     MockResponse,
     mock_computervision_response,
-    mock_speak_text_async,
+    mock_speak_text_cancelled,
+    mock_speak_text_failed,
+    mock_speak_text_success,
 )
 
 MockSearchIndex = SearchIndex(
@@ -63,8 +65,18 @@ def mock_compute_embeddings_call(monkeypatch):
 
 
 @pytest.fixture
-def mock_speechsdk(monkeypatch):
-    monkeypatch.setattr(speechsdk.SpeechSynthesizer, "speak_text_async", mock_speak_text_async)
+def mock_speech_success(monkeypatch):
+    monkeypatch.setattr(azure.cognitiveservices.speech.SpeechSynthesizer, "speak_text_async", mock_speak_text_success)
+
+
+@pytest.fixture
+def mock_speech_cancelled(monkeypatch):
+    monkeypatch.setattr(azure.cognitiveservices.speech.SpeechSynthesizer, "speak_text_async", mock_speak_text_cancelled)
+
+
+@pytest.fixture
+def mock_speech_failed(monkeypatch):
+    monkeypatch.setattr(azure.cognitiveservices.speech.SpeechSynthesizer, "speak_text_async", mock_speak_text_failed)
 
 
 @pytest.fixture
@@ -310,7 +322,6 @@ async def client(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_acs_search,
-    mock_speechsdk,
     mock_blob_container_client,
     mock_compute_embeddings_call,
 ):
@@ -330,7 +341,6 @@ async def client_with_expiring_token(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_acs_search,
-    mock_speechsdk,
     mock_blob_container_client,
     mock_compute_embeddings_call,
 ):

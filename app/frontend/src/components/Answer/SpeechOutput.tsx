@@ -1,33 +1,43 @@
+import { useState } from "react";
+
 import { IconButton } from "@fluentui/react";
 
 interface Props {
-    isSpeaking?: boolean;
-    onSpeechSynthesisClicked: () => void;
+    url: string | null;
 }
 
-export const SpeechOutput = ({ isSpeaking, onSpeechSynthesisClicked }: Props) => {
-    // The state of this is managed by the parent component, to ensure that
-    // only one speech is outputted at any given time.
+let audio = new Audio();
+
+export const SpeechOutput = ({ url }: Props) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const startOrStopAudio = async () => {
+        if (isPlaying) {
+            audio.pause();
+            return;
+        }
+
+        if (!url) {
+            console.error("Speech output is not yet available.");
+            return;
+        }
+        audio = new Audio(url);
+        await audio.play();
+        audio.addEventListener("ended", () => {
+            setIsPlaying(false);
+        });
+        setIsPlaying(true);
+    };
+
+    const color = isPlaying ? "red" : "black";
     return (
-        <>
-            {isSpeaking && (
-                <IconButton
-                    style={{ color: "red" }}
-                    iconProps={{ iconName: "Volume3" }}
-                    title="Speak answer"
-                    ariaLabel="Speak answer"
-                    onClick={() => onSpeechSynthesisClicked()}
-                />
-            )}
-            {!isSpeaking && (
-                <IconButton
-                    style={{ color: "black" }}
-                    iconProps={{ iconName: "Volume3" }}
-                    title="Speak answer"
-                    ariaLabel="Speak answer"
-                    onClick={() => onSpeechSynthesisClicked()}
-                />
-            )}
-        </>
+        <IconButton
+            style={{ color: color }}
+            iconProps={{ iconName: "Volume3" }}
+            title="Speak answer"
+            ariaLabel="Speak answer"
+            onClick={() => startOrStopAudio()}
+            disabled={!url}
+        />
     );
 };

@@ -31,8 +31,6 @@ import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 
-let audio = new Audio();
-
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
@@ -65,7 +63,6 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse, speechUrl: string | null][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse, speechUrl: string | null][]>([]);
-    const [runningIndex, setRunningIndex] = useState<number>(-1);
 
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
@@ -296,30 +293,6 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const startOrStopSynthesis = async (url: string | null, index: number) => {
-        if (runningIndex === index) {
-            audio.pause();
-            setRunningIndex(-1);
-            return;
-        }
-
-        if (runningIndex !== -1) {
-            audio.pause();
-            setRunningIndex(-1);
-        }
-
-        if (!url) {
-            return;
-        }
-
-        audio = new Audio(url);
-        await audio.play();
-        audio.addEventListener("ended", () => {
-            setRunningIndex(-1);
-        });
-        setRunningIndex(index);
-    };
-
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
@@ -354,8 +327,7 @@ const Chat = () => {
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutput={showSpeechOutput}
-                                                onSpeechSynthesisClicked={() => startOrStopSynthesis(streamedAnswer[2], index)}
-                                                isSpeaking={runningIndex === index}
+                                                speechUrl={streamedAnswer[2]}
                                             />
                                         </div>
                                     </div>
@@ -376,8 +348,7 @@ const Chat = () => {
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutput={showSpeechOutput}
-                                                onSpeechSynthesisClicked={() => startOrStopSynthesis(answer[2], index)}
-                                                isSpeaking={runningIndex === index}
+                                                speechUrl={answer[2]}
                                             />
                                         </div>
                                     </div>

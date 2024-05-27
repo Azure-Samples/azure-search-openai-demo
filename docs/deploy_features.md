@@ -126,7 +126,7 @@ azd env set USE_SPEECH_OUTPUT_AZURE true
 To set [the voice](https://learn.microsoft.com/azure/ai-services/speech-service/language-support?tabs=tts) for the speech output, run:
 
 ```shell
-azd env set AZURE_SPEECH_VOICE en-US-FableMultilingualNeuralHD
+azd env set AZURE_SPEECH_VOICE en-US-AndrewMultilingualNeural
 ```
 
 ## Enabling Integrated Vectorization

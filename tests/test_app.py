@@ -347,7 +347,7 @@ async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch
 
 
 @pytest.mark.asyncio
-async def test_speech(client):
+async def test_speech(client, mock_speech_success):
     response = await client.post(
         "/speech",
         json={
@@ -359,7 +359,7 @@ async def test_speech(client):
 
 
 @pytest.mark.asyncio
-async def test_speech_token_refresh(client_with_expiring_token):
+async def test_speech_token_refresh(client_with_expiring_token, mock_speech_success):
     # First time should create a brand new token
     response = await client_with_expiring_token.post(
         "/speech",
@@ -390,11 +390,37 @@ async def test_speech_token_refresh(client_with_expiring_token):
 
 
 @pytest.mark.asyncio
-async def test_speech_request_must_be_json(client):
+async def test_speech_request_must_be_json(client, mock_speech_success):
     response = await client.post("/speech")
     assert response.status_code == 415
     result = await response.get_json()
     assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_cancelled(client, mock_speech_cancelled):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis canceled. Check logs for details."
+
+
+@pytest.mark.asyncio
+async def test_speech_request_failed(client, mock_speech_failed):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis failed. Check logs for details."
 
 
 @pytest.mark.asyncio
