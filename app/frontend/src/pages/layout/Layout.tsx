@@ -42,7 +42,7 @@ const Layout = () => {
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
+                    <h4 className={styles.headerRightText}>Capgemini Assistant Powered by OpenAI</h4>
                     {useLogin && <LoginButton />}
                 </div>
             </header>
