@@ -14,13 +14,13 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>Asistente virtual | Capgemini | Powered by OpenAi</h3>
+                        <h3 className={styles.headerTitle}>Asistente virtual | Capgemini</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
                             <li>
                                 <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Chat
+                                    Inicio
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>

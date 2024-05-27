@@ -296,7 +296,7 @@ const Chat = () => {
                         <div className={styles.chatEmptyState}>
                             <img src={logo} alt="Chat-logo" width={120} height={120} />
                             <h1 className={styles.chatEmptyStateTitle}>¡Bienvenido a tu asistente virtual!</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>¿En que te puedo ayudar?</h2>
+                            <h2 className={styles.chatEmptyStateSubtitle}>¿En qué te puedo ayudar?</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
@@ -362,7 +362,7 @@ const Chat = () => {
                     <div className={styles.chatInput}>
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
+                            placeholder="Escribe aquí tu pregunta."
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                         />
