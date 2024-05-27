@@ -12,9 +12,9 @@ aiohttp==3.9.5
     #   microsoft-kiota-authentication-azure
 aiosignal==1.3.1
     # via aiohttp
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
-anyio==4.3.0
+anyio==4.4.0
     # via
     #   httpx
     #   openai
@@ -91,7 +91,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -128,7 +128,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.0.0
+importlib-metadata==7.1.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -152,7 +152,7 @@ markupsafe==2.1.5
     #   jinja2
     #   quart
     #   werkzeug
-microsoft-kiota-abstractions==1.3.2
+microsoft-kiota-abstractions==1.3.3
     # via
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
@@ -181,7 +181,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.4.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -196,7 +196,7 @@ numpy==1.26.4
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.30.1
+openai[datalib]==1.30.3
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -255,7 +255,7 @@ opentelemetry-instrumentation-flask==0.45b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.45b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.18.2
+opentelemetry-instrumentation-openai==0.20.0
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.45b0
     # via azure-monitor-opentelemetry
@@ -357,7 +357,7 @@ python-jose[cryptography]==3.3.0
     # via -r requirements.in
 pytz==2024.1
     # via pandas
-quart==0.19.5
+quart==0.19.6
     # via
     #   -r requirements.in
     #   quart-cors
@@ -365,7 +365,7 @@ quart-cors==0.7.0
     # via -r requirements.in
 regex==2024.5.15
     # via tiktoken
-requests==2.31.0
+requests==2.32.2
     # via
     #   azure-core
     #   msal
@@ -406,7 +406,7 @@ types-beautifulsoup4==4.12.0.20240511
     # via -r requirements.in
 types-html5lib==1.1.11.20240228
     # via types-beautifulsoup4
-types-pillow==10.2.0.20240511
+types-pillow==10.2.0.20240520
     # via -r requirements.in
 types-pyasn1==0.6.0.20240402
     # via types-python-jose
@@ -414,7 +414,7 @@ types-python-jose==3.3.4.20240106
     # via -r requirements.in
 types-pytz==2024.1.0.20240417
     # via pandas-stubs
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   azure-ai-documentintelligence
     #   azure-core
@@ -447,7 +447,7 @@ wsproto==1.2.0
     # via hypercorn
 yarl==1.9.4
     # via aiohttp
-zipp==3.18.2
+zipp==3.19.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
