@@ -18,10 +18,10 @@ class ChatUser(HttpUser):
                     {
                         "content": random.choice(
                             [
-                                "¿De qué trata el convenio entre Microsoft y Capgemini?",
-                                "¿Cuales son los principales servicios financieros ofrecidos por Capgemini?",
-                                "¿Qué oferta de valor ofrece el mantener convenio con Capgemini?",
-                                "¿Cuáles son los principales clientes de Capgemini?",
+                                "What is included in my Northwind Health Plus plan that is not in standard?",
+                                "What does a Product Manager do?",
+                                "What happens in a performance review?",
+                                "Whats your whistleblower policy?",
                             ]
                         ),
                         "role": "user",

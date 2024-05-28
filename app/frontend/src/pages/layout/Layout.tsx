@@ -25,7 +25,7 @@ const Layout = () => {
                             </li>
                             <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Ask a question
+                                    Q&A
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
@@ -42,7 +42,7 @@ const Layout = () => {
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Capgemini Assistant Powered by OpenAI</h4>
+                    <h4 className={styles.headerRightText}>Powered by OpenAI</h4>
                     {useLogin && <LoginButton />}
                 </div>
             </header>
