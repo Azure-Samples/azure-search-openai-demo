@@ -64,7 +64,7 @@ if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
 fi
 
 
-./.venv/bin/python ./app/backend/prepdocs.py './data/*' --verbose \
+./.venv/bin/python ./app/backend/prepdocs.py './data/FS.MS.1100.pdf' --verbose \
 --subscriptionid $AZURE_SUBSCRIPTION_ID  \
 --storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \
@@ -77,4 +77,4 @@ $searchImagesArg $visionEndpointArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
 $tenantArg $aclArg \
 $disableVectorsArg $localPdfParserArg $localHtmlParserArg \
-$integratedVectorizationArg 
+$integratedVectorizationArg --remove
