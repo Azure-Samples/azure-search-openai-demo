@@ -169,8 +169,9 @@ async def main():
         print("Not setting up authentication.")
         exit(0)
 
-    print("Setting up authentication...")
-    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID", os.environ["AZURE_TENANT_ID"]))
+    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.environ["AZURE_TENANT_ID"])
+    print("Setting up authentication for tenant", auth_tenant)
+    credential = AzureDeveloperCliCredential(tenant_id=auth_tenant)
 
     scopes = ["https://graph.microsoft.com/.default"]
     graph_client = GraphServiceClient(credentials=credential, scopes=scopes)

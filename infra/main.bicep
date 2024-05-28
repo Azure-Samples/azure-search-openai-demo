@@ -411,6 +411,7 @@ module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
     kind: 'FormRecognizer'
     publicNetworkAccess: publicNetworkAccess
     location: documentIntelligenceResourceGroupLocation
+    disableLocalAuth: true
     tags: tags
     sku: {
       name: documentIntelligenceSkuName
