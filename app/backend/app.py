@@ -265,6 +265,8 @@ async def speech():
     request_json = await request.get_json()
     text = request_json["text"]
     try:
+        # Construct a token as described in documentation:
+        # https://learn.microsoft.com/azure/ai-services/speech-service/how-to-configure-azure-ad-auth?pivots=programming-language-python
         auth_token = (
             "aad#" + current_app.config[CONFIG_SPEECH_SERVICE_ID] + "#" + current_app.config[CONFIG_SPEECH_TOKEN].token
         )
