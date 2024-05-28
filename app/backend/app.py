@@ -64,10 +64,10 @@ from config import (
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
     CONFIG_SPEECH_INPUT_ENABLED,
     CONFIG_SPEECH_OUTPUT_ENABLED,
-    CONFIG_SPEECH_REGION,
     CONFIG_SPEECH_SERVICE_ID,
-    CONFIG_SPEECH_TOKEN,
-    CONFIG_SPEECH_VOICE,
+    CONFIG_SPEECH_SERVICE_LOCATION,
+    CONFIG_SPEECH_SERVICE_TOKEN,
+    CONFIG_SPEECH_SERVICE_VOICE,
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
@@ -255,12 +255,12 @@ async def speech():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
 
-    speech_token = current_app.config.get(CONFIG_SPEECH_TOKEN)
+    speech_token = current_app.config.get(CONFIG_SPEECH_SERVICE_TOKEN)
     if speech_token is None or speech_token.expires_on < time.time() + 60:
         speech_token = await current_app.config[CONFIG_CREDENTIAL].get_token(
             "https://cognitiveservices.azure.com/.default"
         )
-        current_app.config[CONFIG_SPEECH_TOKEN] = speech_token
+        current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = speech_token
 
     request_json = await request.get_json()
     text = request_json["text"]
@@ -268,10 +268,13 @@ async def speech():
         # Construct a token as described in documentation:
         # https://learn.microsoft.com/azure/ai-services/speech-service/how-to-configure-azure-ad-auth?pivots=programming-language-python
         auth_token = (
-            "aad#" + current_app.config[CONFIG_SPEECH_SERVICE_ID] + "#" + current_app.config[CONFIG_SPEECH_TOKEN].token
+            "aad#"
+            + current_app.config[CONFIG_SPEECH_SERVICE_ID]
+            + "#"
+            + current_app.config[CONFIG_SPEECH_SERVICE_TOKEN].token
         )
-        speech_config = SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_REGION])
-        speech_config.speech_synthesis_voice_name = current_app.config[CONFIG_SPEECH_VOICE]
+        speech_config = SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_SERVICE_LOCATION])
+        speech_config.speech_synthesis_voice_name = current_app.config[CONFIG_SPEECH_SERVICE_VOICE]
         speech_config.speech_synthesis_output_format = SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
         synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result: SpeechSynthesisResult = synthesizer.speak_text_async(text).get()
@@ -396,7 +399,7 @@ async def setup_clients():
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
-    AZURE_SPEECH_REGION = os.getenv("AZURE_SPEECH_REGION")
+    AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
     AZURE_SPEECH_VOICE = os.getenv("AZURE_SPEECH_VOICE", "en-US-AndrewMultilingualNeural")
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
@@ -488,13 +491,13 @@ async def setup_clients():
     if USE_SPEECH_OUTPUT_AZURE:
         if not AZURE_SPEECH_SERVICE_ID or AZURE_SPEECH_SERVICE_ID == "":
             raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_ID")
-        if not AZURE_SPEECH_REGION:
-            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_REGION")
+        if not AZURE_SPEECH_SERVICE_LOCATION or AZURE_SPEECH_SERVICE_LOCATION == "":
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
         current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
-        current_app.config[CONFIG_SPEECH_REGION] = AZURE_SPEECH_REGION
-        current_app.config[CONFIG_SPEECH_VOICE] = AZURE_SPEECH_VOICE
+        current_app.config[CONFIG_SPEECH_SERVICE_LOCATION] = AZURE_SPEECH_SERVICE_LOCATION
+        current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_VOICE
         # Wait until token is needed to fetch for the first time
-        current_app.config[CONFIG_SPEECH_TOKEN] = None
+        current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
         current_app.config[CONFIG_CREDENTIAL] = azure_credential
 
     if OPENAI_HOST.startswith("azure"):

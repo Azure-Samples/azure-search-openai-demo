@@ -155,7 +155,7 @@ class IntegratedVectorizerStrategy(Strategy):
             container=ds_container,
             data_deletion_detection_policy=NativeBlobSoftDeleteDeletionDetectionPolicy(),
         )
-
+        return
         await ds_client.create_or_update_data_source_connection(data_source_connection)
         logger.info("Search indexer data source connection updated.")
 

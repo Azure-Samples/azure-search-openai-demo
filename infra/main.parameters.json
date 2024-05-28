@@ -158,8 +158,14 @@
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
     },
-    "speechResourceGroupName": {
-      "value": "${AZURE_SPEECH_RESOURCE_GROUP}"
+    "speechServiceSkuName": {
+      "value": "${AZURE_SPEECH_SERVICE_SKU=S0}"
+    },
+    "speechServiceResourceGroupName": {
+      "value": "${AZURE_SPEECH_SERVICE_RESOURCE_GROUP}"
+    },
+    "speechServiceLocation": {
+      "value": "${AZURE_SPEECH_SERVICE_LOCATION}"
     },
     "useAuthentication": {
       "value": "${AZURE_USE_AUTHENTICATION=false}"

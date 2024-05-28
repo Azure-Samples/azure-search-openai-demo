@@ -49,10 +49,10 @@ param azureOpenAiApiVersion string = ''
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 
-param speechResourceGroupName string = ''
-param speechResourceGroupLocation string = location
+param speechServiceResourceGroupName string = ''
+param speechServiceLocation string = ''
 param speechServiceName string = ''
-param speechServiceSkuName string = 'S0'
+param speechServiceSkuName string // Set in main.parameters.json
 param useGPT4V bool = false
 
 @description('Location for the OpenAI resource group')
@@ -219,8 +219,8 @@ resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' ex
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
 }
 
-resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechResourceGroupName)) {
-  name: !empty(speechResourceGroupName) ? speechResourceGroupName : resourceGroup.name
+resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechServiceResourceGroupName)) {
+  name: !empty(speechServiceResourceGroupName) ? speechServiceResourceGroupName : resourceGroup.name
 }
 
 // Monitor application with Azure Monitor
@@ -297,7 +297,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.id : ''
-      AZURE_SPEECH_REGION: useSpeechOutputAzure ? speechResourceGroupLocation : ''
+      AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
       USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
       USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
       // Shared by all OpenAI deployments
@@ -442,7 +442,7 @@ module speech 'core/ai/cognitiveservices.bicep' = if (useSpeechOutputAzure) {
   params: {
     name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
     kind: 'SpeechServices'
-    location: speechResourceGroupLocation
+    location: !empty(speechServiceLocation) ? speechServiceLocation : location
     tags: tags
     sku: {
       name: speechServiceSkuName
@@ -829,7 +829,7 @@ output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
 output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
 
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.id : ''
-output AZURE_SPEECH_REGION string = useSpeechOutputAzure ? speechResourceGroupLocation : ''
+output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 
