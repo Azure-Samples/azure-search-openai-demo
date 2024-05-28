@@ -175,20 +175,19 @@ const Chat = () => {
             };
 
             const response = await chatApi(request, token);
-            let parsedResponse: ChatAppResponse;
             if (!response.body) {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                parsedResponse = await handleAsyncRequest(question, answers, response.body);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
+                setAnswers([...answers, [question, parsedResponse]]);
             } else {
-                let parsedResponseOrError: ChatAppResponseOrError = await response.json();
+                const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
-                    throw Error(parsedResponseOrError.error || "Unknown error");
+                    throw Error(parsedResponse.error || "Unknown error");
                 }
-                parsedResponse = parsedResponseOrError as ChatAppResponse;
+                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
-            setAnswers([...answers, [question, parsedResponse]]);
         } catch (e) {
             setError(e);
         } finally {
