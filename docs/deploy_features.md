@@ -43,10 +43,10 @@ Execute the following commands inside your terminal:
 1. To set the Azure OpenAI deploymemnt version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0125-Preview
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
     ```
 
-1. To updat the deployment with the new parameters, run this command.
+1. To update the deployment with the new parameters, run this command.
 
     ```bash
     azd up
