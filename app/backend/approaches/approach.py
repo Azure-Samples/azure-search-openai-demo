@@ -23,6 +23,7 @@ from azure.search.documents.models import (
     VectorQuery,
 )
 from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionMessageParam
 
 from core.authentication import AuthenticationHelper
 from text import nonewlines
@@ -254,6 +255,10 @@ class Approach(ABC):
         return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding")
 
     async def run(
-        self, messages: list[dict], stream: bool = False, session_state: Any = None, context: dict[str, Any] = {}
+        self,
+        messages: list[ChatCompletionMessageParam],
+        stream: bool = False,
+        session_state: Any = None,
+        context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         raise NotImplementedError

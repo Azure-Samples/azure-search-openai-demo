@@ -3,10 +3,11 @@ from typing import Any, AsyncGenerator, Optional, Union
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
+from openai.types.chat import ChatCompletionMessageParam
+from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
-from core.messagebuilder import MessageBuilder
 
 
 class RetrieveThenReadApproach(Approach):
@@ -66,15 +67,18 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.content_field = content_field
         self.query_language = query_language
         self.query_speller = query_speller
+        self.chatgpt_token_limit = get_token_limit(chatgpt_model)
 
     async def run(
         self,
-        messages: list[dict],
+        messages: list[ChatCompletionMessageParam],
         stream: bool = False,  # Stream is not used in this approach
         session_state: Any = None,
         context: dict[str, Any] = {},
     ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
         q = messages[-1]["content"]
+        if not isinstance(q, str):
+            raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
         has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
@@ -105,29 +109,29 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             minimum_reranker_score,
         )
 
-        user_content = [q]
-
-        template = overrides.get("prompt_template", self.system_chat_template)
-        model = self.chatgpt_model
-        message_builder = MessageBuilder(template, model)
-
         # Process results
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
 
         # Append user message
         content = "\n".join(sources_content)
         user_content = q + "\n" + f"Sources:\n {content}"
-        message_builder.insert_message("user", user_content)
-        message_builder.insert_message("assistant", self.answer)
-        message_builder.insert_message("user", self.question)
-        updated_messages = message_builder.messages
+
+        response_token_limit = 1024
+        updated_messages = build_messages(
+            model=self.chatgpt_model,
+            system_prompt=overrides.get("prompt_template", self.system_chat_template),
+            few_shots=[{"role": "user", "content": self.question}, {"role": "assistant", "content": self.answer}],
+            new_user_content=user_content,
+            max_tokens=self.chatgpt_token_limit - response_token_limit,
+        )
+
         chat_completion = (
             await self.openai_client.chat.completions.create(
                 # Azure OpenAI takes the deployment name as the model name
                 model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
                 messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
-                max_tokens=1024,
+                max_tokens=response_token_limit,
                 n=1,
             )
         ).model_dump()
