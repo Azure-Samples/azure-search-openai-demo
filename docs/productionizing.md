@@ -73,22 +73,22 @@ or set up a loadtest with Azure Load Testing.
 To use locust, first install the dev requirements that includes locust:
 
 ```shell
-python3 -m pip install -r requirements-dev.txt
+python -m pip install -r requirements-dev.txt
 ```
 
 Or manually install locust:
 
 ```shell
-python3 -m pip install locust
+python -m pip install locust
 ```
 
-Then run the locust command:
+Then run the locust command, specifying the name of the User class to use from `locustfile.py`. We've provided a `ChatUser` class that simulates a user asking questions and receiving answers, as well as a `ChatVisionUser` to simulate a user asking questions with the [GPT-4 vision mode enabled](/docs/gpt4v.md).
 
 ```shell
-locust
+locust ChatUser
 ```
 
-Open the locust UI at http://localhost:8089/, the URI displayed in the terminal.
+Open the locust UI at [http://localhost:8089/](http://localhost:8089/), the URI displayed in the terminal.
 
 Start a new test with the URI of your website, e.g. `https://my-chat-app.azurewebsites.net`.
 Do *not* end the URI with a slash. You can start by pointing at your localhost if you're concerned
