@@ -14,6 +14,7 @@ export const SpeechOutput = ({ url }: Props) => {
     const startOrStopAudio = async () => {
         if (isPlaying) {
             audio.pause();
+            setIsPlaying(false);
             return;
         }
 

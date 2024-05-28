@@ -61,8 +61,9 @@ const Chat = () => {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
-    const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse, speechUrl: string | null][]>([]);
-    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse, speechUrl: string | null][]>([]);
+    const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+    const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+    const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
 
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
@@ -86,7 +87,7 @@ const Chat = () => {
         });
     };
 
-    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse, string | null][], responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>) => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
@@ -98,7 +99,7 @@ const Chat = () => {
                         ...askResponse,
                         choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
                     };
-                    setStreamedAnswers([...answers, [question, latestResponse, null]]);
+                    setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
                 }, 33);
             });
@@ -187,11 +188,7 @@ const Chat = () => {
                 }
                 parsedResponse = parsedResponseOrError as ChatAppResponse;
             }
-            setAnswers([...answers, [question, parsedResponse, null]]);
-            if (showSpeechOutput) {
-                const speechUrl = await getSpeechApi(parsedResponse.choices[0].message.content);
-                setAnswers([...answers, [question, parsedResponse, speechUrl]]);
-            }
+            setAnswers([...answers, [question, parsedResponse]]);
         } catch (e) {
             setError(e);
         } finally {
@@ -215,6 +212,19 @@ const Chat = () => {
     useEffect(() => {
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (answers && showSpeechOutput) {
+            // For each answer that is missing a speech URL, fetch the speech URL
+            for (let i = 0; i < answers.length; i++) {
+                if (!speechUrls[i]) {
+                    getSpeechApi(answers[i][1].choices[0].message.content).then(speechUrl => {
+                        setSpeechUrls([...speechUrls.slice(0, i), speechUrl, ...speechUrls.slice(i + 1)]);
+                    });
+                }
+            }
+        }
+    }, [answers]);
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
@@ -327,7 +337,7 @@ const Chat = () => {
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutput={showSpeechOutput}
-                                                speechUrl={streamedAnswer[2]}
+                                                speechUrl={speechUrls[index]}
                                             />
                                         </div>
                                     </div>
@@ -348,7 +358,7 @@ const Chat = () => {
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutput={showSpeechOutput}
-                                                speechUrl={answer[2]}
+                                                speechUrl={speechUrls[index]}
                                             />
                                         </div>
                                     </div>

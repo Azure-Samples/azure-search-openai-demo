@@ -17,8 +17,6 @@ import { UploadFile } from "../../components/UploadFile";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
-let audio = new Audio();
-
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
@@ -54,7 +52,6 @@ export function Component(): JSX.Element {
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
-    const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
     const client = useLogin ? useMsal().instance : undefined;
 
@@ -129,7 +126,6 @@ export function Component(): JSX.Element {
             const result = await askApi(request, token);
             setAnswer(result);
             setSpeechUrl(null);
-            stopSynthesis();
         } catch (e) {
             setError(e);
         } finally {
@@ -212,29 +208,6 @@ export function Component(): JSX.Element {
 
     const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseGroupsSecurityFilter(!!checked);
-    };
-
-    const startSynthesis = (url: string | null) => {
-        if (isSpeaking) {
-            audio.pause();
-            setIsSpeaking(false);
-        }
-
-        if (url === null) {
-            return;
-        }
-
-        audio = new Audio(url);
-        audio.play();
-        setIsSpeaking(true);
-        audio.addEventListener("ended", () => {
-            setIsSpeaking(false);
-        });
-    };
-
-    const stopSynthesis = () => {
-        audio.pause();
-        setIsSpeaking(false);
     };
 
     return (
