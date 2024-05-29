@@ -34,8 +34,8 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess
-    // Document Intelligence (FormRecognizer) does not support bypass in network acls
-    networkAcls: kind == 'FormRecognizer' ? networkAcls : networkAclsWithBypass
+    // Some services do not support bypass in network acls
+    networkAcls: (kind == 'FormRecognizer' || kind == 'ComputerVision') ? networkAcls : networkAclsWithBypass
     disableLocalAuth: disableLocalAuth
   }
   sku: sku
