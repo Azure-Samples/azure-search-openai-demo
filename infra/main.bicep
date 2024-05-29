@@ -57,7 +57,7 @@ param useGPT4V bool = false
     type: 'location'
   }
 })
-param openAiResourceGroupLocation string = 'eastus'
+param openAiResourceGroupLocation string
 
 param openAiSkuName string = 'S0'
 
