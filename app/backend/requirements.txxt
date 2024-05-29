@@ -1,0 +1,28 @@
+# Requirements
+
+This section lists the requirements for setting up and running the backend application.
+
+## System Requirements
+
+- Operating System: Specify the operating systems that your application supports (e.g., Windows 10, macOS Catalina, Ubuntu 18.04, etc.)
+- Memory: Specify the minimum and recommended RAM (e.g., Minimum: 4GB, Recommended: 8GB)
+- Storage: Specify the minimum and recommended storage (e.g., Minimum: 10GB, Recommended: 20GB)
+
+## Software Requirements
+
+- Runtime Environment: Specify the runtime environment required (e.g., Node.js 14.0 or higher)
+- Database: Specify the database required (e.g., MongoDB 4.0 or higher)
+- Other Software: List any other software that is required (e.g., Docker, specific libraries or frameworks, etc.)
+
+## Network Requirements
+
+- Internet Connection: Specify if an internet connection is required to setup or run the application.
+- Ports: Specify any specific network ports that need to be open for the application to function correctly.
+
+## Skills Required
+
+- Programming Languages: Specify the programming languages that a user needs to know to use or modify the application (e.g., JavaScript, TypeScript, etc.)
+- Frameworks: Specify the frameworks that a user needs to know (e.g., Express.js, React.js, etc.)
+- Database Knowledge: Specify the database technologies a user needs to know (e.g., MongoDB, SQL, etc.)
+
+Please ensure that all these requirements are met before setting up and running the application.
