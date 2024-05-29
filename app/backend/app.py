@@ -520,6 +520,8 @@ async def setup_clients():
             auth_helper=auth_helper,
             vision_endpoint=AZURE_VISION_ENDPOINT,
             vision_token_provider=token_provider,
+            chatgpt_model=OPENAI_CHATGPT_MODEL,
+            chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
             gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
             gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
             embedding_model=OPENAI_EMB_MODEL,
