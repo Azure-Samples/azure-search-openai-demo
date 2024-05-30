@@ -24,6 +24,8 @@ attrs==23.2.0
     # via aiohttp
 azure-ai-documentintelligence==1.0.0b3
     # via -r requirements.in
+azure-cognitiveservices-speech==1.37.0
+    # via -r requirements.in
 azure-common==1.1.28
     # via azure-search-documents
 azure-core==1.30.1
