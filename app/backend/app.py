@@ -4,9 +4,17 @@ import json
 import logging
 import mimetypes
 import os
+import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 
+from azure.cognitiveservices.speech import (
+    ResultReason,
+    SpeechConfig,
+    SpeechSynthesisOutputFormat,
+    SpeechSynthesisResult,
+    SpeechSynthesizer,
+)
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -48,11 +56,18 @@ from config import (
     CONFIG_BLOB_CONTAINER_CLIENT,
     CONFIG_CHAT_APPROACH,
     CONFIG_CHAT_VISION_APPROACH,
+    CONFIG_CREDENTIAL,
     CONFIG_GPT4V_DEPLOYED,
     CONFIG_INGESTER,
     CONFIG_OPENAI_CLIENT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_SPEECH_INPUT_ENABLED,
+    CONFIG_SPEECH_OUTPUT_ENABLED,
+    CONFIG_SPEECH_SERVICE_ID,
+    CONFIG_SPEECH_SERVICE_LOCATION,
+    CONFIG_SPEECH_SERVICE_TOKEN,
+    CONFIG_SPEECH_SERVICE_VOICE,
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
@@ -229,8 +244,54 @@ def config():
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
+            "showSpeechInput": current_app.config[CONFIG_SPEECH_INPUT_ENABLED],
+            "showSpeechOutput": current_app.config[CONFIG_SPEECH_OUTPUT_ENABLED],
         }
     )
+
+
+@bp.route("/speech", methods=["POST"])
+async def speech():
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+
+    speech_token = current_app.config.get(CONFIG_SPEECH_SERVICE_TOKEN)
+    if speech_token is None or speech_token.expires_on < time.time() + 60:
+        speech_token = await current_app.config[CONFIG_CREDENTIAL].get_token(
+            "https://cognitiveservices.azure.com/.default"
+        )
+        current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = speech_token
+
+    request_json = await request.get_json()
+    text = request_json["text"]
+    try:
+        # Construct a token as described in documentation:
+        # https://learn.microsoft.com/azure/ai-services/speech-service/how-to-configure-azure-ad-auth?pivots=programming-language-python
+        auth_token = (
+            "aad#"
+            + current_app.config[CONFIG_SPEECH_SERVICE_ID]
+            + "#"
+            + current_app.config[CONFIG_SPEECH_SERVICE_TOKEN].token
+        )
+        speech_config = SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_SERVICE_LOCATION])
+        speech_config.speech_synthesis_voice_name = current_app.config[CONFIG_SPEECH_SERVICE_VOICE]
+        speech_config.speech_synthesis_output_format = SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+        synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+        result: SpeechSynthesisResult = synthesizer.speak_text_async(text).get()
+        if result.reason == ResultReason.SynthesizingAudioCompleted:
+            return result.audio_data, 200, {"Content-Type": "audio/mp3"}
+        elif result.reason == ResultReason.Canceled:
+            cancellation_details = result.cancellation_details
+            current_app.logger.error(
+                "Speech synthesis canceled: %s %s", cancellation_details.reason, cancellation_details.error_details
+            )
+            raise Exception("Speech synthesis canceled. Check logs for details.")
+        else:
+            current_app.logger.error("Unexpected result reason: %s", result.reason)
+            raise Exception("Speech synthesis failed. Check logs for details.")
+    except Exception as e:
+        logging.exception("Exception in /speech")
+        return jsonify({"error": str(e)}), 500
 
 
 @bp.post("/upload")
@@ -337,8 +398,14 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
+    AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
+    AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
+    AZURE_SPEECH_VOICE = os.getenv("AZURE_SPEECH_VOICE", "en-US-AndrewMultilingualNeural")
+
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
+    USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
+    USE_SPEECH_OUTPUT_AZURE = os.getenv("USE_SPEECH_OUTPUT_AZURE", "").lower() == "true"
 
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
@@ -421,6 +488,18 @@ async def setup_clients():
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
 
+    if USE_SPEECH_OUTPUT_AZURE:
+        if not AZURE_SPEECH_SERVICE_ID or AZURE_SPEECH_SERVICE_ID == "":
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_ID")
+        if not AZURE_SPEECH_SERVICE_LOCATION or AZURE_SPEECH_SERVICE_LOCATION == "":
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
+        current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
+        current_app.config[CONFIG_SPEECH_SERVICE_LOCATION] = AZURE_SPEECH_SERVICE_LOCATION
+        current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_VOICE
+        # Wait until token is needed to fetch for the first time
+        current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
+        current_app.config[CONFIG_CREDENTIAL] = azure_credential
+
     if OPENAI_HOST.startswith("azure"):
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
@@ -456,6 +535,8 @@ async def setup_clients():
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
+    current_app.config[CONFIG_SPEECH_INPUT_ENABLED] = USE_SPEECH_INPUT_BROWSER
+    current_app.config[CONFIG_SPEECH_OUTPUT_ENABLED] = USE_SPEECH_OUTPUT_AZURE
 
     # Various approaches to integrate GPT and external knowledge, most applications will use a single one of these patterns
     # or some derivative, here we include several for exploration purposes
@@ -520,6 +601,8 @@ async def setup_clients():
             auth_helper=auth_helper,
             vision_endpoint=AZURE_VISION_ENDPOINT,
             vision_token_provider=token_provider,
+            chatgpt_model=OPENAI_CHATGPT_MODEL,
+            chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
             gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
             gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
             embedding_model=OPENAI_EMB_MODEL,
