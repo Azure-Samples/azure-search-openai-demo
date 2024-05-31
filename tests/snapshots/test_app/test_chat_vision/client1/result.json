@@ -24,7 +24,8 @@
                             "{'role': 'user', 'content': 'Generate search query for: Are interest rates high?'}"
                         ],
                         "props": {
-                            "model": "gpt-4"
+                            "deployment": "test-chatgpt",
+                            "model": "gpt-35-turbo"
                         },
                         "title": "Prompt to generate search query"
                     },

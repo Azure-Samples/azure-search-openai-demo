@@ -36,6 +36,7 @@ Feature comparison:
 | GPT-4-vision |  ✅ Yes | ❌ No |
 | Auth + ACL |  ✅ Yes | ✅ Yes |
 | User upload |  ✅ Yes | ❌ No |
+| Speech I/O | ✅ Yes | ❌ No |
 
 Technology comparison:
 

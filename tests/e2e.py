@@ -1,9 +1,11 @@
 import json
+import os
 import socket
 import time
 from contextlib import closing
 from multiprocessing import Process
 from typing import Generator
+from unittest import mock
 
 import pytest
 import requests
@@ -38,9 +40,30 @@ def free_port() -> int:
         return s.getsockname()[1]
 
 
+def run_server(port: int):
+    with mock.patch.dict(
+        os.environ,
+        {
+            "AZURE_STORAGE_ACCOUNT": "test-storage-account",
+            "AZURE_STORAGE_CONTAINER": "test-storage-container",
+            "AZURE_STORAGE_RESOURCE_GROUP": "test-storage-rg",
+            "AZURE_SUBSCRIPTION_ID": "test-storage-subid",
+            "USE_SPEECH_INPUT_BROWSER": "false",
+            "USE_SPEECH_OUTPUT_AZURE": "false",
+            "AZURE_SEARCH_INDEX": "test-search-index",
+            "AZURE_SEARCH_SERVICE": "test-search-service",
+            "AZURE_SPEECH_SERVICE_ID": "test-id",
+            "AZURE_SPEECH_SERVICE_LOCATION": "eastus",
+            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-35-turbo",
+        },
+        clear=True,
+    ):
+        uvicorn.run(app.create_app(), port=port)
+
+
 @pytest.fixture()
 def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str, None, None]:
-    proc = Process(target=lambda: uvicorn.run(app.create_app(), port=free_port), daemon=True)
+    proc = Process(target=run_server, args=(free_port,), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"
     wait_for_server_ready(url, timeout=10.0, check_interval=0.5)
@@ -79,7 +102,7 @@ def test_chat(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_role("button", name="Ask question button").click()
+    page.get_by_role("button", name="Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -153,7 +176,7 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_role("button", name="Ask question button").click()
+    page.get_by_role("button", name="Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -184,7 +207,7 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -217,7 +240,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -255,7 +278,7 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -288,7 +311,7 @@ def test_ask(page: Page, live_server_url: str):
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").fill("Whats the dental plan?")
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
