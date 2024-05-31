@@ -167,6 +167,8 @@ param useApplicationInsights bool = false
 
 @description('Use speech recognition feature in browser')
 param useSpeechInputBrowser bool = false
+@description('Use speech synthesis in browser')
+param useSpeechOutputBrowser bool = false
 @description('Use Azure speech service for reading out text')
 param useSpeechOutputAzure bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
@@ -299,6 +301,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.id : ''
       AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
       USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
+      USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
       USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost

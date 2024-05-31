@@ -70,7 +70,8 @@ const Chat = () => {
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
-    const [showSpeechOutput, setShowSpeechOutput] = useState<boolean>(false);
+    const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
+    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -83,7 +84,8 @@ const Chat = () => {
             }
             setShowUserUpload(config.showUserUpload);
             setShowSpeechInput(config.showSpeechInput);
-            setShowSpeechOutput(config.showSpeechOutput);
+            setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
+            setShowSpeechOutputAzure(config.showSpeechOutputAzure);
         });
     };
 
@@ -213,7 +215,7 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
-        if (answers && showSpeechOutput) {
+        if (answers && showSpeechOutputAzure) {
             // For each answer that is missing a speech URL, fetch the speech URL
             for (let i = 0; i < answers.length; i++) {
                 if (!speechUrls[i]) {
@@ -335,7 +337,8 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                                showSpeechOutput={showSpeechOutput}
+                                                showSpeechOutputAzure={showSpeechOutputAzure}
+                                                showSpeechOutputBrowser={showSpeechOutputBrowser}
                                                 speechUrl={speechUrls[index]}
                                             />
                                         </div>
@@ -356,7 +359,8 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                                showSpeechOutput={showSpeechOutput}
+                                                showSpeechOutputAzure={showSpeechOutputAzure}
+                                                showSpeechOutputBrowser={showSpeechOutputBrowser}
                                                 speechUrl={speechUrls[index]}
                                             />
                                         </div>

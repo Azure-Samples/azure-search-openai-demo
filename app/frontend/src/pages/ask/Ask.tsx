@@ -41,7 +41,8 @@ export function Component(): JSX.Element {
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
-    const [showSpeechOutput, setShowSpeechOutput] = useState<boolean>(false);
+    const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
+    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -66,7 +67,8 @@ export function Component(): JSX.Element {
             }
             setShowUserUpload(config.showUserUpload);
             setShowSpeechInput(config.showSpeechInput);
-            setShowSpeechOutput(config.showSpeechOutput);
+            setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
+            setShowSpeechOutputAzure(config.showSpeechOutputAzure);
         });
     };
 
@@ -75,7 +77,7 @@ export function Component(): JSX.Element {
     }, []);
 
     useEffect(() => {
-        if (answer && showSpeechOutput) {
+        if (answer && showSpeechOutputAzure) {
             getSpeechApi(answer.choices[0].message.content).then(speechUrl => {
                 setSpeechUrl(speechUrl);
             });
@@ -239,7 +241,8 @@ export function Component(): JSX.Element {
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
-                            showSpeechOutput={showSpeechOutput}
+                            showSpeechOutputAzure={showSpeechOutputAzure}
+                            showSpeechOutputBrowser={showSpeechOutputBrowser}
                             speechUrl={speechUrl}
                         />
                     </div>
