@@ -547,7 +547,7 @@ module speechRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: principalId
     roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
-    principalType: 'User'
+    principalType: principalType
   }
 }
 
