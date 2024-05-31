@@ -90,7 +90,7 @@ const Chat = () => {
                     answer += newContent;
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
-                        choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
+                        choices: [{ ...askResponse, message: { content: answer, role: askResponse.message.role } }]
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
@@ -100,15 +100,15 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                if (event["choices"] && event["choices"][0]["context"] && event["choices"][0]["context"]["data_points"]) {
-                    event["choices"][0]["message"] = event["choices"][0]["delta"];
+                if (event["context"] && event["context"]["data_points"]) {
+                    event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
-                } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
+                } else if (event["delta"]["content"]) {
                     setIsLoading(false);
-                    await updateState(event["choices"][0]["delta"]["content"]);
-                } else if (event["choices"] && event["choices"][0]["context"]) {
+                    await updateState(event["delta"]["content"]);
+                } else if (event["context"]) {
                     // Update context with new keys from latest event
-                    askResponse.choices[0].context = { ...askResponse.choices[0].context, ...event["choices"][0]["context"] };
+                    askResponse.context = { ...askResponse.context, ...event["context"] };
                 } else if (event["error"]) {
                     throw Error(event["error"]);
                 }
@@ -118,7 +118,7 @@ const Chat = () => {
         }
         const fullResponse: ChatAppResponse = {
             ...askResponse,
-            choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
+            choices: [{ ...askResponse, message: { content: answer, role: askResponse.message.role } }]
         };
         return fullResponse;
     };
@@ -138,7 +138,7 @@ const Chat = () => {
         try {
             const messages: ResponseMessage[] = answers.flatMap(a => [
                 { content: a[0], role: "user" },
-                { content: a[1].choices[0].message.content, role: "assistant" }
+                { content: a[1].message.content, role: "assistant" }
             ]);
 
             const request: ChatAppRequest = {
@@ -164,7 +164,7 @@ const Chat = () => {
                     }
                 },
                 // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
+                session_state: answers.length ? answers[answers.length - 1][1].session_state : null
             };
 
             const response = await chatApi(request, token);

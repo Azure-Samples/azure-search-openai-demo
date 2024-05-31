@@ -4,12 +4,12 @@ import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
 
-import { ChatAppResponse, getCitationFilePath } from "../../api";
+import { ResponseChoice, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 interface Props {
-    answer: ChatAppResponse;
+    answer: ResponseChoice;
     isSelected?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
@@ -29,8 +29,8 @@ export const Answer = ({
     onFollowupQuestionClicked,
     showFollowupQuestions
 }: Props) => {
-    const followupQuestions = answer.choices[0].context.followup_questions;
-    const messageContent = answer.choices[0].message.content;
+    const followupQuestions = answer.context?.followup_questions;
+    const messageContent = answer.message.content;
     const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
@@ -47,7 +47,7 @@ export const Answer = ({
                             title="Show thought process"
                             ariaLabel="Show thought process"
                             onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.choices[0].context.thoughts?.length}
+                            disabled={!answer.context.thoughts?.length}
                         />
                         <IconButton
                             style={{ color: "black" }}
@@ -55,7 +55,7 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.choices[0].context.data_points}
+                            disabled={!answer.context.data_points}
                         />
                     </div>
                 </Stack>

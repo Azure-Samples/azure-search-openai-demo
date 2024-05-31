@@ -90,12 +90,13 @@ class ChatApproach(Approach, ABC):
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
         chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
-        chat_resp["choices"][0]["context"] = extra_info
+        chat_resp = chat_resp["choices"][0]
+        chat_resp["context"] = extra_info
         if overrides.get("suggest_followup_questions"):
-            content, followup_questions = self.extract_followup_questions(chat_resp["choices"][0]["message"]["content"])
-            chat_resp["choices"][0]["message"]["content"] = content
-            chat_resp["choices"][0]["context"]["followup_questions"] = followup_questions
-        chat_resp["choices"][0]["session_state"] = session_state
+            content, followup_questions = self.extract_followup_questions(chat_resp["message"]["content"])
+            chat_resp["message"]["content"] = content
+            chat_resp["context"]["followup_questions"] = followup_questions
+        chat_resp["session_state"] = session_state
         return chat_resp
 
     async def run_with_streaming(
@@ -109,16 +110,11 @@ class ChatApproach(Approach, ABC):
             messages, overrides, auth_claims, should_stream=True
         )
         yield {
-            "choices": [
-                {
-                    "delta": {"role": "assistant"},
-                    "context": extra_info,
-                    "session_state": session_state,
-                    "finish_reason": None,
-                    "index": 0,
-                }
-            ],
-            "object": "chat.completion.chunk",
+            "delta": {"role": "assistant"},
+            "context": extra_info,
+            "session_state": session_state,
+            "finish_reason": None,
+            "index": 0,
         }
 
         followup_questions_started = False
@@ -127,32 +123,28 @@ class ChatApproach(Approach, ABC):
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
+                first_choice = event["choices"][0]
                 # if event contains << and not >>, it is start of follow-up question, truncate
-                content = event["choices"][0]["delta"].get("content")
+                content = first_choice["delta"].get("content")
                 content = content or ""  # content may either not exist in delta, or explicitly be None
                 if overrides.get("suggest_followup_questions") and "<<" in content:
                     followup_questions_started = True
                     earlier_content = content[: content.index("<<")]
                     if earlier_content:
-                        event["choices"][0]["delta"]["content"] = earlier_content
-                        yield event
+                        first_choice["delta"]["content"] = earlier_content
+                        yield first_choice
                     followup_content += content[content.index("<<") :]
                 elif followup_questions_started:
                     followup_content += content
                 else:
-                    yield event
+                    yield first_choice
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
             yield {
-                "choices": [
-                    {
-                        "delta": {"role": "assistant"},
-                        "context": {"followup_questions": followup_questions},
-                        "finish_reason": None,
-                        "index": 0,
-                    }
-                ],
-                "object": "chat.completion.chunk",
+                "delta": {"role": "assistant"},
+                "context": {"followup_questions": followup_questions},
+                "finish_reason": None,
+                "index": 0,
             }
 
     async def run(
