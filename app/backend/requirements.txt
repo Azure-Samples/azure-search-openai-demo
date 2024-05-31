@@ -48,7 +48,7 @@ azure-identity==1.16.0
     #   msgraph-sdk
 azure-monitor-opentelemetry==1.4.2
     # via -r requirements.in
-azure-monitor-opentelemetry-exporter==1.0.0b25
+azure-monitor-opentelemetry-exporter==1.0.0b26
     # via azure-monitor-opentelemetry
 azure-search-documents==11.6.0b1
     # via -r requirements.in
@@ -93,7 +93,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -130,7 +130,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.1.0
+importlib-metadata==7.0.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -183,7 +183,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.4.0
+msgraph-sdk==1.1.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -198,7 +198,7 @@ numpy==1.26.4
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.30.4
+openai[datalib]==1.30.5
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -257,7 +257,7 @@ opentelemetry-instrumentation-flask==0.45b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.45b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.21.0
+opentelemetry-instrumentation-openai==0.21.1
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.45b0
     # via azure-monitor-opentelemetry
@@ -343,7 +343,7 @@ pydantic-core==2.18.3
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via msal
-pymupdf==1.24.4
+pymupdf==1.24.5
     # via -r requirements.in
 pymupdfb==1.24.3
     # via pymupdf
