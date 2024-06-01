@@ -27,12 +27,8 @@ const getUtterance = function (text: string) {
     }
 };
 
-export const SpeechOutput = ({ answer }: Props) => {
+export const SpeechOutputBrowser = ({ answer }: Props) => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-
-    if (!synth) {
-        return <></>;
-    }
 
     const startOrStopSpeech = (answer: string) => {
         if (synth != null) {
