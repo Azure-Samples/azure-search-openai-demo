@@ -7,6 +7,7 @@ import os
 import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, List, Union, cast
+
 import httpx
 from azure.cognitiveservices.speech import (
     ResultReason,
