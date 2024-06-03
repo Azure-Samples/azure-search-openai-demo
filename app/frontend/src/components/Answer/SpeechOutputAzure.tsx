@@ -8,7 +8,7 @@ interface Props {
 
 let audio = new Audio();
 
-export const SpeechOutput = ({ url }: Props) => {
+export const SpeechOutputAzure = ({ url }: Props) => {
     const [isPlaying, setIsPlaying] = useState(false);
 
     const startOrStopAudio = async () => {

@@ -6,7 +6,8 @@ import styles from "./Answer.module.css";
 import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
-import { SpeechOutput } from "./SpeechOutput";
+import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
+import { SpeechOutputAzure } from "./SpeechOutputAzure";
 
 interface Props {
     answer: ChatAppResponse;
@@ -17,7 +18,8 @@ interface Props {
     onSupportingContentClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
-    showSpeechOutput?: boolean;
+    showSpeechOutputBrowser?: boolean;
+    showSpeechOutputAzure?: boolean;
     speechUrl: string | null;
 }
 
@@ -30,7 +32,8 @@ export const Answer = ({
     onSupportingContentClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions,
-    showSpeechOutput,
+    showSpeechOutputAzure,
+    showSpeechOutputBrowser,
     speechUrl
 }: Props) => {
     const followupQuestions = answer.choices[0].context.followup_questions;
@@ -61,7 +64,8 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.choices[0].context.data_points}
                         />
-                        {showSpeechOutput && <SpeechOutput url={speechUrl} />}
+                        {showSpeechOutputAzure && <SpeechOutputAzure url={speechUrl} />}
+                        {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
                     </div>
                 </Stack>
             </Stack.Item>

@@ -86,7 +86,8 @@ export type Config = {
     showVectorOption: boolean;
     showUserUpload: boolean;
     showSpeechInput: boolean;
-    showSpeechOutput: boolean;
+    showSpeechOutputBrowser: boolean;
+    showSpeechOutputAzure: boolean;
 };
 
 export type SimpleAPIResponse = {
