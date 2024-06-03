@@ -321,8 +321,8 @@ async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, ca
     )
 
     response = await client.post(
-        "/chat",
-        json={"messages": [{"content": "What is the capital of France?", "role": "user"}], "stream": True},
+        "/chat/stream",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: something bad happened" in caplog.text
@@ -336,8 +336,8 @@ async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch
     monkeypatch.setattr(chat_client.chat.completions, "create", mock.Mock(side_effect=filtered_response))
 
     response = await client.post(
-        "/chat",
-        json={"messages": [{"content": "How do I do something bad?", "role": "user"}], "stream": True},
+        "/chat/stream",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: The response was filtered" in caplog.text
@@ -512,9 +512,8 @@ async def test_chat_vector(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_text(client, snapshot):
     response = await client.post(
-        "/chat",
+        "/chat/stream",
         json={
-            "stream": True,
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
@@ -529,10 +528,9 @@ async def test_chat_stream_text(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_text_filter(auth_client, snapshot):
     response = await auth_client.post(
-        "/chat",
+        "/chat/stream",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "stream": True,
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {
@@ -573,7 +571,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "performance review")
+    assert thought_contains_text(result["context"]["thoughts"][3], "performance review")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -601,7 +599,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "Is there a dress code?")
+    assert not thought_contains_text(result["context"]["thoughts"][3], "Is there a dress code?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -626,13 +624,12 @@ async def test_chat_session_state_persists(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_session_state_persists(client, snapshot):
     response = await client.post(
-        "/chat",
+        "/chat/stream",
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
-            "stream": True,
             "session_state": {"conversation_id": 1234},
         },
     )
@@ -654,7 +651,7 @@ async def test_chat_followup(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["choices"][0]["context"]["followup_questions"][0] == "What is the capital of Spain?"
+    assert result["context"]["followup_questions"][0] == "What is the capital of Spain?"
 
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -662,9 +659,8 @@ async def test_chat_followup(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_followup(client, snapshot):
     response = await client.post(
-        "/chat",
+        "/chat/stream",
         json={
-            "stream": True,
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {"suggest_followup_questions": True},
