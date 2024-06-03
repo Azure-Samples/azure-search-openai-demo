@@ -466,6 +466,15 @@ module searchService 'core/search/search-services.bicep' = {
   }
 }
 
+module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplicationInsights) {
+  name: 'search-diagnostics'
+  scope: searchServiceResourceGroup
+  params: {
+    searchServiceName: searchService.outputs.name
+    workspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
+  }
+}
+
 module storage 'core/storage/storage-account.bicep' = {
   name: 'storage'
   scope: storageResourceGroup
