@@ -43,6 +43,7 @@ param appServiceSkuName string // Set in main.parameters.json
 @allowed([ 'azure', 'openai', 'azure_custom' ])
 param openAiHost string // Set in main.parameters.json
 param isAzureOpenAiHost bool = startsWith(openAiHost, 'azure')
+param deployAzureOpenAiBackendTwo bool = false
 param azureOpenAiCustomUrl string = ''
 param azureOpenAiApiVersion string = ''
 
@@ -294,6 +295,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
       AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
+      AZURE_OPENAI_SERVICE_BACKEND2: isAzureOpenAiHost && deployAzureOpenAiBackendTwo ? openAiBackendTwo.outputs.name : ''
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
@@ -373,6 +375,23 @@ module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
   scope: openAiResourceGroup
   params: {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+    location: openAiResourceGroupLocation
+    tags: tags
+    publicNetworkAccess: publicNetworkAccess
+    bypass: bypass
+    sku: {
+      name: openAiSkuName
+    }
+    deployments: openAiDeployments
+    disableLocalAuth: true
+  }
+}
+
+module openAiBackendTwo 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost && deployAzureOpenAiBackendTwo) {
+  name: 'openai-backend-two'
+  scope: openAiResourceGroup
+  params: {
+    name: '${abbrs.cognitiveServicesAccounts}${resourceToken}-b2'
     location: openAiResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
@@ -766,6 +785,7 @@ output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
+output AZURE_OPENAI_SERVICE_BACKEND2 string = isAzureOpenAiHost && deployAzureOpenAiBackendTwo ? openAiBackendTwo.outputs.name : ''
 output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''

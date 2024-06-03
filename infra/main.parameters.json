@@ -119,6 +119,9 @@
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
+    "deployAzureOpenAiBackendTwo": {
+      "value": "${DEPLOY_AZURE_OPENAI_BACKEND_TWO=false}"
+    },
     "azureOpenAiCustomUrl":{
       "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },

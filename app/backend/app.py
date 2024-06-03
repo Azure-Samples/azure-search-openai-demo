@@ -4,10 +4,10 @@ import json
 import logging
 import mimetypes
 import os
-import httpx
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Union, cast, List
+from typing import Any, AsyncGenerator, Dict, List, Union, cast
 
+import httpx
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -76,11 +76,6 @@ bp = Blueprint("routes", __name__, static_folder="static")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
-# Data for the backends could be supplied through config. This data is simply here to illustrate usage.
-backends: List[Backend] = [
-    Backend("cog-w2og7ojyhvoq6.openai.azure.com", 1),
-    Backend("cog-kfdf7d5q443bu.openai.azure.com", 1),
-]
 
 @bp.route("/")
 async def index():
@@ -438,13 +433,22 @@ async def setup_clients():
 
         api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
 
-        lb = AsyncLoadBalancer(backends)
+        client_args = {}
+        if AZURE_OPENAI_SERVICE_BACKEND2 := os.environ.get("AZURE_OPENAI_SERVICE_BACKEND2"):
+            backends: List[Backend] = [
+                Backend(f"{AZURE_OPENAI_SERVICE}.openai.azure.com", 1),
+                Backend(f"{AZURE_OPENAI_SERVICE_BACKEND2}.openai.azure.com", 1),
+            ]
+
+            lb = AsyncLoadBalancer(backends)
+            # Inject the load balancer as the transport in a new default httpx client
+            client_args["http_client"] = httpx.AsyncClient(transport=lb)
 
         openai_client = AsyncAzureOpenAI(
             api_version=api_version,
             azure_endpoint=endpoint,
             azure_ad_token_provider=token_provider,
-            http_client = httpx.AsyncClient(transport = lb)        # Inject the load balancer as the transport in a new default httpx client
+            **client_args,
         )
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(
