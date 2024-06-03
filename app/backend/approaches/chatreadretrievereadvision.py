@@ -8,13 +8,14 @@ from openai.types.chat import (
     ChatCompletionChunk,
     ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
+    ChatCompletionMessageParam,
 )
+from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
-from core.modelhelper import get_token_limit
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
@@ -31,6 +32,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         blob_container_client: ContainerClient,
         openai_client: AsyncOpenAI,
         auth_helper: AuthenticationHelper,
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -47,6 +50,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
+        self.chatgpt_model = chatgpt_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.gpt4v_deployment = gpt4v_deployment
         self.gpt4v_model = gpt4v_model
         self.embedding_deployment = embedding_deployment
@@ -79,7 +84,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
     async def run_until_final_call(
         self,
-        history: list[dict[str, str]],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
@@ -97,25 +102,31 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         include_gtpV_text = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         include_gtpV_images = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
-        original_user_query = history[-1]["content"]
+        original_user_query = messages[-1]["content"]
+        if not isinstance(original_user_query, str):
+            raise ValueError("The most recent message content must be a string.")
+        past_messages: list[ChatCompletionMessageParam] = messages[:-1]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         user_query_request = "Generate search query for: " + original_user_query
 
-        query_messages = self.get_messages_from_history(
+        query_response_token_limit = 100
+        query_model = self.chatgpt_model
+        query_deployment = self.chatgpt_deployment
+        query_messages = build_messages(
+            model=query_model,
             system_prompt=self.query_prompt_template,
-            model_id=self.gpt4v_model,
-            history=history,
-            user_content=user_query_request,
-            max_tokens=self.chatgpt_token_limit - len(" ".join(user_query_request)),
             few_shots=self.query_prompt_few_shots,
+            past_messages=past_messages,
+            new_user_content=user_query_request,
+            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
+            model=query_deployment if query_deployment else query_model,
             messages=query_messages,
             temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=100,
+            max_tokens=query_response_token_limit,
             n=1,
         )
 
@@ -159,9 +170,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
         )
 
-        response_token_limit = 1024
-        messages_token_limit = self.chatgpt_token_limit - response_token_limit
-
         user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
         image_list: list[ChatCompletionContentPartImageParam] = []
 
@@ -174,12 +182,13 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
 
-        messages = self.get_messages_from_history(
+        response_token_limit = 1024
+        messages = build_messages(
+            model=self.gpt4v_model,
             system_prompt=system_message,
-            model_id=self.gpt4v_model,
-            history=history,
-            user_content=user_content,
-            max_tokens=messages_token_limit,
+            past_messages=messages[:-1],
+            new_user_content=user_content,
+            max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 
         data_points = {
@@ -194,9 +203,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Prompt to generate search query",
                     [str(message) for message in query_messages],
                     (
-                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
-                        if self.gpt4v_deployment
-                        else {"model": self.gpt4v_model}
+                        {"model": query_model, "deployment": query_deployment}
+                        if query_deployment
+                        else {"model": query_model}
                     ),
                 ),
                 ThoughtStep(

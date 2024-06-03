@@ -6,6 +6,7 @@ openai_priority_loadbalancer==1.0.9
 tiktoken
 tenacity
 azure-ai-documentintelligence
+azure-cognitiveservices-speech
 azure-search-documents==11.6.0b1
 azure-storage-blob
 azure-storage-file-datalake
@@ -28,3 +29,4 @@ PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk==1.1.0
+openai-messages-token-helper

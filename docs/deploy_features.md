@@ -7,6 +7,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using GPT-4](#using-gpt-4)
 * [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
+* [Enabling speech input/output](#enabling-speech-inputoutput)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
@@ -43,10 +44,10 @@ Execute the following commands inside your terminal:
 1. To set the Azure OpenAI deploymemnt version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0125-Preview
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
     ```
 
-1. To updat the deployment with the new parameters, run this command.
+1. To update the deployment with the new parameters, run this command.
 
     ```bash
     azd up
@@ -104,6 +105,30 @@ If you have already deployed:
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
 
+## Enabling speech input/output
+
+[📺 Watch a short video of speech input/output](https://www.youtube.com/watch?v=BwiHUjlLY_U)
+
+You can optionally enable speech input/output by setting the azd environment variables.
+
+The speech input feature uses the browser's built-in [Speech Recognition API](https://developer.mozilla.org/docs/Web/API/SpeechRecognition). It may not work in all browser/OS combinations. To enable speech input, run:
+
+```shell
+azd env set USE_SPEECH_INPUT_BROWSER true
+```
+
+The speech output feature uses [Azure Speech Service](https://learn.microsoft.com/azure/ai-services/speech-service/overview) for speech-to-text. Additional costs will be incurred for using the Azure Speech Service. [See pricing](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/). To enable speech output, run:
+
+```shell
+azd env set USE_SPEECH_OUTPUT_AZURE true
+```
+
+To set [the voice](https://learn.microsoft.com/azure/ai-services/speech-service/language-support?tabs=tts) for the speech output, run:
+
+```shell
+azd env set AZURE_SPEECH_SERVICE_VOICE en-US-AndrewMultilingualNeural
+```
+
 ## Enabling Integrated Vectorization
 
 Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in/ba-p/3960809#:~:text=Integrated%20vectorization%20is%20a%20new%20feature%20of%20Azure,pull-indexers%2C%20and%20vectorization%20of%20text%20queries%20through%20vectorizers). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
@@ -123,7 +148,7 @@ By default, the deployed Azure web app will have no authentication or access res
 
 Alternatively, you can manually require authentication to your Azure Active Directory by following the [Add app authentication](https://learn.microsoft.com/azure/app-service/scenario-secure-app-authentication-app-service) tutorial and set it up against the deployed web app.
 
-To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Azure AD app to a set of users](https://learn.microsoft.com/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
+To then limit access to a specific set of users or groups, you can follow the steps from [Restrict your Microsoft Entra app to a set of users](https://learn.microsoft.com/entra/identity-platform/howto-restrict-your-app-to-a-set-of-users) by changing "Assignment Required?" option under the Enterprise Application, and then assigning users/groups access.  Users not granted explicit access will receive the error message -AADSTS50105: Your administrator has configured the application <app_name> to block users unless they are specifically granted ('assigned') access to the application.-
 
 ## Enabling login and document level access control
 
