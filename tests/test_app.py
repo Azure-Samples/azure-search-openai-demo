@@ -281,6 +281,14 @@ async def test_chat_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+async def test_chat_stream_request_must_be_json(client):
+    response = await client.post("/chat/stream")
+    assert response.status_code == 415
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
 async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
         "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
@@ -289,6 +297,23 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 
     response = await client.post(
         "/chat",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert "Exception in /chat: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_handle_exception(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
+    )
+
+    response = await client.post(
+        "/chat/stream",
         json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
     )
     assert response.status_code == 500
@@ -768,6 +793,26 @@ async def test_chat_vision(client, snapshot):
     assert response.status_code == 200
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_vision(client, snapshot):
+    response = await client.post(
+        "/chat/stream",
+        json={
+            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "use_gpt4v": True,
+                    "gpt4v_input": "textAndImages",
+                    "vector_fields": ["embedding", "imageEmbedding"],
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
 
 
 @pytest.mark.asyncio
