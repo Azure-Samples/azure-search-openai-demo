@@ -218,7 +218,7 @@ const Chat = () => {
             // For each answer that is missing a speech URL, fetch the speech URL
             for (let i = 0; i < answers.length; i++) {
                 if (!speechUrls[i]) {
-                    getSpeechApi(answers[i][1].choices[0].message.content).then(speechUrl => {
+                    getSpeechApi(answers[i][1].message.content).then(speechUrl => {
                         setSpeechUrls([...speechUrls.slice(0, i), speechUrl, ...speechUrls.slice(i + 1)]);
                     });
                 }
