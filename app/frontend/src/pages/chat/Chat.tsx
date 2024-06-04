@@ -90,7 +90,7 @@ const Chat = () => {
                     answer += newContent;
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
-                        choices: [{ ...askResponse, message: { content: answer, role: askResponse.message.role } }]
+                        message: { content: answer, role: askResponse.message.role }
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
@@ -118,7 +118,7 @@ const Chat = () => {
         }
         const fullResponse: ChatAppResponse = {
             ...askResponse,
-            choices: [{ ...askResponse, message: { content: answer, role: askResponse.message.role } }]
+            message: { content: answer, role: askResponse.message.role }
         };
         return fullResponse;
     };
@@ -143,7 +143,6 @@ const Chat = () => {
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: question, role: "user" }],
-                stream: shouldStream,
                 context: {
                     overrides: {
                         prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
@@ -167,7 +166,7 @@ const Chat = () => {
                 session_state: answers.length ? answers[answers.length - 1][1].session_state : null
             };
 
-            const response = await chatApi(request, token);
+            const response = await chatApi(request, shouldStream, token);
             if (!response.body) {
                 throw Error("No response body");
             }
