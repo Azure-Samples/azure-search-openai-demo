@@ -190,7 +190,8 @@ class RetrieveThenReadVisionApproach(Approach):
             ],
         }
 
-        first_choice = chat_completion["choices"][0]
-        first_choice["context"] = extra_info
-        first_choice["session_state"] = session_state
-        return first_choice
+        completion = {}
+        completion["message"] = chat_completion["choices"][0]["message"]
+        completion["context"] = extra_info
+        completion["session_state"] = session_state
+        return completion
