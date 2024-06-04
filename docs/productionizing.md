@@ -24,9 +24,10 @@ If the maximum TPM isn't enough for your expected load, you have a few options:
 
 * Use a backoff mechanism to retry the request. This is helpful if you're running into a short-term quota due to bursts of activity but aren't over long-term quota. The [tenacity](https://tenacity.readthedocs.io/en/latest/) library is a good option for this, and this [pull request](https://github.com/Azure-Samples/azure-search-openai-demo/pull/500) shows how to apply it to this app.
 
-* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management or container-based load balancers. For seamless integration instructions with this sample, please check:
+* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management or container-based load balancers. A native Python approach that integrates with the OpenAI Python API Library is also possible. For integration instructions with this sample, please check:
   * [Scale Azure OpenAI for Python with Azure API Management](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-api-management)
   * [Scale Azure OpenAI for Python chat using RAG with Azure Container Apps](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-container-apps)
+  * [Pull request: Scale Azure OpenAI for Python with the Python openai-priority-loadbalancer](https://github.com/Azure-Samples/azure-search-openai-demo/pull/1626)   
 
 ### Azure Storage
 

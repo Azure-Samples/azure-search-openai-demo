@@ -93,7 +93,7 @@ class SentenceTextSplitter(TextSplitter):
         self.max_section_length = DEFAULT_SECTION_LENGTH
         self.sentence_search_limit = 100
         self.max_tokens_per_section = max_tokens_per_section
-        self.section_overlap = self.max_section_length // DEFAULT_OVERLAP_PERCENT
+        self.section_overlap = int(self.max_section_length * DEFAULT_OVERLAP_PERCENT / 100)
         self.has_image_embeddings = has_image_embeddings
 
     def split_page_by_max_tokens(self, page_num: int, text: str) -> Generator[SplitPage, None, None]:

@@ -83,6 +83,9 @@ export type Config = {
     showSemanticRankerOption: boolean;
     showVectorOption: boolean;
     showUserUpload: boolean;
+    showSpeechInput: boolean;
+    showSpeechOutputBrowser: boolean;
+    showSpeechOutputAzure: boolean;
 };
 
 export type SimpleAPIResponse = {

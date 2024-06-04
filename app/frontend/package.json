@@ -35,6 +35,7 @@
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "@types/react-syntax-highlighter": "^15.5.7",
+    "@types/dom-speech-recognition": "^0.0.4",
     "vite": "^4.5.3"
   }
 }

@@ -32,6 +32,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         blob_container_client: ContainerClient,
         openai_client: AsyncOpenAI,
         auth_helper: AuthenticationHelper,
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -48,6 +50,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
+        self.chatgpt_model = chatgpt_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.gpt4v_deployment = gpt4v_deployment
         self.gpt4v_model = gpt4v_model
         self.embedding_deployment = embedding_deployment
@@ -107,8 +111,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         user_query_request = "Generate search query for: " + original_user_query
 
         query_response_token_limit = 100
+        query_model = self.chatgpt_model
+        query_deployment = self.chatgpt_deployment
         query_messages = build_messages(
-            model=self.gpt4v_model,
+            model=query_model,
             system_prompt=self.query_prompt_template,
             few_shots=self.query_prompt_few_shots,
             past_messages=past_messages,
@@ -117,7 +123,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
+            model=query_deployment if query_deployment else query_model,
             messages=query_messages,
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=query_response_token_limit,
@@ -197,9 +203,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Prompt to generate search query",
                     [str(message) for message in query_messages],
                     (
-                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
-                        if self.gpt4v_deployment
-                        else {"model": self.gpt4v_model}
+                        {"model": query_model, "deployment": query_deployment}
+                        if query_deployment
+                        else {"model": query_model}
                     ),
                 ),
                 ThoughtStep(

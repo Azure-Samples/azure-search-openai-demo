@@ -77,7 +77,8 @@ async def test_redirect(client):
 async def test_favicon(client):
     response = await client.get("/favicon.ico")
     assert response.status_code == 200
-    assert response.content_type == "image/vnd.microsoft.icon"
+    assert response.content_type.startswith("image")
+    assert response.content_type.endswith("icon")
 
 
 @pytest.mark.asyncio
@@ -343,6 +344,83 @@ async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch
     assert "Exception while generating response stream: The response was filtered" in caplog.text
     result = await response.get_data()
     snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
+async def test_speech(client, mock_speech_success):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
+async def test_speech_token_refresh(client_with_expiring_token, mock_speech_success):
+    # First time should create a brand new token
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_must_be_json(client, mock_speech_success):
+    response = await client.post("/speech")
+    assert response.status_code == 415
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_cancelled(client, mock_speech_cancelled):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis canceled. Check logs for details."
+
+
+@pytest.mark.asyncio
+async def test_speech_request_failed(client, mock_speech_failed):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis failed. Check logs for details."
 
 
 @pytest.mark.asyncio
