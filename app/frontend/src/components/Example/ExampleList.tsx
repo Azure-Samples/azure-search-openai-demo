@@ -3,9 +3,12 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
+    // "What is included in my Northwind Health Plus plan that is not in standard?",
+    // "What happens in a performance review?",
+    // "What does a Product Manager do?"
+    "Does MS-ISR support hybrid connectivity to on-premises systems?",
+    "How much does MS-ISR cost to Run?",
+    "Is Blob storage created in the Mission Plane or the Data Plane?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
