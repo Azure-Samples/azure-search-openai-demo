@@ -215,7 +215,6 @@ async def chat(auth_claims: Dict[str, Any]):
 
         result = await approach.run(
             request_json["messages"],
-            stream=False,
             context=context,
             session_state=request_json.get("session_state"),
         )
@@ -240,9 +239,8 @@ async def chat_stream(auth_claims: Dict[str, Any]):
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
-        result = await approach.run(
+        result = await approach.run_stream(
             request_json["messages"],
-            stream=True,
             context=context,
             session_state=request_json.get("session_state"),
         )

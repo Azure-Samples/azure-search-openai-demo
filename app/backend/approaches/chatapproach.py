@@ -1,7 +1,7 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Optional
 
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
@@ -139,14 +139,19 @@ class ChatApproach(Approach, ABC):
     async def run(
         self,
         messages: list[ChatCompletionMessageParam],
-        stream: bool = False,
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+    ) -> dict[str, Any]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
+        return await self.run_without_streaming(messages, overrides, auth_claims, session_state)
 
-        if stream is False:
-            return await self.run_without_streaming(messages, overrides, auth_claims, session_state)
-        else:
-            return self.run_with_streaming(messages, overrides, auth_claims, session_state)
+    async def run_stream(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        session_state: Any = None,
+        context: dict[str, Any] = {},
+    ) -> AsyncGenerator[dict[str, Any], None]:
+        overrides = context.get("overrides", {})
+        auth_claims = context.get("auth_claims", {})
+        return self.run_with_streaming(messages, overrides, auth_claims, session_state)
