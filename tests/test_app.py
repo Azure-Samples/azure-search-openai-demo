@@ -308,7 +308,7 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 @pytest.mark.asyncio
 async def test_chat_stream_handle_exception(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
-        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run_stream",
         mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
     )
 
