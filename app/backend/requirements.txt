@@ -79,7 +79,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==42.0.7
+cryptography==42.0.8
     # via
     #   -r requirements.in
     #   azure-identity
@@ -93,7 +93,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -183,7 +183,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.4.0
+msgraph-sdk==1.1.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -198,7 +198,7 @@ numpy==1.26.4
     #   pandas-stubs
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.30.5
+openai[datalib]==1.31.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -226,6 +226,7 @@ opentelemetry-api==1.25.0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
+    #   opentelemetry-semantic-conventions
 opentelemetry-instrumentation==0.46b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
@@ -257,7 +258,7 @@ opentelemetry-instrumentation-flask==0.46b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.46b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.21.3
+opentelemetry-instrumentation-openai==0.21.4
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.46b0
     # via azure-monitor-opentelemetry
@@ -317,7 +318,7 @@ packaging==24.0
     #   opentelemetry-instrumentation-flask
 pandas==2.2.2
     # via openai
-pandas-stubs==2.2.2.240514
+pandas-stubs==2.2.2.240603
     # via openai
 pendulum==3.0.0
     # via microsoft-kiota-serialization-json
@@ -337,9 +338,9 @@ pyasn1==0.6.0
     #   rsa
 pycparser==2.22
     # via cffi
-pydantic==2.7.2
+pydantic==2.7.3
     # via openai
-pydantic-core==2.18.3
+pydantic-core==2.18.4
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via msal
@@ -449,7 +450,7 @@ wsproto==1.2.0
     # via hypercorn
 yarl==1.9.4
     # via aiohttp
-zipp==3.19.1
+zipp==3.19.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
