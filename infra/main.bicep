@@ -114,9 +114,9 @@ var embedding = {
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
-param gpt4vModelName string = 'gpt-4'
-param gpt4vDeploymentName string = 'gpt-4v'
-param gpt4vModelVersion string = 'vision-preview'
+param gpt4vModelName string = 'gpt-4o'
+param gpt4vDeploymentName string = 'gpt-4o'
+param gpt4vModelVersion string = '2024-05-13'
 param gpt4vDeploymentCapacity int = 10
 
 param tenantId string = tenant().tenantId
@@ -167,6 +167,8 @@ param useApplicationInsights bool = false
 
 @description('Use speech recognition feature in browser')
 param useSpeechInputBrowser bool = false
+@description('Use speech synthesis in browser')
+param useSpeechOutputBrowser bool = false
 @description('Use Azure speech service for reading out text')
 param useSpeechOutputAzure bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
@@ -299,6 +301,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.id : ''
       AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
       USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
+      USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
       USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
@@ -463,6 +466,15 @@ module searchService 'core/search/search-services.bicep' = {
     semanticSearch: actualSearchServiceSemanticRankerLevel
     publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
     sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
+  }
+}
+
+module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplicationInsights) {
+  name: 'search-diagnostics'
+  scope: searchServiceResourceGroup
+  params: {
+    searchServiceName: searchService.outputs.name
+    workspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
   }
 }
 

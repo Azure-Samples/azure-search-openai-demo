@@ -152,6 +152,9 @@
     "useSpeechInputBrowser": {
       "value": "${USE_SPEECH_INPUT_BROWSER=false}"
     },
+    "useSpeechOutputBrowser": {
+      "value": "${USE_SPEECH_OUTPUT_BROWSER=false}"
+    },
     "useSpeechOutputAzure": {
       "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
     },

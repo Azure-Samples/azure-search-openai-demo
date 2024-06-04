@@ -111,11 +111,15 @@ This section covers the integration of GPT-4 Vision with Azure AI Search. Learn 
 
 You can optionally enable speech input/output by setting the azd environment variables.
 
+### Speech Input:
+
 The speech input feature uses the browser's built-in [Speech Recognition API](https://developer.mozilla.org/docs/Web/API/SpeechRecognition). It may not work in all browser/OS combinations. To enable speech input, run:
 
 ```shell
 azd env set USE_SPEECH_INPUT_BROWSER true
 ```
+
+### Speech Output:
 
 The speech output feature uses [Azure Speech Service](https://learn.microsoft.com/azure/ai-services/speech-service/overview) for speech-to-text. Additional costs will be incurred for using the Azure Speech Service. [See pricing](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/). To enable speech output, run:
 
@@ -128,6 +132,14 @@ To set [the voice](https://learn.microsoft.com/azure/ai-services/speech-service/
 ```shell
 azd env set AZURE_SPEECH_SERVICE_VOICE en-US-AndrewMultilingualNeural
 ```
+
+> [!NOTE]
+> Alternatively you can use the browser's built-in [Speech Synthesis API](https://developer.mozilla.org/docs/Web/API/SpeechSynthesis). It may not work in all browser/OS combinations. To enable speech output, run:
+>
+>    ```shell
+>    azd env set USE_SPEECH_OUTPUT_BROWSER true
+>    ```
+>
 
 ## Enabling Integrated Vectorization
 
