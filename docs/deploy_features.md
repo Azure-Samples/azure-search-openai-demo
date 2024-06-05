@@ -35,13 +35,13 @@ Execute the following commands inside your terminal:
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
     ```
 
-1. To set the Azure OpenAI deploymemnt capacity, run this command with the desired capacity.
+1. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 10
     ```
 
-1. To set the Azure OpenAI deploymemnt version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
+1. To set the Azure OpenAI deployment version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
