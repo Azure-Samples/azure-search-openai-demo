@@ -88,7 +88,7 @@ def test_chat(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat", handle)
+    page.route("*/**/chat/stream", handle)
 
     # Check initial page state
     page.goto(live_server_url)
@@ -133,7 +133,6 @@ def test_chat(page: Page, live_server_url: str):
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
-        assert route.request.post_data_json["stream"] is False
         overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["retrieval_mode"] == "vectors"
         assert overrides["semantic_ranker"] is False
@@ -278,7 +277,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat", handle)
+    page.route("*/**/chat/stream", handle)
 
     # Check initial page state
     page.goto(live_server_url)

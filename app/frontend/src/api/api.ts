@@ -37,8 +37,12 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
     return parsedResponse as ChatAppResponse;
 }
 
-export async function chatApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {
-    return await fetch(`${BACKEND_URI}/chat`, {
+export async function chatApi(request: ChatAppRequest, shouldStream: boolean, idToken: string | undefined): Promise<Response> {
+    let url = `${BACKEND_URI}/chat`;
+    if (shouldStream) {
+        url += "/stream";
+    }
+    return await fetch(url, {
         method: "POST",
         headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
         body: JSON.stringify(request)

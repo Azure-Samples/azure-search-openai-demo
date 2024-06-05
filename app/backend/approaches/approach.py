@@ -9,7 +9,6 @@ from typing import (
     List,
     Optional,
     TypedDict,
-    Union,
     cast,
 )
 from urllib.parse import urljoin
@@ -257,8 +256,15 @@ class Approach(ABC):
     async def run(
         self,
         messages: list[ChatCompletionMessageParam],
-        stream: bool = False,
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+    ) -> dict[str, Any]:
+        raise NotImplementedError
+
+    async def run_stream(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        session_state: Any = None,
+        context: dict[str, Any] = {},
+    ) -> AsyncGenerator[dict[str, Any], None]:
         raise NotImplementedError

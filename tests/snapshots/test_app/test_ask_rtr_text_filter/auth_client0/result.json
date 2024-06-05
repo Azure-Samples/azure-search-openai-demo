@@ -1,81 +1,68 @@
 {
-    "choices": [
-        {
-            "context": {
-                "data_points": {
-                    "text": [
-                        "Benefit_Options-2.pdf: There is a whistleblower policy."
-                    ]
+    "context": {
+        "data_points": {
+            "text": [
+                "Benefit_Options-2.pdf: There is a whistleblower policy."
+            ]
+        },
+        "thoughts": [
+            {
+                "description": "What is the capital of France?",
+                "props": {
+                    "filter": "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))",
+                    "has_vector": false,
+                    "top": 3,
+                    "use_semantic_captions": false,
+                    "use_semantic_ranker": null
                 },
-                "thoughts": [
+                "title": "Search using user query"
+            },
+            {
+                "description": [
                     {
-                        "description": "What is the capital of France?",
-                        "props": {
-                            "filter": "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))",
-                            "has_vector": false,
-                            "top": 3,
-                            "use_semantic_captions": false,
-                            "use_semantic_ranker": null
-                        },
-                        "title": "Search using user query"
-                    },
-                    {
-                        "description": [
+                        "captions": [
                             {
-                                "captions": [
-                                    {
-                                        "additional_properties": {},
-                                        "highlights": [],
-                                        "text": "Caption: A whistleblower policy."
-                                    }
-                                ],
-                                "category": null,
-                                "content": "There is a whistleblower policy.",
-                                "embedding": null,
-                                "groups": null,
-                                "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
-                                "imageEmbedding": null,
-                                "oids": null,
-                                "reranker_score": 3.4577205181121826,
-                                "score": 0.03279569745063782,
-                                "sourcefile": "Benefit_Options.pdf",
-                                "sourcepage": "Benefit_Options-2.pdf"
+                                "additional_properties": {},
+                                "highlights": [],
+                                "text": "Caption: A whistleblower policy."
                             }
                         ],
-                        "props": null,
-                        "title": "Search results"
-                    },
-                    {
-                        "description": [
-                            "{'role': 'system', 'content': \"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. Use 'you' to refer to the individual asking the questions even if they ask with 'I'. Answer the following question using only the data provided in the sources below. For tabular information return it as an html table. Do not return markdown format. Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. If you cannot answer using the sources below, say you don't know. Use below example to answer\"}",
-                            "{'role': 'user', 'content': \"\\n'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'\\n\\nSources:\\ninfo1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.\\ninfo2.pdf: Overlake is in-network for the employee plan.\\ninfo3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.\\ninfo4.pdf: In-network institutions include Overlake, Swedish and others in the region\\n\"}",
-                            "{'role': 'assistant', 'content': 'In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].'}",
-                            "{'role': 'user', 'content': 'What is the capital of France?\\nSources:\\n Benefit_Options-2.pdf: There is a whistleblower policy.'}"
-                        ],
-                        "props": {
-                            "deployment": "test-chatgpt",
-                            "model": "gpt-35-turbo"
-                        },
-                        "title": "Prompt to generate answer"
+                        "category": null,
+                        "content": "There is a whistleblower policy.",
+                        "embedding": null,
+                        "groups": null,
+                        "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                        "imageEmbedding": null,
+                        "oids": null,
+                        "reranker_score": 3.4577205181121826,
+                        "score": 0.03279569745063782,
+                        "sourcefile": "Benefit_Options.pdf",
+                        "sourcepage": "Benefit_Options-2.pdf"
                     }
-                ]
+                ],
+                "props": null,
+                "title": "Search results"
             },
-            "finish_reason": "stop",
-            "index": 0,
-            "logprobs": null,
-            "message": {
-                "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
-                "function_call": null,
-                "role": "assistant",
-                "tool_calls": null
-            },
-            "session_state": null
-        }
-    ],
-    "created": 0,
-    "id": "test-123",
-    "model": "test-model",
-    "object": "chat.completion",
-    "system_fingerprint": null,
-    "usage": null
+            {
+                "description": [
+                    "{'role': 'system', 'content': \"You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. Use 'you' to refer to the individual asking the questions even if they ask with 'I'. Answer the following question using only the data provided in the sources below. For tabular information return it as an html table. Do not return markdown format. Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. If you cannot answer using the sources below, say you don't know. Use below example to answer\"}",
+                    "{'role': 'user', 'content': \"\\n'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'\\n\\nSources:\\ninfo1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.\\ninfo2.pdf: Overlake is in-network for the employee plan.\\ninfo3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.\\ninfo4.pdf: In-network institutions include Overlake, Swedish and others in the region\\n\"}",
+                    "{'role': 'assistant', 'content': 'In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].'}",
+                    "{'role': 'user', 'content': 'What is the capital of France?\\nSources:\\n Benefit_Options-2.pdf: There is a whistleblower policy.'}"
+                ],
+                "props": {
+                    "deployment": "test-chatgpt",
+                    "model": "gpt-35-turbo"
+                },
+                "title": "Prompt to generate answer"
+            }
+        ]
+    },
+    "message": {
+        "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+        "function_call": null,
+        "role": "assistant",
+        "tool_calls": null
+    },
+    "session_state": null
 }

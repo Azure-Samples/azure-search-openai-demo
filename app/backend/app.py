@@ -215,17 +215,39 @@ async def chat(auth_claims: Dict[str, Any]):
 
         result = await approach.run(
             request_json["messages"],
-            stream=request_json.get("stream", False),
             context=context,
             session_state=request_json.get("session_state"),
         )
-        if isinstance(result, dict):
-            return jsonify(result)
+        return jsonify(result)
+    except Exception as error:
+        return error_response(error, "/chat")
+
+
+@bp.route("/chat/stream", methods=["POST"])
+@authenticated
+async def chat_stream(auth_claims: Dict[str, Any]):
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    request_json = await request.get_json()
+    context = request_json.get("context", {})
+    context["auth_claims"] = auth_claims
+    try:
+        use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+        approach: Approach
+        if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
+            approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
         else:
-            response = await make_response(format_as_ndjson(result))
-            response.timeout = None  # type: ignore
-            response.mimetype = "application/json-lines"
-            return response
+            approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
+
+        result = await approach.run_stream(
+            request_json["messages"],
+            context=context,
+            session_state=request_json.get("session_state"),
+        )
+        response = await make_response(format_as_ndjson(result))
+        response.timeout = None  # type: ignore
+        response.mimetype = "application/json-lines"
+        return response
     except Exception as error:
         return error_response(error, "/chat")
 
