@@ -44,17 +44,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Run analysis by using the PSRule GitHub action.
       - name: Run PSRule analysis
         uses: microsoft/ps-rule@v2.9.0
         with:
           modules: PSRule.Rules.Azure
-          inputPath: infra/main.test.bicep
+          inputPath: infra/*.test.bicep
           outputFormat: Sarif
           outputPath: reports/ps-rule-results.sarif
           summary: true
         env:
-          PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: 1
+          PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: 'true'
+          PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION_TIMEOUT: '30'
 
       - name: Upload results to security tab
         uses: github/codeql-action/upload-sarif@v3
