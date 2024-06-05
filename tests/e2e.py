@@ -220,7 +220,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
 
     # Customize the GPT-4-vision settings
     page.get_by_role("button", name="Developer settings").click()
-    page.get_by_text("Use GPT-4 Turbo with Vision").click()
+    page.get_by_text("Use GPT vision model").click()
     page.get_by_text("Images and text").click()
     page.get_by_role("option", name="Images", exact=True).click()
     page.get_by_text("Text and Image embeddings").click()
