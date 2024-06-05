@@ -1,0 +1,3 @@
+# YAML: Set the AZURE_BICEP_FILE_EXPANSION configuration option to enable expansion
+configuration:
+  AZURE_BICEP_FILE_EXPANSION: true
