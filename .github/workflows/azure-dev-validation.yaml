@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  templateanalyzer:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -36,3 +36,26 @@ jobs:
         if: github.repository == 'Azure-Samples/azure-search-openai-demo'
         with:
           sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+  psrule:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Run analysis by using the PSRule GitHub action.
+      - name: Run PSRule analysis
+        uses: microsoft/ps-rule@v2.9.0
+        with:
+          modules: PSRule.Rules.Azure
+          inputPath: infra/main.test.bicep
+          outputFormat: Sarif
+          outputPath: reports/ps-rule-results.sarif
+          summary: true
+
+      - name: Upload results to security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: github.repository == 'Azure-Samples/azure-search-openai-demo'
+        with:
+          sarif_file: reports/ps-rule-results.sarif
