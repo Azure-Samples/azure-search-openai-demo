@@ -1,5 +1,5 @@
 // This file is for doing static analysis and contains sensible defaults
-// for the template analyser to minimise false-positives and provide the best results.
+// for PSRule to minimise false-positives and provide the best results.
 
 // This file is not intended to be used as a runtime configuration file.
 
