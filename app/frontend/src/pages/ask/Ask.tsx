@@ -321,7 +321,12 @@ export function Component(): JSX.Element {
                     defaultValue={retrieveCount.toString()}
                     onChange={onRetrieveCountChange}
                 />
-                <TextField className={styles.askSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                <TextField
+                    className={styles.askSettingsSeparator}
+                    label="Exclude category"
+                    onChange={onExcludeCategoryChanged}
+                    defaultValue={excludeCategory}
+                />
 
                 {showSemanticRankerOption && (
                     <Checkbox
