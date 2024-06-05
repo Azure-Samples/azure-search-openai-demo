@@ -31,6 +31,10 @@ module main 'main.bicep' = {
     useGPT4V: false
     useSpeechInputBrowser: false
     useSpeechOutputBrowser: false
+
+    // Test the secure configuration
     enableUnauthenticatedAccess: false
+    usePrivateEndpoint: true
+    publicNetworkAccess: 'Disabled'
   }
 }
