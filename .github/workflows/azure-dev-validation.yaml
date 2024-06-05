@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  templateanalyzer:
+  bicep:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -24,18 +24,6 @@ jobs:
         with:
           inlineScript: az config set bicep.use_binary_from_path=false && az bicep build -f infra/main.bicep --stdout
 
-      - name: Run Microsoft Security DevOps Analysis
-        uses: microsoft/security-devops-action@preview
-        id: msdo
-        continue-on-error: true
-        with:
-          tools: templateanalyzer
-
-      - name: Upload alerts to Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: github.repository == 'Azure-Samples/azure-search-openai-demo'
-        with:
-          sarif_file: ${{ steps.msdo.outputs.sarifFile }}
   psrule:
     runs-on: ubuntu-latest
     permissions:
