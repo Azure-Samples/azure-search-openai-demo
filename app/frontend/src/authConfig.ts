@@ -17,6 +17,8 @@ interface AuthSetup {
     useLogin: boolean;
     // Set to true if access control is enforced by the application
     requireAccessControl: boolean;
+    // Set to true if the application allows unauthenticated access (only applies for documents without access control)
+    enableUnauthenticatedAccess: boolean;
     /**
      * Configuration object to be passed to MSAL instance on creation.
      * For a full list of MSAL.js configuration parameters, visit:
@@ -25,7 +27,7 @@ interface AuthSetup {
     msalConfig: {
         auth: {
             clientId: string; // Client app id used for login
-            authority: string; // Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
+            authority: string; // Directory to use for login https://learn.microsoft.com/entra/identity-platform/msal-client-application-configuration#authority
             redirectUri: string; // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
             postLogoutRedirectUri: string; // Indicates the page to navigate after logout.
             navigateToLoginRequestUrl: boolean; // If "true", will navigate back to the original request location before processing the auth code response.
@@ -40,7 +42,7 @@ interface AuthSetup {
          * Scopes you add here will be prompted for user consent during sign-in.
          * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
          * For more information about OIDC scopes, visit:
-         * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+         * https://learn.microsoft.com/entra/identity-platform/permissions-consent-overview#openid-connect-scopes
          */
         scopes: Array<string>;
     };
@@ -64,6 +66,10 @@ export const useLogin = authSetup.useLogin;
 
 export const requireAccessControl = authSetup.requireAccessControl;
 
+export const enableUnauthenticatedAccess = authSetup.enableUnauthenticatedAccess;
+
+export const requireLogin = requireAccessControl && !enableUnauthenticatedAccess;
+
 /**
  * Configuration object to be passed to MSAL instance on creation.
  * For a full list of MSAL.js configuration parameters, visit:
@@ -75,7 +81,7 @@ export const msalConfig = authSetup.msalConfig;
  * Scopes you add here will be prompted for user consent during sign-in.
  * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
  * For more information about OIDC scopes, visit:
- * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+ * https://learn.microsoft.com/entra/identity-platform/permissions-consent-overview#openid-connect-scopes
  */
 export const loginRequest = authSetup.loginRequest;
 

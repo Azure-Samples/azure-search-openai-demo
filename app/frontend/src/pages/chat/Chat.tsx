@@ -9,6 +9,7 @@ import styles from "./Chat.module.css";
 import {
     chatApi,
     configApi,
+    getSpeechApi,
     RetrievalMode,
     ChatAppResponse,
     ChatAppResponseOrError,
@@ -65,10 +66,15 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+    const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
+
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
+    const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
+    const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
+    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -80,10 +86,13 @@ const Chat = () => {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
+            setShowSpeechInput(config.showSpeechInput);
+            setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
+            setShowSpeechOutputAzure(config.showSpeechOutputAzure);
         });
     };
 
-    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>) => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
@@ -175,7 +184,7 @@ const Chat = () => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
@@ -207,6 +216,19 @@ const Chat = () => {
     useEffect(() => {
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (answers && showSpeechOutputAzure) {
+            // For each answer that is missing a speech URL, fetch the speech URL
+            for (let i = 0; i < answers.length; i++) {
+                if (!speechUrls[i]) {
+                    getSpeechApi(answers[i][1].choices[0].message.content).then(speechUrl => {
+                        setSpeechUrls([...speechUrls.slice(0, i), speechUrl, ...speechUrls.slice(i + 1)]);
+                    });
+                }
+            }
+        }
+    }, [answers]);
 
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
@@ -340,6 +362,9 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                showSpeechOutputAzure={showSpeechOutputAzure}
+                                                showSpeechOutputBrowser={showSpeechOutputBrowser}
+                                                speechUrl={speechUrls[index]}
                                             />
                                         </div>
                                     </div>
@@ -359,6 +384,9 @@ const Chat = () => {
                                                 onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
                                                 onFollowupQuestionClicked={q => makeApiRequest(q)}
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                                showSpeechOutputAzure={showSpeechOutputAzure}
+                                                showSpeechOutputBrowser={showSpeechOutputBrowser}
+                                                speechUrl={speechUrls[index]}
                                             />
                                         </div>
                                     </div>
@@ -389,6 +417,7 @@ const Chat = () => {
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
+                            showSpeechInput={showSpeechInput}
                         />
                     </div>
                 </div>
@@ -586,6 +615,7 @@ const Chat = () => {
 
                     {showVectorOption && (
                         <VectorSettings
+                            defaultRetrievalMode={retrievalMode}
                             showImageOptions={useGPT4V && showGPT4VOptions}
                             updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
                             updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}

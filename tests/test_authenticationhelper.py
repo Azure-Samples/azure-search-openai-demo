@@ -18,7 +18,11 @@ MockSearchIndex = SearchIndex(
 )
 
 
-def create_authentication_helper(require_access_control: bool = False):
+def create_authentication_helper(
+    require_access_control: bool = False,
+    enable_global_documents: bool = False,
+    enable_unauthenticated_access: bool = False,
+):
     return AuthenticationHelper(
         search_index=MockSearchIndex,
         use_authentication=True,
@@ -27,6 +31,8 @@ def create_authentication_helper(require_access_control: bool = False):
         client_app_id="CLIENT_APP",
         tenant_id="TENANT_ID",
         require_access_control=require_access_control,
+        enable_global_documents=enable_global_documents,
+        enable_unauthenticated_access=enable_unauthenticated_access,
     )
 
 
@@ -93,6 +99,14 @@ def test_auth_setup_required_access_control(mock_confidential_client_success, mo
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
+def test_auth_setup_required_access_control_and_unauthenticated_access(
+    mock_confidential_client_success, mock_validate_token_success, snapshot
+):
+    helper = create_authentication_helper(require_access_control=True, enable_unauthenticated_access=True)
+    result = helper.get_auth_setup_for_client()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
 def test_get_auth_token(mock_confidential_client_success, mock_validate_token_success):
     with pytest.raises(AuthError) as exc_info:
         AuthenticationHelper.get_token_auth_header({})
@@ -113,6 +127,13 @@ def test_get_auth_token(mock_confidential_client_success, mock_validate_token_su
 def test_build_security_filters(mock_confidential_client_success, mock_validate_token_success):
     auth_helper = create_authentication_helper()
     auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    auth_helper_enable_global_documents = create_authentication_helper(enable_global_documents=True)
+    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
+        require_access_control=True, enable_global_documents=True
+    )
+    auth_helper_all_options = create_authentication_helper(
+        require_access_control=True, enable_global_documents=True, enable_unauthenticated_access=True
+    )
     assert auth_helper.build_security_filters(overrides={}, auth_claims={}) is None
     assert (
         auth_helper_require_access_control.build_security_filters(overrides={}, auth_claims={})
@@ -162,6 +183,50 @@ def test_build_security_filters(mock_confidential_client_success, mock_validate_
         )
         == "oids/any(g:search.in(g, ''))"
     )
+    assert auth_helper.build_security_filters(overrides={}, auth_claims={}) is None
+    assert auth_helper_enable_global_documents.build_security_filters(overrides={}, auth_claims={}) is None
+    assert (
+        auth_helper_enable_global_documents.build_security_filters(
+            overrides={"use_oid_security_filter": True, "use_groups_security_filter": True},
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+        )
+        == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
+    )
+    assert (
+        auth_helper_enable_global_documents.build_security_filters(
+            overrides={"use_oid_security_filter": True}, auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+        )
+        == "(oids/any(g:search.in(g, 'OID_X')) or (not oids/any() and not groups/any()))"
+    )
+    assert (
+        auth_helper_enable_global_documents.build_security_filters(
+            overrides={"use_groups_security_filter": True},
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+        )
+        == "(groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')) or (not oids/any() and not groups/any()))"
+    )
+    assert (
+        auth_helper_require_access_control_and_enable_global_documents.build_security_filters(
+            overrides={}, auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+        )
+        == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
+    )
+    assert (
+        auth_helper_require_access_control_and_enable_global_documents.build_security_filters(
+            overrides={}, auth_claims={}
+        )
+        == "((oids/any(g:search.in(g, '')) or groups/any(g:search.in(g, ''))) or (not oids/any() and not groups/any()))"
+    )
+    assert (
+        auth_helper_all_options.build_security_filters(
+            overrides={}, auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]}
+        )
+        == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
+    )
+    assert (
+        auth_helper_all_options.build_security_filters(overrides={}, auth_claims={})
+        == "((oids/any(g:search.in(g, '')) or groups/any(g:search.in(g, ''))) or (not oids/any() and not groups/any()))"
+    )
 
 
 @pytest.mark.asyncio
@@ -206,7 +271,7 @@ async def test_check_path_auth_allowed_sourcepage(
 
     assert (
         await auth_helper_require_access_control.check_path_auth(
-            path="Benefit_Options-2.pdf",
+            path="Benefit_Options-2's complement.pdf",
             auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
             search_client=create_search_client(),
         )
@@ -214,7 +279,7 @@ async def test_check_path_auth_allowed_sourcepage(
     )
     assert (
         filter
-        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options-2.pdf') or (sourcepage eq 'Benefit_Options-2.pdf'))"
+        == "(oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) and ((sourcefile eq 'Benefit_Options-2''s complement.pdf') or (sourcepage eq 'Benefit_Options-2''s complement.pdf'))"
     )
 
 
@@ -247,6 +312,36 @@ async def test_check_path_auth_allowed_sourcefile(
 
 
 @pytest.mark.asyncio
+async def test_check_path_auth_allowed_public_sourcefile(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
+        require_access_control=True, enable_global_documents=True
+    )
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control_and_enable_global_documents.check_path_auth(
+            path="Benefit_Options.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert (
+        filter
+        == "((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any())) and ((sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf'))"
+    )
+
+
+@pytest.mark.asyncio
 async def test_check_path_auth_allowed_empty(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
@@ -262,6 +357,33 @@ async def test_check_path_auth_allowed_empty(
 
     assert (
         await auth_helper_require_access_control.check_path_auth(
+            path="",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_public_empty(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
+        require_access_control=True, enable_global_documents=True
+    )
+    filter = None
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        filter = kwargs.get("filter")
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control_and_enable_global_documents.check_path_auth(
             path="",
             auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
             search_client=create_search_client(),
@@ -318,6 +440,37 @@ async def test_check_path_auth_allowed_without_access_control(
 
     assert (
         await auth_helper.check_path_auth(
+            path="Benefit_Options-2.pdf",
+            auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
+            search_client=create_search_client(),
+        )
+        is True
+    )
+    assert filter is None
+    assert called_search is False
+
+
+@pytest.mark.asyncio
+async def test_check_path_auth_allowed_public_without_access_control(
+    monkeypatch, mock_confidential_client_success, mock_validate_token_success
+):
+    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
+        require_access_control=False, enable_global_documents=True
+    )
+    filter = None
+    called_search = False
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal filter
+        nonlocal called_search
+        filter = kwargs.get("filter")
+        called_search = True
+        return MockAsyncPageIterator(data=[])
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    assert (
+        await auth_helper_require_access_control_and_enable_global_documents.check_path_auth(
             path="Benefit_Options-2.pdf",
             auth_claims={"oid": "OID_X", "groups": ["GROUP_Y", "GROUP_Z"]},
             search_client=create_search_client(),

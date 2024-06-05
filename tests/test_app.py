@@ -77,7 +77,8 @@ async def test_redirect(client):
 async def test_favicon(client):
     response = await client.get("/favicon.ico")
     assert response.status_code == 200
-    assert response.content_type == "image/vnd.microsoft.icon"
+    assert response.content_type.startswith("image")
+    assert response.content_type.endswith("icon")
 
 
 @pytest.mark.asyncio
@@ -192,6 +193,32 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_rtr_text_filter_public_documents(auth_public_documents_client, snapshot):
+    response = await auth_public_documents_client.post(
+        "/ask",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
@@ -320,6 +347,83 @@ async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch
 
 
 @pytest.mark.asyncio
+async def test_speech(client, mock_speech_success):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
+async def test_speech_token_refresh(client_with_expiring_token, mock_speech_success):
+    # First time should create a brand new token
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_must_be_json(client, mock_speech_success):
+    response = await client.post("/speech")
+    assert response.status_code == 415
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_cancelled(client, mock_speech_cancelled):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis canceled. Check logs for details."
+
+
+@pytest.mark.asyncio
+async def test_speech_request_failed(client, mock_speech_failed):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis failed. Check logs for details."
+
+
+@pytest.mark.asyncio
 async def test_chat_text(client, snapshot):
     response = await client.post(
         "/chat",
@@ -356,6 +460,32 @@ async def test_chat_text_filter(auth_client, snapshot):
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_text_filter_public_documents(auth_public_documents_client, snapshot):
+    response = await auth_public_documents_client.post(
+        "/chat",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")

@@ -45,11 +45,9 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
     monkeypatch.setattr(DataLakeDirectoryClient, "set_access_control", mock_directory_set_access_control)
 
     def mock_directory_get_file_client(self, *args, **kwargs):
-        path = kwargs.get("file")
-        if path in self.files:
-            return self.files[path]
-        self.files[path] = DataLakeFileClient(path)
-        return self.files[path]
+        return azure.storage.filedatalake.aio.DataLakeFileClient(
+            account_url="https://test.blob.core.windows.net/", file_system_name="user-content", file_path=args[0]
+        )
 
     monkeypatch.setattr(DataLakeDirectoryClient, "get_file_client", mock_directory_get_file_client)
 
@@ -150,12 +148,19 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
 
     monkeypatch.setattr(DataLakeFileClient, "delete_file", mock_delete_file)
 
+    def mock_directory_get_file_client(self, *args, **kwargs):
+        return azure.storage.filedatalake.aio.DataLakeFileClient(
+            account_url="https://test.blob.core.windows.net/", file_system_name="user-content", file_path=args[0]
+        )
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "get_file_client", mock_directory_get_file_client)
+
     class AsyncSearchResultsIterator:
         def __init__(self):
             self.results = [
                 {
-                    "sourcepage": "a.txt",
-                    "sourcefile": "a.txt",
+                    "sourcepage": "a's doc.txt",
+                    "sourcefile": "a's doc.txt",
                     "content": "This is a test document.",
                     "embedding": [],
                     "category": None,
@@ -165,8 +170,8 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
                     "@search.reranker_score": 3.4577205181121826,
                 },
                 {
-                    "sourcepage": "a.txt",
-                    "sourcefile": "a.txt",
+                    "sourcepage": "a's doc.txt",
+                    "sourcefile": "a's doc.txt",
                     "content": "This is a test document.",
                     "embedding": [],
                     "category": None,
@@ -176,8 +181,8 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
                     "@search.reranker_score": 3.4577205181121826,
                 },
                 {
-                    "sourcepage": "a.txt",
-                    "sourcefile": "a.txt",
+                    "sourcepage": "a's doc.txt",
+                    "sourcefile": "a's doc.txt",
                     "content": "This is a test document.",
                     "embedding": [],
                     "category": None,
@@ -219,10 +224,10 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
     monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
 
     response = await auth_client.post(
-        "/delete_uploaded", headers={"Authorization": "Bearer test"}, json={"filename": "a.txt"}
+        "/delete_uploaded", headers={"Authorization": "Bearer test"}, json={"filename": "a's doc.txt"}
     )
     assert response.status_code == 200
     assert len(searched_filters) == 2, "It should have searched twice (with no results on second try)"
-    assert searched_filters[0] == "sourcefile eq 'a.txt'"
+    assert searched_filters[0] == "sourcefile eq 'a''s doc.txt'"
     assert len(deleted_documents) == 1, "It should have only deleted the document solely owned by OID_X"
     assert deleted_documents[0]["id"] == "file-a_txt-7465737420646F63756D656E742E706466"

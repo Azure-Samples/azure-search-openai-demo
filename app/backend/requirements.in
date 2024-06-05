@@ -5,6 +5,7 @@ openai[datalib]>=1.3.7
 tiktoken
 tenacity
 azure-ai-documentintelligence
+azure-cognitiveservices-speech
 azure-search-documents==11.6.0b1
 azure-storage-blob
 azure-storage-file-datalake
@@ -17,7 +18,6 @@ opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
 msal
-azure-keyvault-secrets
 cryptography
 python-jose[cryptography]
 types-python-jose
@@ -28,3 +28,4 @@ PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk==1.1.0
+openai-messages-token-helper

@@ -9,11 +9,12 @@ import { toolTipText } from "../../i18n/tooltips.js";
 
 interface Props {
     showImageOptions?: boolean;
+    defaultRetrievalMode: RetrievalMode;
     updateRetrievalMode: (retrievalMode: RetrievalMode) => void;
     updateVectorFields: (options: VectorFieldOptions[]) => void;
 }
 
-export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions }: Props) => {
+export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions, defaultRetrievalMode }: Props) => {
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [vectorFieldOption, setVectorFieldOption] = useState<VectorFieldOptions>(VectorFieldOptions.Both);
 
@@ -43,6 +44,7 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
             <Dropdown
                 id={retrievalModeFieldId}
                 label="Retrieval mode"
+                selectedKey={defaultRetrievalMode.toString()}
                 options={[
                     { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
                     { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },

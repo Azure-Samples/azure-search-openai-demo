@@ -149,11 +149,38 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
+    "useSpeechInputBrowser": {
+      "value": "${USE_SPEECH_INPUT_BROWSER=false}"
+    },
+    "useSpeechOutputBrowser": {
+      "value": "${USE_SPEECH_OUTPUT_BROWSER=false}"
+    },
+    "useSpeechOutputAzure": {
+      "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
+    },
+    "speechServiceName": {
+      "value": "${AZURE_SPEECH_SERVICE}"
+    },
+    "speechServiceSkuName": {
+      "value": "${AZURE_SPEECH_SERVICE_SKU=S0}"
+    },
+    "speechServiceResourceGroupName": {
+      "value": "${AZURE_SPEECH_SERVICE_RESOURCE_GROUP}"
+    },
+    "speechServiceLocation": {
+      "value": "${AZURE_SPEECH_SERVICE_LOCATION}"
+    },
     "useAuthentication": {
       "value": "${AZURE_USE_AUTHENTICATION=false}"
     },
     "enforceAccessControl": {
       "value": "${AZURE_ENFORCE_ACCESS_CONTROL=false}"
+    },
+    "enableGlobalDocuments": {
+      "value": "${AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS=false}"
+    },
+    "enableUnauthenticatedAccess": {
+      "value": "${AZURE_ENABLE_UNAUTHENTICATED_ACCESS=false}"
     },
     "tenantId": {
       "value": "${AZURE_TENANT_ID}"
@@ -175,6 +202,33 @@
     },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
+    },
+    "publicNetworkAccess": {
+      "value": "${AZURE_PUBLIC_NETWORK_ACCESS=Enabled}"
+    },
+    "usePrivateEndpoint": {
+      "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"
+    },
+    "bypass": {
+      "value": "${AZURE_NETWORK_BYPASS=AzureServices}"
+    },
+    "provisionVm": {
+      "value": "${AZURE_PROVISION_VM=false}"
+    },
+    "vmUserName": {
+      "value": "${AZURE_VM_USERNAME}"
+    },
+    "vmPassword": {
+      "value": "${AZURE_VM_PASSWORD}"
+    },
+    "vmOsVersion": {
+      "value": "${AZURE_VM_OS_VERSION=2022-datacenter-azure-edition}"
+    },
+    "vmOsPublisher": {
+      "value": "${AZURE_VM_OS_PUBLISHER=MicrosoftWindowsServer}"
+    },
+    "vmOsOffer": {
+      "value": "${AZURE_VM_OS_OFFER=WindowsServer}"
     },
     "useIntegratedVectorization": {
       "value": "${USE_FEATURE_INT_VECTORIZATION}"

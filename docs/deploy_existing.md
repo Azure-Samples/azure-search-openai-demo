@@ -11,6 +11,7 @@ You should set these values before running `azd up`. Once you've set them, retur
 * [Azure Application Insights and related resources](#azure-application-insights-and-related-resources)
 * [Azure Computer Vision resources](#azure-computer-vision-resources)
 * [Azure Document Intelligence resource](#azure-document-intelligence-resource)
+* [Azure Speech resource](#azure-speech-resource)
 * [Other Azure resources](#other-azure-resources)
 
 
@@ -50,7 +51,7 @@ When you run `azd up` after and are prompted to select a value for `openAiResour
 1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
 1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
   then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
-1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. If you specify the free tier, then your app will no longer be able to use semantic ranker, and it will use keys instead of managed identity for accessing the search service. Be advised that [search SKUs cannot be changed](https://learn.microsoft.com/azure/search/search-sku-tier#tier-upgrade-or-downgrade). ([See other possible SKU values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
+1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. If you specify the free tier, then your app will no longer be able to use semantic ranker. Be advised that [search SKUs cannot be changed](https://learn.microsoft.com/azure/search/search-sku-tier#tier-upgrade-or-downgrade). ([See other possible SKU values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
 1. If you have an existing index that is set up with all the expected fields, then run `azd env set AZURE_SEARCH_INDEX {Name of existing index}`. Otherwise, the `azd up` command will create a new index.
 
 You can also customize the search service (new or existing) for non-English searches:
@@ -87,6 +88,14 @@ If your existing resource is in one of those regions, then you can re-use it by 
 1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_LOCATION {Location of existing service}`
 1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}`
 1. Run `azd env set AZURE_DOCUMENTINTELLIGENCE_SKU {SKU of existing service, defaults to S0}`
+
+## Azure Speech resource
+
+1. Run `azd env set AZURE_SPEECH_SERVICE {Name of existing Azure Speech service}`
+1. Run `azd env set AZURE_SPEECH_SERVICE_RESOURCE_GROUP {Name of existing resource group with speech service}`
+1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
+  then run `azd env set AZURE_SPEECH_SERVICE_LOCATION {Location of existing service}`
+1. If the speech service's SKU is not "S0", then run `azd env set AZURE_SPEECH_SERVICE_SKU {Name of SKU}`.
 
 ## Other Azure resources
 

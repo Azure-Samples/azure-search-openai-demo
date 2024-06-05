@@ -4,7 +4,7 @@ import { useId } from "@fluentui/react-hooks";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
+import { askApi, configApi, getSpeechApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -43,12 +43,16 @@ export function Component(): JSX.Element {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
+    const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
+    const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
+    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
     const [answer, setAnswer] = useState<ChatAppResponse>();
+    const [speechUrl, setSpeechUrl] = useState<string | null>(null);
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
@@ -65,12 +69,23 @@ export function Component(): JSX.Element {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
+            setShowSpeechInput(config.showSpeechInput);
+            setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
+            setShowSpeechOutputAzure(config.showSpeechOutputAzure);
         });
     };
 
     useEffect(() => {
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (answer && showSpeechOutputAzure) {
+            getSpeechApi(answer.choices[0].message.content).then(speechUrl => {
+                setSpeechUrl(speechUrl);
+            });
+        }
+    }, [answer]);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -115,6 +130,7 @@ export function Component(): JSX.Element {
             };
             const result = await askApi(request, token);
             setAnswer(result);
+            setSpeechUrl(null);
         } catch (e) {
             setError(e);
         } finally {
@@ -219,6 +235,7 @@ export function Component(): JSX.Element {
                         disabled={isLoading}
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}
+                        showSpeechInput={showSpeechInput}
                     />
                 </div>
             </div>
@@ -233,6 +250,9 @@ export function Component(): JSX.Element {
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
+                            showSpeechOutputAzure={showSpeechOutputAzure}
+                            showSpeechOutputBrowser={showSpeechOutputBrowser}
+                            speechUrl={speechUrl}
                         />
                     </div>
                 )}
@@ -403,6 +423,7 @@ export function Component(): JSX.Element {
 
                 {showVectorOption && (
                     <VectorSettings
+                        defaultRetrievalMode={retrievalMode}
                         showImageOptions={useGPT4V && showGPT4VOptions}
                         updateVectorFields={(options: VectorFieldOptions[]) => setVectorFieldList(options)}
                         updateRetrievalMode={(retrievalMode: RetrievalMode) => setRetrievalMode(retrievalMode)}

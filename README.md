@@ -1,20 +1,3 @@
----
-name: ChatGPT + Enterprise data
-description: Chat with your data using OpenAI and AI Search.
-languages:
-- python
-- typescript
-- bicep
-- azdeveloper
-products:
-- azure-openai
-- azure-cognitive-search
-- azure-app-service
-- azure
-page_type: sample
-urlFragment: azure-search-openai-demo
----
-
 # ChatGPT + Enterprise data with Azure OpenAI and AI Search
 
 > [!IMPORTANT]
@@ -44,7 +27,6 @@ urlFragment: azure-search-openai-demo
 - [Troubleshooting](#troubleshooting)
 - [Resources](#resources)
 
-
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
@@ -56,11 +38,14 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ## Features
 
-* Chat and Q&A interfaces
-* Explores various options to help users evaluate the trustworthiness of responses with citations, tracking of source content, etc.
-* Shows possible approaches for data preparation, prompt construction, and orchestration of interaction between model (OpenAI) and retriever (AI Search)
-* Settings directly in the UX to tweak the behavior and experiment with options
-* Performance tracing and monitoring with Application Insights
+- Chat (multi-turn) and Q&A (single turn) interfaces
+- Renders citations and thought process for each answer
+- Includes settings directly in the UI to tweak the behavior and experiment with options
+- Integrates Azure AI Search for indexing and retrieval of documents, with support for [many document formats](/docs/data_ingestion.md#supported-document-formats) as well as [integrated vectorization](/docs/data_ingestion.md#overview-of-integrated-vectorization)
+- Optional usage of [GPT-4 with vision](/docs/gpt4vision.md) to reason over image-heavy documents
+- Optional addition of [speech input/output](/docs/deploy_features.md#enabling-speech-inputoutput) for accessibility
+- Optional automation of [user login and data access](/docs/login_and_acl.md) via Microsoft Entra
+- Performance tracing and monitoring with Application Insights
 
 ![Chat screen](docs/images/chatscreen.png)
 

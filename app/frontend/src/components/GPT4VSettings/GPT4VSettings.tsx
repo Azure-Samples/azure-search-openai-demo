@@ -45,7 +45,7 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
             <Checkbox
                 id={useGPT4VFieldId}
                 checked={useGPT4V}
-                label="Use GPT-4 Turbo with Vision"
+                label="Use GPT vision model"
                 onChange={onuseGPT4V}
                 aria-labelledby={useGPT4VId}
                 onRenderLabel={(props: ICheckboxProps | undefined) => (
@@ -56,7 +56,7 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
                 <Dropdown
                     id={gpt4VInputFieldId}
                     selectedKey={vectorFieldOption}
-                    label="GPT-4 Turbo with Vision inputs"
+                    label="GPT vision model inputs"
                     options={[
                         {
                             key: GPT4VInput.TextAndImages,

@@ -41,6 +41,8 @@ class AuthenticationHelper:
         client_app_id: Optional[str],
         tenant_id: Optional[str],
         require_access_control: bool = False,
+        enable_global_documents: bool = False,
+        enable_unauthenticated_access: bool = False,
     ):
         self.use_authentication = use_authentication
         self.server_app_id = server_app_id
@@ -62,22 +64,27 @@ class AuthenticationHelper:
             field_names = [field.name for field in search_index.fields] if search_index else []
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
             self.require_access_control = require_access_control
+            self.enable_global_documents = enable_global_documents
+            self.enable_unauthenticated_access = enable_unauthenticated_access
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
             self.has_auth_fields = False
             self.require_access_control = False
+            self.enable_global_documents = True
+            self.enable_unauthenticated_access = True
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
             "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
-            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to use the application
+            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to access documents with access control lists
+            "enableUnauthenticatedAccess": self.enable_unauthenticated_access,  # Whether or not the user can access the app without login
             "msalConfig": {
                 "auth": {
                     "clientId": self.client_app_id,  # Client app id used for login
-                    "authority": self.authority,  # Directory to use for login https://learn.microsoft.com/azure/active-directory/develop/msal-client-application-configuration#authority
+                    "authority": self.authority,  # Directory to use for login https://learn.microsoft.com/entra/identity-platform/msal-client-application-configuration#authority
                     "redirectUri": "/redirect",  # Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
                     "postLogoutRedirectUri": "/",  # Indicates the page to navigate after logout.
                     "navigateToLoginRequestUrl": False,  # If "true", will navigate back to the original request location before processing the auth code response.
@@ -93,10 +100,10 @@ class AuthenticationHelper:
                 # Scopes you add here will be prompted for user consent during sign-in.
                 # By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
                 # For more information about OIDC scopes, visit:
-                # https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+                # https://learn.microsoft.com/entra/identity-platform/permissions-consent-overview#openid-connect-scopes
                 "scopes": [".default"],
                 # Uncomment the following line to cause a consent dialog to appear on every login
-                # For more information, please visit https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+                # For more information, please visit https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow#request-an-authorization-code
                 # "prompt": "consent"
             },
             "tokenRequest": {
@@ -150,17 +157,24 @@ class AuthenticationHelper:
             else None
         )
 
-        # If only one security filter is specified, return that filter
+        # If only one security filter is specified, use that filter
         # If both security filters are specified, combine them with "or" so only 1 security filter needs to pass
         # If no security filters are specified, don't return any filter
+        security_filter = None
         if oid_security_filter and not groups_security_filter:
-            return oid_security_filter
+            security_filter = f"{oid_security_filter}"
         elif groups_security_filter and not oid_security_filter:
-            return groups_security_filter
+            security_filter = f"{groups_security_filter}"
         elif oid_security_filter and groups_security_filter:
-            return f"({oid_security_filter} or {groups_security_filter})"
-        else:
-            return None
+            security_filter = f"({oid_security_filter} or {groups_security_filter})"
+
+        # If global documents are allowed, append the public global filter
+        if self.enable_global_documents:
+            global_documents_filter = "(not oids/any() and not groups/any())"
+            if security_filter:
+                security_filter = f"({security_filter} or {global_documents_filter})"
+
+        return security_filter
 
     @staticmethod
     async def list_groups(graph_resource_access_token: dict) -> list[str]:
@@ -197,7 +211,7 @@ class AuthenticationHelper:
         try:
             # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
             # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
-            # https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
+            # https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow
             auth_token = AuthenticationHelper.get_token_auth_header(headers)
             # Validate the token before use
             await self.validate_access_token(auth_token)
@@ -211,13 +225,13 @@ class AuthenticationHelper:
                 raise AuthError(error=str(graph_resource_access_token), status_code=401)
 
             # Read the claims from the response. The oid and groups claims are used for security filtering
-            # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference
+            # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference
             id_token_claims = graph_resource_access_token["id_token_claims"]
             auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups", [])}
 
             # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
             # or a groups overage claim may have been emitted.
-            # https://learn.microsoft.com/azure/active-directory/develop/id-token-claims-reference#groups-overage-claim
+            # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference#groups-overage-claim
             missing_groups_claim = "groups" not in id_token_claims
             has_group_overage_claim = (
                 missing_groups_claim
@@ -230,12 +244,12 @@ class AuthenticationHelper:
             return auth_claims
         except AuthError as e:
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
-            if self.require_access_control:
+            if self.require_access_control and not self.enable_unauthenticated_access:
                 raise
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
-            if self.require_access_control:
+            if self.require_access_control and not self.enable_unauthenticated_access:
                 raise
             return {}
 
@@ -253,7 +267,10 @@ class AuthenticationHelper:
 
         # Filter down to only chunks that are from the specific source file
         # Sourcepage is used for GPT-4V
-        filter = f"{security_filter} and ((sourcefile eq '{path}') or (sourcepage eq '{path}'))"
+        # Replace ' with '' to escape the single quote for the filter
+        # https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax#escaping-special-characters-in-string-constants
+        path_for_filter = path.replace("'", "''")
+        filter = f"{security_filter} and ((sourcefile eq '{path_for_filter}') or (sourcepage eq '{path_for_filter}'))"
 
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied

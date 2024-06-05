@@ -16,7 +16,8 @@ async def main():
         print("Not updating authentication.")
         exit(0)
 
-    credential = AzureDeveloperCliCredential(tenant_id=os.getenv("AZURE_AUTH_TENANT_ID", os.environ["AZURE_TENANT_ID"]))
+    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.environ["AZURE_TENANT_ID"])
+    credential = AzureDeveloperCliCredential(tenant_id=auth_tenant)
 
     scopes = ["https://graph.microsoft.com/.default"]
     graph_client = GraphServiceClient(credentials=credential, scopes=scopes)

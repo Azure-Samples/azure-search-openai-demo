@@ -8,6 +8,7 @@ param applicationInsightsName string = ''
 param appServicePlanId string
 param keyVaultName string = ''
 param managedIdentity bool = !empty(keyVaultName)
+param virtualNetworkSubnetId string = ''
 
 // Runtime Properties
 @allowed([
@@ -44,43 +45,54 @@ param serverAppId string = ''
 @secure()
 param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
+@allowed([ 'Enabled', 'Disabled' ])
+param publicNetworkAccess string = 'Enabled'
+param enableUnauthenticatedAccess bool = false
 
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
 var loginEndpoint = environment().authentication.loginEndpoint
 var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
-var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [loginEndpointFixed]) : msftAllowedOrigins
+var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [ loginEndpointFixed ]) : msftAllowedOrigins
 
 // .default must be the 1st scope for On-Behalf-Of-Flow combined consent to work properly
 // Please see https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#default-and-combined-consent
-var requiredScopes = ['api://${serverAppId}/.default', 'openid', 'profile', 'email', 'offline_access']
-var requiredAudiences = ['api://${serverAppId}']
+var requiredScopes = [ 'api://${serverAppId}/.default', 'openid', 'profile', 'email', 'offline_access' ]
+var requiredAudiences = [ 'api://${serverAppId}' ]
+
+var coreConfig = {
+  linuxFxVersion: linuxFxVersion
+  alwaysOn: alwaysOn
+  ftpsState: ftpsState
+  appCommandLine: appCommandLine
+  numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
+  minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
+  minTlsVersion: '1.2'
+  use32BitWorkerProcess: use32BitWorkerProcess
+  functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
+  healthCheckPath: healthCheckPath
+  cors: {
+    allowedOrigins: union(allMsftAllowedOrigins, allowedOrigins)
+  }
+}
+
+var appServiceProperties = {
+  serverFarmId: appServicePlanId
+  siteConfig: coreConfig
+  clientAffinityEnabled: clientAffinityEnabled
+  httpsOnly: true
+  // Always route traffic through the vnet
+  // See https://learn.microsoft.com/azure/app-service/configure-vnet-integration-routing#configure-application-routing
+  vnetRouteAllEnabled: !empty(virtualNetworkSubnetId)
+  virtualNetworkSubnetId: !empty(virtualNetworkSubnetId) ? virtualNetworkSubnetId : null
+  publicNetworkAccess: publicNetworkAccess
+}
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: name
   location: location
   tags: tags
   kind: kind
-  properties: {
-    serverFarmId: appServicePlanId
-    siteConfig: {
-      linuxFxVersion: linuxFxVersion
-      alwaysOn: alwaysOn
-      ftpsState: ftpsState
-      minTlsVersion: '1.2'
-      appCommandLine: appCommandLine
-      numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
-      minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
-      use32BitWorkerProcess: use32BitWorkerProcess
-      functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
-      healthCheckPath: healthCheckPath
-      cors: {
-        allowedOrigins: union(allMsftAllowedOrigins, allowedOrigins)
-      }
-    }
-    clientAffinityEnabled: clientAffinityEnabled
-    httpsOnly: true
-  }
-
+  properties: appServiceProperties
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
 
   resource configAppSettings 'config' = {
@@ -90,7 +102,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
         ENABLE_ORYX_BUILD: string(enableOryxBuild)
       },
-      runtimeName == 'python' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true'} : {},
+      runtimeName == 'python' ? { PYTHON_ENABLE_GUNICORN_MULTIWORKERS: 'true' } : {},
       !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {},
       !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
   }
@@ -127,7 +139,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     properties: {
       globalValidation: {
         requireAuthentication: true
-        unauthenticatedClientAction: 'RedirectToLoginPage'
+        unauthenticatedClientAction: enableUnauthenticatedAccess ? 'AllowAnonymous' : 'RedirectToLoginPage'
         redirectToProvider: 'azureactivedirectory'
       }
       identityProviders: {
@@ -139,7 +151,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
             openIdIssuer: authenticationIssuerUri
           }
           login: {
-            loginParameters: ['scope=${join(union(requiredScopes, additionalScopes), ' ')}']
+            loginParameters: [ 'scope=${join(union(requiredScopes, additionalScopes), ' ')}' ]
           }
           validation: {
             allowedAudiences: union(requiredAudiences, additionalAllowedAudiences)
@@ -166,6 +178,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
   name: applicationInsightsName
 }
 
+output id string = appService.id
 output identityPrincipalId string = managedIdentity ? appService.identity.principalId : ''
 output name string = appService.name
 output uri string = 'https://${appService.properties.defaultHostName}'

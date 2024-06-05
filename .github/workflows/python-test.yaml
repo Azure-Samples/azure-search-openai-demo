@@ -69,5 +69,5 @@ jobs:
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
           uses: actions/upload-artifact@v4
           with:
-            name: playwright-traces
+            name: playwright-traces${{ matrix.python_version }}
             path: test-results

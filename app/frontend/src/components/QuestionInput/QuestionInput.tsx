@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import { useMsal } from "@azure/msal-react";
+import { useState, useEffect } from "react";
 import { Stack, TextField } from "@fluentui/react";
-import { Button, Tooltip, Field, Textarea } from "@fluentui/react-components";
+import { Button, Tooltip } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
-import { isLoggedIn, requireAccessControl } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
 
+import { isLoggedIn, requireLogin } from "../../authConfig";
 import styles from "./QuestionInput.module.css";
+import { SpeechInput } from "./SpeechInput";
 
 interface Props {
     onSend: (question: string) => void;
@@ -13,9 +14,10 @@ interface Props {
     initQuestion?: string;
     placeholder?: string;
     clearOnSend?: boolean;
+    showSpeechInput?: boolean;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion }: Props) => {
+export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput }: Props) => {
     const [question, setQuestion] = useState<string>("");
 
     useEffect(() => {
@@ -50,8 +52,8 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     };
 
     const { instance } = useMsal();
-    const disableRequiredAccessControl = requireAccessControl && !isLoggedIn(instance);
-    const sendQuestionDisabled = disabled || !question.trim() || disableRequiredAccessControl;
+    const disableRequiredAccessControl = requireLogin && !isLoggedIn(instance);
+    const sendQuestionDisabled = disabled || !question.trim() || requireLogin;
 
     if (disableRequiredAccessControl) {
         placeholder = "Please login to continue...";
@@ -71,10 +73,11 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
                 onKeyDown={onEnterPress}
             />
             <div className={styles.questionInputButtonsContainer}>
-                <Tooltip content="Ask question button" relationship="label">
+                <Tooltip content="Submit question" relationship="label">
                     <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
                 </Tooltip>
             </div>
+            {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
         </Stack>
     );
 };

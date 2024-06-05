@@ -111,6 +111,12 @@ class SearchManager:
                     filterable=True,
                     facetable=True,
                 ),
+                SimpleField(
+                    name="storageUrl",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=False,
+                ),
             ]
             if self.use_acls:
                 fields.append(
@@ -181,8 +187,22 @@ class SearchManager:
                 await search_index_client.create_index(index)
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
+                index_definition = await search_index_client.get_index(self.search_info.index_name)
+                if not any(field.name == "storageUrl" for field in index_definition.fields):
+                    logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
+                    index_definition.fields.append(
+                        SimpleField(
+                            name="storageUrl",
+                            type="Edm.String",
+                            filterable=True,
+                            facetable=False,
+                        ),
+                    )
+                    await search_index_client.create_or_update_index(index_definition)
 
-    async def update_content(self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None):
+    async def update_content(
+        self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
+    ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -209,6 +229,9 @@ class SearchManager:
                     }
                     for section_index, section in enumerate(batch)
                 ]
+                if url:
+                    for document in documents:
+                        document["storageUrl"] = url
                 if self.embeddings:
                     embeddings = await self.embeddings.create_embeddings(
                         texts=[section.split_page.text for section in batch]
@@ -227,7 +250,12 @@ class SearchManager:
         )
         async with self.search_info.create_search_client() as search_client:
             while True:
-                filter = None if path is None else f"sourcefile eq '{os.path.basename(path)}'"
+                filter = None
+                if path is not None:
+                    # Replace ' with '' to escape the single quote for the filter
+                    # https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax#escaping-special-characters-in-string-constants
+                    path_for_filter = os.path.basename(path).replace("'", "''")
+                    filter = f"sourcefile eq '{path_for_filter}'"
                 max_results = 1000
                 result = await search_client.search(
                     search_text="", filter=filter, top=max_results, include_total_count=True
