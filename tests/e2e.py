@@ -233,7 +233,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
 
 def test_chat_nonstreaming(page: Page, live_server_url: str):
