@@ -53,6 +53,8 @@ jobs:
           outputFormat: Sarif
           outputPath: reports/ps-rule-results.sarif
           summary: true
+        env:
+          PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: true
 
       - name: Upload results to security tab
         uses: github/codeql-action/upload-sarif@v3
