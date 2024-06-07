@@ -18,9 +18,6 @@ urlFragment: azure-search-openai-demo
 <!-- Original document: /readme.md -->
 # ChatGPT-like app with your data using Azure OpenAI and Azure AI Search (Python)
 
-> [!IMPORTANT]
-> As of November 15, 2023, Azure Cognitive Search has been renamed to Azure AI Search.
-
 This solution's backend is written in Python. There are also [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one. Learn more about [developing AI apps using Azure AI Services](https://aka.ms/azai).
 
 ## Table of Contents
