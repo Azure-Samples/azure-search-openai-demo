@@ -10,10 +10,11 @@
                 "description": "What is the capital of France?",
                 "props": {
                     "filter": null,
-                    "has_vector": true,
                     "top": 3,
                     "use_semantic_captions": false,
-                    "use_semantic_ranker": null
+                    "use_semantic_ranker": false,
+                    "use_text_search": true,
+                    "use_vector_search": true
                 },
                 "title": "Search using user query"
             },

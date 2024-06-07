@@ -89,16 +89,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
-        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        vector_fields = overrides.get("vector_fields", ["embedding"])
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
+        use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_ranker = True if overrides.get("semantic_ranker") else False
+        use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
-        use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
 
+        vector_fields = overrides.get("vector_fields", ["embedding"])
         include_gtpV_text = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         include_gtpV_images = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
@@ -136,7 +136,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
-        if has_vector:
+        if use_vector_search:
             for field in vector_fields:
                 vector = (
                     await self.compute_text_embedding(query_text)
@@ -145,15 +145,13 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 )
                 vectors.append(vector)
 
-        # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        if not has_text:
-            query_text = None
-
         results = await self.search(
             top,
             query_text,
             filter,
             vectors,
+            use_text_search,
+            use_vector_search,
             use_semantic_ranker,
             use_semantic_captions,
             minimum_search_score,
@@ -217,6 +215,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                         "top": top,
                         "filter": filter,
                         "vector_fields": vector_fields,
+                        "use_text_search": use_text_search,
                     },
                 ),
                 ThoughtStep(
