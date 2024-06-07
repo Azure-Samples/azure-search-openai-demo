@@ -533,6 +533,7 @@ const Chat = () => {
                         id={excludeCategoryFieldId}
                         className={styles.chatSettingsSeparator}
                         label="Exclude category"
+                        defaultValue={excludeCategory}
                         onChange={onExcludeCategoryChanged}
                         aria-labelledby={excludeCategoryId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (

@@ -8,7 +8,7 @@ export const toolTipText = {
     searchScore:
         "Sets a minimum score for search results coming back from Azure AI search. The score range depends on whether you're using hybrid (default), vectors only, or text only.",
     rerankerScore:
-        "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 1-4. The higher the score, the more semantically relevant the result is to the question.",
+        "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 0-4. The higher the score, the more semantically relevant the result is to the question.",
     retrieveNumber:
         "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
     excludeCategory: "Specifies a category to exclude from the search results. There are no categories used in the default data set.",
