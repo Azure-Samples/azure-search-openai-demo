@@ -1,8 +1,10 @@
 .questionInputContainer {
     border-radius: 0.5rem;
-    box-shadow: 0px 0.5rem 1rem rgba(0, 0, 0, 0.14), 0px 0px 0.125rem rgba(0, 0, 0, 0.12);
+    box-shadow:
+        0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
     width: 100%;
-    padding: 0.8rem; 
+    padding: 0.8rem;
     background: white;
 }
 
@@ -18,9 +20,7 @@
 }
 
 @media (min-width: 992px) {
-
     .questionInputContainer {
         height: 5.625rem;
     }
-
 }

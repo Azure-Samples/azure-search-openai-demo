@@ -64,12 +64,12 @@
 .followupQuestionLearnMore {
     margin-right: 0.3125em;
     font-weight: 600;
-    line-height: 1.5em; 
+    line-height: 1.5em;
 }
 
 .followupQuestion {
     font-weight: 600;
-    line-height: 1.5em; 
+    line-height: 1.5em;
     text-align: center;
     border-radius: 0.25em;
     padding: 0em 0.5em;
@@ -97,7 +97,7 @@ sup {
     font-size: 0.625em;
     font-weight: 600;
     vertical-align: top;
-    top: -1; 
+    top: -1;
     margin: 0em 0.125em;
     min-width: 0.875em;
     height: 0.875em;

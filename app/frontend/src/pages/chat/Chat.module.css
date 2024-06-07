@@ -99,11 +99,10 @@
 }
 
 .commandButton {
-    margin-bottom: 1.25rem; 
+    margin-bottom: 1.25rem;
 }
 
 @media (min-width: 992px) {
-
     .container {
         margin-top: 1.25rem;
     }
@@ -126,7 +125,7 @@
     }
 
     .commandButton {
-        margin-right: 1.25rem; 
+        margin-right: 1.25rem;
         margin-bottom: 1.25rem;
     }
 
@@ -134,5 +133,4 @@
         max-width: 80%;
         min-width: 31.25rem;
     }
-
 }

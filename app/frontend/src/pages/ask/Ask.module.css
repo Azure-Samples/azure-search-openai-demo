@@ -66,23 +66,22 @@
 }
 
 .commandButton {
-    margin-bottom: 1.25rem; 
+    margin-bottom: 1.25rem;
 }
 
 @media (min-width: 992px) {
-
     .askTitle {
         font-size: 4rem;
         margin-top: 8.125rem;
     }
-    
+
     .commandsContainer {
         padding-left: 0;
         padding-right: 0;
     }
 
     .commandButton {
-        margin-right: 1.25rem; 
+        margin-right: 1.25rem;
         margin-bottom: 1.25rem;
     }
 }
