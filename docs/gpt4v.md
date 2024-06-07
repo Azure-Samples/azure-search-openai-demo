@@ -21,11 +21,11 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
    |`gpt-4`|`vision-preview`|
 
 - Ensure that you can deploy the Azure OpenAI resource group in [a region where all required components are available](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability):
-    - Azure OpenAI models
-        - gpt-35-turbo
-        - text-embedding-ada-002
-        - gpt-4v
-    - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
+  - Azure OpenAI models
+    - gpt-35-turbo
+    - text-embedding-ada-002
+    - gpt-4v
+  - [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
 
 ### Setup and Usage
 
@@ -46,7 +46,7 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
    azd env set USE_GPT4V true
    ```
 
-   When set, that flag will provision a Computer Vision resource and GPT-4-vision model, upload image versions of PDFs to Blob storage, upload embeddings of images in a new `imageEmbedding` field, and enable the vision approach in the UI.
+   When set, that flag will provision a Computer Vision resource and gpt-4o model, upload image versions of PDFs to Blob storage, upload embeddings of images in a new `imageEmbedding` field, and enable the vision approach in the UI.
 
 3. **Clean old deployments (optional):**
    Run `azd down --purge` for a fresh setup.
@@ -54,12 +54,11 @@ This repository now includes an example of integrating GPT-4 Turbo with Vision w
 4. **Start the application:**
    Execute `azd up` to build, provision, deploy, and initiate document preparation.
 
-
 5. **Web Application Usage:**
     ![GPT4V configuration screenshot](./images/gpt4v.png)
-   - Access the developer options in the web app and select "Use GPT-4 Turbo with Vision".
+   - Access the developer options in the web app and select "Use GPT vision model".
    - Sample questions will be updated for testing.
    - Interact with the questions to view responses.
-   - The 'Thought Process' tab shows the retrieved data and its processing by GPT-4 Turbo with Vision.
+   - The 'Thought Process' tab shows the retrieved data and its processing by the GPT vision model.
 
 Feel free to explore and contribute to enhancing this feature. For questions or feedback, use the repository's issue tracker.

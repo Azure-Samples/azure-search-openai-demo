@@ -37,12 +37,40 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
     return parsedResponse as ChatAppResponse;
 }
 
-export async function chatApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {
-    return await fetch(`${BACKEND_URI}/chat`, {
+export async function chatApi(request: ChatAppRequest, shouldStream: boolean, idToken: string | undefined): Promise<Response> {
+    let url = `${BACKEND_URI}/chat`;
+    if (shouldStream) {
+        url += "/stream";
+    }
+    return await fetch(url, {
         method: "POST",
         headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
         body: JSON.stringify(request)
     });
+}
+
+export async function getSpeechApi(text: string): Promise<string | null> {
+    return await fetch("/speech", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            text: text
+        })
+    })
+        .then(response => {
+            if (response.status == 200) {
+                return response.blob();
+            } else if (response.status == 400) {
+                console.log("Speech synthesis is not enabled.");
+                return null;
+            } else {
+                console.error("Unable to get speech synthesis.");
+                return null;
+            }
+        })
+        .then(blob => (blob ? URL.createObjectURL(blob) : null));
 }
 
 export function getCitationFilePath(citation: string): string {

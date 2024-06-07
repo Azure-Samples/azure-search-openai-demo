@@ -48,6 +48,11 @@ param azureOpenAiApiVersion string = ''
 
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
+
+param speechServiceResourceGroupName string = ''
+param speechServiceLocation string = ''
+param speechServiceName string = ''
+param speechServiceSkuName string // Set in main.parameters.json
 param useGPT4V bool = false
 
 @description('Location for the OpenAI resource group')
@@ -109,9 +114,9 @@ var embedding = {
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
-param gpt4vModelName string = 'gpt-4'
-param gpt4vDeploymentName string = 'gpt-4v'
-param gpt4vModelVersion string = 'vision-preview'
+param gpt4vModelName string = 'gpt-4o'
+param gpt4vDeploymentName string = 'gpt-4o'
+param gpt4vModelVersion string = '2024-05-13'
 param gpt4vDeploymentCapacity int = 10
 
 param tenantId string = tenant().tenantId
@@ -160,6 +165,12 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
+@description('Use speech recognition feature in browser')
+param useSpeechInputBrowser bool = false
+@description('Use speech synthesis in browser')
+param useSpeechOutputBrowser bool = false
+@description('Use Azure speech service for reading out text')
+param useSpeechOutputAzure bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
 param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
@@ -173,7 +184,6 @@ param useLocalHtmlParser bool = false
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
-var computerVisionName = !empty(computerVisionServiceName) ? computerVisionServiceName : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
@@ -209,6 +219,10 @@ resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-
 
 resource storageResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(storageResourceGroupName)) {
   name: !empty(storageResourceGroupName) ? storageResourceGroupName : resourceGroup.name
+}
+
+resource speechResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(speechServiceResourceGroupName)) {
+  name: !empty(speechServiceResourceGroupName) ? speechServiceResourceGroupName : resourceGroup.name
 }
 
 // Monitor application with Azure Monitor
@@ -284,6 +298,11 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
+      AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.id : ''
+      AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
+      USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
+      USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
+      USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
       // Shared by all OpenAI deployments
       OPENAI_HOST: openAiHost
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
@@ -395,6 +414,7 @@ module documentIntelligence 'core/ai/cognitiveservices.bicep' = {
     kind: 'FormRecognizer'
     publicNetworkAccess: publicNetworkAccess
     location: documentIntelligenceResourceGroupLocation
+    disableLocalAuth: true
     tags: tags
     sku: {
       name: documentIntelligenceSkuName
@@ -406,7 +426,9 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   name: 'computerVision'
   scope: computerVisionResourceGroup
   params: {
-    name: computerVisionName
+    name: !empty(computerVisionServiceName)
+      ? computerVisionServiceName
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
     kind: 'ComputerVision'
     location: computerVisionResourceGroupLocation
     tags: tags
@@ -417,6 +439,19 @@ module computerVision 'core/ai/cognitiveservices.bicep' = if (useGPT4V) {
   }
 }
 
+module speech 'core/ai/cognitiveservices.bicep' = if (useSpeechOutputAzure) {
+  name: 'speech-service'
+  scope: speechResourceGroup
+  params: {
+    name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
+    kind: 'SpeechServices'
+    location: !empty(speechServiceLocation) ? speechServiceLocation : location
+    tags: tags
+    sku: {
+      name: speechServiceSkuName
+    }
+  }
+}
 module searchService 'core/search/search-services.bicep' = {
   name: 'search-service'
   scope: searchServiceResourceGroup
@@ -431,6 +466,15 @@ module searchService 'core/search/search-services.bicep' = {
     semanticSearch: actualSearchServiceSemanticRankerLevel
     publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
     sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
+  }
+}
+
+module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplicationInsights) {
+  name: 'search-diagnostics'
+  scope: searchServiceResourceGroup
+  params: {
+    searchServiceName: searchService.outputs.name
+    workspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
   }
 }
 
@@ -505,6 +549,16 @@ module cognitiveServicesRoleUser 'core/security/role.bicep' = {
   params: {
     principalId: principalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+    principalType: principalType
+  }
+}
+
+module speechRoleUser 'core/security/role.bicep' = {
+  scope: speechResourceGroup
+  name: 'speech-role-user'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
     principalType: principalType
   }
 }
@@ -628,6 +682,16 @@ module searchRoleBackend 'core/security/role.bicep' = {
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module speechRoleBackend 'core/security/role.bicep' = {
+  scope: speechResourceGroup
+  name: 'speech-role-backend'
+  params: {
+    principalId: backend.outputs.identityPrincipalId
+    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
     principalType: 'ServicePrincipal'
   }
 }
@@ -775,6 +839,9 @@ output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymen
 // Used only with non-Azure OpenAI deployments
 output OPENAI_API_KEY string = (openAiHost == 'openai') ? openAiApiKey : ''
 output OPENAI_ORGANIZATION string = (openAiHost == 'openai') ? openAiApiOrganization : ''
+
+output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.id : ''
+output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
 

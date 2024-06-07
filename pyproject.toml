@@ -29,6 +29,8 @@ module = [
     "msal.*",
     "msgraph.*",
     "kiota_abstractions.*",
-    "kiota.*"
+    "kiota.*",
+    "azure.cognitiveservices.*",
+    "azure.cognitiveservices.speech.*",
 ]
 ignore_missing_imports = true

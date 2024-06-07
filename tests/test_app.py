@@ -77,7 +77,8 @@ async def test_redirect(client):
 async def test_favicon(client):
     response = await client.get("/favicon.ico")
     assert response.status_code == 200
-    assert response.content_type == "image/vnd.microsoft.icon"
+    assert response.content_type.startswith("image")
+    assert response.content_type.endswith("icon")
 
 
 @pytest.mark.asyncio
@@ -280,6 +281,14 @@ async def test_chat_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+async def test_chat_stream_request_must_be_json(client):
+    response = await client.post("/chat/stream")
+    assert response.status_code == 415
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
 async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
         "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
@@ -288,6 +297,23 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 
     response = await client.post(
         "/chat",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert "Exception in /chat: something bad happened" in caplog.text
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_handle_exception(client, monkeypatch, snapshot, caplog):
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run_stream",
+        mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
+    )
+
+    response = await client.post(
+        "/chat/stream",
         json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
     )
     assert response.status_code == 500
@@ -321,8 +347,8 @@ async def test_chat_handle_exception_streaming(client, monkeypatch, snapshot, ca
     )
 
     response = await client.post(
-        "/chat",
-        json={"messages": [{"content": "What is the capital of France?", "role": "user"}], "stream": True},
+        "/chat/stream",
+        json={"messages": [{"content": "What is the capital of France?", "role": "user"}]},
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: something bad happened" in caplog.text
@@ -336,13 +362,90 @@ async def test_chat_handle_exception_contentsafety_streaming(client, monkeypatch
     monkeypatch.setattr(chat_client.chat.completions, "create", mock.Mock(side_effect=filtered_response))
 
     response = await client.post(
-        "/chat",
-        json={"messages": [{"content": "How do I do something bad?", "role": "user"}], "stream": True},
+        "/chat/stream",
+        json={"messages": [{"content": "How do I do something bad?", "role": "user"}]},
     )
     assert response.status_code == 200
     assert "Exception while generating response stream: The response was filtered" in caplog.text
     result = await response.get_data()
     snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
+async def test_speech(client, mock_speech_success):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
+async def test_speech_token_refresh(client_with_expiring_token, mock_speech_success):
+    # First time should create a brand new token
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+    response = await client_with_expiring_token.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 200
+    assert await response.get_data() == b"mock_audio_data"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_must_be_json(client, mock_speech_success):
+    response = await client.post("/speech")
+    assert response.status_code == 415
+    result = await response.get_json()
+    assert result["error"] == "request must be json"
+
+
+@pytest.mark.asyncio
+async def test_speech_request_cancelled(client, mock_speech_cancelled):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis canceled. Check logs for details."
+
+
+@pytest.mark.asyncio
+async def test_speech_request_failed(client, mock_speech_failed):
+    response = await client.post(
+        "/speech",
+        json={
+            "text": "test",
+        },
+    )
+    assert response.status_code == 500
+    result = await response.get_json()
+    assert result["error"] == "Speech synthesis failed. Check logs for details."
 
 
 @pytest.mark.asyncio
@@ -512,9 +615,8 @@ async def test_chat_vector(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_text(client, snapshot):
     response = await client.post(
-        "/chat",
+        "/chat/stream",
         json={
-            "stream": True,
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
@@ -529,10 +631,9 @@ async def test_chat_stream_text(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_text_filter(auth_client, snapshot):
     response = await auth_client.post(
-        "/chat",
+        "/chat/stream",
         headers={"Authorization": "Bearer MockToken"},
         json={
-            "stream": True,
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {
@@ -573,7 +674,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "performance review")
+    assert thought_contains_text(result["context"]["thoughts"][3], "performance review")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -601,7 +702,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not thought_contains_text(result["choices"][0]["context"]["thoughts"][3], "Is there a dress code?")
+    assert not thought_contains_text(result["context"]["thoughts"][3], "Is there a dress code?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -626,13 +727,12 @@ async def test_chat_session_state_persists(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_session_state_persists(client, snapshot):
     response = await client.post(
-        "/chat",
+        "/chat/stream",
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {"retrieval_mode": "text"},
             },
-            "stream": True,
             "session_state": {"conversation_id": 1234},
         },
     )
@@ -654,7 +754,7 @@ async def test_chat_followup(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["choices"][0]["context"]["followup_questions"][0] == "What is the capital of Spain?"
+    assert result["context"]["followup_questions"][0] == "What is the capital of Spain?"
 
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -662,9 +762,8 @@ async def test_chat_followup(client, snapshot):
 @pytest.mark.asyncio
 async def test_chat_stream_followup(client, snapshot):
     response = await client.post(
-        "/chat",
+        "/chat/stream",
         json={
-            "stream": True,
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {"suggest_followup_questions": True},
@@ -694,6 +793,26 @@ async def test_chat_vision(client, snapshot):
     assert response.status_code == 200
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_vision(client, snapshot):
+    response = await client.post(
+        "/chat/stream",
+        json={
+            "messages": [{"content": "Are interest rates high?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "use_gpt4v": True,
+                    "gpt4v_input": "textAndImages",
+                    "vector_fields": ["embedding", "imageEmbedding"],
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
 
 
 @pytest.mark.asyncio

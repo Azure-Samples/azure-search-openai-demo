@@ -52,6 +52,8 @@ def chat_approach(openai_client, mock_confidential_client_success):
         blob_container_client=None,
         vision_endpoint="endpoint",
         vision_token_provider=lambda: "token",
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
         gpt4v_deployment="gpt-4v",
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",

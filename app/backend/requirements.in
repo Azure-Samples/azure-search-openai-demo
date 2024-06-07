@@ -5,6 +5,7 @@ openai[datalib]>=1.3.7
 tiktoken
 tenacity
 azure-ai-documentintelligence
+azure-cognitiveservices-speech
 azure-search-documents==11.6.0b1
 azure-storage-blob
 azure-storage-file-datalake

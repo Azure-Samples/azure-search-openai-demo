@@ -1,4 +1,4 @@
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -72,10 +72,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
     async def run(
         self,
         messages: list[ChatCompletionMessageParam],
-        stream: bool = False,  # Stream is not used in this approach
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> Union[dict[str, Any], AsyncGenerator[dict[str, Any], None]]:
+    ) -> dict[str, Any]:
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
@@ -167,6 +166,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             ],
         }
 
-        chat_completion["choices"][0]["context"] = extra_info
-        chat_completion["choices"][0]["session_state"] = session_state
-        return chat_completion
+        completion = {}
+        completion["message"] = chat_completion["choices"][0]["message"]
+        completion["context"] = extra_info
+        completion["session_state"] = session_state
+        return completion

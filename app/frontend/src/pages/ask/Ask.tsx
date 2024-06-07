@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Checkbox, Panel, DefaultButton, Spinner, Slider, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, Spinner, TextField, ICheckboxProps, ITextFieldProps } from "@fluentui/react";
+import { useId } from "@fluentui/react-hooks";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
+import { askApi, configApi, getSpeechApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
+import { HelpCallout } from "../../components/HelpCallout";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
 import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
+import { toolTipText } from "../../i18n/tooltips.js";
 import { UploadFile } from "../../components/UploadFile";
 
 import { useMsal } from "@azure/msal-react";
@@ -40,12 +43,16 @@ export function Component(): JSX.Element {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
+    const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
+    const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
+    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
     const [answer, setAnswer] = useState<ChatAppResponse>();
+    const [speechUrl, setSpeechUrl] = useState<string | null>(null);
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
@@ -62,12 +69,23 @@ export function Component(): JSX.Element {
                 setRetrievalMode(RetrievalMode.Text);
             }
             setShowUserUpload(config.showUserUpload);
+            setShowSpeechInput(config.showSpeechInput);
+            setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
+            setShowSpeechOutputAzure(config.showSpeechOutputAzure);
         });
     };
 
     useEffect(() => {
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (answer && showSpeechOutputAzure) {
+            getSpeechApi(answer.message.content).then(speechUrl => {
+                setSpeechUrl(speechUrl);
+            });
+        }
+    }, [answer]);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -108,10 +126,11 @@ export function Component(): JSX.Element {
                     }
                 },
                 // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answer ? answer.choices[0].session_state : null
+                session_state: answer ? answer.session_state : null
             };
             const result = await askApi(request, token);
             setAnswer(result);
+            setSpeechUrl(null);
         } catch (e) {
             setError(e);
         } finally {
@@ -123,20 +142,8 @@ export function Component(): JSX.Element {
         setPromptTemplate(newValue || "");
     };
 
-    const onPromptTemplatePrefixChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplatePrefix(newValue || "");
-    };
-
-    const onPromptTemplateSuffixChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplateSuffix(newValue || "");
-    };
-
-    const onTemperatureChange = (
-        newValue: number,
-        range?: [number, number],
-        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
-    ) => {
-        setTemperature(newValue);
+    const onTemperatureChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setTemperature(parseFloat(newValue || "0"));
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -148,10 +155,6 @@ export function Component(): JSX.Element {
     };
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
         setRetrieveCount(parseInt(newValue || "3"));
-    };
-
-    const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined, index?: number | undefined) => {
-        setRetrievalMode(option?.data || RetrievalMode.Hybrid);
     };
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
@@ -196,6 +199,28 @@ export function Component(): JSX.Element {
         setUseGroupsSecurityFilter(!!checked);
     };
 
+    // IDs for form labels and their associated callouts
+    const promptTemplateId = useId("promptTemplate");
+    const promptTemplateFieldId = useId("promptTemplateField");
+    const temperatureId = useId("temperature");
+    const temperatureFieldId = useId("temperatureField");
+    const searchScoreId = useId("searchScore");
+    const searchScoreFieldId = useId("searchScoreField");
+    const rerankerScoreId = useId("rerankerScore");
+    const rerankerScoreFieldId = useId("rerankerScoreField");
+    const retrieveCountId = useId("retrieveCount");
+    const retrieveCountFieldId = useId("retrieveCountField");
+    const excludeCategoryId = useId("excludeCategory");
+    const excludeCategoryFieldId = useId("excludeCategoryField");
+    const semanticRankerId = useId("semanticRanker");
+    const semanticRankerFieldId = useId("semanticRankerField");
+    const semanticCaptionsId = useId("semanticCaptions");
+    const semanticCaptionsFieldId = useId("semanticCaptionsField");
+    const useOidSecurityFilterId = useId("useOidSecurityFilter");
+    const useOidSecurityFilterFieldId = useId("useOidSecurityFilterField");
+    const useGroupsSecurityFilterId = useId("useGroupsSecurityFilter");
+    const useGroupsSecurityFilterFieldId = useId("useGroupsSecurityFilterField");
+
     return (
         <div className={styles.askContainer}>
             <div className={styles.askTopSection}>
@@ -210,6 +235,7 @@ export function Component(): JSX.Element {
                         disabled={isLoading}
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}
+                        showSpeechInput={showSpeechInput}
                     />
                 </div>
             </div>
@@ -224,6 +250,9 @@ export function Component(): JSX.Element {
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
+                            showSpeechOutputAzure={showSpeechOutputAzure}
+                            showSpeechOutputBrowser={showSpeechOutputBrowser}
+                            speechUrl={speechUrl}
                         />
                     </div>
                 )}
@@ -254,71 +283,133 @@ export function Component(): JSX.Element {
                 isFooterAtBottom={true}
             >
                 <TextField
-                    className={styles.askSettingsSeparator}
+                    id={promptTemplateFieldId}
+                    className={styles.chatSettingsSeparator}
                     defaultValue={promptTemplate}
                     label="Override prompt template"
                     multiline
                     autoAdjustHeight
                     onChange={onPromptTemplateChange}
+                    aria-labelledby={promptTemplateId}
+                    onRenderLabel={(props: ITextFieldProps | undefined) => (
+                        <HelpCallout labelId={promptTemplateId} fieldId={promptTemplateFieldId} helpText={toolTipText.promptTemplate} label={props?.label} />
+                    )}
                 />
 
-                <Slider
+                <TextField
+                    id={temperatureFieldId}
                     className={styles.chatSettingsSeparator}
                     label="Temperature"
+                    type="number"
                     min={0}
                     max={1}
                     step={0.1}
-                    defaultValue={temperature}
+                    defaultValue={temperature.toString()}
                     onChange={onTemperatureChange}
-                    showValue
-                    snapToStep
+                    aria-labelledby={temperatureId}
+                    onRenderLabel={(props: ITextFieldProps | undefined) => (
+                        <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={toolTipText.temperature} label={props?.label} />
+                    )}
                 />
 
-                <SpinButton
-                    className={styles.askSettingsSeparator}
+                <TextField
+                    id={searchScoreFieldId}
+                    className={styles.chatSettingsSeparator}
                     label="Minimum search score"
+                    type="number"
                     min={0}
                     step={0.01}
                     defaultValue={minimumSearchScore.toString()}
                     onChange={onMinimumSearchScoreChange}
+                    aria-labelledby={searchScoreId}
+                    onRenderLabel={(props: ITextFieldProps | undefined) => (
+                        <HelpCallout labelId={searchScoreId} fieldId={searchScoreFieldId} helpText={toolTipText.searchScore} label={props?.label} />
+                    )}
                 />
 
-                <SpinButton
-                    className={styles.askSettingsSeparator}
-                    label="Minimum reranker score"
-                    min={1}
-                    max={4}
-                    step={0.1}
-                    defaultValue={minimumRerankerScore.toString()}
-                    onChange={onMinimumRerankerScoreChange}
-                />
+                {showSemanticRankerOption && (
+                    <TextField
+                        id={rerankerScoreFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label="Minimum reranker score"
+                        type="number"
+                        min={1}
+                        max={4}
+                        step={0.1}
+                        defaultValue={minimumRerankerScore.toString()}
+                        onChange={onMinimumRerankerScoreChange}
+                        aria-labelledby={rerankerScoreId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout labelId={rerankerScoreId} fieldId={rerankerScoreFieldId} helpText={toolTipText.rerankerScore} label={props?.label} />
+                        )}
+                    />
+                )}
 
-                <SpinButton
-                    className={styles.askSettingsSeparator}
+                <TextField
+                    id={retrieveCountFieldId}
+                    className={styles.chatSettingsSeparator}
                     label="Retrieve this many search results:"
+                    type="number"
                     min={1}
                     max={50}
                     defaultValue={retrieveCount.toString()}
                     onChange={onRetrieveCountChange}
+                    aria-labelledby={retrieveCountId}
+                    onRenderLabel={(props: ITextFieldProps | undefined) => (
+                        <HelpCallout labelId={retrieveCountId} fieldId={retrieveCountFieldId} helpText={toolTipText.retrieveNumber} label={props?.label} />
+                    )}
                 />
-                <TextField className={styles.askSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+
+                <TextField
+                    id={excludeCategoryFieldId}
+                    className={styles.chatSettingsSeparator}
+                    label="Exclude category"
+                    defaultValue={excludeCategory}
+                    onChange={onExcludeCategoryChanged}
+                    aria-labelledby={excludeCategoryId}
+                    onRenderLabel={(props: ITextFieldProps | undefined) => (
+                        <HelpCallout labelId={excludeCategoryId} fieldId={excludeCategoryFieldId} helpText={toolTipText.excludeCategory} label={props?.label} />
+                    )}
+                />
 
                 {showSemanticRankerOption && (
-                    <Checkbox
-                        className={styles.askSettingsSeparator}
-                        checked={useSemanticRanker}
-                        label="Use semantic ranker for retrieval"
-                        onChange={onUseSemanticRankerChange}
-                    />
-                )}
+                    <>
+                        <Checkbox
+                            id={semanticRankerFieldId}
+                            className={styles.chatSettingsSeparator}
+                            checked={useSemanticRanker}
+                            label="Use semantic ranker for retrieval"
+                            onChange={onUseSemanticRankerChange}
+                            aria-labelledby={semanticRankerId}
+                            onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                <HelpCallout
+                                    labelId={semanticRankerId}
+                                    fieldId={semanticRankerFieldId}
+                                    helpText={toolTipText.useSemanticReranker}
+                                    label={props?.label}
+                                />
+                            )}
+                        />
 
-                <Checkbox
-                    className={styles.askSettingsSeparator}
-                    checked={useSemanticCaptions}
-                    label="Use query-contextual summaries instead of whole documents"
-                    onChange={onUseSemanticCaptionsChange}
-                    disabled={!useSemanticRanker}
-                />
+                        <Checkbox
+                            id={semanticCaptionsFieldId}
+                            className={styles.chatSettingsSeparator}
+                            checked={useSemanticCaptions}
+                            label="Use semantic captions"
+                            onChange={onUseSemanticCaptionsChange}
+                            disabled={!useSemanticRanker}
+                            aria-labelledby={semanticCaptionsId}
+                            onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                <HelpCallout
+                                    labelId={semanticCaptionsId}
+                                    fieldId={semanticCaptionsFieldId}
+                                    helpText={toolTipText.useSemanticCaptions}
+                                    label={props?.label}
+                                />
+                            )}
+                        />
+                    </>
+                )}
 
                 {showGPT4VOptions && (
                     <GPT4VSettings
@@ -341,22 +432,42 @@ export function Component(): JSX.Element {
                 )}
 
                 {useLogin && (
-                    <Checkbox
-                        className={styles.askSettingsSeparator}
-                        checked={useOidSecurityFilter || requireAccessControl}
-                        label="Use oid security filter"
-                        disabled={!isLoggedIn(client) || requireAccessControl}
-                        onChange={onUseOidSecurityFilterChange}
-                    />
-                )}
-                {useLogin && (
-                    <Checkbox
-                        className={styles.askSettingsSeparator}
-                        checked={useGroupsSecurityFilter || requireAccessControl}
-                        label="Use groups security filter"
-                        disabled={!isLoggedIn(client) || requireAccessControl}
-                        onChange={onUseGroupsSecurityFilterChange}
-                    />
+                    <>
+                        <Checkbox
+                            id={useOidSecurityFilterFieldId}
+                            className={styles.chatSettingsSeparator}
+                            checked={useOidSecurityFilter || requireAccessControl}
+                            label="Use oid security filter"
+                            disabled={!isLoggedIn(client) || requireAccessControl}
+                            onChange={onUseOidSecurityFilterChange}
+                            aria-labelledby={useOidSecurityFilterId}
+                            onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                <HelpCallout
+                                    labelId={useOidSecurityFilterId}
+                                    fieldId={useOidSecurityFilterFieldId}
+                                    helpText={toolTipText.useOidSecurityFilter}
+                                    label={props?.label}
+                                />
+                            )}
+                        />
+                        <Checkbox
+                            id={useGroupsSecurityFilterFieldId}
+                            className={styles.chatSettingsSeparator}
+                            checked={useGroupsSecurityFilter || requireAccessControl}
+                            label="Use groups security filter"
+                            disabled={!isLoggedIn(client) || requireAccessControl}
+                            onChange={onUseGroupsSecurityFilterChange}
+                            aria-labelledby={useGroupsSecurityFilterId}
+                            onRenderLabel={(props: ICheckboxProps | undefined) => (
+                                <HelpCallout
+                                    labelId={useGroupsSecurityFilterId}
+                                    fieldId={useGroupsSecurityFilterFieldId}
+                                    helpText={toolTipText.useGroupsSecurityFilter}
+                                    label={props?.label}
+                                />
+                            )}
+                        />
+                    </>
                 )}
                 {useLogin && <TokenClaimsDisplay />}
             </Panel>
