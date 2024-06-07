@@ -3,7 +3,7 @@ name: Validate Markdown
 on:
   # Trigger the workflow on pull request
   pull_request_target:
-    branches: 
+    branches:
       - main
     paths:
       - '**.md'
@@ -14,6 +14,16 @@ permissions:
   pull-requests: write
 
 jobs:
+  lint:
+    name: Check for Markdown linting errors
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Run markdownlint
+        uses: articulate/actions-markdownlint@v1
   check-broken-paths:
     name: Check Broken Relative Paths
     runs-on: ubuntu-latest

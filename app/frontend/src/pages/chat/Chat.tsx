@@ -174,7 +174,7 @@ const Chat = () => {
                         gpt4v_input: gpt4vInput
                     }
                 },
-                // ChatAppProtocol: Client must pass on any session state received from the server
+                // AI Chat Protocol: Client must pass on any session state received from the server
                 session_state: answers.length ? answers[answers.length - 1][1].session_state : null
             };
 
