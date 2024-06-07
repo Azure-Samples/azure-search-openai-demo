@@ -19,3 +19,4 @@ jobs:
         with:
           config: .github/workflows/markdownlint-config.json
           files: '**/*.md'
+          ignore: data/

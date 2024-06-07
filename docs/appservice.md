@@ -20,7 +20,7 @@ We recommend always waiting 10 minutes, to give the server time to properly star
 
 If you still see a 500 error after 10 minutes:
 
-1. [Check the deployment logs](#checking-the-deployment-logs)
+1. [Check the deployment logs](#checking-the-deployment-logs-for-errors)
 2. [Look for errors in the app logs](#checking-the-app-logs-for-errors)
 3. [Look for errors in Azure Monitor](#checking-azure-monitor-for-errors)
 

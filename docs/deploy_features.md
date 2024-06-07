@@ -133,13 +133,11 @@ To set [the voice](https://learn.microsoft.com/azure/ai-services/speech-service/
 azd env set AZURE_SPEECH_SERVICE_VOICE en-US-AndrewMultilingualNeural
 ```
 
-> [!NOTE]
-> Alternatively you can use the browser's built-in [Speech Synthesis API](https://developer.mozilla.org/docs/Web/API/SpeechSynthesis). It may not work in all browser/OS combinations. To enable speech output, run:
->
->    ```shell
->    azd env set USE_SPEECH_OUTPUT_BROWSER true
->    ```
->
+Alternatively you can use the browser's built-in [Speech Synthesis API](https://developer.mozilla.org/docs/Web/API/SpeechSynthesis). It may not work in all browser/OS combinations. To enable speech output, run:
+
+```shell
+azd env set USE_SPEECH_OUTPUT_BROWSER true
+```
 
 ## Enabling Integrated Vectorization
 
