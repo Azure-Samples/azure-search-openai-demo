@@ -1,0 +1,12 @@
+{
+    "evaluation_gpt_model": "gpt-4",
+    "evaluation_timestamp": 1708043241,
+    "testdata_path": "/workspaces/ai-rag-chat-evaluator/example_input/qa.jsonl",
+    "target_url": "http://host.docker.internal:54846/chat",
+    "target_parameters": {
+        "overrides": {
+            "semantic_ranker": false
+        }
+    },
+    "num_questions": 200
+}

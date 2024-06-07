@@ -1,0 +1,11 @@
+{
+    "overrides": {
+        "retrieval_mode": "hybrid",
+        "semantic_ranker": false,
+        "semantic_captions": false,
+        "top": 3,
+        "suggest_followup_questions": false,
+        "prompt_template": "You are a helpful assistant."
+    },
+    "evaluation_gpt_model": "gpt-4"
+}

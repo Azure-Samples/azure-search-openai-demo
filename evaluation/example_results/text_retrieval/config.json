@@ -1,0 +1,12 @@
+{
+    "testdata_path": "example_input/qa.jsonl",
+    "results_dir": "example_results/text_retrieval",
+    "requested_metrics": ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "has_citation", "answer_length", "latency"],
+    "target_url": "http://host.docker.internal:50505/chat",
+    "target_parameters": {
+        "overrides": {
+            "semantic_ranker": false,
+            "retrieval_mode": "text"
+        }
+    }
+}

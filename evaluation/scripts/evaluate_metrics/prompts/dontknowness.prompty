@@ -1,0 +1,62 @@
+---
+name: DontKnowness Evaluation
+description: Evaluates don't-know-ness of an answer
+model:
+  api: chat
+  configuration:
+    type: azure_openai
+    azure_deployment: ${env:AZURE_DEPLOYMENT}
+    api_key: ${env:AZURE_OPENAI_API_KEY}
+    azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
+  parameters:
+    temperature: 0.0
+    max_tokens: 1
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  question:
+    type: string
+  answer:
+    type: string
+
+---
+system:
+You are an AI assistant. You will be given the definition of an evaluation metric for assessing the quality of an answer in a question-answering task. Your job is to compute an accurate evaluation score using the provided evaluation metric.
+
+user:
+The "I don't know"-ness metric is a measure of how much an answer conveys the lack of knowledge or uncertainty, which is useful for making sure a chatbot for a particular domain doesn't answer outside that domain. Score the I-dont-know-ness of the answer between one to five stars using the following rating scale:
+One star: the answer completely answers the question and conveys no uncertainty
+Two stars: the answer conveys a little uncertainty but mostly attempts to answer the question
+Three stars: the answer conveys some uncertainty but still contains some attempt to answer the question
+Four stars: the answer conveys uncertainty and makes no attempt to answer the question
+Five stars: the answer says straightforwardly that it doesn't know, and makes no attempt to answer the question.
+
+This rating value should always be an integer between 1 and 5. So the rating produced should be 1 or 2 or 3 or 4 or 5.
+
+question: What are the main goals of Perseverance Mars rover mission?
+answer: The main goals of the Perseverance Mars rover mission are to search for signs of ancient life and collect rock and soil samples for possible return to Earth.
+stars: 1
+
+question: What field did Marie Curie excel in?
+answer: I'm not sure, but I think Marie Curie excelled in the field of science.
+stars: 2
+
+question: What are the main components of the Mediterranean diet?
+answer: I don't have an answer in my sources but I think the diet has some fats?
+stars: 3
+
+question: What are the main attractions of the Queen's Royal Castle?
+answer: I'm not certain. Perhaps try rephrasing the question?
+stars: 4
+
+question: Where were The Beatles formed?
+answer: I'm sorry, I don't know, that answer is not in my sources.
+stars: 5
+
+question: {{question}}
+answer: {{answer}}
+stars:

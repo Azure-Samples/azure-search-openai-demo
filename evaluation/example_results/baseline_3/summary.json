@@ -1,0 +1,32 @@
+{
+    "gpt_groundedness": {
+        "mean_rating": 4.83,
+        "pass_count": 188,
+        "pass_rate": 0.94
+    },
+    "gpt_relevance": {
+        "mean_rating": 4.74,
+        "pass_count": 186,
+        "pass_rate": 0.93
+    },
+    "gpt_coherence": {
+        "mean_rating": 4.8,
+        "pass_count": 191,
+        "pass_rate": 0.95
+    },
+    "gpt_similarity": {
+        "mean_rating": 3.32,
+        "pass_count": 119,
+        "pass_rate": 0.59
+    },
+    "answer_length": {
+        "total": 131879,
+        "mean": 659.39,
+        "max": 2572,
+        "min": 91
+    },
+    "answer_has_citation": {
+        "total": 197,
+        "rate": 0.98
+    }
+}
