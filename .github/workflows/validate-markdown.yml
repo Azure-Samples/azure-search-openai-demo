@@ -14,25 +14,25 @@ permissions:
   pull-requests: write
 
 jobs:
-  lint:
+  lint-markdown:
     name: Check for Markdown linting errors
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Run markdownlint
         uses: articulate/actions-markdownlint@v1
   check-broken-paths:
-    name: Check Broken Relative Paths
+    name: Check broken relative paths
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Check broken Paths
+      - name: Run check_broken_paths
         id: check-broken-paths
         uses: john0isaac/action-check-markdown@v1.0.6
         with:
@@ -43,14 +43,14 @@ jobs:
   check-urls-locale:
     if: ${{ always() }}
     needs: check-broken-paths
-    name: Check URLs Don't Have Locale
+    name: Check URLs don't have locale
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Run Check URLs Country Locale
+      - name: Run check_urls_locale
         id: check-urls-locale
         uses: john0isaac/action-check-markdown@v1.0.6
         with:
@@ -60,14 +60,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   check-broken-urls:
     if: ${{ always() }}
-    name: Check Broken URLs
+    name: Check broken URLs
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Run Check Broken URLs
+      - name: Run check_broken_urls
         id: check-broken-urls
         uses: john0isaac/action-check-markdown@v1.0.6
         with:
