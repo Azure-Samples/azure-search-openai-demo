@@ -305,7 +305,7 @@ def test_ask(page: Page, live_server_url: str):
 
     page.route("*/**/ask", handle)
     page.goto(live_server_url)
-    expect(page).to_have_title("BST | RAG")
+    expect(page).to_have_title("BrightSide Technologies | RAG")
 
     page.get_by_role("link", name="Ask a question").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
