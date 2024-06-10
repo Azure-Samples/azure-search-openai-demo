@@ -92,7 +92,7 @@ def test_chat(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("BST | RAG")
+    expect(page).to_have_title("BrightSide Technologies | RAG")
     expect(page.get_by_role("heading", name="Chat with your data")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
