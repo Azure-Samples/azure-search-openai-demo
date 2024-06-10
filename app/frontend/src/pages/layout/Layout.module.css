@@ -5,9 +5,14 @@
 }
 
 .header {
-    background-color: #222222;
+    background-color: #000000;
     color: #f2f2f2;
 }
+.mailTagStyle{
+    color: white;
+    text-decoration: none;
+}
+
 
 .headerContainer {
     display: flex;
