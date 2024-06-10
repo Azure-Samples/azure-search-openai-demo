@@ -375,7 +375,7 @@ def test_upload_disabled(page: Page, live_server_url: str):
 
     page.goto(live_server_url)
 
-    expect(page).to_have_title("BST | RAG")
+    expect(page).to_have_title("BrightSide Technologies | RAG")
 
     expect(page.get_by_role("button", name="Manage file uploads")).to_be_visible()
     expect(page.get_by_role("button", name="Manage file uploads")).to_be_disabled()
