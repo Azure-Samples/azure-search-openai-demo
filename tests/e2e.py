@@ -154,7 +154,7 @@ def test_chat_customization(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("BST | RAG")
+    expect(page).to_have_title("BrightSide Technologies | RAG")
 
     # Customize all the settings
     page.get_by_role("button", name="Developer settings").click()
