@@ -73,7 +73,7 @@ def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str,
 
 def test_home(page: Page, live_server_url: str):
     page.goto(live_server_url)
-    expect(page).to_have_title("BST | RAG")
+    expect(page).to_have_title("BrightSide Technologies | RAG")
 
 
 def test_chat(page: Page, live_server_url: str):
