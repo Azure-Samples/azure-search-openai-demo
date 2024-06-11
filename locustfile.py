@@ -71,7 +71,7 @@ class ChatVisionUser(HttpUser):
         self.client.get("/")
         time.sleep(5)
         self.client.post(
-            "/chat",
+            "/chat/stream",
             json={
                 "messages": [
                     {
@@ -79,7 +79,6 @@ class ChatVisionUser(HttpUser):
                         "role": "user",
                     }
                 ],
-                "stream": True,
                 "context": {
                     "overrides": {
                         "top": 3,
@@ -102,12 +101,11 @@ class ChatVisionUser(HttpUser):
         )
         time.sleep(5)
         self.client.post(
-            "/chat",
+            "/chat/stream",
             json={
                 "messages": [
                     {"content": "Compare the impact of interest rates and GDP in financial markets.", "role": "user"}
                 ],
-                "stream": True,
                 "context": {
                     "overrides": {
                         "top": 3,

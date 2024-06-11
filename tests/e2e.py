@@ -88,7 +88,7 @@ def test_chat(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat", handle)
+    page.route("*/**/chat/stream", handle)
 
     # Check initial page state
     page.goto(live_server_url)
@@ -133,7 +133,6 @@ def test_chat(page: Page, live_server_url: str):
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
-        assert route.request.post_data_json["stream"] is False
         overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["retrieval_mode"] == "vectors"
         assert overrides["semantic_ranker"] is False
@@ -164,7 +163,7 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.get_by_label("Retrieve this many search results:").fill("1")
     page.get_by_label("Exclude category").click()
     page.get_by_label("Exclude category").fill("dogs")
-    page.get_by_text("Use query-contextual summaries instead of whole documents").click()
+    page.get_by_text("Use semantic captions").click()
     page.get_by_text("Use semantic ranker for retrieval").click()
     page.get_by_text("Vectors + Text (Hybrid)").click()
     page.get_by_role("option", name="Vectors", exact=True).click()
@@ -181,6 +180,59 @@ def test_chat_customization(page: Page, live_server_url: str):
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+
+
+def test_chat_customization_gpt4v(page: Page, live_server_url: str):
+
+    # Set up a mock route to the /chat endpoint
+    def handle_chat(route: Route):
+        overrides = route.request.post_data_json["context"]["overrides"]
+        assert overrides["gpt4v_input"] == "images"
+        assert overrides["use_gpt4v"] is True
+        assert overrides["vector_fields"] == ["imageEmbedding"]
+
+        # Read the JSON from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_text/client0/result.json")
+        json = f.read()
+        f.close()
+        route.fulfill(body=json, status=200)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": True,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": False,
+                    "showVectorOption": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+    page.route("*/**/chat", handle_chat)
+
+    # Check initial page state
+    page.goto(live_server_url)
+    expect(page).to_have_title("GPT + Enterprise data | Sample")
+
+    # Customize the GPT-4-vision settings
+    page.get_by_role("button", name="Developer settings").click()
+    page.get_by_text("Use GPT vision model").click()
+    page.get_by_text("Images and text").click()
+    page.get_by_role("option", name="Images", exact=True).click()
+    page.get_by_text("Text and Image embeddings").click()
+    page.get_by_role("option", name="Image Embeddings", exact=True).click()
+    page.get_by_text("Stream chat completion responses").click()
+    page.locator("button").filter(has_text="Close").click()
+
+    # Ask a question and wait for the message to appear
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_label("Submit question").click()
 
 
 def test_chat_nonstreaming(page: Page, live_server_url: str):
@@ -225,7 +277,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat", handle)
+    page.route("*/**/chat/stream", handle)
 
     # Check initial page state
     page.goto(live_server_url)

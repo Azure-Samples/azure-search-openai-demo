@@ -53,20 +53,19 @@ export type ResponseContext = {
     thoughts: Thoughts[];
 };
 
-export type ResponseChoice = {
-    index: number;
+export type ChatAppResponseOrError = {
     message: ResponseMessage;
+    delta: ResponseMessage;
     context: ResponseContext;
     session_state: any;
-};
-
-export type ChatAppResponseOrError = {
-    choices?: ResponseChoice[];
     error?: string;
 };
 
 export type ChatAppResponse = {
-    choices: ResponseChoice[];
+    message: ResponseMessage;
+    delta: ResponseMessage;
+    context: ResponseContext;
+    session_state: any;
 };
 
 export type ChatAppRequestContext = {
@@ -76,7 +75,6 @@ export type ChatAppRequestContext = {
 export type ChatAppRequest = {
     messages: ResponseMessage[];
     context?: ChatAppRequestContext;
-    stream?: boolean;
     session_state: any;
 };
 
