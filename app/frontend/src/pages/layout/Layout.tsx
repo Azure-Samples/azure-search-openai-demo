@@ -1,6 +1,6 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
-import alGhurairLogo from "../../assets/al-ghurair-logo.png";
+import alGhurairLogo from "../../assets/AGILogo.png";
 
 import styles from "./Layout.module.css";
 
@@ -14,7 +14,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>Al Ghurair Policy Assistant | Demo</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
@@ -29,14 +29,14 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
+                                <a href="https://www.al-ghurair.com/en/our-company/about-us" target={"_blank"} title="Al Ghurair website link">
                                     <img
-                                        src={github}
-                                        alt="Github logo"
-                                        aria-label="Link to github repository"
+                                        src={alGhurairLogo}
+                                        alt="Al Ghurair logo"
+                                        aria-label="Link to Al Ghurair website"
                                         width="20px"
                                         height="20px"
-                                        className={styles.githubLogo}
+                                        className={styles.AGILogo}
                                     />
                                 </a>
                             </li>
