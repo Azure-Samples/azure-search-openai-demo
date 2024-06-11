@@ -1,6 +1,6 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
 
-import github from "../../assets/github.svg";
+import alGhurairLogo from "../../assets/al-ghurair-logo.png";
 
 import styles from "./Layout.module.css";
 
