@@ -3,15 +3,15 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
+    "What are the policy statements under the Asset Management Policy?",
+    "Explain the purpose of the Business Continuity Policy.",
+    "What is the process I should follow to log of network devices to maintain network security?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
-    "Compare the impact of interest rates and GDP in financial markets.",
-    "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-    "Can you identify any correlation between oil prices and stock market trends?"
+    "What are the policy statements under the Asset Management Policy?",
+    "Explain the purpose of the Business Continuity Policy.",
+    "What is the process I should follow to log of network devices to maintain network security?"
 ];
 
 interface Props {
