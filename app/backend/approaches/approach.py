@@ -29,23 +29,35 @@ from text import nonewlines
 
 
 @dataclass
-class Document:
+class Document: #Update document class to handle new metadata in pdfs 
     id: Optional[str]
-    content: Optional[str]
-    embedding: Optional[List[float]]
-    image_embedding: Optional[List[float]]
-    category: Optional[str]
-    sourcepage: Optional[str]
-    sourcefile: Optional[str]
-    oids: Optional[List[str]]
-    groups: Optional[List[str]]
-    captions: List[QueryCaptionResult]
+    title: Optional[str]
+    policy_id: Optional[str]
+    policy_owner: Optional[str]
+    version: Optional[str]
+    date: Optional[str]
+    sections: Optional[dict] = field(default_factory=dict)
+    content: Optional[str] = None
+    embedding: Optional[List[float]] = None
+    image_embedding: Optional[List[float]] = None
+    category: Optional[str] = None
+    sourcepage: Optional[str] = None
+    sourcefile: Optional[str] = None
+    oids: Optional[List[str]] = None
+    groups: Optional[List[str]] = None
+    captions: List[Any] = field(default_factory=list)
     score: Optional[float] = None
     reranker_score: Optional[float] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
             "id": self.id,
+            "title": self.title,
+            "policy_id": self.policy_id,
+            "policy_owner": self.policy_owner,
+            "version": self.version,
+            "date": self.date,
+            "sections": self.sections,
             "content": self.content,
             "embedding": Document.trim_embedding(self.embedding),
             "imageEmbedding": Document.trim_embedding(self.image_embedding),
@@ -54,18 +66,14 @@ class Document:
             "sourcefile": self.sourcefile,
             "oids": self.oids,
             "groups": self.groups,
-            "captions": (
-                [
-                    {
-                        "additional_properties": caption.additional_properties,
-                        "text": caption.text,
-                        "highlights": caption.highlights,
-                    }
-                    for caption in self.captions
-                ]
-                if self.captions
-                else []
-            ),
+            "captions": [
+                {
+                    "additional_properties": caption.additional_properties,
+                    "text": caption.text,
+                    "highlights": caption.highlights,
+                }
+                for caption in self.captions
+            ] if self.captions else [],
             "score": self.score,
             "reranker_score": self.reranker_score,
         }
@@ -156,12 +164,18 @@ class Approach(ABC):
                 search_text=query_text or "", filter=filter, top=top, vector_queries=vectors
             )
 
-        documents = []
+        documents = [] #update search to handle new metadata
         async for page in results.by_page():
             async for document in page:
                 documents.append(
                     Document(
                         id=document.get("id"),
+                        title=document.get("title"),
+                        policy_id=document.get("policy_id"),
+                        policy_owner=document.get("policy_owner"),
+                        version=document.get("version"),
+                        date=document.get("date"),
+                        sections=document.get("sections"),
                         content=document.get("content"),
                         embedding=document.get("embedding"),
                         image_embedding=document.get("imageEmbedding"),
@@ -170,7 +184,7 @@ class Approach(ABC):
                         sourcefile=document.get("sourcefile"),
                         oids=document.get("oids"),
                         groups=document.get("groups"),
-                        captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
+                        captions=document.get("@search.captions", []),
                         score=document.get("@search.score"),
                         reranker_score=document.get("@search.reranker_score"),
                     )
