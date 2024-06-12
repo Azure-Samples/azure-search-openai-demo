@@ -91,8 +91,8 @@ class RetrieveThenReadVisionApproach(Approach):
         filter = self.build_filter(overrides, auth_claims)
 
         vector_fields = overrides.get("vector_fields", ["embedding"])
-        include_gtpV_text = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
-        include_gtpV_images = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
+        send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
+        send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
@@ -124,10 +124,10 @@ class RetrieveThenReadVisionApproach(Approach):
         # Process results
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
 
-        if include_gtpV_text:
+        if send_text_to_gptvision:
             content = "\n".join(sources_content)
             user_content.append({"text": content, "type": "text"})
-        if include_gtpV_images:
+        if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
                 if url:
