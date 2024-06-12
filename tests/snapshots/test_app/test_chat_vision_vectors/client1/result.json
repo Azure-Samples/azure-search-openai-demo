@@ -28,12 +28,13 @@
                 "title": "Prompt to generate search query"
             },
             {
-                "description": null,
+                "description": "interest rates",
                 "props": {
                     "filter": null,
                     "top": 3,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,
+                    "use_text_search": false,
                     "vector_fields": [
                         "embedding",
                         "imageEmbedding"

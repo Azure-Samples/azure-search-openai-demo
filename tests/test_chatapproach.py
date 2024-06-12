@@ -187,6 +187,8 @@ async def test_search_results_filtering_by_scores(
         query_text="test query",
         filter=None,
         vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
         use_semantic_ranker=True,
         use_semantic_captions=True,
         minimum_search_score=minimum_search_score,
