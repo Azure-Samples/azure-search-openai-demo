@@ -461,6 +461,9 @@ async def test_chat_text(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is False
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is False
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -593,6 +596,50 @@ async def test_chat_hybrid(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is False
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_captions"] is False
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_hybrid_semantic_ranker(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_captions"] is False
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_hybrid_semantic_captions(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_captions"] is True
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -603,12 +650,53 @@ async def test_chat_vector(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "vector"},
+                "overrides": {"retrieval_mode": "vectors"},
             },
         },
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is False
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is False
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_vector_semantic_ranker(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "vectors", "semantic_ranker": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is False
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is True
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_text_semantic_ranker(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text", "semantic_ranker": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][1]["props"]["use_text_search"] is True
+    assert result["context"]["thoughts"][1]["props"]["use_vector_search"] is False
+    assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is True
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

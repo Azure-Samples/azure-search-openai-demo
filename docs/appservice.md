@@ -20,7 +20,7 @@ We recommend always waiting 10 minutes, to give the server time to properly star
 
 If you still see a 500 error after 10 minutes:
 
-1. [Check the deployment logs](#checking-the-deployment-logs)
+1. [Check the deployment logs](#checking-the-deployment-logs-for-errors)
 2. [Look for errors in the app logs](#checking-the-app-logs-for-errors)
 3. [Look for errors in Azure Monitor](#checking-azure-monitor-for-errors)
 
@@ -536,9 +536,9 @@ Done in 522 sec(s).
 
 Look for these important steps in the Oryx build:
 
-* _Detected following platforms: python: 3.11.7_
+- _Detected following platforms: python: 3.11.7_
     That should match your runtime in the App Service configuration.
-* _Running pip install..._
+- _Running pip install..._
     That should install all the requirements in your requirements.txt - if it didn't find your requirements.txt, then you won't see the packages installed.
 
 If you see all those steps in the Oryx build, then that's a good sign that the build went well, and you can move on to checking the App Service logs.
@@ -610,11 +610,11 @@ Open that file to see the full logs, with the most recent logs at the bottom.
 
 A few notable logs:
 
-* `2024-02-08T19:30:33.441385332Z Site's appCommandLine: python3 -m gunicorn main:app`
+- `2024-02-08T19:30:33.441385332Z Site's appCommandLine: python3 -m gunicorn main:app`
     This log indicates that App Service was correctly configured with a custom startup command to run the app.
-* `[2024-02-08 19:31:11 +0000] [75] [INFO] Starting gunicorn 20.1.0`
+- `[2024-02-08 19:31:11 +0000] [75] [INFO] Starting gunicorn 20.1.0`
     That's the start of the gunicorn server serving the app.
-* `2024-02-08T19:32:20.726942614Z [2024-02-08 19:32:20 +0000] [77] [INFO] Application startup complete.`
+- `2024-02-08T19:32:20.726942614Z [2024-02-08 19:32:20 +0000] [77] [INFO] Application startup complete.`
     At this point, the app has started successfully.
 
 If you do not see any errors in those logs, then the app should be running successfully. If you do see errors, then try looking in Azure Monitor.

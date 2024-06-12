@@ -14,7 +14,6 @@ You should set these values before running `azd up`. Once you've set them, retur
 * [Azure Speech resource](#azure-speech-resource)
 * [Other Azure resources](#other-azure-resources)
 
-
 ## Resource group
 
 1. Run `azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}`
@@ -22,7 +21,7 @@ You should set these values before running `azd up`. Once you've set them, retur
 
 ## OpenAI resource
 
-### Azure OpenAI:
+### Azure OpenAI
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
@@ -31,7 +30,7 @@ You should set these values before running `azd up`. Once you've set them, retur
 
 When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, make sure to select the same location as the existing OpenAI resource group.
 
-### Openai.com OpenAI:
+### Openai.com OpenAI
 
 1. Run `azd env set OPENAI_HOST openai`
 2. Run `azd env set OPENAI_ORGANIZATION {Your OpenAI organization}`
@@ -43,7 +42,6 @@ Learn more about creating an OpenAI free trial at [this link](https://openai.com
 Do *not* check your key into source control.
 
 When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, you can select any location as it will not be used.
-
 
 ## Azure AI Search resource
 

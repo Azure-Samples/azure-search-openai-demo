@@ -25,10 +25,11 @@
                 "description": "capital of France",
                 "props": {
                     "filter": null,
-                    "has_vector": false,
                     "top": 3,
                     "use_semantic_captions": true,
-                    "use_semantic_ranker": false
+                    "use_semantic_ranker": false,
+                    "use_text_search": true,
+                    "use_vector_search": false
                 },
                 "title": "Search using generated search query"
             },
