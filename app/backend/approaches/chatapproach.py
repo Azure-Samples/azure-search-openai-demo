@@ -38,44 +38,12 @@ class ChatApproach(Approach, ABC):
 
     @property
     @abstractmethod
-    def system_message_chat_conversation(self) -> str: # Addded a system message to handle working with policy documents. 
-        return """You are an AI assistant specialized in providing information on company policies.
-        You will answer questions based on the content of policy documents provided by the company.
-        Use the information from the policies to provide accurate and relevant responses to the user's queries.
-        {injected_prompt}
-        Follow-up questions:
-        {follow_up_questions_prompt}
-        """
+    def system_message_chat_conversation(self) -> str:
+        pass
 
     @abstractmethod
-    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple: # Update this to ensure web UI can extract and display the new metadata effectively 
-        user_message = messages[-1]["content"]
-        search_query = self.generate_search_query(user_message)
-
-        search_results = await self.search(
-            top=5,
-            query_text=search_query,
-            filter=None,
-            vectors=[],
-            use_semantic_ranker=True,
-            use_semantic_captions=True,
-            minimum_search_score=None,
-            minimum_reranker_score=None
-        )
-
-        final_response = self.format_final_response(search_results)
-        return {}, final_response
-
-    def generate_search_query(self, user_message: str) -> str: # Added to ensure it generates queries considering new metadata fields 
-        return user_message
-
-    def format_final_response(self, search_results: list[Any]) -> dict: # Include new metadata in the response formatting 
-        # Include new metadata in the response
-        response_content = "\n".join([
-            f"Title: {doc.title}, Policy ID: {doc.policy_id}, Owner: {doc.policy_owner}\nContent: {doc.content}"
-            for doc in search_results
-        ])
-        return {"choices": [{"message": {"content": response_content}}]}
+    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
+        pass
 
     def get_system_prompt(self, override_prompt: Optional[str], follow_up_questions_prompt: str) -> str:
         if override_prompt is None:
