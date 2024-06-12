@@ -133,27 +133,34 @@ class Approach(ABC):
         query_text: Optional[str],
         filter: Optional[str],
         vectors: List[VectorQuery],
+        use_text_search: bool,
+        use_vector_search: bool,
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
         minimum_search_score: Optional[float],
         minimum_reranker_score: Optional[float],
     ) -> List[Document]:
-        # Use semantic ranker if requested and if retrieval mode is text or hybrid (vectors + text)
-        if use_semantic_ranker and query_text:
+        search_text = query_text if use_text_search else ""
+        search_vectors = vectors if use_vector_search else []
+        if use_semantic_ranker:
             results = await self.search_client.search(
-                search_text=query_text,
+                search_text=search_text,
                 filter=filter,
+                top=top,
+                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                vector_queries=search_vectors,
                 query_type=QueryType.SEMANTIC,
                 query_language=self.query_language,
                 query_speller=self.query_speller,
                 semantic_configuration_name="default",
-                top=top,
-                query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                vector_queries=vectors,
+                semantic_query=query_text,
             )
         else:
             results = await self.search_client.search(
-                search_text=query_text or "", filter=filter, top=top, vector_queries=vectors
+                search_text=search_text,
+                filter=filter,
+                top=top,
+                vector_queries=search_vectors,
             )
 
         documents = []

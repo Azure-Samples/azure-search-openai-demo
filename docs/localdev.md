@@ -40,7 +40,6 @@ Navigate to the URL shown in the terminal (in this case, `http://localhost:5173/
 
 Then, whenever you make changes to frontend files, the changes will be automatically reloaded, without any browser refresh needed.
 
-
 ## Using a local OpenAI-compatible API
 
 You may want to save costs by developing against a local LLM server, such as
