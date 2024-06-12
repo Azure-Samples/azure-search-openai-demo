@@ -14,7 +14,7 @@ This repository now includes an example of integrating a GPT Vision model with A
 ### Prerequisites
 
 - Create a [Computer Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing.
-- The ability to deploy a gpt-4o model in the [supported regions](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4o deployment from your Azure OpenAI deployments page.
+- The ability to deploy a gpt-4o model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4o deployment from your Azure OpenAI deployments page.
 - Ensure that you can deploy the Azure OpenAI resource group in [a region where all required components are available](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability):
   - Azure OpenAI models
     - gpt-35-turbo
