@@ -81,7 +81,7 @@ $argumentList = "./app/backend/prepdocs.py $dataArg --verbose " + `
 "$adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg  " + `
 "$tenantArg $aclArg " + `
 "$disableVectorsArg $localPdfParserArg $localHtmlParserArg " + `
-"$integratedVectorizationArg --removeall"
+"$integratedVectorizationArg "
 
 $argumentList
 
