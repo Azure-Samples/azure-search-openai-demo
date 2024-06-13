@@ -3,7 +3,8 @@
     "image": "mcr.microsoft.com/devcontainers/python:3.11",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
-            "version": "16",
+            // This should match the version of Node.js in Github Actions workflows
+            "version": "18",
             "nodeGypDependencies": false
         },
         "ghcr.io/devcontainers/features/powershell:1.1.0": {},
