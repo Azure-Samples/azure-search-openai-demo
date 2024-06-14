@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, RefObject } from "react";
 import { Outlet, NavLink, Link } from "react-router-dom";
 
-import github from "../../assets/github.svg";
-
 import styles from "./Layout.module.css";
 
 import { useLogin } from "../../authConfig";
@@ -40,7 +38,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>Azure OpenAI + AI Search</h3>
                     </Link>
                     <nav>
                         <ul className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
@@ -62,28 +60,17 @@ const Layout = () => {
                                     Ask a question
                                 </NavLink>
                             </li>
-                            <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
-                                    <img
-                                        src={github}
-                                        alt="Github logo"
-                                        aria-label="Link to github repository"
-                                        width="20px"
-                                        height="20px"
-                                        className={styles.githubLogo}
-                                    />
-                                </a>
-                            </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
-                    {useLogin && <LoginButton />}
-                    <IconButton
-                        iconProps={{ iconName: "GlobalNavButton" }}
-                        className={styles.menuToggle}
-                        onClick={toggleMenu}
-                        ariaLabel="Toggle menu"
-                    />
+                    <div className={styles.loginMenuContainer}>
+                        {useLogin && <LoginButton />}
+                        <IconButton
+                            iconProps={{ iconName: "GlobalNavButton" }}
+                            className={styles.menuToggle}
+                            onClick={toggleMenu}
+                            ariaLabel="Toggle menu"
+                        />
+                    </div>
                 </div>
             </header>
 

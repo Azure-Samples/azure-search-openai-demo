@@ -97,6 +97,12 @@
     z-index: 101;
 }
 
+.loginMenuContainer {
+    display: flex;
+    align-items: center;
+    gap: 0; /* Ensure no gap between login button and menu toggle */
+}
+
 @media (min-width: 992px) {
     .headerTitle {
         font-weight: 600;

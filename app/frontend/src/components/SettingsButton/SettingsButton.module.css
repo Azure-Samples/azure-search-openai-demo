@@ -3,4 +3,5 @@
     align-items: center;
     gap: 0.375em;
     cursor: pointer;
+    padding: 0.5rem;
 }
