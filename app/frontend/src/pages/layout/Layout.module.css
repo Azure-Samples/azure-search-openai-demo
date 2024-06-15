@@ -2,10 +2,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    background-color: rgb(255, 255, 255);
 }
 
 .header {
-    background-color: #222222;
+    background-color: #0063a7;
     color: #f2f2f2;
 }
 
@@ -13,6 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+    background-color: #0063a7;
     margin-right: 12px;
     margin-left: 12px;
 }
@@ -74,5 +76,7 @@
 }
 
 .githubLogo {
-    height: 20px;
+    height: 40px;
+    background-color: whitesmoke;
+    border-radius: 100%;
 }

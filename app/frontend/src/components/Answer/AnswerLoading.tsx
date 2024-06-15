@@ -16,8 +16,9 @@ export const AnswerLoading = () => {
                 <AnswerIcon />
                 <Stack.Item grow>
                     <p className={styles.answerText}>
-                        Generating answer
+                        Vedha is Fetching answer for you
                         <span className={styles.loadingdots} />
+                        🤔
                     </p>
                 </Stack.Item>
             </Stack>

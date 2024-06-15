@@ -14,7 +14,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>GPT + Enterprise data | Sample</h3>
+                        <h3 className={styles.headerTitle}>Ve.D.H.A</h3>
                     </Link>
                     <nav>
                         <ul className={styles.headerNavList}>
@@ -34,15 +34,15 @@ const Layout = () => {
                                         src={github}
                                         alt="Github logo"
                                         aria-label="Link to github repository"
-                                        width="20px"
-                                        height="20px"
+                                        width="40px"
+                                        height="40px"
                                         className={styles.githubLogo}
                                     />
                                 </a>
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}>Azure OpenAI + AI Search</h4>
+                    <h4 className={styles.headerRightText}>Vedanta Digital Helper and Assistant</h4>
                     {useLogin && <LoginButton />}
                 </div>
             </header>

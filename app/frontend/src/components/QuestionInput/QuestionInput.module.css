@@ -6,12 +6,13 @@
     height: 90px;
     width: 100%;
     padding: 15px;
-    background: white;
+    background: rgb(254, 254, 254);
 }
 
 .questionInputTextArea {
     width: 100%;
     line-height: 40px;
+    color: aqua;
 }
 
 .questionInputButtonsContainer {

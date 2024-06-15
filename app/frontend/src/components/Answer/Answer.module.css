@@ -1,6 +1,6 @@
 .answerContainer {
     padding: 20px;
-    background: rgb(249, 249, 249);
+    background:#73be42;
     border-radius: 8px;
     box-shadow:
         0px 2px 4px rgba(0, 0, 0, 0.14),
@@ -9,7 +9,7 @@
 }
 
 .answerLogo {
-    font-size: 28px;
+    font-size: 48px;
 }
 
 .answerText {
