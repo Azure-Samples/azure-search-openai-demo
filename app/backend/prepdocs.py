@@ -286,7 +286,7 @@ if __name__ == "__main__":
         help="Optional. Name of the Azure AI Search analyzer to use for the content field in the index",
     )
     parser.add_argument("--openaihost", help="Host of the API used to compute embeddings ('azure' or 'openai')")
-    parser.add_argument("--openaiservice", help="Name of the Azure OpenAI service used to compute embeddings")
+    parser.add_argument("--openaiservice", help="Name of the Azure OpenAI Service used to compute embeddings")
     parser.add_argument(
         "--openaideployment",
         help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)",
