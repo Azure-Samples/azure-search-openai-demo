@@ -3,7 +3,7 @@ name: Validate Markdown
 on:
   # Trigger the workflow on pull request
   pull_request_target:
-    branches: 
+    branches:
       - main
     paths:
       - '**.md'

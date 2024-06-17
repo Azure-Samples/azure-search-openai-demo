@@ -88,15 +88,14 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
-        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
+        use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_ranker = True if overrides.get("semantic_ranker") else False
+        use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
-
         filter = self.build_filter(overrides, auth_claims)
-        use_semantic_ranker = True if overrides.get("semantic_ranker") and has_text else False
 
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
@@ -151,18 +150,16 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
-        if has_vector:
+        if use_vector_search:
             vectors.append(await self.compute_text_embedding(query_text))
-
-        # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        if not has_text:
-            query_text = None
 
         results = await self.search(
             top,
             query_text,
             filter,
             vectors,
+            use_text_search,
+            use_vector_search,
             use_semantic_ranker,
             use_semantic_captions,
             minimum_search_score,
@@ -212,7 +209,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "use_semantic_ranker": use_semantic_ranker,
                         "top": top,
                         "filter": filter,
-                        "has_vector": has_vector,
+                        "use_vector_search": use_vector_search,
+                        "use_text_search": use_text_search,
                     },
                 ),
                 ThoughtStep(

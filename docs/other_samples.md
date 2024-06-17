@@ -15,7 +15,7 @@ They do not all support the same features as this repo, but they provide a good 
 ## Other Python samples
 
 Another popular repository for this use case is here:
-https://github.com/Microsoft/sample-app-aoai-chatGPT/
+[https://github.com/Microsoft/sample-app-aoai-chatGPT/](https://github.com/Microsoft/sample-app-aoai-chatGPT/)
 
 That repository is designed for use by customers using Azure OpenAI studio and Azure Portal for setup. It also includes `azd` support for folks who want to deploy it completely from scratch.
 

@@ -125,7 +125,7 @@ export function Component(): JSX.Element {
                         gpt4v_input: gpt4vInput
                     }
                 },
-                // ChatAppProtocol: Client must pass on any session state received from the server
+                // AI Chat Protocol: Client must pass on any session state received from the server
                 session_state: answer ? answer.session_state : null
             };
             const result = await askApi(request, token);
