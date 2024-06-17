@@ -93,7 +93,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -183,7 +183,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.0.0
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.4.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -191,7 +191,7 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==1.26.4
+numpy==2.0.0
     # via
     #   openai
     #   pandas
@@ -258,7 +258,7 @@ opentelemetry-instrumentation-flask==0.46b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.46b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.22.0
+opentelemetry-instrumentation-openai==0.22.1
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.46b0
     # via azure-monitor-opentelemetry
@@ -341,7 +341,7 @@ pycparser==2.22
     # via cffi
 pydantic==2.7.4
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.19.0
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via
@@ -397,7 +397,7 @@ soupsieve==2.5
     # via beautifulsoup4
 std-uritemplate==1.0.1
     # via microsoft-kiota-abstractions
-tenacity==8.3.0
+tenacity==8.4.0
     # via -r requirements.in
 tiktoken==0.7.0
     # via
