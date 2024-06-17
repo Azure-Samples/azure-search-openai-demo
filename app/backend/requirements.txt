@@ -434,7 +434,7 @@ tzdata==2024.1
     # via
     #   pandas
     #   pendulum
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
 uvicorn==0.30.1
     # via -r requirements.in
