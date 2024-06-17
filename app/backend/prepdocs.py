@@ -423,7 +423,9 @@ if __name__ == "__main__":
         openai_dimensions=args.openaidimensions,
         openai_key=clean_key_if_exists(args.openaikey),
         openai_org=args.openaiorg,
+        # FIXME: changed for temporary debugging purposes
         disable_vectors=args.novectors,
+        # disable_vectors=True,
         disable_batch_vectors=args.disablebatchvectors,
     )
 

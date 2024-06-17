@@ -312,7 +312,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
       AZURE_OPENAI_GPT4V_MODEL: gpt4vModelName
       // Specific to Azure OpenAI
-      AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
+      // AZURE_OPENAI_SERVICE: isAzureOpenAiHost ? openAi.outputs.name : ''
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
       AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
@@ -387,22 +387,23 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
-  name: 'openai'
-  scope: openAiResourceGroup
-  params: {
-    name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
-    location: openAiResourceGroupLocation
-    tags: tags
-    publicNetworkAccess: publicNetworkAccess
-    bypass: bypass
-    sku: {
-      name: openAiSkuName
-    }
-    deployments: openAiDeployments
-    disableLocalAuth: true
-  }
-}
+// FIXME: Removed to attempt to stop attempted deployment of Azure OpenAI resources
+// module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost) {
+//   name: 'openai'
+//   scope: openAiResourceGroup
+//   params: {
+//     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+//     location: openAiResourceGroupLocation
+//     tags: tags
+//     publicNetworkAccess: publicNetworkAccess
+//     bypass: bypass
+//     sku: {
+//       name: openAiSkuName
+//     }
+//     deployments: openAiDeployments
+//     disableLocalAuth: true
+//   }
+// }
 
 // Formerly known as Form Recognizer
 // Does not support bypass
@@ -720,15 +721,16 @@ var privateEndpointConnections = usePrivateEndpoint ? [
       useUserUpload ? [ userStorage.outputs.id ] : []
     )
   }
-  {
-    groupId: 'account'
-    dnsZoneName: 'privatelink.openai.azure.com'
-    resourceIds: concat(
-      [ openAi.outputs.id ],
-      useGPT4V ? [ computerVision.outputs.id ] : [],
-      !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
-    )
-  }
+  // FIXME removed to attempt to remove Azure OpenAI resource deployment
+  // {
+  //   groupId: 'account'
+  //   dnsZoneName: 'privatelink.openai.azure.com'
+  //   resourceIds: concat(
+  //     [ openAi.outputs.id ],
+  //     useGPT4V ? [ computerVision.outputs.id ] : [],
+  //     !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
+  //   )
+  // }
   {
     groupId: 'searchService'
     dnsZoneName: 'privatelink.search.windows.net'
@@ -829,7 +831,8 @@ output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4vModelName
 
 // Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
+// FIXME: removed to attempt to stop OpenAI Azure Resource Deployment
+// output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost ? openAi.outputs.name : ''
 output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''

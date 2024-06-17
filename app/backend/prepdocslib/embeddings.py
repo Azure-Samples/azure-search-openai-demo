@@ -187,9 +187,12 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
             raise TypeError("Invalid credential type")
 
         return AsyncAzureOpenAI(
-            azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
+            # FIXME: experiment to see if I can get this to not throw errors
+            # azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
+            # FIXME: this is also super hard-coded, both the model and the api version should be variables
+            azure_endpoint=f"https://app-westus3-dc-dev-ailbapp-01.azurewebsites.net/openai/deployments/text-embedding-ada-002/embeddings?api-version=2024-02-01",
             azure_deployment=self.open_ai_deployment,
-            api_version="2023-05-15",
+            api_version="2023-05-15", # FIXME: this wasn't me, but why is this hard-coded as well?
             **auth_args,
         )
 

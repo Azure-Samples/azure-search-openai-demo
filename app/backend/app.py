@@ -388,7 +388,11 @@ async def setup_clients():
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     # Shared by all OpenAI deployments
-    OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
+    # FIXME: Switch the below to actually use an environment variable
+    # OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
+    OPENAI_HOST = "azure_custom"
+    # FIXME: The below URL has a couple things that should be separate variables, the below is hard-coded for ChatGPT model and API version
+    os.environ["AZURE_OPENAI_CUSTOM_URL"] = "https://app-westus3-dc-dev-ailbapp-01.azurewebsites.net/openai/deployments/model-gpt-35-turbo-0125/chat/completions?api-version=2024-02-01"
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", 1536))
@@ -503,7 +507,9 @@ async def setup_clients():
             openai_dimensions=OPENAI_EMB_DIMENSIONS,
             openai_key=clean_key_if_exists(OPENAI_API_KEY),
             openai_org=OPENAI_ORGANIZATION,
+            # FIXME: the below swap kills vector embeddings, which are really useful. Taking them out for a debugging-related experiment.
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
+            # disable_vectors=True,
         )
         ingester = UploadUserFileStrategy(
             search_info=search_info, embeddings=text_embeddings_service, file_processors=file_processors
@@ -529,6 +535,7 @@ async def setup_clients():
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         if OPENAI_HOST == "azure_custom":
+            print('in azure_custom, where I want to be')
             endpoint = os.environ["AZURE_OPENAI_CUSTOM_URL"]
         else:
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
