@@ -16,11 +16,10 @@ class RetrieveThenReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-
     system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
+        "You are an intelligent assistant helping Car Capital employees with questions about the company's marketing foundation, customer interaction blueprint, LEADS dealer beta guide, and other attached documentation. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
-        + "Answer the following question using only the data provided in the sources below. "
+        + "Answer the following question using only the data provided in the sources below. "  
         + "For tabular information return it as an html table. Do not return markdown format. "
         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
         + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
@@ -28,15 +27,17 @@ class RetrieveThenReadApproach(Approach):
 
     # shots/sample conversation
     question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
+'What are the key value propositions of Car Capital according to the marketing foundation document?'
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
+Car Capital Marketing Foundation.pdf: Car Capital's key value propositions include:
+Commercial Credit Extension to Dealerships: Providing flexible credit solutions to dealers, enabling them to cater to a diverse customer base, including those with credit challenges.
+DEALS Platform Integration: Offering a sophisticated, yet user-friendly platform that streamlines the car financing process for dealers and consumers alike.
+Empowering Dealers, Enriching Choices for Consumers: Enabling dealers to offer a wider range of financing options, thus expanding the choices available to consumers, especially those with less-than-perfect credit histories.
+cc_customer_interaction_blueprint.pdf: Car Capital focuses on empowering dealers to serve credit-challenged consumers.
+LEADS_Dealer_Beta_Guide_FINAL.pdf: The LEADS program is designed to connect dealerships with prequalified subprime automotive purchase intenders.
 """
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
+    answer = "According to the Car Capital Marketing Foundation document, Car Capital's key value propositions are: 1) Providing commercial credit to dealerships to enable them to serve a diverse customer base, including those with credit challenges, 2) Offering the DEALS platform to streamline car financing for dealers and consumers, and 3) Empowering dealers to offer more financing options, expanding choices for consumers, especially those with less-than-perfect credit [Car Capital Marketing Foundation.pdf]. The focus on empowering dealers to serve credit-challenged consumers is also mentioned in the customer interaction blueprint [cc_customer_interaction_blueprint.pdf]."
 
     def __init__(
         self,
