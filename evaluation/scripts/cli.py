@@ -8,6 +8,7 @@ from rich.logging import RichHandler
 from . import service_setup
 from .evaluate import run_evaluate_from_config
 from .generate import generate_dontknows_qa_data, generate_test_qa_data
+from typing import Optional
 
 app = typer.Typer(pretty_exceptions_enable=False)
 
@@ -22,11 +23,11 @@ logger.setLevel(logging.INFO)
 dotenv.load_dotenv(override=True)
 
 
-def int_or_none(raw: str) -> int | None:
+def int_or_none(raw: str) -> Optional[int]:
     return None if raw == "None" else int(raw)
 
 
-def str_or_none(raw: str) -> str | None:
+def str_or_none(raw: str) -> Optional[str]:
     return None if raw == "None" else raw
 
 
@@ -35,10 +36,10 @@ def evaluate(
     config: Path = typer.Option(
         exists=True, dir_okay=False, file_okay=True, help="Path to config.json", default="config.json"
     ),
-    numquestions: int | None = typer.Option(
+    numquestions: Optional[int] = typer.Option(
         help="Number of questions to evaluate (defaults to all if not specified).", default=None, parser=int_or_none
     ),
-    targeturl: str | None = typer.Option(
+    targeturl: Optional[str] = typer.Option(
         help="URL of the target service to evaluate against (defaults to the one in the config).",
         default=None,
         parser=str_or_none,

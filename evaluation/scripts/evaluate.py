@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import os
 from pathlib import Path
 
 import jmespath
@@ -10,6 +11,7 @@ from rich.progress import track
 
 from . import service_setup
 from .evaluate_metrics import metrics_by_name
+from azure.identity import ClientSecretCredential
 
 logger = logging.getLogger("scripts")
 
@@ -19,8 +21,8 @@ def send_question_to_target(
     url: str,
     parameters: dict = {},
     raise_error=False,
-    response_answer_jmespath="message.content",
-    response_context_jmespath="context.data_points.text",
+    response_answer_jmespath="choices[0].message.content",
+    response_context_jmespath="choices[0].context.data_points.text",
 ):
     headers = {"Content-Type": "application/json"}
     body = {
@@ -66,6 +68,82 @@ def send_question_to_target(
         }
 
 
+
+def send_question_to_ask(
+    question: str,
+    url: str,
+    # token: str, 
+    parameters: dict = {},
+    raise_error=False,
+    response_answer_jmespath="choices[0].message.content",
+    response_context_jmespath="choices[0].context.data_points.text",
+):
+    headers = {
+        "Content-Type": "application/json",
+        # "Authorization": f"Bearer {token}" 
+    }
+    body = {
+        "messages": [{"content": question, "role": "user"}],
+        "context": parameters,
+    }
+    try:
+        r = requests.post(url, headers=headers, json=body)
+        r.encoding = "utf-8"
+        latency = r.elapsed.total_seconds()
+
+        try:
+            response_dict = r.json()
+            print(response_dict)
+        except json.JSONDecodeError:
+            raise ValueError(
+                f"Response from target {url} is not valid JSON:\n\n{r.text} \n"
+                "Make sure that your configuration points at a chat endpoint that returns a single JSON object.\n"
+            )
+        try:
+            expression = 'choices[0].message.content'
+            answer = jmespath.search(expression, response_dict)
+            print(answer)
+            data_points = jmespath.search('choices[0].context.data_points.text', response_dict)
+            context = "\n\n".join(data_points)
+        except Exception:
+            raise ValueError(
+                "Response does not adhere to the expected schema. 111111111111111111111111111111"
+                f"The answer should be accessible via the JMESPath expression '{response_answer_jmespath}' "
+                f"and the context should be accessible via the JMESPath expression '{response_context_jmespath}'. "
+                "Either adjust the app response or adjust send_question_to_ask() to match the actual schema.\nResponse: {response_dict}"
+            )
+
+        response_obj = {"answer": answer, "context": context, "latency": latency}
+        return response_obj
+    except Exception as e:
+        if raise_error:
+            raise e
+        return {
+            "answer": str(e),
+            "context": str(e),
+            "latency": -1,
+        }
+
+
+def azure_login():
+
+    tenant_id = os.environ.get("TENANT_ID")
+    client_id = os.environ.get("CLIENT_ID")
+    client_secret = os.environ.get("CLIENT_SECRET")
+
+
+    credential = ClientSecretCredential(tenant_id, client_id, client_secret)
+
+
+    scope = ["https://management.azure.com/.default"]
+    token = credential.get_token(scope)
+
+    print("Access Token:", token.token)
+    return token.token
+
+
+
+
 def truncate_for_log(s: str, max_length=50):
     return s if len(s) < max_length else s[:max_length] + "..."
 
@@ -73,6 +151,18 @@ def truncate_for_log(s: str, max_length=50):
 def load_jsonl(path: Path) -> list[dict]:
     with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f.readlines()]
+    
+    
+# def load_jsonl(file_path):
+#     with open(file_path, 'r', encoding='utf-8') as f:
+#         lines = f.readlines()
+#         if not lines:
+#             raise ValueError("Input file is empty")
+#         try:
+#             return [json.loads(line) for line in lines]
+#         except json.JSONDecodeError as e:
+#             print(f"Error decoding JSON on line {lines.index(line)+1}: {line}")
+#             raise e
 
 
 def run_evaluation(
@@ -139,13 +229,15 @@ def run_evaluation(
         output = {}
         output["question"] = row["question"]
         output["truth"] = row["truth"]
-        target_response = send_question_to_target(
+        target_response = send_question_to_ask(
             question=row["question"],
             url=target_url,
+            # token=token,
             parameters=target_parameters,
             response_answer_jmespath=target_response_answer_jmespath,
             response_context_jmespath=target_response_context_jmespath,
         )
+        print(target_response)
         output.update(target_response)
         for metric in requested_metrics:
             result = metric.evaluator_fn(openai_config=openai_config)(
@@ -160,6 +252,7 @@ def run_evaluation(
 
 
     questions_with_ratings = []
+    # token= azure_login()
     for row in track(testdata, description="Processing..."):
         questions_with_ratings.append(evaluate_row(row))
 
