@@ -21,6 +21,7 @@ import {
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
+import { BotList } from "../../components/BotType";
 import { UserChatMessage } from "../../components/UserChatMessage";
 import { HelpCallout } from "../../components/HelpCallout";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
@@ -37,6 +38,8 @@ import { toolTipText } from "../../i18n/tooltips.js";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
+    const [selectedBot, setSelectedBot] = useState<number>(0);
+    const [selected,setSelected] = useState<boolean>(false)
     const [temperature, setTemperature] = useState<number>(0.3);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
@@ -280,6 +283,12 @@ const Chat = () => {
     const onExampleClicked = (example: string) => {
         makeApiRequest(example);
     };
+    const onBotClicked = (example: string, selected:number) => {
+        setPromptTemplate(example);
+        console.log(promptTemplate);
+        setSelectedBot(selected);
+        console.log(selected)
+    };
 
     const onShowCitation = (citation: string, index: number) => {
         if (activeCitation === citation && activeAnalysisPanelTab === AnalysisPanelTabs.CitationTab && selectedAnswer === index) {
@@ -341,7 +350,8 @@ const Chat = () => {
                         <div className={styles.chatEmptyState}>
                             <BotFilled fontSize={"120px"} primaryFill={"#0063a7"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>Vedha The AI Assistant for SESA GOA</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything Or try an example</h2>
+                            <BotList selected={selectedBot} onBotClicked={onBotClicked} useGPT4V={useGPT4V} />
+                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
