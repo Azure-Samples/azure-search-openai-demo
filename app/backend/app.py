@@ -534,11 +534,15 @@ async def setup_clients():
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
 
         api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
-
+        auth_args = {}
+        if os.getenv("AZURE_OPENAI_API_KEY"):
+            auth_args["api_key"] = os.getenv("AZURE_OPENAI_API_KEY")
+        else:
+            auth_args["azure_ad_token_provider"] = token_provider
         openai_client = AsyncAzureOpenAI(
             api_version=api_version,
             azure_endpoint=endpoint,
-            azure_ad_token_provider=token_provider,
+            **auth_args,
         )
     elif OPENAI_HOST == "local":
         openai_client = AsyncOpenAI(
