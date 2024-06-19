@@ -52,13 +52,12 @@ class BlobManager:
             if not await container_client.exists():
                 await container_client.create_container()
 
-            # Re-open and upload the original file
-            if file.url is None:
-                with open(file.content.name, "rb") as reopened_file:
-                    blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                    logger.info("Uploading blob for whole file -> %s", blob_name)
-                    blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
-                    file.url = blob_client.url
+            # Always attempt to upload the file, ignoring the previous URL check
+            with open(file.content.name, "rb") as reopened_file:
+                blob_name = BlobManager.blob_name_from_file_name(file.content.name)
+                logger.info("Uploading blob for whole file -> %s", blob_name)
+                blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
+                file.url = blob_client.url
 
             if self.store_page_images:
                 if os.path.splitext(file.content.name)[1].lower() == ".pdf":
