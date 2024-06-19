@@ -6,24 +6,38 @@ const DEFAULT_EXAMPLES: string[] = [
     "What are the IT policies of SESA goa?",
     "Give me a brief idea of what is blast furnace?"
 ];
+const EXAMPLES: string[][] = [
+    [
+        "What are the IT policies of SESA goa?",
+        "what are the allowed usage of company laptop?",
+        "what are the classification of data privacy level?"
+    ],
+    [
+        "How many leaves I am entitled to?",
+        "How to apply for reimbersment?",
+        "How many holidays do we get"
+    ],
+    [
+        "How risk assessment is done?",
+        "Give me a brief idea of what is blast furnace?"
+    ]
+];
 
 const GPT4V_EXAMPLES: string[] = [
-    "Compare the impact of interest rates and GDP in financial markets.",
-    "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-    "Can you identify any correlation between oil prices and stock market trends?"
 ];
 
 interface Props {
     onExampleClicked: (value: string) => void;
     useGPT4V?: boolean;
+    selectedBot:number
 }
 
-export const ExampleList = ({ onExampleClicked, useGPT4V }: Props) => {
+export const ExampleList = ({ onExampleClicked, useGPT4V , selectedBot}: Props) => {
     return (
         <ul className={styles.examplesNavList}>
-            {(useGPT4V ? GPT4V_EXAMPLES : DEFAULT_EXAMPLES).map((question, i) => (
+            {(selectedBot <= 0 ? GPT4V_EXAMPLES : EXAMPLES[selectedBot-1]).map((question, i) => (
                 <li key={i}>
-                    <Example text={question} value={question} onClick={onExampleClicked} />
+                    <Example text={question} value={question} onClick={onExampleClicked}/>
                 </li>
             ))}
         </ul>

@@ -352,7 +352,7 @@ const Chat = () => {
                             <h1 className={styles.chatEmptyStateTitle}>Vedha The AI Assistant for SESA GOA</h1>
                             <BotList selected={selectedBot} onBotClicked={onBotClicked} useGPT4V={useGPT4V} />
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
-                            <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
+                            <ExampleList selectedBot={selectedBot}onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
