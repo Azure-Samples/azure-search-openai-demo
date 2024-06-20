@@ -42,7 +42,7 @@ azure-core==1.30.2
     #   msrest
 azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
-azure-identity==1.16.1
+azure-identity==1.17.0
     # via
     #   -r requirements.in
     #   msgraph-sdk
@@ -181,7 +181,7 @@ msal==1.28.1
     #   msal-extensions
 msal-extensions==1.1.0
     # via azure-identity
-msgraph-core==1.0.0
+msgraph-core==1.1.0
     # via msgraph-sdk
 msgraph-sdk==1.1.0
     # via -r requirements.in
@@ -191,14 +191,11 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==1.26.4
-    # via
-    #   openai
-    #   pandas
-    #   pandas-stubs
+numpy==2.0.0
+    # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
-openai[datalib]==1.34.0
+openai==1.35.1
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -258,7 +255,7 @@ opentelemetry-instrumentation-flask==0.46b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.46b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.22.0
+opentelemetry-instrumentation-openai==0.23.0
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.46b0
     # via azure-monitor-opentelemetry
@@ -317,10 +314,6 @@ packaging==24.1
     # via
     #   msal-extensions
     #   opentelemetry-instrumentation-flask
-pandas==2.2.2
-    # via openai
-pandas-stubs==2.2.2.240603
-    # via openai
 pendulum==3.0.0
     # via microsoft-kiota-serialization-json
 pillow==10.3.0
@@ -356,13 +349,10 @@ pypdf==4.2.0
 python-dateutil==2.9.0.post0
     # via
     #   microsoft-kiota-serialization-text
-    #   pandas
     #   pendulum
     #   time-machine
 python-jose[cryptography]==3.3.0
     # via -r requirements.in
-pytz==2024.1
-    # via pandas
 quart==0.19.6
     # via
     #   -r requirements.in
@@ -397,7 +387,7 @@ soupsieve==2.5
     # via beautifulsoup4
 std-uritemplate==1.0.1
     # via microsoft-kiota-abstractions
-tenacity==8.3.0
+tenacity==8.4.1
     # via -r requirements.in
 tiktoken==0.7.0
     # via
@@ -418,12 +408,11 @@ types-pyasn1==0.6.0.20240402
     # via types-python-jose
 types-python-jose==3.3.4.20240106
     # via -r requirements.in
-types-pytz==2024.1.0.20240417
-    # via pandas-stubs
 typing-extensions==4.12.2
     # via
     #   azure-ai-documentintelligence
     #   azure-core
+    #   azure-identity
     #   azure-storage-blob
     #   azure-storage-file-datalake
     #   openai
@@ -431,10 +420,8 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
 tzdata==2024.1
-    # via
-    #   pandas
-    #   pendulum
-urllib3==2.2.1
+    # via pendulum
+urllib3==2.2.2
     # via requests
 uvicorn==0.30.1
     # via -r requirements.in
