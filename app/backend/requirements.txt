@@ -93,7 +93,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -183,7 +183,7 @@ msal-extensions==1.1.0
     # via azure-identity
 msgraph-core==1.1.0
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.4.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -324,7 +324,7 @@ portalocker==2.8.2
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-psutil==5.9.8
+psutil==6.0.0
     # via azure-monitor-opentelemetry-exporter
 pyasn1==0.6.0
     # via
@@ -334,7 +334,7 @@ pycparser==2.22
     # via cffi
 pydantic==2.7.4
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.19.0
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via
