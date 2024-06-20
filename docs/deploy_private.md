@@ -3,6 +3,8 @@
 
 If you want to disable public access when deploying the Chat App, you can do so by setting `azd` environment values.
 
+[📺 Watch a video overview of the VM provisioning process](https://www.youtube.com/watch?v=RbITd0a5who)
+
 ## Before you begin
 
 Deploying with public access disabled adds additional cost to your deployment. Please see pricing for the following products:
