@@ -149,3 +149,5 @@ static/
 data/**/*.md5
 
 .DS_Store
+
+!evaluation/.env
