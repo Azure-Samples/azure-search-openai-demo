@@ -1,0 +1,61 @@
+{
+    "id": "chatcmpl-9c9DQjN44gNirY5em7HVNrDSIG4Yo",
+    "choices": [
+        {
+            "finish_reason": "stop",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+                "content": "The Northwind Health Plus plan includes coverage for hospital stays, doctor visits, lab tests, X-rays, emergency services, mental health and substance abuse coverage, out-of-network services, and a wider range of prescription drug coverage [Benefit_Options.pdf#page=3].",
+                "role": "assistant",
+                "function_call": null,
+                "tool_calls": null
+            },
+            "content_filter_results": {
+                "hate": {
+                    "filtered": false,
+                    "severity": "safe"
+                },
+                "self_harm": {
+                    "filtered": false,
+                    "severity": "safe"
+                },
+                "sexual": {
+                    "filtered": false,
+                    "severity": "safe"
+                },
+                "violence": {
+                    "filtered": false,
+                    "severity": "safe"
+                }
+            },
+            "context": {
+                "data_points": {
+                    "text": ["Northwind_Standard_Benefits_Details.pdf#page=56:  Finally, Northwind Health's Northwind Standard plan does not cover services that are not medically necessary. ... covered by the insurance."]
+                }, 
+                "thoughts": [
+                    ThoughtStep(),
+                    ThoughtStep(),
+                    ...
+                ],
+                "session_state": null
+            }
+        }
+    ],
+    "created": 1718878916,
+    "model": "gpt-35-turbo",
+    "object": "chat.completion",
+    "system_fingerprint": null,
+    "usage": {
+        "completion_tokens": 54,
+        "prompt_tokens": 971,
+        "total_tokens": 1025
+    },
+    "prompt_filter_results": [
+        {
+            "prompt_index": 0,
+            "content_filter_results": {...
+            }
+        }
+    ]
+}

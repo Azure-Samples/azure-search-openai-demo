@@ -1,0 +1,22 @@
+name: Model evaluation
+
+on:
+  push:
+    branches: [ evaluate ]
+    paths:
+      - "evaluate/**"
+  pull_request:
+    branches: [ evaluate ]
+    paths:
+      - "evaluate/**"
+
+jobs:
+    prettier:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Run evaluations
+              run: |
+                cd ./evaluation
+                pip install -r scripts/requirements.txt
+                python -m script evaluate --config=./example_config.json
