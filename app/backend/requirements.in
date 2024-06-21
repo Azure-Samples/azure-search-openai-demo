@@ -1,7 +1,8 @@
 azure-identity
 quart
 quart-cors
-openai[datalib]>=1.3.7
+openai>=1.3.7
+numpy>=1 # Used by openai embeddings.create to optimize embeddings (but not required)
 tiktoken
 tenacity
 azure-ai-documentintelligence
