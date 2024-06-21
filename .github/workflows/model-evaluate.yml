@@ -2,11 +2,11 @@ name: Model evaluation
 
 on:
   push:
-    branches: [ evaluate ]
+    branches: [ main ]
     paths:
       - "evaluate/**"
   pull_request:
-    branches: [ evaluate ]
+    branches: [ main ]
     paths:
       - "evaluate/**"
 
