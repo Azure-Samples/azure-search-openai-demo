@@ -65,6 +65,12 @@ if ($env:USE_FEATURE_INT_VECTORIZATION) {
   $integratedVectorizationArg = "--useintvectorization $env:USE_FEATURE_INT_VECTORIZATION"
 }
 
+if ($env:AZURE_OPENAI_API_KEY) {
+  $openaiApiKey = $env:AZURE_OPENAI_API_KEY
+} else {
+  $openaiApiKey = $env:OPENAI_API_KEY
+}
+
 $cwd = (Get-Location)
 $dataArg = "`"$cwd/data/*`""
 
@@ -75,6 +81,7 @@ $argumentList = "./app/backend/prepdocs.py $dataArg --verbose " + `
 "$searchAnalyzerNameArg " + `
 "--openaihost `"$env:OPENAI_HOST`" --openaimodelname `"$env:AZURE_OPENAI_EMB_MODEL_NAME`" $openaiDimensionsArg " + `
 "--openaiservice `"$env:AZURE_OPENAI_SERVICE`" --openaideployment `"$env:AZURE_OPENAI_EMB_DEPLOYMENT`" " + `
+"--openaicustomurl `"$env:OPENAI_CUSTOM_URL`" " + `
 "--openaikey `"$env:OPENAI_API_KEY`" --openaiorg `"$env:OPENAI_ORGANIZATION`" " + `
 "--documentintelligenceservice $env:AZURE_DOCUMENTINTELLIGENCE_SERVICE " + `
 "$searchImagesArg $visionEndpointArg " + `

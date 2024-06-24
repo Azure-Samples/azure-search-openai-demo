@@ -65,9 +65,9 @@ fi
 
 # Send in either AZURE_OPENAI_API_KEY or OPENAI_API_KEY, whichever is set
 if [ -n "$AZURE_OPENAI_API_KEY" ]; then
-  openAiApiKeyArg="--openaikey $AZURE_OPENAI_API_KEY"
+  openAiApiKeyArg="$AZURE_OPENAI_API_KEY"
 elif [ -n "$OPENAI_API_KEY" ]; then
-  openAiApiKeyArg="--openaikey $OPENAI_API_KEY"
+  openAiApiKeyArg="$OPENAI_API_KEY"
 fi
 
 ./.venv/bin/python ./app/backend/prepdocs.py './data/*' --verbose \
@@ -77,9 +77,8 @@ fi
 $searchAnalyzerNameArg \
 --openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" $openAiDimensionsArg \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
-$openAiApiKeyArg \
 --openaicustomurl "$AZURE_OPENAI_CUSTOM_URL" \
---openaiorg "$OPENAI_ORGANIZATION" \
+--openaikey $openAiApiKeyArg --openaiorg "$OPENAI_ORGANIZATION" \
 --documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
 $searchImagesArg $visionEndpointArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
