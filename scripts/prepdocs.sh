@@ -63,7 +63,6 @@ if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
   integratedVectorizationArg="--useintvectorization $USE_FEATURE_INT_VECTORIZATION"
 fi
 
-# Send in either AZURE_OPENAI_API_KEY or OPENAI_API_KEY, whichever is set
 if [ -n "$AZURE_OPENAI_API_KEY" ]; then
   openAiApiKeyArg="$AZURE_OPENAI_API_KEY"
 elif [ -n "$OPENAI_API_KEY" ]; then
