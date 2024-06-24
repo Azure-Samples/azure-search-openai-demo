@@ -159,7 +159,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
 
     def __init__(
         self,
-        open_ai_service: Union[str, None],
+        open_ai_endpoint: str,
         open_ai_deployment: Union[str, None],
         open_ai_model_name: str,
         open_ai_dimensions: int,
@@ -167,7 +167,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         disable_batch: bool = False,
     ):
         super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
-        self.open_ai_service = open_ai_service
+        self.open_ai_endpoint = open_ai_endpoint
         self.open_ai_deployment = open_ai_deployment
         self.credential = credential
 
@@ -187,7 +187,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
             raise TypeError("Invalid credential type")
 
         return AsyncAzureOpenAI(
-            azure_endpoint=f"https://{self.open_ai_service}.openai.azure.com",
+            azure_endpoint=self.open_ai_endpoint,
             azure_deployment=self.open_ai_deployment,
             api_version="2023-05-15",
             **auth_args,
