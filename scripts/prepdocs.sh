@@ -64,9 +64,9 @@ if [ -n "$USE_FEATURE_INT_VECTORIZATION" ]; then
 fi
 
 if [ -n "$AZURE_OPENAI_API_KEY" ]; then
-  openAiApiKeyArg="$AZURE_OPENAI_API_KEY"
+  openAiApiKeyArg="--openaikey $AZURE_OPENAI_API_KEY"
 elif [ -n "$OPENAI_API_KEY" ]; then
-  openAiApiKeyArg="$OPENAI_API_KEY"
+  openAiApiKeyArg="--openaikey $OPENAI_API_KEY"
 fi
 
 ./.venv/bin/python ./app/backend/prepdocs.py './data/*' --verbose \
@@ -77,7 +77,7 @@ $searchAnalyzerNameArg \
 --openaihost "$OPENAI_HOST" --openaimodelname "$AZURE_OPENAI_EMB_MODEL_NAME" $openAiDimensionsArg \
 --openaiservice "$AZURE_OPENAI_SERVICE" --openaideployment "$AZURE_OPENAI_EMB_DEPLOYMENT"  \
 --openaicustomurl "$AZURE_OPENAI_CUSTOM_URL" \
---openaikey $openAiApiKeyArg --openaiorg "$OPENAI_ORGANIZATION" \
+$openAiApiKeyArg --openaiorg "$OPENAI_ORGANIZATION" \
 --documentintelligenceservice "$AZURE_DOCUMENTINTELLIGENCE_SERVICE" \
 $searchImagesArg $visionEndpointArg \
 $adlsGen2StorageAccountArg $adlsGen2FilesystemArg $adlsGen2FilesystemPathArg \
