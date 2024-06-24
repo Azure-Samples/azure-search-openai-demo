@@ -171,8 +171,10 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         self.open_ai_service = open_ai_service
         if open_ai_service:
             self.open_ai_endpoint = f"https://{open_ai_service}.openai.azure.com"
-        else:
+        elif open_ai_custom_url:
             self.open_ai_endpoint = open_ai_custom_url
+        else:
+            raise ValueError("Either open_ai_service or open_ai_custom_url must be provided")
         self.open_ai_deployment = open_ai_deployment
         self.credential = credential
 
