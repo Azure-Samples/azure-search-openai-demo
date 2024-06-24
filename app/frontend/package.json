@@ -21,20 +21,20 @@
     "marked": "^13.0.0",
     "dompurify": "^3.0.6",
     "react": "^18.3.1",
-    "react-dom": "^18.2.0",
+    "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
-    "ndjson-readablestream": "^1.0.7",
+    "ndjson-readablestream": "^1.2.0",
     "react-syntax-highlighter": "^15.5.0",
     "scheduler": "^0.20.2"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.4",
     "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.2.14",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.1.1",
     "prettier": "^3.0.3",
     "typescript": "^5.4.5",
-    "@types/react-syntax-highlighter": "^15.5.7",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@types/dom-speech-recognition": "^0.0.4",
     "vite": "^4.5.3"
   }
