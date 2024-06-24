@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-aiofiles==23.2.1
+aiofiles==24.1.0
     # via quart
 aiohttp==3.9.5
     # via
@@ -42,13 +42,13 @@ azure-core==1.30.2
     #   msrest
 azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
-azure-identity==1.17.0
+azure-identity==1.17.1
     # via
     #   -r requirements.in
     #   msgraph-sdk
 azure-monitor-opentelemetry==1.6.0
     # via -r requirements.in
-azure-monitor-opentelemetry-exporter==1.0.0b26
+azure-monitor-opentelemetry-exporter==1.0.0b27
     # via azure-monitor-opentelemetry
 azure-search-documents==11.6.0b1
     # via -r requirements.in
@@ -93,7 +93,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -130,7 +130,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.1.0
+importlib-metadata==7.2.1
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -174,16 +174,16 @@ microsoft-kiota-serialization-json==1.2.0
     # via msgraph-sdk
 microsoft-kiota-serialization-text==1.0.0
     # via msgraph-sdk
-msal==1.28.1
+msal==1.29.0
     # via
     #   -r requirements.in
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.1.0
+msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.0
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.4.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -195,7 +195,7 @@ numpy==2.0.0
     # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
-openai==1.35.1
+openai==1.35.3
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -320,11 +320,11 @@ pillow==10.3.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
-portalocker==2.8.2
+portalocker==2.10.0
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-psutil==5.9.8
+psutil==6.0.0
     # via azure-monitor-opentelemetry-exporter
 pyasn1==0.6.0
     # via
@@ -334,7 +334,7 @@ pycparser==2.22
     # via cffi
 pydantic==2.7.4
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.19.0
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via
