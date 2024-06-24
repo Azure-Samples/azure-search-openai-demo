@@ -34,6 +34,7 @@
                     "top": 3,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,
+                    "use_text_search": true,
                     "vector_fields": [
                         "embedding",
                         "imageEmbedding"
