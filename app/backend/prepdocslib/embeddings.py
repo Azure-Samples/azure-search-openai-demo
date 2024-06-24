@@ -168,6 +168,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         disable_batch: bool = False,
     ):
         super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
+        self.open_ai_service = open_ai_service
         if open_ai_service:
             self.open_ai_endpoint = f"https://{open_ai_service}.openai.azure.com"
         else:
