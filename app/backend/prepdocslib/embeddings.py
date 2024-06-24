@@ -160,11 +160,11 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
     def __init__(
         self,
         open_ai_service: Union[str, None],
-        open_ai_custom_url: Union[str, None],
         open_ai_deployment: Union[str, None],
         open_ai_model_name: str,
         open_ai_dimensions: int,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        open_ai_custom_url: Union[str, None] = None,
         disable_batch: bool = False,
     ):
         super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
