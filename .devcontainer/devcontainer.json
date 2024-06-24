@@ -1,12 +1,12 @@
 {
     "name": "Azure Search OpenAI Demo",
-    "image": "mcr.microsoft.com/devcontainers/python:3.10",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
-            "version": "16",
+            // This should match the version of Node.js in Github Actions workflows
+            "version": "18",
             "nodeGypDependencies": false
         },
-        "ghcr.io/devcontainers/features/powershell:1.1.0": {},
         "ghcr.io/devcontainers/features/azure-cli:1.0.8": {},
         "ghcr.io/azure/azure-dev/azd:latest": {}
     },
@@ -15,7 +15,8 @@
             "extensions": [
                 "ms-azuretools.azure-dev",
                 "ms-azuretools.vscode-bicep",
-                "ms-python.python"
+                "ms-python.python",
+                "esbenp.prettier-vscode"
             ]
         }
     },

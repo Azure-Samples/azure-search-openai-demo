@@ -3,6 +3,7 @@ import asyncio
 import json
 import logging
 import os
+from typing import Any, Optional
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
@@ -24,7 +25,7 @@ class AdlsGen2Setup:
         storage_account_name: str,
         filesystem_name: str,
         security_enabled_groups: bool,
-        data_access_control_format: dict[str, any],
+        data_access_control_format: dict[str, Any],
         credentials: AsyncTokenCredential,
     ):
         """
@@ -39,7 +40,7 @@ class AdlsGen2Setup:
         filesystem_name
             Name of the container / filesystem in the Data Lake Storage Gen 2 account to use
         security_enabled_groups
-            When creating groups in Azure AD, whether or not to make them security enabled
+            When creating groups in Microsoft Entra, whether or not to make them security enabled
         data_access_control_format
             File describing how to create groups, upload files with access control. See the sampleacls.json for the format of this file
         """
@@ -49,7 +50,7 @@ class AdlsGen2Setup:
         self.credentials = credentials
         self.security_enabled_groups = security_enabled_groups
         self.data_access_control_format = data_access_control_format
-        self.graph_headers = None
+        self.graph_headers: Optional[dict[str, str]] = None
 
     async def run(self):
         async with self.create_service_client() as service_client:
@@ -98,6 +99,9 @@ class AdlsGen2Setup:
                                 await directory_client.update_access_control_recursive(
                                     acl=f"group:{groups[group_name]}:r-x"
                                 )
+                        if "oids" in access_control:
+                            for oid in access_control["oids"]:
+                                await directory_client.update_access_control_recursive(acl=f"user:{oid}:r-x")
                 finally:
                     for directory_client in directories.values():
                         await directory_client.close()
@@ -143,7 +147,7 @@ class AdlsGen2Setup:
         return group_id
 
 
-async def main(args: any):
+async def main(args: Any):
     async with AzureDeveloperCliCredential() as credentials:
         with open(args.data_access_control) as f:
             data_access_control_format = json.load(f)
@@ -173,7 +177,7 @@ if __name__ == "__main__":
         "--create-security-enabled-groups",
         required=False,
         action="store_true",
-        help="Whether or not the sample groups created are security enabled in Azure AD",
+        help="Whether or not the sample groups created are security enabled in Microsoft Entra",
     )
     parser.add_argument(
         "--data-access-control", required=True, help="JSON file describing access control for the sample data"

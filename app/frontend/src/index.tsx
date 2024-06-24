@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { initializeIcons } from "@fluentui/react";
-import { MsalProvider } from '@azure/msal-react';
-import { PublicClientApplication, EventType, AccountInfo } from '@azure/msal-browser';
-import { msalConfig, useLogin } from './authConfig';
+import { MsalProvider } from "@azure/msal-react";
+import { PublicClientApplication, EventType, AccountInfo } from "@azure/msal-browser";
+import { msalConfig, useLogin } from "./authConfig";
 
 import "./index.css";
 
@@ -22,7 +22,7 @@ if (useLogin) {
     }
 
     // Listen for sign-in event and set active account
-    msalInstance.addEventCallback((event) => {
+    msalInstance.addEventCallback(event => {
         if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
             const account = event.payload as AccountInfo;
             msalInstance.setActiveAccount(account);
@@ -33,9 +33,9 @@ if (useLogin) {
         <MsalProvider instance={msalInstance}>
             <Layout />
         </MsalProvider>
-    )
+    );
 } else {
-    layout = <Layout />
+    layout = <Layout />;
 }
 
 initializeIcons();
@@ -51,7 +51,7 @@ const router = createHashRouter([
             },
             {
                 path: "qa",
-                lazy: () => import("./pages/oneshot/OneShot")
+                lazy: () => import("./pages/ask/Ask")
             },
             {
                 path: "*",

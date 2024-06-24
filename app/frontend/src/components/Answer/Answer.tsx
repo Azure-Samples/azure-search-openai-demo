@@ -3,10 +3,11 @@ import { Stack, IconButton } from "@fluentui/react";
 import DOMPurify from "dompurify";
 
 import styles from "./Answer.module.css";
-
 import { ChatAppResponse, getCitationFilePath } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
+import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
+import { SpeechOutputAzure } from "./SpeechOutputAzure";
 
 interface Props {
     answer: ChatAppResponse;
@@ -17,6 +18,9 @@ interface Props {
     onSupportingContentClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
+    showSpeechOutputBrowser?: boolean;
+    showSpeechOutputAzure?: boolean;
+    speechUrl: string | null;
 }
 
 export const Answer = ({
@@ -27,10 +31,14 @@ export const Answer = ({
     onThoughtProcessClicked,
     onSupportingContentClicked,
     onFollowupQuestionClicked,
-    showFollowupQuestions
+    showFollowupQuestions,
+    showSpeechOutputAzure,
+    showSpeechOutputBrowser,
+    speechUrl
 }: Props) => {
-    const messageContent = answer.choices[0].message.content;
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked ), [answer]);
+    const followupQuestions = answer.context?.followup_questions;
+    const messageContent = answer.message.content;
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
 
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
@@ -46,7 +54,7 @@ export const Answer = ({
                             title="Show thought process"
                             ariaLabel="Show thought process"
                             onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.choices[0].extra_args.thoughts?.length}
+                            disabled={!answer.context.thoughts?.length}
                         />
                         <IconButton
                             style={{ color: "black" }}
@@ -54,8 +62,10 @@ export const Answer = ({
                             title="Show supporting content"
                             ariaLabel="Show supporting content"
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.choices[0].extra_args.data_points?.length}
+                            disabled={!answer.context.data_points}
                         />
+                        {showSpeechOutputAzure && <SpeechOutputAzure url={speechUrl} />}
+                        {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
                     </div>
                 </Stack>
             </Stack.Item>
@@ -80,11 +90,11 @@ export const Answer = ({
                 </Stack.Item>
             )}
 
-            {!!parsedAnswer.followupQuestions.length && showFollowupQuestions && onFollowupQuestionClicked && (
+            {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <Stack.Item>
                     <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
                         <span className={styles.followupQuestionLearnMore}>Follow-up questions:</span>
-                        {parsedAnswer.followupQuestions.map((x, i) => {
+                        {followupQuestions.map((x, i) => {
                             return (
                                 <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>
                                     {`${x}`}
