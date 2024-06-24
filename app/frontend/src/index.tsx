@@ -11,6 +11,8 @@ import "./index.css";
 import Layout from "./pages/layout/Layout";
 import Chat from "./pages/chat/Chat";
 
+import Search from "./pages/search/SearchTab";
+
 var layout;
 if (useLogin) {
     var msalInstance = new PublicClientApplication(msalConfig);
@@ -40,6 +42,8 @@ if (useLogin) {
 
 initializeIcons();
 
+const SearchTab = React.lazy(() => import("./pages/search/SearchTab").then(module => ({ default: module.default })));
+
 const router = createHashRouter([
     {
         path: "/",
@@ -52,6 +56,12 @@ const router = createHashRouter([
             {
                 path: "qa",
                 lazy: () => import("./pages/ask/Ask")
+            },
+            {
+                path: "search",
+                element: <React.Suspense fallback={<div>Loading...</div>}>
+                   <SearchTab />
+                 </React.Suspense>
             },
             {
                 path: "*",

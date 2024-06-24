@@ -27,6 +27,10 @@ from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDo
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+##add components for search
+from azure.search.documents import SearchClient
+from azure.core.credentials import AzureKeyCredential
+
 from opentelemetry.instrumentation.httpx import (
     HTTPXClientInstrumentor,
 )
@@ -250,6 +254,48 @@ async def chat_stream(auth_claims: Dict[str, Any]):
         return response
     except Exception as error:
         return error_response(error, "/chat")
+
+##add search tab
+@bp.route("/search", methods=["POST"])
+def perform_search():
+    try:
+        request_json = request.json
+        query = request_json["query"]
+        search_type = request_json.get("searchType", "hybrid")
+        num_results = request_json.get("numResults", 10)
+
+        # Initialize SearchClient (you might want to create a function for this if used elsewhere)
+        search_client = SearchClient(
+            endpoint=os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"],
+            index_name=os.environ["AZURE_SEARCH_INDEX_NAME"],
+            credential=AzureKeyCredential(os.environ["AZURE_SEARCH_ADMIN_KEY"])
+        )
+
+        # Reuse existing retrieval approach if possible
+        retrieval_approach = RetrievalApproach(search_client, ApproachType.SEMANTIC if search_type != "keyword" else ApproachType.SIMPLE)
+
+        if search_type == "keyword":
+            results = retrieval_approach.retrieve(query, top=num_results, use_semantic_ranker=False)
+        elif search_type == "vector":
+            results = retrieval_approach.retrieve(query, top=num_results, use_semantic_ranker=True, use_vector_search=True)
+        else:  # hybrid
+            results = retrieval_approach.retrieve(query, top=num_results, use_semantic_ranker=True, use_vector_search=True)
+
+        formatted_results = [
+            {
+                "title": result["title"],
+                "content": result["content"][:200] + "...",  # Preview
+                "url": result.get("url", ""),  # Assuming URL might be optional
+                "score": result.get("@search.score", 0)  # Include relevance score if available
+            } for result in results
+        ]
+
+        return jsonify(formatted_results)
+
+    except Exception as e:
+        logging.exception("Exception in /api/search")
+        return jsonify({"error": str(e)}), 500
+
 
 
 # Send MSAL.js settings to the client UI

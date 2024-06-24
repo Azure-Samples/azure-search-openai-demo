@@ -120,3 +120,23 @@ export async function listUploadedFilesApi(idToken: string): Promise<string[]> {
     const dataResponse: string[] = await response.json();
     return dataResponse;
 }
+
+
+export async function searchDocuments(searchQuery: string, searchType: string): Promise<any> {
+  const response = await fetch(`${BACKEND_URI}/ask`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: searchQuery,
+      searchType: searchType,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Search request failed: ${response.statusText}`);
+  }
+
+  return await response.json();
+}

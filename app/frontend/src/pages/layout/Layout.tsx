@@ -24,6 +24,11 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
+                                <NavLink to="/search" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
+                                   Search
+                                </NavLink>
+                            </li>
+                            <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/qa" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
                                     Ask a question
                                 </NavLink>
