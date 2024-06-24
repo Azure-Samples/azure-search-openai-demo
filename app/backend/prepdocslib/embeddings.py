@@ -159,7 +159,8 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
 
     def __init__(
         self,
-        open_ai_endpoint: str,
+        open_ai_service: Union[str, None],
+        open_ai_custom_url: Union[str, None],
         open_ai_deployment: Union[str, None],
         open_ai_model_name: str,
         open_ai_dimensions: int,
@@ -167,7 +168,10 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         disable_batch: bool = False,
     ):
         super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
-        self.open_ai_endpoint = open_ai_endpoint
+        if open_ai_service:
+            self.open_ai_endpoint = f"https://{open_ai_service}.openai.azure.com"
+        else:
+            self.open_ai_endpoint = open_ai_custom_url
         self.open_ai_deployment = open_ai_deployment
         self.credential = credential
 

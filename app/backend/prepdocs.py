@@ -125,13 +125,9 @@ def setup_embeddings_service(
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
             azure_credential if openai_key is None else AzureKeyCredential(openai_key)
         )
-        if openai_host == "azure_custom":
-            endpoint = openai_custom_url
-        else:
-            endpoint = f"https://{openai_service}.openai.azure.com"
-
         return AzureOpenAIEmbeddingService(
-            open_ai_endpoint=endpoint,
+            open_ai_service=openai_service,
+            open_ai_custom_url=openai_custom_url,
             open_ai_deployment=openai_deployment,
             open_ai_model_name=openai_model_name,
             open_ai_dimensions=openai_dimensions,

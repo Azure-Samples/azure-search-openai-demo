@@ -400,12 +400,7 @@ async def setup_clients():
         os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     )
     AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
-    AZURE_OPENAI_ENDPOINT = None
-    if OPENAI_HOST == "azure_custom":
-        AZURE_OPENAI_ENDPOINT = os.environ["AZURE_OPENAI_CUSTOM_URL"]
-    elif OPENAI_HOST == "azure":
-        AZURE_OPENAI_ENDPOINT = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-
+    AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -504,7 +499,8 @@ async def setup_clients():
             azure_credential=azure_credential,
             openai_host=OPENAI_HOST,
             openai_model_name=OPENAI_EMB_MODEL,
-            openai_endpoint=AZURE_OPENAI_ENDPOINT,
+            openai_service=AZURE_OPENAI_SERVICE,
+            openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
             openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
             openai_dimensions=OPENAI_EMB_DIMENSIONS,
             openai_key=clean_key_if_exists(OPENAI_API_KEY),
@@ -533,14 +529,21 @@ async def setup_clients():
 
     if OPENAI_HOST.startswith("azure"):
         api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
-
+        if OPENAI_HOST == "azure_custom":
+            if not AZURE_OPENAI_CUSTOM_URL:
+                raise ValueError("AZURE_OPENAI_CUSTOM_URL must be set when OPENAI_HOST is azure_custom")
+            endpoint = AZURE_OPENAI_CUSTOM_URL
+        else:
+            if not AZURE_OPENAI_SERVICE:
+                raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
+            endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
         if api_key := os.getenv("AZURE_OPENAI_API_KEY"):
-            openai_client = AsyncAzureOpenAI(api_version=api_version, azure_endpoint=AZURE_OPENAI_ENDPOINT, api_key=api_key)
+            openai_client = AsyncAzureOpenAI(api_version=api_version, azure_endpoint=endpoint, api_key=api_key)
         else:
             token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
             openai_client = AsyncAzureOpenAI(
                 api_version=api_version,
-                azure_endpoint=AZURE_OPENAI_ENDPOINT,
+                azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
             )
     elif OPENAI_HOST == "local":
