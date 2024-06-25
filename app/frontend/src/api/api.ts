@@ -42,6 +42,7 @@ export async function chatApi(request: ChatAppRequest, shouldStream: boolean, id
     if (shouldStream) {
         url += "/stream";
     }
+    console.log(request);
     return await fetch(url, {
         method: "POST",
         headers: { ...getHeaders(idToken), "Content-Type": "application/json" },

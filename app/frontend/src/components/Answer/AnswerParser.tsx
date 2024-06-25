@@ -28,7 +28,7 @@ export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitati
     }
 
     const parts = parsedAnswer.split(/\[([^\]]+)\]/g);
-
+    // console.log(parts);
     const fragments: string[] = parts.map((part, index) => {
         if (index % 2 === 0) {
             return part;
