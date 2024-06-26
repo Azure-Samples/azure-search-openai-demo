@@ -13,6 +13,7 @@ def minimal_env(monkeypatch):
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
         yield
 
@@ -26,6 +27,29 @@ async def test_app_local_openai(monkeypatch, minimal_env):
     async with quart_app.test_app():
         assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "no-key-required"
         assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://localhost:5000"
+
+
+@pytest.mark.asyncio
+async def test_app_azure_custom_key(monkeypatch, minimal_env):
+    monkeypatch.setenv("OPENAI_HOST", "azure_custom")
+    monkeypatch.setenv("AZURE_OPENAI_CUSTOM_URL", "http://azureapi.com/api/v1")
+    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "azure-api-key")
+
+    quart_app = app.create_app()
+    async with quart_app.test_app():
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "azure-api-key"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/openai/"
+
+
+@pytest.mark.asyncio
+async def test_app_azure_custom_identity(monkeypatch, minimal_env):
+    monkeypatch.setenv("OPENAI_HOST", "azure_custom")
+    monkeypatch.setenv("AZURE_OPENAI_CUSTOM_URL", "http://azureapi.com/api/v1")
+
+    quart_app = app.create_app()
+    async with quart_app.test_app():
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "<missing API key>"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/openai/"
 
 
 @pytest.mark.asyncio

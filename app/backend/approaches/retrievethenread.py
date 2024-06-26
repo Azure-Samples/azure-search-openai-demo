@@ -80,28 +80,27 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        has_text = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        has_vector = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
-        use_semantic_ranker = overrides.get("semantic_ranker") and has_text
-
-        use_semantic_captions = True if overrides.get("semantic_captions") and has_text else False
+        use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_ranker = True if overrides.get("semantic_ranker") else False
+        use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
+
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
-        if has_vector:
+        if use_vector_search:
             vectors.append(await self.compute_text_embedding(q))
-
-        # Only keep the text query if the retrieval mode uses text, otherwise drop it
-        query_text = q if has_text else None
 
         results = await self.search(
             top,
-            query_text,
+            q,
             filter,
             vectors,
+            use_text_search,
+            use_vector_search,
             use_semantic_ranker,
             use_semantic_captions,
             minimum_search_score,
@@ -141,13 +140,14 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             "thoughts": [
                 ThoughtStep(
                     "Search using user query",
-                    query_text,
+                    q,
                     {
                         "use_semantic_captions": use_semantic_captions,
                         "use_semantic_ranker": use_semantic_ranker,
                         "top": top,
                         "filter": filter,
-                        "has_vector": has_vector,
+                        "use_vector_search": use_vector_search,
+                        "use_text_search": use_text_search,
                     },
                 ),
                 ThoughtStep(

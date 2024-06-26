@@ -16,10 +16,6 @@ updates:
     directory: "/app/frontend"
     schedule:
       interval: "weekly"
-    groups:
-      node-packages:
-        patterns:
-          - "*"
 
   # Maintain dependencies for pip
   - package-ecosystem: "pip"
