@@ -25,7 +25,7 @@
     "react-router-dom": "^6.23.1",
     "ndjson-readablestream": "^1.2.0",
     "react-syntax-highlighter": "^15.5.0",
-    "scheduler": "^0.20.2"
+    "scheduler": "^0.23.2"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.4",
