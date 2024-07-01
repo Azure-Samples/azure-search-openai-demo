@@ -93,7 +93,7 @@ distro==1.9.0
     # via openai
 ecdsa==0.19.0
     # via python-jose
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -130,7 +130,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==8.0.0
+importlib-metadata==7.1.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -183,7 +183,7 @@ msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.0
     # via msgraph-sdk
-msgraph-sdk==1.4.0
+msgraph-sdk==1.1.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -296,7 +296,7 @@ opentelemetry-semantic-conventions==0.46b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-semantic-conventions-ai==0.3.2
+opentelemetry-semantic-conventions-ai==0.3.1
     # via opentelemetry-instrumentation-openai
 opentelemetry-util-http==0.46b0
     # via
@@ -311,9 +311,7 @@ opentelemetry-util-http==0.46b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
 packaging==24.1
-    # via
-    #   msal-extensions
-    #   opentelemetry-instrumentation-flask
+    # via opentelemetry-instrumentation-flask
 pendulum==3.0.0
     # via microsoft-kiota-serialization-json
 pillow==10.4.0
@@ -324,7 +322,7 @@ portalocker==2.10.0
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-psutil==6.0.0
+psutil==5.9.8
     # via azure-monitor-opentelemetry-exporter
 pyasn1==0.6.0
     # via
@@ -332,7 +330,7 @@ pyasn1==0.6.0
     #   rsa
 pycparser==2.22
     # via cffi
-pydantic==2.7.4
+pydantic==2.8.0
     # via openai
 pydantic-core==2.20.0
     # via pydantic
