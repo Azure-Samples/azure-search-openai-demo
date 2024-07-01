@@ -133,7 +133,7 @@ export const appServicesLogout = () => {
 
 // Determine if the user is logged in
 // The user may have logged in either using the app services login or the on-page login
-export const isLoggedIn = async (client: IPublicClientApplication | undefined): Promise<boolean> => {
+export const checkLoggedIn = async (client: IPublicClientApplication | undefined): Promise<boolean> => {
     return client?.getActiveAccount() != null || (await getAppServicesToken()) != null;
 };
 

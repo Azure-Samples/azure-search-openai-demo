@@ -2,22 +2,15 @@ import { DefaultButton } from "@fluentui/react";
 import { useMsal } from "@azure/msal-react";
 
 import styles from "./LoginButton.module.css";
-import { getRedirectUri, isLoggedIn, loginRequest, appServicesLogout, getUsername } from "../../authConfig";
-import { useState, useEffect } from "react";
+import { getRedirectUri, loginRequest, appServicesLogout, getUsername, checkLoggedIn } from "../../authConfig";
+import { useState, useEffect, useContext } from "react";
+import { LoginContext } from "../../loginContext";
 
 export const LoginButton = () => {
     const { instance } = useMsal();
+    const { loggedIn, setLoggedIn } = useContext(LoginContext);
     const activeAccount = instance.getActiveAccount();
-    const [loggedIn, setLoggedIn] = useState(false);
     const [username, setUsername] = useState("");
-
-    useEffect(() => {
-        const fetchLoggedIn = async () => {
-            setLoggedIn(await isLoggedIn(instance));
-        };
-
-        fetchLoggedIn();
-    }, [])
 
     useEffect(() => {
         const fetchUsername = async () => {
@@ -40,7 +33,7 @@ export const LoginButton = () => {
             })
             .catch(error => console.log(error))
             .then(async () => { 
-                setLoggedIn(await isLoggedIn(instance))
+                setLoggedIn(await checkLoggedIn(instance));
                 setUsername(await getUsername(instance) ?? "");
             });
     };
@@ -53,7 +46,7 @@ export const LoginButton = () => {
                 })
                 .catch(error => console.log(error))
                 .then(async () => { 
-                    setLoggedIn(await isLoggedIn(instance))
+                    setLoggedIn(await checkLoggedIn(instance));
                     setUsername(await getUsername(instance) ?? "");
                 });
         } else {
