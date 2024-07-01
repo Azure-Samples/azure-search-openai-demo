@@ -715,22 +715,23 @@ module isolation 'network-isolation.bicep' = {
 }
 
 var environmentData = environment()
-var privateEndpointConnections = usePrivateEndpoint ? [
+
+var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi) ? [{
+  groupId: 'account'
+  dnsZoneName: 'privatelink.openai.azure.com'
+  resourceIds: concat(
+    [ openAi.outputs.id ],
+    useGPT4V ? [ computerVision.outputs.id ] : [],
+    !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
+  )
+}] : []
+var otherPrivateEndpointConnections = usePrivateEndpoint ? [
   {
     groupId: 'blob'
     dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
     resourceIds: concat(
       [ storage.outputs.id ],
       useUserUpload ? [ userStorage.outputs.id ] : []
-    )
-  }
-  {
-    groupId: 'account'
-    dnsZoneName: 'privatelink.openai.azure.com'
-    resourceIds: concat(
-      [ openAi.outputs.id ],
-      useGPT4V ? [ computerVision.outputs.id ] : [],
-      !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
     )
   }
   {
@@ -744,6 +745,9 @@ var privateEndpointConnections = usePrivateEndpoint ? [
     resourceIds: [ backend.outputs.id ]
   }
 ] : []
+
+
+var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection)
 
 module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'
