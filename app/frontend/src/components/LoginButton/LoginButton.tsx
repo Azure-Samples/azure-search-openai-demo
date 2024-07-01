@@ -2,13 +2,30 @@ import { DefaultButton } from "@fluentui/react";
 import { useMsal } from "@azure/msal-react";
 
 import styles from "./LoginButton.module.css";
-import { getRedirectUri, loginRequest } from "../../authConfig";
-import { appServicesToken, appServicesLogout } from "../../authConfig";
+import { getRedirectUri, isLoggedIn, loginRequest, appServicesLogout, getUsername } from "../../authConfig";
+import { useState, useEffect } from "react";
 
 export const LoginButton = () => {
     const { instance } = useMsal();
     const activeAccount = instance.getActiveAccount();
-    const isLoggedIn = (activeAccount || appServicesToken) != null;
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+        const fetchLoggedIn = async () => {
+            setLoggedIn(await isLoggedIn(instance));
+        };
+
+        fetchLoggedIn();
+    }, [])
+
+    useEffect(() => {
+        const fetchUsername = async () => {
+            setUsername(await getUsername(instance) ?? "");
+        };
+
+        fetchUsername();
+    }, []);
 
     const handleLoginPopup = () => {
         /**
@@ -35,12 +52,11 @@ export const LoginButton = () => {
             appServicesLogout();
         }
     };
-    const logoutText = `Logout\n${activeAccount?.username ?? appServicesToken?.user_claims?.preferred_username}`;
     return (
         <DefaultButton
-            text={isLoggedIn ? logoutText : "Login"}
+            text={loggedIn ? `Logout\n${username}` : "Login"}
             className={styles.loginButton}
-            onClick={isLoggedIn ? handleLogoutPopup : handleLoginPopup}
+            onClick={loggedIn ? handleLogoutPopup : handleLoginPopup}
         ></DefaultButton>
     );
 };

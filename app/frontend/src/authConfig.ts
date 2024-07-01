@@ -123,7 +123,7 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
     });
 };
 
-export const appServicesToken = await getAppServicesToken();
+export const isUsingAppServicesLogin = (await getAppServicesToken()) != null;
 
 // Sign out of app services
 // Learn more at https://learn.microsoft.com/azure/app-service/configure-authentication-customize-sign-in-out#sign-out-of-a-session
@@ -133,14 +133,15 @@ export const appServicesLogout = () => {
 
 // Determine if the user is logged in
 // The user may have logged in either using the app services login or the on-page login
-export const isLoggedIn = (client: IPublicClientApplication | undefined): boolean => {
-    return client?.getActiveAccount() != null || appServicesToken != null;
+export const isLoggedIn = async (client: IPublicClientApplication | undefined): Promise<boolean> => {
+    return client?.getActiveAccount() != null || (await getAppServicesToken()) != null;
 };
 
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
 // Use the access token from app services login if available
-export const getToken = (client: IPublicClientApplication): Promise<string | undefined> => {
+export const getToken = async (client: IPublicClientApplication): Promise<string | undefined> => {
+    const appServicesToken = await getAppServicesToken();
     if (appServicesToken) {
         return Promise.resolve(appServicesToken.access_token);
     }
@@ -156,3 +157,31 @@ export const getToken = (client: IPublicClientApplication): Promise<string | und
             return undefined;
         });
 };
+
+export const getUsername = async (client: IPublicClientApplication): Promise<string | null> => {
+    const activeAccount = client.getActiveAccount();
+    if (activeAccount) {
+        return activeAccount.username;
+    }
+
+    const appServicesToken = await getAppServicesToken();
+    if (appServicesToken?.user_claims) {
+        return appServicesToken.user_claims.preferred_username;
+    }
+
+    return null;
+}
+
+export const getTokenClaims = async (client: IPublicClientApplication) : Promise<Record<string, unknown> | undefined> => {
+    const activeAccount = client.getActiveAccount();
+    if (activeAccount) {
+        return activeAccount.idTokenClaims;
+    }
+
+    const appServicesToken = await getAppServicesToken();
+    if (appServicesToken) {
+        return appServicesToken.user_claims;
+    }
+
+    return undefined;
+}
