@@ -38,7 +38,11 @@ export const LoginButton = () => {
                 ...loginRequest,
                 redirectUri: getRedirectUri()
             })
-            .catch(error => console.log(error));
+            .catch(error => console.log(error))
+            .then(async () => { 
+                setLoggedIn(await isLoggedIn(instance))
+                setUsername(await getUsername(instance) ?? "");
+            });
     };
     const handleLogoutPopup = () => {
         if (activeAccount) {
@@ -47,7 +51,11 @@ export const LoginButton = () => {
                     mainWindowRedirectUri: "/", // redirects the top level app after logout
                     account: instance.getActiveAccount()
                 })
-                .catch(error => console.log(error));
+                .catch(error => console.log(error))
+                .then(async () => { 
+                    setLoggedIn(await isLoggedIn(instance))
+                    setUsername(await getUsername(instance) ?? "");
+                });
         } else {
             appServicesLogout();
         }
