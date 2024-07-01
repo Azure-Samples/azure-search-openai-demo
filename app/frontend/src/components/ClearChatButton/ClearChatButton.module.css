@@ -1,6 +1,7 @@
 .container {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375em;
     cursor: pointer;
+    padding: 0.5rem;
 }
