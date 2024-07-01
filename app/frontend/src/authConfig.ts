@@ -170,9 +170,9 @@ export const getUsername = async (client: IPublicClientApplication): Promise<str
     }
 
     return null;
-}
+};
 
-export const getTokenClaims = async (client: IPublicClientApplication) : Promise<Record<string, unknown> | undefined> => {
+export const getTokenClaims = async (client: IPublicClientApplication): Promise<Record<string, unknown> | undefined> => {
     const activeAccount = client.getActiveAccount();
     if (activeAccount) {
         return activeAccount.idTokenClaims;
@@ -184,4 +184,4 @@ export const getTokenClaims = async (client: IPublicClientApplication) : Promise
     }
 
     return undefined;
-}
+};

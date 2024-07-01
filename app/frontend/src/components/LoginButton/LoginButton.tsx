@@ -14,7 +14,7 @@ export const LoginButton = () => {
 
     useEffect(() => {
         const fetchUsername = async () => {
-            setUsername(await getUsername(instance) ?? "");
+            setUsername((await getUsername(instance)) ?? "");
         };
 
         fetchUsername();
@@ -32,9 +32,9 @@ export const LoginButton = () => {
                 redirectUri: getRedirectUri()
             })
             .catch(error => console.log(error))
-            .then(async () => { 
+            .then(async () => {
                 setLoggedIn(await checkLoggedIn(instance));
-                setUsername(await getUsername(instance) ?? "");
+                setUsername((await getUsername(instance)) ?? "");
             });
     };
     const handleLogoutPopup = () => {
@@ -45,9 +45,9 @@ export const LoginButton = () => {
                     account: instance.getActiveAccount()
                 })
                 .catch(error => console.log(error))
-                .then(async () => { 
+                .then(async () => {
                     setLoggedIn(await checkLoggedIn(instance));
-                    setUsername(await getUsername(instance) ?? "");
+                    setUsername((await getUsername(instance)) ?? "");
                 });
         } else {
             appServicesLogout();

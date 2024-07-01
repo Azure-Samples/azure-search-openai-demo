@@ -11,7 +11,7 @@ import {
     TableColumnDefinition
 } from "@fluentui/react-table";
 import { getTokenClaims } from "../../authConfig";
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 type Claim = {
     name: string;
