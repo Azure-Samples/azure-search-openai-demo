@@ -39,7 +39,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
             const originalHash = activeCitation.indexOf("#") ? activeCitation.split("#")[1] : "";
             const response = await fetch(activeCitation, {
                 method: "GET",
-                headers: getHeaders(token)
+                headers: await getHeaders(token)
             });
             const citationContent = await response.blob();
             let citationObjectUrl = URL.createObjectURL(citationContent);
