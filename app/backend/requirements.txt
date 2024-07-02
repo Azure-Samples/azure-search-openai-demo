@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-aiofiles==23.2.1
+aiofiles==24.1.0
     # via quart
 aiohttp==3.9.5
     # via
@@ -42,13 +42,13 @@ azure-core==1.30.2
     #   msrest
 azure-core-tracing-opentelemetry==1.0.0b11
     # via azure-monitor-opentelemetry
-azure-identity==1.17.0
+azure-identity==1.17.1
     # via
     #   -r requirements.in
     #   msgraph-sdk
 azure-monitor-opentelemetry==1.6.0
     # via -r requirements.in
-azure-monitor-opentelemetry-exporter==1.0.0b26
+azure-monitor-opentelemetry-exporter==1.0.0b27
     # via azure-monitor-opentelemetry
 azure-search-documents==11.6.0b1
     # via -r requirements.in
@@ -174,12 +174,12 @@ microsoft-kiota-serialization-json==1.2.0
     # via msgraph-sdk
 microsoft-kiota-serialization-text==1.0.0
     # via msgraph-sdk
-msal==1.28.1
+msal==1.29.0
     # via
     #   -r requirements.in
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.1.0
+msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.0
     # via msgraph-sdk
@@ -195,7 +195,7 @@ numpy==2.0.0
     # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
-openai==1.35.1
+openai==1.35.7
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -311,16 +311,14 @@ opentelemetry-util-http==0.46b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
 packaging==24.1
-    # via
-    #   msal-extensions
-    #   opentelemetry-instrumentation-flask
+    # via opentelemetry-instrumentation-flask
 pendulum==3.0.0
     # via microsoft-kiota-serialization-json
-pillow==10.3.0
+pillow==10.4.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
-portalocker==2.8.2
+portalocker==2.10.0
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
@@ -332,17 +330,17 @@ pyasn1==0.6.0
     #   rsa
 pycparser==2.22
     # via cffi
-pydantic==2.7.4
+pydantic==2.8.0
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 pyjwt[crypto]==2.8.0
     # via
     #   msal
     #   pyjwt
-pymupdf==1.24.5
+pymupdf==1.24.7
     # via -r requirements.in
-pymupdfb==1.24.3
+pymupdfb==1.24.6
     # via pymupdf
 pypdf==4.2.0
     # via -r requirements.in
@@ -385,16 +383,16 @@ sniffio==1.3.1
     #   openai
 soupsieve==2.5
     # via beautifulsoup4
-std-uritemplate==1.0.1
+std-uritemplate==1.0.2
     # via microsoft-kiota-abstractions
-tenacity==8.4.1
+tenacity==8.4.2
     # via -r requirements.in
 tiktoken==0.7.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
     #   opentelemetry-instrumentation-openai
-time-machine==2.14.1
+time-machine==2.14.2
     # via pendulum
 tqdm==4.66.4
     # via openai
