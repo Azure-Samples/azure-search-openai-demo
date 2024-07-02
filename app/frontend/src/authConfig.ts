@@ -94,6 +94,7 @@ export const getRedirectUri = () => {
 };
 
 // Cache the app services token if it's available
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this#global_context
 declare global {
     var cachedAppServicesToken: AppServicesToken | null;
 }
@@ -103,7 +104,7 @@ globalThis.cachedAppServicesToken = null;
  * Retrieves an access token if the user is logged in using app services authentication.
  * Checks if the current token is expired and fetches a new token if necessary.
  * Returns null if the app doesn't support app services authentication.
- * 
+ *
  * @returns {Promise<AppServicesToken | null>} A promise that resolves to an AppServicesToken if the user is authenticated, or null if authentication is not supported or fails.
  */
 const getAppServicesToken = (): Promise<AppServicesToken | null> => {
@@ -111,7 +112,7 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
         const currentDate = new Date();
         const expiresOnDate = new Date(appServicesToken.expires_on);
         return expiresOnDate > currentDate;
-    }
+    };
 
     if (globalThis.cachedAppServicesToken && checkNotExpired(globalThis.cachedAppServicesToken)) {
         return Promise.resolve(globalThis.cachedAppServicesToken);
@@ -180,7 +181,7 @@ export const checkLoggedIn = async (client: IPublicClientApplication | undefined
             return true;
         }
     }
-    
+
     const appServicesToken = await getAppServicesToken();
     if (appServicesToken) {
         return true;
