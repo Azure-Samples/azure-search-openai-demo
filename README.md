@@ -16,11 +16,11 @@ This solution's backend is written in Python. There are also [**JavaScript**](ht
     - [GitHub Codespaces](#github-codespaces)
     - [VS Code Dev Containers](#vs-code-dev-containers)
     - [Local environment](#local-environment)
-    - [Running locally](#running-locally)
   - [Quickstart](#quickstart)
     - [Deploying](#deploying)
     - [Deploying again](#deploying-again)
     - [Sharing environments](#sharing-environments)
+    - [Running locally](#running-locally)
     - [Using the app](#using-the-app)
     - [Monitoring with Application Insights](#monitoring-with-application-insights)
     - [Customizing the UI and data](#customizing-the-ui-and-data)
@@ -133,27 +133,6 @@ A related option is VS Code Dev Containers, which will open the project in your 
 
 ### Quickstart
 
-#### Running locally
-
-You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
-
-1. Run `azd auth login`
-2. Change dir to `app`
-3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
-
-See more tips in [the local development guide](docs/localdev.md).
-
-#### Using the app
-
-- In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.
-- Running locally: navigate to 127.0.0.1:50505
-
-Once in the web app:
-
-- Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
-- Explore citations and sources
-- Click on "settings" to try different options, tweak prompts, etc.
-
 #### Deploying
 
 Follow these steps to provision Azure resources and deploy the application code:
@@ -205,6 +184,26 @@ either you or they can follow these steps:
 1. Set the environment variable `AZURE_PRINCIPAL_ID` either in that `.env` file or in the active shell to their Azure ID, which they can get with `az ad signed-in-user show`.
 1. Run `./scripts/roles.ps1` or `.scripts/roles.sh` to assign all of the necessary roles to the user.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Once the script runs, they should be able to run the app locally.
 
+#### Running locally
+
+You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
+
+1. Run `azd auth login`
+2. Change dir to `app`
+3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
+
+See more tips in [the local development guide](docs/localdev.md).
+
+#### Using the app
+
+- In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.
+- Running locally: navigate to 127.0.0.1:50505
+
+Once in the web app:
+
+- Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
+- Explore citations and sources
+- Click on "settings" to try different options, tweak prompts, etc.
 
 #### Monitoring with Application Insights
 
