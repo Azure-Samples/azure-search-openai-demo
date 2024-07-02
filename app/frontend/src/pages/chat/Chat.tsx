@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
@@ -27,12 +27,13 @@ import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 import { UploadFile } from "../../components/UploadFile";
-import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
+import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { toolTipText } from "../../i18n/tooltips.js";
+import { LoginContext } from "../../loginContext";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -136,6 +137,7 @@ const Chat = () => {
     };
 
     const client = useLogin ? useMsal().instance : undefined;
+    const { loggedIn } = useContext(LoginContext);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -332,7 +334,7 @@ const Chat = () => {
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
+                {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
@@ -629,7 +631,7 @@ const Chat = () => {
                                 className={styles.chatSettingsSeparator}
                                 checked={useOidSecurityFilter || requireAccessControl}
                                 label="Use oid security filter"
-                                disabled={!isLoggedIn(client) || requireAccessControl}
+                                disabled={!loggedIn || requireAccessControl}
                                 onChange={onUseOidSecurityFilterChange}
                                 aria-labelledby={useOidSecurityFilterId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
@@ -646,7 +648,7 @@ const Chat = () => {
                                 className={styles.chatSettingsSeparator}
                                 checked={useGroupsSecurityFilter || requireAccessControl}
                                 label="Use groups security filter"
-                                disabled={!isLoggedIn(client) || requireAccessControl}
+                                disabled={!loggedIn || requireAccessControl}
                                 onChange={onUseGroupsSecurityFilterChange}
                                 aria-labelledby={useGroupsSecurityFilterId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
