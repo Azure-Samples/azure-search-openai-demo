@@ -59,7 +59,7 @@ export function Component(): JSX.Element {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const client = useLogin ? useMsal().instance : undefined;
-    const { loggedIn } = useLogin ? useContext(LoginContext) : { loggedIn: false };
+    const { loggedIn } = useContext(LoginContext);
 
     const getConfig = async () => {
         configApi().then(config => {

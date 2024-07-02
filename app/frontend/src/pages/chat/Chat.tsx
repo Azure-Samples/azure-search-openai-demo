@@ -137,7 +137,7 @@ const Chat = () => {
     };
 
     const client = useLogin ? useMsal().instance : undefined;
-    const { loggedIn } = useLogin ? useContext(LoginContext) : { loggedIn: false };
+    const { loggedIn } = useContext(LoginContext);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;

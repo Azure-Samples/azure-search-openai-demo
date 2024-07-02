@@ -6,6 +6,7 @@ import { LoginContext } from "./loginContext";
 import Layout from "./pages/layout/Layout";
 
 const LayoutWrapper = () => {
+    const [loggedIn, setLoggedIn] = useState(false);
     if (useLogin) {
         var msalInstance = new PublicClientApplication(msalConfig);
 
@@ -23,7 +24,6 @@ const LayoutWrapper = () => {
             }
         });
 
-        const [loggedIn, setLoggedIn] = useState(false);
         useEffect(() => {
             const fetchLoggedIn = async () => {
                 setLoggedIn(await checkLoggedIn(msalInstance));
@@ -45,7 +45,16 @@ const LayoutWrapper = () => {
             </MsalProvider>
         );
     } else {
-        return <Layout />;
+        return (
+            <LoginContext.Provider
+                value={{
+                    loggedIn,
+                    setLoggedIn
+                }}
+            >
+                <Layout />
+            </LoginContext.Provider>
+        );
     }
 };
 
