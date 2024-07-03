@@ -677,6 +677,8 @@ def create_app():
     logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
-        app.logger.info("CORS enabled for %s", allowed_origin)
-        cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
+        allowed_origin = allowed_origin.split(";")
+        if len(allowed_origin) > 0:
+            app.logger.info("CORS enabled for %s", allowed_origin)
+            cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
     return app
