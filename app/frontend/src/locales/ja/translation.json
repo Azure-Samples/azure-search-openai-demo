@@ -1,0 +1,97 @@
+{
+    "language_name": "日本語",
+    "pageTitle": "GPT + エンタープライズデータ | サンプル",
+    "headerTitle": "GPT + エンタープライズデータ | サンプル",
+    "chat": "チャット",
+    "qa": "一問一答",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "clearChat": "チャットクリア",
+    "developerSettings": "高度な設定",
+
+    "chatEmptyStateTitle": "データとチャットします",
+    "chatEmptyStateSubtitle": "何でも尋ねてみるか、例を試してみてください",
+    "defaultExamples": {
+        "1": "私のNorthwind Health Plusプランには標準プランには含まれていないものが何ですか？",
+        "2": "パフォーマンスレビューでは何が行われますか？",
+        "3": "プロダクトマネージャーの職務内容は何ですか？",
+        "placeholder": "新しい質問を入力してください (例：私のプランは年に一度の目の検診をカバーしていますか？)"
+    },
+    "askTitle": "データに質問します",
+    "gpt4vExamples": {
+        "1": "金利とGDPの影響を金融市場で比較してみてください。",
+        "2": "次の5年間におけるS&P 500インデックスの予想トレンドは何ですか？過去のS&P 500のパフォーマンスと比較してみてください",
+        "3": "原油価格と株価動向の間に相関関係が見られますか？",
+        "placeholder": "例：私のプランは年に一度の目の検診をカバーしていますか？"
+    },
+    "generatingAnswer": "回答を生成中です",
+
+    "settingsLabels": {
+        "headerText": "回答生成の設定",
+        "closeButton": "閉じる",
+        "promptTemplate": "プロンプトテンプレートを上書き",
+        "temperature": "温度",
+        "minimumSearchScore": "最小検索スコア",
+        "minimumRerankerScore": "最小再ランキングスコア",
+        "retrieveCount": "この数の検索結果を取得：",
+        "excludeCategory": "カテゴリを除外",
+        "useSemanticRanker": "取得のためにセマンティックランカーを使用",
+        "useSemanticCaptions": "セマンティックなキャプションを使用",
+        "useSuggestFollowupQuestions": "フォローアップの質問を提案",
+        "useGPT4V": "GPT Visionモデルを使用する",
+        "gpt4VInput": {
+            "label": "GPTVisionモデルの入力",
+            "options": {
+                "textAndImages": "画像とテキスト",
+                "images": "画像",
+                "texts": "テキスト"
+            }
+        },
+        "retrievalMode": {
+            "label": "検索モード",
+            "options": {
+                "hybrid": "ベクトル + テキスト (ハイブリッド)",
+                "vectors": "ベクトル",
+                "texts": "テキスト"
+            }
+        },
+        "vector": {
+            "label": "ベクトルフィールド (マルチクエリベクトル検索)",
+            "options": {
+                "embedding": "テキスト埋め込み",
+                "imageEmbedding": "画像埋め込み",
+                "both": "テキストと画像の埋め込み"
+            }
+        },
+        "useOidSecurityFilter": "OIDセキュリティフィルターを使用",
+        "useGroupsSecurityFilter": "グループセキュリティフィルターを使用",
+        "shouldStream": "チャット完了のレスポンスをストリーム"
+    },
+    "toolTipText": {
+        "promptTemplate":
+            "質問と検索結果に基づいて回答を生成するために使用されるプロンプトを上書きします。既存のプロンプトに追加する場合は、プロンプトを'>>>'で始めてください。",
+        "temperature":
+            "回答を生成するLLMに対するリクエストの温度を設定します。温度が高いほど、よりクリエイティブな応答が得られますが、地に足ついていない可能性もあります。",
+        "searchScore":
+            "Azure AI searchから戻ってくる検索結果の最小スコアを設定します。スコアの範囲は、ハイブリッド(デフォルト)、ベクトルのみ、またはテキストのみを使用しているかによります。",
+        "rerankerScore":
+            "セマンティックリランカーから戻ってくる検索結果の最小スコアを設定します。スコアは常に0から4の間で変動します。スコアが高いほど、結果は質問とのセマンティックな関連性が高くなります。",
+        "retrieveNumber":
+            "Azure AI searchから取得する検索結果の数を設定します。結果が多いほど正解を見つける可能性が上がるかもしれませんが、モデルが「迷子」になる可能性もあります。",
+        "excludeCategory": "検索結果から除外するカテゴリを指定します。デフォルトのデータセットではカテゴリは使用されていません。",
+            "useSemanticReranker": "Azure AI Searchのセマンティックランカーを有効にします。これは、ユーザーのクエリとセマンティックに似ているものに基づいて検索結果を再ランキングするモデルです。",
+        "useSemanticCaptions":
+            "完全な検索結果の代わりにLLMにセマンティックなキャプションを送信します。セマンティックキャプションは、セマンティックランキングの過程で検索結果から抽出されます。",
+        "suggestFollowupQuestions": "ユーザーのクエリに基づいてLLMにフォローアップの質問を提案させます。",
+        "useGPT4Vision": "インデックスからの画像とテキストに基づいて回答を生成するためにGPT-4-Turbo with Visionを使用します。",
+        "vectorFields":
+            "Azure AI Search Indexのどの埋め込みフィールドを検索するかを指定します。'画像とテキスト'の埋め込み、'画像'のみ、または'テキスト'のみのいずれかです。",
+        "gpt4VisionInputs":
+            "ビジョンモデルに何を送信するかを設定します。'画像とテキスト'は画像とテキストの両方をモデルに送信し、'画像'は画像のみを、'テキスト'はテキストのみを送信します。",
+        "retrievalMode":
+            "Azure AI Searchクエリの取得モードを設定します。ベクトル+テキスト（ハイブリッド）はベクトル検索と全文検索の組み合わせを使用し、ベクトルはベクトル検索のみを、テキストは全文検索のみを使用します。ハイブリッドが一般的に最適です。",
+        "streamChat": "生成されると同時にチャットUIへのレスポンスを連続的にストリームします。",
+        "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
+        "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。"
+    } 
+}

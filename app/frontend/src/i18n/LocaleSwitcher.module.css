@@ -1,0 +1,47 @@
+.localeSwitcher {
+    word-break: break-word;
+    background: #dbdbdb;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.localeSwitcher:hover {
+     box-shadow:
+        0px 8px 16px rgba(0, 0, 0, 0.14),
+        0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: 2px solid rgba(115, 118, 225, 1);
+}
+
+.localeSwitcherIcon {
+    margin-bottom: 2.5px;
+    margin-left: 2px;
+}
+
+.localeSwitcherText {
+    font-family: "Segoe UI";
+    font-size: 22px;
+    border-radius: 6px;
+    border: 2px solid #dbdbdb;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+}
+
+.localeSwitcherText:hover {
+    background: #dbdbdb;
+    font-size: 22px;
+    box-shadow:
+        0px 8px 16px rgba(0, 0, 0, 0.14),
+        0px 0px 2px rgba(0, 0, 0, 0.12);
+    outline: 2px solid rgba(115, 118, 225, 1);
+}
+
+.localeSwitcherText:focus {
+    outline: none;
+}

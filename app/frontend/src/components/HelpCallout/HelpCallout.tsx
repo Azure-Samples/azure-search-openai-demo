@@ -1,5 +1,6 @@
 import { ITextFieldProps, DefaultButton, IconButton, IButtonStyles, Callout, IStackTokens, Stack, IStackStyles, initializeIcons } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
+import { useTranslation } from "react-i18next";
 
 const stackTokens: IStackTokens = {
     childrenGap: 4,
@@ -21,7 +22,8 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
     const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
     const descriptionId: string = useId("description");
     const iconButtonId: string = useId("iconButton");
-
+    const { t } = useTranslation();
+    
     return (
         <>
             <Stack horizontal verticalAlign="center" tokens={stackTokens}>
@@ -34,7 +36,7 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
                 <Callout target={"#" + iconButtonId} setInitialFocus onDismiss={toggleIsCalloutVisible} ariaDescribedBy={descriptionId} role="alertdialog">
                     <Stack tokens={stackTokens} horizontalAlign="start" styles={labelCalloutStackStyles}>
                         <span id={descriptionId}>{props.helpText}</span>
-                        <DefaultButton onClick={toggleIsCalloutVisible}>Close</DefaultButton>
+                        <DefaultButton onClick={toggleIsCalloutVisible}>{t("settingsLabels.closeButton")}</DefaultButton>
                     </Stack>
                 </Callout>
             )}
