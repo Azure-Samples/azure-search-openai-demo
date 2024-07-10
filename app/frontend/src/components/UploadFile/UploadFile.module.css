@@ -1,13 +1,14 @@
 .container {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375em;
     cursor: pointer;
+    padding: 0.5rem;
 }
 
 .callout {
-    padding: 16px;
-    min-height: 100px;
+    padding: 1em;
+    min-height: 6.25em;
 }
 
 .list {
@@ -17,9 +18,9 @@
 }
 
 .item {
-    width: 250px;
+    width: 15.625em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 12px;
+    margin-bottom: 0.75em;
 }
