@@ -12,7 +12,7 @@
 .headerContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between; 
+    justify-content: space-between;
     padding-left: 1rem;
     padding-right: 1rem;
     position: relative;
@@ -26,7 +26,7 @@
 }
 
 .headerLogo {
-    height: 2rem; 
+    height: 2rem;
     width: auto;
 }
 
@@ -37,7 +37,7 @@
 
 .headerNavList {
     z-index: 100;
-    display: none; 
+    display: none;
     flex-direction: column;
     background-color: #222222;
     position: absolute;
@@ -48,7 +48,7 @@
     padding: 1.1rem;
     align-items: flex-end;
 }
-    
+
 .headerNavList.show {
     display: flex; /* Show when toggled */
 }
@@ -107,7 +107,7 @@
     .headerTitle {
         font-weight: 600;
     }
-    
+
     .headerNavList {
         display: flex;
         flex-direction: row;

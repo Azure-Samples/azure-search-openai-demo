@@ -20,7 +20,7 @@ const Layout = () => {
         if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
             setMenuOpen(false);
         }
-    };   
+    };
 
     useEffect(() => {
         if (menuOpen) {
@@ -64,12 +64,7 @@ const Layout = () => {
                     </nav>
                     <div className={styles.loginMenuContainer}>
                         {useLogin && <LoginButton />}
-                        <IconButton
-                            iconProps={{ iconName: "GlobalNavButton" }}
-                            className={styles.menuToggle}
-                            onClick={toggleMenu}
-                            ariaLabel="Toggle menu"
-                        />
+                        <IconButton iconProps={{ iconName: "GlobalNavButton" }} className={styles.menuToggle} onClick={toggleMenu} ariaLabel="Toggle menu" />
                     </div>
                 </div>
             </header>
