@@ -4,16 +4,16 @@
 }
 
 .markdownViewer {
-    border-radius: 8px;
+    border-radius: 0.5em;
     box-shadow:
-        #0000000d 0 0 0 1px,
-        #0000001a 0 2px 3px;
+        #0000000d 0 0 0 0.0625em,
+        #0000001a 0 0.125em 0.1875em;
     background-color: white;
-    margin: 20px 0;
+    margin: 1.25em 0;
 }
 
 .loading {
-    padding: 100px;
+    padding: 6.25em;
     height: 100vh;
     background-color: white;
 }
@@ -24,7 +24,7 @@
 }
 
 .markdown {
-    padding: 30px;
+    padding: 1.875em;
 }
 
 table {
@@ -33,8 +33,8 @@ table {
 
 th,
 td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    border: 0.0625em solid #ddd;
+    padding: 0.5em;
 }
 
 tr:nth-child(even) {
@@ -44,6 +44,6 @@ tr:nth-child(even) {
 code {
     display: block;
     font-family: monospace;
-    padding: 10px;
+    padding: 0.625em;
     background-color: #f6f8fa;
 }
