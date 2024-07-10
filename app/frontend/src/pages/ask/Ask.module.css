@@ -2,7 +2,7 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    align-items: center;
+    margin-top: 1rem;
 }
 
 .askTopSection {
@@ -19,54 +19,69 @@
     justify-content: center;
     align-content: flex-start;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 .askTitle {
-    font-size: 4rem;
+    font-size: 2.75rem;
     font-weight: 600;
-    margin-top: 130px;
-}
-
-@media only screen and (max-width: 800px) {
-    .askTitle {
-        font-size: 3rem;
-        font-weight: 600;
-        margin-top: 0;
-    }
+    margin-top: 0;
 }
 
 .askQuestionInput {
-    max-width: 800px;
+    padding: 1rem;
     width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
+    max-width: 64.25rem;
 }
 
 .askAnswerContainer {
-    max-width: 800px;
+    max-width: 50rem;
     width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .askAnalysisPanel {
-    width: 600px;
-    margin-left: 20px;
+    width: 37.5rem;
+    margin-left: 1.25rem;
 }
 
 .askSettingsSeparator {
     display: flex;
     flex-direction: column;
-    margin-top: 15px;
+    margin-top: 0.9375rem;
+}
+
+.settingsButton {
+    align-self: flex-end;
+    margin-right: 1.25rem;
+    margin-top: 1.25rem;
 }
 
 .commandsContainer {
     display: flex;
+    padding-left: 9rem;
+    padding-right: 1rem;
     align-self: flex-end;
 }
 
 .commandButton {
-    margin-right: 20px;
-    margin-top: 20px;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 992px) {
+    .askTitle {
+        font-size: 4rem;
+        margin-top: 8.125rem;
+    }
+
+    .commandsContainer {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .commandButton {
+        margin-right: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
 }
