@@ -72,12 +72,21 @@ def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str,
     proc.kill()
 
 
+@pytest.fixture(params=[(480, 800), (600, 1024), (768, 1024), (992, 1024), (1024, 768)])
+def sized_page(page: Page, request):
+    size = request.param
+    page.set_viewport_size({"width": size[0], "height": size[1]})
+    yield page
+
+
 def test_home(page: Page, live_server_url: str):
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
 
-def test_chat(page: Page, live_server_url: str):
+def test_chat(sized_page: Page, live_server_url: str):
+    page = sized_page
+
     # Set up a mock route to the /chat endpoint with streaming results
     def handle(route: Route):
         # Assert that session_state is specified in the request (None for now)
@@ -93,7 +102,7 @@ def test_chat(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("heading", name="Chat with your data")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
@@ -154,7 +163,7 @@ def test_chat_customization(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
     # Customize all the settings
     page.get_by_role("button", name="Developer settings").click()
@@ -216,7 +225,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
     # Customize the GPT-4-vision settings
     page.get_by_role("button", name="Developer settings").click()
@@ -249,7 +258,7 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_text("Stream chat completion responses").click()
@@ -282,7 +291,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_text("Suggest follow-up questions").click()
@@ -319,7 +328,7 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_text("Stream chat completion responses").click()
@@ -344,7 +353,9 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     expect(page.get_by_text("The capital of France is Paris.")).to_have_count(2)
 
 
-def test_ask(page: Page, live_server_url: str):
+def test_ask(sized_page: Page, live_server_url: str):
+    page = sized_page
+
     # Set up a mock route to the /ask endpoint
     def handle(route: Route):
         # Assert that session_state is specified in the request (None for now)
@@ -358,8 +369,11 @@ def test_ask(page: Page, live_server_url: str):
 
     page.route("*/**/ask", handle)
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
+    # The burger menu only exists at smaller viewport sizes
+    if page.get_by_role("button", name="Toggle menu").is_visible():
+        page.get_by_role("button", name="Toggle menu").click()
     page.get_by_role("link", name="Ask a question").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").fill("Whats the dental plan?")
@@ -396,7 +410,7 @@ def test_upload_hidden(page: Page, live_server_url: str):
 
     page.goto(live_server_url)
 
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
     expect(page.get_by_role("button", name="Clear chat")).to_be_visible()
     expect(page.get_by_role("button", name="Manage file uploads")).not_to_be_visible()
@@ -428,7 +442,7 @@ def test_upload_disabled(page: Page, live_server_url: str):
 
     page.goto(live_server_url)
 
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
     expect(page.get_by_role("button", name="Manage file uploads")).to_be_visible()
     expect(page.get_by_role("button", name="Manage file uploads")).to_be_disabled()

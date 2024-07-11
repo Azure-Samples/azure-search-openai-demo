@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Checkbox, Panel, DefaultButton, Spinner, TextField, ICheckboxProps, ITextFieldProps } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 
@@ -11,7 +11,7 @@ import { ExampleList } from "../../components/Example";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { HelpCallout } from "../../components/HelpCallout";
 import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
+import { useLogin, getToken, requireAccessControl, checkLoggedIn } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { toolTipText } from "../../i18n/tooltips.js";
@@ -19,6 +19,7 @@ import { UploadFile } from "../../components/UploadFile";
 
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import { LoginContext } from "../../loginContext";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -58,6 +59,7 @@ export function Component(): JSX.Element {
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
 
     const client = useLogin ? useMsal().instance : undefined;
+    const { loggedIn } = useContext(LoginContext);
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -225,7 +227,7 @@ export function Component(): JSX.Element {
         <div className={styles.askContainer}>
             <div className={styles.askTopSection}>
                 <div className={styles.commandsContainer}>
-                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
+                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={loggedIn} />}
                     <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 </div>
                 <h1 className={styles.askTitle}>Ask your data</h1>
@@ -438,7 +440,7 @@ export function Component(): JSX.Element {
                             className={styles.chatSettingsSeparator}
                             checked={useOidSecurityFilter || requireAccessControl}
                             label="Use oid security filter"
-                            disabled={!isLoggedIn(client) || requireAccessControl}
+                            disabled={!loggedIn || requireAccessControl}
                             onChange={onUseOidSecurityFilterChange}
                             aria-labelledby={useOidSecurityFilterId}
                             onRenderLabel={(props: ICheckboxProps | undefined) => (
@@ -455,7 +457,7 @@ export function Component(): JSX.Element {
                             className={styles.chatSettingsSeparator}
                             checked={useGroupsSecurityFilter || requireAccessControl}
                             label="Use groups security filter"
-                            disabled={!isLoggedIn(client) || requireAccessControl}
+                            disabled={!loggedIn || requireAccessControl}
                             onChange={onUseGroupsSecurityFilterChange}
                             aria-labelledby={useGroupsSecurityFilterId}
                             onRenderLabel={(props: ICheckboxProps | undefined) => (

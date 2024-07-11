@@ -33,7 +33,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.1.1",
     "prettier": "^3.0.3",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.3",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/dom-speech-recognition": "^0.0.4",
     "vite": "^4.5.3"
