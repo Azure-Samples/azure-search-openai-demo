@@ -584,6 +584,22 @@ async def test_chat_prompt_template_concat(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_seed(client, snapshot):
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"seed": 42},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_chat_hybrid(client, snapshot):
     response = await client.post(
         "/chat",
