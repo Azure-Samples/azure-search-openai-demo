@@ -80,6 +80,7 @@ class RetrieveThenReadVisionApproach(Approach):
             raise ValueError("The most recent message content must be a string.")
 
         overrides = context.get("overrides", {})
+        seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -148,6 +149,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 temperature=overrides.get("temperature", 0.3),
                 max_tokens=response_token_limit,
                 n=1,
+                seed=seed,
             )
         ).model_dump()
 

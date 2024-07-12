@@ -5,6 +5,7 @@ export const toolTipText = {
         "Overrides the prompt used to generate the answer based on the question and search results. To append to existing prompt instead of replace whole prompt, start your prompt with '>>>'.",
     temperature:
         "Sets the temperature of the request to the LLM that generates the answer. Higher temperatures result in more creative responses, but they may be less grounded.",
+    seed: "Sets a seed to improve the reproducibility of the model's responses. The seed can be any integer.",
     searchScore:
         "Sets a minimum score for search results coming back from Azure AI search. The score range depends on whether you're using hybrid (default), vectors only, or text only.",
     rerankerScore:

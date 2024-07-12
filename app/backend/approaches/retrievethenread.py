@@ -79,6 +79,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
+        seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -131,6 +132,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 temperature=overrides.get("temperature", 0.3),
                 max_tokens=response_token_limit,
                 n=1,
+                seed=seed,
             )
         ).model_dump()
 
