@@ -182,6 +182,7 @@ def mock_openai_chatcompletion(monkeypatch):
     async def mock_acreate(*args, **kwargs):
         messages = kwargs["messages"]
         last_question = messages[-1]["content"]
+        assert kwargs.get("seed") is None
         if last_question == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
         elif last_question == "Generate search query for: Are interest rates high?":
