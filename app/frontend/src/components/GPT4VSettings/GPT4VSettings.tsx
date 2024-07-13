@@ -46,31 +46,31 @@ export const GPT4VSettings = ({ updateGPT4VInputs, updateUseGPT4V, isUseGPT4V, g
             <Checkbox
                 id={useGPT4VFieldId}
                 checked={useGPT4V}
-                label={t("settingsLabels.useGPT4V")}
+                label={t("labels.useGPT4V")}
                 onChange={onuseGPT4V}
                 aria-labelledby={useGPT4VId}
                 onRenderLabel={(props: ICheckboxProps | undefined) => (
-                    <HelpCallout labelId={useGPT4VId} fieldId={useGPT4VFieldId} helpText={t("toolTipText.useGPT4Vision")} label={props?.label} />
+                    <HelpCallout labelId={useGPT4VId} fieldId={useGPT4VFieldId} helpText={t("helpTexts.useGPT4Vision")} label={props?.label} />
                 )}
             />
             {useGPT4V && (
                 <Dropdown
                     id={gpt4VInputFieldId}
                     selectedKey={vectorFieldOption}
-                    label={t("settingsLabels.gpt4VInput.label")}
+                    label={t("labels.gpt4VInput.label")}
                     options={[
                         {
                             key: GPT4VInput.TextAndImages,
-                            text: t("settingsLabels.gpt4VInput.options.textAndImages")
+                            text: t("labels.gpt4VInput.options.textAndImages")
                         },
-                        { text: t("settingsLabels.gpt4VInput.options.images"), key: GPT4VInput.Images },
-                        { text: t("settingsLabels.gpt4VInput.options.texts"), key: GPT4VInput.Texts }
+                        { text: t("labels.gpt4VInput.options.images"), key: GPT4VInput.Images },
+                        { text: t("labels.gpt4VInput.options.texts"), key: GPT4VInput.Texts }
                     ]}
                     required
                     onChange={onSetGPT4VInput}
                     aria-labelledby={gpt4VInputId}
                     onRenderLabel={(props: IDropdownProps | undefined) => (
-                        <HelpCallout labelId={gpt4VInputId} fieldId={gpt4VInputFieldId} helpText={t("toolTipText.gpt4VisionInputs")} label={props?.label} />
+                        <HelpCallout labelId={gpt4VInputId} fieldId={gpt4VInputFieldId} helpText={t("helpTexts.gpt4VisionInputs")} label={props?.label} />
                     )}
                 />
             )}

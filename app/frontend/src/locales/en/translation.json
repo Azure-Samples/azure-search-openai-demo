@@ -26,7 +26,24 @@
     },
     "generatingAnswer": "generatingAnswer",
 
-    "settingsLabels": {
+    "tooltips": {
+        "submitQuestion": "Submit question",
+        "askWithVoice": "Ask question with voice",
+        "stopRecording": "Stop recording question",
+        "showThoughtProcess": "Show thought process",
+        "showSupportingContent": "Show supporting content",
+        "speakAnswer": "Speak answer",
+        "info": "Info",
+        "save": "Save"
+    },
+
+    "headerTexts":{
+        "thoughtProcess": "Thought Process",
+        "supportingContent": "Supporting Content",
+        "citation": "Citation"
+    },
+
+    "labels": {
         "headerText": "Configure answer generation",
         "closeButton": "Close",
         "promptTemplate": "Override prompt template",
@@ -67,7 +84,8 @@
         "useGroupsSecurityFilter": "Use groups security filter",
         "shouldStream": "Stream chat completion responses"
     },
-    "toolTipText": {
+
+    "helpTexts": {
         "promptTemplate":
             "Overrides the prompt used to generate the answer based on the question and search results. To append to existing prompt instead of replace whole prompt, start your prompt with '>>>'.",
         "temperature":

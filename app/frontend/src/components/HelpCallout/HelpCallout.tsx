@@ -30,13 +30,13 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
                 <label id={props.labelId} htmlFor={props.fieldId}>
                     {props.label}
                 </label>
-                <IconButton id={iconButtonId} iconProps={iconProps} title="Info" ariaLabel="Info" onClick={toggleIsCalloutVisible} styles={iconButtonStyles} />
+                <IconButton id={iconButtonId} iconProps={iconProps} title={t("tooltips.info")} ariaLabel="Info" onClick={toggleIsCalloutVisible} styles={iconButtonStyles} />
             </Stack>
             {isCalloutVisible && (
                 <Callout target={"#" + iconButtonId} setInitialFocus onDismiss={toggleIsCalloutVisible} ariaDescribedBy={descriptionId} role="alertdialog">
                     <Stack tokens={stackTokens} horizontalAlign="start" styles={labelCalloutStackStyles}>
                         <span id={descriptionId}>{props.helpText}</span>
-                        <DefaultButton onClick={toggleIsCalloutVisible}>{t("settingsLabels.closeButton")}</DefaultButton>
+                        <DefaultButton onClick={toggleIsCalloutVisible}>{t("labels.closeButton")}</DefaultButton>
                     </Stack>
                 </Callout>
             )}

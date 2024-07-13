@@ -6,8 +6,9 @@
     "qa": "一問一答",
     "login": "ログイン",
     "logout": "ログアウト",
-    "clearChat": "チャットクリア",
+    "clearChat": "クリア",
     "developerSettings": "高度な設定",
+    "upload": "アップロード",
 
     "chatEmptyStateTitle": "データとチャットします",
     "chatEmptyStateSubtitle": "何でも尋ねてみるか、例を試してみてください",
@@ -26,7 +27,24 @@
     },
     "generatingAnswer": "回答を生成中です",
 
-    "settingsLabels": {
+    "tooltips":{
+        "submitQuestion": "質問を送信",
+        "askWithVoice": "音声で質問",
+        "stopRecording": "質問の録音を停止",
+        "showThoughtProcess": "思考プロセスを表示する",
+        "showSupportingContent": "関連する参照先を表示する",
+        "speakAnswer": "回答を話す",
+        "info": "情報",
+        "save": "保存"
+    },
+
+    "headerTexts":{
+        "thoughtProcess": "思考プロセス",
+        "supportingContent": "関連する参照先",
+        "citation": "引用"
+    },
+
+    "labels": {
         "headerText": "回答生成の設定",
         "closeButton": "閉じる",
         "promptTemplate": "プロンプトテンプレートを上書き",
@@ -38,7 +56,7 @@
         "useSemanticRanker": "取得のためにセマンティックランカーを使用",
         "useSemanticCaptions": "セマンティックなキャプションを使用",
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
-        "useGPT4V": "GPT Visionモデルを使用する",
+        "useGPT4V": "GPT Visionモデルを使用",
         "gpt4VInput": {
             "label": "GPTVisionモデルの入力",
             "options": {
@@ -65,9 +83,10 @@
         },
         "useOidSecurityFilter": "OIDセキュリティフィルターを使用",
         "useGroupsSecurityFilter": "グループセキュリティフィルターを使用",
-        "shouldStream": "チャット完了のレスポンスをストリーム"
+        "shouldStream": "チャット完了応答をストリーム"
     },
-    "toolTipText": {
+
+    "helpTexts": {
         "promptTemplate":
             "質問と検索結果に基づいて回答を生成するために使用されるプロンプトを上書きします。既存のプロンプトに追加する場合は、プロンプトを'>>>'で始めてください。",
         "temperature":
@@ -79,9 +98,10 @@
         "retrieveNumber":
             "Azure AI searchから取得する検索結果の数を設定します。結果が多いほど正解を見つける可能性が上がるかもしれませんが、モデルが「迷子」になる可能性もあります。",
         "excludeCategory": "検索結果から除外するカテゴリを指定します。デフォルトのデータセットではカテゴリは使用されていません。",
-            "useSemanticReranker": "Azure AI Searchのセマンティックランカーを有効にします。これは、ユーザーのクエリとセマンティックに似ているものに基づいて検索結果を再ランキングするモデルです。",
+        "useSemanticReranker": 
+            "Azure AI Searchのセマンティックランカーを有効にします。これは、ユーザーのクエリとセマンティックに似ているものに基づいて検索結果を再ランキングするモデルです。",
         "useSemanticCaptions":
-            "完全な検索結果の代わりにLLMにセマンティックなキャプションを送信します。セマンティックキャプションは、セマンティックランキングの過程で検索結果から抽出されます。",
+            "完全な検索結果ではなく、セマンティックキャプションをLLMに送信します。セマンティックキャプションは、セマンティックランク付けの処理中に検索結果から抽出されます。",
         "suggestFollowupQuestions": "ユーザーのクエリに基づいてLLMにフォローアップの質問を提案させます。",
         "useGPT4Vision": "インデックスからの画像とテキストに基づいて回答を生成するためにGPT-4-Turbo with Visionを使用します。",
         "vectorFields":
@@ -90,7 +110,7 @@
             "ビジョンモデルに何を送信するかを設定します。'画像とテキスト'は画像とテキストの両方をモデルに送信し、'画像'は画像のみを、'テキスト'はテキストのみを送信します。",
         "retrievalMode":
             "Azure AI Searchクエリの取得モードを設定します。ベクトル+テキスト（ハイブリッド）はベクトル検索と全文検索の組み合わせを使用し、ベクトルはベクトル検索のみを、テキストは全文検索のみを使用します。ハイブリッドが一般的に最適です。",
-        "streamChat": "生成されると同時にチャットUIへのレスポンスを連続的にストリームします。",
+        "streamChat": "回答が生成されると、チャットUIに継続的にストリーム配信されます。",
         "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
         "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。"
     } 

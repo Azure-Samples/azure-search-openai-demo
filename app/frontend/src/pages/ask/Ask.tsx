@@ -287,32 +287,32 @@ export function Component(): JSX.Element {
             </div>
 
             <Panel
-                headerText={t("settingsLabels.headerText")}
+                headerText={t("labels.headerText")}
                 isOpen={isConfigPanelOpen}
                 isBlocking={false}
                 onDismiss={() => setIsConfigPanelOpen(false)}
-                closeButtonAriaLabel={t("settingsLabels.closeButton")}
-                onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>{t("settingsLabels.closeButton")}</DefaultButton>}
+                closeButtonAriaLabel={t("labels.closeButton")}
+                onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>{t("labels.closeButton")}</DefaultButton>}
                 isFooterAtBottom={true}
             >
                 <TextField
                     id={promptTemplateFieldId}
                     className={styles.chatSettingsSeparator}
                     defaultValue={promptTemplate}
-                    label={t("settingsLabels.promptTemplate")}
+                    label={t("labels.promptTemplate")}
                     multiline
                     autoAdjustHeight
                     onChange={onPromptTemplateChange}
                     aria-labelledby={promptTemplateId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout labelId={promptTemplateId} fieldId={promptTemplateFieldId} helpText={t("toolTipText.promptTemplate")} label={props?.label} />
+                        <HelpCallout labelId={promptTemplateId} fieldId={promptTemplateFieldId} helpText={t("helpTexts.promptTemplate")} label={props?.label} />
                     )}
                 />
 
                 <TextField
                     id={temperatureFieldId}
                     className={styles.chatSettingsSeparator}
-                    label={t("settingsLabels.temperature")}
+                    label={t("labels.temperature")}
                     type="number"
                     min={0}
                     max={1}
@@ -321,14 +321,14 @@ export function Component(): JSX.Element {
                     onChange={onTemperatureChange}
                     aria-labelledby={temperatureId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={t("toolTipText.temperature")} label={props?.label} />
+                        <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={t("helpTexts.temperature")} label={props?.label} />
                     )}
                 />
 
                 <TextField
                     id={searchScoreFieldId}
                     className={styles.chatSettingsSeparator}
-                    label={t("settingsLabels.minimumSearchScore")}
+                    label={t("labels.minimumSearchScore")}
                     type="number"
                     min={0}
                     step={0.01}
@@ -336,7 +336,7 @@ export function Component(): JSX.Element {
                     onChange={onMinimumSearchScoreChange}
                     aria-labelledby={searchScoreId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout labelId={searchScoreId} fieldId={searchScoreFieldId} helpText={t("toolTipText.searchScore")} label={props?.label} />
+                        <HelpCallout labelId={searchScoreId} fieldId={searchScoreFieldId} helpText={t("helpTexts.searchScore")} label={props?.label} />
                     )}
                 />
 
@@ -344,7 +344,7 @@ export function Component(): JSX.Element {
                     <TextField
                         id={rerankerScoreFieldId}
                         className={styles.chatSettingsSeparator}
-                        label={t("settingsLabels.minimumRerankerScore")}
+                        label={t("labels.minimumRerankerScore")}
                         type="number"
                         min={1}
                         max={4}
@@ -353,7 +353,7 @@ export function Component(): JSX.Element {
                         onChange={onMinimumRerankerScoreChange}
                         aria-labelledby={rerankerScoreId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout labelId={rerankerScoreId} fieldId={rerankerScoreFieldId} helpText={t("toolTipText.rerankerScore")} label={props?.label} />
+                            <HelpCallout labelId={rerankerScoreId} fieldId={rerankerScoreFieldId} helpText={t("helpTexts.rerankerScore")} label={props?.label} />
                         )}
                     />
                 )}
@@ -361,7 +361,7 @@ export function Component(): JSX.Element {
                 <TextField
                     id={retrieveCountFieldId}
                     className={styles.chatSettingsSeparator}
-                    label={t("settingsLabels.retrieveCount")}
+                    label={t("labels.retrieveCount")}
                     type="number"
                     min={1}
                     max={50}
@@ -369,19 +369,19 @@ export function Component(): JSX.Element {
                     onChange={onRetrieveCountChange}
                     aria-labelledby={retrieveCountId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout labelId={retrieveCountId} fieldId={retrieveCountFieldId} helpText={t("toolTipText.retrieveNumber")} label={props?.label} />
+                        <HelpCallout labelId={retrieveCountId} fieldId={retrieveCountFieldId} helpText={t("helpTexts.retrieveNumber")} label={props?.label} />
                     )}
                 />
 
                 <TextField
                     id={excludeCategoryFieldId}
                     className={styles.chatSettingsSeparator}
-                    label={t("settingsLabels.excludeCategory")}
+                    label={t("labels.excludeCategory")}
                     defaultValue={excludeCategory}
                     onChange={onExcludeCategoryChanged}
                     aria-labelledby={excludeCategoryId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout labelId={excludeCategoryId} fieldId={excludeCategoryFieldId} helpText={t("toolTipText.excludeCategory")} label={props?.label} />
+                        <HelpCallout labelId={excludeCategoryId} fieldId={excludeCategoryFieldId} helpText={t("helpTexts.excludeCategory")} label={props?.label} />
                     )}
                 />
 
@@ -391,14 +391,14 @@ export function Component(): JSX.Element {
                             id={semanticRankerFieldId}
                             className={styles.chatSettingsSeparator}
                             checked={useSemanticRanker}
-                            label={t("settingsLabels.useSemanticRanker")}
+                            label={t("labels.useSemanticRanker")}
                             onChange={onUseSemanticRankerChange}
                             aria-labelledby={semanticRankerId}
                             onRenderLabel={(props: ICheckboxProps | undefined) => (
                                 <HelpCallout
                                     labelId={semanticRankerId}
                                     fieldId={semanticRankerFieldId}
-                                    helpText={t("toolTipText.useSemanticReranker")}
+                                    helpText={t("helpTexts.useSemanticReranker")}
                                     label={props?.label}
                                 />
                             )}
@@ -408,7 +408,7 @@ export function Component(): JSX.Element {
                             id={semanticCaptionsFieldId}
                             className={styles.chatSettingsSeparator}
                             checked={useSemanticCaptions}
-                            label={t("settingsLabels.useSmanticCaptions")}
+                            label={t("labels.useSmanticCaptions")}
                             onChange={onUseSemanticCaptionsChange}
                             disabled={!useSemanticRanker}
                             aria-labelledby={semanticCaptionsId}
@@ -416,7 +416,7 @@ export function Component(): JSX.Element {
                                 <HelpCallout
                                     labelId={semanticCaptionsId}
                                     fieldId={semanticCaptionsFieldId}
-                                    helpText={t("toolTipText.useSemanticCaptions")}
+                                    helpText={t("helpTexts.useSemanticCaptions")}
                                     label={props?.label}
                                 />
                             )}
@@ -450,7 +450,7 @@ export function Component(): JSX.Element {
                             id={useOidSecurityFilterFieldId}
                             className={styles.chatSettingsSeparator}
                             checked={useOidSecurityFilter || requireAccessControl}
-                            label={t("settingsLabels.useOidSecurityFilter")}
+                            label={t("labels.useOidSecurityFilter")}
                             disabled={!loggedIn || requireAccessControl}
                             onChange={onUseOidSecurityFilterChange}
                             aria-labelledby={useOidSecurityFilterId}
@@ -458,7 +458,7 @@ export function Component(): JSX.Element {
                                 <HelpCallout
                                     labelId={useOidSecurityFilterId}
                                     fieldId={useOidSecurityFilterFieldId}
-                                    helpText={t("toolTipText.useOidSecurityFilter")}
+                                    helpText={t("helpTexts.useOidSecurityFilter")}
                                     label={props?.label}
                                 />
                             )}
@@ -467,7 +467,7 @@ export function Component(): JSX.Element {
                             id={useGroupsSecurityFilterFieldId}
                             className={styles.chatSettingsSeparator}
                             checked={useGroupsSecurityFilter || requireAccessControl}
-                            label={t("settingsLabels.useGroupsSecurityFilter")}
+                            label={t("labels.useGroupsSecurityFilter")}
                             disabled={!loggedIn || requireAccessControl}
                             onChange={onUseGroupsSecurityFilterChange}
                             aria-labelledby={useGroupsSecurityFilterId}
@@ -475,7 +475,7 @@ export function Component(): JSX.Element {
                                 <HelpCallout
                                     labelId={useGroupsSecurityFilterId}
                                     fieldId={useGroupsSecurityFilterFieldId}
-                                    helpText={t("toolTipText.useGroupsSecurityFilter")}
+                                    helpText={t("helpTexts.useGroupsSecurityFilter")}
                                     label={props?.label}
                                 />
                             )}

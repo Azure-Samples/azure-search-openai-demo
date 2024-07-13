@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IconButton } from "@fluentui/react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     answer: string;
@@ -28,6 +29,7 @@ const getUtterance = function (text: string) {
 };
 
 export const SpeechOutputBrowser = ({ answer }: Props) => {
+    const { t } = useTranslation();
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
     const startOrStopSpeech = (answer: string) => {
@@ -63,7 +65,7 @@ export const SpeechOutputBrowser = ({ answer }: Props) => {
             style={{ color: color }}
             iconProps={{ iconName: "Volume3" }}
             title="Speak answer"
-            ariaLabel="Speak answer"
+            ariaLabel={t("tooltips.speakAnswer")}
             onClick={() => startOrStopSpeech(answer)}
             disabled={!synth}
         />

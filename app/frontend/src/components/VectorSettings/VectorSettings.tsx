@@ -44,34 +44,34 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
         <Stack className={styles.container} tokens={{ childrenGap: 10 }}>
             <Dropdown
                 id={retrievalModeFieldId}
-                label={t("settingsLabels.retrievalMode.label")}
+                label={t("labels.retrievalMode.label")}
                 selectedKey={defaultRetrievalMode.toString()}
                 options={[
-                    { key: "hybrid", text: t("settingsLabels.retrievalMode.options.hybrid"), selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                    { key: "vectors", text: t("settingsLabels.retrievalMode.options.vectors"), selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                    { key: "text", text: t("settingsLabels.retrievalMode.options.texts"), selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
+                    { key: "hybrid", text: t("labels.retrievalMode.options.hybrid"), selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                    { key: "vectors", text: t("labels.retrievalMode.options.vectors"), selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                    { key: "text", text: t("labels.retrievalMode.options.texts"), selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
                 ]}
                 required
                 onChange={onRetrievalModeChange}
                 aria-labelledby={retrievalModeId}
                 onRenderLabel={(props: IDropdownProps | undefined) => (
-                    <HelpCallout labelId={retrievalModeId} fieldId={retrievalModeFieldId} helpText={t("toolTipText.retrievalMode")} label={props?.label} />
+                    <HelpCallout labelId={retrievalModeId} fieldId={retrievalModeFieldId} helpText={t("helpTexts.retrievalMode")} label={props?.label} />
                 )}
             />
 
             {showImageOptions && [RetrievalMode.Vectors, RetrievalMode.Hybrid].includes(retrievalMode) && (
                 <Dropdown
                     id={vectorFieldsFieldId}
-                    label={t("settingsLabels.vector.label")}
+                    label={t("labels.vector.label")}
                     options={[
-                        { key: VectorFieldOptions.Embedding, text: t("settingsLabels.vector.options.embedding"), selected: vectorFieldOption === VectorFieldOptions.Embedding },
-                        { key: VectorFieldOptions.ImageEmbedding, text: t("settingsLabels.vector.options.imageEmbedding"), selected: vectorFieldOption === VectorFieldOptions.ImageEmbedding },
-                        { key: VectorFieldOptions.Both, text: t("settingsLabels.vector.options.both"), selected: vectorFieldOption === VectorFieldOptions.Both }
+                        { key: VectorFieldOptions.Embedding, text: t("labels.vector.options.embedding"), selected: vectorFieldOption === VectorFieldOptions.Embedding },
+                        { key: VectorFieldOptions.ImageEmbedding, text: t("labels.vector.options.imageEmbedding"), selected: vectorFieldOption === VectorFieldOptions.ImageEmbedding },
+                        { key: VectorFieldOptions.Both, text: t("labels.vector.options.both"), selected: vectorFieldOption === VectorFieldOptions.Both }
                     ]}
                     onChange={onVectorFieldsChange}
                     aria-labelledby={vectorFieldsId}
                     onRenderLabel={(props: IDropdownProps | undefined) => (
-                        <HelpCallout labelId={vectorFieldsId} fieldId={vectorFieldsFieldId} helpText={t("toolTipText.vectorFields")} label={props?.label} />
+                        <HelpCallout labelId={vectorFieldsId} fieldId={vectorFieldsFieldId} helpText={t("helpTexts.vectorFields")} label={props?.label} />
                     )}
                 />
             )}

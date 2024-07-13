@@ -1,6 +1,7 @@
 import { SetStateAction, useState } from "react";
 import { Button, Tooltip } from "@fluentui/react-components";
 import { Mic28Filled } from "@fluentui/react-icons";
+import { useTranslation } from "react-i18next";
 import styles from "./QuestionInput.module.css";
 
 interface Props {
@@ -31,8 +32,8 @@ try {
 }
 
 export const SpeechInput = ({ updateQuestion }: Props) => {
+    const { t } = useTranslation();
     const [isRecording, setIsRecording] = useState<boolean>(false);
-
     const startRecording = () => {
         if (speechRecognition == null) {
             console.error("SpeechRecognition not supported");
@@ -85,14 +86,14 @@ export const SpeechInput = ({ updateQuestion }: Props) => {
         <>
             {!isRecording && (
                 <div className={styles.questionInputButtonsContainer}>
-                    <Tooltip content="Ask question with voice" relationship="label">
+                    <Tooltip content={t("tooltips.askWithVoice")} relationship="label">
                         <Button size="large" icon={<Mic28Filled primaryFill="rgba(115, 118, 225, 1)" />} onClick={startRecording} />
                     </Tooltip>
                 </div>
             )}
             {isRecording && (
                 <div className={styles.questionInputButtonsContainer}>
-                    <Tooltip content="Stop recording question" relationship="label">
+                    <Tooltip content={t("tooltips.stopRecording")} relationship="label">
                         <Button size="large" icon={<Mic28Filled primaryFill="rgba(250, 0, 0, 0.7)" />} disabled={!isRecording} onClick={stopRecording} />
                     </Tooltip>
                 </div>

@@ -26,7 +26,24 @@
     },
     "generatingAnswer": "generandoRespuesta",
 
-    "settingsLabels": {
+    "tooltips": {
+        "submitQuestion": "Enviar pregunta",
+        "askWithVoice": "Realizar pregunta con voz",
+        "stopRecording": "Detener la grabación de la pregunta",
+        "showThoughtProcess": "Mostrar proceso de pensamiento",
+        "showSupportingContent": "Mostrar contenido de soporte",
+        "speakAnswer": "Hablar respuesta",
+        "info": "Información",
+        "save": "Guardar"
+    },
+
+    "headerTexts":{
+        "thoughtProcess": "Proceso de Pensamiento",
+        "supportingContent": "Contenido de apoyo",
+        "citation": "Cita"
+    },
+    
+    "labels": {
         "headerText": "Configurar la generación de respuestas",
         "closeButton": "Cerrar",
         "promptTemplate": "Sobrescribir plantilla de aviso",
@@ -67,7 +84,8 @@
         "useGroupsSecurityFilter": "Usar filtro de seguridad degrupos",
         "shouldStream": "Transmitir respuestas de finalización de chat en tiempo real"
     },
-    "toolTipText": {
+
+    "helpTexts": {
         "promptTemplate":
             "Sobrescribe el aviso utilizado para generar la respuesta basada en la pregunta y los resultados de la búsqueda. Para agregar al aviso existente en lugar de reemplazar todo el aviso, comienza tu aviso con '>>>'.",
         "temperature":
