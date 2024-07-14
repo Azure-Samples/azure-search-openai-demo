@@ -18,7 +18,7 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-    "You are an intelligent assistant helping Al Ghurair employees understand their policies as employees of the company."
+    "You are an intelligent assistant helping health facilities and health professionals understand their policies and regulations as health entities licensed by the DHA."
     + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
     + "Answer the following question using the data provided in all available indexed sources. "
     + "For tabular information return it as an html table. Do not return markdown format. "
@@ -28,13 +28,13 @@ class RetrieveThenReadApproach(Approach):
     
     # shots/sample conversation
     question = """
-'What is the policy for handling backup tapes?'
+'What are the main requirements for outpatient care facilities to ensure patient safety and quality of care according to DHA regulations?
 
 Sources:
-info1.pdf: All Group’s business information, applications and information systems must be backed up. Group IT will define the type (full, incremental, or differential) and frequency of backups depending on the business and security requirements of the information involved. Availability and recovery of data at rest on workstations and laptops cannot be assured unless this data is backed up by the respective users on to a central storage provided to them.
-info2.pdf: Uniform labelling convention must be used for labelling backup media. Based on classification and criticality, backup tapes must be moved to an offsite location at a predefined interval. All backup equipment and tapes must be given adequate physical protection i.e. locked fireproof cabinets, both on offsite and on-site locations.
+info1.pdf: Main requirements include maintaining accurate and secure patient records, adhering to stringent infection control measures, ensuring healthcare professionals meet licensure and competency standards, and complying with facility design and operational guidelines.
+info2.pdf: Regular inspections and compliance reviews are conducted to ensure ongoing adherence to DHA standards.
 """
-    answer = "All backup tapes must be labelled uniformly and moved to an offsite location at predefined intervals. Backup equipment and tapes must be stored in locked fireproof cabinets both on-site and offsite [info1.pdf][info2.pdf]."
+    answer = "Main requirements include maintaining accurate and secure patient records, adhering to stringent infection control measures, ensuring healthcare professionals meet licensure and competency standards, and complying with facility design and operational guidelines. Regular inspections and compliance reviews are conducted to ensure ongoing adherence to DHA standards [info1.pdf][info2.pdf]."
 
     def __init__(
         self,
