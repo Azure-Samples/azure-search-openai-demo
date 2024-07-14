@@ -10,18 +10,18 @@ from approaches.approach import Approach
 
 class ChatApproach(Approach, ABC):
     query_prompt_few_shots: list[ChatCompletionMessageParam] = [
-        {"role": "user", "content": "How are information assets handled by IT?"},
-        {"role": "assistant", "content": "Summarize the policy on Network Security."},
-        {"role": "user", "content": "What devices should not be connected to Al-Ghurair's corporate net"},
-        {"role": "assistant", "content": "Explain the common acceptable uses of GenAi and LLMs according to the company policy?"},
+        {"role": "user", "content": "What are the licensing requirements for home healthcare facilities in Dubai?"},
+        {"role": "assistant", "content": "Describe the safety requirements for dental laboratories according to DHA regulations."},
+        {"role": "user", "content": "What are the key components of the Clinical Governance Framework by the Dubai Health Authority?"},
+        {"role": "assistant", "content": "What are the main requirements for outpatient care facilities to ensure patient safety and quality of care according to DHA regulations?"}
     ]
     NO_RESPONSE = "0"
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<What are the steps to handle a data breach?>>
-    <<Who is responsible for enforcing the network security policy?>>
-    <<What are the consequences of violating the device policy?>>
+    <<What are the steps to renew a license for a home healthcare facility?>>
+    <<What infection control measures are mandated for dental laboratories?>>
+    <<How does the Clinical Governance Framework ensure continuous improvement?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """
