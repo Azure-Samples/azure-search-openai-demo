@@ -130,20 +130,21 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 
-        chat_completion = (
-            await self.llm_client.chat_completion(
-                # Azure OpenAI takes the deployment name as the model name
-                model=(
-                    self.hf_model
-                    if self.use_hf
-                    else self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
-                ),
-                messages=self.llm_client.format_message(updated_messages),
-                temperature=overrides.get("temperature", 0.3),
-                max_tokens=response_token_limit,
-                n=1,
-            )
-        ).model_dump()
+        chat_completion = await self.llm_client.chat_completion(
+            # Azure OpenAI takes the deployment name as the model name
+            model=(
+                self.hf_model
+                if self.use_hf
+                else self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
+            ),
+            messages=self.llm_client.format_message(updated_messages),
+            temperature=overrides.get("temperature", 0.3),
+            max_tokens=response_token_limit,
+            n=1,
+        )
+
+        if not self.use_hf:
+            chat_completion = chat_completion.model_dump()
 
         data_points = {"text": sources_content}
         extra_info = {
