@@ -441,5 +441,7 @@ yarl==1.9.4
 zipp==3.19.2
     # via importlib-metadata
 
+huggingface-hub==0.23.4
+
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

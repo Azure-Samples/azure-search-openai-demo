@@ -24,6 +24,7 @@ from azure.search.documents.models import (
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
+from api_wrappers import BaseAPIClient
 from core.authentication import AuthenticationHelper
 from text import nonewlines
 
@@ -94,7 +95,8 @@ class Approach(ABC):
     def __init__(
         self,
         search_client: SearchClient,
-        openai_client: AsyncOpenAI,
+        llm_client: BaseAPIClient,
+        emb_client: AsyncOpenAI,
         auth_helper: AuthenticationHelper,
         query_language: Optional[str],
         query_speller: Optional[str],
@@ -106,7 +108,8 @@ class Approach(ABC):
         vision_token_provider: Callable[[], Awaitable[str]],
     ):
         self.search_client = search_client
-        self.openai_client = openai_client
+        self.llm_client = llm_client
+        self.emb_client = emb_client
         self.auth_helper = auth_helper
         self.query_language = query_language
         self.query_speller = query_speller
@@ -235,7 +238,7 @@ class Approach(ABC):
         dimensions_args: ExtraArgs = (
             {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
         )
-        embedding = await self.openai_client.embeddings.create(
+        embedding = await self.emb_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name
             model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
             input=q,

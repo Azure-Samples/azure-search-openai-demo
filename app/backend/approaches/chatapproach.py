@@ -5,6 +5,7 @@ from typing import Any, AsyncGenerator, Optional
 
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
+from api_wrappers import CompatibilityWrapper
 from approaches.approach import Approach
 
 
@@ -66,7 +67,13 @@ class ChatApproach(Approach, ABC):
                     continue
                 function = tool.function
                 if function.name == "search_sources":
-                    arg = json.loads(function.arguments)
+                    try:
+                        if isinstance(function.arguments, str):
+                            arg = json.loads(function.arguments)
+                        else:
+                            arg = function.arguments
+                    except (json.JSONDecodeError, TypeError):
+                        arg = function.arguments
                     search_query = arg.get("search_query", self.NO_RESPONSE)
                     if search_query != self.NO_RESPONSE:
                         return search_query
@@ -115,9 +122,9 @@ class ChatApproach(Approach, ABC):
         followup_content = ""
         async for event_chunk in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
-            event = event_chunk.model_dump()  # Convert pydantic model to dict
-            if event["choices"]:
-                completion = {"delta": event["choices"][0]["delta"]}
+            event = CompatibilityWrapper(event_chunk)  # Convert pydantic model to dict
+            if event.choices:
+                completion = {"delta": CompatibilityWrapper(event.choices[0]).delta}
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = completion["delta"].get("content")
                 content = content or ""  # content may either not exist in delta, or explicitly be None

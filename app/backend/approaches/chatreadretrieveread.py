@@ -11,6 +11,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
+from api_wrappers import BaseAPIClient
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
@@ -28,7 +29,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         *,
         search_client: SearchClient,
         auth_helper: AuthenticationHelper,
-        openai_client: AsyncOpenAI,
+        llm_client: BaseAPIClient,
+        emb_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -38,9 +40,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
+        hf_model: str,
+        use_hf: bool,
     ):
         self.search_client = search_client
-        self.openai_client = openai_client
+        self.llm_client = llm_client
+        self.emb_client = emb_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
@@ -52,6 +57,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        self.hf_model = hf_model
+        self.use_hf = use_hf
 
     @property
     def system_message_chat_conversation(self):
@@ -134,10 +141,15 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=query_messages,  # type: ignore
+        formatted_querry_msg = self.llm_client.format_message(query_messages)
+        chat_completion: ChatCompletion = await self.llm_client.chat_completion(
+            messages=formatted_querry_msg,  # type: ignore
             # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+            model=(
+                self.hf_model
+                if self.use_hf
+                else self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
+            ),
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
@@ -145,7 +157,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
-
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
         # If retrieval mode includes vectors, compute an embedding for the query
@@ -228,11 +239,15 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),
             ],
         }
-
-        chat_coroutine = self.openai_client.chat.completions.create(
+        reviewed_messages = self.llm_client.format_message(messages)
+        chat_coroutine = self.llm_client.chat_completion(
             # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            messages=messages,
+            model=(
+                self.hf_model
+                if self.use_hf
+                else self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
+            ),
+            messages=reviewed_messages,
             temperature=overrides.get("temperature", 0.3),
             max_tokens=response_token_limit,
             n=1,

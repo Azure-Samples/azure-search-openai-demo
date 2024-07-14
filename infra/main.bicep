@@ -56,6 +56,9 @@ param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
 param useGPT4V bool = false
+param useHuggingFace bool = false
+param huggingFaceApiKey string = ''
+param huggingFaceModel string = ''
 
 @description('Location for the OpenAI resource group')
 @allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral' ])
@@ -335,6 +338,8 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_TENANT_ID: tenantId
       AZURE_AUTH_TENANT_ID: tenantIdForAuth
       AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
+      HUGGINGFACE_API_KEY: huggingFaceApiKey
+      HUGGINGFACE_MODEL: huggingFaceModel
       // CORS support, for frontends on other hosts
       ALLOWED_ORIGIN: allowedOrigin
       USE_VECTORS: useVectors
@@ -391,7 +396,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
+module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && !useHuggingFace) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {

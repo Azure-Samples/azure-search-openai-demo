@@ -10,6 +10,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
+from api_wrappers import BaseAPIClient
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -38,7 +39,8 @@ class RetrieveThenReadVisionApproach(Approach):
         *,
         search_client: SearchClient,
         blob_container_client: ContainerClient,
-        openai_client: AsyncOpenAI,
+        llm_client: BaseAPIClient,
+        emb_client: AsyncOpenAI,
         auth_helper: AuthenticationHelper,
         gpt4v_deployment: Optional[str],
         gpt4v_model: str,
@@ -50,11 +52,14 @@ class RetrieveThenReadVisionApproach(Approach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
+        hf_model: str,
+        use_hf: bool,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
-        self.openai_client = openai_client
+        self.llm_client = llm_client
+        self.emb_client = emb_client
         self.auth_helper = auth_helper
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
@@ -68,6 +73,8 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model)
+        self.hf_model = hf_model
+        self.use_hf = use_hf
 
     async def run(
         self,
@@ -142,7 +149,7 @@ class RetrieveThenReadVisionApproach(Approach):
             max_tokens=self.gpt4v_token_limit - response_token_limit,
         )
         chat_completion = (
-            await self.openai_client.chat.completions.create(
+            await self.llm_client.chat_completion(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
                 messages=updated_messages,
                 temperature=overrides.get("temperature", 0.3),
