@@ -3,15 +3,15 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What are the policy statements under the Asset Management Policy?",
-    "Explain the purpose of the Business Continuity Policy.",
-    "What is the process I should follow to log of network devices to maintain network security?"
+    "What are the essential procedures for obtaining a license to operate a home healthcare facility in Dubai?",
+    "Explain the primary goal of the Clinical Governance Framework outlined by DHA.",
+    "What are the key licensure requirements for establishing a dental laboratory that I need to follow?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
-    "What are the policy statements under the Asset Management Policy?",
-    "Explain the purpose of the Business Continuity Policy.",
-    "What is the process I should follow to log of network devices to maintain network security?"
+    "What are the essential procedures for obtaining a license to operate a home healthcare facility in Dubai?",
+    "Explain the primary goal of the Clinical Governance Framework outlined by DHA.",
+    "What are the key licensure requirements for establishing a dental laboratory that I need to follow?"
 ];
 
 interface Props {
