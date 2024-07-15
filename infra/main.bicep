@@ -391,18 +391,20 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
     }
   ] : [])
 
-module openAi 'core/ai/cognitiveservices.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
+module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzureOpenAiHost && deployAzureOpenAi) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiResourceGroupLocation
     tags: tags
+    kind: 'OpenAI'
     publicNetworkAccess: publicNetworkAccess
-    bypass: bypass
-    sku: {
-      name: openAiSkuName
+    networkAcls: {
+      defaultAction: 'Allow'
+      bypass: bypass
     }
+    sku: openAiSkuName
     deployments: openAiDeployments
     disableLocalAuth: true
   }
@@ -720,7 +722,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi) ?
   groupId: 'account'
   dnsZoneName: 'privatelink.openai.azure.com'
   resourceIds: concat(
-    [ openAi.outputs.id ],
+    [ openAi.outputs.resourceId ],
     useGPT4V ? [ computerVision.outputs.id ] : [],
     !useLocalPdfParser ? [ documentIntelligence.outputs.id ] : []
   )
