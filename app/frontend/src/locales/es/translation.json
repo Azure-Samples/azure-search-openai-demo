@@ -1,12 +1,24 @@
 {
-    "language_name": "Español",
-    "pageTitle": "GPT + Datos empresariales | Ejemplo",
-    "headerTitle": "GPT + Datos empresariales | Ejemplo",
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
     "chat": "Chat",
     "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "clearChat": "Borrar chat",
+    "upload": {
+        "fileLabel": "Subir archivo:",
+        "uploadedFilesLabel": "Archivos subidos previamente:",
+        "noFilesUploaded": "No se han subido archivos todavía",
+        "loading": "Cargando...",
+        "manageFileUploads": "Administrar subidas de archivos",
+        "uploadingFiles": "Subiendo archivos...",
+        "uploadedFileError": "Error al subir el archivo - por favor, inténtalo de nuevo o contacta con el administrador.",
+        "deleteFile": "Eliminar archivo",
+        "deletingFile": "Eliminando archivo...",
+        "errorDeleting": "Error eliminando.",
+        "fileDeleted": "Archivo eliminado"
+    },
     "developerSettings": "Configuración del desarrollador",
 
     "chatEmptyStateTitle": "Chatea con tus datos",
@@ -42,7 +54,7 @@
         "supportingContent": "Contenido de apoyo",
         "citation": "Cita"
     },
-    
+
     "labels": {
         "headerText": "Configurar la generación de respuestas",
         "closeButton": "Cerrar",
@@ -96,8 +108,10 @@
             "Establece una puntuación mínima para los resultados de búsqueda que vuelven del re-clasificador semántico. La puntuación siempre varía entre 0-4. Cuanto mayor es la puntuación, más relevante es semánticamente el resultado a la pregunta.",
         "retrieveNumber":
             "Establece el número de resultados de búsqueda para recuperar de Azure AI search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero pueden provocar que el modelo se 'pierda en el medio'.",
-        "excludeCategory": "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
-        "useSemanticReranker": "Habilita el re-clasificador semántico de Azure AI Search, un modelo que re-clasifica los resultados de búsqueda basándose en la similitud semántica con la consulta del usuario.",
+        "excludeCategory":
+            "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
+        "useSemanticReranker":
+            "Habilita el re-clasificador semántico de Azure AI Search, un modelo que re-clasifica los resultados de búsqueda basándose en la similitud semántica con la consulta del usuario.",
         "useSemanticCaptions":
             "Envía subtítulos semánticos al LLM en lugar del resultado de búsqueda completo. Un subtítulo semántico se extrae de un resultado de búsqueda durante el proceso de clasificación semántica.",
         "suggestFollowupQuestions": "Pide al LLM que sugiera preguntas de seguimiento basándose en la consulta del usuario.",
@@ -111,5 +125,5 @@
         "streamChat": "Transmite continuamente la respuesta a la interfaz de usuario del chat mientras se genera.",
         "useOidSecurityFilter": "Filtra los resultados de búsqueda en función del OID del usuario autenticado.",
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado."
-    } 
+    }
 }

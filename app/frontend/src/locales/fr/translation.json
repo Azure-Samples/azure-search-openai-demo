@@ -1,12 +1,24 @@
 {
-    "language_name": "Français",
-    "pageTitle": "GPT + Données d'entreprise | Exemple",
-    "headerTitle": "GPT + Données d'entreprise | Exemple",
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
     "chat": "Chat",
     "qa": "Posez une question",
     "login": "Connexion",
     "logout": "Déconnexion",
     "clearChat": "Effacer le chat",
+    "upload": {
+        "fileLabel": "Télécharger le fichier:",
+        "uploadedFilesLabel": "Fichiers précédemment téléchargés:",
+        "noFilesUploaded": "Aucun fichier téléchargé pour le moment",
+        "loading": "Chargement...",
+        "manageFileUploads": "Gérer les téléchargements de fichiers",
+        "uploadingFiles": "Téléchargement de fichiers...",
+        "uploadedFileError": "Erreur lors du téléchargement du fichier - veuillez réessayer ou contacter l'administrateur.",
+        "deleteFile": "Supprimer le fichier",
+        "deletingFile": "Suppression du fichier...",
+        "errorDeleting": "Erreur lors de la suppression.",
+        "fileDeleted": "Fichier supprimé"
+    },
     "developerSettings": "Paramètres développeur",
 
     "chatEmptyStateTitle": "Discutez avec vos données",
@@ -42,7 +54,7 @@
         "supportingContent": "Contenu d'Appui",
         "citation": "Citation"
     },
-    
+
     "labels": {
         "headerText": "Configurer la génération de réponses",
         "closeButton": "Fermer",
@@ -96,8 +108,10 @@
             "Définit un score minimum pour les résultats de recherche provenant du reranker sémantique. Le score varie toujours entre 0 et 4. Plus le score est élevé, plus le résultat est sémantiquement pertinent par rapport à la question.",
         "retrieveNumber":
             "Définit le nombre de résultats de recherche à récupérer d'Azure AI Search. Plus de résultats peuvent augmenter la probabilité de trouver la bonne réponse, mais peuvent amener le modèle à se 'perdre au milieu'.",
-        "excludeCategory": "Spécifie une catégorie à exclure des résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
-        "useSemanticReranker": "Active le classement sémantique d'Azure AI Search, un modèle qui réorganise les résultats de recherche en fonction de la similarité sémantique avec la requête de l'utilisateur.",
+        "excludeCategory":
+            "Spécifie une catégorie à exclure des résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
+        "useSemanticReranker":
+            "Active le classement sémantique d'Azure AI Search, un modèle qui réorganise les résultats de recherche en fonction de la similarité sémantique avec la requête de l'utilisateur.",
         "useSemanticCaptions":
             "Envoie des légendes sémantiques à l'LLM au lieu du résultat de recherche complet. Une légende sémantique est extraite d'un résultat de recherche lors du processus de classement sémantique.",
         "suggestFollowupQuestions": "Demande à l'LLM de suggérer des questions de suivi en fonction de la requête de l'utilisateur.",
@@ -111,5 +125,5 @@
         "streamChat": "Diffuse en continu la réponse à l'interface utilisateur du chat au fur et à mesure de sa génération.",
         "useOidSecurityFilter":"Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié."
-    } 
+    }
 }

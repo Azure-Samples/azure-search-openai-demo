@@ -12,18 +12,18 @@ export const LocaleSwitcher = ({ onLanguageChange }: Props) => {
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         onLanguageChange(event.target.value);
-    }
+    };
 
     return (
         <div className={styles.localeSwitcher}>
             <LocalLanguage24Regular className={styles.localeSwitcherIcon} />
             <select value={i18n.language} onChange={handleLanguageChange} className={styles.localeSwitcherText}>
-                 {Object.entries(supportedLngs).map(([code, name]) => (
+                {Object.entries(supportedLngs).map(([code, details]) => (
                     <option value={code} key={code}>
-                        {name}
+                        {details.name}
                     </option>
                 ))}
-            </select>            
+            </select>
         </div>
     );
-}
+};

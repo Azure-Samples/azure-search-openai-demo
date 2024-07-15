@@ -67,8 +67,8 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
                         className={styles.downloadButton}
                         style={{ color: "black" }}
                         iconProps={{ iconName: "Save" }}
-                        title="Save"
-                        ariaLabel={t("tooltips.save")} 
+                        title={t("tooltips.save")}
+                        ariaLabel="Save"
                         href={src}
                         download
                     />

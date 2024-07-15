@@ -3,35 +3,49 @@ import { Button, Tooltip } from "@fluentui/react-components";
 import { Mic28Filled } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 import styles from "./QuestionInput.module.css";
+import { supportedLngs } from "../../i18n/config";
 
 interface Props {
     updateQuestion: (question: string) => void;
 }
 
-const SpeechRecognition = (window as any).speechRecognition || (window as any).webkitSpeechRecognition;
-let speechRecognition: {
-    continuous: boolean;
-    lang: string;
-    interimResults: boolean;
-    maxAlternatives: number;
-    start: () => void;
-    onresult: (event: { results: { transcript: SetStateAction<string> }[][] }) => void;
-    onend: () => void;
-    onerror: (event: { error: string }) => void;
-    stop: () => void;
-} | null = null;
-try {
-    speechRecognition = new SpeechRecognition();
-    if (speechRecognition != null) {
-        speechRecognition.lang = "en-US";
-        speechRecognition.interimResults = true;
+const useCustomSpeechRecognition = () => {
+    const { i18n } = useTranslation();
+    const currentLng = i18n.language;
+    let lngCode = supportedLngs[currentLng]?.locale;
+    if (!lngCode) {
+        lngCode = "en-US";
     }
-} catch (err) {
-    console.error("SpeechRecognition not supported");
-    speechRecognition = null;
-}
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    let speechRecognition: {
+        continuous: boolean;
+        lang: string;
+        interimResults: boolean;
+        maxAlternatives: number;
+        start: () => void;
+        onresult: (event: { results: { transcript: SetStateAction<string> }[][] }) => void;
+        onend: () => void;
+        onerror: (event: { error: string }) => void;
+        stop: () => void;
+    } | null = null;
+
+    try {
+        speechRecognition = new SpeechRecognition();
+        if (speechRecognition != null) {
+            speechRecognition.lang = lngCode;
+            speechRecognition.interimResults = true;
+        }
+    } catch (err) {
+        console.error("SpeechRecognition not supported");
+        speechRecognition = null;
+    }
+
+    return speechRecognition;
+};
 
 export const SpeechInput = ({ updateQuestion }: Props) => {
+    let speechRecognition = useCustomSpeechRecognition();
     const { t } = useTranslation();
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const startRecording = () => {

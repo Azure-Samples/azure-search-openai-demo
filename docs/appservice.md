@@ -40,7 +40,7 @@ Click the commit ID to open the logs for the most recent deploy. First scroll do
 ![Screenshot of successful deployment logs from Azure App Service](images/screenshot_appservice_deployment_log.png)
 
 Now scroll back up to find the timestamp with the label "Running oryx build".
-[Oryx](https://github.com/microsoft/Oryx) is the open source tool that builds apps for App Service, Functions, and other platforms, across all the supported MS languages. Click the _Show logs_ link next to that labels. That will pop open detailed logs at the bottom. Scroll down.
+[Oryx](https://github.com/microsoft/Oryx) is the open source tool that builds apps for App Service, Functions, and other platforms, across all the supported MS languages. Click the _Show logs_ link next to that label. That will pop open detailed logs at the bottom. Scroll down.
 
 <details>
 <summary>Expand to see the logs for a successful Oryx build for the application.</summary>

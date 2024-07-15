@@ -1,14 +1,25 @@
 {
-    "language_name": "日本語",
-    "pageTitle": "GPT + エンタープライズデータ | サンプル",
-    "headerTitle": "GPT + エンタープライズデータ | サンプル",
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
     "chat": "チャット",
     "qa": "一問一答",
     "login": "ログイン",
     "logout": "ログアウト",
     "clearChat": "クリア",
+    "upload": {
+        "fileLabel": "ファイルをアップロード：",
+        "uploadedFilesLabel": "以前にアップロードしたファイル：",
+        "noFilesUploaded": "まだファイルがアップロードされていません",
+        "loading": "読み込み中...",
+        "manageFileUploads": "ファイルのアップロードを管理",
+        "uploadingFiles": "ファイルをアップロード中...",
+        "uploadedFileError": "ファイルのアップロードエラー - 再試行するか、管理者に連絡してください。",
+        "deleteFile": "ファイルを削除",
+        "deletingFile": "ファイルを削除中...",
+        "errorDeleting": "削除エラー。",
+        "fileDeleted": "ファイル削除済み"
+    },
     "developerSettings": "高度な設定",
-    "upload": "アップロード",
 
     "chatEmptyStateTitle": "データとチャットします",
     "chatEmptyStateSubtitle": "何でも尋ねてみるか、例を試してみてください",
@@ -98,7 +109,7 @@
         "retrieveNumber":
             "Azure AI searchから取得する検索結果の数を設定します。結果が多いほど正解を見つける可能性が上がるかもしれませんが、モデルが「迷子」になる可能性もあります。",
         "excludeCategory": "検索結果から除外するカテゴリを指定します。デフォルトのデータセットではカテゴリは使用されていません。",
-        "useSemanticReranker": 
+        "useSemanticReranker":
             "Azure AI Searchのセマンティックランカーを有効にします。これは、ユーザーのクエリとセマンティックに似ているものに基づいて検索結果を再ランキングするモデルです。",
         "useSemanticCaptions":
             "完全な検索結果ではなく、セマンティックキャプションをLLMに送信します。セマンティックキャプションは、セマンティックランク付けの処理中に検索結果から抽出されます。",
@@ -113,5 +124,5 @@
         "streamChat": "回答が生成されると、チャットUIに継続的にストリーム配信されます。",
         "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
         "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。"
-    } 
+    }
 }
