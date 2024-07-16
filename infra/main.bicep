@@ -399,6 +399,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzure
     location: openAiResourceGroupLocation
     tags: tags
     kind: 'OpenAI'
+    customSubDomainName: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
@@ -418,7 +419,11 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4'
   params: {
     name: !empty(documentIntelligenceServiceName) ? documentIntelligenceServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     kind: 'FormRecognizer'
+    customSubDomainName: !empty(documentIntelligenceServiceName) ? documentIntelligenceServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
     location: documentIntelligenceResourceGroupLocation
     disableLocalAuth: true
     tags: tags
@@ -434,6 +439,12 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if 
       ? computerVisionServiceName
       : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
     kind: 'ComputerVision'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    customSubDomainName: !empty(computerVisionServiceName)
+      ? computerVisionServiceName
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
     location: computerVisionResourceGroupLocation
     tags: tags
     sku: computerVisionSkuName
@@ -446,6 +457,10 @@ module speech 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useSpee
   params: {
     name: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
     kind: 'SpeechServices'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    customSubDomainName: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
     location: !empty(speechServiceLocation) ? speechServiceLocation : location
     tags: tags
     sku: speechServiceSkuName
