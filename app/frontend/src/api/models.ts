@@ -21,6 +21,7 @@ export type ChatAppRequestOverrides = {
     semantic_ranker?: boolean;
     semantic_captions?: boolean;
     exclude_category?: string;
+    seed?: number;
     top?: number;
     temperature?: number;
     minimum_search_score?: number;
