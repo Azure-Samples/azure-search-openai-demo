@@ -17,6 +17,7 @@ module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.4.0' = {
     dataRetention: 30
     publicNetworkAccessForIngestion: publicNetworkAccess
     publicNetworkAccessForQuery: publicNetworkAccess
+    useResourcePermissions: true
   }
 }
 
