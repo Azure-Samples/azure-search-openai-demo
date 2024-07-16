@@ -7,7 +7,7 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
