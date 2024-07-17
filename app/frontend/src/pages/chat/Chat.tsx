@@ -336,7 +336,7 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <Helmet>
-                <title>{t('pageTitle')}</title>
+                <title>{t("pageTitle")}</title>
             </Helmet>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
@@ -350,8 +350,8 @@ const Chat = () => {
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
-                            <LocaleSwitcher onLanguageChange={(newLang) => i18n.changeLanguage(newLang)} />
-                            
+                            <LocaleSwitcher onLanguageChange={newLang => i18n.changeLanguage(newLang)} />
+
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
@@ -535,7 +535,12 @@ const Chat = () => {
                         onChange={onRetrieveCountChange}
                         aria-labelledby={retrieveCountId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout labelId={retrieveCountId} fieldId={retrieveCountFieldId} helpText={t("helpTexts.retrieveNumber")} label={props?.label} />
+                            <HelpCallout
+                                labelId={retrieveCountId}
+                                fieldId={retrieveCountFieldId}
+                                helpText={t("helpTexts.retrieveNumber")}
+                                label={props?.label}
+                            />
                         )}
                     />
 
@@ -579,7 +584,7 @@ const Chat = () => {
                                 id={semanticCaptionsFieldId}
                                 className={styles.chatSettingsSeparator}
                                 checked={useSemanticCaptions}
-                                label={t("labels.useSmanticCaptions")}
+                                label={t("labels.useSemanticCaptions")}
                                 onChange={onUseSemanticCaptionsChange}
                                 disabled={!useSemanticRanker}
                                 aria-labelledby={semanticCaptionsId}

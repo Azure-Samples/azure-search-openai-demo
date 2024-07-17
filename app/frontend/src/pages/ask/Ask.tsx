@@ -229,7 +229,7 @@ export function Component(): JSX.Element {
     return (
         <div className={styles.askContainer}>
             <Helmet>
-                <title>{t('pageTitle')}</title>
+                <title>{t("pageTitle")}</title>
             </Helmet>
             <div className={styles.askTopSection}>
                 <div className={styles.commandsContainer}>
@@ -251,7 +251,7 @@ export function Component(): JSX.Element {
                 {isLoading && <Spinner label={t("generatingAnswer")} />}
                 {!lastQuestionRef.current && (
                     <div className={styles.askTopSection}>
-                        <LocaleSwitcher onLanguageChange={(newLang) => i18n.changeLanguage(newLang)} />
+                        <LocaleSwitcher onLanguageChange={newLang => i18n.changeLanguage(newLang)} />
                         <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                     </div>
                 )}
@@ -353,7 +353,12 @@ export function Component(): JSX.Element {
                         onChange={onMinimumRerankerScoreChange}
                         aria-labelledby={rerankerScoreId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
-                            <HelpCallout labelId={rerankerScoreId} fieldId={rerankerScoreFieldId} helpText={t("helpTexts.rerankerScore")} label={props?.label} />
+                            <HelpCallout
+                                labelId={rerankerScoreId}
+                                fieldId={rerankerScoreFieldId}
+                                helpText={t("helpTexts.rerankerScore")}
+                                label={props?.label}
+                            />
                         )}
                     />
                 )}
@@ -381,7 +386,12 @@ export function Component(): JSX.Element {
                     onChange={onExcludeCategoryChanged}
                     aria-labelledby={excludeCategoryId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
-                        <HelpCallout labelId={excludeCategoryId} fieldId={excludeCategoryFieldId} helpText={t("helpTexts.excludeCategory")} label={props?.label} />
+                        <HelpCallout
+                            labelId={excludeCategoryId}
+                            fieldId={excludeCategoryFieldId}
+                            helpText={t("helpTexts.excludeCategory")}
+                            label={props?.label}
+                        />
                     )}
                 />
 
@@ -408,7 +418,7 @@ export function Component(): JSX.Element {
                             id={semanticCaptionsFieldId}
                             className={styles.chatSettingsSeparator}
                             checked={useSemanticCaptions}
-                            label={t("labels.useSmanticCaptions")}
+                            label={t("labels.useSemanticCaptions")}
                             onChange={onUseSemanticCaptionsChange}
                             disabled={!useSemanticRanker}
                             aria-labelledby={semanticCaptionsId}
