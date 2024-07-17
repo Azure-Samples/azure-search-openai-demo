@@ -1,8 +1,11 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Dict, Optional, Union, cast
 
+from huggingface_hub.inference._generated.types import (  # type: ignore
+    ChatCompletionOutput,
+)
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach
@@ -57,7 +60,7 @@ class ChatApproach(Approach, ABC):
         else:
             return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
-    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
+    def get_search_query(self, chat_completion: Union[ChatCompletion, ChatCompletionOutput], user_query: str):
         response_message = chat_completion.choices[0].message
 
         if response_message.tool_calls:
@@ -66,7 +69,13 @@ class ChatApproach(Approach, ABC):
                     continue
                 function = tool.function
                 if function.name == "search_sources":
-                    arg = json.loads(function.arguments)
+                    try:
+                        if isinstance(function.arguments, str):
+                            arg = json.loads(function.arguments)
+                        else:
+                            arg = function.arguments
+                    except (json.JSONDecodeError, TypeError):
+                        arg = function.arguments
                     search_query = arg.get("search_query", self.NO_RESPONSE)
                     if search_query != self.NO_RESPONSE:
                         return search_query
@@ -89,14 +98,24 @@ class ChatApproach(Approach, ABC):
             messages, overrides, auth_claims, should_stream=False
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
-        chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
-        chat_resp = chat_resp["choices"][0]
+
+        if isinstance(chat_completion_response, dict):
+            chat_resp = chat_completion_response["choices"][0]
+        else:
+            chat_resp = chat_completion_response.model_dump()
+            chat_resp = cast(Dict[str, Any], chat_resp)["choices"][0]
+
+        chat_resp = cast(Dict[str, Any], chat_resp)
         chat_resp["context"] = extra_info
+
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(chat_resp["message"]["content"])
             chat_resp["message"]["content"] = content
+            chat_resp["context"] = cast(Dict[str, Any], chat_resp["context"])
             chat_resp["context"]["followup_questions"] = followup_questions
+
         chat_resp["session_state"] = session_state
+
         return chat_resp
 
     async def run_with_streaming(
@@ -115,9 +134,13 @@ class ChatApproach(Approach, ABC):
         followup_content = ""
         async for event_chunk in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
-            event = event_chunk.model_dump()  # Convert pydantic model to dict
-            if event["choices"]:
-                completion = {"delta": event["choices"][0]["delta"]}
+            # Convert pydantic model to dict if needed
+            event = event_chunk.model_dump() if hasattr(event_chunk, "model_dump") else event_chunk
+            # OpenAI uses dict-style access, while huggingface-hub uses dataclasses since 0.25.0
+            if (hasattr(event, "choices") and event.choices) or event.get("choices"):
+                completion = {
+                    "delta": event.choices[0].delta if hasattr(event, "choices") else event["choices"][0]["delta"]
+                }
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = completion["delta"].get("content")
                 content = content or ""  # content may either not exist in delta, or explicitly be None

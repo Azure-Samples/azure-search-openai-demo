@@ -152,6 +152,12 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
+    "huggingFaceApiKey": {
+      "value": "${HUGGINGFACE_API_KEY}"
+    },
+    "huggingFaceModel": {
+      "value": "${HUGGINGFACE_MODEL}"
+    },
     "useSpeechInputBrowser": {
       "value": "${USE_SPEECH_INPUT_BROWSER=false}"
     },

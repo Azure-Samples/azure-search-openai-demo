@@ -100,7 +100,7 @@ def mock_openai_embedding(monkeypatch):
         )
 
     def patch(openai_client):
-        monkeypatch.setattr(openai_client.embeddings, "create", mock_acreate)
+        monkeypatch.setattr(openai_client, "create_embeddings", mock_acreate)
 
     return patch
 
@@ -208,7 +208,7 @@ def mock_openai_chatcompletion(monkeypatch):
             )
 
     def patch(openai_client):
-        monkeypatch.setattr(openai_client.chat.completions, "create", mock_acreate)
+        monkeypatch.setattr(openai_client.client.chat.completions, "create", mock_acreate)
 
     return patch
 

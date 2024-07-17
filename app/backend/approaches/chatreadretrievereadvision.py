@@ -1,8 +1,12 @@
-from typing import Any, Awaitable, Callable, Coroutine, Optional, Union
+from typing import Any, AsyncIterable, Awaitable, Callable, Coroutine, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
-from openai import AsyncOpenAI, AsyncStream
+from huggingface_hub.inference._generated.types import (  # type: ignore
+    ChatCompletionOutput,
+    ChatCompletionStreamOutput,
+)
+from openai import AsyncStream
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
@@ -12,6 +16,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
+from api_wrappers import LLMClient
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
@@ -30,8 +35,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         *,
         search_client: SearchClient,
         blob_container_client: ContainerClient,
-        openai_client: AsyncOpenAI,
+        llm_client: LLMClient,
+        emb_client: LLMClient,
         auth_helper: AuthenticationHelper,
+        hf_model: Optional[str],  # Not needed for OpenAI
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -44,12 +51,14 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
-        self.openai_client = openai_client
+        self.llm_client = llm_client
+        self.emb_client = emb_client
         self.auth_helper = auth_helper
+        self.hf_model = hf_model
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.gpt4v_deployment = gpt4v_deployment
@@ -88,7 +97,19 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[
+        dict[str, Any],
+        Coroutine[
+            Any,
+            Any,
+            Union[
+                ChatCompletion,
+                AsyncStream[ChatCompletionChunk],
+                ChatCompletionOutput,
+                AsyncIterable[ChatCompletionStreamOutput],
+            ],
+        ],
+    ]:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -122,9 +143,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+        chat_completion: Union[ChatCompletion, ChatCompletionOutput] = await self.llm_client.chat_completion(
             model=query_deployment if query_deployment else query_model,
-            messages=query_messages,
+            messages=self.llm_client.format_message(query_messages),
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=query_response_token_limit,
             n=1,
@@ -234,9 +255,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         }
 
-        chat_coroutine = self.openai_client.chat.completions.create(
+        chat_coroutine = self.llm_client.chat_completion(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=messages,
+            messages=self.llm_client.format_message(messages),
             temperature=overrides.get("temperature", 0.3),
             max_tokens=response_token_limit,
             n=1,

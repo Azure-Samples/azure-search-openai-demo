@@ -25,8 +25,8 @@ async def test_app_local_openai(monkeypatch, minimal_env):
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "no-key-required"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://localhost:5000"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.api_key == "no-key-required"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.base_url == "http://localhost:5000"
 
 
 @pytest.mark.asyncio
@@ -37,8 +37,8 @@ async def test_app_azure_custom_key(monkeypatch, minimal_env):
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "azure-api-key"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/openai/"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.api_key == "azure-api-key"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.base_url == "http://azureapi.com/api/v1/openai/"
 
 
 @pytest.mark.asyncio
@@ -48,8 +48,8 @@ async def test_app_azure_custom_identity(monkeypatch, minimal_env):
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "<missing API key>"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/openai/"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.api_key == "<missing API key>"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.base_url == "http://azureapi.com/api/v1/openai/"
 
 
 @pytest.mark.asyncio

@@ -2,10 +2,10 @@ from typing import Any, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
-from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai.types.chat import ChatCompletionMessage, ChatCompletionMessageParam
 from openai_messages_token_helper import build_messages, get_token_limit
 
+from api_wrappers import LLMClient
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 
@@ -43,7 +43,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         *,
         search_client: SearchClient,
         auth_helper: AuthenticationHelper,
-        openai_client: AsyncOpenAI,
+        llm_client: LLMClient,
+        emb_client: LLMClient,
+        hf_model: Optional[str],  # Not needed for OpenAI
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_model: str,
@@ -56,7 +58,9 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
-        self.openai_client = openai_client
+        self.llm_client = llm_client
+        self.emb_client = emb_client
+        self.hf_model = hf_model
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
@@ -123,16 +127,20 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 
-        chat_completion = (
-            await self.openai_client.chat.completions.create(
-                # Azure OpenAI takes the deployment name as the model name
-                model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-                messages=updated_messages,
-                temperature=overrides.get("temperature", 0.3),
-                max_tokens=response_token_limit,
-                n=1,
-            )
-        ).model_dump()
+        chat_completion = await self.llm_client.chat_completion(
+            # Azure OpenAI takes the deployment name as the model name
+            model=(
+                self.hf_model
+                if self.hf_model
+                else self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
+            ),
+            messages=self.llm_client.format_message(updated_messages),
+            temperature=overrides.get("temperature", 0.3),
+            max_tokens=response_token_limit,
+            n=1,
+        )
+
+        final_result = chat_completion.model_dump() if hasattr(chat_completion, "model_dump") else chat_completion
 
         data_points = {"text": sources_content}
         extra_info = {
@@ -158,16 +166,29 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                     "Prompt to generate answer",
                     [str(message) for message in updated_messages],
                     (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
+                        {"model": self.hf_model}
+                        if self.hf_model
+                        else (
+                            {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                            if self.chatgpt_deployment
+                            else {"model": self.chatgpt_model}
+                        )
                     ),
                 ),
             ],
         }
+        completion_message: ChatCompletionMessage
+        try:
+            if hasattr(final_result, "choices"):
+                completion_message = final_result.choices[0].message
+            elif isinstance(final_result, dict) and "choices" in final_result:
+                completion_message = final_result["choices"][0]["message"]
+            else:
+                raise TypeError(
+                    f"Unexpected chat completion response type: {type(final_result)}. It should be a dictionary or dataclass."
+                )
+        except Exception as e:
+            raise ValueError(f"Failed to retrieve message from chat completion response: {e}")
 
-        completion = {}
-        completion["message"] = chat_completion["choices"][0]["message"]
-        completion["context"] = extra_info
-        completion["session_state"] = session_state
+        completion = {"message": completion_message, "context": extra_info, "session_state": session_state}
         return completion

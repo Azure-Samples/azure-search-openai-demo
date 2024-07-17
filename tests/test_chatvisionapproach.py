@@ -15,7 +15,8 @@ from .mocks import MOCK_EMBEDDING_DIMENSIONS, MOCK_EMBEDDING_MODEL_NAME
 
 class MockOpenAIClient:
     def __init__(self):
-        self.embeddings = self
+        self.client = self
+        self.create_embeddings = self
 
     async def create(self, *args, **kwargs):
         pass
@@ -39,7 +40,8 @@ def openai_client():
 def chat_approach(openai_client, mock_confidential_client_success):
     return ChatReadRetrieveReadVisionApproach(
         search_client=None,
-        openai_client=openai_client,
+        llm_client=openai_client,
+        emb_client=openai_client,
         auth_helper=AuthenticationHelper(
             search_index=MockSearchIndex,
             use_authentication=True,
@@ -52,6 +54,7 @@ def chat_approach(openai_client, mock_confidential_client_success):
         blob_container_client=None,
         vision_endpoint="endpoint",
         vision_token_provider=lambda: "token",
+        hf_model=None,
         chatgpt_model="gpt-35-turbo",
         chatgpt_deployment="chat",
         gpt4v_deployment="gpt-4v",
