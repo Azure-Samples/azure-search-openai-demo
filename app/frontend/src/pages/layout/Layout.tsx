@@ -24,11 +24,11 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
-                                <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
+                                <a href="https://vedanta.sharepoint.com/sites/SesaGoa/SitePages/IOBHome.aspx" target={"_blank"} title="Github repository link">
                                     <img
                                         src={github}
                                         alt="Github logo"
-                                        aria-label="Link to github repository"
+                                        aria-label="Sesa Goa Home page"
                                         width="40px"
                                         height="40px"
                                         className={styles.githubLogo}
