@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Quart",
+            "name": "Backend (HTTP)",
             "type": "debugpy",
             "request": "launch",
             "module": "quart",
@@ -26,10 +26,40 @@
             "envFile": "${input:dotEnvFilePath}",
         },
         {
-            "name": "Frontend: watch",
+            "name": "Backend (HTTPS)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "quart",
+            "cwd": "${workspaceFolder}/app/backend",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "env": {
+                "QUART_APP": "main:app",
+                "QUART_ENV": "development",
+                "QUART_DEBUG": "0"
+            },
+            "args": [
+                "run",
+                "--no-reload",
+                "--port=50505",
+                "--certfile=../../localcert.pem",
+                "--keyfile=../../localcert_key.pem"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "envFile": "${input:dotEnvFilePath}",
+        },
+        {
+            "name": "Frontend (HTTP)",
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run dev",
+            "cwd": "${workspaceFolder}/app/frontend",
+        },
+        {
+            "name": "Frontend (HTTPS)",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "npm run dev-https",
             "cwd": "${workspaceFolder}/app/frontend",
         },
         {

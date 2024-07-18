@@ -59,7 +59,13 @@ cd ../backend
 
 port=50505
 host=localhost
-../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
+
+# optionally add certfile and keyfile args if AZURE_USE_AUTHENTICATION = "true"
+if [ "$AZURE_USE_AUTHENTICATION" = "true" ]; then
+    certArgs="--certfile ../../localcert.pem --keyfile ../../localcert_key.pem"
+fi
+
+../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload $certArgs
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
     exit $?
