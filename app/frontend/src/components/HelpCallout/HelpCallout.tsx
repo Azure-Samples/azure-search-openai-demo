@@ -23,14 +23,21 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
     const descriptionId: string = useId("description");
     const iconButtonId: string = useId("iconButton");
     const { t } = useTranslation();
-    
+
     return (
         <>
             <Stack horizontal verticalAlign="center" tokens={stackTokens}>
                 <label id={props.labelId} htmlFor={props.fieldId}>
                     {props.label}
                 </label>
-                <IconButton id={iconButtonId} iconProps={iconProps} title={t("tooltips.info")} ariaLabel="Info" onClick={toggleIsCalloutVisible} styles={iconButtonStyles} />
+                <IconButton
+                    id={iconButtonId}
+                    iconProps={iconProps}
+                    title={t("tooltips.info")}
+                    ariaLabel="Info"
+                    onClick={toggleIsCalloutVisible}
+                    styles={iconButtonStyles}
+                />
             </Stack>
             {isCalloutVisible && (
                 <Callout target={"#" + iconButtonId} setInitialFocus onDismiss={toggleIsCalloutVisible} ariaDescribedBy={descriptionId} role="alertdialog">

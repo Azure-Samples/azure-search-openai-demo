@@ -102,6 +102,8 @@
             "Remplace le prompt utilisé pour générer la réponse en fonction de la question et des résultats de la recherche. Pour ajouter à l'invite existante au lieu de remplacer l'invite entière, commencez votre invite par '>>>'.",
         "temperature":
             "Définit la température de la requête à l'LLM qui génère la réponse. Des températures plus élevées donnent lieu à des réponses plus créatives, mais elles peuvent être moins ancrées.",
+        "seed":
+            "Détermine un numéro premier qui servira à améliorer la répétabilité des réponses du modèle. Le numéro premier doit être un entier quelconque.",
         "searchScore":
             "Définit un score minimum pour les résultats de recherche provenant d'Azure AI Search. La plage de scores dépend si vous utilisez l'hybride (par défaut), uniquement les vecteurs, ou uniquement le texte.",
         "rerankerScore":

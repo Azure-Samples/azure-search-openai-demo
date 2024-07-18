@@ -29,9 +29,8 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     const isDisabledCitationTab: boolean = !activeCitation;
     const [citation, setCitation] = useState("");
 
-    const client = useLogin ? useMsal().instance : undefined
+    const client = useLogin ? useMsal().instance : undefined;
     const { t } = useTranslation();
-
 
     const fetchCitation = async () => {
         const token = client ? await getToken(client) : undefined;

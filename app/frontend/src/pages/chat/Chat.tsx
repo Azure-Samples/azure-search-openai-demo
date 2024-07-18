@@ -41,6 +41,7 @@ const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
+    const [seed, setSeed] = useState<number | null>(null);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -175,7 +176,8 @@ const Chat = () => {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput
+                        gpt4v_input: gpt4vInput,
+                        ...(seed !== null ? { seed: seed } : {})
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
@@ -239,6 +241,10 @@ const Chat = () => {
 
     const onTemperatureChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
         setTemperature(parseFloat(newValue || "0"));
+    };
+
+    const onSeedChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setSeed(parseInt(newValue || ""));
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -311,6 +317,8 @@ const Chat = () => {
     const promptTemplateFieldId = useId("promptTemplateField");
     const temperatureId = useId("temperature");
     const temperatureFieldId = useId("temperatureField");
+    const seedId = useId("seed");
+    const seedFieldId = useId("seedField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
@@ -483,6 +491,19 @@ const Chat = () => {
                         aria-labelledby={temperatureId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
                             <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={t("helpTexts.temperature")} label={props?.label} />
+                        )}
+                    />
+
+                    <TextField
+                        id={seedFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label="Seed"
+                        type="text"
+                        defaultValue={seed?.toString() || ""}
+                        onChange={onSeedChange}
+                        aria-labelledby={seedId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout labelId={seedId} fieldId={seedFieldId} helpText={t("helpTexts.seed")} label={props?.label} />
                         )}
                     />
 

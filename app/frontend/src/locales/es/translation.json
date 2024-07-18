@@ -102,6 +102,8 @@
             "Sobrescribe el aviso utilizado para generar la respuesta basada en la pregunta y los resultados de la búsqueda. Para agregar al aviso existente en lugar de reemplazar todo el aviso, comienza tu aviso con '>>>'.",
         "temperature":
             "Establece la temperatura de la solicitud al LLM que genera la respuesta. Temperaturas más altas dan como resultado respuestas más creativas, pero pueden ser menos realistas.",
+        "seed":
+            "Define un número entero para mejorar la reproducibilidad de las respuestas del modelo. El número de semilla se utiliza para generar respuestas más consistentes. El número de semilla puede ser cualquier número.",
         "searchScore":
             "Establece una puntuación mínima para los resultados de búsqueda que vuelven de Azure AI search. El rango de puntuaciones depende de si estás utilizando híbrido (predeterminado), solo vectores o solo texto.",
         "rerankerScore":

@@ -47,8 +47,18 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
                 label={t("labels.retrievalMode.label")}
                 selectedKey={defaultRetrievalMode.toString()}
                 options={[
-                    { key: "hybrid", text: t("labels.retrievalMode.options.hybrid"), selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                    { key: "vectors", text: t("labels.retrievalMode.options.vectors"), selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                    {
+                        key: "hybrid",
+                        text: t("labels.retrievalMode.options.hybrid"),
+                        selected: retrievalMode == RetrievalMode.Hybrid,
+                        data: RetrievalMode.Hybrid
+                    },
+                    {
+                        key: "vectors",
+                        text: t("labels.retrievalMode.options.vectors"),
+                        selected: retrievalMode == RetrievalMode.Vectors,
+                        data: RetrievalMode.Vectors
+                    },
                     { key: "text", text: t("labels.retrievalMode.options.texts"), selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
                 ]}
                 required
@@ -64,8 +74,16 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
                     id={vectorFieldsFieldId}
                     label={t("labels.vector.label")}
                     options={[
-                        { key: VectorFieldOptions.Embedding, text: t("labels.vector.options.embedding"), selected: vectorFieldOption === VectorFieldOptions.Embedding },
-                        { key: VectorFieldOptions.ImageEmbedding, text: t("labels.vector.options.imageEmbedding"), selected: vectorFieldOption === VectorFieldOptions.ImageEmbedding },
+                        {
+                            key: VectorFieldOptions.Embedding,
+                            text: t("labels.vector.options.embedding"),
+                            selected: vectorFieldOption === VectorFieldOptions.Embedding
+                        },
+                        {
+                            key: VectorFieldOptions.ImageEmbedding,
+                            text: t("labels.vector.options.imageEmbedding"),
+                            selected: vectorFieldOption === VectorFieldOptions.ImageEmbedding
+                        },
                         { key: VectorFieldOptions.Both, text: t("labels.vector.options.both"), selected: vectorFieldOption === VectorFieldOptions.Both }
                     ]}
                     onChange={onVectorFieldsChange}

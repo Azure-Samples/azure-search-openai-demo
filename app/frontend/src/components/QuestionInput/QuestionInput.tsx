@@ -23,7 +23,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     const [question, setQuestion] = useState<string>("");
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
-    
+
     useEffect(() => {
         initQuestion && setQuestion(initQuestion);
     }, [initQuestion]);
