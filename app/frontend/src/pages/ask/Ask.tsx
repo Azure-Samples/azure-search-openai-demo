@@ -27,6 +27,7 @@ export function Component(): JSX.Element {
     const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
     const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
+    const [seed, setSeed] = useState<number | null>(null);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
@@ -124,7 +125,8 @@ export function Component(): JSX.Element {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput
+                        gpt4v_input: gpt4vInput,
+                        ...(seed !== null ? { seed: seed } : {})
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
@@ -146,6 +148,10 @@ export function Component(): JSX.Element {
 
     const onTemperatureChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
         setTemperature(parseFloat(newValue || "0"));
+    };
+
+    const onSeedChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setSeed(parseInt(newValue || ""));
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -206,6 +212,8 @@ export function Component(): JSX.Element {
     const promptTemplateFieldId = useId("promptTemplateField");
     const temperatureId = useId("temperature");
     const temperatureFieldId = useId("temperatureField");
+    const seedId = useId("seed");
+    const seedFieldId = useId("seedField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
@@ -311,6 +319,19 @@ export function Component(): JSX.Element {
                     aria-labelledby={temperatureId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
                         <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={toolTipText.temperature} label={props?.label} />
+                    )}
+                />
+
+                <TextField
+                    id={seedFieldId}
+                    className={styles.chatSettingsSeparator}
+                    label="Seed"
+                    type="text"
+                    defaultValue={seed?.toString() || ""}
+                    onChange={onSeedChange}
+                    aria-labelledby={seedId}
+                    onRenderLabel={(props: ITextFieldProps | undefined) => (
+                        <HelpCallout labelId={seedId} fieldId={seedFieldId} helpText={toolTipText.seed} label={props?.label} />
                     )}
                 />
 
