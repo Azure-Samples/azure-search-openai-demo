@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
@@ -27,17 +27,19 @@ import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 import { UploadFile } from "../../components/UploadFile";
-import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
+import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { toolTipText } from "../../i18n/tooltips.js";
+import { LoginContext } from "../../loginContext";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
+    const [seed, setSeed] = useState<number | null>(null);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -136,6 +138,7 @@ const Chat = () => {
     };
 
     const client = useLogin ? useMsal().instance : undefined;
+    const { loggedIn } = useContext(LoginContext);
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
@@ -171,7 +174,8 @@ const Chat = () => {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput
+                        gpt4v_input: gpt4vInput,
+                        ...(seed !== null ? { seed: seed } : {})
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
@@ -235,6 +239,10 @@ const Chat = () => {
 
     const onTemperatureChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
         setTemperature(parseFloat(newValue || "0"));
+    };
+
+    const onSeedChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
+        setSeed(parseInt(newValue || ""));
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -307,6 +315,8 @@ const Chat = () => {
     const promptTemplateFieldId = useId("promptTemplateField");
     const temperatureId = useId("temperature");
     const temperatureFieldId = useId("temperatureField");
+    const seedId = useId("seed");
+    const seedFieldId = useId("seedField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
@@ -332,7 +342,7 @@ const Chat = () => {
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
+                {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
@@ -473,6 +483,19 @@ const Chat = () => {
                         aria-labelledby={temperatureId}
                         onRenderLabel={(props: ITextFieldProps | undefined) => (
                             <HelpCallout labelId={temperatureId} fieldId={temperatureFieldId} helpText={toolTipText.temperature} label={props?.label} />
+                        )}
+                    />
+
+                    <TextField
+                        id={seedFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label="Seed"
+                        type="text"
+                        defaultValue={seed?.toString() || ""}
+                        onChange={onSeedChange}
+                        aria-labelledby={seedId}
+                        onRenderLabel={(props: ITextFieldProps | undefined) => (
+                            <HelpCallout labelId={seedId} fieldId={seedFieldId} helpText={toolTipText.seed} label={props?.label} />
                         )}
                     />
 
@@ -629,7 +652,7 @@ const Chat = () => {
                                 className={styles.chatSettingsSeparator}
                                 checked={useOidSecurityFilter || requireAccessControl}
                                 label="Use oid security filter"
-                                disabled={!isLoggedIn(client) || requireAccessControl}
+                                disabled={!loggedIn || requireAccessControl}
                                 onChange={onUseOidSecurityFilterChange}
                                 aria-labelledby={useOidSecurityFilterId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (
@@ -646,7 +669,7 @@ const Chat = () => {
                                 className={styles.chatSettingsSeparator}
                                 checked={useGroupsSecurityFilter || requireAccessControl}
                                 label="Use groups security filter"
-                                disabled={!isLoggedIn(client) || requireAccessControl}
+                                disabled={!loggedIn || requireAccessControl}
                                 onChange={onUseGroupsSecurityFilterChange}
                                 aria-labelledby={useGroupsSecurityFilterId}
                                 onRenderLabel={(props: ICheckboxProps | undefined) => (

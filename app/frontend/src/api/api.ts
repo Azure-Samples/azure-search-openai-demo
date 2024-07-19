@@ -1,11 +1,11 @@
 const BACKEND_URI = "";
 
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, SimpleAPIResponse } from "./models";
-import { useLogin, appServicesToken } from "../authConfig";
+import { useLogin, getToken, isUsingAppServicesLogin } from "../authConfig";
 
-export function getHeaders(idToken: string | undefined): Record<string, string> {
+export async function getHeaders(idToken: string | undefined): Promise<Record<string, string>> {
     // If using login and not using app services, add the id token of the logged in account as the authorization
-    if (useLogin && appServicesToken == null) {
+    if (useLogin && !isUsingAppServicesLogin) {
         if (idToken) {
             return { Authorization: `Bearer ${idToken}` };
         }
@@ -23,9 +23,10 @@ export async function configApi(): Promise<Config> {
 }
 
 export async function askApi(request: ChatAppRequest, idToken: string | undefined): Promise<ChatAppResponse> {
+    const headers = await getHeaders(idToken);
     const response = await fetch(`${BACKEND_URI}/ask`, {
         method: "POST",
-        headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
+        headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify(request)
     });
 
@@ -42,9 +43,10 @@ export async function chatApi(request: ChatAppRequest, shouldStream: boolean, id
     if (shouldStream) {
         url += "/stream";
     }
+    const headers = await getHeaders(idToken);
     return await fetch(url, {
         method: "POST",
-        headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
+        headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify(request)
     });
 }
@@ -80,7 +82,7 @@ export function getCitationFilePath(citation: string): string {
 export async function uploadFileApi(request: FormData, idToken: string): Promise<SimpleAPIResponse> {
     const response = await fetch("/upload", {
         method: "POST",
-        headers: getHeaders(idToken),
+        headers: await getHeaders(idToken),
         body: request
     });
 
@@ -93,9 +95,10 @@ export async function uploadFileApi(request: FormData, idToken: string): Promise
 }
 
 export async function deleteUploadedFileApi(filename: string, idToken: string): Promise<SimpleAPIResponse> {
+    const headers = await getHeaders(idToken);
     const response = await fetch("/delete_uploaded", {
         method: "POST",
-        headers: { ...getHeaders(idToken), "Content-Type": "application/json" },
+        headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify({ filename })
     });
 
@@ -110,7 +113,7 @@ export async function deleteUploadedFileApi(filename: string, idToken: string): 
 export async function listUploadedFilesApi(idToken: string): Promise<string[]> {
     const response = await fetch(`/list_uploaded`, {
         method: "GET",
-        headers: getHeaders(idToken)
+        headers: await getHeaders(idToken)
     });
 
     if (!response.ok) {

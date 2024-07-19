@@ -88,6 +88,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -142,6 +143,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
             tools=tools,
+            seed=seed,
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -237,5 +239,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             max_tokens=response_token_limit,
             n=1,
             stream=should_stream,
+            seed=seed,
         )
         return (extra_info, chat_coroutine)

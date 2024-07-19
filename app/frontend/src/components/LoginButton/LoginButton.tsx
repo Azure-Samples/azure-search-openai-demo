@@ -2,13 +2,23 @@ import { DefaultButton } from "@fluentui/react";
 import { useMsal } from "@azure/msal-react";
 
 import styles from "./LoginButton.module.css";
-import { getRedirectUri, loginRequest } from "../../authConfig";
-import { appServicesToken, appServicesLogout } from "../../authConfig";
+import { getRedirectUri, loginRequest, appServicesLogout, getUsername, checkLoggedIn } from "../../authConfig";
+import { useState, useEffect, useContext } from "react";
+import { LoginContext } from "../../loginContext";
 
 export const LoginButton = () => {
     const { instance } = useMsal();
+    const { loggedIn, setLoggedIn } = useContext(LoginContext);
     const activeAccount = instance.getActiveAccount();
-    const isLoggedIn = (activeAccount || appServicesToken) != null;
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+        const fetchUsername = async () => {
+            setUsername((await getUsername(instance)) ?? "");
+        };
+
+        fetchUsername();
+    }, []);
 
     const handleLoginPopup = () => {
         /**
@@ -21,7 +31,11 @@ export const LoginButton = () => {
                 ...loginRequest,
                 redirectUri: getRedirectUri()
             })
-            .catch(error => console.log(error));
+            .catch(error => console.log(error))
+            .then(async () => {
+                setLoggedIn(await checkLoggedIn(instance));
+                setUsername((await getUsername(instance)) ?? "");
+            });
     };
     const handleLogoutPopup = () => {
         if (activeAccount) {
@@ -30,17 +44,20 @@ export const LoginButton = () => {
                     mainWindowRedirectUri: "/", // redirects the top level app after logout
                     account: instance.getActiveAccount()
                 })
-                .catch(error => console.log(error));
+                .catch(error => console.log(error))
+                .then(async () => {
+                    setLoggedIn(await checkLoggedIn(instance));
+                    setUsername((await getUsername(instance)) ?? "");
+                });
         } else {
             appServicesLogout();
         }
     };
-    const logoutText = `Logout\n${activeAccount?.username ?? appServicesToken?.user_claims?.preferred_username}`;
     return (
         <DefaultButton
-            text={isLoggedIn ? logoutText : "Login"}
+            text={loggedIn ? `Logout\n${username}` : "Login"}
             className={styles.loginButton}
-            onClick={isLoggedIn ? handleLogoutPopup : handleLoginPopup}
+            onClick={loggedIn ? handleLogoutPopup : handleLoginPopup}
         ></DefaultButton>
     );
 };
