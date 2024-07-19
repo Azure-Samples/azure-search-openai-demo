@@ -8,34 +8,36 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "dev-https": "vite --host 127.0.0.1 --config vite.https.ts",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-react": "^2.0.6",
     "@azure/msal-browser": "^3.17.0",
+    "@azure/msal-react": "^2.0.6",
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.37.3",
     "@fluentui/react-icons": "^2.0.221",
     "@react-spring/web": "^9.7.3",
-    "marked": "^13.0.0",
     "dompurify": "^3.0.6",
+    "marked": "^13.0.0",
+    "ndjson-readablestream": "^1.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
-    "ndjson-readablestream": "^1.2.0",
     "react-syntax-highlighter": "^15.5.0",
     "scheduler": "^0.20.2"
   },
   "devDependencies": {
+    "@types/dom-speech-recognition": "^0.0.4",
     "@types/dompurify": "^3.0.4",
+    "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^4.3.1",
     "prettier": "^3.0.3",
     "typescript": "^5.5.3",
-    "@types/react-syntax-highlighter": "^15.5.13",
-    "@types/dom-speech-recognition": "^0.0.4",
     "vite": "^4.5.3"
   }
 }

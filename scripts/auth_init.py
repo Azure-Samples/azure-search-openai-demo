@@ -134,7 +134,14 @@ def client_app(server_app_id: str, server_app: Application, identifier: int) -> 
             redirect_uris=["http://localhost:50505/.auth/login/aad/callback"],
             implicit_grant_settings=ImplicitGrantSettings(enable_id_token_issuance=True),
         ),
-        spa=SpaApplication(redirect_uris=["http://localhost:50505/redirect", "http://localhost:5173/redirect"]),
+        spa=SpaApplication(
+            redirect_uris=[
+                "http://localhost:50505/redirect",
+                "https://localhost:50505/redirect",
+                "http://localhost:5173/redirect",
+                "https://localhost:5173/redirect",
+            ]
+        ),
         required_resource_access=[
             RequiredResourceAccess(
                 resource_app_id=server_app_id,

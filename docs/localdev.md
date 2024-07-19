@@ -40,6 +40,34 @@ Navigate to the URL shown in the terminal (in this case, `http://localhost:5173/
 
 Then, whenever you make changes to frontend files, the changes will be automatically reloaded, without any browser refresh needed.
 
+## Accessing localhost over HTTPS
+
+If you are using the user authentication feature of the app, you should only access your localhost server over HTTPS. That requires generated locally trusted certificates and then running the localhost with access to those certificates.
+
+### Generating certificates
+
+To generate certificates, you can use the `mkcert` tool. Follow the instructions on the [mkcert GitHub page](https://github.com/FiloSottile/mkcert) to install it on your operating system.
+
+Once installed, run the following command from the repository root:
+
+```shell
+mkcert --key-file localcert_key.pem --cert-file localcert.pem 127.0.0.1 localhost
+```
+
+This will generate two files: `localcert_key.pem` and `localcert.pem`. These files will be used to run the localhost server with HTTPS.
+
+### Running the localhost server with HTTPS
+
+If you are running the localhost server by running `./start.ps1` or `./start.sh`, then it will automatically pass in the certificates to the server when `AZURE_USE_AUTHENTICATION` is true, using the `certfile` and `keyfile` arguments.
+
+To run the frontend server with HTTPS, you can use the following command:
+
+```shell
+npm run dev-https
+```
+
+If you are using the VS Code debugger to run the local server, then use "Backend (HTTPS)" and "Frontend (HTTPS)", which are configured to use the certificates.
+
 ## Using a local OpenAI-compatible API
 
 You may want to save costs by developing against a local LLM server, such as

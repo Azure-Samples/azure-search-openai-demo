@@ -149,3 +149,7 @@ static/
 data/**/*.md5
 
 .DS_Store
+
+localcert.pem
+localcert_key.pem
+*.pem

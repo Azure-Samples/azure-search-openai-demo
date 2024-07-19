@@ -34,7 +34,9 @@ async def main():
                 spa=SpaApplication(
                     redirect_uris=[
                         "http://localhost:50505/redirect",
+                        "https://localhost:50505/redirect",
                         "http://localhost:5173/redirect",
+                        "https://localhost:5173/redirect",
                         f"{uri}/redirect",
                     ]
                 ),
