@@ -10,6 +10,7 @@ interface AppServicesToken {
     id_token: string;
     access_token: string;
     user_claims: Record<string, any>;
+    expires_on: string;
 }
 
 interface AuthSetup {
@@ -92,29 +93,66 @@ export const getRedirectUri = () => {
     return window.location.origin + authSetup.msalConfig.auth.redirectUri;
 };
 
-// Get an access token if a user logged in using app services authentication
-// Returns null if the app doesn't support app services authentication
+// Cache the app services token if it's available
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this#global_context
+declare global {
+    var cachedAppServicesToken: AppServicesToken | null;
+}
+globalThis.cachedAppServicesToken = null;
+
+/**
+ * Retrieves an access token if the user is logged in using app services authentication.
+ * Checks if the current token is expired and fetches a new token if necessary.
+ * Returns null if the app doesn't support app services authentication.
+ *
+ * @returns {Promise<AppServicesToken | null>} A promise that resolves to an AppServicesToken if the user is authenticated, or null if authentication is not supported or fails.
+ */
 const getAppServicesToken = (): Promise<AppServicesToken | null> => {
-    return fetch(appServicesAuthTokenRefreshUrl).then(r => {
-        if (r.ok) {
-            return fetch(appServicesAuthTokenUrl).then(r => {
+    const checkNotExpired = (appServicesToken: AppServicesToken) => {
+        const currentDate = new Date();
+        const expiresOnDate = new Date(appServicesToken.expires_on);
+        return expiresOnDate > currentDate;
+    };
+
+    if (globalThis.cachedAppServicesToken && checkNotExpired(globalThis.cachedAppServicesToken)) {
+        return Promise.resolve(globalThis.cachedAppServicesToken);
+    }
+
+    const getAppServicesTokenFromMe: () => Promise<AppServicesToken | null> = () => {
+        return fetch(appServicesAuthTokenUrl).then(r => {
+            if (r.ok) {
+                return r.json().then(json => {
+                    if (json.length > 0) {
+                        return {
+                            id_token: json[0]["id_token"] as string,
+                            access_token: json[0]["access_token"] as string,
+                            user_claims: json[0]["user_claims"].reduce((acc: Record<string, any>, item: Record<string, any>) => {
+                                acc[item.typ] = item.val;
+                                return acc;
+                            }, {}) as Record<string, any>,
+                            expires_on: json[0]["expires_on"] as string
+                        } as AppServicesToken;
+                    }
+
+                    return null;
+                });
+            }
+
+            return null;
+        });
+    };
+
+    return getAppServicesTokenFromMe().then(token => {
+        if (token) {
+            if (checkNotExpired(token)) {
+                globalThis.cachedAppServicesToken = token;
+                return token;
+            }
+
+            return fetch(appServicesAuthTokenRefreshUrl).then(r => {
                 if (r.ok) {
-                    return r.json().then(json => {
-                        if (json.length > 0) {
-                            return {
-                                id_token: json[0]["id_token"] as string,
-                                access_token: json[0]["access_token"] as string,
-                                user_claims: json[0]["user_claims"].reduce((acc: Record<string, any>, item: Record<string, any>) => {
-                                    acc[item.typ] = item.val;
-                                    return acc;
-                                }, {}) as Record<string, any>
-                            };
-                        }
-
-                        return null;
-                    });
+                    return getAppServicesTokenFromMe();
                 }
-
                 return null;
             });
         }
@@ -123,7 +161,7 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
     });
 };
 
-export const appServicesToken = await getAppServicesToken();
+export const isUsingAppServicesLogin = (await getAppServicesToken()) != null;
 
 // Sign out of app services
 // Learn more at https://learn.microsoft.com/azure/app-service/configure-authentication-customize-sign-in-out#sign-out-of-a-session
@@ -131,16 +169,32 @@ export const appServicesLogout = () => {
     window.location.href = appServicesAuthLogoutUrl;
 };
 
-// Determine if the user is logged in
-// The user may have logged in either using the app services login or the on-page login
-export const isLoggedIn = (client: IPublicClientApplication | undefined): boolean => {
-    return client?.getActiveAccount() != null || appServicesToken != null;
+/**
+ * Determines if the user is logged in either via the MSAL public client application or the app services login.
+ * @param {IPublicClientApplication | undefined} client - The MSAL public client application instance, or undefined if not available.
+ * @returns {Promise<boolean>} A promise that resolves to true if the user is logged in, false otherwise.
+ */
+export const checkLoggedIn = async (client: IPublicClientApplication | undefined): Promise<boolean> => {
+    if (client) {
+        const activeAccount = client.getActiveAccount();
+        if (activeAccount) {
+            return true;
+        }
+    }
+
+    const appServicesToken = await getAppServicesToken();
+    if (appServicesToken) {
+        return true;
+    }
+
+    return false;
 };
 
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
 // Use the access token from app services login if available
-export const getToken = (client: IPublicClientApplication): Promise<string | undefined> => {
+export const getToken = async (client: IPublicClientApplication): Promise<string | undefined> => {
+    const appServicesToken = await getAppServicesToken();
     if (appServicesToken) {
         return Promise.resolve(appServicesToken.access_token);
     }
@@ -155,4 +209,44 @@ export const getToken = (client: IPublicClientApplication): Promise<string | und
             console.log(error);
             return undefined;
         });
+};
+
+/**
+ * Retrieves the username of the active account.
+ * If no active account is found, attempts to retrieve the username from the app services login token if available.
+ * @param {IPublicClientApplication} client - The MSAL public client application instance.
+ * @returns {Promise<string | null>} The username of the active account, or null if no username is found.
+ */
+export const getUsername = async (client: IPublicClientApplication): Promise<string | null> => {
+    const activeAccount = client.getActiveAccount();
+    if (activeAccount) {
+        return activeAccount.username;
+    }
+
+    const appServicesToken = await getAppServicesToken();
+    if (appServicesToken?.user_claims) {
+        return appServicesToken.user_claims.preferred_username;
+    }
+
+    return null;
+};
+
+/**
+ * Retrieves the token claims of the active account.
+ * If no active account is found, attempts to retrieve the token claims from the app services login token if available.
+ * @param {IPublicClientApplication} client - The MSAL public client application instance.
+ * @returns {Promise<Record<string, unknown> | undefined>} A promise that resolves to the token claims of the active account, the user claims from the app services login token, or undefined if no claims are found.
+ */
+export const getTokenClaims = async (client: IPublicClientApplication): Promise<Record<string, unknown> | undefined> => {
+    const activeAccount = client.getActiveAccount();
+    if (activeAccount) {
+        return activeAccount.idTokenClaims;
+    }
+
+    const appServicesToken = await getAppServicesToken();
+    if (appServicesToken) {
+        return appServicesToken.user_claims;
+    }
+
+    return undefined;
 };
