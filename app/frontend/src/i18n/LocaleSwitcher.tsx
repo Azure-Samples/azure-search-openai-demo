@@ -13,7 +13,7 @@ interface Props {
 export const LocaleSwitcher = ({ onLanguageChange }: Props) => {
     const { i18n } = useTranslation();
 
-    const handleLanguageChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<String> | undefined) => {
+    const handleLanguageChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<string> | undefined) => {
         onLanguageChange(option?.data || i18n.language);
     };
     const localeSwitcherId = useId("localSwitcher");
