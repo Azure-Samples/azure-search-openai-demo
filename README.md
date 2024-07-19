@@ -2,36 +2,38 @@
 
 This solution's backend is written in Python. There are also [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one. Learn more about [developing AI apps using Azure AI Services](https://aka.ms/azai).
 
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
+[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+
 ## Table of Contents
 
 - [Features](#features)
 - [Azure account requirements](#azure-account-requirements)
-- [Azure deployment](#azure-deployment)
   - [Cost estimation](#cost-estimation)
-  - [Project setup](#project-setup)
-    - [GitHub Codespaces](#github-codespaces)
-    - [VS Code Dev Containers](#vs-code-dev-containers)
-    - [Local environment](#local-environment)
-  - [Deploying](#deploying)
+- [Getting Started](#getting-started)
+  - [GitHub Codespaces](#github-codespaces)
+  - [VS Code Dev Containers](#vs-code-dev-containers)
+  - [Local environment](#local-environment)
+- [Deploying](#deploying)
   - [Deploying again](#deploying-again)
-- [Sharing environments](#sharing-environments)
-- [Using the app](#using-the-app)
+  - [Sharing environments](#sharing-environments)
 - [Running locally](#running-locally)
-- [Monitoring with Application Insights](#monitoring-with-application-insights)
-- [Customizing the UI and data](#customizing-the-ui-and-data)
-- [Productionizing](#productionizing)
+- [Using the app](#using-the-app)
 - [Clean up](#clean-up)
-- [Troubleshooting](#troubleshooting)
-- [Resources](#resources)
+- [Guidance](#guidance)
+  - [Customizing the UI and data](#customizing-the-ui-and-data)
+  - [Monitoring with Application Insights](#monitoring-with-application-insights)
+  - [Productionizing](#productionizing)
+  - [Troubleshooting](#troubleshooting)
+  - [Resources](#resources)
 
-[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
-[![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
+![Chat screen](docs/images/chatscreen.png)
+
+[📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
 
 This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access a GPT model (gpt-35-turbo), and Azure AI Search for data indexing and retrieval.
 
 The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
-
-![RAG Architecture](docs/images/appcomponents.png)
 
 ## Features
 
@@ -44,9 +46,9 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - Optional automation of [user login and data access](/docs/login_and_acl.md) via Microsoft Entra
 - Performance tracing and monitoring with Application Insights
 
-![Chat screen](docs/images/chatscreen.png)
+### Architecture Diagram
 
-[📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
+![RAG Architecture](docs/images/appcomponents.png)
 
 ## Azure account requirements
 
@@ -57,8 +59,6 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - **Azure account permissions**:
   - Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner). If you don't have subscription-level permissions, you must be granted [RBAC](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview) for an existing resource group and [deploy to that existing group](docs/deploy_existing.md#resource-group).
   - Your Azure account also needs `Microsoft.Resources/deployments/write` permissions on the subscription level.
-
-## Azure deployment
 
 ### Cost estimation
 
@@ -78,13 +78,13 @@ See this guide on [deploying with minimal costs](docs/deploy_lowcost.md) for mor
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
-### Project setup
+## Getting Started
 
 You have a few options for setting up this project.
 The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
 but you can also [set it up locally](#local-environment) if desired.
 
-#### GitHub Codespaces
+### GitHub Codespaces
 
 You can run this repo virtually by using GitHub Codespaces, which will open a web-based VS Code in your browser:
 
@@ -92,16 +92,17 @@ You can run this repo virtually by using GitHub Codespaces, which will open a we
 
 Once the codespace opens (this may take several minutes), open a terminal window.
 
-#### VS Code Dev Containers
+### VS Code Dev Containers
 
 A related option is VS Code Dev Containers, which will open the project in your local VS Code using the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):
 
 1. Start Docker Desktop (install it if not already installed)
-1. Open the project:
+2. Open the project:
     [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
-1. In the VS Code window that opens, once the project files show up (this may take several minutes), open a terminal window.
 
-#### Local environment
+3. In the VS Code window that opens, once the project files show up (this may take several minutes), open a terminal window.
+
+### Local environment
 
 1. Install the required tools:
 
@@ -123,7 +124,7 @@ A related option is VS Code Dev Containers, which will open the project in your 
 
     Note that this command will initialize a git repository, so you do not need to clone this repository.
 
-### Deploying
+## Deploying
 
 Follow these steps to provision Azure resources and deploy the application code:
 
@@ -162,7 +163,7 @@ If you've changed the infrastructure files (`infra` folder or `azure.yaml`), the
 
 ```azd up```
 
-## Sharing environments
+#### Sharing environments
 
 To give someone else access to a completely deployed and existing environment,
 either you or they can follow these steps:
@@ -176,7 +177,7 @@ either you or they can follow these steps:
 
 ## Running locally
 
-You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
+You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the [deploying](#deploying) steps above.
 
 1. Run `azd auth login`
 2. Change dir to `app`
@@ -195,7 +196,25 @@ Once in the web app:
 - Explore citations and sources
 - Click on "settings" to try different options, tweak prompts, etc.
 
-## Monitoring with Application Insights
+## Clean up
+
+To clean up all the resources created by this sample:
+
+1. Run `azd down`
+2. When asked if you are sure you want to continue, enter `y`
+3. When asked if you want to permanently delete the resources, enter `y`
+
+The resource group and all the resources will be deleted.
+
+## Guidance
+
+Besides the tips below, you can find extensive documentation in the [docs](docs/README.md) folder.
+
+### Customizing the UI and data
+
+Once you successfully deploy the app, you can start customizing it for your needs: changing the text, tweaking the prompts, and replacing the data. Consult the [app customization guide](docs/customization.md) as well as the [data ingestion guide](docs/data_ingestion.md) for more details.
+
+### Monitoring with Application Insights
 
 By default, deployed apps use Application Insights for the tracing of each request, along with the logging of errors.
 
@@ -212,27 +231,13 @@ You can also see chart summaries on a dashboard by running the following command
 azd monitor
 ```
 
-## Customizing the UI and data
-
-Once you successfully deploy the app, you can start customizing it for your needs: changing the text, tweaking the prompts, and replacing the data. Consult the [app customization guide](docs/customization.md) as well as the [data ingestion guide](docs/data_ingestion.md) for more details.
-
-## Productionizing
+### Productionizing
 
 This sample is designed to be a starting point for your own production application,
 but you should do a thorough review of the security and performance before deploying
 to production. Read through our [productionizing guide](docs/productionizing.md) for more details.
 
-## Clean up
-
-To clean up all the resources created by this sample:
-
-1. Run `azd down`
-2. When asked if you are sure you want to continue, enter `y`
-3. When asked if you want to permanently delete the resources, enter `y`
-
-The resource group and all the resources will be deleted.
-
-## Troubleshooting
+### Troubleshooting
 
 Here are the most common failure scenarios and solutions:
 
@@ -248,7 +253,7 @@ Here are the most common failure scenarios and solutions:
 
 1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app, consult the [guide on debugging App Service deployments](docs/appservice.md). Please file an issue if the logs don't help you resolve the error.
 
-## Resources
+### Resources
 
 - [Additional documentation for this app](docs/README.md)
 - [📖 Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and AI Search](https://aka.ms/entgptsearchblog)
