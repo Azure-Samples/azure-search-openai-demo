@@ -9,24 +9,21 @@ This solution's backend is written in Python. There are also [**JavaScript**](ht
 
 - [Features](#features)
 - [Azure account requirements](#azure-account-requirements)
-- [Azure deployment](#azure-deployment)
   - [Cost estimation](#cost-estimation)
-- [Getting started](#getting-started)
-  - [Project setup](#project-setup)
-    - [GitHub Codespaces](#github-codespaces)
-    - [VS Code Dev Containers](#vs-code-dev-containers)
-    - [Local environment](#local-environment)
-  - [Quickstart](#quickstart)
-    - [Deploying](#deploying)
-    - [Deploying again](#deploying-again)
-    - [Sharing environments](#sharing-environments)
-    - [Running locally](#running-locally)
-    - [Using the app](#using-the-app)
-    - [Monitoring with Application Insights](#monitoring-with-application-insights)
-    - [Customizing the UI and data](#customizing-the-ui-and-data)
-    - [Productionizing](#productionizing)
-    - [Clean up](#clean-up)
+- [Getting Started](#getting-started)
+  - [GitHub Codespaces](#github-codespaces)
+  - [VS Code Dev Containers](#vs-code-dev-containers)
+  - [Local environment](#local-environment)
+- [Deploying](#deploying)
+  - [Deploying again](#deploying-again)
+  - [Sharing environments](#sharing-environments)
+- [Running locally](#running-locally)
+- [Using the app](#using-the-app)
+- [Clean up](#clean-up)
 - [Guidance](#guidance)
+  - [Customizing the UI and data](#customizing-the-ui-and-data)
+  - [Monitoring with Application Insights](#monitoring-with-application-insights)
+  - [Productionizing](#productionizing)
   - [Troubleshooting](#troubleshooting)
   - [Resources](#resources)
 
@@ -53,7 +50,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ![RAG Architecture](docs/images/appcomponents.png)
 
-### Azure account requirements
+## Azure account requirements
 
 **IMPORTANT:** In order to deploy and run this example, you'll need:
 
@@ -63,9 +60,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
   - Your Azure account must have `Microsoft.Authorization/roleAssignments/write` permissions, such as [Role Based Access Control Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview), [User Access Administrator](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator), or [Owner](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#owner). If you don't have subscription-level permissions, you must be granted [RBAC](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#role-based-access-control-administrator-preview) for an existing resource group and [deploy to that existing group](docs/deploy_existing.md#resource-group).
   - Your Azure account also needs `Microsoft.Resources/deployments/write` permissions on the subscription level.
 
-## Azure Deployment
-
-#### Cost estimation
+### Cost estimation
 
 Pricing varies per region and usage, so it isn't possible to predict exact costs for your usage.
 However, you can try the [Azure pricing calculator](https://azure.com/e/d18187516e9e421e925b3b311eec8aae) for the resources below.
@@ -83,9 +78,7 @@ See this guide on [deploying with minimal costs](docs/deploy_lowcost.md) for mor
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
-## Getting started
-
-### Project setup
+## Getting Started
 
 You have a few options for setting up this project.
 The easiest way to get started is GitHub Codespaces, since it will setup all the tools for you,
@@ -131,9 +124,7 @@ A related option is VS Code Dev Containers, which will open the project in your 
 
     Note that this command will initialize a git repository, so you do not need to clone this repository.
 
-### Quickstart
-
-#### Deploying
+## Deploying
 
 Follow these steps to provision Azure resources and deploy the application code:
 
@@ -162,7 +153,7 @@ It will look like the following:
 
 > NOTE: It may take 5-10 minutes after you see 'SUCCESS' for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page. See [guide on debugging App Service deployments](docs/appservice.md).
 
-#### Deploying again
+### Deploying again
 
 If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
 
@@ -184,9 +175,9 @@ either you or they can follow these steps:
 1. Set the environment variable `AZURE_PRINCIPAL_ID` either in that `.env` file or in the active shell to their Azure ID, which they can get with `az ad signed-in-user show`.
 1. Run `./scripts/roles.ps1` or `.scripts/roles.sh` to assign all of the necessary roles to the user.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Once the script runs, they should be able to run the app locally.
 
-#### Running locally
+## Running locally
 
-You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](#azure-deployment) above.
+You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the [deploying](#deploying) steps above.
 
 1. Run `azd auth login`
 2. Change dir to `app`
@@ -194,7 +185,7 @@ You can only run locally **after** having successfully run the `azd up` command.
 
 See more tips in [the local development guide](docs/localdev.md).
 
-#### Using the app
+## Using the app
 
 - In Azure: navigate to the Azure WebApp deployed by azd. The URL is printed out when azd completes (as "Endpoint"), or you can find it in the Azure portal.
 - Running locally: navigate to 127.0.0.1:50505
@@ -205,7 +196,25 @@ Once in the web app:
 - Explore citations and sources
 - Click on "settings" to try different options, tweak prompts, etc.
 
-#### Monitoring with Application Insights
+## Clean up
+
+To clean up all the resources created by this sample:
+
+1. Run `azd down`
+2. When asked if you are sure you want to continue, enter `y`
+3. When asked if you want to permanently delete the resources, enter `y`
+
+The resource group and all the resources will be deleted.
+
+## Guidance
+
+Besides the tips below, you can find extensive documentation in the [docs](docs/README.md) folder.
+
+### Customizing the UI and data
+
+Once you successfully deploy the app, you can start customizing it for your needs: changing the text, tweaking the prompts, and replacing the data. Consult the [app customization guide](docs/customization.md) as well as the [data ingestion guide](docs/data_ingestion.md) for more details.
+
+### Monitoring with Application Insights
 
 By default, deployed apps use Application Insights for the tracing of each request, along with the logging of errors.
 
@@ -222,27 +231,11 @@ You can also see chart summaries on a dashboard by running the following command
 azd monitor
 ```
 
-#### Customizing the UI and data
-
-Once you successfully deploy the app, you can start customizing it for your needs: changing the text, tweaking the prompts, and replacing the data. Consult the [app customization guide](docs/customization.md) as well as the [data ingestion guide](docs/data_ingestion.md) for more details.
-
-#### Productionizing
+### Productionizing
 
 This sample is designed to be a starting point for your own production application,
 but you should do a thorough review of the security and performance before deploying
 to production. Read through our [productionizing guide](docs/productionizing.md) for more details.
-
-#### Clean up
-
-To clean up all the resources created by this sample:
-
-1. Run `azd down`
-2. When asked if you are sure you want to continue, enter `y`
-3. When asked if you want to permanently delete the resources, enter `y`
-
-The resource group and all the resources will be deleted.
-
-## Guidance
 
 ### Troubleshooting
 
