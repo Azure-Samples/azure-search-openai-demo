@@ -2,11 +2,7 @@ import { Example } from "./Example";
 
 import styles from "./Example.module.css";
 
-const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
-];
+const DEFAULT_EXAMPLES: string[] = ["Can you give me some nutrition advise?", "Is my blood glucose level stable?", "What should I eat?"];
 
 const GPT4V_EXAMPLES: string[] = [
     "Compare the impact of interest rates and GDP in financial markets.",
