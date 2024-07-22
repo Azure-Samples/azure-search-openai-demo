@@ -16,7 +16,7 @@
     "@azure/msal-browser": "^3.17.0",
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.37.3",
-    "@fluentui/react-icons": "^2.0.221",
+    "@fluentui/react-icons": "^2.0.249",
     "@react-spring/web": "^9.7.3",
     "marked": "^13.0.0",
     "dompurify": "^3.0.6",
