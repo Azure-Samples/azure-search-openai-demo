@@ -3,7 +3,7 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "write an email to a parent  explaining the college position on AI?",
+    "Write an email to a parent  explaining the college position on AI?",
     "I am a new member of staff. Please explain the process of organising an educational trip for my students",
     "Can you summarise the course structure of L3 Equine?"
 ];
