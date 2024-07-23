@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
+import { EmojiSparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
 
