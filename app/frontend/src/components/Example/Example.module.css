@@ -27,8 +27,9 @@
 }
 
 .exampleText {
+    color: #f2f2f2;
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     width: 25rem;
     padding: 0.5rem;
     min-height: 4.5rem;
