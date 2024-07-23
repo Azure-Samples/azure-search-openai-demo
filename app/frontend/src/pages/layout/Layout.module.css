@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #222222;
+    background-color: #123bb6;
     color: #f2f2f2;
 }
 
@@ -39,7 +39,7 @@
     z-index: 100;
     display: none;
     flex-direction: column;
-    background-color: #222222;
+    background-color: #123bb6;
     position: absolute;
     top: 2.7rem;
     right: 0;
