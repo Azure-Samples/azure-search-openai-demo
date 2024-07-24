@@ -79,6 +79,6 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
 }
 
 
-output appSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[2].id : ''
+output appSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[1].id : ''
 output backendSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[0].id : ''
 output vnetName string = usePrivateEndpoint ? vnet.outputs.name : ''
