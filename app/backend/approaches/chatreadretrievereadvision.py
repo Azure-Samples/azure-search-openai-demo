@@ -110,6 +110,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         ],
     ]:
+        seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -149,6 +150,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=query_response_token_limit,
             n=1,
+            seed=seed,
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -262,5 +264,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             max_tokens=response_token_limit,
             n=1,
             stream=should_stream,
+            seed=seed,
         )
         return (extra_info, chat_coroutine)

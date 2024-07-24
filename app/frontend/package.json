@@ -7,18 +7,18 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-react": "^2.0.6",
+    "@azure/msal-react": "^2.0.21",
     "@azure/msal-browser": "^3.17.0",
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.37.3",
-    "@fluentui/react-icons": "^2.0.221",
+    "@fluentui/react-icons": "^2.0.249",
     "@react-spring/web": "^9.7.3",
-    "marked": "^13.0.0",
+    "marked": "^13.0.2",
     "dompurify": "^3.0.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -31,7 +31,7 @@
     "@types/dompurify": "^3.0.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.1.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "prettier": "^3.0.3",
     "typescript": "^5.5.3",
     "@types/react-syntax-highlighter": "^15.5.13",
