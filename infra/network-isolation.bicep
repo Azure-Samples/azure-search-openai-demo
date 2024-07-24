@@ -50,32 +50,6 @@ var securityRules = [
       direction: 'Outbound'
     }
   }
-  {
-    name: 'DenyAllInBound'
-    properties: {
-      protocol: '*'
-      sourcePortRange: '*'
-      sourceAddressPrefix: '*'
-      destinationPortRange: '*'
-      destinationAddressPrefix: '*'
-      access: 'Deny'
-      priority: 1000
-      direction: 'Inbound'
-    }
-  }
-  {
-    name: 'DenyAllOutBound'
-    properties: {
-      protocol: '*'
-      sourcePortRange: '*'
-      destinationPortRange: '*'
-      sourceAddressPrefix: '*'
-      destinationAddressPrefix: '*'
-      access: 'Deny'
-      priority: 1000
-      direction: 'Outbound'
-    }
-  }
 ]
 
 module backendNsg 'br/public:avm/res/network/network-security-group:0.3.1' = {
