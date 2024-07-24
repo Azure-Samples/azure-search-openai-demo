@@ -21,17 +21,76 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
   name: appServicePlanName
 }
 
-module backendNsg './core/networking/nsg.bicep' = if (usePrivateEndpoint) {
-  name: 'backendNsg'
+
+
+var securityRules = [
+  {
+    name: 'AllowHttpsInBound'
+    properties: {
+      protocol: 'Tcp'
+      sourcePortRange: '*'
+      sourceAddressPrefix: 'Internet'
+      destinationPortRange: '443'
+      destinationAddressPrefix: '*'
+      access: 'Allow'
+      priority: 100
+      direction: 'Inbound'
+    }
+  }
+  {
+    name: 'AllowHttpsOutBound'
+    properties: {
+      protocol: 'Tcp'
+      sourcePortRange: '*'
+      sourceAddressPrefix: 'Internet'
+      destinationPortRange: '443'
+      destinationAddressPrefix: '*'
+      access: 'Allow'
+      priority: 100
+      direction: 'Outbound'
+    }
+  }
+  {
+    name: 'DenyAllInBound'
+    properties: {
+      protocol: '*'
+      sourcePortRange: '*'
+      sourceAddressPrefix: '*'
+      destinationPortRange: '*'
+      destinationAddressPrefix: '*'
+      access: 'Deny'
+      priority: 1000
+      direction: 'Inbound'
+    }
+  }
+  {
+    name: 'DenyAllOutBound'
+    properties: {
+      protocol: '*'
+      sourcePortRange: '*'
+      destinationPortRange: '*'
+      sourceAddressPrefix: '*'
+      destinationAddressPrefix: '*'
+      access: 'Deny'
+      priority: 1000
+      direction: 'Outbound'
+    }
+  }
+]
+
+module backendNsg 'br/public:avm/res/network/network-security-group:0.3.1' = {
+  name: 'backendNsgDeployment'
   params: {
-    name: nsgName
+    name: 'backendNsg'
+    // Non-required parameters
     location: location
+    securityRules: securityRules
     tags: tags
   }
 }
 
-module appNsg './core/networking/nsg.bicep' = if (usePrivateEndpoint) {
-  name: 'appNsg'
+module appNsg 'br/public:avm/res/network/network-security-group:0.3.1' = if (usePrivateEndpoint) {
+  name: 'appNsgDeployment'
   params: {
     name: nsgName
     location: location
@@ -53,7 +112,7 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: usePrivateEndpoint ? backendNsg.outputs.id : ''
+            id: usePrivateEndpoint ? backendNsg.outputs.resourceId : ''
           }
         }
       }
@@ -64,7 +123,7 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: usePrivateEndpoint ? appNsg.outputs.id : ''
+            id: usePrivateEndpoint ? appNsg.outputs.resourceId : ''
           }
           delegations: [
             {
