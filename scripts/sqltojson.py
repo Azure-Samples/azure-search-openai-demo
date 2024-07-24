@@ -15,7 +15,7 @@ except pyodbc.Error as ex:
     print("Error:", ex)
     exit(1)
 
-query = "SELECT  [surname] as staff_surname ,[forename1] as staff_forename, [dept_party_nm]as dept, [job_title],[boss_surname] as manager_surname FROM [Mich].[dbo].[ManagerDept]"
+query = "SELECT TOP (1000) [surname],[firstname] ,[job_title],[dept],[cn] as Fullname ,[mail],[samaccountname],[Phone],[managername],[managermail] FROM [Mich].[dbo].[ManagerDeptAD]"
 cursor = conn.cursor()
 cursor.execute(query)
 
@@ -27,25 +27,14 @@ data = []
 for row in cursor.fetchall():
     data.append(dict(zip(columns, row)))
 
-# Print the number of records fetched
-print(f"Number of records fetched: {len(data)}")
+# Specify the path for the output JSON file
+output_file_path = 'c:/NKCAI/nkcai/data/managerdept/ManagerDeptAD.json'
 
-# Specify the directory where you want to save the JSON files
-output_dir_path = 'c:/NKCAI/nkcai/data/managerdept/'
+# Convert the entire data list to JSON
+all_records_json = json.dumps(data, indent=4)
 
-# Make sure the directory exists
-os.makedirs(output_dir_path, exist_ok=True)
+# Write the JSON data to a single file
+with open(output_file_path, 'w') as f:
+    f.write(all_records_json)
 
-# Loop through the data list
-for i, record in enumerate(data):
-    # Convert dictionary to JSON
-    json_data = json.dumps(record, indent=4)
-    
-    
-     # Create a unique file name for each record using the surname
-    output_file_path = os.path.join(output_dir_path, f'{record["staff_surname"]}_{i}.json')
-    
-    # Write JSON data to a file
-    with open(output_file_path, 'w') as f:
-        f.write(json_data)
-    print(f"Data written to {output_file_path}")
+print(f"All records written to {output_file_path}")
