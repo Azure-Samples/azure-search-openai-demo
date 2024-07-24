@@ -706,6 +706,7 @@ module isolation 'network-isolation.bicep' = {
     location: location
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
+    nsgName: '${abbrs.networkNetworkSecurityGroups}${resourceToken}'
     appServicePlanName: appServicePlan.outputs.name
     usePrivateEndpoint: usePrivateEndpoint
   }

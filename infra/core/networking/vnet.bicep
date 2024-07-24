@@ -1,4 +1,4 @@
-metadata description = 'Creates a virtual network with 3 subnets (for AI, Azure Bastion, App Service).'
+metadata description = 'Creates a virtual network with 2 subnets (for AI, App Service).'
 
 @description('The location for the VNet')
 param location string

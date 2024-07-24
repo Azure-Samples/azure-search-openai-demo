@@ -3,6 +3,9 @@ metadata description = 'Sets up private networking for all resources, using VNet
 @description('The name of the VNet to create')
 param vnetName string
 
+@description('The name of the NSG to create')
+param nsgName string
+
 @description('The location to create the VNet and private endpoints')
 param location string = resourceGroup().location
 
@@ -18,6 +21,15 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
   name: appServicePlanName
 }
 
+module nsg './core/networking/nsg.bicep' = if (usePrivateEndpoint) {
+  name: 'nsg'
+  params: {
+    name: nsgName
+    location: location
+    tags: tags
+  }
+}
+
 module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
   name: 'vnet'
   params: {
@@ -31,14 +43,9 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           addressPrefix: '10.0.1.0/24'
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
-        }
-      }
-      {
-        name: 'AzureBastionSubnet'
-        properties: {
-          addressPrefix: '10.0.2.0/24'
-          privateEndpointNetworkPolicies: 'Enabled'
-          privateLinkServiceNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: usePrivateEndpoint ? nsg.outputs.id : ''
+          }
         }
       }
       {
@@ -47,6 +54,9 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           addressPrefix: '10.0.3.0/24'
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
+          networkSecurityGroup: {
+            id: usePrivateEndpoint ? nsg.outputs.id : ''
+          }
           delegations: [
             {
               id: appServicePlan.id
