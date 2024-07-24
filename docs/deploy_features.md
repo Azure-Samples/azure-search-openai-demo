@@ -105,6 +105,21 @@ If you have already deployed:
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
 
+## Enabling Language Picker
+
+You can optionally enable the language picker to allow users to switch between different languages. Currently, the app supports the following languages:
+
+- English
+- Spanish
+- French
+- Japanese
+
+To add support for additional languages, create new locale files and update `app/frontend/src/i18n/config.ts` accordingly. To enable language picker, run:
+
+```shell
+azd env set ENABLE_LANGUAGE_PICKER true
+```
+
 ## Enabling speech input/output
 
 [📺 Watch a short video of speech input/output](https://www.youtube.com/watch?v=BwiHUjlLY_U)
