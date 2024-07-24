@@ -21,8 +21,17 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
   name: appServicePlanName
 }
 
-module nsg './core/networking/nsg.bicep' = if (usePrivateEndpoint) {
-  name: 'nsg'
+module backendNsg './core/networking/nsg.bicep' = if (usePrivateEndpoint) {
+  name: 'backendNsg'
+  params: {
+    name: nsgName
+    location: location
+    tags: tags
+  }
+}
+
+module appNsg './core/networking/nsg.bicep' = if (usePrivateEndpoint) {
+  name: 'appNsg'
   params: {
     name: nsgName
     location: location
@@ -44,7 +53,7 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: usePrivateEndpoint ? nsg.outputs.id : ''
+            id: usePrivateEndpoint ? backendNsg.outputs.id : ''
           }
         }
       }
@@ -55,7 +64,7 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
           networkSecurityGroup: {
-            id: usePrivateEndpoint ? nsg.outputs.id : ''
+            id: usePrivateEndpoint ? appNsg.outputs.id : ''
           }
           delegations: [
             {

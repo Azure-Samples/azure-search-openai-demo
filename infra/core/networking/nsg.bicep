@@ -24,6 +24,19 @@ param securityRules array = [
     }
   }
   {
+    name: 'AllowHttpsOutBound'
+    properties: {
+      protocol: 'Tcp'
+      sourcePortRange: '*'
+      sourceAddressPrefix: 'Internet'
+      destinationPortRange: '443'
+      destinationAddressPrefix: '*'
+      access: 'Allow'
+      priority: 100
+      direction: 'Outbound'
+    }
+  }
+  {
     name: 'DenyAllInBound'
     properties: {
       protocol: '*'
