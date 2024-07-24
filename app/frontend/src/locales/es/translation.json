@@ -36,7 +36,8 @@
         "3": "¿Puedes identificar alguna correlación entre los precios del petróleo y las tendencias del mercado de valores?",
         "placeholder": "Ejemplo: ¿Mi plan cubre exámenes anuales de la vista?"
     },
-    "generatingAnswer": "generandoRespuesta",
+    "generatingAnswer": "Generando respuesta",
+    "citationWithColon": "Cita:",
 
     "tooltips": {
         "submitQuestion": "Enviar pregunta",
@@ -56,13 +57,16 @@
     },
 
     "labels": {
+        "toggleMenu": "Alternar menú",
+        "languagePicker": "Seleccione su idioma",
         "headerText": "Configurar la generación de respuestas",
         "closeButton": "Cerrar",
         "promptTemplate": "Sobrescribir plantilla de aviso",
         "temperature": "Temperatura",
+        "seed": "Seed",
         "minimumSearchScore": "Puntaje mínimo de búsqueda",
         "minimumRerankerScore": "Puntaje mínimo de re-clasificación",
-        "retrieveCount": "Recupera estos muchos resultados de búsqueda:",
+        "retrieveCount": "Obtén éste número resultados de búsqueda:",
         "excludeCategory": "Excluir categoría",
         "useSemanticRanker": "Usar clasificador semántico para la recuperación",
         "useSemanticCaptions": "Usar subtítulos semánticos",

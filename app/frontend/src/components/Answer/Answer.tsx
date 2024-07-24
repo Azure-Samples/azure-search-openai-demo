@@ -53,7 +53,7 @@ export const Answer = ({
                             style={{ color: "black" }}
                             iconProps={{ iconName: "Lightbulb" }}
                             title={t("tooltips.showThoughtProcess")}
-                            ariaLabel="Show thought process"
+                            ariaLabel={t("tooltips.showThoughtProcess")}
                             onClick={() => onThoughtProcessClicked()}
                             disabled={!answer.context.thoughts?.length}
                         />
@@ -61,7 +61,7 @@ export const Answer = ({
                             style={{ color: "black" }}
                             iconProps={{ iconName: "ClipboardList" }}
                             title={t("tooltips.showSupportingContent")}
-                            ariaLabel="Show supporting content"
+                            ariaLabel={t("tooltips.showSupportingContent")}
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.context.data_points}
                         />
@@ -78,7 +78,7 @@ export const Answer = ({
             {!!parsedAnswer.citations.length && (
                 <Stack.Item>
                     <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
-                        <span className={styles.citationLearnMore}>{t("headerTexts.citation")}:</span>
+                        <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
                         {parsedAnswer.citations.map((x, i) => {
                             const path = getCitationFilePath(x);
                             return (

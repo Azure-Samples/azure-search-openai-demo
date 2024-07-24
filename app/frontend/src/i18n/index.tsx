@@ -1,1 +1,1 @@
-export * from "./LocaleSwitcher";
+export * from "./LanguagePicker";

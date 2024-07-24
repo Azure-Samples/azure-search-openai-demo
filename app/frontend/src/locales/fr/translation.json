@@ -36,7 +36,8 @@
         "3": "Pouvez-vous identifier une corrélation entre les prix du pétrole et les tendances du marché boursier?",
         "placeholder": "Exemple: Mon plan couvre-t-il les examens oculaires annuels?"
     },
-    "generatingAnswer": "génération de la réponse",
+    "generatingAnswer": "Génération de la réponse",
+    "citationWithColon": "Citation:",
 
     "tooltips": {
         "submitQuestion": "Soumettre une question",
@@ -56,15 +57,18 @@
     },
 
     "labels": {
+        "toggleMenu": "Basculer le menu",
+        "languagePicker": "Sélectionnez votre langue",
         "headerText": "Configurer la génération de réponses",
         "closeButton": "Fermer",
-        "promptTemplate": "Modèle de l'invite",
+        "promptTemplate": "Modèle de l'invitation",
         "temperature": "Température",
+        "seed": "Seed",
         "minimumSearchScore": "Score de recherche minimum",
-        "minimumRerankerScore": "Score minimum du reranker",
+        "minimumRerankerScore": "Score minimum du reclasseur sémantique",
         "retrieveCount": "Récupérer ce nombre de résultats de recherche :",
         "excludeCategory": "Exclure la catégorie",
-        "useSemanticRanker": "Utiliser le classement sémantique pour la récupération",
+        "useSemanticRanker": "Utiliser le reclasseur sémantique",
         "useSemanticCaptions": "Utiliser les titres sémantiques",
         "useSuggestFollowupQuestions": "Suggérer des questions de suivi",
         "useGPT4V": "Utiliser le modèle GPT Vision",
@@ -94,14 +98,14 @@
         },
         "useOidSecurityFilter": "Utiliser le filtre de sécurité oid",
         "useGroupsSecurityFilter": "Utiliser le filtre de sécurité de groupe",
-        "shouldStream": "Streamer les réponses du chat"
+        "shouldStream": "Diffuser en continu les réponses"
     },
 
     "helpTexts": {
         "promptTemplate":
             "Remplace le prompt utilisé pour générer la réponse en fonction de la question et des résultats de la recherche. Pour ajouter à l'invite existante au lieu de remplacer l'invite entière, commencez votre invite par '>>>'.",
         "temperature":
-            "Définit la température de la requête à l'LLM qui génère la réponse. Des températures plus élevées donnent lieu à des réponses plus créatives, mais elles peuvent être moins ancrées.",
+            "Définit la température de la requête à le Grand modèle de langage (LLM) qui génère la réponse. Des températures plus élevées donnent lieu à des réponses plus créatives, mais elles peuvent être moins ancrées.",
         "seed":
             "Détermine un numéro premier qui servira à améliorer la répétabilité des réponses du modèle. Le numéro premier doit être un entier quelconque.",
         "searchScore":

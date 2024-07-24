@@ -37,7 +37,7 @@ export const SpeechOutputAzure = ({ url }: Props) => {
             style={{ color: color }}
             iconProps={{ iconName: "Volume3" }}
             title={t("tooltips.speakAnswer")}
-            ariaLabel="Speak answer"
+            ariaLabel={t("tooltips.speakAnswer")}
             onClick={() => startOrStopAudio()}
             disabled={!url}
         />

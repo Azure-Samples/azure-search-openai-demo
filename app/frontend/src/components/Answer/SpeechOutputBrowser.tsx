@@ -17,14 +17,20 @@ try {
     console.error("SpeechSynthesis is not supported");
 }
 
-const getUtterance = function (text: string, lngCode: string) {
+const getUtterance = function (text: string, lngCode: string = "en-US") {
     if (synth) {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lngCode;
         utterance.volume = 1;
         utterance.rate = 1;
         utterance.pitch = 1;
-        utterance.voice = synth.getVoices().filter((voice: SpeechSynthesisVoice) => voice.lang === lngCode)[0];
+
+        let voice = synth.getVoices().filter((voice: SpeechSynthesisVoice) => voice.lang === lngCode)[0];
+        if (!voice) {
+            voice = synth.getVoices().filter((voice: SpeechSynthesisVoice) => voice.lang === "en-US")[0];
+        }
+
+        utterance.voice = voice;
         return utterance;
     }
 };
@@ -71,7 +77,7 @@ export const SpeechOutputBrowser = ({ answer }: Props) => {
             style={{ color: color }}
             iconProps={{ iconName: "Volume3" }}
             title={t("tooltips.speakAnswer")}
-            ariaLabel="Speak answer"
+            ariaLabel={t("tooltips.speakAnswer")}
             onClick={() => startOrStopSpeech(answer)}
             disabled={!synth}
         />

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Checkbox, Panel, DefaultButton, Spinner, TextField, ICheckboxProps, ITextFieldProps } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 
@@ -21,7 +21,7 @@ import { UploadFile } from "../../components/UploadFile";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { LoginContext } from "../../loginContext";
-import { LocaleSwitcher } from "../../i18n/LocaleSwitcher";
+import { LanguagePicker } from "../../i18n/LanguagePicker";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -236,8 +236,9 @@ export function Component(): JSX.Element {
 
     return (
         <div className={styles.askContainer}>
+            {/* Setting the page title using react-helmet-async */}
             <Helmet>
-                <title>{t("pageTitle")}</title>
+                <title>{`${t("pageTitle")} - ${t("qa")}`}</title>
             </Helmet>
             <div className={styles.askTopSection}>
                 <div className={styles.commandsContainer}>
@@ -259,7 +260,7 @@ export function Component(): JSX.Element {
                 {isLoading && <Spinner label={t("generatingAnswer")} />}
                 {!lastQuestionRef.current && (
                     <div className={styles.askTopSection}>
-                        <LocaleSwitcher onLanguageChange={newLang => i18n.changeLanguage(newLang)} />
+                        <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />
                         <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                     </div>
                 )}
@@ -336,7 +337,7 @@ export function Component(): JSX.Element {
                 <TextField
                     id={seedFieldId}
                     className={styles.chatSettingsSeparator}
-                    label="Seed"
+                    label={t("labels.seed")}
                     type="text"
                     defaultValue={seed?.toString() || ""}
                     onChange={onSeedChange}

@@ -34,7 +34,7 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
                     id={iconButtonId}
                     iconProps={iconProps}
                     title={t("tooltips.info")}
-                    ariaLabel="Info"
+                    ariaLabel={t("tooltips.info")}
                     onClick={toggleIsCalloutVisible}
                     styles={iconButtonStyles}
                 />

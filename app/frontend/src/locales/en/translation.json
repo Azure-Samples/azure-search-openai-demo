@@ -36,7 +36,8 @@
         "3": "Can you identify any correlation between oil prices and stock market trends?",
         "placeholder": "Example: Does my plan cover annual eye exams?"
     },
-    "generatingAnswer": "generatingAnswer",
+    "generatingAnswer": "Generating answer",
+    "citationWithColon": "Citation:",
 
     "tooltips": {
         "submitQuestion": "Submit question",
@@ -56,11 +57,13 @@
     },
 
     "labels": {
+        "toggleMenu": "Toggle menu",
         "languagePicker": "Select your language",
         "headerText": "Configure answer generation",
         "closeButton": "Close",
         "promptTemplate": "Override prompt template",
         "temperature": "Temperature",
+        "seed": "Seed",
         "minimumSearchScore": "Minimum search score",
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Retrieve this many search results:",

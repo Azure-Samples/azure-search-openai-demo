@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
@@ -35,7 +35,7 @@ import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { LoginContext } from "../../loginContext";
-import { LocaleSwitcher } from "../../i18n/LocaleSwitcher";
+import { LanguagePicker } from "../../i18n/LanguagePicker";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -343,8 +343,9 @@ const Chat = () => {
 
     return (
         <div className={styles.container}>
+            {/* Setting the page title using react-helmet-async */}
             <Helmet>
-                <title>{t("pageTitle")}</title>
+                <title>{`${t("pageTitle")} - ${t("chat")}`}</title>
             </Helmet>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
@@ -358,7 +359,7 @@ const Chat = () => {
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
-                            <LocaleSwitcher onLanguageChange={newLang => i18n.changeLanguage(newLang)} />
+                            <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />
 
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
@@ -497,7 +498,7 @@ const Chat = () => {
                     <TextField
                         id={seedFieldId}
                         className={styles.chatSettingsSeparator}
-                        label="Seed"
+                        label={t("labels.seed")}
                         type="text"
                         defaultValue={seed?.toString() || ""}
                         onChange={onSeedChange}
