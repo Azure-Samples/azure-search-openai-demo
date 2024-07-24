@@ -13,7 +13,7 @@ These are advanced topics that are not necessary for a basic deployment.
 * [Debugging the app on App Service](appservice.md)
 * [Local development](localdev.md)
 * [App customization](customization.md)
-* [Private access](private.md)
+* [Private access](deploy_private.md)
 * [Data ingestion](data_ingestion.md)
 * [Productionizing](productionizing.md)
 * [Alternative RAG chat samples](other_samples.md)
