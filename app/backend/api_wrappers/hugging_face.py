@@ -82,8 +82,8 @@ class HuggingFaceClient:
 
             if system_content and message and message[0]["role"] == "user":
                 content = system_content + "\n\n" + self._extract_content_as_string(message[0]["content"])
+                message[0]["content"] = content
 
-            message[0]["content"] = content
             last_role = None
             for msg in message:
                 if last_role == msg["role"]:
