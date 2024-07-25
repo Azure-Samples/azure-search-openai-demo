@@ -1,232 +1,127 @@
-import { useEffect, useRef, useState } from "react";
-import { Checkbox, Panel, DefaultButton, Spinner, Slider, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
-
+import { useState, FormEvent, ChangeEvent } from "react";
+import { DefaultButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import styles from "./Info.module.css";
-
-import { askApi, configApi, getSpeechApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
-import { Answer, AnswerError } from "../../components/Answer";
-import { QuestionInput } from "../../components/QuestionInput";
-import { ExampleList } from "../../components/Example";
-import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
-import { SettingsButton } from "../../components/SettingsButton/SettingsButton";
-import { useLogin, getToken, isLoggedIn, requireAccessControl } from "../../authConfig";
-import { VectorSettings } from "../../components/VectorSettings";
-import { GPT4VSettings } from "../../components/GPT4VSettings";
-import { UploadFile } from "../../components/UploadFile";
-
-import { useMsal } from "@azure/msal-react";
-import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
-
+import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 export function Component(): JSX.Element {
-    const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
-    const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [promptTemplatePrefix, setPromptTemplatePrefix] = useState<string>("");
-    const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
-    const [temperature, setTemperature] = useState<number>(0.3);
-    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
-    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
-    const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
-    const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
-    const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
-    const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
-    const [excludeCategory, setExcludeCategory] = useState<string>("");
-    const [question, setQuestion] = useState<string>("");
-    const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding, VectorFieldOptions.ImageEmbedding]);
-    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
-    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
-    const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
-    const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
-    const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
-    const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
-    const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
-    const [showSpeechOutput, setShowSpeechOutput] = useState<boolean>(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [filePreview, setFilePreview] = useState<string | null>(null);
+    const [responseData, setResponseData] = useState<any>(null);
+    const [statusCode, setStatusCode] = useState<number | null>(null);
+    const [selectedParser, setSelectedParser] = useState<string>("invoice");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [showResponse, setShowResponse] = useState<boolean>(false);
+    const [showPreview, setShowPreview] = useState<boolean>(false);
 
-    const lastQuestionRef = useRef<string>("");
-
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<unknown>();
-    const [answer, setAnswer] = useState<ChatAppResponse>();
-    const [speechUrl, setSpeechUrl] = useState<string | null>(null);
-
-    const [activeCitation, setActiveCitation] = useState<string>();
-    const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
-
-    const client = useLogin ? useMsal().instance : undefined;
-
-    const getConfig = async () => {
-        configApi().then(config => {
-            setShowGPT4VOptions(config.showGPT4VOptions);
-            setUseSemanticRanker(config.showSemanticRankerOption);
-            setShowSemanticRankerOption(config.showSemanticRankerOption);
-            setShowVectorOption(config.showVectorOption);
-            if (!config.showVectorOption) {
-                setRetrievalMode(RetrievalMode.Text);
-            }
-            setShowUserUpload(config.showUserUpload);
-            setShowSpeechInput(config.showSpeechInput);
-            setShowSpeechOutput(config.showSpeechOutput);
-        });
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            setSelectedFile(file);
+            setFilePreview(URL.createObjectURL(file));
+            setShowPreview(true); // Show file preview once file is selected
+        }
     };
 
-    useEffect(() => {
-        getConfig();
-    }, []);
-
-    useEffect(() => {
-        if (answer && showSpeechOutput) {
-            getSpeechApi(answer.choices[0].message.content).then(speechUrl => {
-                setSpeechUrl(speechUrl);
-            });
+    const handleDropdownChange = (event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
+        if (option) {
+            setSelectedParser(option.data);
         }
-    }, [answer]);
+    };
 
-    const makeApiRequest = async (question: string) => {
-        lastQuestionRef.current = question;
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
-        error && setError(undefined);
-        setIsLoading(true);
-        setActiveCitation(undefined);
-        setActiveAnalysisPanelTab(undefined);
+        if (!selectedFile) {
+            alert("Please select a file first!");
+            return;
+        }
 
-        const token = client ? await getToken(client) : undefined;
+        setLoading(true);
+
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("parser", selectedParser);
 
         try {
-            const request: ChatAppRequest = {
-                messages: [
-                    {
-                        content: question,
-                        role: "user"
-                    }
-                ],
-                context: {
-                    overrides: {
-                        prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
-                        prompt_template_prefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
-                        prompt_template_suffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
-                        exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
-                        top: retrieveCount,
-                        temperature: temperature,
-                        minimum_reranker_score: minimumRerankerScore,
-                        minimum_search_score: minimumSearchScore,
-                        retrieval_mode: retrievalMode,
-                        semantic_ranker: useSemanticRanker,
-                        semantic_captions: useSemanticCaptions,
-                        use_oid_security_filter: useOidSecurityFilter,
-                        use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFieldList,
-                        use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput
-                    }
-                },
-                // ChatAppProtocol: Client must pass on any session state received from the server
-                session_state: answer ? answer.choices[0].session_state : null
-            };
-            const result = await askApi(request, token);
-            setAnswer(result);
-            setSpeechUrl(null);
-        } catch (e) {
-            setError(e);
+            const response = await fetch("https://langflow-inference.azurewebsites.net/api/parser", {
+                method: "POST",
+                body: formData,
+                redirect: "follow"
+            });
+
+            const text = await response.text();
+            const parsedResponse = JSON.parse(text);
+            const data = JSON.parse(parsedResponse[0]);
+            setResponseData(data);
+            setStatusCode(response.status);
+            setShowResponse(true); // Show response after successful fetch
+        } catch (error) {
+            console.error("Error:", error);
+            setResponseData("An error occurred");
+            setStatusCode(null);
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
-    const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplate(newValue || "");
-    };
-
-    const onPromptTemplatePrefixChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplatePrefix(newValue || "");
-    };
-
-    const onPromptTemplateSuffixChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        setPromptTemplateSuffix(newValue || "");
-    };
-
-    const onTemperatureChange = (
-        newValue: number,
-        range?: [number, number],
-        event?: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent | React.KeyboardEvent
-    ) => {
-        setTemperature(newValue);
-    };
-
-    const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumSearchScore(parseFloat(newValue || "0"));
-    };
-
-    const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumRerankerScore(parseFloat(newValue || "0"));
-    };
-    const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setRetrieveCount(parseInt(newValue || "3"));
-    };
-
-    const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined, index?: number | undefined) => {
-        setRetrievalMode(option?.data || RetrievalMode.Hybrid);
-    };
-
-    const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseSemanticRanker(!!checked);
-    };
-
-    const onUseSemanticCaptionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseSemanticCaptions(!!checked);
-    };
-
-    const onExcludeCategoryChanged = (_ev?: React.FormEvent, newValue?: string) => {
-        setExcludeCategory(newValue || "");
-    };
-
-    const onExampleClicked = (example: string) => {
-        makeApiRequest(example);
-        setQuestion(example);
-    };
-
-    const onShowCitation = (citation: string) => {
-        if (activeCitation === citation && activeAnalysisPanelTab === AnalysisPanelTabs.CitationTab) {
-            setActiveAnalysisPanelTab(undefined);
+    const renderFilePreview = () => {
+        if (!filePreview) return null;
+        if (selectedFile?.type.startsWith("image/")) {
+            return <img src={filePreview} alt="File Preview" className={styles.filePreview} />;
+        } else if (selectedFile?.type === "application/pdf") {
+            return <embed src={filePreview} type="application/pdf" width="100%" height="600px" />;
         } else {
-            setActiveCitation(citation);
-            setActiveAnalysisPanelTab(AnalysisPanelTabs.CitationTab);
+            return <p>File preview not available for this file type.</p>;
         }
-    };
-
-    const onToggleTab = (tab: AnalysisPanelTabs) => {
-        if (activeAnalysisPanelTab === tab) {
-            setActiveAnalysisPanelTab(undefined);
-        } else {
-            setActiveAnalysisPanelTab(tab);
-        }
-    };
-
-    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseOidSecurityFilter(!!checked);
-    };
-
-    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseGroupsSecurityFilter(!!checked);
     };
 
     return (
-        <div className={styles.askContainer}>
-            <div className={styles.askTopSection}>
-                <div className={styles.commandsContainer}>
-                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!isLoggedIn(client)} />}
-                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-                </div>
-                <h1 className={styles.askTitle}>Information Extraction</h1>
-                <div className={styles.askQuestionInput}>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <h1 className={styles.title}>Information Extraction</h1>
+            </div>
+            <div className={styles.header}>
+                <div className={styles.uploadSection}>
                     <Dropdown
+                        className={styles.dropdown}
+                        placeholder="Select an option"
                         options={[
-                            { key: "invoices", text: "Invoices", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                            { key: "vectors", text: "Sales orders", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                            { key: "text", text: "General document analysis", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
+                            { key: "invoices", text: "Invoices", data: "invoice" },
+                            { key: "sales order", text: "Sales orders", data: "sales order" },
+                            { key: "other", text: "General document analysis", data: "other" }
                         ]}
+                        onChange={handleDropdownChange}
                         required
                     />
+                    <form onSubmit={handleSubmit} className={styles.uploadForm}>
+                        <input type="file" onChange={handleFileChange} className={styles.fileInput} />
+                        <DefaultButton text="Extract Information" type="submit" className={styles.uploadButton} />
+                    </form>
+                </div>
+            </div>
+            <div className={styles.row}>
+                <div className={styles.column}>
+                    <div className={styles.uploadSection1} style={{ display: showPreview ? "block" : "none" }}>
+                        {loading ? (
+                            <div className={styles.loader}>
+                                <AnswerLoading />
+                            </div>
+                        ) : (
+                            showResponse &&
+                            responseData && (
+                                <div className={styles.response}>
+                                    <h2>Extracted Information:</h2>
+                                    <div className={styles.jsonContainer}>
+                                        <pre>{JSON.stringify(responseData, null, 2)}</pre>
+                                    </div>
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
+                <div className={styles.column}>
+                    <div className={styles.filePreviewContainer} style={{ display: showPreview ? "block" : "none" }}>
+                        {filePreview && <>{renderFilePreview()}</>}
+                    </div>
                 </div>
             </div>
         </div>
