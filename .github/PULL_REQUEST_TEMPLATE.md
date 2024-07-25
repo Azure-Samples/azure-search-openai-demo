@@ -8,10 +8,8 @@
 When developers merge from main and run the server, azd up, or azd deploy, will this produce an error?
 If you're not sure, try it out on an old environment.
 
-```
-[ ] Yes
-[ ] No
-```
+- [ ] Yes
+- [ ] No
 
 ## Does this require changes to learn.microsoft.com docs?
 
@@ -19,21 +17,17 @@ This repository is referenced by [this tutorial](https://learn.microsoft.com/azu
 which includes deployment, settings and usage instructions. If text or screenshot need to change in the tutorial,
 check the box below and notify the tutorial author. A Microsoft employee can do this for you if you're an external contributor.
 
-```
-[ ] Yes
-[ ] No
-```
+- [ ] Yes
+- [ ] No
 
 ## Type of change
 
-```
-[ ] Bugfix
-[ ] Feature
-[ ] Code style update (formatting, local variables)
-[ ] Refactoring (no functional changes, no api changes)
-[ ] Documentation content changes
-[ ] Other... Please describe:
-```
+- [ ] Bugfix
+- [ ] Feature
+- [ ] Code style update (formatting, local variables)
+- [ ] Refactoring (no functional changes, no api changes)
+- [ ] Documentation content changes
+- [ ] Other... Please describe:
 
 ## Code quality checklist
 
