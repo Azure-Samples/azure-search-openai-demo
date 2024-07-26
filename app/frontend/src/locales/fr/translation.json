@@ -38,6 +38,7 @@
     },
     "generatingAnswer": "Génération de la réponse",
     "citationWithColon": "Citation:",
+    "followupQuestions": "Questions de suivi:",
 
     "tooltips": {
         "submitQuestion": "Soumettre une question",

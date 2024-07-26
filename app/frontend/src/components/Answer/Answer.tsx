@@ -94,7 +94,7 @@ export const Answer = ({
             {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <Stack.Item>
                     <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
-                        <span className={styles.followupQuestionLearnMore}>Follow-up questions:</span>
+                        <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
                         {followupQuestions.map((x, i) => {
                             return (
                                 <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>

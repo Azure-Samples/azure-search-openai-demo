@@ -38,6 +38,7 @@
     },
     "generatingAnswer": "回答を生成中",
     "citationWithColon": "引用：",
+    "followupQuestions": "フォローアップの質問:",
 
     "tooltips":{
         "submitQuestion": "質問を送信",
