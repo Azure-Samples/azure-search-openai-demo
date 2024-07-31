@@ -193,7 +193,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         async for event in r:
             yield json.dumps(event, ensure_ascii=False, cls=JSONEncoder) + "\n"
     except Exception as error:
-        current_app.logger.exception("Exception while generating response stream: %s", error)
+        logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps(error_dict(error))
 
 
