@@ -86,13 +86,10 @@ cryptography==43.0.0
     #   azure-storage-blob
     #   msal
     #   pyjwt
-    #   python-jose
 deprecated==1.2.14
     # via opentelemetry-api
 distro==1.9.0
     # via openai
-ecdsa==0.19.0
-    # via python-jose
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
@@ -324,10 +321,6 @@ priority==2.0.0
     # via hypercorn
 psutil==5.9.8
     # via azure-monitor-opentelemetry-exporter
-pyasn1==0.6.0
-    # via
-    #   python-jose
-    #   rsa
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
@@ -349,8 +342,6 @@ python-dateutil==2.9.0.post0
     #   microsoft-kiota-serialization-text
     #   pendulum
     #   time-machine
-python-jose[cryptography]==3.3.0
-    # via -r requirements.in
 quart==0.19.6
     # via
     #   -r requirements.in
@@ -368,8 +359,6 @@ requests==2.32.3
     #   tiktoken
 requests-oauthlib==2.0.0
     # via msrest
-rsa==4.9
-    # via python-jose
 six==1.16.0
     # via
     #   azure-core
@@ -401,10 +390,6 @@ types-beautifulsoup4==4.12.0.20240511
 types-html5lib==1.1.11.20240228
     # via types-beautifulsoup4
 types-pillow==10.2.0.20240520
-    # via -r requirements.in
-types-pyasn1==0.6.0.20240402
-    # via types-python-jose
-types-python-jose==3.3.4.20240106
     # via -r requirements.in
 typing-extensions==4.12.2
     # via
