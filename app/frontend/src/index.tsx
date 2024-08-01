@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { initializeIcons } from "@fluentui/react";
+import { FluentProvider, webLightTheme, Theme } from "@fluentui/react-components";
 import { MsalProvider } from "@azure/msal-react";
 import { PublicClientApplication, EventType, AccountInfo } from "@azure/msal-browser";
 import { msalConfig, useLogin } from "./authConfig";
@@ -10,7 +11,7 @@ import "./index.css";
 
 import Layout from "./pages/layout/Layout";
 import Chat from "./pages/chat/Chat";
-import Admin from "./pages/admin/Admin";
+import Manage from "./pages/manage/Manage";
 
 var layout;
 if (useLogin) {
@@ -55,8 +56,8 @@ const router = createHashRouter([
                 lazy: () => import("./pages/oneshot/OneShot")
             },
             {
-                path: "/admin",
-                element: <Admin />
+                path: "/manage",
+                element: <Manage />
             },
             {
                 path: "*",
@@ -66,8 +67,14 @@ const router = createHashRouter([
     }
 ]);
 
+const customTheme: Theme = {
+    ...webLightTheme,
+    colorNeutralBackground1: " #f2f2f2;"
+};
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-        <RouterProvider router={router} />
+        <FluentProvider theme={customTheme}>
+            <RouterProvider router={router} />
+        </FluentProvider>
     </React.StrictMode>
 );

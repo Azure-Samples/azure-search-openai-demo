@@ -1,0 +1,20 @@
+.container {
+    padding: 5px 5px 5px 10px;
+}
+
+.projects {
+    width: 1000px;
+}
+
+.inputColumn {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    gap: 15px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
