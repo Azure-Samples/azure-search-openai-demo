@@ -183,7 +183,6 @@ const Chat = () => {
             };
 
             const response = await chatApi(request, shouldStream, token);
-
             if (!response.body) {
                 throw Error("No response body");
             }
