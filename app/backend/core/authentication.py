@@ -317,7 +317,7 @@ class AuthenticationHelper:
                 if key["kid"] == unverified_header["kid"]:
                     rsa_key = {"kty": key["kty"], "kid": key["kid"], "use": key["use"], "n": key["n"], "e": key["e"]}
                     break
-        except Exception as exc:
+        except jwt.PyJWTError as exc:
             raise AuthError(
                 {"code": "invalid_header", "description": "Unable to parse authorization token."}, 401
             ) from exc
