@@ -310,7 +310,7 @@ class AuthenticationHelper:
         audience = None
         try:
             unverified_header = jwt.get_unverified_header(token)
-            unverified_claims = jwt.get_unverified_claims(token)
+            unverified_claims = jwt.decode(token, options={"verify_signature": False})
             issuer = unverified_claims.get("iss")
             audience = unverified_claims.get("aud")
             for key in jwks["keys"]:
