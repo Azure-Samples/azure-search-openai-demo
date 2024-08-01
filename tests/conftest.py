@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from typing import IO
 from unittest import mock
 
@@ -46,6 +47,24 @@ MockSearchIndex = SearchIndex(
         SearchField(name="groups", type="Collection(Edm.String)"),
     ],
 )
+
+
+def pytest_configure(config):
+    # PyRIT is only compatible with Python 3.10 and 3.11 and is otherwise not installed
+    # Although no tests directly depend on it, the module is mocked globally when running
+    # on incompatible Python versions to prevent the evaluation suite from failing with import errors
+    if not (3, 10) <= sys.version_info < (3, 12):
+        modules_to_mock = [
+            "pyrit",
+            "pyrit.chat_message_normalizer",
+            "pyrit.common",
+            "pyrit.exceptions",
+            "pyrit.memory",
+            "pyrit.models",
+            "pyrit.prompt_target",
+        ]
+        for module in modules_to_mock:
+            sys.modules[module] = mock.MagicMock()
 
 
 async def mock_search(self, *args, **kwargs):

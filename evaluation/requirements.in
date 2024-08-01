@@ -1,0 +1,16 @@
+azure-ai-generative[evaluate]==1.0.0b3
+azure-identity
+azure-search-documents
+httpx
+matplotlib
+numpy
+openai
+openai-messages-token-helper
+pandas
+promptflow-core
+promptflow-evals
+pyrit ; python_version >= "3.10" and python_version < "3.12"
+python-dotenv
+requests
+rich
+typer

@@ -40,6 +40,37 @@
             "purpose": ["debug-test"],
             "console": "integratedTerminal",
             "justMyCode": false
+          },
+          {
+            "name": "Debug RAG Evaluation",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "module": "evaluation",
+            "args": [
+                "evaluate",
+                "--config=evaluation/config.json",
+                "--numquestions=2"
+            ]
+          },
+          {
+            "name": "Debug Red-teaming Evaluation",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "module": "evaluation",
+            "args": [
+                "red-teaming"
+            ]
+          },
+          {
+            "name": "Python Test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-v",
+            ],
           }
     ],
     "inputs": [
