@@ -1,5 +1,6 @@
 # Refactored from https://github.com/Azure-Samples/ms-identity-python-on-behalf-of
 
+import base64
 import json
 import logging
 from typing import Any, Optional
@@ -8,6 +9,8 @@ import aiohttp
 import jwt
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchIndex
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
 from tenacity import (
@@ -315,7 +318,18 @@ class AuthenticationHelper:
             audience = unverified_claims.get("aud")
             for key in jwks["keys"]:
                 if key["kid"] == unverified_header["kid"]:
-                    rsa_key = {"kty": key["kty"], "kid": key["kid"], "use": key["use"], "n": key["n"], "e": key["e"]}
+                    # Construct the RSA public key
+                    public_numbers = rsa.RSAPublicNumbers(
+                        e=int.from_bytes(base64.urlsafe_b64decode(key["e"] + "=="), byteorder="big"),
+                        n=int.from_bytes(base64.urlsafe_b64decode(key["n"] + "=="), byteorder="big"),
+                    )
+                    public_key = public_numbers.public_key()
+
+                    # Convert to PEM format
+                    pem_key = public_key.public_bytes(
+                        encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    )
+                    rsa_key = pem_key
                     break
         except jwt.PyJWTError as exc:
             raise AuthError(
