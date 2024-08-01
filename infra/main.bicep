@@ -307,7 +307,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
-      AZURE_OPENAI_API_KEY: azureOpenAiApiKey
+      AZURE_OPENAI_API_KEY_OVERRIDE: azureOpenAiApiKey
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       // Used only with non-Azure OpenAI deployments
       OPENAI_API_KEY: openAiApiKey
