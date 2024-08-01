@@ -541,8 +541,8 @@ async def setup_clients():
             if not AZURE_OPENAI_SERVICE:
                 raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-        if api_key := os.getenv("AZURE_OPENAI_API_KEY"):
-            current_app.logger.info("AZURE_OPENAI_API_KEY found, using as value for api_key for Azure OpenAI client")
+        if api_key := os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"):
+            current_app.logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
             openai_client = AsyncAzureOpenAI(api_version=api_version, azure_endpoint=endpoint, api_key=api_key)
         else:
             current_app.logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")

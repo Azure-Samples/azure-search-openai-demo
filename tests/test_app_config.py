@@ -33,7 +33,7 @@ async def test_app_local_openai(monkeypatch, minimal_env):
 async def test_app_azure_custom_key(monkeypatch, minimal_env):
     monkeypatch.setenv("OPENAI_HOST", "azure_custom")
     monkeypatch.setenv("AZURE_OPENAI_CUSTOM_URL", "http://azureapi.com/api/v1")
-    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "azure-api-key")
+    monkeypatch.setenv("AZURE_OPENAI_API_KEY_OVERRIDE", "azure-api-key")
 
     quart_app = app.create_app()
     async with quart_app.test_app():
