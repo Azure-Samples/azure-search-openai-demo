@@ -157,11 +157,15 @@ It will look like the following:
 
 If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
 
-```azd deploy```
+```shell
+azd deploy
+```
 
 If you've changed the infrastructure files (`infra` folder or `azure.yaml`), then you'll need to re-provision the Azure resources. You can do that by running:
 
-```azd up```
+```shell
+azd up
+```
 
 #### Sharing environments
 
