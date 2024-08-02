@@ -27,6 +27,7 @@ import {
 
 import { Premium20Regular } from "@fluentui/react-icons";
 import styles from "./Manage.module.css";
+import axios from "axios";
 
 interface User {
     uuid: string;
@@ -198,6 +199,9 @@ export default function Manage(): JSX.Element {
         { columnKey: "projectRole", name: "Project Role" },
         { columnKey: "initialPasswordChanged", name: "Initial Password Changed" }
     ];
+
+    const baseURL = 'https://us-central1-projectpalai-83a5f.cloudfunctions.net/'
+
 
     const showProject = () => {
         if (currentUser?.projectRole === "Admin") {
@@ -501,6 +505,16 @@ export default function Manage(): JSX.Element {
         setNewProjectInputs({ ...newProjectInputs, [name]: value });
     };
 
+
+const createUserDB = (user:any) => {
+
+    axios.post(baseURL + 'createNewAccount', 
+       user
+    ).then((response) => {
+
+    });
+  }
+
     const createUser = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const uuid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -521,6 +535,8 @@ export default function Manage(): JSX.Element {
             projectId: projectId,
             projectRole: projectRole
         };
+
+        createUserDB(newUser)
 
         projects.forEach(project => {
             if (project.projectId === projectId) {
