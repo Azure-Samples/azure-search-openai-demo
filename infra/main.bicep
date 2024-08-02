@@ -468,7 +468,7 @@ module searchService 'core/search/search-services.bicep' = {
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
     publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
+    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.resourceId ] : []
   }
 }
 
@@ -481,54 +481,62 @@ module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplica
   }
 }
 
-module storage 'core/storage/storage-account.bicep' = {
+module storage 'br/public:avm/res/storage/storage-account:0.9.1' = {
   name: 'storage'
   scope: storageResourceGroup
   params: {
     name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
+
+    kind: 'StorageV2'
+    skuName: 'Standard_LRS'
     publicNetworkAccess: publicNetworkAccess
-    bypass: bypass
+    networkAcls: (publicNetworkAccess == 'Enabled') ? {
+      bypass: bypass
+      defaultAction: 'Allow'
+    } : { defaultAction: 'Deny' }
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
-    sku: {
-      name: storageSkuName
+    blobServices: {
+      deleteRetentionPolicyDays: 2
+      deleteRetentionPolicyEnabled: true
+      containers: [
+        {
+          name: storageContainerName
+          publicAccess: 'None'
+        }
+      ]
     }
-    deleteRetentionPolicy: {
-      enabled: true
-      days: 2
-    }
-    containers: [
-      {
-        name: storageContainerName
-        publicAccess: 'None'
-      }
-    ]
   }
 }
 
-module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
+module userStorage 'br/public:avm/res/storage/storage-account:0.9.1' = if (useUserUpload) {
   name: 'user-storage'
   scope: storageResourceGroup
   params: {
     name: !empty(userStorageAccountName) ? userStorageAccountName : 'user${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
+
+    kind: 'StorageV2'
+    skuName: 'Standard_LRS'
     publicNetworkAccess: publicNetworkAccess
-    bypass: bypass
+    networkAcls: (publicNetworkAccess == 'Enabled') ? {
+      bypass: bypass
+      defaultAction: 'Allow'
+    } : { defaultAction: 'Deny' }
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
-    isHnsEnabled: true
-    sku: {
-      name: storageSkuName
+    enableHierarchicalNamespace: true
+    blobServices: {
+      containers: [
+        {
+          name: userStorageContainerName
+          publicAccess: 'None'
+        }
+      ]
     }
-    containers: [
-      {
-        name: userStorageContainerName
-        publicAccess: 'None'
-      }
-    ]
   }
 }
 
@@ -727,8 +735,8 @@ var otherPrivateEndpointConnections = usePrivateEndpoint ? [
     groupId: 'blob'
     dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
     resourceIds: concat(
-      [ storage.outputs.id ],
-      useUserUpload ? [ userStorage.outputs.id ] : []
+      [ storage.outputs.resourceId ],
+      useUserUpload ? [ userStorage.outputs.resourceId ] : []
     )
   }
   {
