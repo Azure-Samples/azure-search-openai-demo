@@ -246,7 +246,7 @@ export function Component(): JSX.Element {
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}
                         showSpeechInput={showSpeechInput}
-                    />
+                        isStreaming={false} />
                 </div>
             </div>
             <div className={styles.askBottomSection}>
