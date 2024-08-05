@@ -1,0 +1,159 @@
+name: Model Evaluation and Red Teaming
+
+on:
+  workflow_dispatch:
+    inputs:
+      eval-num-questions:
+        description: 'Number of questions to generate for evaluation'
+        required: false
+        default: 200
+        type: number
+      azd-env-name:
+        description: 'Azure environment name'
+        required: false
+        type: string
+      skip-deploy:
+        description: 'Skip deployment'
+        required: false
+        default: false
+        type: boolean
+      purge:
+        description: 'Whether to purge the deployment after evaluation'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  evaluation:
+    name: Run Evaluation and Red Teaming
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version: ["3.11"]
+    env:
+      # az/azd credentials
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # deployment-specific variables (only expose the ones necessary for the evaluation)
+      AZURE_ENV_NAME: ${{ inputs.azd-env-name || vars.AZURE_ENV_NAME }}
+      AZURE_DOCUMENTINTELLIGENCE_LOCATION: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_LOCATION }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      AZURE_SEARCH_SERVICE_LOCATION: ${{ vars.AZURE_SEARCH_SERVICE_LOCATION }}
+      AZURE_SEARCH_SERVICE_SKU: ${{ vars.AZURE_SEARCH_SERVICE_SKU }}
+      AZURE_SEARCH_SEMANTIC_RANKER: ${{ vars.AZURE_SEARCH_SEMANTIC_RANKER }}
+      HUGGINGFACE_API_KEY: ${{ secrets.HUGGINGFACE_API_KEY }}
+      HUGGINGFACE_MODEL: ${{ vars.HUGGINGFACE_MODEL }}
+
+    steps:
+      #-------------------------- Setup ---------------------------
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+          architecture: x64
+
+      - name: Install azd
+        uses: Azure/setup-azd@v1.0.0
+
+      #----------------------- Azure Login ------------------------
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in with Azure (Federated Credentials)
+        if: ${{ env.AZURE_CLIENT_ID != '' }}
+        run: |
+          azd auth login `
+            --client-id "$Env:AZURE_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:AZURE_TENANT_ID"
+        shell: pwsh
+
+      - name: Log in with Azure (Client Credentials)
+        if: ${{ env.AZURE_CREDENTIALS != '' }}
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          azd auth login `
+            --client-id "$($info.clientId)" `
+            --client-secret "$($info.clientSecret)" `
+            --tenant-id "$($info.tenantId)"
+        shell: pwsh
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      #-------------------- Deploy Application --------------------
+
+      - name: Provision and deploy application
+        if: ${{ !inputs.skip-deploy }}
+        run: |
+          azd up --no-prompt
+
+      - name: Refresh azd environment
+        run: |
+          azd env refresh --no-prompt
+
+      #---------------------- Run Evaluation ----------------------
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r evaluation/requirements.txt
+
+      - name: Create evaluation environment
+        run: |
+          ./scripts/create_eval_dotenv.sh
+
+      - name: Generate Q&As
+        run: |
+          python -m evaluation generate --numquestions ${{ inputs.eval-num-questions }}
+
+      - name: Run AI RAG Chat evaluation
+        run: |
+          python -m evaluation evaluate --numquestions ${{ inputs.eval-num-questions }}
+
+          # Store evaluation results path
+          results_path=$(ls -d evaluation/results/gpt_evaluation/experiment-* | tail -n 1)
+          echo "EVALUATION_RESULTS=$results_path" >> $GITHUB_ENV
+
+      - name: Run Red Teaming evaluation
+        run: |
+          python -m evaluation red-teaming
+
+          # Store red teaming results path
+          results_path=$(ls -d evaluation/results/red_teaming/experiment-* | tail -n 1)
+          echo "RED_TEAMING_RESULTS=$results_path" >> $GITHUB_ENV
+
+      - name: Dump results
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-results
+          path: |
+            ${{ env.EVALUATION_RESULTS }}/summary.json
+            ${{ env.EVALUATION_RESULTS }}/eval_results.jsonl
+            ${{ env.EVALUATION_RESULTS }}/config.json
+            ${{ env.EVALUATION_RESULTS }}/eval.png
+            ${{ env.EVALUATION_RESULTS }}/mean_score.png
+            ${{ env.EVALUATION_RESULTS }}/passing_rate.png
+            ${{ env.RED_TEAMING_RESULTS }}/scores.json
+
+      #------------------------- Cleanup --------------------------
+
+      - name: Purge deployment
+        if: ${{ always() && inputs.purge }}
+        run: azd down --force --purge
