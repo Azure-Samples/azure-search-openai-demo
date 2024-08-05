@@ -18,7 +18,7 @@ on:
         default: false
         type: boolean
       purge:
-        description: 'Whether to purge the deployment after evaluation'
+        description: 'Purge deployment after evaluation'
         required: true
         default: false
         type: boolean
