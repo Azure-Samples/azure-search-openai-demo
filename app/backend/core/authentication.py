@@ -284,6 +284,24 @@ class AuthenticationHelper:
 
         return allowed
 
+    async def create_pem_format(self, jwks, token):
+        unverified_header = jwt.get_unverified_header(token)
+        for key in jwks["keys"]:
+            if key["kid"] == unverified_header["kid"]:
+                # Construct the RSA public key
+                public_numbers = rsa.RSAPublicNumbers(
+                    e=int.from_bytes(base64.urlsafe_b64decode(key["e"] + "=="), byteorder="big"),
+                    n=int.from_bytes(base64.urlsafe_b64decode(key["n"] + "=="), byteorder="big"),
+                )
+                public_key = public_numbers.public_key()
+
+                # Convert to PEM format
+                pem_key = public_key.public_bytes(
+                    encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+                )
+            rsa_key = pem_key
+            return rsa_key
+
     # See https://github.com/Azure-Samples/ms-identity-python-on-behalf-of/blob/939be02b11f1604814532fdacc2c2eccd198b755/FlaskAPI/helpers/authorization.py#L44
     async def validate_access_token(self, token: str):
         """
@@ -312,25 +330,10 @@ class AuthenticationHelper:
         issuer = None
         audience = None
         try:
-            unverified_header = jwt.get_unverified_header(token)
             unverified_claims = jwt.decode(token, options={"verify_signature": False})
             issuer = unverified_claims.get("iss")
             audience = unverified_claims.get("aud")
-            for key in jwks["keys"]:
-                if key["kid"] == unverified_header["kid"]:
-                    # Construct the RSA public key
-                    public_numbers = rsa.RSAPublicNumbers(
-                        e=int.from_bytes(base64.urlsafe_b64decode(key["e"] + "=="), byteorder="big"),
-                        n=int.from_bytes(base64.urlsafe_b64decode(key["n"] + "=="), byteorder="big"),
-                    )
-                    public_key = public_numbers.public_key()
-
-                    # Convert to PEM format
-                    pem_key = public_key.public_bytes(
-                        encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
-                    )
-                    rsa_key = pem_key
-                    break
+            rsa_key = self.create_pem_format(jwks, token)
         except jwt.PyJWTError as exc:
             raise AuthError(
                 {"code": "invalid_header", "description": "Unable to parse authorization token."}, 401
