@@ -126,7 +126,7 @@
       "value": "${AZURE_OPENAI_API_VERSION}"
     },
     "azureOpenAiApiKey":{
-      "value": "${AZURE_OPENAI_API_KEY}"
+      "value": "${AZURE_OPENAI_API_KEY_OVERRIDE}"
     },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
