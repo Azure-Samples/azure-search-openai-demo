@@ -225,9 +225,11 @@ export default function Manage(): JSX.Element {
                                         <TableBody>
                                             {project.users.map((user, index) => (
                                                 <TableRow key={index}>
-                                                    <TableCellLayout media={user.projectRole === "Owner" ? <Premium20Regular /> : {}}>
-                                                        <TableCell>{user.firstName}</TableCell>
-                                                    </TableCellLayout>
+                                                    <TableCell>
+                                                        <TableCellLayout media={user.projectRole === "Owner" ? <Premium20Regular /> : ""}>
+                                                            {user.firstName}
+                                                        </TableCellLayout>
+                                                    </TableCell>
                                                     <TableCell>{user.lastName}</TableCell>
                                                     <TableCell>{user.emailAddress}</TableCell>
                                                     <TableCell>{user.projectRole}</TableCell>
@@ -236,7 +238,7 @@ export default function Manage(): JSX.Element {
                                             ))}
                                         </TableBody>
                                     </Table>
-                                    <Button onClick={() => setOpenCreateUser(true)} style={{ marginTop: "10px" }}>
+                                    <Button onClick={() => handleOpenCreateUser(project)} style={{ marginTop: "10px" }}>
                                         Create new user
                                     </Button>
                                     <Dialog open={openCreateUser} onOpenChange={(_, data) => setOpenCreateUser(data.open)}>
@@ -293,17 +295,7 @@ export default function Manage(): JSX.Element {
                                                         <DialogTrigger disableButtonEnhancement>
                                                             <Button appearance="secondary">Close</Button>
                                                         </DialogTrigger>
-                                                        <Button
-                                                            appearance="primary"
-                                                            type="submit"
-                                                            onClick={() =>
-                                                                setNewUserInputs({
-                                                                    ...newUserInputs,
-                                                                    projectName: project.projectName,
-                                                                    projectId: project.projectId
-                                                                })
-                                                            }
-                                                        >
+                                                        <Button appearance="primary" type="submit">
                                                             Create User
                                                         </Button>
                                                     </DialogActions>
@@ -382,7 +374,7 @@ export default function Manage(): JSX.Element {
                                         ))}
                                     </TableBody>
                                 </Table>
-                                <Button onClick={() => setOpenCreateUser(true)} style={{ marginTop: "10px" }}>
+                                <Button onClick={() => handleOpenCreateUser(project)} style={{ marginTop: "10px" }}>
                                     Create new user
                                 </Button>
                                 <Dialog open={openCreateUser} onOpenChange={(_, data) => setOpenCreateUser(data.open)}>
@@ -434,17 +426,7 @@ export default function Manage(): JSX.Element {
                                                     <DialogTrigger disableButtonEnhancement>
                                                         <Button appearance="secondary">Close</Button>
                                                     </DialogTrigger>
-                                                    <Button
-                                                        appearance="primary"
-                                                        type="submit"
-                                                        onClick={() =>
-                                                            setNewUserInputs({
-                                                                ...newUserInputs,
-                                                                projectName: project.projectName,
-                                                                projectId: project.projectId
-                                                            })
-                                                        }
-                                                    >
+                                                    <Button appearance="primary" type="submit">
                                                         Create User
                                                     </Button>
                                                 </DialogActions>
@@ -489,6 +471,15 @@ export default function Manage(): JSX.Element {
                 </>
             );
         }
+    };
+
+    const handleOpenCreateUser = (project: Project) => {
+        setOpenCreateUser(true);
+        setNewUserInputs({
+            ...newUserInputs,
+            projectName: project.projectName,
+            projectId: project.projectId
+        });
     };
 
     const handleUserInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
