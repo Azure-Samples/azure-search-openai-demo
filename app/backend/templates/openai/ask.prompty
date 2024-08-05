@@ -1,0 +1,33 @@
+---
+name: OpenAI_ask
+description: A basic prompt using MistralAI for QA page
+model:
+  api: chat
+  configuration:
+    type: openai
+    messages_length_limit: 4000
+  parameters:
+    max_tokens: 1024
+    temperature: 0.3
+inputs:
+  system_message:
+    type: string
+  question:
+    type: string
+  sources:
+    type: list
+sample:
+  system_message: You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions.
+  question: What is included in my Northwind Health Plus plan that is not in standard?
+  sources: ["source1.txt: This is data from source1\nsource2.txt:This is data from source 2"]
+---
+user:
+{{ system_message }}
+
+Sources:
+{% for source in sources %}
+{{ source }}
+{% endfor %}
+
+Question:
+{{ question }}

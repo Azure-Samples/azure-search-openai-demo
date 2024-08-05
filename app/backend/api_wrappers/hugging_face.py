@@ -1,3 +1,4 @@
+import inspect
 from typing import AsyncIterable, Dict, Iterable, List, Optional, Union
 
 from huggingface_hub import AsyncInferenceClient  # type: ignore
@@ -25,6 +26,13 @@ class HuggingFaceClient:
         cookies: Optional[Dict[str, str]] = None,
     ):
         self.client = AsyncInferenceClient(model=model, token=token, timeout=timeout, headers=headers, cookies=cookies)
+
+    @property
+    def allowed_chat_completion_params(self) -> List[str]:
+        params = list(inspect.signature(self.client.chat_completion).parameters.keys())
+        if "messages" in params:
+            params.remove("messages")
+        return params
 
     async def chat_completion(
         self,

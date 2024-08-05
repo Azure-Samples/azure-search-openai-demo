@@ -1,3 +1,4 @@
+import inspect
 from abc import ABC
 from typing import List
 
@@ -10,6 +11,13 @@ class OpenAIClient(ABC):
 
     def __init__(self):
         self._client = None
+
+    @property
+    def allowed_chat_completion_params(self) -> List[str]:
+        params = list(inspect.signature(self.client.chat.completions.create).parameters.keys())
+        if "messages" in params:
+            params.remove("messages")
+        return params
 
     @property
     def client(self):

@@ -1,13 +1,16 @@
+import ast
 from typing import Any, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai.types.chat import ChatCompletionMessage, ChatCompletionMessageParam
-from openai_messages_token_helper import build_messages, get_token_limit
+from openai_messages_token_helper import get_token_limit
+from promptflow.core import Prompty  # type: ignore
 
 from api_wrappers import LLMClient
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
+from templates.supported_models import SUPPORTED_MODELS
 
 
 class RetrieveThenReadApproach(Approach):
@@ -83,7 +86,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
-        seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -115,17 +117,30 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         # Process results
         sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
 
-        # Append user message
-        content = "\n".join(sources_content)
-        user_content = q + "\n" + f"Sources:\n {content}"
+        # Load the Prompty object
+        prompty_path = SUPPORTED_MODELS.get(self.hf_model if self.hf_model else self.chatgpt_model)
+        if prompty_path:
+            ask_prompty = Prompty.load(source=prompty_path / "ask.prompty")
+        else:
+            raise ValueError(
+                f"Model {self.hf_model if self.hf_model else self.chatgpt_model} is not supported. Please create a template for this model."
+            )
 
-        response_token_limit = 1024
-        updated_messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=overrides.get("prompt_template", self.system_chat_template),
-            few_shots=[{"role": "user", "content": self.question}, {"role": "assistant", "content": self.answer}],
-            new_user_content=user_content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
+        updated_messages = ask_prompty.render(
+            system_message=overrides.get("prompt_template", self.system_chat_template),
+            question=q,
+            sources=sources_content,
+        )
+        updated_messages = ast.literal_eval(updated_messages)
+
+        # If the parameters are overridden via the API request, use that value.
+        # Otherwise, use the default value from the model configuration.
+        ask_prompty._model.parameters.update(
+            {
+                param: overrides[param]
+                for param in self.llm_client.allowed_chat_completion_params
+                if overrides.get(param) is not None
+            }
         )
 
         chat_completion = await self.llm_client.chat_completion(
@@ -135,13 +150,10 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 if self.hf_model
                 else self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
             ),
-            messages=self.llm_client.format_message(updated_messages),
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=response_token_limit,
+            messages=updated_messages,
+            **ask_prompty._model.parameters,
             n=1,
-            seed=seed,
         )
-
         final_result = chat_completion.model_dump() if hasattr(chat_completion, "model_dump") else chat_completion
 
         data_points = {"text": sources_content}

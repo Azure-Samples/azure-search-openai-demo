@@ -1,0 +1,51 @@
+---
+name: MistralAI_Chat
+description: A basic prompt using MistralAI for Chat page
+model:
+  api: chat
+  configuration:
+    type: "hf"
+    messages_length_limit: 3895
+  parameters:
+    max_tokens: 1024
+    temperature: 0.3
+inputs:
+  system_message:
+    type: string
+  question:
+    type: string
+  sources:
+    type: list
+  past_messages:
+    type: list
+sample:
+  system_message: Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
+  question: What is included in my Northwind Health Plus plan that is not in standard?
+  sources: ["source1.txt: This is data from source1\nsource2.txt:This is data from source 2"]
+  past_messages: [{"role": "user", "content": "What is the weather today"}, {"role": "assistant", "content": "It is sunny today"}]
+
+---
+user:
+{{ system_message }}
+
+Sources:
+{% for source in sources %}
+{{ source }}
+{% endfor %}
+
+{% if past_messages is defined %}
+Past conversation:
+{% endif %}
+{% for old_question in past_messages %}
+{% if loop.first %}
+{{ old_question.content }}
+{% else %}
+{{ old_question.role }}:
+{{ old_question.content }}
+{% endif %}
+{% endfor %}
+
+{% if past_messages is defined and past_messages|length > 0 %}
+user:
+{% endif %}
+{{ question }}
