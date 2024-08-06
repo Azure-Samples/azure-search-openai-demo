@@ -19,9 +19,9 @@ You should typically enable these features before running `azd up`. Once you've 
 
 ## Using GPT-4
 
-(Instructions for GPT-4o and GPT-4o mini models are also included here.)
+(Instructions for **GPT-4**, **GPT-4o**, and **GPT-4o mini** models are also included here.)
 
-We generally find that most developers are able to get high-quality answers using GPT-3.5. However, if you want to try GPT-4, GPT-4o or GPT-4o mini, you can do so by following these steps:
+We generally find that most developers are able to get high-quality answers using GPT-3.5. However, if you want to try GPT-4, GPT-4o, or GPT-4o mini, you can do so by following these steps:
 
 Execute the following commands inside your terminal:
 
@@ -37,16 +37,15 @@ Execute the following commands inside your terminal:
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
     ```
 
-2. To set the GPT model name to a model from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate GPT model name.
-
+1. To set the GPT model name to a **gpt-4**, **gpt-4o**, or **gpt-4o mini** version from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate GPT model name.
 
     For GPT-4:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
     ```
 
     For GPT-4o:
-
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o
@@ -54,41 +53,37 @@ Execute the following commands inside your terminal:
 
     For GPT-4o mini:
 
-
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
     ```
 
-3. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
+1. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 10
     ```
 
-4. To set the Azure OpenAI deployment version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version. For example:
-
-
+1. To set the Azure OpenAI deployment version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
 
     For GPT-4:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
     ```
 
-
-
     For GPT-4o:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-05-13
     ```
 
     For GPT-4o mini:
 
-
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
     ```
 
-5. To update the deployment with the new parameters, run this command.
+1. To update the deployment with the new parameters, run this command.
 
     ```bash
     azd up
