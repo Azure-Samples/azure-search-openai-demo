@@ -151,17 +151,6 @@ param publicNetworkAccess string = 'Enabled'
 @description('Add a private endpoints for network connectivity')
 param usePrivateEndpoint bool = false
 
-@description('Provision a VM to use for private endpoint connectivity')
-param provisionVm bool = false
-param vmUserName string = ''
-@secure()
-param vmPassword string = ''
-param vmOsVersion string = ''
-param vmOsPublisher string = ''
-param vmOsOffer string = ''
-@description('Size of the virtual machine.')
-param vmSize string = 'Standard_DS1_v2'
-
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -318,7 +307,7 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
       AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
       AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
-      AZURE_OPENAI_API_KEY: azureOpenAiApiKey
+      AZURE_OPENAI_API_KEY_OVERRIDE: azureOpenAiApiKey
       AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
       // Used only with non-Azure OpenAI deployments
       OPENAI_API_KEY: openAiApiKey
@@ -326,7 +315,7 @@ module backend 'core/host/appservice.bicep' = {
       // Optional login and document level access control system
       AZURE_USE_AUTHENTICATION: useAuthentication
       AZURE_ENFORCE_ACCESS_CONTROL: enforceAccessControl
-      AZURE_ENABLE_GLOBAL_DOCUMENTS_ACCESS: enableGlobalDocuments
+      AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS: enableGlobalDocuments
       AZURE_ENABLE_UNAUTHENTICATED_ACCESS: enableUnauthenticatedAccess
       AZURE_SERVER_APP_ID: serverAppId
       AZURE_SERVER_APP_SECRET: serverAppSecret
@@ -716,10 +705,8 @@ module isolation 'network-isolation.bicep' = {
   params: {
     location: location
     tags: tags
-    resourceToken: resourceToken
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
     appServicePlanName: appServicePlan.outputs.name
-    provisionVm: provisionVm
     usePrivateEndpoint: usePrivateEndpoint
   }
 }
@@ -771,22 +758,6 @@ module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
     logAnalyticsWorkspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
     vnetName: isolation.outputs.vnetName
     vnetPeSubnetName: isolation.outputs.backendSubnetId
-  }
-}
-
-module vm 'core/host/vm.bicep' = if (provisionVm && usePrivateEndpoint) {
-  name: 'vm'
-  scope: resourceGroup
-  params: {
-    name: '${abbrs.computeVirtualMachines}${resourceToken}'
-    location: location
-    adminUsername: vmUserName
-    adminPassword: vmPassword
-    nicId: isolation.outputs.nicId
-    osVersion: vmOsVersion
-    osPublisher: vmOsPublisher
-    osOffer: vmOsOffer
-    vmSize: vmSize
   }
 }
 
