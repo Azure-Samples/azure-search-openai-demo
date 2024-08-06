@@ -18,6 +18,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using local parsers](#using-local-parsers)
 
 ## Using GPT-4
+
 (Instructions for GPT-4o and GPT-4o mini models are also included here.)
 
 We generally find that most developers are able to get high-quality answers using GPT-3.5. However, if you want to try GPT-4, GPT-4o or GPT-4o mini, you can do so by following these steps:
@@ -31,11 +32,13 @@ Execute the following commands inside your terminal:
     ```
 
     For example:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
     ```
 
 2. To set the GPT model name to a model from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate GPT model name.
+
 
     For GPT-4:
     ```bash
@@ -43,11 +46,13 @@ Execute the following commands inside your terminal:
     ```
 
     For GPT-4o:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o
     ```
 
     For GPT-4o mini:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
     ```
@@ -60,10 +65,12 @@ Execute the following commands inside your terminal:
 
 4. To set the Azure OpenAI deployment version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version. For example:
 
+
     For GPT-4:
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
     ```
+
 
     For GPT-4o:
     ```bash
@@ -71,6 +78,7 @@ Execute the following commands inside your terminal:
     ```
 
     For GPT-4o mini:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
     ```
