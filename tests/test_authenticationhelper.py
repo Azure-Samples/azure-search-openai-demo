@@ -3,6 +3,7 @@ import json
 import re
 from datetime import datetime, timedelta
 
+import aiohttp
 import jwt
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -13,7 +14,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 from core.authentication import AuthenticationHelper, AuthError
 
-from .mocks import MockAsyncPageIterator
+from .mocks import MockAsyncPageIterator, MockResponse
 
 MockSearchIndex = SearchIndex(
     name="test",
@@ -521,8 +522,29 @@ async def test_check_path_auth_allowed_public_without_access_control(
 async def test_create_pem_format(mock_confidential_client_success, mock_validate_token_success):
     helper = create_authentication_helper()
     mock_token, public_key, payload = create_mock_jwt(oid="OID_X")
+    _, other_public_key, _ = create_mock_jwt(oid="OID_Y")
     mock_jwks = {
         "keys": [
+            # Include a key with a different KID to ensure the correct key is selected
+            {
+                "kty": "RSA",
+                "kid": "other_mock_kid",
+                "use": "sig",
+                "n": base64.urlsafe_b64encode(
+                    other_public_key.public_numbers().n.to_bytes(
+                        (other_public_key.public_numbers().n.bit_length() + 7) // 8, byteorder="big"
+                    )
+                )
+                .decode("utf-8")
+                .rstrip("="),
+                "e": base64.urlsafe_b64encode(
+                    other_public_key.public_numbers().e.to_bytes(
+                        (other_public_key.public_numbers().e.bit_length() + 7) // 8, byteorder="big"
+                    )
+                )
+                .decode("utf-8")
+                .rstrip("="),
+            },
             {
                 "kty": "RSA",
                 "kid": "mock_kid",
@@ -541,7 +563,7 @@ async def test_create_pem_format(mock_confidential_client_success, mock_validate
                 )
                 .decode("utf-8")
                 .rstrip("="),
-            }
+            },
         ]
     }
 
@@ -576,3 +598,54 @@ async def test_create_pem_format(mock_confidential_client_success, mock_validate
         assert isinstance(loaded_public_key, rsa.RSAPublicKey), "Loaded key should be an RSA public key"
     except Exception as e:
         pytest.fail(f"Failed to load PEM key: {str(e)}")
+
+
+@pytest.mark.asyncio
+async def test_validate_access_token(monkeypatch, mock_confidential_client_success):
+    mock_token, public_key, payload = create_mock_jwt(oid="OID_X")
+
+    def mock_get(*args, **kwargs):
+        return MockResponse(
+            status=200,
+            text=json.dumps(
+                {
+                    "keys": [
+                        {
+                            "kty": "RSA",
+                            "use": "sig",
+                            "kid": "23nt",
+                            "x5t": "23nt",
+                            "n": "hu2SJ",
+                            "e": "AQAB",
+                            "x5c": ["MIIC/jCC"],
+                            "issuer": "https://login.microsoftonline.com/TENANT_ID/v2.0",
+                        },
+                        {
+                            "kty": "RSA",
+                            "use": "sig",
+                            "kid": "MGLq",
+                            "x5t": "MGLq",
+                            "n": "yfNcG8",
+                            "e": "AQAB",
+                            "x5c": ["MIIC/jCC"],
+                            "issuer": "https://login.microsoftonline.com/TENANT_ID/v2.0",
+                        },
+                    ]
+                }
+            ),
+        )
+
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+
+    def mock_decode(*args, **kwargs):
+        return payload
+
+    monkeypatch.setattr(jwt, "decode", mock_decode)
+
+    async def mock_create_pem_format(*args, **kwargs):
+        return public_key
+
+    monkeypatch.setattr(AuthenticationHelper, "create_pem_format", mock_create_pem_format)
+
+    helper = create_authentication_helper()
+    await helper.validate_access_token(mock_token)
