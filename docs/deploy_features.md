@@ -79,6 +79,7 @@ Execute the following commands inside your terminal:
 
     For GPT-4o mini:
 
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
     ```
