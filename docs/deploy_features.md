@@ -47,6 +47,7 @@ Execute the following commands inside your terminal:
 
     For GPT-4o:
 
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o
     ```
