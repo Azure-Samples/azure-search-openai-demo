@@ -3,7 +3,7 @@
 }
 
 .projects {
-    width: 1000px;
+    width: 1200px;
     display: flex;
     flex-direction: column;
     gap: 10px;

@@ -124,18 +124,20 @@ export default function Manage(): JSX.Element {
         setSelectedUser(user);
         setSelectedProject(project);
         setOpenSettingsDialog(true);
+        // console.log(selectedUser, selectedProject);
     };
 
     const handleCreateUserDB = (user: any) => {
-        axios.post(baseURL + "createNewAccount", user).then(response => {});
+        return axios.post(baseURL2 + "createNewAccount", user);
     };
 
     const handleAddUserToProject = (projectID: string, user: NewUser) => {
-        return axios.post(baseURL + "addNewUserToProject", { projectID, user });
+        return axios.post(baseURL2 + "addNewUserToProject", { projectID, user });
     };
 
     const handleCreateUser = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true);
         const uuid = uuidv4();
         const emailAddress = newUserInputs?.emailAddress as string;
         const firstName = newUserInputs?.firstName as string;
@@ -160,38 +162,46 @@ export default function Manage(): JSX.Element {
             projectID: projectID
         };
 
-        handleCreateUserDB(newUser);
+        handleCreateUserDB(newUser).then(response => {
+            handleAddUserToProject(projectID, newUserProject).then(response => {
+                if (response.data === "User already exists in project") {
+                    setLoading(false);
+                    setOpenCreateUser(false);
+                    return;
+                } else {
+                    newUser.uuid = response.data.uuid;
+                    newUser.projectRole = response.data.projectRole;
+                    projects.forEach(project => {
+                        if (project.projectID === projectID && project.users) {
+                            project.users.push(newUser);
+                        } else if (project.projectID === projectID) {
+                            project.users = [newUser];
+                        }
+                    });
+
+                    setNewUserInputs({
+                        uuid: "",
+                        emailAddress: "",
+                        firstName: "",
+                        lastName: "",
+                        initialPasswordChanged: false,
+                        projectName: "",
+                        projectID: "",
+                        projectRole: "Member"
+                    });
+                    setLoading(false);
+                    setOpenCreateUser(false);
+                }
+            });
+        });
         // axios.post(baseURL2 + "createNewAccount", newUser).then(response => {
         //     axios.post(baseURL2 + "addNewUserToProject", { projectID, newUserProject }).then(response => {});
         // })
-        handleAddUserToProject(projectID, newUserProject).then(response => {
-            newUser.projectRole = projectRole;
-
-            projects.forEach(project => {
-                if (project.projectID === projectID && project.users) {
-                    project.users.push(newUser);
-                } else if (project.projectID === projectID) {
-                    project.users = [newUser];
-                }
-            });
-
-            setNewUserInputs({
-                uuid: "",
-                emailAddress: "",
-                firstName: "",
-                lastName: "",
-                initialPasswordChanged: false,
-                projectName: "",
-                projectID: "",
-                projectRole: "Member"
-            });
-
-            setOpenCreateUser(false);
-        });
     };
 
     const handleCreateProject = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true);
         const projectID = uuidv4();
         const projectName = newProjectInputs?.projectName as string;
         const newProject: NewProject = {
@@ -199,7 +209,7 @@ export default function Manage(): JSX.Element {
             projectName: projectName,
             dateCreated: new Date().toISOString()
         };
-        axios.post(baseURL + "createNewProject", newProject).then(response => {
+        axios.post(baseURL2 + "createNewProject", newProject).then(response => {
             console.log("New project created");
             setProjects([...projects, response.data]);
             setNewProjectInputs({
@@ -207,32 +217,34 @@ export default function Manage(): JSX.Element {
                 projectName: "",
                 dateCreated: ""
             });
+            setLoading(false);
             setOpenCreateProject(false);
         });
     };
 
     const handleRemoveUser = (projectID: string, user: User) => {
-        console.log(projectID, user.uuid, user.projectRole);
-        axios.post(baseURL + "removeUserFromProject", { projectID: projectID, uuid: user.uuid, projectRole: user.projectRole }).then(response => {
+        setLoading(true);
+        axios.post(baseURL2 + "removeUserFromProject", { projectID: projectID, uuid: user.uuid, projectRole: user.projectRole }).then(response => {
             console.log("User removed from project");
             projects.forEach(project => {
                 if (project.users.some(user => user.uuid === user.uuid) && projectID === project.projectID) {
                     project.users = project.users.filter(projectUser => projectUser.uuid !== user.uuid);
                 }
             });
+            setLoading(false);
             setOpenSettingsDialog(false);
         });
     };
 
     const handleChangeUserRole = (projectID: string, user: User, newRole: string) => {
-        console.log(user, newRole);
+        setLoading(true);
         if (user.projectRole === newRole) {
             return;
         }
-        axios.post(baseURL + "changeUserRole", { projectID: projectID, user: user, newRole: newRole }).then(response => {
+        axios.post(baseURL2 + "changeUserRole", { projectID: projectID, user: user, newRole: newRole }).then(response => {
             console.log("User role changed");
             projects.forEach(project => {
-                if (project.projectID === user.projectID && project.users) {
+                if (project.users && projectID === project.projectID) {
                     project.users.forEach(projectUser => {
                         if (projectUser.uuid === user.uuid) {
                             projectUser.projectRole = newRole;
@@ -241,6 +253,7 @@ export default function Manage(): JSX.Element {
                 }
             });
             setNewUserRole("Member");
+            setLoading(false);
             setOpenSettingsDialog(false);
         });
     };
@@ -248,12 +261,11 @@ export default function Manage(): JSX.Element {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
-                axios.get(baseURL + "getAccountDetails", { params: { clientID: user.uid } }).then(response => {
-                    console.log(response.data);
+                axios.get(baseURL2 + "getAccountDetails", { params: { clientID: user.uid } }).then(response => {
                     const data = response.data;
                     if (data.found) {
                         setCurrentUser(data.user);
-                        axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
+                        axios.get(baseURL2 + "getProjects", { params: { clientID: user.uid } }).then(response => {
                             setProjects(response.data);
                             setLoading(false);
                         });
@@ -297,7 +309,7 @@ export default function Manage(): JSX.Element {
                                                             </TableCellLayout>
                                                         </TableCell>
                                                         <TableCell>{user.lastName}</TableCell>
-                                                        <TableCell>{user.emailAddress}</TableCell>
+                                                        <TableCell style={{ width: "4500px" }}>{user.emailAddress}</TableCell>
                                                         <TableCell>{user.projectRole}</TableCell>
                                                         <TableCell>{user.initialPasswordChanged ? "Yes" : "No"}</TableCell>
                                                         {currentUser &&
@@ -355,10 +367,17 @@ export default function Manage(): JSX.Element {
                             <DialogTitle>Create new Project</DialogTitle>
                             <form onSubmit={handleCreateProject} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                                 <DialogContent>
-                                    <div className={styles.inputColumn}>
+                                    <div className={`${styles.inputColumn} ${styles.edit}`}>
                                         <div className={styles.inputGroup}>
                                             <Label>Project Name</Label>
-                                            <Input name="projectName" placeholder="Project Name" onChange={handleProjectInputChange} required />
+                                            <Input
+                                                name="projectName"
+                                                placeholder="Project Name"
+                                                aria-label="Project Name"
+                                                onChange={handleProjectInputChange}
+                                                required
+                                            />
+                                            {loading && <Spinner label="Loading..." labelPosition="below" size="large" />}
                                         </div>
                                     </div>
                                 </DialogContent>
@@ -366,7 +385,7 @@ export default function Manage(): JSX.Element {
                                     <DialogTrigger disableButtonEnhancement>
                                         <Button appearance="secondary">Close</Button>
                                     </DialogTrigger>
-                                    <Button appearance="primary" type="submit">
+                                    <Button appearance="primary" type="submit" disabled={loading}>
                                         Create Project
                                     </Button>
                                 </DialogActions>
@@ -391,15 +410,28 @@ export default function Manage(): JSX.Element {
                                     <div className={styles.inputColumn}>
                                         <div className={styles.inputGroup}>
                                             <Label>First Name</Label>
-                                            <Input name="firstName" placeholder="First Name" onChange={handleUserInputChange} required />
+                                            <Input
+                                                name="firstName"
+                                                placeholder="First Name"
+                                                aria-label="First Name"
+                                                onChange={handleUserInputChange}
+                                                required
+                                            />
                                         </div>
                                         <div className={styles.inputGroup}>
                                             <Label>Last Name</Label>
-                                            <Input name="lastName" placeholder="Last Name" onChange={handleUserInputChange} required />
+                                            <Input name="lastName" placeholder="Last Name" aria-label="Last Name" onChange={handleUserInputChange} required />
                                         </div>
                                         <div className={styles.inputGroup}>
                                             <Label>Email Address</Label>
-                                            <Input name="emailAddress" placeholder="Email Address" onChange={handleUserInputChange} required type="email" />
+                                            <Input
+                                                name="emailAddress"
+                                                placeholder="Email Address"
+                                                aria-label="Email Address"
+                                                onChange={handleUserInputChange}
+                                                required
+                                                type="email"
+                                            />
                                         </div>
                                         <div className={styles.inputGroup}>
                                             <Label>Password</Label>
@@ -407,6 +439,7 @@ export default function Manage(): JSX.Element {
                                                 id="passwordInput"
                                                 name="password"
                                                 placeholder="Password"
+                                                aria-label="Password"
                                                 onChange={handleUserInputChange}
                                                 required
                                                 type={showPassword ? "text" : "password"}
@@ -445,7 +478,8 @@ export default function Manage(): JSX.Element {
                                     <DialogTrigger disableButtonEnhancement>
                                         <Button appearance="secondary">Close</Button>
                                     </DialogTrigger>
-                                    <Button appearance="primary" type="submit">
+                                    {loading && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
+                                    <Button appearance="primary" type="submit" disabled={loading}>
                                         Create User
                                     </Button>
                                 </DialogActions>
@@ -491,6 +525,7 @@ export default function Manage(): JSX.Element {
                                             >
                                                 Change Role
                                             </Button>
+                                            {loading && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
                                         </div>
                                     </div>
                                 </DialogContent>
@@ -503,6 +538,7 @@ export default function Manage(): JSX.Element {
                                         color="red"
                                         style={{ backgroundColor: "#f00" }}
                                         onClick={() => handleRemoveUser(selectedProject.projectID, selectedUser)}
+                                        disabled={loading}
                                     >
                                         Remove User from project
                                     </Button>
