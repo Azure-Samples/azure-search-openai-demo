@@ -14,65 +14,76 @@ import axios from "axios";
 import { Button } from "@fluentui/react-components";
 import { useNavigate } from "react-router-dom";
 
-const Layout = () => {
+interface User {
+    uuid: string;
+    emailAddress: string;
+    firstName: string;
+    lastName: string;
+    initialPasswordChanged: boolean;
+    projectName?: string;
+    projectId?: string;
+    projectRole?: string;
+}
 
+const Layout = () => {
     const navigate = useNavigate();
 
-
-    const baseURL = 'https://us-central1-projectpalai-83a5f.cloudfunctions.net/'
+    const baseURL = "https://us-central1-projectpalai-83a5f.cloudfunctions.net/";
     const [loggedIn, setLoggedIn] = useState(false);
-    
-
-
-useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-
-        navigate("../", {});
-
-        setLoggedIn(true);
-        getAccountDetail(user.uid);
-      }
-      else {
-
-        navigate("../login", {});
-        setLoggedIn(false);
-      }
-    })
-    return () => unsubscribe();
-  }, []);
-
-
-
-const getAccountDetail = (uid:string) => {
-
-    axios.get(baseURL + 'getAccountDetails', {
-      params: {
-        clientID: uid,
-      }
-    }).then((response) => {
-
-      const data = response.data;
-      if (data.found) {
-        // setUserDetails(data.user)
-        localStorage.setItem("user", JSON.stringify(data.user))
-      }
+    const [userData, setUserData] = useState<User>({
+        uuid: "",
+        emailAddress: "",
+        firstName: "",
+        lastName: "",
+        initialPasswordChanged: false
     });
-  }
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            if (user) {
+                if (window.location.hash === "#/manage") {
+                    setLoggedIn(true);
+                    getAccountDetail(user.uid);
+                }
+                if (window.location.hash === "#/login") {
+                    navigate("../", {});
+                    setLoggedIn(true);
+                }
+            } else {
+                navigate("../login", {});
+                setLoggedIn(false);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
 
+    const getAccountDetail = (uid: string) => {
+        axios
+            .get(baseURL + "getAccountDetails", {
+                params: {
+                    clientID: uid
+                }
+            })
+            .then(response => {
+                const data = response.data;
+                if (data.found) {
+                    // setUserDetails(data.user)
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    setUserData(data.user);
+                    console.log("User details: ", data.user);
+                }
+            });
+    };
 
-  const logout = () => {
-
-
-    signOut(auth).then(() => {
-        // Sign-out successful.
-
-    }).catch((error) => {
-        // An error happened.
-        console.log("ERROR: ", error.message);
-    });
-
-}
+    const logout = () => {
+        signOut(auth)
+            .then(() => {
+                // Sign-out successful.
+            })
+            .catch(error => {
+                // An error happened.
+                console.log("ERROR: ", error.message);
+            });
+    };
 
     return (
         <div className={styles.layout}>
@@ -87,8 +98,6 @@ const getAccountDetail = (uid:string) => {
                     {useLogin && <LoginButton />}
                 </div>
             </div>
-
-
 
             <Outlet />
         </div>
