@@ -1,0 +1,97 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.dropdown {
+    margin: 0 10px;
+}
+
+.option-container {
+    display: flex;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.column {
+    flex-basis: 100%;
+    flex: 1;
+    min-width: 500px;
+    padding: 10px;
+}
+
+.uploadSection {
+    box-shadow: 0 2px 3px #0f2344;
+    padding: 20px;
+}
+
+.uploadSection1 {
+    box-shadow: 0 2px 3px #0f2344;
+    padding: 20px;
+}
+
+.uploadForm {
+    padding: 10px;
+}
+
+.fileInput {
+    margin-bottom: 15px;
+}
+
+.uploadButton {
+    margin-bottom: 15px;
+    align-self: flex-start;
+}
+
+.uploadButton:hover {
+    background-color: #0f2344;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
+
+.filePreviewContainer {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 3px #0f2344;
+}
+
+.filePreview {
+    max-width: 100%;
+    height: auto;
+}
+
+.loader {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+.jsonContainer {
+    overflow: auto;
+    max-height: 400px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}

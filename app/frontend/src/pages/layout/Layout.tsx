@@ -29,6 +29,14 @@ const Layout = () => {
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
+                                <NavLink
+                                    to="/information-extraction"
+                                    className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
+                                >
+                                    Information Extraction
+                                </NavLink>
+                            </li>
+                            <li className={styles.headerNavLeftMargin}>
                                 <a href="https://aka.ms/entgptsearch" target={"_blank"} title="Github repository link">
                                     <img
                                         src={github}
@@ -42,7 +50,11 @@ const Layout = () => {
                             </li>
                         </ul>
                     </nav>
-                    <h4 className={styles.headerRightText}><a href="mailto:info@thebrights.ai" className={styles.mailTagStyle} target={"_blank"} title="The Brights Technology">Contact Us</a></h4>
+                    <h4 className={styles.headerRightText}>
+                        <a href="mailto:info@thebrights.ai" className={styles.mailTagStyle} target={"_blank"} title="The Brights Technology">
+                            Contact Us
+                        </a>
+                    </h4>
                     {useLogin && <LoginButton />}
                 </div>
             </header>
