@@ -261,11 +261,11 @@ export default function Manage(): JSX.Element {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
-                axios.get(baseURL2 + "getAccountDetails", { params: { clientID: user.uid } }).then(response => {
+                axios.get(baseURL + "getAccountDetails", { params: { clientID: user.uid } }).then(response => {
                     const data = response.data;
                     if (data.found) {
                         setCurrentUser(data.user);
-                        axios.get(baseURL2 + "getProjects", { params: { clientID: user.uid } }).then(response => {
+                        axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
                             setProjects(response.data);
                             setLoading(false);
                         });
