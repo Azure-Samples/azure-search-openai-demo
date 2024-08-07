@@ -1,33 +1,36 @@
 import { useState } from "react";
 
 import { IconButton } from "@fluentui/react";
+import { getSpeechApi } from "../../api";
 
 interface Props {
-    url: string | null;
+    answer: string;
 }
 
 let audio = new Audio();
 
-export const SpeechOutputAzure = ({ url }: Props) => {
+export const SpeechOutputAzure = ({ answer }: Props) => {
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const startOrStopAudio = async () => {
+    const startOrStopSpeech = async (answer: string) => {
         if (isPlaying) {
             audio.pause();
             setIsPlaying(false);
             return;
         }
-
-        if (!url) {
-            console.error("Speech output is not yet available.");
-            return;
-        }
-        audio = new Audio(url);
-        await audio.play();
-        audio.addEventListener("ended", () => {
-            setIsPlaying(false);
+        await getSpeechApi(answer).then(async speechUrl => {
+            if (!speechUrl) {
+                alert("Speech output is not available.");
+                console.error("Speech output is not available.");
+                return;
+            }
+            audio = new Audio(speechUrl);
+            await audio.play();
+            audio.addEventListener("ended", () => {
+                setIsPlaying(false);
+            });
+            setIsPlaying(true);
         });
-        setIsPlaying(true);
     };
 
     const color = isPlaying ? "red" : "black";
@@ -37,8 +40,7 @@ export const SpeechOutputAzure = ({ url }: Props) => {
             iconProps={{ iconName: "Volume3" }}
             title="Speak answer"
             ariaLabel="Speak answer"
-            onClick={() => startOrStopAudio()}
-            disabled={!url}
+            onClick={() => startOrStopSpeech(answer)}
         />
     );
 };

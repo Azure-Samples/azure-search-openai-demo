@@ -68,7 +68,6 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
-    const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
 
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
@@ -223,19 +222,6 @@ const Chat = () => {
         getConfig();
     }, []);
 
-    useEffect(() => {
-        if (answers && showSpeechOutputAzure) {
-            // For each answer that is missing a speech URL, fetch the speech URL
-            for (let i = 0; i < answers.length; i++) {
-                if (!speechUrls[i]) {
-                    getSpeechApi(answers[i][1].message.content).then(speechUrl => {
-                        setSpeechUrls([...speechUrls.slice(0, i), speechUrl, ...speechUrls.slice(i + 1)]);
-                    });
-                }
-            }
-        }
-    }, [answers]);
-
     const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         setPromptTemplate(newValue || "");
     };
@@ -376,7 +362,6 @@ const Chat = () => {
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutputAzure={showSpeechOutputAzure}
                                                 showSpeechOutputBrowser={showSpeechOutputBrowser}
-                                                speechUrl={speechUrls[index]}
                                             />
                                         </div>
                                     </div>
@@ -398,7 +383,6 @@ const Chat = () => {
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutputAzure={showSpeechOutputAzure}
                                                 showSpeechOutputBrowser={showSpeechOutputBrowser}
-                                                speechUrl={speechUrls[index]}
                                             />
                                         </div>
                                     </div>
