@@ -201,6 +201,7 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 
 resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(openAiResourceGroupName)) {
   name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
+  scope: subscription('a47eb467-ae01-4fd3-a73d-e806e3440072')
 }
 
 resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(documentIntelligenceResourceGroupName)) {
