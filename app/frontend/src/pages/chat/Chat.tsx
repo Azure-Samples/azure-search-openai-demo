@@ -347,7 +347,7 @@ const Chat = () => {
         <div className={styles.container}>
             {/* Setting the page title using react-helmet-async */}
             <Helmet>
-                <title>{`${t("pageTitle")} - ${t("chat")}`}</title>
+                <title>{t("pageTitle")}</title>
             </Helmet>
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />

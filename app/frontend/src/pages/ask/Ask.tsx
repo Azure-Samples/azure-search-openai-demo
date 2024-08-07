@@ -240,7 +240,7 @@ export function Component(): JSX.Element {
         <div className={styles.askContainer}>
             {/* Setting the page title using react-helmet-async */}
             <Helmet>
-                <title>{`${t("pageTitle")} - ${t("qa")}`}</title>
+                <title>{t("pageTitle")}</title>
             </Helmet>
             <div className={styles.askTopSection}>
                 <div className={styles.commandsContainer}>

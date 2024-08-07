@@ -7,7 +7,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using GPT-4](#using-gpt-4)
 * [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
-* [Enabling language picker](#Enabling-language-picker)
+* [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
@@ -108,12 +108,7 @@ This section covers the integration of GPT-4 Vision with Azure AI Search. Learn 
 
 ## Enabling language picker
 
-You can optionally enable the language picker to allow users to switch between different languages. Currently, the app supports the following languages:
-
-- English
-- Spanish
-- French
-- Japanese
+You can optionally enable the language picker to allow users to switch between different languages. Currently, it supports English, Spanish, French, and Japanese.
 
 To add support for additional languages, create new locale files and update `app/frontend/src/i18n/config.ts` accordingly. To enable language picker, run:
 
