@@ -99,7 +99,7 @@ export default function Manage(): JSX.Element {
         { columnKey: "initialPasswordChanged", name: "Initial Password Changed" }
     ];
 
-    const baseURL = "https://us-central1-projectpalai-83a5f.cloudfunctions.net/";
+    const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
 
     const handleOpenCreateUser = (project: Project) => {
@@ -304,7 +304,9 @@ export default function Manage(): JSX.Element {
                                                 <React.Fragment key={index}>
                                                     <TableRow>
                                                         <TableCell>
-                                                            <TableCellLayout media={user.projectRole === "Owner" ? <Premium20Regular /> : ""}>
+                                                            <TableCellLayout
+                                                                media={user.projectRole === "Owner" || user.projectRole === "Admin" ? <Premium20Regular /> : ""}
+                                                            >
                                                                 {user.firstName}
                                                             </TableCellLayout>
                                                         </TableCell>
