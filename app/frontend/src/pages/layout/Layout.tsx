@@ -75,6 +75,9 @@ const Layout = () => {
         if ((window.location.hash === "#/" || window.location.hash === "#/manage") && noProjects) {
             navigate("/no-projects", {});
         }
+        if (window.location.hash === "#/login" && userData.uuid !== "") {
+            navigate("/", {});
+        }
     });
 
     const getAccountDetail = (uid: string) => {
@@ -99,6 +102,13 @@ const Layout = () => {
         signOut(auth)
             .then(() => {
                 // Sign-out successful.
+                setUserData({
+                    uuid: "",
+                    emailAddress: "",
+                    firstName: "",
+                    lastName: "",
+                    initialPasswordChanged: false
+                });
             })
             .catch(error => {
                 // An error happened.
