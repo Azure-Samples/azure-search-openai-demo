@@ -14,36 +14,29 @@ import Chat from "./pages/chat/Chat";
 import Manage from "./pages/manage/Manage";
 import Login from "./pages/login/Login";
 
-
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBpc-yWt3kwpXy7oy2XKzC2p-fRNrOcagQ",
-  authDomain: "projectpalai-83a5f.firebaseapp.com",
-  projectId: "projectpalai-83a5f",
-  storageBucket: "projectpalai-83a5f.appspot.com",
-  messagingSenderId: "430310511920",
-  appId: "1:430310511920:web:cb0e58341ef191e799a4f5",
-  measurementId: "G-TVX8H2KFTD"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-export {auth}
-
-
-
-
-
+export { auth };
 
 var layout;
 if (useLogin) {
