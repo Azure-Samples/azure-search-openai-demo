@@ -6,6 +6,8 @@
 #
 aiofiles==24.1.0
     # via quart
+aiohappyeyeballs==2.3.5
+    # via aiohttp
 aiohttp==3.10.1
     # via
     #   -r requirements.in
@@ -87,10 +89,12 @@ cryptography==43.0.0
     #   msal
     #   pyjwt
 deprecated==1.2.14
-    # via opentelemetry-api
+    # via
+    #   opentelemetry-api
+    #   opentelemetry-semantic-conventions
 distro==1.9.0
     # via openai
-fixedint==0.2.0
+fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -127,7 +131,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==8.2.0
+importlib-metadata==8.0.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -146,6 +150,8 @@ jinja2==3.1.4
     # via
     #   flask
     #   quart
+jiter==0.5.0
+    # via openai
 markupsafe==2.1.5
     # via
     #   jinja2
@@ -180,7 +186,7 @@ msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.2
     # via msgraph-sdk
-msgraph-sdk==1.5.4
+msgraph-sdk==1.1.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -196,7 +202,7 @@ openai==1.40.1
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
-openai-messages-token-helper==0.1.8
+openai-messages-token-helper==0.1.9
     # via -r requirements.in
 opentelemetry-api==1.26.0
     # via
@@ -319,18 +325,18 @@ portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-psutil==6.0.0
+psutil==5.9.8
     # via azure-monitor-opentelemetry-exporter
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
     # via openai
-pydantic-core==2.21.0
+pydantic-core==2.20.1
     # via pydantic
 pyjwt[crypto]==2.9.0
     # via
+    #   -r requirements.in
     #   msal
-    #   pyjwt
 pymupdf==1.24.9
     # via -r requirements.in
 pymupdfb==1.24.9
@@ -362,7 +368,6 @@ requests-oauthlib==2.0.0
 six==1.16.0
     # via
     #   azure-core
-    #   ecdsa
     #   isodate
     #   python-dateutil
 sniffio==1.3.1
