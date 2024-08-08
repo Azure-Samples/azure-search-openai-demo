@@ -68,14 +68,14 @@ const Layout = () => {
         return () => unsubscribe();
     }, []);
 
-    // useEffect(() => {
-    //     if ((window.location.hash === "#/" || window.location.hash === "#/manage") && userData.uuid === "") {
-    //         navigate("/login", {});
-    //     }
-    //     if ((window.location.hash === "#/" || window.location.hash === "#/manage") && noProjects) {
-    //         navigate("/no-projects", {});
-    //     }
-    // });
+    useEffect(() => {
+        if ((window.location.hash === "#/" || window.location.hash === "#/manage") && userData.uuid === "") {
+            navigate("/login", {});
+        }
+        if ((window.location.hash === "#/" || window.location.hash === "#/manage") && noProjects) {
+            navigate("/no-projects", {});
+        }
+    });
 
     const getAccountDetail = (uid: string) => {
         axios
