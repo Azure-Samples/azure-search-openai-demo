@@ -28,7 +28,7 @@ interface User {
 const Layout = () => {
     const navigate = useNavigate();
 
-    const baseURL = "https://us-central1-projectpalai-83a5f.cloudfunctions.net/";
+    const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const [loggedIn, setLoggedIn] = useState(false);
     const [userData, setUserData] = useState<User>({
         uuid: "",
@@ -37,17 +37,29 @@ const Layout = () => {
         lastName: "",
         initialPasswordChanged: false
     });
+    const [noProjects, setNoProjects] = useState(false);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
-                if (window.location.hash === "#/manage") {
-                    setLoggedIn(true);
-                    getAccountDetail(user.uid);
-                }
-                if (window.location.hash === "#/login") {
-                    navigate("../", {});
-                    setLoggedIn(true);
-                }
+                axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
+                    if (response.data.length === 0) {
+                        navigate("../no-projects", {});
+                        getAccountDetail(user.uid);
+                        setLoggedIn(true);
+                        setNoProjects(true);
+                    } else {
+                        if (window.location.hash === "#/manage") {
+                            getAccountDetail(user.uid);
+                            setLoggedIn(true);
+                        }
+                        if (window.location.hash === "#/login") {
+                            getAccountDetail(user.uid);
+                            navigate("../", {});
+                            setLoggedIn(true);
+                        }
+                    }
+                });
             } else {
                 navigate("../login", {});
                 setLoggedIn(false);
@@ -55,6 +67,18 @@ const Layout = () => {
         });
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if ((window.location.hash === "#/" || window.location.hash === "#/manage") && userData.uuid === "") {
+            navigate("/login", {});
+        }
+        if ((window.location.hash === "#/" || window.location.hash === "#/manage") && noProjects) {
+            navigate("/no-projects", {});
+        }
+        if (window.location.hash === "#/login" && userData.uuid !== "") {
+            navigate("/", {});
+        }
+    });
 
     const getAccountDetail = (uid: string) => {
         axios
@@ -78,6 +102,13 @@ const Layout = () => {
         signOut(auth)
             .then(() => {
                 // Sign-out successful.
+                setUserData({
+                    uuid: "",
+                    emailAddress: "",
+                    firstName: "",
+                    lastName: "",
+                    initialPasswordChanged: false
+                });
             })
             .catch(error => {
                 // An error happened.
@@ -89,7 +120,7 @@ const Layout = () => {
         <div className={styles.layout}>
             <div className={styles.header}>
                 <div className={styles.headerContainer}>
-                    <Link to="/" className={styles.headerTitleContainer}>
+                    <Link to={userData.uuid ? "/" : "/login"} className={styles.headerTitleContainer}>
                         <h3 className={styles.headerTitle}>Project Pal AI</h3>
                     </Link>
 

@@ -89,6 +89,10 @@ const router = createHashRouter([
                 element: <Login />
             },
             {
+                path: "/no-projects",
+                lazy: () => import("./pages/noProjects/NoProjects")
+            },
+            {
                 path: "*",
                 lazy: () => import("./pages/NoPage")
             }
