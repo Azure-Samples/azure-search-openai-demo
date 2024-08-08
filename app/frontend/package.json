@@ -12,18 +12,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-react": "^2.0.8",
     "@azure/msal-browser": "^3.1.0",
+    "@azure/msal-react": "^2.0.8",
     "@fluentui/react": "^8.112.9",
     "@fluentui/react-components": "^9.42.0",
     "@fluentui/react-icons": "^2.0.223",
     "@react-spring/web": "^9.7.3",
+    "axios": "^1.7.3",
     "dompurify": "^3.0.6",
+    "firebase": "^10.12.5",
+    "ndjson-readablestream": "^1.0.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
-    "ndjson-readablestream": "^1.0.9",
-    "scheduler": "^0.20.2"
+    "scheduler": "^0.20.2",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",

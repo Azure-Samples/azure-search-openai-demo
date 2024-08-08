@@ -1,0 +1,37 @@
+.container {
+    padding: 5px 5px 5px 10px;
+}
+
+.projects {
+    width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inputColumn {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 350px;
+    gap: 15px;
+}
+
+.inputColumn.edit {
+    width: 300px;
+    height: 150px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.passwordInput {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
