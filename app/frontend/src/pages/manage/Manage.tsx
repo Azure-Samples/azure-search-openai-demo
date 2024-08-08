@@ -128,11 +128,11 @@ export default function Manage(): JSX.Element {
     };
 
     const handleCreateUserDB = (user: any) => {
-        return axios.post(baseURL2 + "createNewAccount", user);
+        return axios.post(baseURL + "createNewAccount", user);
     };
 
     const handleAddUserToProject = (projectID: string, user: NewUser) => {
-        return axios.post(baseURL2 + "addNewUserToProject", { projectID, user });
+        return axios.post(baseURL + "addNewUserToProject", { projectID, user });
     };
 
     const handleCreateUser = (event: FormEvent<HTMLFormElement>) => {
@@ -194,8 +194,8 @@ export default function Manage(): JSX.Element {
                 }
             });
         });
-        // axios.post(baseURL2 + "createNewAccount", newUser).then(response => {
-        //     axios.post(baseURL2 + "addNewUserToProject", { projectID, newUserProject }).then(response => {});
+        // axios.post(baseURL + "createNewAccount", newUser).then(response => {
+        //     axios.post(baseURL + "addNewUserToProject", { projectID, newUserProject }).then(response => {});
         // })
     };
 
@@ -209,7 +209,7 @@ export default function Manage(): JSX.Element {
             projectName: projectName,
             dateCreated: new Date().toISOString()
         };
-        axios.post(baseURL2 + "createNewProject", newProject).then(response => {
+        axios.post(baseURL + "createNewProject", newProject).then(response => {
             console.log("New project created");
             setProjects([...projects, response.data]);
             setNewProjectInputs({
@@ -224,7 +224,7 @@ export default function Manage(): JSX.Element {
 
     const handleRemoveUser = (projectID: string, user: User) => {
         setLoading(true);
-        axios.post(baseURL2 + "removeUserFromProject", { projectID: projectID, uuid: user.uuid, projectRole: user.projectRole }).then(response => {
+        axios.post(baseURL + "removeUserFromProject", { projectID: projectID, uuid: user.uuid, projectRole: user.projectRole }).then(response => {
             console.log("User removed from project");
             projects.forEach(project => {
                 if (project.users.some(user => user.uuid === user.uuid) && projectID === project.projectID) {
@@ -241,7 +241,7 @@ export default function Manage(): JSX.Element {
         if (user.projectRole === newRole) {
             return;
         }
-        axios.post(baseURL2 + "changeUserRole", { projectID: projectID, user: user, newRole: newRole }).then(response => {
+        axios.post(baseURL + "changeUserRole", { projectID: projectID, user: user, newRole: newRole }).then(response => {
             console.log("User role changed");
             projects.forEach(project => {
                 if (project.users && projectID === project.projectID) {
