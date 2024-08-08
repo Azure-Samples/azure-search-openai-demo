@@ -10,18 +10,18 @@ from approaches.approach import Approach
 
 class ChatApproach(Approach, ABC):
     query_prompt_few_shots: list[ChatCompletionMessageParam] = [
-        {"role": "user", "content": "What are the licensing requirements for home healthcare facilities in Dubai?"},
-        {"role": "assistant", "content": "Describe the safety requirements for dental laboratories according to DHA regulations."},
-        {"role": "user", "content": "What are the key components of the Clinical Governance Framework by the Dubai Health Authority?"},
-        {"role": "assistant", "content": "What are the main requirements for outpatient care facilities to ensure patient safety and quality of care according to DHA regulations?"}
+         {"role": "user", "content": "How has the COVID-19 pandemic accelerated healthcare innovation and improved management protocols for respiratory diseases?"},
+        {"role": "assistant", "content": "The COVID-19 pandemic has accelerated healthcare innovation and improved management protocols for respiratory diseases by prompting the revision of influenza preparedness guidelines, the development of novel tools and technologies, and the acceleration of pharmaceutical research. Improved global surveillance and digital healthcare delivery have also been significant advancements. Machine learning has enhanced disease outbreak predictions."},
+        {"role": "user", "content": "What are the primary differences between antigenic drift and antigenic shift in influenza viruses?"},
+        {"role": "assistant", "content": "Antigenic drift involves small genetic changes over time that allow the virus to evade the immune system, while antigenic shift involves a major genetic change resulting in new H or N proteins, potentially leading to pandemics."}
     ]
     NO_RESPONSE = "0"
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<What are the steps to renew a license for a home healthcare facility?>>
-    <<What infection control measures are mandated for dental laboratories?>>
-    <<How does the Clinical Governance Framework ensure continuous improvement?>>
+    <<What specific novel tools have been developed to manage respiratory diseases?>>
+    <<How has digital healthcare delivery changed during the COVID-19 pandemic?>>
+    <<How does antigenic drift affect vaccine effectiveness?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """

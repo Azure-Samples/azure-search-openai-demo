@@ -18,7 +18,7 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-    "You are an intelligent assistant helping health facilities and health professionals understand their policies and regulations as health entities licensed by the DHA."
+    "You are an intelligent assistant helping hospital staff members gain advanced insights into medical terms such as diseases and research in the medical field."
     + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
     + "Answer the following question using the data provided in all available indexed sources. "
     + "For tabular information return it as an html table. Do not return markdown format. "
@@ -28,13 +28,13 @@ class RetrieveThenReadApproach(Approach):
     
     # shots/sample conversation
     question = """
-'What are the main requirements for outpatient care facilities to ensure patient safety and quality of care according to DHA regulations?
+'How has the COVID-19 pandemic accelerated healthcare innovation and improved management protocols for respiratory diseases?
 
 Sources:
-info1.pdf: Main requirements include maintaining accurate and secure patient records, adhering to stringent infection control measures, ensuring healthcare professionals meet licensure and competency standards, and complying with facility design and operational guidelines.
-info2.pdf: Regular inspections and compliance reviews are conducted to ensure ongoing adherence to DHA standards.
+info1.pdf: The pandemic prompted the revision of influenza preparedness guidelines, the development of novel tools and technologies, and the acceleration of pharmaceutical research. 
+info2.pdf: Improved global surveillance and digital healthcare delivery have also been significant advancements. Machine learning has enhanced disease outbreak predictions.
 """
-    answer = "Main requirements include maintaining accurate and secure patient records, adhering to stringent infection control measures, ensuring healthcare professionals meet licensure and competency standards, and complying with facility design and operational guidelines. Regular inspections and compliance reviews are conducted to ensure ongoing adherence to DHA standards [info1.pdf][info2.pdf]."
+    answer = " The COVID-19 pandemic has accelerated healthcare innovation and improved management protocols for respiratory diseases by prompting the revision of influenza preparedness guidelines, the development of novel tools and technologies, and the acceleration of pharmaceutical research. Improved global surveillance and digital healthcare delivery have also been significant advancements. Machine learning has enhanced disease outbreak predictions [info1.pdf][info2.pdf]."
 
     def __init__(
         self,
