@@ -93,6 +93,10 @@ const router = createHashRouter([
                 lazy: () => import("./pages/noProjects/NoProjects")
             },
             {
+                path: "/change-password",
+                lazy: () => import("./pages/changePassword/ChangePassword")
+            },
+            {
                 path: "*",
                 lazy: () => import("./pages/NoPage")
             }

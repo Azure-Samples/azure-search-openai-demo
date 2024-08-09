@@ -1,7 +1,9 @@
 import { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
+import { auth } from "../../";
 
 import styles from "./Chat.module.css";
 
@@ -44,6 +46,8 @@ const Chat = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
+
+    const navigate = useNavigate();
 
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
@@ -225,6 +229,12 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
+
+    useEffect(() => {
+        if (!auth.currentUser) {
+            navigate("/login");
+        }
+    });
 
     return (
         <div className={styles.container}>
