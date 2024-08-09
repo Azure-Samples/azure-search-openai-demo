@@ -29,6 +29,7 @@ module main 'main.bicep' = {
     useApplicationInsights: false
     useVectors: true
     useGPT4V: false
+    enableLanguagePicker: false
     useSpeechInputBrowser: false
     useSpeechOutputBrowser: false
 
