@@ -1,9 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Dropdown, IDropdownOption } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
+import { useId, Dropdown as DropdownComponent, Option } from "@fluentui/react-components";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 import { auth } from "../../";
+import type { DropdownProps } from "@fluentui/react-components";
 
 import styles from "./Chat.module.css";
 
@@ -18,9 +20,9 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
-import PalAILogo from "../../../public/PalAILogo.png";
 
-const Chat = () => {
+
+const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -47,7 +49,16 @@ const Chat = () => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
 
+    // @cade-ryan heres the state for parameters to be passed to backend
+    const [parameters, setParameters] = useState<Record<string, string>>({
+        tone: "Formal",
+        readability: "Medium",
+        wordCount: "200",
+        communicationFramework: "Think/Feel/Do"
+    });
+
     const navigate = useNavigate();
+    const dropdownId = useId("dropdown-default");
 
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], setAnswers: Function, responseBody: ReadableStream<any>) => {
         let answer: string = "";
@@ -230,6 +241,14 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const toneOptions = ["Formal", "Informal", "Motivational", "Celebratory", "Cautious"];
+
+    const readabilityOptions = ["Low", "Medium", "High"];
+
+    const wordCountOptions = ["100", "200", "300"];
+
+    const communicationFrameworkOptions = ["Think/Feel/Do", "Before/During/After", "Concentric Circles"];
+
     useEffect(() => {
         if (!auth.currentUser) {
             navigate("/login");
@@ -314,10 +333,83 @@ const Chat = () => {
                             onSend={question => makeApiRequest(question)}
                         />
                     </div>
+
+                    <div className={styles.parameterContainer}>
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Tone</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="toneDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="Formal"
+                                defaultSelectedOptions={["Formal"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, tone: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {toneOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Readability</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="readabilityDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="Medium"
+                                defaultSelectedOptions={["Medium"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, readability: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {readabilityOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Word count</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="wordCountDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="200"
+                                defaultSelectedOptions={["200"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, wordCount: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {wordCountOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Communication framework</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="communicationFramewrokDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="Think/Feel/Do"
+                                defaultSelectedOptions={["Think/Feel/Do"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, communicationFramework: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {communicationFrameworkOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                    </div>
                 </div>
-
-                <img src={PalAILogo} className={styles.palAIIcon} />
-
+                
                 {answers.length > 0 && activeAnalysisPanelTab && (
                     <AnalysisPanel
                         className={styles.chatAnalysisPanel}

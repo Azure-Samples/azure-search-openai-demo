@@ -13,6 +13,7 @@ import { auth } from "../..";
 import axios from "axios";
 import { Button } from "@fluentui/react-components";
 import { useNavigate, useLocation } from "react-router-dom";
+import PalAILogo from "../../../src/PalAILogo.png";
 
 const Layout = () => {
     const navigate = useNavigate();
@@ -134,7 +135,9 @@ const Layout = () => {
                     </div>
                 </div>
             </div>
-
+            <div className={styles.logoContainer}>
+                <img src={PalAILogo} className={styles.palAIIcon} />
+            </div>
             <Outlet />
         </div>
     );
