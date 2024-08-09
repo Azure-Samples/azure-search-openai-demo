@@ -1,40 +1,38 @@
 ---
-name: OpenAI_query
-description: A basic prompt using MistralAI for Chat page. It adds the tools that are used during the chat completion request.
+name: Phi3-Mini-4k Chat
+description: A basic prompt using Phi3-Mini-4k Chat for Chat page
 model:
   api: chat
   configuration:
-    type: openai
+    type: hf
     messages_length_limit: 4000
   parameters:
-    max_tokens: 100
-    temperature: 0.0
-    tools: ${file:tools.json}
+    max_tokens: 1024
+    temperature: 0.3
 inputs:
   system_message:
     type: string
   question:
     type: string
-  few_shots:
+  sources:
     type: list
   past_messages:
     type: list
 sample:
   system_message: Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
   question: What is included in my Northwind Health Plus plan that is not in standard?
-  few_shots: [{"role": "user", "content": "What is the weather today"}, {"role": "assistant", "content": "It is sunny today"}]
+  sources: ["source1.txt: This is data from source1\nsource2.txt:This is data from source 2"]
   past_messages: [{"role": "user", "content": "What is the weather today"}, {"role": "assistant", "content": "It is sunny today"}]
 
 ---
 system:
 {{ system_message }}
 
-{% if few_shots is defined and few_shots|length > 0 %}
-{% for shot in few_shots %}
-{{ shot.role }}:
-{{ shot.content }}
+user:
+Sources:
+{% for source in sources %}
+{{ source }}
 {% endfor %}
-{% endif %}
 
 {% if past_messages is defined and past_messages|length > 0 %}
 Past conversation:
@@ -42,7 +40,7 @@ Past conversation:
 {{ old_question.role }}:
 {{ old_question.content }}
 {% endfor %}
-{% endif %}
 
 user:
+{% endif %}
 {{ question }}

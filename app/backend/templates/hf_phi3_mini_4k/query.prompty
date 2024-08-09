@@ -1,11 +1,11 @@
 ---
-name: OpenAI_query
-description: A basic prompt using MistralAI for Chat page. It adds the tools that are used during the chat completion request.
+name: Phi3-Mini-4k Query
+description: A basic prompt using Phi3-Mini-4k for generating a query. It adds the tools that are used during the chat completion request.
 model:
   api: chat
   configuration:
-    type: openai
-    messages_length_limit: 4000
+    type: "hf"
+    messages_length_limit: 4096
   parameters:
     max_tokens: 100
     temperature: 0.0

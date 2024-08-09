@@ -2,6 +2,7 @@ const BACKEND_URI = "";
 
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, SimpleAPIResponse } from "./models";
 import { useLogin, getToken, isUsingAppServicesLogin } from "../authConfig";
+import { List } from "@fluentui/react";
 
 export async function getHeaders(idToken: string | undefined): Promise<Record<string, string>> {
     // If using login and not using app services, add the id token of the logged in account as the authorization
@@ -20,6 +21,15 @@ export async function configApi(): Promise<Config> {
     });
 
     return (await response.json()) as Config;
+}
+
+export async function getSupportedModels(): Promise<string[]> {
+    const response = await fetch(`${BACKEND_URI}/getmodels`, {
+        method: "GET"
+    });
+    console.log(response);
+
+    return await response.json();
 }
 
 export async function askApi(request: ChatAppRequest, idToken: string | undefined): Promise<ChatAppResponse> {

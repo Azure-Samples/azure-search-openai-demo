@@ -55,7 +55,8 @@ def run_server(port: int):
             "AZURE_SPEECH_SERVICE_ID": "test-id",
             "AZURE_SPEECH_SERVICE_LOCATION": "eastus",
             "AZURE_OPENAI_SERVICE": "test-openai-service",
-            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-35-turbo",
+            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-3.5-turbo",
+            "HUGGINGFACE_API_KEY": "mock-huggingface-api-key",
         },
         clear=True,
     ):
@@ -63,7 +64,8 @@ def run_server(port: int):
 
 
 @pytest.fixture()
-def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str, None, None]:
+def live_server_url(monkeypatch, mock_env, mock_acs_search, free_port: int) -> Generator[str, None, None]:
+    monkeypatch.setattr("app.login", mock.Mock())
     proc = Process(target=run_server, args=(free_port,), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"

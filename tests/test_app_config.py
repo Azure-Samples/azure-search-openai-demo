@@ -15,6 +15,7 @@ def minimal_env(monkeypatch):
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+        monkeypatch.setenv("HUGGINGFACE_API_KEY", "mock-huggingface-api-key")
         yield
 
 
@@ -22,11 +23,13 @@ def minimal_env(monkeypatch):
 async def test_app_local_openai(monkeypatch, minimal_env):
     monkeypatch.setenv("OPENAI_HOST", "local")
     monkeypatch.setenv("OPENAI_BASE_URL", "http://localhost:5000")
+    monkeypatch.setattr("app.login", mock.Mock())
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.api_key == "no-key-required"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.base_url == "http://localhost:5000"
+        llm_clients = quart_app.config[app.CONFIG_LLM_CLIENTS]
+        assert llm_clients["openai"].client.api_key == "no-key-required"
+        assert llm_clients["openai"].client.base_url == "http://localhost:5000"
 
 
 @pytest.mark.asyncio
@@ -34,26 +37,31 @@ async def test_app_azure_custom_key(monkeypatch, minimal_env):
     monkeypatch.setenv("OPENAI_HOST", "azure_custom")
     monkeypatch.setenv("AZURE_OPENAI_CUSTOM_URL", "http://azureapi.com/api/v1")
     monkeypatch.setenv("AZURE_OPENAI_API_KEY", "azure-api-key")
+    monkeypatch.setattr("app.login", mock.Mock())
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.api_key == "azure-api-key"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.base_url == "http://azureapi.com/api/v1/openai/"
+        llm_clients = quart_app.config[app.CONFIG_LLM_CLIENTS]
+        assert llm_clients["openai"].client.api_key == "azure-api-key"
+        assert llm_clients["openai"].client.base_url == "http://azureapi.com/api/v1/openai/"
 
 
 @pytest.mark.asyncio
 async def test_app_azure_custom_identity(monkeypatch, minimal_env):
     monkeypatch.setenv("OPENAI_HOST", "azure_custom")
     monkeypatch.setenv("AZURE_OPENAI_CUSTOM_URL", "http://azureapi.com/api/v1")
+    monkeypatch.setattr("app.login", mock.Mock())
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.api_key == "<missing API key>"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].client.base_url == "http://azureapi.com/api/v1/openai/"
+        llm_clients = quart_app.config[app.CONFIG_LLM_CLIENTS]
+        assert llm_clients["openai"].client.api_key == "<missing API key>"
+        assert llm_clients["openai"].client.base_url == "http://azureapi.com/api/v1/openai/"
 
 
 @pytest.mark.asyncio
 async def test_app_config_default(monkeypatch, minimal_env):
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         client = test_app.test_client()
@@ -68,6 +76,7 @@ async def test_app_config_default(monkeypatch, minimal_env):
 @pytest.mark.asyncio
 async def test_app_config_use_vectors_true(monkeypatch, minimal_env):
     monkeypatch.setenv("USE_VECTORS", "true")
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         client = test_app.test_client()
@@ -82,6 +91,7 @@ async def test_app_config_use_vectors_true(monkeypatch, minimal_env):
 @pytest.mark.asyncio
 async def test_app_config_use_vectors_false(monkeypatch, minimal_env):
     monkeypatch.setenv("USE_VECTORS", "false")
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         client = test_app.test_client()
@@ -96,6 +106,7 @@ async def test_app_config_use_vectors_false(monkeypatch, minimal_env):
 @pytest.mark.asyncio
 async def test_app_config_semanticranker_free(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_SEARCH_SEMANTIC_RANKER", "free")
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         client = test_app.test_client()
@@ -110,6 +121,7 @@ async def test_app_config_semanticranker_free(monkeypatch, minimal_env):
 @pytest.mark.asyncio
 async def test_app_config_semanticranker_disabled(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_SEARCH_SEMANTIC_RANKER", "disabled")
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         client = test_app.test_client()

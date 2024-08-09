@@ -48,7 +48,7 @@ jobs:
       AZURE_SEARCH_SERVICE_SKU: ${{ vars.AZURE_SEARCH_SERVICE_SKU }}
       AZURE_SEARCH_SEMANTIC_RANKER: ${{ vars.AZURE_SEARCH_SEMANTIC_RANKER }}
       HUGGINGFACE_API_KEY: ${{ secrets.HUGGINGFACE_API_KEY }}
-      HUGGINGFACE_MODEL: ${{ vars.HUGGINGFACE_MODEL }}
+      DEFAULT_MODEL: ${{ vars.DEFAULT_MODEL }}
 
     steps:
       #-------------------------- Setup ---------------------------

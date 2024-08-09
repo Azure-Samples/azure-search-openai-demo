@@ -13,6 +13,7 @@ from api_wrappers import LLMClient
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from templates.supported_models import ModelConfig
 
 
 class RetrieveThenReadVisionApproach(Approach):
@@ -38,10 +39,11 @@ class RetrieveThenReadVisionApproach(Approach):
         *,
         search_client: SearchClient,
         blob_container_client: ContainerClient,
-        llm_client: LLMClient,
+        llm_clients: dict[str, LLMClient],
         emb_client: LLMClient,
         auth_helper: AuthenticationHelper,
-        hf_model: Optional[str],  # Not needed for OpenAI
+        current_model: str,
+        available_models: dict[str, ModelConfig],
         gpt4v_deployment: Optional[str],
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -56,10 +58,11 @@ class RetrieveThenReadVisionApproach(Approach):
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
-        self.llm_client = llm_client
+        self.llm_clients = llm_clients
         self.emb_client = emb_client
         self.auth_helper = auth_helper
-        self.hf_model = hf_model
+        self.current_model = current_model
+        self.available_models = available_models
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
         self.embedding_dimensions = embedding_dimensions
@@ -98,6 +101,8 @@ class RetrieveThenReadVisionApproach(Approach):
         vector_fields = overrides.get("vector_fields", ["embedding"])
         send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
+
+        current_api = self.llm_clients[self.available_models[self.current_model].type]
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
@@ -147,9 +152,9 @@ class RetrieveThenReadVisionApproach(Approach):
             max_tokens=self.gpt4v_token_limit - response_token_limit,
         )
 
-        chat_completion = await self.llm_client.chat_completion(
+        chat_completion = await current_api.chat_completion(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=self.llm_client.format_message(updated_messages),
+            messages=updated_messages,
             temperature=overrides.get("temperature", 0.3),
             max_tokens=response_token_limit,
             n=1,

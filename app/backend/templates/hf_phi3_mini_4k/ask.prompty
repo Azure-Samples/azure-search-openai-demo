@@ -1,11 +1,11 @@
 ---
-name: OpenAI_ask
-description: A basic prompt using MistralAI for QA page
+name: Phi3-Mini-4k Ask
+description: A basic prompt using Phi3-Mini-4k for QA page
 model:
   api: chat
   configuration:
-    type: openai
-    messages_length_limit: 4000
+    type: "hf"
+    messages_length_limit: 4096
   parameters:
     max_tokens: 1024
     temperature: 0.3
@@ -29,5 +29,6 @@ Sources:
 {{ source }}
 {% endfor %}
 
+user:
 Question:
 {{ question }}

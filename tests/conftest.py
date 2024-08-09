@@ -265,6 +265,9 @@ envs = [
         "OPENAI_HOST": "openai",
         "OPENAI_API_KEY": "secretkey",
         "OPENAI_ORGANIZATION": "organization",
+        "HUGGINGFACE_API_KEY": "mock-huggingface-api-key",
+        "DEFAULT_MODEL": "GPT 3.5 Turbo",
+        "AZURE_OPENAI_CHATGPT_MODEL": "gpt-3.5-turbo",
     },
     {
         "OPENAI_HOST": "azure",
@@ -274,6 +277,9 @@ envs = [
         "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
         "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
+        "HUGGINGFACE_API_KEY": "mock-huggingface-api-key",
+        "DEFAULT_MODEL": "GPT 3.5 Turbo",
+        "AZURE_OPENAI_CHATGPT_MODEL": "gpt-35-turbo",
     },
 ]
 
@@ -290,6 +296,8 @@ auth_envs = [
         "AZURE_SERVER_APP_SECRET": "SECRET",
         "AZURE_CLIENT_APP_ID": "CLIENT_APP",
         "AZURE_TENANT_ID": "TENANT_ID",
+        "HUGGINGFACE_API_KEY": "mock-huggingface-api-key",
+        "DEFAULT_MODEL": "GPT 3.5 Turbo",
     },
 ]
 
@@ -308,6 +316,8 @@ auth_public_envs = [
         "AZURE_SERVER_APP_SECRET": "SECRET",
         "AZURE_CLIENT_APP_ID": "CLIENT_APP",
         "AZURE_TENANT_ID": "TENANT_ID",
+        "HUGGINGFACE_API_KEY": "mock-huggingface-api-key",
+        "DEFAULT_MODEL": "GPT 3.5 Turbo",
     },
 ]
 
@@ -325,7 +335,6 @@ def mock_env(monkeypatch, request):
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_LOCATION", "eastus")
-        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
         monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
         for key, value in request.param.items():
             monkeypatch.setenv(key, value)
@@ -347,12 +356,14 @@ async def client(
     mock_blob_container_client,
     mock_compute_embeddings_call,
 ):
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
 
     async with quart_app.test_app() as test_app:
         test_app.app.config.update({"TESTING": True})
-        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
-        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        llm_clients = test_app.app.config[app.CONFIG_LLM_CLIENTS]
+        mock_openai_chatcompletion(llm_clients["openai"])
+        mock_openai_embedding(llm_clients["openai"])
         yield test_app.test_client()
 
 
@@ -366,13 +377,15 @@ async def client_with_expiring_token(
     mock_blob_container_client,
     mock_compute_embeddings_call,
 ):
+    monkeypatch.setattr("app.login", mock.Mock())
     quart_app = app.create_app()
 
     async with quart_app.test_app() as test_app:
         test_app.app.config.update({"TESTING": True})
         test_app.app.config.update({"azure_credential": MockAzureCredentialExpired()})
-        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
-        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        llm_clients = test_app.app.config[app.CONFIG_LLM_CLIENTS]
+        mock_openai_chatcompletion(llm_clients["openai"])
+        mock_openai_embedding(llm_clients["openai"])
         yield test_app.test_client()
 
 
@@ -398,6 +411,7 @@ async def auth_client(
     monkeypatch.setenv("USE_LOCAL_PDF_PARSER", "true")
     monkeypatch.setenv("USE_LOCAL_HTML_PARSER", "true")
     monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-documentintelligence-service")
+    monkeypatch.setattr("app.login", mock.Mock())
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
 
@@ -407,8 +421,9 @@ async def auth_client(
 
         async with quart_app.test_app() as test_app:
             quart_app.config.update({"TESTING": True})
-            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
-            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            llm_clients = test_app.app.config[app.CONFIG_LLM_CLIENTS]
+            mock_openai_chatcompletion(llm_clients["openai"])
+            mock_openai_embedding(llm_clients["openai"])
             client = test_app.test_client()
             client.config = quart_app.config
 
@@ -437,8 +452,11 @@ async def auth_public_documents_client(
     monkeypatch.setenv("USE_LOCAL_PDF_PARSER", "true")
     monkeypatch.setenv("USE_LOCAL_HTML_PARSER", "true")
     monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-documentintelligence-service")
+    monkeypatch.setattr("app.login", mock.Mock())
+
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)
+    monkeypatch.setattr("app.login", mock.Mock())
 
     with mock.patch("app.DefaultAzureCredential") as mock_default_azure_credential:
         mock_default_azure_credential.return_value = MockAzureCredential()
@@ -446,8 +464,9 @@ async def auth_public_documents_client(
 
         async with quart_app.test_app() as test_app:
             quart_app.config.update({"TESTING": True})
-            mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
-            mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+            llm_clients = test_app.app.config[app.CONFIG_LLM_CLIENTS]
+            mock_openai_chatcompletion(llm_clients["openai"])
+            mock_openai_embedding(llm_clients["openai"])
             client = test_app.test_client()
             client.config = quart_app.config
 

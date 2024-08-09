@@ -24,6 +24,7 @@ export const toolTipText = {
         "Sets what will be sent to the vision model. 'Images and text' sends both images and text to the model, 'Images' sends only images, and 'Text' sends only text.",
     retrievalMode:
         "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
+    model: "Selects the model to use for generating responses, to add support of new models, create a template and add the model into list of supported models.",
     streamChat: "Continuously streams the response to the chat UI as it is generated.",
     useOidSecurityFilter: "Filter search results based on the authenticated user's OID.",
     useGroupsSecurityFilter: "Filter search results based on the authenticated user's groups."

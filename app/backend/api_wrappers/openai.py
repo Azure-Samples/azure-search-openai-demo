@@ -4,7 +4,7 @@ from typing import List
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from openai.types import CreateEmbeddingResponse
-from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
+from openai.types.chat import ChatCompletion
 
 
 class OpenAIClient(ABC):
@@ -32,9 +32,6 @@ class OpenAIClient(ABC):
 
     async def create_embeddings(self, *args, **kwargs) -> CreateEmbeddingResponse:
         return await self.client.embeddings.create(*args, **kwargs)
-
-    def format_message(self, message: List[ChatCompletionMessageParam]) -> List[ChatCompletionMessageParam]:
-        return message
 
 
 class LocalOpenAIClient(OpenAIClient):

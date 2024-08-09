@@ -1,4 +1,5 @@
 import os
+from unittest import mock
 
 import aiohttp
 import azure.storage.blob.aio
@@ -39,6 +40,8 @@ class MockAiohttpClientResponse(aiohttp.ClientResponse):
 
 @pytest.mark.asyncio
 async def test_content_file(monkeypatch, mock_env, mock_acs_search):
+
+    monkeypatch.setattr("app.login", mock.Mock())
 
     class MockTransport(AsyncHttpTransport):
         async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:

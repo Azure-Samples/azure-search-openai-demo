@@ -94,7 +94,7 @@ class Approach(ABC):
     def __init__(
         self,
         search_client: SearchClient,
-        llm_client: LLMClient,
+        llm_clients: dict[str, LLMClient],
         emb_client: LLMClient,
         auth_helper: AuthenticationHelper,
         query_language: Optional[str],
@@ -107,7 +107,7 @@ class Approach(ABC):
         vision_token_provider: Callable[[], Awaitable[str]],
     ):
         self.search_client = search_client
-        self.llm_client = llm_client
+        self.llm_clients = llm_clients
         self.emb_client = emb_client
         self.auth_helper = auth_helper
         self.query_language = query_language

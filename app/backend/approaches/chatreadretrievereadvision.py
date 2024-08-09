@@ -1,3 +1,4 @@
+import ast
 from typing import Any, AsyncIterable, Awaitable, Callable, Coroutine, Optional, Union
 
 from azure.search.documents.aio import SearchClient
@@ -14,13 +15,16 @@ from openai.types.chat import (
     ChatCompletionContentPartParam,
     ChatCompletionMessageParam,
 )
-from openai_messages_token_helper import build_messages, get_token_limit
+from openai_messages_token_helper import get_token_limit
+from promptflow.core import Prompty  # type: ignore
 
 from api_wrappers import LLMClient
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from core.messageshelper import build_past_messages
+from templates.supported_models import ModelConfig
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
@@ -35,12 +39,11 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         *,
         search_client: SearchClient,
         blob_container_client: ContainerClient,
-        llm_client: LLMClient,
+        llm_clients: dict[str, LLMClient],
         emb_client: LLMClient,
         auth_helper: AuthenticationHelper,
-        hf_model: Optional[str],  # Not needed for OpenAI
-        chatgpt_model: str,
-        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
+        current_model: str,
+        available_models: dict[str, ModelConfig],
         gpt4v_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -55,12 +58,11 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
-        self.llm_client = llm_client
+        self.llm_clients = llm_clients
         self.emb_client = emb_client
         self.auth_helper = auth_helper
-        self.hf_model = hf_model
-        self.chatgpt_model = chatgpt_model
-        self.chatgpt_deployment = chatgpt_deployment
+        self.current_model = current_model
+        self.available_models = available_models
         self.gpt4v_deployment = gpt4v_deployment
         self.gpt4v_model = gpt4v_model
         self.embedding_deployment = embedding_deployment
@@ -110,7 +112,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         ],
     ]:
-        seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -129,28 +130,60 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
         past_messages: list[ChatCompletionMessageParam] = messages[:-1]
 
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        user_query_request = "Generate search query for: " + original_user_query
+        model_config = self.available_models.get(self.current_model)
+        if not model_config:
+            raise ValueError(f"Model {self.current_model} is not supported. Please create a template for this model.")
 
-        query_response_token_limit = 100
-        query_model = self.chatgpt_model
-        query_deployment = self.chatgpt_deployment
-        query_messages = build_messages(
-            model=query_model,
-            system_prompt=self.query_prompt_template,
+        current_api = self.llm_clients[self.available_models[self.current_model].type]
+
+        # Load the Prompty objects for AI Search query and chat answer generation.
+        prompty_path = model_config.template_path
+
+        chat_prompty = Prompty.load(source=prompty_path / "chat.prompty")
+        query_prompty = Prompty.load(source=prompty_path / "query.prompty")
+
+        # If the parameters are overridden via the API request, use that value.
+        # Otherwise, use the default value from the model configuration.
+        chat_prompty._model.parameters.update(
+            {
+                param: overrides[param]
+                for param in current_api.allowed_chat_completion_params
+                if overrides.get(param) is not None
+            }
+        )
+        # Shorten the past messages if needed
+        question_token_limit = chat_prompty._model.configuration.get(
+            "messages_length_limit", 4000
+        ) - chat_prompty._model.parameters.get("max_tokens", 1024)
+
+        past_messages = build_past_messages(
+            model=model_config.model_name,
+            model_type=query_prompty._model.configuration["type"],
+            system_message=self.query_prompt_template,
+            max_tokens=question_token_limit,
+            tools=query_prompty._model.parameters.get("tools"),
+            new_user_content=original_user_query,
             few_shots=self.query_prompt_few_shots,
-            past_messages=past_messages,
-            new_user_content=user_query_request,
-            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
+            past_messages=messages[:-1],
         )
 
-        chat_completion: Union[ChatCompletion, ChatCompletionOutput] = await self.llm_client.chat_completion(
-            model=query_deployment if query_deployment else query_model,
-            messages=self.llm_client.format_message(query_messages),
-            temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=query_response_token_limit,
-            n=1,
-            seed=seed,
+        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
+        query_messages = query_prompty.render(
+            system_message=self.query_prompt_template,
+            question=original_user_query,
+            few_shots=self.query_prompt_few_shots,
+            past_messages=past_messages,
+        )
+        query_messages = ast.literal_eval(query_messages)
+
+        query_prompty._model.parameters.setdefault("temperature", 0.0)
+        chat_completion: Union[ChatCompletion, ChatCompletionOutput, AsyncIterable[ChatCompletionStreamOutput]] = (
+            await current_api.chat_completion(
+                messages=query_messages,  # type: ignore
+                model=(model_config.identifier),
+                **query_prompty._model.parameters,
+                n=1,
+            )
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -191,6 +224,14 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
         )
 
+        chat_messages = chat_prompty.render(
+            system_message=system_message,
+            sources=sources_content,
+            past_messages=past_messages,
+            question=original_user_query,
+        )
+        chat_messages = ast.literal_eval(chat_messages)
+
         user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
         image_list: list[ChatCompletionContentPartImageParam] = []
 
@@ -203,14 +244,13 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
 
-        response_token_limit = 1024
-        messages = build_messages(
-            model=self.gpt4v_model,
-            system_prompt=system_message,
-            past_messages=messages[:-1],
-            new_user_content=user_content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
+        chat_messages = chat_prompty.render(  # Model should be GPT4V here.
+            system_message=system_message,
+            sources=sources_content,
+            past_messages=past_messages,
+            question=original_user_query,
         )
+        chat_messages = ast.literal_eval(chat_messages)
 
         data_points = {
             "text": sources_content,
@@ -223,11 +263,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 ThoughtStep(
                     "Prompt to generate search query",
                     [str(message) for message in query_messages],
-                    (
-                        {"model": query_model, "deployment": query_deployment}
-                        if query_deployment
-                        else {"model": query_model}
-                    ),
+                    ({"model": self.current_model}),
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -257,13 +293,11 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         }
 
-        chat_coroutine = self.llm_client.chat_completion(
-            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=self.llm_client.format_message(messages),
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=response_token_limit,
+        chat_coroutine = current_api.chat_completion(
+            model=(model_config.identifier),
+            messages=chat_messages,
+            **chat_prompty._model.parameters,
             n=1,
             stream=should_stream,
-            seed=seed,
         )
         return (extra_info, chat_coroutine)

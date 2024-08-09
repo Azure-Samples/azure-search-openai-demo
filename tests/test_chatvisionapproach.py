@@ -40,7 +40,7 @@ def openai_client():
 def chat_approach(openai_client, mock_confidential_client_success):
     return ChatReadRetrieveReadVisionApproach(
         search_client=None,
-        llm_client=openai_client,
+        llm_clients={"hf": "", "openai": openai_client},
         emb_client=openai_client,
         auth_helper=AuthenticationHelper(
             search_index=MockSearchIndex,
@@ -54,9 +54,8 @@ def chat_approach(openai_client, mock_confidential_client_success):
         blob_container_client=None,
         vision_endpoint="endpoint",
         vision_token_provider=lambda: "token",
-        hf_model=None,
-        chatgpt_model="gpt-35-turbo",
-        chatgpt_deployment="chat",
+        current_model=None,
+        available_models=None,
         gpt4v_deployment="gpt-4v",
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",

@@ -9,6 +9,7 @@ import styles from "./Chat.module.css";
 import {
     chatApi,
     configApi,
+    getSupportedModels,
     getSpeechApi,
     RetrievalMode,
     ChatAppResponse,
@@ -29,6 +30,7 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
+import { ModelChoice } from "../../components/ModelChoice";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { GPT4VSettings } from "../../components/GPT4VSettings";
@@ -42,6 +44,8 @@ const Chat = () => {
     const [seed, setSeed] = useState<number | null>(null);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
+    const [model, setModel] = useState<string>("");
+    const [modelsList, setModelsList] = useState<string[]>([]);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -91,7 +95,13 @@ const Chat = () => {
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
+            setModel(config.currentModel);
         });
+    };
+
+    const getModelsList = async () => {
+        const models = await getSupportedModels();
+        setModelsList(models);
     };
 
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>) => {
@@ -175,6 +185,7 @@ const Chat = () => {
                         vector_fields: vectorFieldList,
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
+                        set_model: model,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -218,6 +229,10 @@ const Chat = () => {
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
     useEffect(() => {
         getConfig();
+    }, []);
+
+    useEffect(() => {
+        getModelsList();
     }, []);
 
     useEffect(() => {
@@ -635,6 +650,8 @@ const Chat = () => {
                             updateGPT4VInputs={inputs => setGPT4VInput(inputs)}
                         />
                     )}
+
+                    <ModelChoice defaultModel={model} modelsList={modelsList} updateCurrentModel={(model: string) => setModel(model)} />
 
                     {showVectorOption && (
                         <VectorSettings
