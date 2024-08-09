@@ -22,7 +22,7 @@ export default function Login(): JSX.Element {
             .then((userCredential: any) => {
                 // Signed in
                 setErrorText("Logged in! ");
-                navigate("/");
+                // navigate("/");
                 // console.log("Logged in: ", userCredential);
                 const user = userCredential.user;
                 // console.log("USER", user);

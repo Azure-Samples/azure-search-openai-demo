@@ -123,10 +123,15 @@ const Layout = () => {
                     <Link to={userData.uuid ? "/" : "/login"} className={styles.headerTitleContainer}>
                         <h3 className={styles.headerTitle}>Project Pal AI</h3>
                     </Link>
-
-                    {loggedIn && <Button onClick={logout}>Log out</Button>}
-
-                    {useLogin && <LoginButton />}
+                    <div className={styles.headerLinks}>
+                        {userData.uuid && (
+                            <Button appearance="primary" onClick={() => navigate("/manage", { state: userData })}>
+                                Manage
+                            </Button>
+                        )}
+                        {loggedIn && <Button onClick={logout}>Log out</Button>}
+                        {useLogin && <LoginButton />}
+                    </div>
                 </div>
             </div>
 

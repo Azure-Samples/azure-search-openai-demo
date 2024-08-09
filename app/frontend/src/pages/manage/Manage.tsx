@@ -26,7 +26,7 @@ import {
     Spinner
 } from "@fluentui/react-components";
 
-import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
+import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, Dismiss20Filled } from "@fluentui/react-icons";
 import styles from "./Manage.module.css";
 import { auth } from "../..";
 import axios from "axios";
@@ -66,7 +66,8 @@ export default function Manage(): JSX.Element {
         { columnKey: "lastName", name: "Last Name" },
         { columnKey: "emailAddress", name: "User Email" },
         { columnKey: "projectRole", name: "Project Role" },
-        { columnKey: "initialPasswordChanged", name: "Initial Password Changed" }
+        { columnKey: "initialPasswordChanged", name: "Initial Password Changed" },
+        { columnKey: "edit", name: "Edit" }
     ];
 
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
@@ -285,7 +286,7 @@ export default function Manage(): JSX.Element {
                                                         <TableCell>{user.projectRole}</TableCell>
                                                         <TableCell>{user.initialPasswordChanged ? "Yes" : "No"}</TableCell>
                                                         {currentUser &&
-                                                            (currentUser.projectRole === "Admin" ||
+                                                            (((currentUser.projectRole === "Admin" ||
                                                                 currentUser.projectRole === "Owner" ||
                                                                 (project.users &&
                                                                     project.users.some(
@@ -297,7 +298,16 @@ export default function Manage(): JSX.Element {
                                                                         onClick={() => handleEditClick(user, project)}
                                                                     />
                                                                 </TableCell>
-                                                            )}
+                                                            )) ||
+                                                                (project.users &&
+                                                                    project.users.some(
+                                                                        user => user.uuid === currentUser.uuid && user.projectRole === "Member"
+                                                                    ) && (
+                                                                        <TableCell>
+                                                                            {" "}
+                                                                            <Dismiss20Filled />
+                                                                        </TableCell>
+                                                                    )))}
                                                     </TableRow>
                                                 </React.Fragment>
                                             ))}
