@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Input } from "@fluentui/react-components";
+import { useNavigate } from "react-router-dom";
 
 import "./Login.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -12,6 +13,7 @@ export default function Login(): JSX.Element {
 
     const [errorText, setErrorText] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const signIn = () => {
         setErrorText("Signing in");
@@ -20,6 +22,7 @@ export default function Login(): JSX.Element {
             .then((userCredential: any) => {
                 // Signed in
                 setErrorText("Logged in! ");
+                navigate("/");
                 // console.log("Logged in: ", userCredential);
                 const user = userCredential.user;
                 // console.log("USER", user);
@@ -47,6 +50,11 @@ export default function Login(): JSX.Element {
             });
     };
 
+    useEffect(() => {
+        if (auth.currentUser) {
+            navigate("/");
+        }
+    });
     return (
         <div className="column ai-centre padding80 gap20">
             <h1>Login</h1>

@@ -12,22 +12,11 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../..";
 import axios from "axios";
 import { Button } from "@fluentui/react-components";
-import { useNavigate } from "react-router-dom";
-
-interface User {
-    uuid: string;
-    emailAddress: string;
-    firstName: string;
-    lastName: string;
-    initialPasswordChanged: boolean;
-    projectName?: string;
-    projectId?: string;
-    projectRole?: string;
-}
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Layout = () => {
     const navigate = useNavigate();
-
+    const currentUser = useLocation().state;
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const [loggedIn, setLoggedIn] = useState(false);
     const [userData, setUserData] = useState<User>({
@@ -35,7 +24,7 @@ const Layout = () => {
         emailAddress: "",
         firstName: "",
         lastName: "",
-        initialPasswordChanged: false
+        initialPasswordChanged: null
     });
     const [noProjects, setNoProjects] = useState(false);
 
@@ -43,24 +32,27 @@ const Layout = () => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
                 axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
+                    getAccountDetail(user.uid);
+                    setLoggedIn(true);
                     if (response.data.length === 0) {
-                        navigate("../no-projects", {});
-                        getAccountDetail(user.uid);
-                        setLoggedIn(true);
+                        navigate("/no-projects", {});
                         setNoProjects(true);
                     } else {
-                        if (window.location.hash === "#/manage") {
-                            getAccountDetail(user.uid);
-                            setLoggedIn(true);
-                        }
-                        if (window.location.hash === "#/login") {
-                            getAccountDetail(user.uid);
-                            navigate("../", {});
-                            setLoggedIn(true);
+                        if (userData.initialPasswordChanged === false) {
+                            navigate("../change-password", {});
+                        } else {
+                            navigate("/", { state: userData });
                         }
                     }
                 });
             } else {
+                setUserData({
+                    uuid: "",
+                    emailAddress: "",
+                    firstName: "",
+                    lastName: "",
+                    initialPasswordChanged: null
+                });
                 navigate("../login", {});
                 setLoggedIn(false);
             }
@@ -69,16 +61,24 @@ const Layout = () => {
     }, []);
 
     useEffect(() => {
-        if ((window.location.hash === "#/" || window.location.hash === "#/manage") && userData.uuid === "") {
-            navigate("/login", {});
+        if (window.location.hash === "#/" || window.location.hash === "#/manage") {
+            if (userData.uuid === "") {
+                navigate("/login", {});
+            }
+            if (noProjects) {
+                navigate("/no-projects", { state: userData });
+            }
+            if (userData.initialPasswordChanged === false) {
+                navigate("/change-password", { state: userData });
+            }
         }
-        if ((window.location.hash === "#/" || window.location.hash === "#/manage") && noProjects) {
-            navigate("/no-projects", {});
+    }, [userData]);
+
+    useEffect(() => {
+        if (currentUser && currentUser.userData) {
+            setUserData(currentUser.userData);
         }
-        if (window.location.hash === "#/login" && userData.uuid !== "") {
-            navigate("/", {});
-        }
-    });
+    }, [currentUser]);
 
     const getAccountDetail = (uid: string) => {
         axios

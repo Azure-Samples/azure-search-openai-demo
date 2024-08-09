@@ -33,36 +33,6 @@ import axios from "axios";
 import { onAuthStateChanged } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
 
-interface User {
-    uuid: string;
-    emailAddress: string;
-    firstName: string;
-    lastName: string;
-    password?: string;
-    initialPasswordChanged: boolean;
-    projectName?: string;
-    projectID?: string;
-    projectRole?: string;
-}
-interface NewUser {
-    uuid: string;
-    emailAddress: string;
-    projectRole: string;
-    projectID: string;
-}
-
-interface Project {
-    projectID: string;
-    projectName: string;
-    users: User[];
-    dateCreated: string;
-}
-interface NewProject {
-    projectID: string;
-    projectName: string;
-    dateCreated: string;
-}
-
 export default function Manage(): JSX.Element {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
