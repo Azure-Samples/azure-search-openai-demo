@@ -9,6 +9,10 @@ logger = logging.getLogger("evaluation")
 class AnswerLengthMetric(BaseMetric):
     METRIC_NAME = "answer_length"
 
+    DISPLAY_NAME = "Answer Length"
+    SHORT_NAME = "Length"
+    NOTE = "Length by Word Count"
+
     @classmethod
     def evaluator_fn(cls, **kwargs):
         def answer_length(*, answer, **kwargs):
@@ -33,6 +37,9 @@ class AnswerLengthMetric(BaseMetric):
 class HasCitationMetric(BaseMetric):
     METRIC_NAME = "has_citation"
 
+    DISPLAY_NAME = "Has Citation"
+    SHORT_NAME = "Has Citation"
+
     @classmethod
     def evaluator_fn(cls, **kwargs):
         def has_citation(*, answer, **kwargs):
@@ -54,6 +61,9 @@ class HasCitationMetric(BaseMetric):
 
 class CitationMatchMetric(BaseMetric):
     METRIC_NAME = "citation_match"
+
+    DISPLAY_NAME = "Citation Match"
+    SHORT_NAME = "Citation Match"
 
     @classmethod
     def evaluator_fn(cls, **kwargs):
@@ -80,6 +90,10 @@ class CitationMatchMetric(BaseMetric):
 
 class LatencyMetric(BaseMetric):
     METRIC_NAME = "latency"
+
+    DISPLAY_NAME = "Response Latency (seconds)"
+    SHORT_NAME = "Latency"
+    NOTE = "Latency in Seconds"
 
     @classmethod
     def evaluator_fn(cls, **kwargs):

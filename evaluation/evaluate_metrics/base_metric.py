@@ -11,6 +11,10 @@ DEFAULT_PASSING_THRESHOLD = 4.0
 class BaseMetric(ABC):
     METRIC_NAME = "name_of_metric"
 
+    DISPLAY_NAME = "Base Evaluation Metric Rating"
+    SHORT_NAME = "Base Metric"
+    NOTE = "Rating Score"
+
     @classmethod
     @abstractmethod
     def get_aggregate_stats(cls, df, passing_threshold=DEFAULT_PASSING_THRESHOLD):

@@ -147,10 +147,12 @@ jobs:
             ${{ env.EVALUATION_RESULTS }}/summary.json
             ${{ env.EVALUATION_RESULTS }}/eval_results.jsonl
             ${{ env.EVALUATION_RESULTS }}/config.json
-            ${{ env.EVALUATION_RESULTS }}/eval.png
-            ${{ env.EVALUATION_RESULTS }}/mean_score.png
-            ${{ env.EVALUATION_RESULTS }}/passing_rate.png
+            ${{ env.EVALUATION_RESULTS }}/evaluation_gpt_boxplot.pdf
+            ${{ env.EVALUATION_RESULTS }}/evaluation_gpt_radar.pdf
+            ${{ env.EVALUATION_RESULTS }}/evaluation_results.pdf
+            ${{ env.EVALUATION_RESULTS }}/evaluation_stat_boxplot.pdf
             ${{ env.RED_TEAMING_RESULTS }}/scores.json
+            ${{ env.RED_TEAMING_RESULTS }}/red_teaming_results.pdf
 
       #------------------------- Cleanup --------------------------
 

@@ -19,6 +19,10 @@ class BuiltinRatingMetric(BaseMetric):
 class BuiltinRelevanceMetric(BuiltinRatingMetric):
     METRIC_NAME = "gpt_relevance"
 
+    DISPLAY_NAME = "GPT Relevance Rating"
+    SHORT_NAME = "Relevance"
+    NOTE = "Rating Score (1-5)"
+
     @classmethod
     def evaluator_fn(cls, openai_config, **kwargs):
         return RelevanceEvaluator(openai_config)
@@ -26,6 +30,10 @@ class BuiltinRelevanceMetric(BuiltinRatingMetric):
 
 class BuiltinCoherenceMetric(BuiltinRatingMetric):
     METRIC_NAME = "gpt_coherence"
+
+    DISPLAY_NAME = "GPT Coherence Rating"
+    SHORT_NAME = "Coherence"
+    NOTE = "Rating Score (1-5)"
 
     @classmethod
     def evaluator_fn(cls, openai_config, **kwargs):
@@ -35,6 +43,10 @@ class BuiltinCoherenceMetric(BuiltinRatingMetric):
 class BuiltinGroundednessMetric(BuiltinRatingMetric):
     METRIC_NAME = "gpt_groundedness"
 
+    DISPLAY_NAME = "GPT Groundedness Rating"
+    SHORT_NAME = "Groundedness"
+    NOTE = "Rating Score (1-5)"
+
     @classmethod
     def evaluator_fn(cls, openai_config, **kwargs):
         return GroundednessEvaluator(openai_config)
@@ -42,6 +54,10 @@ class BuiltinGroundednessMetric(BuiltinRatingMetric):
 
 class BuiltinSimilarityMetric(BuiltinRatingMetric):
     METRIC_NAME = "gpt_similarity"
+
+    DISPLAY_NAME = "GPT Similarity Rating"
+    SHORT_NAME = "Similarity"
+    NOTE = "Rating Score (1-5)"
 
     @classmethod
     def evaluator_fn(cls, openai_config, **kwargs):
@@ -51,6 +67,10 @@ class BuiltinSimilarityMetric(BuiltinRatingMetric):
 class BuiltinFluencyMetric(BuiltinRatingMetric):
     METRIC_NAME = "gpt_fluency"
 
+    DISPLAY_NAME = "GPT Fluency Rating"
+    SHORT_NAME = "Fluency"
+    NOTE = "Rating Score (1-5)"
+
     @classmethod
     def evaluator_fn(cls, openai_config, **kwargs):
         return FluencyEvaluator(openai_config)
@@ -58,6 +78,10 @@ class BuiltinFluencyMetric(BuiltinRatingMetric):
 
 class BuiltinF1ScoreMetric(BaseMetric):
     METRIC_NAME = "f1_score"
+
+    DISPLAY_NAME = "F1 Score"
+    SHORT_NAME = "F1 Score"
+    NOTE = "F1 Score"
 
     @classmethod
     def evaluator_fn(cls, **kwargs):
