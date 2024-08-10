@@ -25,7 +25,12 @@ import {
     Dropdown,
     Option,
     TableCellLayout,
-    Spinner
+    Spinner,
+    TableColumnSizingOptions,
+    useTableFeatures,
+    TableColumnDefinition,
+    createTableColumn,
+    useTableColumnSizing_unstable
 } from "@fluentui/react-components";
 
 import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, Dismiss20Filled, DocumentArrowUpRegular } from "@fluentui/react-icons";
@@ -63,17 +68,95 @@ export default function Manage(): JSX.Element {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-    const columns = [
-        { columnKey: "firstName", name: "First Name" },
-        { columnKey: "lastName", name: "Last Name" },
-        { columnKey: "emailAddress", name: "User Email" },
-        { columnKey: "projectRole", name: "Project Role" },
-        { columnKey: "initialPasswordChanged", name: "Initial Password Changed" },
-        { columnKey: "edit", name: "Edit" }
-    ];
-
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
+
+    // const columnsDef = [
+    //     { columnKey: "firstName", name: "First Name" },
+    //     { columnKey: "lastName", name: "Last Name" },
+    //     { columnKey: "emailAddress", name: "User Email" },
+    //     { columnKey: "projectRole", name: "Project Role" },
+    //     { columnKey: "initialPasswordChanged", name: "Initial Password Changed" },
+    //     { columnKey: "edit", name: "Edit" }
+    // ];
+    type firstNameCell = {
+        label: string;
+        icon: string | JSX.Element;
+    };
+    type editCell = {
+        label: string;
+        icon: string | JSX.Element;
+    };
+
+    type Item = {
+        projectId: string;
+        firstName: firstNameCell;
+        lastName: string;
+        emailAddress: string;
+        projectRole: string;
+        initialPasswordChanged: string;
+        edit: editCell;
+    };
+
+    const columnsDef: TableColumnDefinition<Item>[] = [
+        createTableColumn<Item>({ columnId: "firstName", renderHeaderCell: () => <h3>First Name</h3> }),
+        createTableColumn<Item>({ columnId: "lastName", renderHeaderCell: () => <h3>Last Name</h3> }),
+        createTableColumn<Item>({ columnId: "emailAddress", renderHeaderCell: () => <h3>User Email</h3> }),
+        createTableColumn<Item>({ columnId: "projectRole", renderHeaderCell: () => <h3>Project Role</h3> }),
+        createTableColumn<Item>({ columnId: "initialPasswordChanged", renderHeaderCell: () => <h3>Initial Password Changed</h3> }),
+        createTableColumn<Item>({ columnId: "edit", renderHeaderCell: () => <h3>Edit</h3> })
+    ];
+
+    const [columnSizingOptions] = React.useState<TableColumnSizingOptions>({
+        projectId: {
+            idealWidth: 0
+        },
+        firstName: {
+            idealWidth: 150
+        },
+        lastName: {
+            idealWidth: 150
+        },
+        emailAddress: {
+            minWidth: 200
+        },
+        projectRole: {
+            idealWidth: 100
+        },
+        initialPasswordChanged: {
+            idealWidth: 200
+        },
+        edit: {
+            idealWidth: 100
+        }
+    });
+
+    const items: Item[] = projects.flatMap(project =>
+        project.users
+            ? project.users.map(user => ({
+                  projectId: project.projectID,
+                  firstName: { label: user.firstName, icon: user.projectRole === "Owner" || user.projectRole === "Admin" ? <Premium20Regular /> : "" },
+                  lastName: user.lastName,
+                  emailAddress: user.emailAddress,
+                  projectRole: user.projectRole || "Member",
+                  initialPasswordChanged: user.initialPasswordChanged ? "Yes" : "No",
+                  edit: {
+                      label: "",
+                      icon:
+                          currentUser?.projectRole === "Owner" || currentUser?.projectRole === "Admin" ? (
+                              <Edit20Regular style={{ cursor: "pointer" }} onClick={() => handleEditClick(user, project)} />
+                          ) : (
+                              <Dismiss20Filled style={{ cursor: "pointer" }} />
+                          )
+                  }
+              }))
+            : []
+    );
+    const [columns] = React.useState<TableColumnDefinition<Item>[]>(columnsDef);
+
+    const { getRows, columnSizing_unstable, tableRef } = useTableFeatures({ columns, items }, [useTableColumnSizing_unstable({ columnSizingOptions })]);
+
+    const rows = getRows();
 
     const handleOpenCreateUser = (project: Project) => {
         setOpenCreateUser(true);
@@ -231,17 +314,42 @@ export default function Manage(): JSX.Element {
         });
     };
 
-    function Dropzone() {
+    function Dropzone({ projectID }: { projectID: string }) {
+        const [filePath, setFilePath] = useState("");
         const onDrop = useCallback((acceptedFiles: any) => {
-            console.log(acceptedFiles);
+            //@cade-ryan - handle file uploads here
+            acceptedFiles.forEach((file: any) => {
+                setFilePath(file.path);
+                const reader = new FileReader();
+
+                reader.onabort = () => console.log("file reading was aborted");
+                reader.onerror = () => console.log("file reading has failed");
+                reader.onload = () => {
+                    // Do whatever you want with the file contents
+                    const binaryStr = reader.result;
+                };
+                reader.readAsArrayBuffer(file);
+            });
         }, []);
         const { getRootProps, getInputProps } = useDropzone({ onDrop });
         return (
-            <div {...getRootProps()} className={styles.dropzone}>
-                <input {...getInputProps()} />
-                <p>Drag and drop your project files here</p>
-                <DocumentArrowUpRegular fontSize={40} />
-            </div>
+            <>
+                <div {...getRootProps()} className={styles.dropzone} key={projectID}>
+                    <input {...getInputProps()} />
+                    {!filePath && (
+                        <>
+                            <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                            <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
+                        </>
+                    )}
+                    {filePath && (
+                        <>
+                            <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                            <p>{filePath}</p>
+                        </>
+                    )}
+                </div>
+            </>
         );
     }
 
@@ -275,60 +383,49 @@ export default function Manage(): JSX.Element {
                                 <h3>{project.projectName}</h3>
                             </AccordionHeader>
                             <AccordionPanel>
-                                <Table arial-label="Default table" style={{ minWidth: "510px" }}>
-                                    <TableHeader>
-                                        <TableRow>
-                                            {columns.map(column => (
-                                                <TableHeaderCell key={column.columnKey}>
-                                                    <h3>{column.name}</h3>
-                                                </TableHeaderCell>
-                                            ))}
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {project.users &&
-                                            project.users.map((user, index) => (
-                                                <React.Fragment key={index}>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <TableCellLayout
-                                                                media={user.projectRole === "Owner" || user.projectRole === "Admin" ? <Premium20Regular /> : ""}
-                                                            >
-                                                                {user.firstName}
-                                                            </TableCellLayout>
-                                                        </TableCell>
-                                                        <TableCell>{user.lastName}</TableCell>
-                                                        <TableCell style={{ width: "4500px" }}>{user.emailAddress}</TableCell>
-                                                        <TableCell>{user.projectRole}</TableCell>
-                                                        <TableCell>{user.initialPasswordChanged ? "Yes" : "No"}</TableCell>
-                                                        {currentUser &&
-                                                            (((currentUser.projectRole === "Admin" ||
-                                                                currentUser.projectRole === "Owner" ||
-                                                                (project.users &&
-                                                                    project.users.some(
-                                                                        user => user.uuid === currentUser.uuid && user.projectRole === "Owner"
-                                                                    ))) && (
-                                                                <TableCell>
-                                                                    <Edit20Regular
-                                                                        style={{ cursor: "pointer" }}
-                                                                        onClick={() => handleEditClick(user, project)}
-                                                                    />
+                                <div className={styles.accordionRow}>
+                                    <div style={{ maxWidth: "950px" }}>
+                                        <Table sortable aria-label="Project table" ref={tableRef} {...columnSizing_unstable.getTableProps()}>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    {columns.map(column => (
+                                                        <TableHeaderCell
+                                                            key={column.columnId}
+                                                            {...columnSizing_unstable.getTableHeaderCellProps(column.columnId)}
+                                                        >
+                                                            {column.renderHeaderCell()}
+                                                        </TableHeaderCell>
+                                                    ))}
+                                                </TableRow>
+                                            </TableHeader>
+
+                                            <TableBody>
+                                                {rows.map(
+                                                    ({ item }) =>
+                                                        item.projectId === project.projectID && (
+                                                            <TableRow key={item.firstName.label}>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("firstName")}>
+                                                                    <TableCellLayout media={item.firstName.icon}>{item.firstName.label}</TableCellLayout>
                                                                 </TableCell>
-                                                            )) ||
-                                                                (project.users &&
-                                                                    project.users.some(
-                                                                        user => user.uuid === currentUser.uuid && user.projectRole === "Member"
-                                                                    ) && (
-                                                                        <TableCell>
-                                                                            {" "}
-                                                                            <Dismiss20Filled />
-                                                                        </TableCell>
-                                                                    )))}
-                                                    </TableRow>
-                                                </React.Fragment>
-                                            ))}
-                                    </TableBody>
-                                </Table>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("lastName")}>{item.lastName}</TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("emailAddress")}>
+                                                                    {item.emailAddress}
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("projectRole")}>
+                                                                    {item.projectRole}
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("initialPasswordChanged")}>
+                                                                    {item.initialPasswordChanged}
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("edit")}>{item.edit.icon}</TableCell>
+                                                            </TableRow>
+                                                        )
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                    <Dropzone projectID={project.projectID} />
+                                </div>
                                 {currentUser &&
                                     (currentUser.projectRole === "Admin" ||
                                         currentUser.projectRole === "Owner" ||
@@ -545,7 +642,6 @@ export default function Manage(): JSX.Element {
                         </DialogSurface>
                     </Dialog>
                 )}
-                <Dropzone />
             </div>
         </div>
     );
