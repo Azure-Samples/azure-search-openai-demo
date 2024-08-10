@@ -28,42 +28,12 @@ import {
     Spinner
 } from "@fluentui/react-components";
 
-import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, DocumentArrowUpRegular } from "@fluentui/react-icons";
+import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, Dismiss20Filled, DocumentArrowUpRegular } from "@fluentui/react-icons";
 import styles from "./Manage.module.css";
 import { auth } from "../..";
 import axios from "axios";
 import { onAuthStateChanged } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
-
-interface User {
-    uuid: string;
-    emailAddress: string;
-    firstName: string;
-    lastName: string;
-    password?: string;
-    initialPasswordChanged: boolean;
-    projectName?: string;
-    projectID?: string;
-    projectRole?: string;
-}
-interface NewUser {
-    uuid: string;
-    emailAddress: string;
-    projectRole: string;
-    projectID: string;
-}
-
-interface Project {
-    projectID: string;
-    projectName: string;
-    users: User[];
-    dateCreated: string;
-}
-interface NewProject {
-    projectID: string;
-    projectName: string;
-    dateCreated: string;
-}
 
 export default function Manage(): JSX.Element {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -98,7 +68,8 @@ export default function Manage(): JSX.Element {
         { columnKey: "lastName", name: "Last Name" },
         { columnKey: "emailAddress", name: "User Email" },
         { columnKey: "projectRole", name: "Project Role" },
-        { columnKey: "initialPasswordChanged", name: "Initial Password Changed" }
+        { columnKey: "initialPasswordChanged", name: "Initial Password Changed" },
+        { columnKey: "edit", name: "Edit" }
     ];
 
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
@@ -331,7 +302,7 @@ export default function Manage(): JSX.Element {
                                                         <TableCell>{user.projectRole}</TableCell>
                                                         <TableCell>{user.initialPasswordChanged ? "Yes" : "No"}</TableCell>
                                                         {currentUser &&
-                                                            (currentUser.projectRole === "Admin" ||
+                                                            (((currentUser.projectRole === "Admin" ||
                                                                 currentUser.projectRole === "Owner" ||
                                                                 (project.users &&
                                                                     project.users.some(
@@ -343,7 +314,16 @@ export default function Manage(): JSX.Element {
                                                                         onClick={() => handleEditClick(user, project)}
                                                                     />
                                                                 </TableCell>
-                                                            )}
+                                                            )) ||
+                                                                (project.users &&
+                                                                    project.users.some(
+                                                                        user => user.uuid === currentUser.uuid && user.projectRole === "Member"
+                                                                    ) && (
+                                                                        <TableCell>
+                                                                            {" "}
+                                                                            <Dismiss20Filled />
+                                                                        </TableCell>
+                                                                    )))}
                                                     </TableRow>
                                                 </React.Fragment>
                                             ))}
