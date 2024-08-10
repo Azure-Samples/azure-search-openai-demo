@@ -75,9 +75,9 @@ const Layout = () => {
         if ((window.location.hash === "#/" || window.location.hash === "#/manage") && noProjects) {
             navigate("/no-projects", {});
         }
-        if (window.location.hash === "#/login" && userData.uuid !== "") {
-            navigate("/", {});
-        }
+        // if (window.location.hash === "#/login" && userData.uuid !== "") {
+        //     navigate("/", {});
+        // }
     });
 
     const getAccountDetail = (uid: string) => {

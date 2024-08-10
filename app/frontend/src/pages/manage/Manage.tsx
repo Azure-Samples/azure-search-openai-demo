@@ -1,4 +1,6 @@
-import React, { useState, useEffect, FormEventHandler, FormEvent } from "react";
+import React, { useState, useEffect, FormEvent, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+
 import {
     TableBody,
     TableCell,
@@ -26,7 +28,7 @@ import {
     Spinner
 } from "@fluentui/react-components";
 
-import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
+import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, DocumentArrowUpRegular } from "@fluentui/react-icons";
 import styles from "./Manage.module.css";
 import { auth } from "../..";
 import axios from "axios";
@@ -257,6 +259,20 @@ export default function Manage(): JSX.Element {
             setOpenSettingsDialog(false);
         });
     };
+
+    function Dropzone() {
+        const onDrop = useCallback((acceptedFiles: any) => {
+            console.log(acceptedFiles);
+        }, []);
+        const { getRootProps, getInputProps } = useDropzone({ onDrop });
+        return (
+            <div {...getRootProps()} className={styles.dropzone}>
+                <input {...getInputProps()} />
+                <p>Drag and drop your project files here</p>
+                <DocumentArrowUpRegular fontSize={40} />
+            </div>
+        );
+    }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -549,6 +565,7 @@ export default function Manage(): JSX.Element {
                         </DialogSurface>
                     </Dialog>
                 )}
+                <Dropzone />
             </div>
         </div>
     );

@@ -35,3 +35,18 @@
     width: 100%;
     gap: 10px;
 }
+
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #409ece;
+    border-radius: 5px;
+    padding: 10px;
+    width: 200px;
+    height: 120px;
+    cursor: pointer;
+    overflow: hidden;
+}
