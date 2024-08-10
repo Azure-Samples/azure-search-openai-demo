@@ -410,7 +410,12 @@ export default function Manage(): JSX.Element {
                                         (userData.projectRole === "Admin" ||
                                             userData.projectRole === "Owner" ||
                                             (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
-                                            <Dropzone projectID={project.projectID} />
+                                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                                <Dropzone projectID={project.projectID} />
+                                                <Button appearance="primary" style={{ marginTop: "10px" }}>
+                                                    Upload file
+                                                </Button>
+                                            </div>
                                         )}
                                 </div>
                                 {userData &&
