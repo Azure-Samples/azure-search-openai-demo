@@ -39,9 +39,10 @@ import { auth } from "../..";
 import axios from "axios";
 import { onAuthStateChanged } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
+import { useLocation } from "react-router-dom";
 
 export default function Manage(): JSX.Element {
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [userData, setUserData] = useState<User | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [newUserInputs, setNewUserInputs] = useState<User>({
@@ -68,35 +69,10 @@ export default function Manage(): JSX.Element {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+    const currentUser = useLocation().state;
+
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
-
-    // const columnsDef = [
-    //     { columnKey: "firstName", name: "First Name" },
-    //     { columnKey: "lastName", name: "Last Name" },
-    //     { columnKey: "emailAddress", name: "User Email" },
-    //     { columnKey: "projectRole", name: "Project Role" },
-    //     { columnKey: "initialPasswordChanged", name: "Initial Password Changed" },
-    //     { columnKey: "edit", name: "Edit" }
-    // ];
-    type firstNameCell = {
-        label: string;
-        icon: string | JSX.Element;
-    };
-    type editCell = {
-        label: string;
-        icon: string | JSX.Element;
-    };
-
-    type Item = {
-        projectId: string;
-        firstName: firstNameCell;
-        lastName: string;
-        emailAddress: string;
-        projectRole: string;
-        initialPasswordChanged: string;
-        edit: editCell;
-    };
 
     const columnsDef: TableColumnDefinition<Item>[] = [
         createTableColumn<Item>({ columnId: "firstName", renderHeaderCell: () => <h3>First Name</h3> }),
@@ -143,7 +119,10 @@ export default function Manage(): JSX.Element {
                   edit: {
                       label: "",
                       icon:
-                          currentUser?.projectRole === "Owner" || currentUser?.projectRole === "Admin" ? (
+                          userData &&
+                          (userData.projectRole === "Admin" ||
+                              userData.projectRole === "Owner" ||
+                              (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) ? (
                               <Edit20Regular style={{ cursor: "pointer" }} onClick={() => handleEditClick(user, project)} />
                           ) : (
                               <Dismiss20Filled style={{ cursor: "pointer" }} />
@@ -180,7 +159,6 @@ export default function Manage(): JSX.Element {
         setSelectedUser(user);
         setSelectedProject(project);
         setOpenSettingsDialog(true);
-        // console.log(selectedUser, selectedProject);
     };
 
     const handleCreateUserDB = (user: any) => {
@@ -250,9 +228,6 @@ export default function Manage(): JSX.Element {
                 }
             });
         });
-        // axios.post(baseURL + "createNewAccount", newUser).then(response => {
-        //     axios.post(baseURL + "addNewUserToProject", { projectID, newUserProject }).then(response => {});
-        // })
     };
 
     const handleCreateProject = (event: FormEvent<HTMLFormElement>) => {
@@ -359,7 +334,7 @@ export default function Manage(): JSX.Element {
                 axios.get(baseURL + "getAccountDetails", { params: { clientID: user.uid } }).then(response => {
                     const data = response.data;
                     if (data.found) {
-                        setCurrentUser(data.user);
+                        setUserData(data.user);
                         axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
                             setProjects(response.data);
                             setLoading(false);
@@ -370,9 +345,16 @@ export default function Manage(): JSX.Element {
         });
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (currentUser && currentUser.userData) {
+            setUserData(currentUser.userData);
+        }
+    });
+
     return (
         <div className={styles.container}>
-            <h1>Manage {currentUser && currentUser.projectRole && `(Viewing as ${currentUser.projectRole})`}</h1>
+            <h1>Manage {userData && userData.projectRole && `(Viewing as ${userData.projectRole})`}</h1>
             {loading && <Spinner label="Loading..." labelPosition="below" size="large" />}
             <div className={styles.projects}>
                 <Accordion collapsible multiple>
@@ -424,12 +406,17 @@ export default function Manage(): JSX.Element {
                                             </TableBody>
                                         </Table>
                                     </div>
-                                    <Dropzone projectID={project.projectID} />
+                                    {userData &&
+                                        (userData.projectRole === "Admin" ||
+                                            userData.projectRole === "Owner" ||
+                                            (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
+                                            <Dropzone projectID={project.projectID} />
+                                        )}
                                 </div>
-                                {currentUser &&
-                                    (currentUser.projectRole === "Admin" ||
-                                        currentUser.projectRole === "Owner" ||
-                                        (project.users && project.users.some(user => user.uuid === currentUser.uuid && user.projectRole === "Owner"))) && (
+                                {userData &&
+                                    (userData.projectRole === "Admin" ||
+                                        userData.projectRole === "Owner" ||
+                                        (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
                                         <Button
                                             appearance="primary"
                                             onClick={() => handleOpenCreateUser(project)}
@@ -443,7 +430,7 @@ export default function Manage(): JSX.Element {
                     ))}
                 </Accordion>
 
-                {currentUser && currentUser.projectRole === "Admin" && (
+                {userData && userData.projectRole === "Admin" && (
                     <Button style={{ width: "150px" }} appearance="primary" onClick={() => setOpenCreateProject(true)}>
                         Create new Project
                     </Button>
