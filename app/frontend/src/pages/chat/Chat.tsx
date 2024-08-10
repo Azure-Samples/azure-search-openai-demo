@@ -21,7 +21,6 @@ import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 
-
 const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
@@ -49,7 +48,6 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
 
-    // @cade-ryan heres the state for parameters to be passed to backend
     const [parameters, setParameters] = useState<Record<string, string>>({
         tone: "Formal",
         readability: "Medium",
@@ -107,7 +105,18 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
+        const parameterString =
+            "Respond in a tone that is " +
+            parameters.tone +
+            ". The readability of the response should be of " +
+            parameters.readability +
+            " readability, using a Flesch-Kincaid approach. Make sure that the word count of the response does not exceed " +
+            parameters.wordCount +
+            " words. The communication framework for the response should utilize a " +
+            parameters.communicationFramework +
+            " model";
 
+        const questionWithParameters = question + " " + parameterString;
         error && setError(undefined);
         setIsLoading(true);
         setActiveCitation(undefined);
@@ -122,7 +131,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             ]);
 
             const request: ChatAppRequest = {
-                messages: [...messages, { content: question, role: "user" }],
+                messages: [...messages, { content: questionWithParameters, role: "user" }],
                 stream: shouldStream,
                 context: {
                     overrides: {
@@ -146,14 +155,14 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
-                setAnswers([...answers, [question, parsedResponse]]);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(questionWithParameters, answers, setAnswers, response.body);
+                setAnswers([...answers, [questionWithParameters, parsedResponse]]);
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
+                setAnswers([...answers, [questionWithParameters, parsedResponse as ChatAppResponse]]);
             }
         } catch (e) {
             setError(e);
@@ -409,7 +418,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                         </div>
                     </div>
                 </div>
-                
+
                 {answers.length > 0 && activeAnalysisPanelTab && (
                     <AnalysisPanel
                         className={styles.chatAnalysisPanel}
