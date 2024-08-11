@@ -76,6 +76,8 @@ const Chat = () => {
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
+    const audio = useRef(new Audio()).current;
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -359,6 +361,9 @@ const Chat = () => {
                                                 index={index}
                                                 speechUrls={speechUrls}
                                                 updateSpeechUrls={setSpeechUrls}
+                                                audio={audio}
+                                                isPlaying={isPlaying}
+                                                setIsPlaying={setIsPlaying}
                                                 isSelected={false}
                                                 onCitationClicked={c => onShowCitation(c, index)}
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
@@ -382,7 +387,10 @@ const Chat = () => {
                                                 answer={answer[1]}
                                                 index={index}
                                                 speechUrls={speechUrls}
+                                                audio={audio}
                                                 updateSpeechUrls={setSpeechUrls}
+                                                isPlaying={isPlaying}
+                                                setIsPlaying={setIsPlaying}
                                                 isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
                                                 onCitationClicked={c => onShowCitation(c, index)}
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}

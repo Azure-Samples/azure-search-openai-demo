@@ -8,27 +8,39 @@ interface Props {
     urls: (string | null)[];
     updateSpeechUrls: (urls: (string | null)[]) => void;
     index: number;
+    audio: HTMLAudioElement;
+    isPlaying: boolean;
+    setIsPlaying: (isPlaying: boolean) => void;
+    isStreaming: boolean;
 }
 
-let audio = new Audio();
-
-export const SpeechOutputAzure = ({ answer, urls, updateSpeechUrls, index }: Props) => {
-    const [isPlaying, setIsPlaying] = useState(false);
+export const SpeechOutputAzure = ({ answer, urls, updateSpeechUrls, index, audio, isPlaying, setIsPlaying, isStreaming }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [localPlayingState, setLocalPlayingState] = useState(false);
 
     const playAudio = async (url: string) => {
-        audio = new Audio(url);
-        await audio.play();
-        audio.addEventListener("ended", () => {
-            setIsPlaying(false);
-        });
-        setIsPlaying(true);
+        audio.src = url;
+        await audio
+            .play()
+            .then(() => {
+                audio.onended = () => setIsPlaying(false);
+                setIsPlaying(true);
+                setLocalPlayingState(true);
+            })
+            .catch(() => {
+                alert("Failed to play speech output.");
+                console.error("Failed to play speech output.");
+                setIsPlaying(false);
+                setLocalPlayingState(false);
+            });
     };
 
     const startOrStopSpeech = async (answer: string) => {
         if (isPlaying) {
             audio.pause();
+            audio.currentTime = 0;
             setIsPlaying(false);
+            setLocalPlayingState(false);
             return;
         }
         if (urls[index]) {
@@ -48,7 +60,7 @@ export const SpeechOutputAzure = ({ answer, urls, updateSpeechUrls, index }: Pro
         });
     };
 
-    const color = isPlaying ? "red" : "black";
+    const color = localPlayingState ? "red" : "black";
     return isLoading ? (
         <IconButton style={{ color: color }} iconProps={{ iconName: "Sync" }} title="Loading" ariaLabel="Loading answer" disabled={true} />
     ) : (
@@ -58,6 +70,7 @@ export const SpeechOutputAzure = ({ answer, urls, updateSpeechUrls, index }: Pro
             title="Speak answer"
             ariaLabel="Speak answer"
             onClick={() => startOrStopSpeech(answer)}
+            disabled={isStreaming}
         />
     );
 };

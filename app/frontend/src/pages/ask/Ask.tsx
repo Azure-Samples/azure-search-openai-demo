@@ -48,6 +48,8 @@ export function Component(): JSX.Element {
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
+    const audio = useRef(new Audio()).current;
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -251,6 +253,9 @@ export function Component(): JSX.Element {
                             index={0}
                             speechUrls={speechUrl}
                             updateSpeechUrls={setSpeechUrl}
+                            audio={audio}
+                            isPlaying={isPlaying}
+                            setIsPlaying={setIsPlaying}
                             isStreaming={false}
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
