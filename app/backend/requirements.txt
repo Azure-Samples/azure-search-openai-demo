@@ -8,7 +8,7 @@ aiofiles==24.1.0
     # via quart
 aiohappyeyeballs==2.3.5
     # via aiohttp
-aiohttp==3.10.1
+aiohttp==3.10.3
     # via
     #   -r requirements.in
     #   microsoft-kiota-authentication-azure
@@ -94,7 +94,7 @@ deprecated==1.2.14
     #   opentelemetry-semantic-conventions
 distro==1.9.0
     # via openai
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -131,7 +131,7 @@ idna==3.7
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==8.0.0
+importlib-metadata==8.2.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -186,7 +186,7 @@ msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.2
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.5.4
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -198,11 +198,11 @@ numpy==2.0.1
     # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
-openai==1.40.1
+openai==1.40.3
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
-openai-messages-token-helper==0.1.9
+openai-messages-token-helper==0.1.10
     # via -r requirements.in
 opentelemetry-api==1.26.0
     # via
@@ -325,13 +325,13 @@ portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-psutil==5.9.8
+psutil==6.0.0
     # via azure-monitor-opentelemetry-exporter
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.21.0
     # via pydantic
 pyjwt[crypto]==2.9.0
     # via
@@ -428,7 +428,7 @@ wsproto==1.2.0
     # via hypercorn
 yarl==1.9.4
     # via aiohttp
-zipp==3.19.2
+zipp==3.20.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
