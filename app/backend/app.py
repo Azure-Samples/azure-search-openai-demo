@@ -591,9 +591,11 @@ async def setup_clients():
     available_models = get_supported_models(deployment_information)
 
     current_model = list(available_models.keys())[0] if DEFAULT_MODEL is None else DEFAULT_MODEL
-
-    if DEFAULT_MODEL is not None and DEFAULT_MODEL not in available_models.keys():
-        raise ValueError(f"DEFAULT_MODEL must be set to a supported model from {available_models.keys()}")
+    if current_model and current_model not in available_models.keys():
+        raise ValueError(
+            f"DEFAULT_MODEL must be set to a supported model from\
+                         {available_models.keys()}.\nCurrent model is set to {current_model}"
+        )
 
     if not HUGGINGFACE_API_KEY:
         raise ValueError("HUGGINGFACE_API_KEY must be set if you want to use full capabilities.")
