@@ -207,7 +207,6 @@ export const getToken = async (client: IPublicClientApplication): Promise<string
         .then(r => r.accessToken)
         .catch(error => {
             console.log(error);
-            window.alert(error);
             return undefined;
         });
 };
