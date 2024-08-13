@@ -27,11 +27,8 @@ export const ExampleList = ({ onExampleClicked, useGPT4V }: Props) => {
         };
 
         loadExamples();
-
-        // 7秒ごとにシャッフルして新しい例を設定
         const intervalId = workerSetInterval(loadExamples, 7000);
 
-        // コンポーネントのアンマウント時にタイマーをクリア
         return () => workerClearInterval(intervalId);
     }, [useGPT4V]);
 
