@@ -17,12 +17,7 @@ The Chat App is designed to work with any PDF documents. The sample data is prov
 
 ## Customizing the UI
 
-The frontend is built using [React](https://reactjs.org/) and [Fluent UI components](https://react.fluentui.dev/). The frontend components are stored in the `app/frontend/src` folder. The typical components you'll want to customize are:
-
-- `app/frontend/index.html`: To change the page title
-- `app/frontend/src/pages/layout/Layout.tsx`: To change the header text and logo
-- `app/frontend/src/pages/chat/Chat.tsx`: To change the large heading
-- `app/frontend/src/components/Example/ExampleList.tsx`: To change the example questions
+The frontend is built using [React](https://reactjs.org/) and [Fluent UI components](https://react.fluentui.dev/). The frontend components are stored in the `app/frontend/src` folder. To modify the page title, header text, example questions, and other UI elements, you can customize the `app/frontend/src/locales/{en/es/fr/jp}/translation.json` file for different languages(English is the default). The primary strings and labels used throughout the application are defined within these files.
 
 ## Customizing the backend
 

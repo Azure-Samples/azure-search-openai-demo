@@ -69,7 +69,7 @@ const Layout = () => {
                             iconProps={{ iconName: "GlobalNavButton" }}
                             className={styles.menuToggle}
                             onClick={toggleMenu}
-                            ariaLabel={t("toggleMenu")}
+                            ariaLabel={t("labels.toggleMenu")}
                         />
                     </div>
                 </div>
