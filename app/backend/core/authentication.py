@@ -1,14 +1,16 @@
 # Refactored from https://github.com/Azure-Samples/ms-identity-python-on-behalf-of
 
+import base64
 import json
 import logging
 from typing import Any, Optional
 
 import aiohttp
+import jwt
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.models import SearchIndex
-from jose import jwt
-from jose.exceptions import ExpiredSignatureError, JWTClaimsError
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from msal import ConfidentialClientApplication
 from msal.token_cache import TokenCache
 from tenacity import (
@@ -282,6 +284,24 @@ class AuthenticationHelper:
 
         return allowed
 
+    async def create_pem_format(self, jwks, token):
+        unverified_header = jwt.get_unverified_header(token)
+        for key in jwks["keys"]:
+            if key["kid"] == unverified_header["kid"]:
+                # Construct the RSA public key
+                public_numbers = rsa.RSAPublicNumbers(
+                    e=int.from_bytes(base64.urlsafe_b64decode(key["e"] + "=="), byteorder="big"),
+                    n=int.from_bytes(base64.urlsafe_b64decode(key["n"] + "=="), byteorder="big"),
+                )
+                public_key = public_numbers.public_key()
+
+                # Convert to PEM format
+                pem_key = public_key.public_bytes(
+                    encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+                )
+                rsa_key = pem_key
+                return rsa_key
+
     # See https://github.com/Azure-Samples/ms-identity-python-on-behalf-of/blob/939be02b11f1604814532fdacc2c2eccd198b755/FlaskAPI/helpers/authorization.py#L44
     async def validate_access_token(self, token: str):
         """
@@ -304,51 +324,38 @@ class AuthenticationHelper:
                         jwks = await resp.json()
 
         if not jwks or "keys" not in jwks:
-            raise AuthError({"code": "invalid_keys", "description": "Unable to get keys to validate auth token."}, 401)
+            raise AuthError("Unable to get keys to validate auth token.", 401)
 
         rsa_key = None
         issuer = None
         audience = None
         try:
-            unverified_header = jwt.get_unverified_header(token)
-            unverified_claims = jwt.get_unverified_claims(token)
+            unverified_claims = jwt.decode(token, options={"verify_signature": False})
             issuer = unverified_claims.get("iss")
             audience = unverified_claims.get("aud")
-            for key in jwks["keys"]:
-                if key["kid"] == unverified_header["kid"]:
-                    rsa_key = {"kty": key["kty"], "kid": key["kid"], "use": key["use"], "n": key["n"], "e": key["e"]}
-                    break
-        except Exception as exc:
-            raise AuthError(
-                {"code": "invalid_header", "description": "Unable to parse authorization token."}, 401
-            ) from exc
+            rsa_key = await self.create_pem_format(jwks, token)
+        except jwt.PyJWTError as exc:
+            raise AuthError("Unable to parse authorization token.", 401) from exc
         if not rsa_key:
-            raise AuthError({"code": "invalid_header", "description": "Unable to find appropriate key"}, 401)
+            raise AuthError("Unable to find appropriate key", 401)
 
         if issuer not in self.valid_issuers:
-            raise AuthError(
-                {"code": "invalid_header", "description": f"Issuer {issuer} not in {','.join(self.valid_issuers)}"}, 401
-            )
+            raise AuthError(f"Issuer {issuer} not in {','.join(self.valid_issuers)}", 401)
 
         if audience not in self.valid_audiences:
             raise AuthError(
-                {
-                    "code": "invalid_header",
-                    "description": f"Audience {audience} not in {','.join(self.valid_audiences)}",
-                },
+                f"Audience {audience} not in {','.join(self.valid_audiences)}",
                 401,
             )
 
         try:
             jwt.decode(token, rsa_key, algorithms=["RS256"], audience=audience, issuer=issuer)
-        except ExpiredSignatureError as jwt_expired_exc:
-            raise AuthError({"code": "token_expired", "description": "token is expired"}, 401) from jwt_expired_exc
-        except JWTClaimsError as jwt_claims_exc:
+        except jwt.ExpiredSignatureError as jwt_expired_exc:
+            raise AuthError("Token is expired", 401) from jwt_expired_exc
+        except (jwt.InvalidAudienceError, jwt.InvalidIssuerError) as jwt_claims_exc:
             raise AuthError(
-                {"code": "invalid_claims", "description": "incorrect claims," "please check the audience and issuer"},
+                "Incorrect claims: please check the audience and issuer",
                 401,
             ) from jwt_claims_exc
         except Exception as exc:
-            raise AuthError(
-                {"code": "invalid_header", "description": "Unable to parse authorization token."}, 401
-            ) from exc
+            raise AuthError("Unable to parse authorization token.", 401) from exc
