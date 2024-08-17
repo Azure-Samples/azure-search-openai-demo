@@ -39,6 +39,20 @@ MODEL_CONFIGS: Dict[str, Union[ModelConfig, dict[str, ModelConfig]]] = {
         type="hf",
         identifier="microsoft/Phi-3-mini-4k-instruct",
     ),
+    "Llama 3 8B Instruct": ModelConfig(
+        model_name="meta-llama/Meta-Llama-3-8B-Instruct",
+        display_name="Llama 3 8B Instruct",
+        template_path=BASE_DIR / "hf_llama",
+        type="hf",
+        identifier="meta-llama/Meta-Llama-3-8B-Instruct",
+    ),
+    "Llama 3 70B Instruct": ModelConfig(
+        model_name="meta-llama/Meta-Llama-3-70B-Instruct",
+        display_name="Llama 3 70B Instruct",
+        template_path=BASE_DIR / "hf_llama",
+        type="hf",
+        identifier="meta-llama/Meta-Llama-3-70B-Instruct",
+    ),
 }
 
 
