@@ -35,6 +35,7 @@ export type ChatAppRequestOverrides = {
     use_gpt4v?: boolean;
     gpt4v_input?: GPT4VInput;
     vector_fields: VectorFieldOptions[];
+    language: string;
 };
 
 export type ResponseMessage = {
