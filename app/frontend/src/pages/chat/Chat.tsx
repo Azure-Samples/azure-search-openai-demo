@@ -186,13 +186,16 @@ const Chat = () => {
             if (!response.body) {
                 throw Error("No response body");
             }
+            if (response.status > 299 || !response.ok) {
+                throw Error(`Request failed with status ${response.status}`);
+            }
             if (shouldStream) {
                 const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
-                if (response.status > 299 || !response.ok) {
-                    throw Error(parsedResponse.error || "Unknown error");
+                if (parsedResponse.error) {
+                    throw Error(parsedResponse.error);
                 }
                 setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
