@@ -30,9 +30,12 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
         body: JSON.stringify(request)
     });
 
-    const parsedResponse: ChatAppResponseOrError = await response.json();
     if (response.status > 299 || !response.ok) {
-        throw Error(parsedResponse.error || "Unknown error");
+        throw Error(`Request failed with status ${response.status}`);
+    }
+    const parsedResponse: ChatAppResponseOrError = await response.json();
+    if (parsedResponse.error) {
+        throw Error(parsedResponse.error);
     }
 
     return parsedResponse as ChatAppResponse;
