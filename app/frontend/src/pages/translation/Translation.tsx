@@ -1,15 +1,15 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { DefaultButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import styles from "./Translation.module.css";
-import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
+import { TranslationLoading } from "../../components/Answer";
+
 export function Component(): JSX.Element {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<string | null>(null);
-    const [responseData, setResponseData] = useState<any>(null);
+    const [responseData, setResponseData] = useState<string | null>(null);
     const [statusCode, setStatusCode] = useState<number | null>(null);
-    const [selectedParser, setSelectedParser] = useState<string>("invoice");
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("es");
     const [loading, setLoading] = useState<boolean>(false);
-    const [showResponse, setShowResponse] = useState<boolean>(false);
     const [showPreview, setShowPreview] = useState<boolean>(false);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +23,7 @@ export function Component(): JSX.Element {
 
     const handleDropdownChange = (event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
         if (option) {
-            setSelectedParser(option.data);
+            setSelectedLanguage(option.data);
         }
     };
 
@@ -38,22 +38,24 @@ export function Component(): JSX.Element {
         setLoading(true);
 
         const formData = new FormData();
-        formData.append("file", selectedFile);
-        formData.append("parser", selectedParser);
+        formData.append("document", selectedFile);
+        formData.append("target_language", selectedLanguage);
 
         try {
-            const response = await fetch("https://langflow-inference.azurewebsites.net/api/parser", {
+            const response = await fetch("https://documents-translation.azurewebsites.net/api/parser", {
                 method: "POST",
-                body: formData,
-                redirect: "follow"
+                body: formData
             });
 
-            const text = await response.text();
-            const parsedResponse = JSON.parse(text);
-            const data = JSON.parse(parsedResponse[0]);
-            setResponseData(data);
-            setStatusCode(response.status);
-            setShowResponse(true); // Show response after successful fetch
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                setResponseData(url);
+                setStatusCode(response.status);
+            } else {
+                setResponseData("Failed to translate the document.");
+                setStatusCode(response.status);
+            }
         } catch (error) {
             console.error("Error:", error);
             setResponseData("An error occurred");
@@ -65,13 +67,25 @@ export function Component(): JSX.Element {
 
     const renderFilePreview = () => {
         if (!filePreview) return null;
-        if (selectedFile?.type.startsWith("image/")) {
-            return <img src={filePreview} alt="File Preview" className={styles.filePreview} />;
-        } else if (selectedFile?.type === "application/pdf") {
-            return <embed src={filePreview} type="application/pdf" width="100%" height="600px" />;
-        } else {
-            return <p>File preview not available for this file type.</p>;
+        return <embed src={filePreview} type="application/pdf" width="100%" height="600px" />;
+    };
+
+    const renderResponse = () => {
+        if (loading) {
+            return (
+                <div className={styles.loader}>
+                    <TranslationLoading />
+                </div>
+            );
         }
+
+        if (responseData && statusCode === 200) {
+            return <embed src={responseData} type="application/pdf" width="100%" height="600px" />;
+        } else if (responseData) {
+            return <p>{responseData}</p>;
+        }
+
+        return null;
     };
 
     return (
@@ -79,34 +93,25 @@ export function Component(): JSX.Element {
             <div className={styles.header}>
                 <h1 className={styles.title}>Translation</h1>
             </div>
-            <div className={styles.header}>
-                <div className={styles.uploadSection}>
+            <div>
+                <form onSubmit={handleSubmit} className={styles.uploadSection}>
+                    <input type="file" onChange={handleFileChange} className={styles.fileInput} />
                     <Dropdown
                         className={styles.dropdown}
-                        placeholder="Select an Language"
-                        options={[
-                            { key: "en", text: "English", data: "en" },
-                            { key: "et", text: "Estonian", data: "et" },
-                            { key: "fo", text: "Faroese", data: "fo" },
-                            { key: "fr", text: "French", data: "fr" },
-                            { key: "fi", text: "Finnish", data: "fi" },
-                            { key: "fj", text: "Fijian", data: "fj" },
-
-                            { key: "fil", text: "Filipi", data: "fil" },
-                            { key: "de", text: "German", data: "de" },
-                            { key: "hi", text: "Hindi", data: "hi" }
-                        ]}
+                        placeholder="Select a Language"
+                        options={[{ key: "es", text: "Spanish", data: "es" }]}
                         onChange={handleDropdownChange}
                         required
                     />
-                    <form onSubmit={handleSubmit} className={styles.uploadForm}>
-                        <input type="file" onChange={handleFileChange} className={styles.fileInput} />
-                        <DefaultButton text="Translate" type="submit" className={styles.uploadButton} />
-                    </form>
-                </div>
+                    <DefaultButton text="Translate" type="submit" className={styles.uploadButton} />
+                </form>
+            </div>
+            <div className={styles.row}>
+                <div className={styles.column}>{renderFilePreview()}</div>
+                <div className={styles.column}>{renderResponse()}</div>
             </div>
         </div>
     );
 }
 
-Component.displayName = "Ask";
+Component.displayName = "TranslationComponent";

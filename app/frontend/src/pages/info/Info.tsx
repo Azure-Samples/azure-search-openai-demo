@@ -1,7 +1,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { DefaultButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import styles from "./Info.module.css";
-import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
+import { ExtractionLoading } from "../../components/Answer";
 export function Component(): JSX.Element {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export function Component(): JSX.Element {
         formData.append("parser", selectedParser);
 
         try {
-            const response = await fetch("https://langflow-inference.azurewebsites.net/api/parser", {
+            const response = await fetch("https://documents-parsing.azurewebsites.net/api/parser", {
                 method: "POST",
                 body: formData,
                 redirect: "follow"
@@ -79,31 +79,35 @@ export function Component(): JSX.Element {
             <div className={styles.header}>
                 <h1 className={styles.title}>Information Extraction</h1>
             </div>
-            <div className={styles.header}>
-                <div className={styles.uploadSection}>
-                    <Dropdown
-                        className={styles.dropdown}
-                        placeholder="Select an option"
-                        options={[
-                            { key: "invoices", text: "Invoices", data: "invoice" },
-                            { key: "sales order", text: "Sales orders", data: "sales order" },
-                            { key: "other", text: "General document analysis", data: "other" }
-                        ]}
-                        onChange={handleDropdownChange}
-                        required
-                    />
-                    <form onSubmit={handleSubmit} className={styles.uploadForm}>
-                        <input type="file" onChange={handleFileChange} className={styles.fileInput} />
-                        <DefaultButton text="Extract Information" type="submit" className={styles.uploadButton} />
-                    </form>
-                </div>
-            </div>
+
+            <form onSubmit={handleSubmit} className={styles.uploadSection}>
+                <input type="file" onChange={handleFileChange} className={styles.fileInput} />
+                <Dropdown
+                    className={styles.dropdown}
+                    placeholder="Select an option"
+                    options={[
+                        { key: "invoices", text: "Invoices", data: "invoice" },
+                        { key: "sales order", text: "Sales orders", data: "sales order" },
+                        { key: "other", text: "General document analysis", data: "other" }
+                    ]}
+                    onChange={handleDropdownChange}
+                    required
+                />
+
+                <DefaultButton text="Extract Information" type="submit" className={styles.uploadButton} />
+            </form>
+
             <div className={styles.row}>
+                <div className={styles.column}>
+                    <div className={styles.filePreviewContainer} style={{ display: showPreview ? "block" : "none" }}>
+                        {filePreview && <>{renderFilePreview()}</>}
+                    </div>
+                </div>
                 <div className={styles.column}>
                     <div className={styles.uploadSection1} style={{ display: showPreview ? "block" : "none" }}>
                         {loading ? (
                             <div className={styles.loader}>
-                                <AnswerLoading />
+                                <ExtractionLoading />
                             </div>
                         ) : (
                             showResponse &&
@@ -116,11 +120,6 @@ export function Component(): JSX.Element {
                                 </div>
                             )
                         )}
-                    </div>
-                </div>
-                <div className={styles.column}>
-                    <div className={styles.filePreviewContainer} style={{ display: showPreview ? "block" : "none" }}>
-                        {filePreview && <>{renderFilePreview()}</>}
                     </div>
                 </div>
             </div>
