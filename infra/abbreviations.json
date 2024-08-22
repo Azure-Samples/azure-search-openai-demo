@@ -135,6 +135,7 @@
   "virtualNetworks": "vnet-",
   "webServerFarms": "plan-",
   "webSitesAppService": "app-",
+  "webSitesContainerApps": "capps-",
   "webSitesAppServiceEnvironment": "ase-",
   "webSitesFunctions": "func-",
   "webStaticSites": "stapp-"

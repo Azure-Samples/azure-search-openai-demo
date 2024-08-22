@@ -7,9 +7,9 @@ services:
   backend:
     project: ./app/backend
     language: py
-    host: containerapp
+    host: appservice
     hooks:
-      prebuild:
+      prepackage:
         windows:
           shell: pwsh
           run:  cd ../frontend;npm install;npm run build
@@ -20,10 +20,6 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
-infra:
-  provider: bicep
-  module: main-aca
-
 pipeline:
   variables:
       - AZURE_OPENAI_SERVICE
