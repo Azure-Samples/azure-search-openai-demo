@@ -60,7 +60,7 @@
       "value": "${AZURE_SEARCH_SERVICE_LOCATION}"
     },
     "searchServiceSkuName": {
-      "value": "${AZURE_SEARCH_SERVICE_SKU=standard}"
+      "value": "${AZURE_SEARCH_SERVICE_SKU=basic}"
     },
     "searchQueryLanguage": {
       "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
@@ -178,6 +178,9 @@
     },
     "enforceAccessControl": {
       "value": "${AZURE_ENFORCE_ACCESS_CONTROL=false}"
+    },
+    "disableAppServicesAuthentication": {
+      "value": "${AZURE_DISABLE_APP_SERVICES_AUTHENTICATION=false}"
     },
     "enableGlobalDocuments": {
       "value": "${AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS=false}"

@@ -128,6 +128,9 @@ param authTenantId string = ''
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
 param enforceAccessControl bool = false
+// Force using MSAL app authentication instead of built-in App Service authentication
+// https://learn.microsoft.com/azure/app-service/overview-authentication-authorization
+param disableAppServicesAuthentication bool = false
 param enableGlobalDocuments bool = false
 param enableUnauthenticatedAccess bool = false
 param serverAppId string = ''
@@ -276,6 +279,7 @@ module backend 'core/host/appservice.bicep' = {
     clientAppId: clientAppId
     serverAppId: serverAppId
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
+    disableAppServicesAuthentication: disableAppServicesAuthentication
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
     authenticationIssuerUri: authenticationIssuerUri
     use32BitWorkerProcess: appServiceSkuName == 'F1'
