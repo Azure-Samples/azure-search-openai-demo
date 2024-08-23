@@ -128,7 +128,7 @@ param authTenantId string = ''
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
 param enforceAccessControl bool = false
-// Force using MSAL app authentication instead of integrated app services authentication
+// Force using MSAL app authentication instead of built-in App Service authentication
 // https://learn.microsoft.com/azure/app-service/overview-authentication-authorization
 param disableAppServicesAuthentication bool = false
 param enableGlobalDocuments bool = false
