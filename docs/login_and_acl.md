@@ -137,7 +137,7 @@ In both the chat and ask a question modes, under **Developer settings** optional
 
 #### Programmatic Access with Authentication
 
-If you want to use the chat endpoint without the UI and still use authentication, you must disable the integrated app services authentication and use the authentication built into the sample app instead. Ensure the `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION` environment variable is set before deploying.
+If you want to use the chat endpoint without the UI and still use authentication, you must disable [App Service built-in authentication](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization) and use only the app's MSAL-based authentication flow. Ensure the `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION` environment variable is set before deploying.
 
 Get an access token that can be used for calling the chat API using the following code:
 
