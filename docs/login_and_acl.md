@@ -141,7 +141,7 @@ If you want to use the chat endpoint without the UI and still use authentication
 
 Get an access token that can be used for calling the chat API using the following code:
 
-```
+```python
 from azure.identity import DefaultAzureCredential
 import os
 
