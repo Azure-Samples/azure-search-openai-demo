@@ -291,6 +291,10 @@ module containerApps 'core/host/container-apps.bicep' = {
 module backend 'core/host/container-app-upsert.bicep' = {
   name: 'aca-web'
   scope: resourceGroup
+  dependsOn: [
+    containerApps
+    acaIdentity
+  ]
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
@@ -357,6 +361,8 @@ module backend 'core/host/container-app-upsert.bicep' = {
       AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
       USE_LOCAL_PDF_PARSER: useLocalPdfParser
       USE_LOCAL_HTML_PARSER: useLocalHtmlParser
+      // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
+      AZURE_CLIENT_ID: acaIdentity.outputs.clientId
     }
   }
 }
@@ -557,6 +563,7 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
 
 // USER ROLES
 var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
+// var principalType = 'ServicePrincipal'
 
 module openAiRoleUser 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
   scope: openAiResourceGroup
@@ -796,7 +803,7 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
-    principalType: 'ServicePrincipal'
+    principalType: principalType
   }
 }
 
@@ -807,7 +814,7 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload) 
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
-    principalType: 'ServicePrincipal'
+    principalType: principalType
   }
 }
 
@@ -818,7 +825,7 @@ module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: 'ServicePrincipal'
+    principalType: principalType
   }
 }
 
@@ -829,7 +836,7 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: 'ServicePrincipal'
+    principalType: principalType
   }
 }
 
@@ -883,7 +890,7 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerApps.outputs.registry
 output AZURE_CONTAINER_REGISTRY_NAME string = containerApps.outputs.registryName
 
 
-// output SERVICE_WEB_IDENTITY_PRINCIPAL_ID string = webIdentity.properties.principalId
+output SERVICE_WEB_IDENTITY_PRINCIPAL_ID string = backend.outputs.identityPrincipalId
 output SERVICE_WEB_NAME string = backend.outputs.name
 output SERVICE_WEB_URI string = backend.outputs.uri
 output SERVICE_WEB_IMAGE_NAME string = backend.outputs.imageName
