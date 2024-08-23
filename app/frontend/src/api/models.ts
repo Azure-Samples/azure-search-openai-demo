@@ -92,3 +92,11 @@ export type Config = {
 export type SimpleAPIResponse = {
     message?: string;
 };
+
+export interface SpeechConfig {
+    speechUrls: (string | null)[];
+    setSpeechUrls: (urls: (string | null)[]) => void;
+    audio: HTMLAudioElement;
+    isPlaying: boolean;
+    setIsPlaying: (isPlaying: boolean) => void;
+}
