@@ -1,50 +1,49 @@
 import { useState } from "react";
 
 import { IconButton } from "@fluentui/react";
-import { getSpeechApi } from "../../api";
+import { getSpeechApi, SpeechConfig } from "../../api";
 
 interface Props {
     answer: string;
-    urls: (string | null)[];
-    updateSpeechUrls: (urls: (string | null)[]) => void;
+    speechConfig: SpeechConfig;
     index: number;
-    audio: HTMLAudioElement;
-    isPlaying: boolean;
-    setIsPlaying: (isPlaying: boolean) => void;
     isStreaming: boolean;
 }
 
-export const SpeechOutputAzure = ({ answer, urls, updateSpeechUrls, index, audio, isPlaying, setIsPlaying, isStreaming }: Props) => {
+export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [localPlayingState, setLocalPlayingState] = useState(false);
 
     const playAudio = async (url: string) => {
-        audio.src = url;
-        await audio
+        speechConfig.audio.src = url;
+        await speechConfig.audio
             .play()
             .then(() => {
-                audio.onended = () => setIsPlaying(false);
-                setIsPlaying(true);
+                speechConfig.audio.onended = () => {
+                    speechConfig.setIsPlaying(false);
+                    setLocalPlayingState(false);
+                };
+                speechConfig.setIsPlaying(true);
                 setLocalPlayingState(true);
             })
             .catch(() => {
                 alert("Failed to play speech output.");
                 console.error("Failed to play speech output.");
-                setIsPlaying(false);
+                speechConfig.setIsPlaying(false);
                 setLocalPlayingState(false);
             });
     };
 
     const startOrStopSpeech = async (answer: string) => {
-        if (isPlaying) {
-            audio.pause();
-            audio.currentTime = 0;
-            setIsPlaying(false);
+        if (speechConfig.isPlaying) {
+            speechConfig.audio.pause();
+            speechConfig.audio.currentTime = 0;
+            speechConfig.setIsPlaying(false);
             setLocalPlayingState(false);
             return;
         }
-        if (urls[index]) {
-            playAudio(urls[index]);
+        if (speechConfig.speechUrls[index]) {
+            playAudio(speechConfig.speechUrls[index]);
             return;
         }
         setIsLoading(true);
@@ -55,7 +54,7 @@ export const SpeechOutputAzure = ({ answer, urls, updateSpeechUrls, index, audio
                 return;
             }
             setIsLoading(false);
-            updateSpeechUrls(urls.map((url, i) => (i === index ? speechUrl : url)));
+            speechConfig.setSpeechUrls(speechConfig.speechUrls.map((url, i) => (i === index ? speechUrl : url)));
             playAudio(speechUrl);
         });
     };

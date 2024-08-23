@@ -4,7 +4,7 @@ import { useId } from "@fluentui/react-hooks";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, getSpeechApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
+import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput, SpeechConfig } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -56,7 +56,15 @@ export function Component(): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<unknown>();
     const [answer, setAnswer] = useState<ChatAppResponse>();
-    const [speechUrl, setSpeechUrl] = useState<(string | null)[]>([]);
+    const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
+
+    const speechConfig: SpeechConfig = {
+        speechUrls,
+        setSpeechUrls,
+        audio,
+        isPlaying,
+        setIsPlaying
+    };
 
     const [activeCitation, setActiveCitation] = useState<string>();
     const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
@@ -128,7 +136,7 @@ export function Component(): JSX.Element {
             };
             const result = await askApi(request, token);
             setAnswer(result);
-            setSpeechUrl([null]);
+            setSpeechUrls([null]);
         } catch (e) {
             setError(e);
         } finally {
@@ -251,11 +259,7 @@ export function Component(): JSX.Element {
                         <Answer
                             answer={answer}
                             index={0}
-                            speechUrls={speechUrl}
-                            updateSpeechUrls={setSpeechUrl}
-                            audio={audio}
-                            isPlaying={isPlaying}
-                            setIsPlaying={setIsPlaying}
+                            speechConfig={speechConfig}
                             isStreaming={false}
                             onCitationClicked={x => onShowCitation(x)}
                             onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}

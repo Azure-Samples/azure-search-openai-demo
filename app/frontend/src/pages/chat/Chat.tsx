@@ -15,7 +15,8 @@ import {
     ChatAppRequest,
     ResponseMessage,
     VectorFieldOptions,
-    GPT4VInput
+    GPT4VInput,
+    SpeechConfig
 } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
@@ -78,6 +79,14 @@ const Chat = () => {
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
+
+    const speechConfig: SpeechConfig = {
+        speechUrls,
+        setSpeechUrls,
+        audio,
+        isPlaying,
+        setIsPlaying
+    };
 
     const getConfig = async () => {
         configApi().then(config => {
@@ -359,11 +368,7 @@ const Chat = () => {
                                                 key={index}
                                                 answer={streamedAnswer[1]}
                                                 index={index}
-                                                speechUrls={speechUrls}
-                                                updateSpeechUrls={setSpeechUrls}
-                                                audio={audio}
-                                                isPlaying={isPlaying}
-                                                setIsPlaying={setIsPlaying}
+                                                speechConfig={speechConfig}
                                                 isSelected={false}
                                                 onCitationClicked={c => onShowCitation(c, index)}
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
@@ -386,11 +391,7 @@ const Chat = () => {
                                                 key={index}
                                                 answer={answer[1]}
                                                 index={index}
-                                                speechUrls={speechUrls}
-                                                audio={audio}
-                                                updateSpeechUrls={setSpeechUrls}
-                                                isPlaying={isPlaying}
-                                                setIsPlaying={setIsPlaying}
+                                                speechConfig={speechConfig}
                                                 isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
                                                 onCitationClicked={c => onShowCitation(c, index)}
                                                 onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
