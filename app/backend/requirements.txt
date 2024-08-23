@@ -194,7 +194,7 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==2.1.0
+numpy==2.0.1
     # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
