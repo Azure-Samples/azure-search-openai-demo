@@ -60,16 +60,21 @@ export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: 
     };
 
     const color = localPlayingState ? "red" : "black";
+
+    // We always preload the Sync icon in hidden mode so that there's no visual glitch when icon changes
     return isLoading ? (
-        <IconButton style={{ color: color }} iconProps={{ iconName: "Sync" }} title="Loading" ariaLabel="Loading answer" disabled={true} />
+        <IconButton style={{ color: color }} iconProps={{ iconName: "Sync" }} title="Loading speech" ariaLabel="Loading speech" disabled={true} />
     ) : (
-        <IconButton
-            style={{ color: color }}
-            iconProps={{ iconName: "Volume3" }}
-            title="Speak answer"
-            ariaLabel="Speak answer"
-            onClick={() => startOrStopSpeech(answer)}
-            disabled={isStreaming}
-        />
+        <>
+            <IconButton iconProps={{ iconName: "Sync" }} ariaHidden={true} disabled={true} style={{ display: "none" }} />
+            <IconButton
+                style={{ color: color }}
+                iconProps={{ iconName: "Volume3" }}
+                title="Speak answer"
+                ariaLabel="Speak answer"
+                onClick={() => startOrStopSpeech(answer)}
+                disabled={isStreaming}
+            />
+        </>
     );
 };
