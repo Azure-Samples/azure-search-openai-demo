@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Stack, TextField } from "@fluentui/react";
-import { Button, Tooltip } from "@fluentui/react-components";
-import { Send28Filled } from "@fluentui/react-icons";
+import { Button, Popover, PopoverSurface, PopoverTrigger, Tooltip } from "@fluentui/react-components";
+import { Send28Filled, SettingsRegular } from "@fluentui/react-icons";
 
 import styles from "./QuestionInput.module.css";
 import { SpeechInput } from "./SpeechInput";
@@ -15,9 +15,10 @@ interface Props {
     placeholder?: string;
     clearOnSend?: boolean;
     showSpeechInput?: boolean;
+    popoverOptions: Function;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput }: Props) => {
+export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput, popoverOptions }: Props) => {
     const [question, setQuestion] = useState<string>("");
     const { loggedIn } = useContext(LoginContext);
     const [isComposing, setIsComposing] = useState(false);
@@ -71,6 +72,18 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
 
     return (
         <Stack horizontal className={styles.questionInputContainer}>
+            <Popover>
+                <PopoverTrigger disableButtonEnhancement>
+                    <div className={styles.settingsContainer}>
+                        <Button size="large" icon={<SettingsRegular fontSize={"25px"} primaryFill="white" className={styles.gearIcon} />} />
+                    </div>
+                </PopoverTrigger>
+
+                <PopoverSurface tabIndex={-1}>
+                    <div className={styles.popoverContainer}>{popoverOptions()}</div>
+                </PopoverSurface>
+            </Popover>
+
             <TextField
                 className={styles.questionInputTextArea}
                 disabled={disableRequiredAccessControl}

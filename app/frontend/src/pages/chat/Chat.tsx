@@ -341,13 +341,23 @@ const Chat = () => {
     const shouldStreamId = useId("shouldStream");
     const shouldStreamFieldId = useId("shouldStreamField");
 
+    const popoverOptions = () => {
+        return (
+            <div className={styles.commandsContainer}>
+                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                {true && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
+                <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+            </div>
+        );
+    };
+
     return (
         <div className={styles.container}>
-            <div className={styles.commandsContainer}>
+            {/* <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                 {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-            </div>
+            </div> */}
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
@@ -424,12 +434,13 @@ const Chat = () => {
                     )}
 
                     <div className={styles.chatInput}>
-                        <QuestionInput
+                        <QuestionInput // changes are made inside of this componenet too!!!!@!
                             clearOnSend
                             placeholder="Type a new question (e.g. does my plan cover annual eye exams?)"
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                             showSpeechInput={showSpeechInput}
+                            popoverOptions={popoverOptions}
                         />
                     </div>
                 </div>

@@ -5,3 +5,8 @@
     cursor: pointer;
     padding: 0.5rem;
 }
+
+.container button{
+    display: flex;
+    gap: 10px;
+}

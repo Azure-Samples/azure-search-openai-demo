@@ -24,3 +24,8 @@
     text-overflow: ellipsis;
     margin-bottom: 0.75em;
 }
+
+.calloutButton {
+    display: flex;
+    gap: 10px;
+}

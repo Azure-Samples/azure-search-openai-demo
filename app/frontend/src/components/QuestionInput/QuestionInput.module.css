@@ -4,13 +4,24 @@
         0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
         0px 0px 0.125rem rgba(0, 0, 0, 0.12);
     width: 100%;
-    padding: 0.8rem;
-    background: white;
+    padding: 1rem 1.3rem;
+    border-radius: 50px;
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .questionInputTextArea {
+    height: 40px;
     width: 100%;
-    line-height: 2.5rem;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    background: none !important;
+}
+
+.questionInputTextArea * {
+    background: none !important;
 }
 
 .questionInputButtonsContainer {
@@ -19,8 +30,39 @@
     justify-content: flex-end;
 }
 
+/* ---------------------------------- */
+
+.popoverContainer {
+    background-color: white;
+    padding: 1rem;
+    box-shadow:
+        0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
+    border-radius: 30px;
+}
+
+.settingsContainer {
+    width: 40px;
+    height: 40px;
+    background: #7376e1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gearIcon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.gearIcon:hover {
+    transform: rotate(60deg); /* Full rotation */
+}
+
+/* ---------------------------------- */
+
 @media (min-width: 992px) {
     .questionInputContainer {
-        height: 5.625rem;
+        /* height: 5.625rem; */
     }
 }
