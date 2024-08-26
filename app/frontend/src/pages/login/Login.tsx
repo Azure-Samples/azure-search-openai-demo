@@ -33,7 +33,7 @@ export default function Login(): JSX.Element {
             })
             .catch(error => {
                 // An error happened.
-                setErrorText("Error MEssage");
+                setErrorText("Error Message");
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log("ERRORTT", errorCode);
@@ -50,11 +50,11 @@ export default function Login(): JSX.Element {
             });
     };
 
-    useEffect(() => {
-        if (auth.currentUser) {
-            navigate("/");
-        }
-    });
+    // useEffect(() => {
+    //     if (auth.currentUser) {
+    //         navigate("/");
+    //     }
+    // });
     return (
         <div className="column ai-centre padding80 gap20">
             <h1>Login</h1>
@@ -81,7 +81,7 @@ export default function Login(): JSX.Element {
             </div>
             <Button onClick={signIn}>Login</Button>
 
-            <span>{errorText}</span>
+            <p style={{ color: "red", margin: "0px" }}>{errorText}</p>
         </div>
     );
 }

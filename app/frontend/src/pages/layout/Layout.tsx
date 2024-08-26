@@ -39,6 +39,7 @@ const Layout = () => {
                         navigate("/no-projects", {});
                         setNoProjects(true);
                     } else {
+                        localStorage.setItem("projects", JSON.stringify(response.data));
                         if (userData.initialPasswordChanged === false) {
                             navigate("../change-password", {});
                         } else {
@@ -94,7 +95,6 @@ const Layout = () => {
                     // setUserDetails(data.user)
                     localStorage.setItem("user", JSON.stringify(data.user));
                     setUserData(data.user);
-                    console.log("User details: ", data.user);
                 }
             });
     };

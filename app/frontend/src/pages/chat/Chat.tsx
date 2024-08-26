@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
 import { useId, Dropdown as DropdownComponent, Option } from "@fluentui/react-components";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 import { auth } from "../../";
 import type { DropdownProps } from "@fluentui/react-components";
-
+import axios from "axios";
 import styles from "./Chat.module.css";
 
 import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage } from "../../api";
@@ -47,13 +47,18 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
-
     const [parameters, setParameters] = useState<Record<string, string>>({
         tone: "Formal",
         readability: "Medium",
         wordCount: "200",
         communicationFramework: "Think/Feel/Do"
     });
+    const [currentProject, setCurrentProject] = useState<string>("default");
+    const [projectOptions, setProjectOptions] = useState<ProjectOptions[]>([]);
+
+    const [index, setIndex] = useState<string>("gptkbindex");
+    const [container, setContainer] = useState<string>("content");
+    const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
 
     const navigate = useNavigate();
     const dropdownId = useId("dropdown-default");
@@ -117,6 +122,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             " model";
 
         const questionWithParameters = question + " " + parameterString;
+        const questionWithIndexAndContainer = question + " using " + index + " and " + container + " container.";
         error && setError(undefined);
         setIsLoading(true);
         setActiveCitation(undefined);
@@ -132,8 +138,8 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: questionWithParameters, role: "user" }],
-                azureIndex: "index 123",
-                azureContainer: "container 123",
+                azureIndex: index,
+                azureContainer: container,
                 stream: shouldStream,
                 context: {
                     overrides: {
@@ -157,14 +163,15 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                 throw Error("No response body");
             }
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(questionWithParameters, answers, setAnswers, response.body);
-                setAnswers([...answers, [questionWithParameters, parsedResponse]]);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, setAnswers, response.body);
+                console.log(streamedAnswers);
+                setAnswers([...answers, [question, parsedResponse]]);
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (response.status > 299 || !response.ok) {
                     throw Error(parsedResponse.error || "Unknown error");
                 }
-                setAnswers([...answers, [questionWithParameters, parsedResponse as ChatAppResponse]]);
+                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
         } catch (e) {
             setError(e);
@@ -252,6 +259,21 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
         setSelectedAnswer(index);
     };
 
+    const handleSetProject = (project: string) => {
+        if (project === currentProject) {
+            return;
+        }
+        setAnswers([]);
+        setStreamedAnswers([]);
+        lastQuestionRef.current = "";
+        const projectOption = projectOptions.find(p => p.projectName === project);
+        if (projectOption) {
+            setIndex(projectOption.projectIndex);
+            setContainer(projectOption.projectContainer);
+            setCurrentProject(project);
+        }
+    };
+
     const toneOptions = ["Formal", "Informal", "Motivational", "Celebratory", "Cautious"];
 
     const readabilityOptions = ["Low", "Medium", "High"];
@@ -263,8 +285,25 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     useEffect(() => {
         if (!auth.currentUser) {
             navigate("/login");
+        } else {
+            const projectString = localStorage.getItem("projects");
+            if (projectString) {
+                const projects = JSON.parse(projectString);
+                let compArray: ProjectOptions[] = [];
+                projects.forEach((project: Project) => {
+                    compArray.push({
+                        projectName: project.projectName ?? "",
+                        projectIndex: project.projectIndex ?? "",
+                        projectContainer: project.projectContainer ?? ""
+                    });
+                });
+                setProjectOptions(compArray);
+                setCurrentProject(compArray[0].projectName);
+                setIndex(compArray[0].projectIndex);
+                setContainer(compArray[0].projectContainer);
+            }
         }
-    });
+    }, []);
 
     return (
         <div className={styles.container}>
@@ -418,6 +457,26 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                 ))}
                             </DropdownComponent>
                         </div>
+                        {projectOptions && projectOptions.length > 1 && (
+                            <div className={styles.parameterColumn}>
+                                <h2 style={{ color: "#409ece" }}>Project</h2>
+                                <DropdownComponent
+                                    style={{ minWidth: "200px" }}
+                                    name="projectDropdown"
+                                    aria-labelledby={dropdownId}
+                                    defaultValue={projectOptions[0].projectName}
+                                    defaultSelectedOptions={[projectOptions[0].projectName]}
+                                    onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
+                                    {...dropdownProps}
+                                >
+                                    {projectOptions.map(option => (
+                                        <Option key={option.projectName} text={option.projectName} value={option.projectName}>
+                                            {option.projectName}
+                                        </Option>
+                                    ))}
+                                </DropdownComponent>
+                            </div>
+                        )}
                     </div>
                 </div>
 
