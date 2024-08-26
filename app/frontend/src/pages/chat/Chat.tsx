@@ -132,6 +132,8 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
             const request: ChatAppRequest = {
                 messages: [...messages, { content: questionWithParameters, role: "user" }],
+                azureIndex: "index 123",
+                azureContainer: "container 123",
                 stream: shouldStream,
                 context: {
                     overrides: {
