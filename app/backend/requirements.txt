@@ -94,7 +94,7 @@ deprecated==1.2.14
     #   opentelemetry-semantic-conventions
 distro==1.9.0
     # via openai
-fixedint==0.1.6
+fixedint==0.2.0
     # via azure-monitor-opentelemetry-exporter
 flask==3.0.3
     # via quart
@@ -131,7 +131,7 @@ idna==3.8
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==8.0.0
+importlib-metadata==8.4.0
     # via
     #   opentelemetry-api
     #   opentelemetry-instrumentation-flask
@@ -186,7 +186,7 @@ msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.2
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.5.4
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -194,7 +194,7 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==2.0.1
+numpy==2.1.0
     # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
@@ -258,7 +258,7 @@ opentelemetry-instrumentation-flask==0.47b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-httpx==0.47b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.27.0
+opentelemetry-instrumentation-openai==0.28.1
     # via -r requirements.in
 opentelemetry-instrumentation-psycopg2==0.47b0
     # via azure-monitor-opentelemetry
@@ -325,13 +325,13 @@ portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-psutil==5.9.8
+psutil==6.0.0
     # via azure-monitor-opentelemetry-exporter
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.23.0
     # via pydantic
 pyjwt[crypto]==2.9.0
     # via
