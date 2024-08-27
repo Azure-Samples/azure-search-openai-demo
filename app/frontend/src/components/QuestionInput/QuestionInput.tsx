@@ -20,7 +20,6 @@ interface Props {
 
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput }: Props) => {
     const [question, setQuestion] = useState<string>("");
-    const [isComposing, setIsComposing] = useState(false);
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
     const [isComposing, setIsComposing] = useState(false);
