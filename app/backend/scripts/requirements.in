@@ -1,0 +1,10 @@
+pypdf
+aiohttp
+azure-identity
+azure-search-documents==11.4.0b11
+azure-ai-formrecognizer
+azure-storage-blob
+azure-storage-file-datalake
+openai[datalib]>=1.3.5
+tiktoken
+tenacity

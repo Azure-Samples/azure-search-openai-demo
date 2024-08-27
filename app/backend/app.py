@@ -3,6 +3,7 @@ import json
 import logging
 import mimetypes
 import os
+import subprocess
 from pathlib import Path
 from typing import AsyncGenerator
 
@@ -112,6 +113,16 @@ def error_response(error: Exception, route: str, status_code: int = 500):
     return jsonify(error_dict(error)), status_code
 
 
+def run_prepdocs_script():
+    script_path = os.path.join(os.path.dirname(__file__), 'scripts', 'prepdocs.sh')
+    try:
+        result = subprocess.run(['sh', script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"Script output: {result.stdout.decode()}")
+    except subprocess.CalledProcessError as e:
+        print(f"Script failed with error: {e.stderr.decode()}")
+        raise e
+
+
 @bp.route("/ask", methods=["POST"])
 async def ask():
     if not request.is_json:
@@ -141,6 +152,9 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 @bp.route("/chat", methods=["POST"])
 async def chat():
+
+    run_prepdocs_script()
+
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
