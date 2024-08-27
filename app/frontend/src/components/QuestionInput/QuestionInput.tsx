@@ -23,6 +23,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     const [isComposing, setIsComposing] = useState(false);
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
+    const [isComposing, setIsComposing] = useState(false);
 
     useEffect(() => {
         initQuestion && setQuestion(initQuestion);

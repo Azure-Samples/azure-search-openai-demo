@@ -28,7 +28,6 @@ class RetrieveThenReadVisionApproach(Approach):
         + "Each text source starts in a new line and has the file name followed by colon and the actual information "
         + "Always include the source name from the image or text for each fact you use in the response in the format: [filename] "
         + "Answer the following question using only the data provided in the sources below. "
-        + "For tabular information return it as an html table. Do not return markdown format. "
         + "The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned "
         + "If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts "
     )
