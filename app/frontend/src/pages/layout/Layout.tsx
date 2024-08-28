@@ -13,6 +13,7 @@ import { auth } from "../..";
 import axios from "axios";
 import { Button } from "@fluentui/react-components";
 import { useNavigate, useLocation } from "react-router-dom";
+import PalAILogo from "../../../src/PalAILogo.png";
 
 const Layout = () => {
     const navigate = useNavigate();
@@ -38,6 +39,7 @@ const Layout = () => {
                         navigate("/no-projects", {});
                         setNoProjects(true);
                     } else {
+                        localStorage.setItem("projects", JSON.stringify(response.data));
                         if (userData.initialPasswordChanged === false) {
                             navigate("../change-password", {});
                         } else {
@@ -93,7 +95,6 @@ const Layout = () => {
                     // setUserDetails(data.user)
                     localStorage.setItem("user", JSON.stringify(data.user));
                     setUserData(data.user);
-                    console.log("User details: ", data.user);
                 }
             });
     };
@@ -134,7 +135,9 @@ const Layout = () => {
                     </div>
                 </div>
             </div>
-
+            <div className={styles.logoContainer}>
+                <img src={PalAILogo} className={styles.palAIIcon} />
+            </div>
             <Outlet />
         </div>
     );

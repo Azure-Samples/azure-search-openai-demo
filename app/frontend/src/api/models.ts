@@ -52,6 +52,8 @@ export type ChatAppRequestContext = {
 
 export type ChatAppRequest = {
     messages: ResponseMessage[];
+    azureIndex?: string;
+    azureContainer?: string;
     context?: ChatAppRequestContext;
     stream?: boolean;
     session_state: any;

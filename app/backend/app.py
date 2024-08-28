@@ -134,7 +134,8 @@ async def ask():
     try:
         approach = current_app.config[CONFIG_ASK_APPROACH]
         r = await approach.run(
-            request_json["messages"], context=context, session_state=request_json.get("session_state")
+            request_json["messages"], context=context, session_state=request_json.get(
+                "session_state")
         )
         return jsonify(r)
     except Exception as error:
@@ -156,7 +157,11 @@ async def chat():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
+
+    await set_index_and_container(
+        request_json["azureIndex"], request_json["azureContainer"])
     context = request_json.get("context", {})
+
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
@@ -202,15 +207,19 @@ async def setup_clients():
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
+    OPENAI_EMB_MODEL = os.getenv(
+        "AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
-    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == "azure" else None
-    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST == "azure" else None
+    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv(
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == "azure" else None
+    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv(
+        "AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST == "azure" else None
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
-    AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    AZURE_USE_AUTHENTICATION = os.getenv(
+        "AZURE_USE_AUTHENTICATION", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
     AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
@@ -220,14 +229,16 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
-    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
-    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
-
+    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv(
+        "AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
+    AZURE_SEARCH_QUERY_SPELLER = os.getenv(
+        "AZURE_SEARCH_QUERY_SPELLER", "lexicon")
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
+    azure_credential = DefaultAzureCredential(
+        exclude_shared_token_cache_credential=True)
 
     # Set up authentication helper
     auth_helper = AuthenticationHelper(
@@ -248,13 +259,15 @@ async def setup_clients():
     blob_client = BlobServiceClient(
         account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
     )
-    blob_container_client = blob_client.get_container_client(AZURE_STORAGE_CONTAINER)
+    blob_container_client = blob_client.get_container_client(
+        AZURE_STORAGE_CONTAINER)
 
     # Used by the OpenAI SDK
     openai_client: AsyncOpenAI
 
     if OPENAI_HOST == "azure":
-        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
+        token_provider = get_bearer_token_provider(
+            azure_credential, "https://cognitiveservices.azure.com/.default")
         # Store on app.config for later use inside requests
         openai_client = AsyncAzureOpenAI(
             api_version="2023-07-01-preview",
@@ -301,6 +314,77 @@ async def setup_clients():
     )
 
 
+async def set_index_and_container(index, container):
+    print("Setting index and container")
+    print(index)
+    print(container)
+    AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
+    AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
+    # Shared by all OpenAI deployments
+    OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
+    OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    OPENAI_EMB_MODEL = os.getenv(
+        "AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
+    # Used with Azure OpenAI deployments
+    AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv(
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == "azure" else None
+    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv(
+        "AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST == "azure" else None
+    # Used only with non-Azure OpenAI deployments
+    KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
+    KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
+    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv(
+        "AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
+    AZURE_SEARCH_QUERY_SPELLER = os.getenv(
+        "AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+
+    azure_credential = DefaultAzureCredential(
+        exclude_shared_token_cache_credential=True)
+
+    search_client = SearchClient(
+        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        index_name=index,
+        credential=azure_credential,
+    )
+
+    blob_client = BlobServiceClient(
+        account_url=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential
+    )
+    blob_container_client = blob_client.get_container_client(
+        container)
+
+    current_app.config[CONFIG_SEARCH_CLIENT] = search_client
+    current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+
+    current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
+        search_client=search_client,
+        openai_client=current_app.config[CONFIG_OPENAI_CLIENT],
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
+    )
+
+    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
+        search_client=search_client,
+        openai_client=current_app.config[CONFIG_OPENAI_CLIENT],
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
+    )
+
+    return "Success"
+
+
 def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
@@ -312,7 +396,8 @@ def create_app():
         # This tracks HTTP requests made by httpx/openai:
         HTTPXClientInstrumentor().instrument()
         # This middleware tracks app route requests:
-        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[method-assign]
+        app.asgi_app = OpenTelemetryMiddleware(
+            app.asgi_app)  # type: ignore[method-assign]
 
     # Level should be one of https://docs.python.org/3/library/logging.html#logging-levels
     default_level = "INFO"  # In development, log more verbosely

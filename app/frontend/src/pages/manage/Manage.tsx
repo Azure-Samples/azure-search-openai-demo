@@ -291,23 +291,25 @@ export default function Manage(): JSX.Element {
                                                                 (project.users &&
                                                                     project.users.some(
                                                                         user => user.uuid === currentUser.uuid && user.projectRole === "Owner"
-                                                                    ))) && (
-                                                                <TableCell>
-                                                                    <Edit20Regular
-                                                                        style={{ cursor: "pointer" }}
-                                                                        onClick={() => handleEditClick(user, project)}
-                                                                    />
-                                                                </TableCell>
-                                                            )) ||
+                                                                    ))) &&
+                                                                user.uuid !== currentUser.uuid && (
+                                                                    <TableCell>
+                                                                        <Edit20Regular
+                                                                            style={{ cursor: "pointer" }}
+                                                                            onClick={() => handleEditClick(user, project)}
+                                                                        />
+                                                                    </TableCell>
+                                                                )) ||
                                                                 (project.users &&
                                                                     project.users.some(
                                                                         user => user.uuid === currentUser.uuid && user.projectRole === "Member"
-                                                                    ) && (
-                                                                        <TableCell>
-                                                                            {" "}
-                                                                            <Dismiss20Filled />
-                                                                        </TableCell>
-                                                                    )))}
+                                                                    )) ||
+                                                                (user.uuid === currentUser.uuid && (
+                                                                    <TableCell>
+                                                                        {" "}
+                                                                        <Dismiss20Filled />
+                                                                    </TableCell>
+                                                                )))}
                                                     </TableRow>
                                                 </React.Fragment>
                                             ))}
@@ -470,7 +472,7 @@ export default function Manage(): JSX.Element {
                     </DialogSurface>
                 </Dialog>
 
-                {selectedUser && selectedProject && (
+                {selectedUser && selectedProject && currentUser && selectedUser.uuid !== currentUser.uuid && (
                     <Dialog open={openSettingsDialog} onOpenChange={(_, data) => setOpenSettingsDialog(data.open)}>
                         <DialogSurface style={{ maxWidth: "400px" }}>
                             <DialogBody

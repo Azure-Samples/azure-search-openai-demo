@@ -3,9 +3,19 @@ interface Project {
     projectName: string;
     users: User[];
     dateCreated: string;
+    projectIndex?: string;
+    projectContainer?: string;
 }
 interface NewProject {
     projectID: string;
     projectName: string;
     dateCreated: string;
+    projectIndex?: string;
+    projectContainer?: string;
+}
+
+interface ProjectOptions {
+    projectName: string;
+    projectIndex: string;
+    projectContainer: string;
 }
