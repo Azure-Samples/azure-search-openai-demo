@@ -9,15 +9,14 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-param appServicePlanName string = '' // Set in main.parameters.json
 param backendServiceName string = '' // Set in main.parameters.json
 param resourceGroupName string = '' // Set in main.parameters.json
 
 // ACA parametors
 param containerAppsEnvironmentName string
-param containerRegistryName string
+param containerRegistryName string = '${replace(containerAppsEnvironmentName, '-', '')}acr'
 param webAppExists bool
-param identityName string
+param identityName string= '${environmentName}-aca-identity'
 
 param applicationInsightsDashboardName string = '' // Set in main.parameters.json
 param applicationInsightsName string = '' // Set in main.parameters.json
@@ -62,6 +61,9 @@ param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
 param useGPT4V bool = false
+
+@allowed(['Consumption', 'D4', 'D8', 'D16', 'D32', 'E4', 'E8', 'E16', 'E32', 'NC24-A100', 'NC48-A100', 'NC96-A100'])
+param azureContainerAppsWorkloadProfile string = 'Consumption'
 
 @description('Location for the OpenAI resource group')
 @allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral' ])
@@ -280,6 +282,7 @@ module containerApps 'core/host/container-apps.bicep' = {
   params: {
     name: 'app'
     location: location
+    workloadProfile: azureContainerAppsWorkloadProfile
     containerAppsEnvironmentName: containerAppsEnvironmentName
     containerRegistryName: containerRegistryName
     logAnalyticsWorkspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
@@ -300,6 +303,7 @@ module backend 'core/host/container-app-upsert.bicep' = {
     location: location
     identityName: acaIdentity.name
     exists: webAppExists
+    workloadProfile: azureContainerAppsWorkloadProfile
     containerRegistryName: containerApps.outputs.registryName
     containerAppsEnvironmentName: containerApps.outputs.environmentName
     identityType: 'UserAssigned'
