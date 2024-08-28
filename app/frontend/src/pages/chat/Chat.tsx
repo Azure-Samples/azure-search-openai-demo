@@ -309,6 +309,26 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
         <div className={styles.container}>
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
+                    {projectOptions && projectOptions.length > 1 && (
+                        <div className={styles.projectSelection}>
+                            <h2 style={{ color: "#409ece", textAlign: "right" }}>Select project</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="projectDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue={projectOptions[0].projectName}
+                                defaultSelectedOptions={[projectOptions[0].projectName]}
+                                onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
+                                {...dropdownProps}
+                            >
+                                {projectOptions.map(option => (
+                                    <Option key={option.projectName} text={option.projectName} value={option.projectName}>
+                                        {option.projectName}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                    )}
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your project data</h1>
@@ -457,26 +477,6 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                 ))}
                             </DropdownComponent>
                         </div>
-                        {projectOptions && projectOptions.length > 1 && (
-                            <div className={styles.parameterColumn}>
-                                <h2 style={{ color: "#409ece" }}>Project</h2>
-                                <DropdownComponent
-                                    style={{ minWidth: "200px" }}
-                                    name="projectDropdown"
-                                    aria-labelledby={dropdownId}
-                                    defaultValue={projectOptions[0].projectName}
-                                    defaultSelectedOptions={[projectOptions[0].projectName]}
-                                    onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
-                                    {...dropdownProps}
-                                >
-                                    {projectOptions.map(option => (
-                                        <Option key={option.projectName} text={option.projectName} value={option.projectName}>
-                                            {option.projectName}
-                                        </Option>
-                                    ))}
-                                </DropdownComponent>
-                            </div>
-                        )}
                     </div>
                 </div>
 

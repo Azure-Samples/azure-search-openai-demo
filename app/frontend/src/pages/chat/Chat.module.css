@@ -131,6 +131,14 @@
     max-width: 195px;
 }
 
+.projectSelection {
+    position: absolute;
+    top: 50px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    max-width: 195px;
+}
 /* .DropdownComponent {
     max-width: auto;
 } */
