@@ -122,7 +122,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             " model";
 
         const questionWithParameters = question + " " + parameterString;
-        const questionWithIndexAndContainer = question + " using " + index + " and " + container + " container.";
+        // const questionWithIndexAndContainer = question + " using " + index + " and " + container + " container.";
         error && setError(undefined);
         setIsLoading(true);
         setActiveCitation(undefined);
