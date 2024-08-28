@@ -3,6 +3,30 @@ import { DefaultButton, Dropdown, IDropdownOption } from "@fluentui/react";
 import styles from "./Translation.module.css";
 import { TranslationLoading } from "../../components/Answer";
 
+// Data parsing and filtering
+const languagesData = [
+    { language: "Afrikaans", code: "af", source: "Yes", target: "Yes" },
+    { language: "Albanian", code: "sq", source: "Yes", target: "Yes" },
+    { language: "English", code: "en", source: "Yes", target: "Yes" },
+    { language: "German", code: "de", source: "Yes", target: "Yes" },
+    { language: "Hindi", code: "hi", source: "Yes", target: "Yes" },
+    { language: "Japanese", code: "ja", source: "Yes", target: "Yes" },
+    { language: "Korean", code: "ko", source: "Yes", target: "Yes" },
+    { language: "Norwegian", code: "nb", source: "Yes", target: "Yes" },
+    { language: "Russian", code: "ru", source: "Yes", target: "Yes" },
+    { language: "Spanish", code: "es", source: "Yes", target: "Yes" },
+    { language: "Swedish", code: "sv", source: "Yes", target: "Yes" },
+    { language: "Zulu", code: "zu", source: "Yes", target: "Yes" }
+];
+
+const supportedLanguages = languagesData
+    .filter(lang => lang.source === "Yes" && lang.target === "Yes")
+    .map(lang => ({
+        key: lang.code,
+        text: lang.language,
+        data: lang.code
+    }));
+
 export function Component(): JSX.Element {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -17,13 +41,13 @@ export function Component(): JSX.Element {
             const file = event.target.files[0];
             setSelectedFile(file);
             setFilePreview(URL.createObjectURL(file));
-            setShowPreview(true); // Show file preview once file is selected
+            setShowPreview(true);
         }
     };
 
     const handleDropdownChange = (event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
         if (option) {
-            setSelectedLanguage(option.data);
+            setSelectedLanguage(option.data as string);
         }
     };
 
@@ -99,7 +123,7 @@ export function Component(): JSX.Element {
                     <Dropdown
                         className={styles.dropdown}
                         placeholder="Select a Language"
-                        options={[{ key: "es", text: "Spanish", data: "es" }]}
+                        options={supportedLanguages}
                         onChange={handleDropdownChange}
                         required
                     />
