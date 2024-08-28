@@ -43,3 +43,14 @@ export async function chatApi(request: ChatAppRequest, idToken: string | undefin
 export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
 }
+
+
+
+
+export async function runScriptApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {
+    return await fetch(`${BACKEND_URI}/runScript`, {
+        method: "POST",
+        headers: getHeaders(idToken),
+        body: JSON.stringify(request)
+    });
+}

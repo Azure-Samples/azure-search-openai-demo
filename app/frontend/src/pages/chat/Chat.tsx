@@ -7,7 +7,7 @@ import { auth } from "../../";
 
 import styles from "./Chat.module.css";
 
-import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage } from "../../api";
+import { chatApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage, runScriptApi } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -129,6 +129,9 @@ const Chat = () => {
                 // ChatAppProtocol: Client must pass on any session state received from the server
                 session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
+
+            runScriptApi(request, token?.accessToken);
+            
 
             const response = await chatApi(request, token?.accessToken);
             if (!response.body) {

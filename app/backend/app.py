@@ -153,8 +153,6 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 @bp.route("/chat", methods=["POST"])
 async def chat():
 
-    run_prepdocs_script()
-
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -178,6 +176,13 @@ async def chat():
             return response
     except Exception as error:
         return error_response(error, "/chat")
+
+@bp.route("/runScript", methods=["POST"])
+async def runScript():
+    run_prepdocs_script()
+    return jsonify({"result":"ranScript"})
+
+
 
 
 # Send MSAL.js settings to the client UI
