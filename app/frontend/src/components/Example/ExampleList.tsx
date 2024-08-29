@@ -3,9 +3,9 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What is included in my Northwind Health Plus plan that is not in standard?",
-    "What happens in a performance review?",
-    "What does a Product Manager do?"
+    "How do I start a new business in New Zealand?",
+    "What funding is available for a small business in New Zealand?",
+    "What are my responsibilities as a small business owner in New Zealand?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [

@@ -86,7 +86,7 @@ export const SpeechInput = ({ updateQuestion }: Props) => {
             {!isRecording && (
                 <div className={styles.questionInputButtonsContainer}>
                     <Tooltip content="Ask question with voice" relationship="label">
-                        <Button size="large" icon={<Mic28Filled primaryFill="rgba(115, 118, 225, 1)" />} onClick={startRecording} />
+                        <Button size="large" icon={<Mic28Filled primaryFill="rgba(115, 118, 118, 1)" />} onClick={startRecording} />
                     </Tooltip>
                 </div>
             )}

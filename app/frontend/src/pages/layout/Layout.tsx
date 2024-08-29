@@ -4,7 +4,6 @@ import { Outlet, NavLink, Link } from "react-router-dom";
 import styles from "./Layout.module.css";
 
 import { useLogin } from "../../authConfig";
-
 import { LoginButton } from "../../components/LoginButton";
 import { IconButton } from "@fluentui/react";
 
@@ -37,35 +36,7 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
-                    <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>Azure OpenAI + AI Search</h3>
-                    </Link>
-                    <nav>
-                        <ul className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
-                            <li>
-                                <NavLink
-                                    to="/"
-                                    className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    Chat
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/qa"
-                                    className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    Ask a question
-                                </NavLink>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div className={styles.loginMenuContainer}>
-                        {useLogin && <LoginButton />}
-                        <IconButton iconProps={{ iconName: "GlobalNavButton" }} className={styles.menuToggle} onClick={toggleMenu} ariaLabel="Toggle menu" />
-                    </div>
+                    <h3 className={styles.headerTitle}>GovGPT</h3>
                 </div>
             </header>
 

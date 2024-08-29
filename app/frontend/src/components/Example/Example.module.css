@@ -23,7 +23,7 @@
     box-shadow:
         0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
         0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
-    outline: 0.125rem solid rgba(115, 118, 225, 1);
+    outline: 0.125rem solid rgb(114, 114, 114);
 }
 
 .exampleText {

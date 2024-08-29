@@ -351,7 +351,7 @@ var defaultOpenAiDeployments = [
       version: chatGpt.deploymentVersion
     }
     sku: {
-      name: 'Standard'
+      name: 'GlobalStandard'
       capacity: chatGpt.deploymentCapacity
     }
   }
@@ -378,7 +378,7 @@ var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
         version: gpt4vModelVersion
       }
       sku: {
-        name: 'Standard'
+        name: 'GlobalStandard'
         capacity: gpt4vDeploymentCapacity
       }
     }

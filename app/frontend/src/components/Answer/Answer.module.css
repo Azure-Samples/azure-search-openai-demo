@@ -38,13 +38,14 @@ h2 {
 }
 
 .selected {
-    outline: 0.125em solid rgba(115, 118, 225, 1);
+    outline: 0.125em solid rgb(88, 88, 88);
 }
 
 .citationLearnMore {
     margin-right: 0.3125em;
     font-weight: 600;
     line-height: 1.5em;
+    margin-top: 0.625em;
 }
 
 .citation {
@@ -64,7 +65,7 @@ h2 {
 }
 
 .followupQuestionsList {
-    margin-top: 0.625em;
+    margin-bottom: 0.625em;
 }
 
 .followupQuestionLearnMore {

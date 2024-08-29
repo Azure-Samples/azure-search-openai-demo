@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Stack, IconButton } from "@fluentui/react";
+import { useMemo, useState } from "react";
+import { Stack, IconButton, Text, Icon } from "@fluentui/react";
 import DOMPurify from "dompurify";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -43,6 +43,13 @@ export const Answer = ({
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
     const messageContent = answer.message.content;
+
+    const [isCitationsOpen, setIsCitationsOpen] = useState(false);
+
+    const toggleCitations = () => {
+        setIsCitationsOpen(!isCitationsOpen);
+    };
+
     const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
@@ -52,22 +59,6 @@ export const Answer = ({
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
                     <div>
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "Lightbulb" }}
-                            title="Show thought process"
-                            ariaLabel="Show thought process"
-                            onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.context.thoughts?.length}
-                        />
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "ClipboardList" }}
-                            title="Show supporting content"
-                            ariaLabel="Show supporting content"
-                            onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.context.data_points}
-                        />
                         {showSpeechOutputAzure && (
                             <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
                         )}
@@ -82,22 +73,6 @@ export const Answer = ({
                 </div>
             </Stack.Item>
 
-            {!!parsedAnswer.citations.length && (
-                <Stack.Item>
-                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
-                        <span className={styles.citationLearnMore}>Citations:</span>
-                        {parsedAnswer.citations.map((x, i) => {
-                            const path = getCitationFilePath(x);
-                            return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
-                                    {`${++i}. ${x}`}
-                                </a>
-                            );
-                        })}
-                    </Stack>
-                </Stack.Item>
-            )}
-
             {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <Stack.Item>
                     <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
@@ -109,6 +84,29 @@ export const Answer = ({
                                 </a>
                             );
                         })}
+                    </Stack>
+                </Stack.Item>
+            )}
+
+            {!!parsedAnswer.citations.length && (
+                <Stack.Item>
+                    <Stack>
+                        <Stack horizontal verticalAlign="center" onClick={toggleCitations} style={{ cursor: "pointer" }}>
+                            <Icon iconName={isCitationsOpen ? "ChevronDown" : "ChevronRight"} className={styles.citationLearnMore} />
+                            <Text className={styles.citationLearnMore}>Citations</Text>
+                        </Stack>
+                        {isCitationsOpen && (
+                            <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
+                                {parsedAnswer.citations.map((x, i) => {
+                                    const path = getCitationFilePath(x);
+                                    return (
+                                        <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
+                                            {`${++i}. ${x}`}
+                                        </a>
+                                    );
+                                })}
+                            </Stack>
+                        )}
                     </Stack>
                 </Stack.Item>
             )}
