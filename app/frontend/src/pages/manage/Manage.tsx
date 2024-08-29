@@ -44,7 +44,8 @@ import { useLocation } from "react-router-dom";
 export default function Manage(): JSX.Element {
     const [userData, setUserData] = useState<User | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingPage, setLoadingPage] = useState(true);
+    const [loadingSettings, setLoadingSettings] = useState(false);
     const [newUserInputs, setNewUserInputs] = useState<User>({
         uuid: "",
         emailAddress: "",
@@ -171,7 +172,7 @@ export default function Manage(): JSX.Element {
 
     const handleCreateUser = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
+        setLoadingSettings(true);
         const uuid = uuidv4();
         const emailAddress = newUserInputs?.emailAddress as string;
         const firstName = newUserInputs?.firstName as string;
@@ -199,7 +200,7 @@ export default function Manage(): JSX.Element {
         handleCreateUserDB(newUser).then(response => {
             handleAddUserToProject(projectID, newUserProject).then(response => {
                 if (response.data === "User already exists in project") {
-                    setLoading(false);
+                    setLoadingSettings(false);
                     setOpenCreateUser(false);
                     return;
                 } else {
@@ -223,7 +224,7 @@ export default function Manage(): JSX.Element {
                         projectID: "",
                         projectRole: "Member"
                     });
-                    setLoading(false);
+                    setLoadingSettings(false);
                     setOpenCreateUser(false);
                 }
             });
@@ -232,7 +233,7 @@ export default function Manage(): JSX.Element {
 
     const handleCreateProject = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
+        setLoadingSettings(true);
         const projectID = uuidv4();
         const projectName = newProjectInputs?.projectName as string;
         const newProject: NewProject = {
@@ -248,13 +249,13 @@ export default function Manage(): JSX.Element {
                 projectName: "",
                 dateCreated: ""
             });
-            setLoading(false);
+            setLoadingSettings(false);
             setOpenCreateProject(false);
         });
     };
 
     const handleRemoveUser = (projectID: string, user: User) => {
-        setLoading(true);
+        setLoadingSettings(true);
         axios.post(baseURL + "removeUserFromProject", { projectID: projectID, uuid: user.uuid, projectRole: user.projectRole }).then(response => {
             console.log("User removed from project");
             projects.forEach(project => {
@@ -262,13 +263,13 @@ export default function Manage(): JSX.Element {
                     project.users = project.users.filter(projectUser => projectUser.uuid !== user.uuid);
                 }
             });
-            setLoading(false);
+            setLoadingSettings(false);
             setOpenSettingsDialog(false);
         });
     };
 
     const handleChangeUserRole = (projectID: string, user: User, newRole: string) => {
-        setLoading(true);
+        setLoadingSettings(true);
         if (user.projectRole === newRole) {
             return;
         }
@@ -284,7 +285,7 @@ export default function Manage(): JSX.Element {
                 }
             });
             setNewUserRole("Member");
-            setLoading(false);
+            setLoadingSettings(false);
             setOpenSettingsDialog(false);
         });
     };
@@ -337,7 +338,7 @@ export default function Manage(): JSX.Element {
                         setUserData(data.user);
                         axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
                             setProjects(response.data);
-                            setLoading(false);
+                            setLoadingPage(false);
                         });
                     }
                 });
@@ -355,7 +356,7 @@ export default function Manage(): JSX.Element {
     return (
         <div className={styles.container}>
             <h1>Manage {userData && userData.projectRole && `(Viewing as ${userData.projectRole})`}</h1>
-            {loading && <Spinner label="Loading..." labelPosition="below" size="large" />}
+            {loadingPage && <Spinner label="Loading..." labelPosition="below" size="large" />}
             <div className={styles.projects}>
                 <Accordion collapsible multiple>
                     {projects.map((project, index) => (
@@ -464,7 +465,7 @@ export default function Manage(): JSX.Element {
                                                 onChange={handleProjectInputChange}
                                                 required
                                             />
-                                            {loading && <Spinner label="Loading..." labelPosition="below" size="large" />}
+                                            {loadingSettings && <Spinner label="Loading..." labelPosition="below" size="large" />}
                                         </div>
                                     </div>
                                 </DialogContent>
@@ -472,7 +473,7 @@ export default function Manage(): JSX.Element {
                                     <DialogTrigger disableButtonEnhancement>
                                         <Button appearance="secondary">Close</Button>
                                     </DialogTrigger>
-                                    <Button appearance="primary" type="submit" disabled={loading}>
+                                    <Button appearance="primary" type="submit" disabled={loadingSettings}>
                                         Create Project
                                     </Button>
                                 </DialogActions>
@@ -565,8 +566,8 @@ export default function Manage(): JSX.Element {
                                     <DialogTrigger disableButtonEnhancement>
                                         <Button appearance="secondary">Close</Button>
                                     </DialogTrigger>
-                                    {loading && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
-                                    <Button appearance="primary" type="submit" disabled={loading}>
+                                    {loadingSettings && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
+                                    <Button appearance="primary" type="submit" disabled={loadingSettings}>
                                         Create User
                                     </Button>
                                 </DialogActions>
@@ -612,7 +613,7 @@ export default function Manage(): JSX.Element {
                                             >
                                                 Change Role
                                             </Button>
-                                            {loading && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
+                                            {loadingSettings && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
                                         </div>
                                     </div>
                                 </DialogContent>
@@ -625,7 +626,7 @@ export default function Manage(): JSX.Element {
                                         color="red"
                                         style={{ backgroundColor: "#f00" }}
                                         onClick={() => handleRemoveUser(selectedProject.projectID, selectedUser)}
-                                        disabled={loading}
+                                        disabled={loadingSettings}
                                     >
                                         Remove User from project
                                     </Button>
