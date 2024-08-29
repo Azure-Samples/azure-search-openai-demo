@@ -10,6 +10,7 @@
     - [Client App](#client-app)
     - [Configure Server App Known Client Applications](#configure-server-app-known-client-applications)
     - [Testing](#testing)
+    - [Programmatic Access With Authentication](#programmatic-access-with-authentication)
   - [Troubleshooting](#troubleshooting)
 - [Adding data with document level access control](#adding-data-with-document-level-access-control)
   - [Using the Add Documents API](#using-the-add-documents-api)
@@ -35,7 +36,7 @@ Two Microsoft Entra applications must be registered in order to make the optiona
 
 The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
 
-1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and App Service authentication.
+1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and use App Service authentication by default.
 1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
 1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`. Authentication is always required to search on documents with access control assigned, regardless of if unauthenticated access is enabled or not.
 1. (Optional) To allow authenticated users to search on documents that have no access controls assigned, even when access control is required, run `azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true`.
@@ -133,6 +134,21 @@ If you are running setup for the first time, ensure you have run `azd env set AZ
 Ensure you run `azd env set AZURE_USE_AUTHENTICATION` to enable the login UI once you have setup the two Microsoft Entra apps before you deploy or run the application. The login UI will not appear unless all [required environment variables](#environment-variables-reference) have been setup.
 
 In both the chat and ask a question modes, under **Developer settings** optional **Use oid security filter** and **Use groups security filter** checkboxes will appear. The oid (User ID) filter maps to the `oids` field in the search index and the groups (Group ID) filter maps to the `groups` field in the search index. If `AZURE_ENFORCE_ACCESS_CONTROL` has been set, then both the **Use oid security filter** and **Use groups security filter** options are always enabled and cannot be disabled.
+
+#### Programmatic Access with Authentication
+
+If you want to use the chat endpoint without the UI and still use authentication, you must disable [App Service built-in authentication](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization) and use only the app's MSAL-based authentication flow. Ensure the `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION` environment variable is set before deploying.
+
+Get an access token that can be used for calling the chat API using the following code:
+
+```python
+from azure.identity import DefaultAzureCredential
+import os
+
+token = DefaultAzureCredential().get_token(f"api://{os.environ['AZURE_SERVER_APP_ID']}/access_as_user", tenant_id=os.getenv('AZURE_AUTH_TENANT_ID', os.getenv('AZURE_TENANT_ID')))
+
+print(token.token)
+```
 
 ### Troubleshooting
 
@@ -235,6 +251,7 @@ The following environment variables are used to setup the optional login and doc
 - `AZURE_ENFORCE_ACCESS_CONTROL`: Enforces Entra ID based login and document level access control on documents with access control assigned. Set to true before running `azd up`. If `AZURE_ENFORCE_ACCESS_CONTROL` is enabled and `AZURE_ENABLE_UNAUTHENTICATED_ACCESS` is not enabled, then authentication is required to use the app.
 - `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS`: Allows users to search on documents that have no access controls assigned
 - `AZURE_ENABLE_UNAUTHENTICATED_ACCESS`: Allows unauthenticated users to access the chat app, even when `AZURE_ENFORCE_ACCESS_CONTROL` is enabled. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should be set to true to allow unauthenticated users to search on documents that have no access control assigned. Unauthenticated users cannot search on documents with access control assigned.
+- `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION`: Disables [use of built-in authentication for App Services](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization). An authentication flow based on the MSAL SDKs is used instead. Useful when you want to provide programmatic access to the chat endpoints with authentication.
 - `AZURE_SERVER_APP_ID`: (Required) Application ID of the Microsoft Entra app for the API server.
 - `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Microsoft Entra server app.
 - `AZURE_CLIENT_APP_ID`: Application ID of the Microsoft Entra app for the client UI.
