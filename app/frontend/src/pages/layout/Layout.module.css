@@ -81,3 +81,15 @@
     display: flex;
     gap: 10px;
 }
+
+.palAIIcon {
+    height: 166px;
+    width: 249px;
+    margin-top: 305px;
+}
+
+.logoContainer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

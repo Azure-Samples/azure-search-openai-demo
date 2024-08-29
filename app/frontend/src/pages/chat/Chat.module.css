@@ -17,6 +17,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
 }
 
 .chatEmptyState {
@@ -117,8 +118,27 @@
     margin-bottom: 20px;
 }
 
-.palAIIcon {
-    height: 130px;
-    width: 160px;
-    margin-top: 305px;
+.parameterContainer {
+    display: flex;
+    width: 980px;
+    justify-content: space-between;
+    align-items: flex-end;
 }
+
+.parameterColumn {
+    display: flex;
+    flex-direction: column;
+    max-width: 195px;
+}
+
+.projectSelection {
+    position: absolute;
+    top: 50px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    max-width: 195px;
+}
+/* .DropdownComponent {
+    max-width: auto;
+} */

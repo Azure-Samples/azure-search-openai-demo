@@ -575,7 +575,7 @@ export default function Manage(): JSX.Element {
                     </DialogSurface>
                 </Dialog>
 
-                {selectedUser && selectedProject && (
+                {selectedUser && selectedProject && currentUser && selectedUser.uuid !== currentUser.uuid && (
                     <Dialog open={openSettingsDialog} onOpenChange={(_, data) => setOpenSettingsDialog(data.open)}>
                         <DialogSurface style={{ maxWidth: "400px" }}>
                             <DialogBody
