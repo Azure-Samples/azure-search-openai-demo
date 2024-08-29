@@ -120,9 +120,9 @@ export default function Manage(): JSX.Element {
                       label: "",
                       icon:
                           userData &&
-                          (userData.projectRole === "Admin" ||
-                              userData.projectRole === "Owner" ||
-                              (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) ? (
+                          userData.projectRole !== "Member" &&
+                          userData.uuid !== user.uuid &&
+                          (user.projectRole === "Member" || (userData.projectRole === "Admin" && user.projectRole !== "Admin")) ? (
                               <Edit20Regular style={{ cursor: "pointer" }} onClick={() => handleEditClick(user, project)} />
                           ) : (
                               <Dismiss20Filled style={{ cursor: "pointer" }} />
