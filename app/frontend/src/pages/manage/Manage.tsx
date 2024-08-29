@@ -292,10 +292,13 @@ export default function Manage(): JSX.Element {
 
     function Dropzone({ projectID }: { projectID: string }) {
         const [filePath, setFilePath] = useState("");
+
         const onDrop = useCallback((acceptedFiles: any) => {
             //@cade-ryan - handle file uploads here
+            console.log(acceptedFiles);
+            let filePaths: string[] = [];
             acceptedFiles.forEach((file: any) => {
-                setFilePath(file.path);
+                filePaths.push(file.path);
                 const reader = new FileReader();
 
                 reader.onabort = () => console.log("file reading was aborted");
@@ -306,6 +309,7 @@ export default function Manage(): JSX.Element {
                 };
                 reader.readAsArrayBuffer(file);
             });
+            setFilePath(filePaths.join(", "));
         }, []);
         const { getRootProps, getInputProps } = useDropzone({ onDrop });
         return (
@@ -321,7 +325,7 @@ export default function Manage(): JSX.Element {
                     {filePath && (
                         <>
                             <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                            <p>{filePath}</p>
+                            <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
                         </>
                     )}
                 </div>
@@ -413,7 +417,7 @@ export default function Manage(): JSX.Element {
                                             (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
                                             <div style={{ display: "flex", flexDirection: "column" }}>
                                                 <Dropzone projectID={project.projectID} />
-                                                <Button appearance="primary" style={{ marginTop: "10px" }}>
+                                                <Button appearance="primary" style={{ marginTop: "10px" }} disabled>
                                                     Upload file
                                                 </Button>
                                             </div>
