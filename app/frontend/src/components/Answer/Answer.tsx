@@ -7,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 import styles from "./Answer.module.css";
-import { ChatAppResponse, getCitationFilePath } from "../../api";
+import { ChatAppResponse, getCitationFilePath, SpeechConfig } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
@@ -15,6 +15,8 @@ import { SpeechOutputAzure } from "./SpeechOutputAzure";
 
 interface Props {
     answer: ChatAppResponse;
+    index: number;
+    speechConfig: SpeechConfig;
     isSelected?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
@@ -24,11 +26,12 @@ interface Props {
     showFollowupQuestions?: boolean;
     showSpeechOutputBrowser?: boolean;
     showSpeechOutputAzure?: boolean;
-    speechUrl: string | null;
 }
 
 export const Answer = ({
     answer,
+    index,
+    speechConfig,
     isSelected,
     isStreaming,
     onCitationClicked,
@@ -37,8 +40,7 @@ export const Answer = ({
     onFollowupQuestionClicked,
     showFollowupQuestions,
     showSpeechOutputAzure,
-    showSpeechOutputBrowser,
-    speechUrl
+    showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
     const messageContent = answer.message.content;
@@ -68,7 +70,9 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.context.data_points}
                         />
-                        {showSpeechOutputAzure && <SpeechOutputAzure url={speechUrl} />}
+                        {showSpeechOutputAzure && (
+                            <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                        )}
                         {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
                     </div>
                 </Stack>

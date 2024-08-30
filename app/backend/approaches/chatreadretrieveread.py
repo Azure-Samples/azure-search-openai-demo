@@ -196,7 +196,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",
-                    [str(message) for message in query_messages],
+                    query_messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment
@@ -221,7 +221,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in messages],
+                    messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment

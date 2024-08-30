@@ -1,9 +1,13 @@
 import { Stack } from "@fluentui/react";
-import SyntaxHighlighter from "react-syntax-highlighter";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
+import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import styles from "./AnalysisPanel.module.css";
 
 import { Thoughts } from "../../api";
+
+SyntaxHighlighter.registerLanguage("json", json);
 
 interface Props {
     thoughts: Thoughts[];
@@ -25,7 +29,7 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                                 ))}
                         </Stack>
                         {Array.isArray(t.description) ? (
-                            <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock}>
+                            <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, null, 2)}
                             </SyntaxHighlighter>
                         ) : (

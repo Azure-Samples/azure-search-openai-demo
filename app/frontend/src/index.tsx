@@ -4,10 +4,6 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { I18nextProvider } from "react-i18next";
 import { HelmetProvider } from "react-helmet-async";
 import { initializeIcons } from "@fluentui/react";
-import { MsalProvider } from "@azure/msal-react";
-import { PublicClientApplication, EventType, AccountInfo } from "@azure/msal-browser";
-import { msalConfig, useLogin } from "./authConfig";
-import { useState } from "react";
 
 import "./index.css";
 

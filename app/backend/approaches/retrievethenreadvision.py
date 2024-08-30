@@ -177,7 +177,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in updated_messages],
+                    updated_messages,
                     (
                         {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
                         if self.gpt4v_deployment
