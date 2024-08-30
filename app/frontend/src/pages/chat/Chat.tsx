@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
-import { useId, Dropdown as DropdownComponent, Option } from "@fluentui/react-components";
+import { useId, Dropdown as DropdownComponent, Option, Button } from "@fluentui/react-components";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 import { auth } from "../../";
@@ -76,6 +76,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                         choices: [{ ...askResponse.choices[0], message: { content: answer, role: askResponse.choices[0].message.role } }]
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
+                    localStorage.setItem("streamedAnswers", JSON.stringify([...answers, [question, latestResponse]]));
                     resolve(null);
                 }, 33);
             });
@@ -115,7 +116,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             parameters.tone +
             ". The readability of the response should be of " +
             parameters.readability +
-            " readability, using a Flesch-Kincaid approach. Make sure that the word count of the response does not exceed " +
+            " readability, using a Flesch-Kincaid approach. Make absolutely certain that your answer does not exceed " +
             parameters.wordCount +
             " words. The communication framework for the response should utilize a " +
             parameters.communicationFramework +
@@ -159,7 +160,6 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             };
 
             runScriptApi(request, token?.accessToken);
-            
 
             const response = await chatApi(request, token?.accessToken);
             if (!response.body) {
@@ -285,6 +285,15 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
     const communicationFrameworkOptions = ["Think/Feel/Do", "Before/During/After", "Concentric Circles"];
 
+    const handleSetAnswersFromStreamed = () => {
+        if (localStorage.getItem("streamedAnswers")) {
+            setAnswers(JSON.parse(localStorage.getItem("streamedAnswers") || ""));
+            const streamedAnswers = localStorage.getItem("streamedAnswers");
+            if (streamedAnswers) {
+                lastQuestionRef.current = JSON.parse(streamedAnswers)[0][0] || "";
+            }
+        }
+    };
     useEffect(() => {
         if (!auth.currentUser) {
             navigate("/login");
@@ -307,7 +316,8 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             }
         }
     }, []);
-
+    console.log(answers);
+    console.log(isStreaming);
     return (
         <div className={styles.container}>
             <div className={styles.chatRoot}>
@@ -406,6 +416,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                             onSend={question => makeApiRequest(question)}
                         />
                     </div>
+                    {localStorage.getItem("streamedAnswers") && <Button onClick={handleSetAnswersFromStreamed}>View previous chat</Button>}
 
                     <div className={styles.parameterContainer}>
                         <div className={styles.parameterColumn}>
