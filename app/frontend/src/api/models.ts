@@ -35,6 +35,7 @@ export type ChatAppRequestOverrides = {
     use_gpt4v?: boolean;
     gpt4v_input?: GPT4VInput;
     vector_fields: VectorFieldOptions[];
+    language: string;
 };
 
 export type ResponseMessage = {
@@ -84,6 +85,7 @@ export type Config = {
     showSemanticRankerOption: boolean;
     showVectorOption: boolean;
     showUserUpload: boolean;
+    showLanguagePicker: boolean;
     showSpeechInput: boolean;
     showSpeechOutputBrowser: boolean;
     showSpeechOutputAzure: boolean;

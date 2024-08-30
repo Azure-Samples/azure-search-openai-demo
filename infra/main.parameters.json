@@ -152,6 +152,9 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
+    "enableLanguagePicker": {
+      "value": "${ENABLE_LANGUAGE_PICKER=false}"
+    },
     "useSpeechInputBrowser": {
       "value": "${USE_SPEECH_INPUT_BROWSER=false}"
     },

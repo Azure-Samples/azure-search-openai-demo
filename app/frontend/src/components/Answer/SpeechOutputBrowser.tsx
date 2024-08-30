@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { IconButton } from "@fluentui/react";
+import { useTranslation } from "react-i18next";
+import { supportedLngs } from "../../i18n/config";
 
 interface Props {
     answer: string;
@@ -15,19 +17,31 @@ try {
     console.error("SpeechSynthesis is not supported");
 }
 
-const getUtterance = function (text: string) {
+const getUtterance = function (text: string, lngCode: string = "en-US") {
     if (synth) {
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "en-US";
+        utterance.lang = lngCode;
         utterance.volume = 1;
         utterance.rate = 1;
         utterance.pitch = 1;
-        utterance.voice = synth.getVoices().filter((voice: SpeechSynthesisVoice) => voice.lang === "en-US")[0];
+
+        let voice = synth.getVoices().filter((voice: SpeechSynthesisVoice) => voice.lang === lngCode)[0];
+        if (!voice) {
+            voice = synth.getVoices().filter((voice: SpeechSynthesisVoice) => voice.lang === "en-US")[0];
+        }
+
+        utterance.voice = voice;
         return utterance;
     }
 };
 
 export const SpeechOutputBrowser = ({ answer }: Props) => {
+    const { t, i18n } = useTranslation();
+    const currentLng = i18n.language;
+    let lngCode = supportedLngs[currentLng]?.locale;
+    if (!lngCode) {
+        lngCode = "en-US";
+    }
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
     const startOrStopSpeech = (answer: string) => {
@@ -37,7 +51,7 @@ export const SpeechOutputBrowser = ({ answer }: Props) => {
                 setIsPlaying(false);
                 return;
             }
-            const utterance: SpeechSynthesisUtterance | undefined = getUtterance(answer);
+            const utterance: SpeechSynthesisUtterance | undefined = getUtterance(answer, lngCode);
 
             if (!utterance) {
                 return;
@@ -62,8 +76,8 @@ export const SpeechOutputBrowser = ({ answer }: Props) => {
         <IconButton
             style={{ color: color }}
             iconProps={{ iconName: "Volume3" }}
-            title="Speak answer"
-            ariaLabel="Speak answer"
+            title={t("tooltips.speakAnswer")}
+            ariaLabel={t("tooltips.speakAnswer")}
             onClick={() => startOrStopSpeech(answer)}
             disabled={!synth}
         />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { IconButton } from "@fluentui/react";
 import { getSpeechApi, SpeechConfig } from "../../api";
 
@@ -13,6 +13,7 @@ interface Props {
 export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [localPlayingState, setLocalPlayingState] = useState(false);
+    const { t } = useTranslation();
 
     const playAudio = async (url: string) => {
         speechConfig.audio.src = url;
@@ -70,8 +71,8 @@ export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: 
             <IconButton
                 style={{ color: color }}
                 iconProps={{ iconName: "Volume3" }}
-                title="Speak answer"
-                ariaLabel="Speak answer"
+                title={t("tooltips.speakAnswer")}
+                ariaLabel={t("tooltips.speakAnswer")}
                 onClick={() => startOrStopSpeech(answer)}
                 disabled={isStreaming}
             />

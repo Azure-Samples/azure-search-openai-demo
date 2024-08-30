@@ -160,6 +160,8 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
+@description('Enable language picker')
+param enableLanguagePicker bool = false
 @description('Use speech recognition feature in browser')
 param useSpeechInputBrowser bool = false
 @description('Use speech synthesis in browser')
@@ -296,6 +298,7 @@ module backend 'core/host/appservice.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
       AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
+      ENABLE_LANGUAGE_PICKER: enableLanguagePicker
       USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
       USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
       USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
