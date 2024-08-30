@@ -155,7 +155,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in updated_messages],
+                    updated_messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment
