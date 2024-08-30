@@ -299,7 +299,7 @@ module backend 'core/host/container-app-upsert.bicep' = {
     acaIdentity
   ]
   params: {
-    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
+    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend-${resourceToken}'
     location: location
     identityName: acaIdentity.name
     exists: webAppExists
@@ -311,6 +311,7 @@ module backend 'core/host/container-app-upsert.bicep' = {
     targetPort: 8000
     containerCpuCoreCount: '2.0'
     containerMemory: '4Gi'
+    allowedOrigins: [ allowedOrigin ]
     env: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
       AZURE_STORAGE_CONTAINER: storageContainerName
@@ -807,7 +808,7 @@ module searchReaderRoleBackend 'core/security/role.bicep' = if (useAuthenticatio
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
-    principalType: principalType
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -818,7 +819,7 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload) 
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
-    principalType: principalType
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -829,7 +830,7 @@ module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: principalType
+    principalType: 'ServicePrincipal'
   }
 }
 
@@ -840,7 +841,7 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
   params: {
     principalId: backend.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: principalType
+    principalType: 'ServicePrincipal'
   }
 }
 

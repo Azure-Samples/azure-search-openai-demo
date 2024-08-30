@@ -22,6 +22,7 @@ services:
           continueOnError: false
 infra:
   provider: bicep
+  path: ./infra
   module: main-aca
 
 pipeline:

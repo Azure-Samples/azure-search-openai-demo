@@ -79,6 +79,8 @@ param targetPort int = 80
 @allowed(['Consumption', 'D4', 'D8', 'D16', 'D32', 'E4', 'E8', 'E16', 'E32', 'NC24-A100', 'NC48-A100', 'NC96-A100'])
 param workloadProfile string = 'Consumption'
 
+param allowedOrigins array = []
+
 resource existingApp 'Microsoft.App/containerApps@2023-05-02-preview' existing = if (exists) {
   name: name
 }
@@ -106,6 +108,7 @@ module app 'container-app.bicep' = {
     daprAppProtocol: daprAppProtocol
     secrets: secrets
     keyvaultIdentities: keyvaultIdentities
+    allowedOrigins: allowedOrigins
     external: external
     env: [
       for key in objectKeys(env): {
