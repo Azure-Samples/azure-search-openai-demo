@@ -41,12 +41,10 @@ contextlength_response = BadRequestError(
 )
 
 
-def thought_contains_text(thought, text):
-    description = thought["description"]
-    if isinstance(description, str) and text in description:
-        return True
-    elif isinstance(description, list) and any(text in item for item in description):
-        return True
+def messages_contains_text(messages, text):
+    for message in messages:
+        if text in message["content"]:
+            return True
     return False
 
 
@@ -778,7 +776,7 @@ async def test_chat_with_history(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert thought_contains_text(result["context"]["thoughts"][3], "performance review")
+    assert messages_contains_text(result["context"]["thoughts"][3]["description"], "performance review")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -806,7 +804,7 @@ async def test_chat_with_long_history(client, snapshot, caplog):
     assert response.status_code == 200
     result = await response.get_json()
     # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not thought_contains_text(result["context"]["thoughts"][3], "Is there a dress code?")
+    assert not messages_contains_text(result["context"]["thoughts"][3]["description"], "Is there a dress code?")
     assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 

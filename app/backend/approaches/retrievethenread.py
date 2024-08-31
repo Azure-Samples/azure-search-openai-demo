@@ -21,7 +21,6 @@ class RetrieveThenReadApproach(Approach):
         "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
         + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
         + "Answer the following question using only the data provided in the sources below. "
-        + "For tabular information return it as an html table. Do not return markdown format. "
         + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
         + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
     )
@@ -124,17 +123,15 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 
-        chat_completion = (
-            await self.openai_client.chat.completions.create(
-                # Azure OpenAI takes the deployment name as the model name
-                model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-                messages=updated_messages,
-                temperature=overrides.get("temperature", 0.3),
-                max_tokens=response_token_limit,
-                n=1,
-                seed=seed,
-            )
-        ).model_dump()
+        chat_completion = await self.openai_client.chat.completions.create(
+            # Azure OpenAI takes the deployment name as the model name
+            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+            messages=updated_messages,
+            temperature=overrides.get("temperature", 0.3),
+            max_tokens=response_token_limit,
+            n=1,
+            seed=seed,
+        )
 
         data_points = {"text": sources_content}
         extra_info = {
@@ -158,7 +155,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    [str(message) for message in updated_messages],
+                    updated_messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment
@@ -168,8 +165,11 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             ],
         }
 
-        completion = {}
-        completion["message"] = chat_completion["choices"][0]["message"]
-        completion["context"] = extra_info
-        completion["session_state"] = session_state
-        return completion
+        return {
+            "message": {
+                "content": chat_completion.choices[0].message.content,
+                "role": chat_completion.choices[0].message.role,
+            },
+            "context": extra_info,
+            "session_state": session_state,
+        }

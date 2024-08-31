@@ -128,6 +128,9 @@ param authTenantId string = ''
 // Used for the optional login and document level access control system
 param useAuthentication bool = false
 param enforceAccessControl bool = false
+// Force using MSAL app authentication instead of built-in App Service authentication
+// https://learn.microsoft.com/azure/app-service/overview-authentication-authorization
+param disableAppServicesAuthentication bool = false
 param enableGlobalDocuments bool = false
 param enableUnauthenticatedAccess bool = false
 param serverAppId string = ''
@@ -157,6 +160,8 @@ param principalId string = ''
 @description('Use Application Insights for monitoring and performance tracing')
 param useApplicationInsights bool = false
 
+@description('Enable language picker')
+param enableLanguagePicker bool = false
 @description('Use speech recognition feature in browser')
 param useSpeechInputBrowser bool = false
 @description('Use speech synthesis in browser')
@@ -276,6 +281,7 @@ module backend 'core/host/appservice.bicep' = {
     clientAppId: clientAppId
     serverAppId: serverAppId
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
+    disableAppServicesAuthentication: disableAppServicesAuthentication
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
     authenticationIssuerUri: authenticationIssuerUri
     use32BitWorkerProcess: appServiceSkuName == 'F1'
@@ -292,6 +298,7 @@ module backend 'core/host/appservice.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
       AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
       AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
+      ENABLE_LANGUAGE_PICKER: enableLanguagePicker
       USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
       USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
       USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure

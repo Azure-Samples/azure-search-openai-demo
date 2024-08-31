@@ -7,6 +7,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using GPT-4](#using-gpt-4)
 * [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
+* [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
@@ -19,20 +20,42 @@ You should typically enable these features before running `azd up`. Once you've 
 
 ## Using GPT-4
 
-We generally find that most developers are able to get high quality answers using GPT 3.5. However, if you want to try GPT-4, you can do so by following these steps:
+(Instructions for **GPT-4**, **GPT-4o**, and **GPT-4o mini** models are also included here.)
+
+We generally find that most developers are able to get high-quality answers using GPT-3.5. However, if you want to try GPT-4, GPT-4o, or GPT-4o mini, you can do so by following these steps:
 
 Execute the following commands inside your terminal:
 
-1. To set the name of the deployment, run this command with a new unique name.
+1. To set the name of the deployment, run this command with a unique name in your Azure OpenAI account. You can use any deployment name, as long as it's unique in your Azure OpenAI account.
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT <your-deployment-name>
+    ```
+
+    For example:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
     ```
 
-1. To set the GPT model name to a **gpt-4** version from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate gpt model name.
+1. To set the GPT model name to a **gpt-4**, **gpt-4o**, or **gpt-4o mini** version from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate GPT model name.
+
+    For GPT-4:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
+    ```
+
+    For GPT-4o:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o
+    ```
+
+    For GPT-4o mini:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
     ```
 
 1. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
@@ -43,8 +66,22 @@ Execute the following commands inside your terminal:
 
 1. To set the Azure OpenAI deployment version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
 
+    For GPT-4:
+
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
+    ```
+
+    For GPT-4o:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-05-13
+    ```
+
+    For GPT-4o mini:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
     ```
 
 1. To update the deployment with the new parameters, run this command.
@@ -104,6 +141,16 @@ If you have already deployed:
 ## Enabling GPT-4 Turbo with Vision
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
+
+## Enabling language picker
+
+You can optionally enable the language picker to allow users to switch between different languages. Currently, it supports English, Spanish, French, and Japanese.
+
+To add support for additional languages, create new locale files and update `app/frontend/src/i18n/config.ts` accordingly. To enable language picker, run:
+
+```shell
+azd env set ENABLE_LANGUAGE_PICKER true
+```
 
 ## Enabling speech input/output
 
