@@ -1,4 +1,6 @@
-import React, { useState, useEffect, FormEventHandler, FormEvent } from "react";
+import React, { useState, useEffect, FormEvent, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+
 import {
     TableBody,
     TableCell,
@@ -23,20 +25,27 @@ import {
     Dropdown,
     Option,
     TableCellLayout,
-    Spinner
+    Spinner,
+    TableColumnSizingOptions,
+    useTableFeatures,
+    TableColumnDefinition,
+    createTableColumn,
+    useTableColumnSizing_unstable
 } from "@fluentui/react-components";
 
-import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, Dismiss20Filled } from "@fluentui/react-icons";
+import { Premium20Regular, Edit20Regular, Eye20Regular, EyeOff20Regular, Dismiss20Filled, DocumentArrowUpRegular } from "@fluentui/react-icons";
 import styles from "./Manage.module.css";
 import { auth } from "../..";
 import axios from "axios";
 import { onAuthStateChanged } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
+import { useLocation } from "react-router-dom";
 
 export default function Manage(): JSX.Element {
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [userData, setUserData] = useState<User | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingPage, setLoadingPage] = useState(true);
+    const [loadingSettings, setLoadingSettings] = useState(false);
     const [newUserInputs, setNewUserInputs] = useState<User>({
         uuid: "",
         emailAddress: "",
@@ -61,17 +70,73 @@ export default function Manage(): JSX.Element {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-    const columns = [
-        { columnKey: "firstName", name: "First Name" },
-        { columnKey: "lastName", name: "Last Name" },
-        { columnKey: "emailAddress", name: "User Email" },
-        { columnKey: "projectRole", name: "Project Role" },
-        { columnKey: "initialPasswordChanged", name: "Initial Password Changed" },
-        { columnKey: "edit", name: "Edit" }
-    ];
+    const currentUser = useLocation().state;
 
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
+
+    const columnsDef: TableColumnDefinition<Item>[] = [
+        createTableColumn<Item>({ columnId: "firstName", renderHeaderCell: () => <h3>First Name</h3> }),
+        createTableColumn<Item>({ columnId: "lastName", renderHeaderCell: () => <h3>Last Name</h3> }),
+        createTableColumn<Item>({ columnId: "emailAddress", renderHeaderCell: () => <h3>User Email</h3> }),
+        createTableColumn<Item>({ columnId: "projectRole", renderHeaderCell: () => <h3>Project Role</h3> }),
+        createTableColumn<Item>({ columnId: "initialPasswordChanged", renderHeaderCell: () => <h3>Initial Password Changed</h3> }),
+        createTableColumn<Item>({ columnId: "edit", renderHeaderCell: () => <h3>Edit</h3> })
+    ];
+
+    const [columnSizingOptions] = React.useState<TableColumnSizingOptions>({
+        projectId: {
+            idealWidth: 0
+        },
+        firstName: {
+            idealWidth: 150
+        },
+        lastName: {
+            idealWidth: 150
+        },
+        emailAddress: {
+            minWidth: 200
+        },
+        projectRole: {
+            idealWidth: 100
+        },
+        initialPasswordChanged: {
+            idealWidth: 200
+        },
+        edit: {
+            idealWidth: 100
+        }
+    });
+
+    const items: Item[] = projects.flatMap(project =>
+        project.users
+            ? project.users.map(user => ({
+                  projectId: project.projectID,
+                  firstName: { label: user.firstName, icon: user.projectRole === "Owner" || user.projectRole === "Admin" ? <Premium20Regular /> : "" },
+                  lastName: user.lastName,
+                  emailAddress: user.emailAddress,
+                  projectRole: user.projectRole || "Member",
+                  initialPasswordChanged: user.initialPasswordChanged ? "Yes" : "No",
+                  edit: {
+                      label: "",
+                      icon:
+                          userData &&
+                          userData.projectRole !== "Member" &&
+                          userData.uuid !== user.uuid &&
+                          (user.projectRole === "Member" || (userData.projectRole === "Admin" && user.projectRole !== "Admin")) ? (
+                              <Edit20Regular style={{ cursor: "pointer" }} onClick={() => handleEditClick(user, project)} />
+                          ) : (
+                              <Dismiss20Filled style={{ cursor: "pointer" }} />
+                          )
+                  }
+              }))
+            : []
+    );
+    const [columns] = React.useState<TableColumnDefinition<Item>[]>(columnsDef);
+
+    const { getRows, columnSizing_unstable, tableRef } = useTableFeatures({ columns, items }, [useTableColumnSizing_unstable({ columnSizingOptions })]);
+
+    const rows = getRows();
 
     const handleOpenCreateUser = (project: Project) => {
         setOpenCreateUser(true);
@@ -95,7 +160,6 @@ export default function Manage(): JSX.Element {
         setSelectedUser(user);
         setSelectedProject(project);
         setOpenSettingsDialog(true);
-        // console.log(selectedUser, selectedProject);
     };
 
     const handleCreateUserDB = (user: any) => {
@@ -108,7 +172,7 @@ export default function Manage(): JSX.Element {
 
     const handleCreateUser = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
+        setLoadingSettings(true);
         const uuid = uuidv4();
         const emailAddress = newUserInputs?.emailAddress as string;
         const firstName = newUserInputs?.firstName as string;
@@ -136,7 +200,7 @@ export default function Manage(): JSX.Element {
         handleCreateUserDB(newUser).then(response => {
             handleAddUserToProject(projectID, newUserProject).then(response => {
                 if (response.data === "User already exists in project") {
-                    setLoading(false);
+                    setLoadingSettings(false);
                     setOpenCreateUser(false);
                     return;
                 } else {
@@ -160,19 +224,16 @@ export default function Manage(): JSX.Element {
                         projectID: "",
                         projectRole: "Member"
                     });
-                    setLoading(false);
+                    setLoadingSettings(false);
                     setOpenCreateUser(false);
                 }
             });
         });
-        // axios.post(baseURL + "createNewAccount", newUser).then(response => {
-        //     axios.post(baseURL + "addNewUserToProject", { projectID, newUserProject }).then(response => {});
-        // })
     };
 
     const handleCreateProject = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
+        setLoadingSettings(true);
         const projectID = uuidv4();
         const projectName = newProjectInputs?.projectName as string;
         const newProject: NewProject = {
@@ -188,13 +249,13 @@ export default function Manage(): JSX.Element {
                 projectName: "",
                 dateCreated: ""
             });
-            setLoading(false);
+            setLoadingSettings(false);
             setOpenCreateProject(false);
         });
     };
 
     const handleRemoveUser = (projectID: string, user: User) => {
-        setLoading(true);
+        setLoadingSettings(true);
         axios.post(baseURL + "removeUserFromProject", { projectID: projectID, uuid: user.uuid, projectRole: user.projectRole }).then(response => {
             console.log("User removed from project");
             projects.forEach(project => {
@@ -202,13 +263,13 @@ export default function Manage(): JSX.Element {
                     project.users = project.users.filter(projectUser => projectUser.uuid !== user.uuid);
                 }
             });
-            setLoading(false);
+            setLoadingSettings(false);
             setOpenSettingsDialog(false);
         });
     };
 
     const handleChangeUserRole = (projectID: string, user: User, newRole: string) => {
-        setLoading(true);
+        setLoadingSettings(true);
         if (user.projectRole === newRole) {
             return;
         }
@@ -224,10 +285,53 @@ export default function Manage(): JSX.Element {
                 }
             });
             setNewUserRole("Member");
-            setLoading(false);
+            setLoadingSettings(false);
             setOpenSettingsDialog(false);
         });
     };
+
+    function Dropzone({ projectID }: { projectID: string }) {
+        const [filePath, setFilePath] = useState("");
+
+        const onDrop = useCallback((acceptedFiles: any) => {
+            //@cade-ryan - handle file uploads here
+            console.log(acceptedFiles);
+            let filePaths: string[] = [];
+            acceptedFiles.forEach((file: any) => {
+                filePaths.push(file.path);
+                const reader = new FileReader();
+
+                reader.onabort = () => console.log("file reading was aborted");
+                reader.onerror = () => console.log("file reading has failed");
+                reader.onload = () => {
+                    // Do whatever you want with the file contents
+                    const binaryStr = reader.result;
+                };
+                reader.readAsArrayBuffer(file);
+            });
+            setFilePath(filePaths.join(", "));
+        }, []);
+        const { getRootProps, getInputProps } = useDropzone({ onDrop });
+        return (
+            <>
+                <div {...getRootProps()} className={styles.dropzone} key={projectID}>
+                    <input {...getInputProps()} />
+                    {!filePath && (
+                        <>
+                            <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                            <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
+                        </>
+                    )}
+                    {filePath && (
+                        <>
+                            <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                            <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
+                        </>
+                    )}
+                </div>
+            </>
+        );
+    }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -235,10 +339,10 @@ export default function Manage(): JSX.Element {
                 axios.get(baseURL + "getAccountDetails", { params: { clientID: user.uid } }).then(response => {
                     const data = response.data;
                     if (data.found) {
-                        setCurrentUser(data.user);
+                        setUserData(data.user);
                         axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
                             setProjects(response.data);
-                            setLoading(false);
+                            setLoadingPage(false);
                         });
                     }
                 });
@@ -246,10 +350,17 @@ export default function Manage(): JSX.Element {
         });
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (currentUser && currentUser.userData) {
+            setUserData(currentUser.userData);
+        }
+    });
+
     return (
         <div className={styles.container}>
-            <h1>Manage {currentUser && currentUser.projectRole && `(Viewing as ${currentUser.projectRole})`}</h1>
-            {loading && <Spinner label="Loading..." labelPosition="below" size="large" />}
+            <h1>Manage {userData && userData.projectRole && `(Viewing as ${userData.projectRole})`}</h1>
+            {loadingPage && <Spinner label="Loading..." labelPosition="below" size="large" />}
             <div className={styles.projects}>
                 <Accordion collapsible multiple>
                     {projects.map((project, index) => (
@@ -259,66 +370,63 @@ export default function Manage(): JSX.Element {
                                 <h3>{project.projectName}</h3>
                             </AccordionHeader>
                             <AccordionPanel>
-                                <Table arial-label="Default table" style={{ minWidth: "510px" }}>
-                                    <TableHeader>
-                                        <TableRow>
-                                            {columns.map(column => (
-                                                <TableHeaderCell key={column.columnKey}>
-                                                    <h3>{column.name}</h3>
-                                                </TableHeaderCell>
-                                            ))}
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {project.users &&
-                                            project.users.map((user, index) => (
-                                                <React.Fragment key={index}>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <TableCellLayout
-                                                                media={user.projectRole === "Owner" || user.projectRole === "Admin" ? <Premium20Regular /> : ""}
-                                                            >
-                                                                {user.firstName}
-                                                            </TableCellLayout>
-                                                        </TableCell>
-                                                        <TableCell>{user.lastName}</TableCell>
-                                                        <TableCell style={{ width: "4500px" }}>{user.emailAddress}</TableCell>
-                                                        <TableCell>{user.projectRole}</TableCell>
-                                                        <TableCell>{user.initialPasswordChanged ? "Yes" : "No"}</TableCell>
-                                                        {currentUser &&
-                                                            (((currentUser.projectRole === "Admin" ||
-                                                                currentUser.projectRole === "Owner" ||
-                                                                (project.users &&
-                                                                    project.users.some(
-                                                                        user => user.uuid === currentUser.uuid && user.projectRole === "Owner"
-                                                                    ))) &&
-                                                                user.uuid !== currentUser.uuid && (
-                                                                    <TableCell>
-                                                                        <Edit20Regular
-                                                                            style={{ cursor: "pointer" }}
-                                                                            onClick={() => handleEditClick(user, project)}
-                                                                        />
-                                                                    </TableCell>
-                                                                )) ||
-                                                                (project.users &&
-                                                                    project.users.some(
-                                                                        user => user.uuid === currentUser.uuid && user.projectRole === "Member"
-                                                                    )) ||
-                                                                (user.uuid === currentUser.uuid && (
-                                                                    <TableCell>
-                                                                        {" "}
-                                                                        <Dismiss20Filled />
-                                                                    </TableCell>
-                                                                )))}
-                                                    </TableRow>
-                                                </React.Fragment>
-                                            ))}
-                                    </TableBody>
-                                </Table>
-                                {currentUser &&
-                                    (currentUser.projectRole === "Admin" ||
-                                        currentUser.projectRole === "Owner" ||
-                                        (project.users && project.users.some(user => user.uuid === currentUser.uuid && user.projectRole === "Owner"))) && (
+                                <div className={styles.accordionRow}>
+                                    <div style={{ maxWidth: "950px" }}>
+                                        <Table sortable aria-label="Project table" ref={tableRef} {...columnSizing_unstable.getTableProps()}>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    {columns.map(column => (
+                                                        <TableHeaderCell
+                                                            key={column.columnId}
+                                                            {...columnSizing_unstable.getTableHeaderCellProps(column.columnId)}
+                                                        >
+                                                            {column.renderHeaderCell()}
+                                                        </TableHeaderCell>
+                                                    ))}
+                                                </TableRow>
+                                            </TableHeader>
+
+                                            <TableBody>
+                                                {rows.map(
+                                                    ({ item }) =>
+                                                        item.projectId === project.projectID && (
+                                                            <TableRow key={item.firstName.label}>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("firstName")}>
+                                                                    <TableCellLayout media={item.firstName.icon}>{item.firstName.label}</TableCellLayout>
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("lastName")}>{item.lastName}</TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("emailAddress")}>
+                                                                    {item.emailAddress}
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("projectRole")}>
+                                                                    {item.projectRole}
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("initialPasswordChanged")}>
+                                                                    {item.initialPasswordChanged}
+                                                                </TableCell>
+                                                                <TableCell {...columnSizing_unstable.getTableCellProps("edit")}>{item.edit.icon}</TableCell>
+                                                            </TableRow>
+                                                        )
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                    {userData &&
+                                        (userData.projectRole === "Admin" ||
+                                            userData.projectRole === "Owner" ||
+                                            (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
+                                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                                <Dropzone projectID={project.projectID} />
+                                                <Button appearance="primary" style={{ marginTop: "10px" }} disabled>
+                                                    Upload file
+                                                </Button>
+                                            </div>
+                                        )}
+                                </div>
+                                {userData &&
+                                    (userData.projectRole === "Admin" ||
+                                        userData.projectRole === "Owner" ||
+                                        (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
                                         <Button
                                             appearance="primary"
                                             onClick={() => handleOpenCreateUser(project)}
@@ -332,7 +440,7 @@ export default function Manage(): JSX.Element {
                     ))}
                 </Accordion>
 
-                {currentUser && currentUser.projectRole === "Admin" && (
+                {userData && userData.projectRole === "Admin" && (
                     <Button style={{ width: "150px" }} appearance="primary" onClick={() => setOpenCreateProject(true)}>
                         Create new Project
                     </Button>
@@ -361,7 +469,7 @@ export default function Manage(): JSX.Element {
                                                 onChange={handleProjectInputChange}
                                                 required
                                             />
-                                            {loading && <Spinner label="Loading..." labelPosition="below" size="large" />}
+                                            {loadingSettings && <Spinner label="Loading..." labelPosition="below" size="large" />}
                                         </div>
                                     </div>
                                 </DialogContent>
@@ -369,7 +477,7 @@ export default function Manage(): JSX.Element {
                                     <DialogTrigger disableButtonEnhancement>
                                         <Button appearance="secondary">Close</Button>
                                     </DialogTrigger>
-                                    <Button appearance="primary" type="submit" disabled={loading}>
+                                    <Button appearance="primary" type="submit" disabled={loadingSettings}>
                                         Create Project
                                     </Button>
                                 </DialogActions>
@@ -462,8 +570,8 @@ export default function Manage(): JSX.Element {
                                     <DialogTrigger disableButtonEnhancement>
                                         <Button appearance="secondary">Close</Button>
                                     </DialogTrigger>
-                                    {loading && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
-                                    <Button appearance="primary" type="submit" disabled={loading}>
+                                    {loadingSettings && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
+                                    <Button appearance="primary" type="submit" disabled={loadingSettings}>
                                         Create User
                                     </Button>
                                 </DialogActions>
@@ -509,7 +617,7 @@ export default function Manage(): JSX.Element {
                                             >
                                                 Change Role
                                             </Button>
-                                            {loading && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
+                                            {loadingSettings && <Spinner label="Loading..." labelPosition="below" size="extra-small" />}
                                         </div>
                                     </div>
                                 </DialogContent>
@@ -522,7 +630,7 @@ export default function Manage(): JSX.Element {
                                         color="red"
                                         style={{ backgroundColor: "#f00" }}
                                         onClick={() => handleRemoveUser(selectedProject.projectID, selectedUser)}
-                                        disabled={loading}
+                                        disabled={loadingSettings}
                                     >
                                         Remove User from project
                                     </Button>

@@ -3,7 +3,7 @@
 }
 
 .projects {
-    width: 1200px;
+    width: 1100px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -34,4 +34,32 @@
     justify-content: space-between;
     width: 100%;
     gap: 10px;
+}
+
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #409ece;
+    border-radius: 5px;
+    padding: 5px;
+    min-width: 200px;
+    height: 120px;
+    cursor: pointer;
+    /* overflow: hidden; */
+}
+
+.accordionRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 5px;
+    gap: 10px;
+    border: 1px solid #409ece;
+    border-radius: 5px;
+    cursor: pointer;
+    overflow-x: auto;
 }
