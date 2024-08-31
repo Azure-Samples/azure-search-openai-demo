@@ -4,7 +4,7 @@ from typing import Any, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import AzureDeveloperCliCredential
+from azure.identity.aio import DefaultAzureCredential
 
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.embeddings import (
@@ -244,13 +244,7 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
-    # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-    azd_credential = (
-        AzureDeveloperCliCredential()
-        if args.tenantid is None
-        else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
-    )
-
+    azd_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
     file_strategy = setup_file_strategy(azd_credential, args)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(file_strategy, azd_credential, args))

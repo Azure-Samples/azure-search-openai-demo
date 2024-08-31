@@ -115,6 +115,7 @@ def error_response(error: Exception, route: str, status_code: int = 500):
 
 def run_prepdocs_script():
     script_path = os.path.join(os.path.dirname(__file__), 'scripts', 'prepdocs.sh')
+
     try:
         result = subprocess.run(['sh', script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(f"Script output: {result.stdout.decode()}")
@@ -181,13 +182,12 @@ async def chat():
             return response
     except Exception as error:
         return error_response(error, "/chat")
+    
 
 @bp.route("/runScript", methods=["POST"])
 async def runScript():
     run_prepdocs_script()
     return jsonify({"result":"ranScript"})
-
-
 
 
 # Send MSAL.js settings to the client UI
