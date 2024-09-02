@@ -5,9 +5,9 @@ metadata:
   template: azure-search-openai-demo@0.0.2-beta
 services:
   backend:
-    project: ./app/backend
+    project: ../app/backend
     language: py
-    host: appservice
+    host: containerapp
     hooks:
       prepackage:
         windows:
@@ -20,6 +20,11 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
+infra:
+  provider: bicep
+  path: ../infra
+  module: main-aca
+
 pipeline:
   variables:
       - AZURE_OPENAI_SERVICE
