@@ -14,7 +14,6 @@ param resourceGroupName string = '' // Set in main.parameters.json
 
 // ACA parametors
 param containerAppsEnvironmentName string
-param containerRegistryName string = '${replace(containerAppsEnvironmentName, '-', '')}acr'
 param webAppExists bool
 param identityName string= '${environmentName}-aca-identity'
 
@@ -184,6 +183,7 @@ param useLocalHtmlParser bool = false
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
+param containerRegistryName string = '${replace(containerAppsEnvironmentName, '-', '')}acr'
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
@@ -284,7 +284,7 @@ module containerApps 'core/host/container-apps.bicep' = {
     location: location
     workloadProfile: azureContainerAppsWorkloadProfile
     containerAppsEnvironmentName: containerAppsEnvironmentName
-    containerRegistryName: containerRegistryName
+    containerRegistryName: '${containerRegistryName}${resourceToken}'
     logAnalyticsWorkspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
     // virtualNetworkSubnetId: virtualNetwork.outputs.subnetResourceIds[1]
   }

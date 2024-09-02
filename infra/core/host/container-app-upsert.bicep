@@ -25,7 +25,7 @@ param containerName string = 'main'
 param containerAppsEnvironmentName string = '${containerName}env'
 
 @description('The name of the container registry')
-param containerRegistryName string = ''
+param containerRegistryName string
 
 @description('Hostname suffix for container registry. Set when deploying to sovereign clouds')
 param containerRegistryHostSuffix string = 'azurecr.io'
