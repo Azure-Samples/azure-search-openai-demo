@@ -252,9 +252,10 @@ async def upload_files():
     DATA_FOLDER = os.path.join(current_directory, "data")
     print(f"Data folder path: {DATA_FOLDER}")
  
-    # Ensure the data folder exists, create it if it doesn'tifnot os.path.exists(DATA_FOLDER):
-    print(f"Data folder does not exist. Creating {DATA_FOLDER}...")
-    os.makedirs(DATA_FOLDER)
+    # Ensure the data folder exists, create it if it doesn't
+    if not os.path.exists(DATA_FOLDER):
+        print(f"Data folder does not exist. Creating {DATA_FOLDER}...")
+        os.makedirs(DATA_FOLDER)
     
     print(f"Folder Created")
  
