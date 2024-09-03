@@ -1,38 +1,53 @@
 import { SetStateAction, useState } from "react";
 import { Button, Tooltip } from "@fluentui/react-components";
 import { Mic28Filled } from "@fluentui/react-icons";
+import { useTranslation } from "react-i18next";
 import styles from "./QuestionInput.module.css";
+import { supportedLngs } from "../../i18n/config";
 
 interface Props {
     updateQuestion: (question: string) => void;
 }
 
-const SpeechRecognition = (window as any).speechRecognition || (window as any).webkitSpeechRecognition;
-let speechRecognition: {
-    continuous: boolean;
-    lang: string;
-    interimResults: boolean;
-    maxAlternatives: number;
-    start: () => void;
-    onresult: (event: { results: { transcript: SetStateAction<string> }[][] }) => void;
-    onend: () => void;
-    onerror: (event: { error: string }) => void;
-    stop: () => void;
-} | null = null;
-try {
-    speechRecognition = new SpeechRecognition();
-    if (speechRecognition != null) {
-        speechRecognition.lang = "en-US";
-        speechRecognition.interimResults = true;
+const useCustomSpeechRecognition = () => {
+    const { i18n } = useTranslation();
+    const currentLng = i18n.language;
+    let lngCode = supportedLngs[currentLng]?.locale;
+    if (!lngCode) {
+        lngCode = "en-US";
     }
-} catch (err) {
-    console.error("SpeechRecognition not supported");
-    speechRecognition = null;
-}
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    let speechRecognition: {
+        continuous: boolean;
+        lang: string;
+        interimResults: boolean;
+        maxAlternatives: number;
+        start: () => void;
+        onresult: (event: { results: { transcript: SetStateAction<string> }[][] }) => void;
+        onend: () => void;
+        onerror: (event: { error: string }) => void;
+        stop: () => void;
+    } | null = null;
+
+    try {
+        speechRecognition = new SpeechRecognition();
+        if (speechRecognition != null) {
+            speechRecognition.lang = lngCode;
+            speechRecognition.interimResults = true;
+        }
+    } catch (err) {
+        console.error("SpeechRecognition not supported");
+        speechRecognition = null;
+    }
+
+    return speechRecognition;
+};
 
 export const SpeechInput = ({ updateQuestion }: Props) => {
+    let speechRecognition = useCustomSpeechRecognition();
+    const { t } = useTranslation();
     const [isRecording, setIsRecording] = useState<boolean>(false);
-
     const startRecording = () => {
         if (speechRecognition == null) {
             console.error("SpeechRecognition not supported");
@@ -85,14 +100,14 @@ export const SpeechInput = ({ updateQuestion }: Props) => {
         <>
             {!isRecording && (
                 <div className={styles.questionInputButtonsContainer}>
-                    <Tooltip content="Ask question with voice" relationship="label">
+                    <Tooltip content={t("tooltips.askWithVoice")} relationship="label">
                         <Button size="large" icon={<Mic28Filled primaryFill="rgba(115, 118, 225, 1)" />} onClick={startRecording} />
                     </Tooltip>
                 </div>
             )}
             {isRecording && (
                 <div className={styles.questionInputButtonsContainer}>
-                    <Tooltip content="Stop recording question" relationship="label">
+                    <Tooltip content={t("tooltips.stopRecording")} relationship="label">
                         <Button size="large" icon={<Mic28Filled primaryFill="rgba(250, 0, 0, 0.7)" />} disabled={!isRecording} onClick={stopRecording} />
                     </Tooltip>
                 </div>

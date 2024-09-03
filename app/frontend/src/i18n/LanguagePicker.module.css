@@ -1,0 +1,25 @@
+.languagePicker {
+    word-break: break-word;
+    background: #dbdbdb;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0.3125rem;
+    padding-right: 0.3125rem;
+    margin-bottom: 0.3125rem;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.languagePicker:hover {
+    box-shadow:
+        0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
+        0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
+    outline: 0.125rem solid rgba(115, 118, 225, 1);
+}
+
+.languagePickerIcon {
+    margin-bottom: 0.15625rem;
+    margin-left: 0.125rem;
+}
