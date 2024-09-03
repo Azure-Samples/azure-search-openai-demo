@@ -238,9 +238,6 @@
     },
     "runningOnAdo": {
       "value": "${TF_BUILD}"
-    },
-    "webAppExists": {
-        "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
     }
   }
 }
