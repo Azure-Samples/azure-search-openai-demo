@@ -1,7 +1,7 @@
 # Deploying on Azure Container Apps
-Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of azd, the azure.yaml file for deploying to Azure Container Apps lives in folder `aca-host` along with symbolic links to `app`,`data` and `scripts` folder.
+Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of azd, the azure.yaml file for deploying to Azure Container Apps lives here along with symbolic links to `app`,`data` and `scripts` folder.
 ## For Linux/MacOS users
-If you are on Linux/MacOS, it should work without any extra settings to deploy on Azure Container Apps. Please use:
+If you are on Linux/MacOS, it should work without any extra settings to deploy to Azure Container Apps. Please use:
 ```bash
 cd aca-host
 azd up
@@ -17,7 +17,7 @@ git config core.symlinks true
 git config --global core.symlinks true
 ```
 
-Please check whether the symlink works correctly and then run:
+Please ensure that the symlinks work correctly and then run:
 ```bash
 cd aca-host
 azd up
