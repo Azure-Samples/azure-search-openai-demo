@@ -30,6 +30,7 @@ export default defineConfig({
             "/ask": "http://localhost:50505",
             "/chat": "http://localhost:50505",
             "/runScript": "http://localhost:50505",
+            "/uploadFiles": "http://localhost:50505"
         }
     }
 });

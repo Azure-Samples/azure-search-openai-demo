@@ -161,6 +161,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
             runScriptApi(request, token?.accessToken);
 
+            console.log("Token: " + token?.accessToken);
             const response = await chatApi(request, token?.accessToken);
             if (!response.body) {
                 throw Error("No response body");

@@ -58,3 +58,9 @@ export type ChatAppRequest = {
     stream?: boolean;
     session_state: any;
 };
+
+export type FileUploadRequest = {
+    azureIndex: string;
+    azureContainer: string;
+    files: File[];
+};

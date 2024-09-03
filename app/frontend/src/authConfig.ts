@@ -43,7 +43,10 @@ async function fetchAuthSetup(): Promise<AuthSetup> {
     if (!response.ok) {
         throw new Error(`auth setup response was not ok: ${response.status}`);
     }
-    return await response.json();
+    let responseJson: AuthSetup = await response.json();
+    // Print JSON dump as string
+    console.log("JSON dump: " + JSON.stringify(responseJson));
+    return await responseJson;
 }
 
 const authSetup = await fetchAuthSetup();
@@ -75,6 +78,7 @@ export const getRedirectUri = () => {
 // Get an access token for use with the API server.
 // ID token received when logging in may not be used for this purpose because it has the incorrect audience
 export const getToken = (client: IPublicClientApplication): Promise<AuthenticationResult | undefined> => {
+    console.log("Getting token");
     return client
         .acquireTokenSilent({
             ...tokenRequest,

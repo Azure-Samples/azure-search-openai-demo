@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-
+import { uploadFilesApi, FileUploadRequest } from "../../api";
 import {
     TableBody,
     TableCell,
@@ -38,8 +38,10 @@ import styles from "./Manage.module.css";
 import { auth } from "../..";
 import axios from "axios";
 import { onAuthStateChanged } from "firebase/auth";
+import { useLogin, getToken } from "../../authConfig";
+import { useMsal } from "@azure/msal-react";
 import { v4 as uuidv4 } from "uuid";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Manage(): JSX.Element {
     const [userData, setUserData] = useState<User | null>(null);
@@ -71,6 +73,12 @@ export default function Manage(): JSX.Element {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
     const currentUser = useLocation().state;
+    const navigate = useNavigate();
+
+    const [currentProject, setCurrentProject] = useState<string>("default");
+    const [projectOptions, setProjectOptions] = useState<ProjectOptions[]>([]);
+    const [index, setIndex] = useState<string>("gptkbindex");
+    const [container, setContainer] = useState<string>("content");
 
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
@@ -292,46 +300,113 @@ export default function Manage(): JSX.Element {
 
     function Dropzone({ projectID }: { projectID: string }) {
         const [filePath, setFilePath] = useState("");
+        const [token, setToken] = useState<string | undefined>(undefined);
+        const client = useLogin ? useMsal().instance : undefined;
 
-        const onDrop = useCallback((acceptedFiles: any) => {
-            //@cade-ryan - handle file uploads here
-            console.log(acceptedFiles);
-            let filePaths: string[] = [];
-            acceptedFiles.forEach((file: any) => {
-                filePaths.push(file.path);
-                const reader = new FileReader();
+        // Retrieve the token asynchronously
+        useEffect(() => {
+            const fetchToken = async () => {
+                try {
+                    console.log("Retrieving token: " + client);
+                    const tokenResponse = client ? await getToken(client) : undefined;
+                    setToken(tokenResponse?.accessToken);
+                    console.log("Token retrieved: " + tokenResponse?.accessToken);
+                } catch (error) {
+                    console.error("Failed to retrieve token:", error);
+                }
+            };
 
-                reader.onabort = () => console.log("file reading was aborted");
-                reader.onerror = () => console.log("file reading has failed");
-                reader.onload = () => {
-                    // Do whatever you want with the file contents
-                    const binaryStr = reader.result;
+            if (client) {
+                fetchToken();
+            }
+        }, [client]);
+
+        const onDrop = useCallback(
+            (acceptedFiles: any) => {
+                let filePaths: string[] = [];
+
+                acceptedFiles.forEach((file: any) => {
+                    filePaths.push(file.name); // Use file.name for better compatibility
+                });
+
+                setFilePath(filePaths.join(", "));
+
+                console.log("Files added: " + filePaths.join(", "));
+
+                console.log("Index & Container: " + index + " " + container);
+                // Build the request object
+                const request: FileUploadRequest = {
+                    azureIndex: index,
+                    azureContainer: container,
+                    files: acceptedFiles
                 };
-                reader.readAsArrayBuffer(file);
-            });
-            setFilePath(filePaths.join(", "));
-        }, []);
+
+                console.log("Request: " + JSON.stringify(request));
+
+                // Call the uploadFilesApi function to upload the files
+                uploadFilesApi(request, token)
+                    .then(async response => {
+                        if (response.ok) {
+                            console.log("Files uploaded successfully:", response);
+                            // Handle success (e.g., show a success message)
+                        } else {
+                            // Parse and log the error message from the response body
+                            const errorMessage = await response.json();
+                            console.error("Error uploading files:", errorMessage);
+                            // Optionally, you could display the error to the user here
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error uploading files:", error);
+                        // Handle network or other errors
+                    });
+            },
+            [token, index, container]
+        );
+
         const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
         return (
-            <>
-                <div {...getRootProps()} className={styles.dropzone} key={projectID}>
-                    <input {...getInputProps()} />
-                    {!filePath && (
-                        <>
-                            <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                            <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
-                        </>
-                    )}
-                    {filePath && (
-                        <>
-                            <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                            <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
-                        </>
-                    )}
-                </div>
-            </>
+            <div {...getRootProps()} className={styles.dropzone} key={projectID}>
+                <input {...getInputProps()} />
+                {!filePath && (
+                    <>
+                        <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                        <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
+                    </>
+                )}
+                {filePath && (
+                    <>
+                        <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                        <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
+                    </>
+                )}
+            </div>
         );
     }
+
+    useEffect(() => {
+        if (!auth.currentUser) {
+            navigate("/login");
+        } else {
+            const projectString = localStorage.getItem("projects");
+            if (projectString) {
+                const projects = JSON.parse(projectString);
+                let compArray: ProjectOptions[] = [];
+                projects.forEach((project: Project) => {
+                    compArray.push({
+                        projectName: project.projectName ?? "",
+                        projectIndex: project.projectIndex ?? "",
+                        projectContainer: project.projectContainer ?? ""
+                    });
+                });
+                setProjectOptions(compArray);
+                setCurrentProject(compArray[0].projectName);
+                setIndex(compArray[0].projectIndex);
+                setContainer(compArray[0].projectContainer);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -417,7 +492,7 @@ export default function Manage(): JSX.Element {
                                             (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
                                             <div style={{ display: "flex", flexDirection: "column" }}>
                                                 <Dropzone projectID={project.projectID} />
-                                                <Button appearance="primary" style={{ marginTop: "10px" }} disabled>
+                                                <Button appearance="primary" style={{ marginTop: "10px" }}>
                                                     Upload file
                                                 </Button>
                                             </div>
