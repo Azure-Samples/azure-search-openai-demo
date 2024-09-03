@@ -35,6 +35,10 @@
     width: 100%;
     gap: 10px;
 }
+/* 
+input[type="file"] {
+    display: none;
+  } */
 
 .dropzone {
     display: flex;

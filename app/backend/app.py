@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import sys
 import mimetypes
 import os
 import base64
@@ -191,29 +192,92 @@ async def runScript():
     return jsonify({"result":"ranScript"})
 
 
+# @bp.route("/uploadFiles", methods=["POST"])
+# async def upload_files():
+
+#     # Get the current working directory
+#     current_directory = os.getcwd()
+#     DATA_FOLDER = os.path.join(current_directory, "data")
+
+#     if not request.is_json:
+#         return jsonify({"error": "Request must be JSON"}), 415
+
+#     request_json = await request.get_json()
+
+#     azure_index = request_json.get("azureIndex")
+#     azure_container = request_json.get("azureContainer")
+
+#     if not azure_index or not azure_container:
+#         return jsonify({"error": "azureIndex and azureContainer are required"}), 400
+
+#     files = request_json.get("files", [])
+
+#     if not files:
+#         return jsonify({"error": "No files provided"}), 400
+
+#     # Save the files to the data folder
+#     for file in files:
+#         file_name = file["name"]
+#         file_content = file["content"].split(",")[1]  # Split to remove the metadata prefix
+#         file_type = file["type"]
+
+#         # Decode the base64 content
+#         file_data = base64.b64decode(file_content)
+
+#         # Save the file to the data folder
+#         file_path = os.path.join(DATA_FOLDER, file_name)
+#         with open(file_path, "wb") as f:
+#             f.write(file_data)
+
+#     # Handle the index and container logic here
+#     await set_index_and_container(azure_index, azure_container)
+
+#     return jsonify({
+#         "result": "Files uploaded and processed successfully",
+#         "azureIndex": azure_index,
+#         "azureContainer": azure_container
+#     })
+
+
 @bp.route("/uploadFiles", methods=["POST"])
 async def upload_files():
-
-    # Get the current working directory
+# Get the current working directory
     current_directory = os.getcwd()
-    DATA_FOLDER = os.path.join(current_directory, "data")
 
+
+    
+    print(f"Current working directory: {current_directory}")
+ 
+    # Set the data folder path relative to the current directory
+    DATA_FOLDER = os.path.join(current_directory, "data")
+    print(f"Data folder path: {DATA_FOLDER}")
+ 
+    # Ensure the data folder exists, create it if it doesn'tifnot os.path.exists(DATA_FOLDER):
+    print(f"Data folder does not exist. Creating {DATA_FOLDER}...")
+    os.makedirs(DATA_FOLDER)
+    
+    print(f"Folder Created")
+ 
+    # List the directories and files at the current level (for debugging)print("Contents of the current directory:")
+    for item in os.listdir(current_directory):
+        print(item)
+ 
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 415
-
+ 
     request_json = await request.get_json()
-
+    
     azure_index = request_json.get("azureIndex")
     azure_container = request_json.get("azureContainer")
-
+ 
     if not azure_index or not azure_container:
         return jsonify({"error": "azureIndex and azureContainer are required"}), 400
-
+ 
     files = request_json.get("files", [])
-
+ 
     if not files:
         return jsonify({"error": "No files provided"}), 400
-
+    
     # Save the files to the data folder
     for file in files:
         file_name = file["name"]
@@ -223,14 +287,16 @@ async def upload_files():
         # Decode the base64 content
         file_data = base64.b64decode(file_content)
 
-        # Save the file to the data folder
+        # Construct the file path using the relative data folder
         file_path = os.path.join(DATA_FOLDER, file_name)
+        print(f"Saving file to: {file_path}")
+ 
+        # Save the file to the data folder
         with open(file_path, "wb") as f:
             f.write(file_data)
-
-    # Handle the index and container logic here
-    await set_index_and_container(azure_index, azure_container)
-
+ 
+    # Handle the index and container logic hereawait set_index_and_container(azure_index, azure_container)
+ 
     return jsonify({
         "result": "Files uploaded and processed successfully",
         "azureIndex": azure_index,
@@ -434,6 +500,16 @@ async def set_index_and_container(index, container):
 
 
 def create_app():
+    
+    
+    logging.info("CREATE APP 1000")
+    logging.info(f"CREATE APP 1500")
+
+    print("CREATE APP 200")
+    logging.error(f"ERRoR TEST 40000")
+
+    
+    
     app = Quart(__name__)
     app.register_blueprint(bp)
 
@@ -452,6 +528,18 @@ def create_app():
     if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
         default_level = "WARNING"
     logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
+
+
+    logger = logging.getLogger(__name__)
+    handler = logging.StreamHandler(stream=sys.stdout)
+    logger.addHandler(handler)
+
+
+    logging.info("CREATE APP 1000 2")
+    logging.error("ERRoR TEST 40000 3")
+
+    app.logger.info("App logger")
+
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)
