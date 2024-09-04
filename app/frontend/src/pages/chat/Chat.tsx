@@ -375,9 +375,10 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     return (
         <div className={styles.container}>
             <div className={styles.chatRoot}>
-                {/* {savedChats && <div className={styles.savedChats}>Saved chats</div>}
-
                 <div className={styles.chatContainer}>
+                    {/* {savedChats && <div className={styles.savedChats}>Saved chats</div>}
+
+
                     <Dialog open={openSave} onOpenChange={(_, data) => setOpenSave(data.open)}>
                         <DialogSurface style={{ maxWidth: "400px" }}>
                             <DialogBody
@@ -417,268 +418,274 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                             </DialogBody>
                         </DialogSurface>
                     </Dialog> */}
-                {!lastQuestionRef.current ? (
-                    <div className={styles.chatEmptyState}>
-                        <h1 className={styles.chatEmptyStateTitle}>Chat with your project data</h1>
-                        <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try one of these examples</h2>
-                        <ExampleList onExampleClicked={onExampleClicked} />
-                    </div>
-                ) : (
-                    <div className={styles.chatMessageStream}>
-                        {isStreaming &&
-                            streamedAnswers.map((streamedAnswer, index) => (
-                                <div key={index}>
-                                    <UserChatMessage message={streamedAnswer[0]} />
-                                    <div className={styles.chatMessageGpt}>
-                                        <Answer
-                                            isStreaming={true}
-                                            key={index}
-                                            answer={streamedAnswer[1]}
-                                            isSelected={false}
-                                            onCitationClicked={c => onShowCitation(c, index)}
-                                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                        />
+                    {!lastQuestionRef.current ? (
+                        <div className={styles.chatEmptyState}>
+                            <h1 className={styles.chatEmptyStateTitle}>Chat with your project data</h1>
+                            <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try one of these examples</h2>
+                            <ExampleList onExampleClicked={onExampleClicked} />
+                        </div>
+                    ) : (
+                        <div className={styles.chatMessageStream}>
+                            {isStreaming &&
+                                streamedAnswers.map((streamedAnswer, index) => (
+                                    <div key={index}>
+                                        <UserChatMessage message={streamedAnswer[0]} />
+                                        <div className={styles.chatMessageGpt}>
+                                            <Answer
+                                                isStreaming={true}
+                                                key={index}
+                                                answer={streamedAnswer[1]}
+                                                isSelected={false}
+                                                onCitationClicked={c => onShowCitation(c, index)}
+                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        {!isStreaming &&
-                            answers.map((answer, index) => (
-                                <div key={index}>
-                                    <UserChatMessage message={answer[0]} />
-                                    <div className={styles.chatMessageGpt}>
-                                        <Answer
-                                            isStreaming={false}
-                                            key={index}
-                                            answer={answer[1]}
-                                            isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
-                                            onCitationClicked={c => onShowCitation(c, index)}
-                                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
-                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
-                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
-                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
-                                        />
+                                ))}
+                            {!isStreaming &&
+                                answers.map((answer, index) => (
+                                    <div key={index}>
+                                        <UserChatMessage message={answer[0]} />
+                                        <div className={styles.chatMessageGpt}>
+                                            <Answer
+                                                isStreaming={false}
+                                                key={index}
+                                                answer={answer[1]}
+                                                isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
+                                                onCitationClicked={c => onShowCitation(c, index)}
+                                                onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                                onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, index)}
+                                                onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                                showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        {isLoading && (
-                            <>
-                                <UserChatMessage message={lastQuestionRef.current} />
-                                <div className={styles.chatMessageGptMinWidth}>
-                                    <AnswerLoading />
-                                </div>
-                            </>
-                        )}
-                        {error ? (
-                            <>
-                                <UserChatMessage message={lastQuestionRef.current} />
-                                <div className={styles.chatMessageGptMinWidth}>
-                                    <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />
-                                </div>
-                            </>
-                        ) : null}
-                        <div ref={chatMessageStreamEnd} />
-                    </div>
-                )}
+                                ))}
+                            {isLoading && (
+                                <>
+                                    <UserChatMessage message={lastQuestionRef.current} />
+                                    <div className={styles.chatMessageGptMinWidth}>
+                                        <AnswerLoading />
+                                    </div>
+                                </>
+                            )}
+                            {error ? (
+                                <>
+                                    <UserChatMessage message={lastQuestionRef.current} />
+                                    <div className={styles.chatMessageGptMinWidth}>
+                                        <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />
+                                    </div>
+                                </>
+                            ) : null}
+                            <div ref={chatMessageStreamEnd} />
+                        </div>
+                    )}
 
-                <div className={styles.chatInput}>
-                    <QuestionInput clearOnSend placeholder="Who is the project sponsor?" disabled={isLoading} onSend={question => makeApiRequest(question)} />
-                </div>
-                {/* {lastQuestionRef.current && <Button onClick={openSaveChatDialog}>Save current Chat</Button>} */}
-                {localStorage.getItem("streamedAnswers") && <Button onClick={handleSetAnswersFromStreamed}>View previous chat</Button>}
+                    <div className={styles.chatInput}>
+                        <QuestionInput
+                            clearOnSend
+                            placeholder="Who is the project sponsor?"
+                            disabled={isLoading}
+                            onSend={question => makeApiRequest(question)}
+                        />
+                    </div>
+                    {/* {lastQuestionRef.current && <Button onClick={openSaveChatDialog}>Save current Chat</Button>} */}
+                    {localStorage.getItem("streamedAnswers") && <Button onClick={handleSetAnswersFromStreamed}>View previous chat</Button>}
 
-                <div className={styles.parameterContainer}>
-                    <div className={styles.parameterColumn}>
-                        <h2 style={{ color: "#409ece" }}>Tone</h2>
-                        <DropdownComponent
-                            style={{ minWidth: "200px" }}
-                            name="toneDropdown"
-                            aria-labelledby={dropdownId}
-                            defaultValue="Formal"
-                            defaultSelectedOptions={["Formal"]}
-                            onOptionSelect={(_, selected) => setParameters({ ...parameters, tone: selected.optionValue || "" })}
-                            {...dropdownProps}
-                        >
-                            {toneOptions.map(option => (
-                                <Option key={option} text={option} value={option}>
-                                    {option}
-                                </Option>
-                            ))}
-                        </DropdownComponent>
-                    </div>
-                    <div className={styles.parameterColumn}>
-                        <h2 style={{ color: "#409ece" }}>Readability</h2>
-                        <DropdownComponent
-                            style={{ minWidth: "200px" }}
-                            name="readabilityDropdown"
-                            aria-labelledby={dropdownId}
-                            defaultValue="Medium"
-                            defaultSelectedOptions={["Medium"]}
-                            onOptionSelect={(_, selected) => setParameters({ ...parameters, readability: selected.optionValue || "" })}
-                            {...dropdownProps}
-                        >
-                            {readabilityOptions.map(option => (
-                                <Option key={option} text={option} value={option}>
-                                    {option}
-                                </Option>
-                            ))}
-                        </DropdownComponent>
-                    </div>
-                    <div className={styles.parameterColumn}>
-                        <h2 style={{ color: "#409ece" }}>Word count</h2>
-                        <DropdownComponent
-                            style={{ minWidth: "200px" }}
-                            name="wordCountDropdown"
-                            aria-labelledby={dropdownId}
-                            defaultValue="200"
-                            defaultSelectedOptions={["200"]}
-                            onOptionSelect={(_, selected) => setParameters({ ...parameters, wordCount: selected.optionValue || "" })}
-                            {...dropdownProps}
-                        >
-                            {wordCountOptions.map(option => (
-                                <Option key={option} text={option} value={option}>
-                                    {option}
-                                </Option>
-                            ))}
-                        </DropdownComponent>
-                    </div>
-                    <div className={styles.parameterColumn}>
-                        <h2 style={{ color: "#409ece" }}>Communication framework</h2>
-                        <DropdownComponent
-                            style={{ minWidth: "200px" }}
-                            name="communicationFramewrokDropdown"
-                            aria-labelledby={dropdownId}
-                            defaultValue="Think/Feel/Do"
-                            defaultSelectedOptions={["Think/Feel/Do"]}
-                            onOptionSelect={(_, selected) => setParameters({ ...parameters, communicationFramework: selected.optionValue || "" })}
-                            {...dropdownProps}
-                        >
-                            {communicationFrameworkOptions.map(option => (
-                                <Option key={option} text={option} value={option}>
-                                    {option}
-                                </Option>
-                            ))}
-                        </DropdownComponent>
-                    </div>
-                    {projectOptions && projectOptions.length > 1 && (
+                    <div className={styles.parameterContainer}>
                         <div className={styles.parameterColumn}>
-                            <h2 style={{ color: "#409ece" }}>Select project</h2>
+                            <h2 style={{ color: "#409ece" }}>Tone</h2>
                             <DropdownComponent
                                 style={{ minWidth: "200px" }}
-                                name="projectDropdown"
+                                name="toneDropdown"
                                 aria-labelledby={dropdownId}
-                                defaultValue={projectOptions[0].projectName}
-                                defaultSelectedOptions={[projectOptions[0].projectName]}
-                                onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
+                                defaultValue="Formal"
+                                defaultSelectedOptions={["Formal"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, tone: selected.optionValue || "" })}
                                 {...dropdownProps}
                             >
-                                {projectOptions.map(option => (
-                                    <Option key={option.projectName} text={option.projectName} value={option.projectName}>
-                                        {option.projectName}
+                                {toneOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
                                     </Option>
                                 ))}
                             </DropdownComponent>
                         </div>
-                    )}
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Readability</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="readabilityDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="Medium"
+                                defaultSelectedOptions={["Medium"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, readability: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {readabilityOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Word count</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="wordCountDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="200"
+                                defaultSelectedOptions={["200"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, wordCount: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {wordCountOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                        <div className={styles.parameterColumn}>
+                            <h2 style={{ color: "#409ece" }}>Communication framework</h2>
+                            <DropdownComponent
+                                style={{ minWidth: "200px" }}
+                                name="communicationFramewrokDropdown"
+                                aria-labelledby={dropdownId}
+                                defaultValue="Think/Feel/Do"
+                                defaultSelectedOptions={["Think/Feel/Do"]}
+                                onOptionSelect={(_, selected) => setParameters({ ...parameters, communicationFramework: selected.optionValue || "" })}
+                                {...dropdownProps}
+                            >
+                                {communicationFrameworkOptions.map(option => (
+                                    <Option key={option} text={option} value={option}>
+                                        {option}
+                                    </Option>
+                                ))}
+                            </DropdownComponent>
+                        </div>
+                        {projectOptions && projectOptions.length > 1 && (
+                            <div className={styles.parameterColumn}>
+                                <h2 style={{ color: "#409ece" }}>Select project</h2>
+                                <DropdownComponent
+                                    style={{ minWidth: "200px" }}
+                                    name="projectDropdown"
+                                    aria-labelledby={dropdownId}
+                                    defaultValue={projectOptions[0].projectName}
+                                    defaultSelectedOptions={[projectOptions[0].projectName]}
+                                    onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
+                                    {...dropdownProps}
+                                >
+                                    {projectOptions.map(option => (
+                                        <Option key={option.projectName} text={option.projectName} value={option.projectName}>
+                                            {option.projectName}
+                                        </Option>
+                                    ))}
+                                </DropdownComponent>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {answers.length > 0 && activeAnalysisPanelTab && (
+                    <AnalysisPanel
+                        className={styles.chatAnalysisPanel}
+                        activeCitation={activeCitation}
+                        onActiveTabChanged={x => onToggleTab(x, selectedAnswer)}
+                        citationHeight="810px"
+                        answer={answers[selectedAnswer][1]}
+                        activeTab={activeAnalysisPanelTab}
+                    />
+                )}
+
+                <Panel
+                    headerText="Configure answer generation"
+                    isOpen={isConfigPanelOpen}
+                    isBlocking={false}
+                    onDismiss={() => setIsConfigPanelOpen(false)}
+                    closeButtonAriaLabel="Close"
+                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
+                    isFooterAtBottom={true}
+                >
+                    <TextField
+                        className={styles.chatSettingsSeparator}
+                        defaultValue={promptTemplate}
+                        label="Override prompt template"
+                        multiline
+                        autoAdjustHeight
+                        onChange={onPromptTemplateChange}
+                    />
+
+                    <SpinButton
+                        className={styles.chatSettingsSeparator}
+                        label="Retrieve this many search results:"
+                        min={1}
+                        max={50}
+                        defaultValue={retrieveCount.toString()}
+                        onChange={onRetrieveCountChange}
+                    />
+                    <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useSemanticRanker}
+                        label="Use semantic ranker for retrieval"
+                        onChange={onUseSemanticRankerChange}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useSemanticCaptions}
+                        label="Use query-contextual summaries instead of whole documents"
+                        onChange={onUseSemanticCaptionsChange}
+                        disabled={!useSemanticRanker}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useSuggestFollowupQuestions}
+                        label="Suggest follow-up questions"
+                        onChange={onUseSuggestFollowupQuestionsChange}
+                    />
+                    {useLogin && (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useOidSecurityFilter}
+                            label="Use oid security filter"
+                            disabled={!client?.getActiveAccount()}
+                            onChange={onUseOidSecurityFilterChange}
+                        />
+                    )}
+                    {useLogin && (
+                        <Checkbox
+                            className={styles.chatSettingsSeparator}
+                            checked={useGroupsSecurityFilter}
+                            label="Use groups security filter"
+                            disabled={!client?.getActiveAccount()}
+                            onChange={onUseGroupsSecurityFilterChange}
+                        />
+                    )}
+                    <Dropdown
+                        className={styles.chatSettingsSeparator}
+                        label="Retrieval mode"
+                        options={[
+                            { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
+                            { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
+                            { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
+                        ]}
+                        required
+                        onChange={onRetrievalModeChange}
+                    />
+                    <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={shouldStream}
+                        label="Stream chat completion responses"
+                        onChange={onShouldStreamChange}
+                    />
+                    {useLogin && <TokenClaimsDisplay />}
+                </Panel>
             </div>
-
-            {answers.length > 0 && activeAnalysisPanelTab && (
-                <AnalysisPanel
-                    className={styles.chatAnalysisPanel}
-                    activeCitation={activeCitation}
-                    onActiveTabChanged={x => onToggleTab(x, selectedAnswer)}
-                    citationHeight="810px"
-                    answer={answers[selectedAnswer][1]}
-                    activeTab={activeAnalysisPanelTab}
-                />
-            )}
-
-            <Panel
-                headerText="Configure answer generation"
-                isOpen={isConfigPanelOpen}
-                isBlocking={false}
-                onDismiss={() => setIsConfigPanelOpen(false)}
-                closeButtonAriaLabel="Close"
-                onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
-                isFooterAtBottom={true}
-            >
-                <TextField
-                    className={styles.chatSettingsSeparator}
-                    defaultValue={promptTemplate}
-                    label="Override prompt template"
-                    multiline
-                    autoAdjustHeight
-                    onChange={onPromptTemplateChange}
-                />
-
-                <SpinButton
-                    className={styles.chatSettingsSeparator}
-                    label="Retrieve this many search results:"
-                    min={1}
-                    max={50}
-                    defaultValue={retrieveCount.toString()}
-                    onChange={onRetrieveCountChange}
-                />
-                <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                <Checkbox
-                    className={styles.chatSettingsSeparator}
-                    checked={useSemanticRanker}
-                    label="Use semantic ranker for retrieval"
-                    onChange={onUseSemanticRankerChange}
-                />
-                <Checkbox
-                    className={styles.chatSettingsSeparator}
-                    checked={useSemanticCaptions}
-                    label="Use query-contextual summaries instead of whole documents"
-                    onChange={onUseSemanticCaptionsChange}
-                    disabled={!useSemanticRanker}
-                />
-                <Checkbox
-                    className={styles.chatSettingsSeparator}
-                    checked={useSuggestFollowupQuestions}
-                    label="Suggest follow-up questions"
-                    onChange={onUseSuggestFollowupQuestionsChange}
-                />
-                {useLogin && (
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useOidSecurityFilter}
-                        label="Use oid security filter"
-                        disabled={!client?.getActiveAccount()}
-                        onChange={onUseOidSecurityFilterChange}
-                    />
-                )}
-                {useLogin && (
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useGroupsSecurityFilter}
-                        label="Use groups security filter"
-                        disabled={!client?.getActiveAccount()}
-                        onChange={onUseGroupsSecurityFilterChange}
-                    />
-                )}
-                <Dropdown
-                    className={styles.chatSettingsSeparator}
-                    label="Retrieval mode"
-                    options={[
-                        { key: "hybrid", text: "Vectors + Text (Hybrid)", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                        { key: "vectors", text: "Vectors", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                        { key: "text", text: "Text", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
-                    ]}
-                    required
-                    onChange={onRetrievalModeChange}
-                />
-                <Checkbox
-                    className={styles.chatSettingsSeparator}
-                    checked={shouldStream}
-                    label="Stream chat completion responses"
-                    onChange={onShouldStreamChange}
-                />
-                {useLogin && <TokenClaimsDisplay />}
-            </Panel>
         </div>
     );
 };
