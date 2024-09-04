@@ -9,7 +9,7 @@ services:
     language: py
     host: containerapp
     hooks:
-      prepackage:
+      prebuild:
         windows:
           shell: pwsh
           run:  cd ../frontend;npm install;npm run build
