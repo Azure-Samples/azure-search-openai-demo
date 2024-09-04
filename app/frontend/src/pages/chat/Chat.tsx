@@ -304,10 +304,11 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                 const projects = JSON.parse(projectString);
                 let compArray: ProjectOptions[] = [];
                 projects.forEach((project: Project) => {
+                    // console.log("PROJECT", project)
                     compArray.push({
                         projectName: project.projectName ?? "",
-                        projectIndex: project.projectIndex ?? "",
-                        projectContainer: project.projectContainer ?? ""
+                        projectIndex: project.projectID ?? "",
+                        projectContainer: project.projectID ?? ""
                     });
                 });
                 setProjectOptions(compArray);

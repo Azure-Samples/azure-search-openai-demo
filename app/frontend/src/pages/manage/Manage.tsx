@@ -396,8 +396,8 @@ export default function Manage(): JSX.Element {
                 projects.forEach((project: Project) => {
                     compArray.push({
                         projectName: project.projectName ?? "",
-                        projectIndex: project.projectIndex ?? "",
-                        projectContainer: project.projectContainer ?? ""
+                        projectIndex: project.projectID ?? "",
+                        projectContainer: project.projectID ?? ""
                     });
                 });
                 setProjectOptions(compArray);
