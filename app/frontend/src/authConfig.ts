@@ -45,7 +45,7 @@ async function fetchAuthSetup(): Promise<AuthSetup> {
     }
     let responseJson: AuthSetup = await response.json();
     // Print JSON dump as string
-    console.log("JSON dump: " + JSON.stringify(responseJson));
+    // console.log("JSON dump: " + JSON.stringify(responseJson));
     return await responseJson;
 }
 

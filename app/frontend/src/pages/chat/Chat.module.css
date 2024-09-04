@@ -143,3 +143,17 @@
     max-width: 195px;
     z-index: 10;
 } */
+
+.inputColumn {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 75px;
+    gap: 15px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
