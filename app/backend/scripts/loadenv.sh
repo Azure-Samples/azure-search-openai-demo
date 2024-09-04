@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Accept the index and container as arguments
+index=$1
+container=$2
+
 # Enable exit on error and command echoing
 set -e
 set -x
@@ -28,13 +32,13 @@ export AZURE_OPENAI_SERVICE=cog-rm72v2vn7ej6o
 export AZURE_PRINCIPAL_ID=5998e964-c0a8-4fcd-af82-6e9a5110adcd
 export AZURE_PRINCIPAL_ID_OTHER=8be21b40-42cc-4850-866b-6f0c717d4e66
 export AZURE_RESOURCE_GROUP=rg-demo
-export AZURE_SEARCH_INDEX=brewing-index
+export AZURE_SEARCH_INDEX=$index
 export AZURE_SEARCH_QUERY_LANGUAGE=en-us
 export AZURE_SEARCH_QUERY_SPELLER=lexicon
 export AZURE_SEARCH_SEMANTIC_RANKER=free
 export AZURE_SEARCH_SERVICE=gptkb-rm72v2vn7ej6o
 export AZURE_STORAGE_ACCOUNT=strm72v2vn7ej6o
-export AZURE_STORAGE_CONTAINER=brewing-data
+export AZURE_STORAGE_CONTAINER=$container
 export AZURE_SUBSCRIPTION_ID=da268cd4-e89e-4d33-952a-5f61a3254e6a
 export AZURE_TENANT_ID=424db043-8c7c-43c2-9241-985a4adda777
 export AZURE_USE_AUTHENTICATION=False
