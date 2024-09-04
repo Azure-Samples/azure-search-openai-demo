@@ -326,8 +326,8 @@ export default function Manage(): JSX.Element {
 
         const onDrop = useCallback(
             (acceptedFiles: any) => {
+                console.log(acceptedFiles);
                 setFiles(acceptedFiles);
-                console.log(files);
                 let filePaths: string[] = [];
 
                 acceptedFiles.forEach((file: any) => {
@@ -335,7 +335,6 @@ export default function Manage(): JSX.Element {
                 });
 
                 setFilePath(filePaths.join(", "));
-
                 console.log("Files added: " + filePaths.join(", "));
 
                 // console.log("Index & Container: " + projectIndex + " " + projectContainer);
@@ -393,7 +392,6 @@ export default function Manage(): JSX.Element {
             }, 5000);
         }, [errorMessage, successMessage]);
         const { getRootProps, getInputProps } = useDropzone({ onDrop, multiple: false });
-
         return (
             <>
                 {!uploadingLoading && (
@@ -409,7 +407,7 @@ export default function Manage(): JSX.Element {
                             {filePath && (
                                 <>
                                     <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                                    <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
+                                    <p style={{ margin: "0", textAlign: "center", overflowWrap: "anywhere" }}>{filePath}</p>
                                 </>
                             )}
                         </div>
