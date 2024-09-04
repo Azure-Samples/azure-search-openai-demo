@@ -159,8 +159,9 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                 session_state: answers.length ? answers[answers.length - 1][1].choices[0].session_state : null
             };
 
-            runScriptApi(request, token?.accessToken);
+            //runScriptApi(request, token?.accessToken);
 
+            console.log("Token: " + token?.accessToken);
             const response = await chatApi(request, token?.accessToken);
             if (!response.body) {
                 throw Error("No response body");
@@ -303,10 +304,11 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                 const projects = JSON.parse(projectString);
                 let compArray: ProjectOptions[] = [];
                 projects.forEach((project: Project) => {
+                    // console.log("PROJECT", project)
                     compArray.push({
                         projectName: project.projectName ?? "",
-                        projectIndex: project.projectIndex ?? "",
-                        projectContainer: project.projectContainer ?? ""
+                        projectIndex: project.projectID ?? "",
+                        projectContainer: project.projectID ?? ""
                     });
                 });
                 setProjectOptions(compArray);

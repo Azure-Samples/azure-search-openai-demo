@@ -1,6 +1,6 @@
  #!/bin/sh
 
-. ./scripts/loadenv.sh
+. ./scripts/loadenv.sh "$1" "$2"
 
 echo 'Running "prepdocs.py"'
 

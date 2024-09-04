@@ -35,6 +35,10 @@
     width: 100%;
     gap: 10px;
 }
+/* 
+input[type="file"] {
+    display: none;
+  } */
 
 .dropzone {
     display: flex;
@@ -62,4 +66,9 @@
     border-radius: 5px;
     cursor: pointer;
     overflow-x: auto;
+}
+
+
+.fileUploadText{
+    font-size: 10px;
 }

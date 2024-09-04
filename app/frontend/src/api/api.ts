@@ -1,17 +1,19 @@
 const BACKEND_URI = "";
 
-import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest } from "./models";
+import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, FileUploadRequest } from "./models";
 import { useLogin } from "../authConfig";
 
-function getHeaders(idToken: string | undefined): Record<string, string> {
-    var headers: Record<string, string> = {
-        "Content-Type": "application/json"
-    };
+function getHeaders(idToken: string | undefined, contentType: string | undefined = "application/json"): Record<string, string> {
+    const headers: Record<string, string> = {};
+
+    // Conditionally set the Content-Type header
+    if (contentType) {
+        headers["Content-Type"] = contentType;
+    }
+
     // If using login, add the id token of the logged in account as the authorization
-    if (useLogin) {
-        if (idToken) {
-            headers["Authorization"] = `Bearer ${idToken}`;
-        }
+    if (useLogin && idToken) {
+        headers["Authorization"] = `Bearer ${idToken}`;
     }
 
     return headers;
@@ -44,13 +46,45 @@ export function getCitationFilePath(citation: string): string {
     return `${BACKEND_URI}/content/${citation}`;
 }
 
-
-
-
 export async function runScriptApi(request: ChatAppRequest, idToken: string | undefined): Promise<Response> {
     return await fetch(`${BACKEND_URI}/runScript`, {
         method: "POST",
         headers: getHeaders(idToken),
         body: JSON.stringify(request)
+    });
+}
+
+export async function uploadFilesApi(request: FileUploadRequest, idToken: string | undefined): Promise<Response> {
+    // Convert files to base64 and attach them to the request
+    const base64Files: { name: string; content: string; type: string }[] = [];
+
+    for (const file of request.files) {
+        const base64 = await fileToBase64(file);
+        base64Files.push({
+            name: file.name,
+            content: base64,
+            type: file.type
+        });
+    }
+
+    const payload = {
+        ...request,
+        files: base64Files
+    };
+
+    // Send the request as JSON
+    return await fetch(`${BACKEND_URI}/uploadFiles`, {
+        method: "POST",
+        headers: getHeaders(idToken, "application/json"),
+        body: JSON.stringify(payload)
+    });
+}
+
+function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file); // This method returns base64 encoded string
     });
 }
