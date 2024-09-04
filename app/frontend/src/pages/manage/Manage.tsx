@@ -301,8 +301,11 @@ export default function Manage(): JSX.Element {
     function Dropzone({ projectID }: { projectID: string }) {
         const [filePath, setFilePath] = useState("");
         const [token, setToken] = useState<string | undefined>(undefined);
+        const [files, setFiles] = useState<any>();
         const client = useLogin ? useMsal().instance : undefined;
-
+        const [uploadingLoading, setUploadingLoading] = useState(false);
+        const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined);
+        const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
         // Retrieve the token asynchronously
         useEffect(() => {
             const fetchToken = async () => {
@@ -323,6 +326,8 @@ export default function Manage(): JSX.Element {
 
         const onDrop = useCallback(
             (acceptedFiles: any) => {
+                setFiles(acceptedFiles);
+                console.log(files);
                 let filePaths: string[] = [];
 
                 acceptedFiles.forEach((file: any) => {
@@ -335,53 +340,84 @@ export default function Manage(): JSX.Element {
 
                 console.log("Index & Container: " + index + " " + container);
                 // Build the request object
-                const request: FileUploadRequest = {
-                    azureIndex: index,
-                    azureContainer: container,
-                    files: acceptedFiles
-                };
-
-                console.log("Request: " + JSON.stringify(request));
-
-                // Call the uploadFilesApi function to upload the files
-                uploadFilesApi(request, token)
-                    .then(async response => {
-                        if (response.ok) {
-                            console.log("Files uploaded successfully:", response);
-                            // Handle success (e.g., show a success message)
-                        } else {
-                            // Parse and log the error message from the response body
-                            const errorMessage = await response.json();
-                            console.error("Error uploading files:", errorMessage);
-                            // Optionally, you could display the error to the user here
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error uploading files:", error);
-                        // Handle network or other errors
-                    });
             },
             [token, index, container]
         );
+        const onUploadClick = () => {
+            const request: FileUploadRequest = {
+                azureIndex: index,
+                azureContainer: container,
+                files: files
+            };
+            setUploadingLoading(true);
+            console.log("Request: " + JSON.stringify(request));
+            setErrorMessage(undefined);
+            setSuccessMessage(undefined);
+            // Call the uploadFilesApi function to upload the files
+            uploadFilesApi(request, token)
+                .then(async response => {
+                    if (response.ok) {
+                        console.log("Files uploaded successfully:", response);
+                        setUploadingLoading(false);
+                        setSuccessMessage("Files uploaded successfully");
+                        // Handle success (e.g., show a success message)
+                    } else {
+                        // Parse and log the error message from the response body
+                        const errorMessage = await response.json();
+                        console.error("Error uploading files:", errorMessage);
+                        setUploadingLoading(false);
+                        setErrorMessage("Error uploading files: " + errorMessage);
+                        // Optionally, you could display the error to the user here
+                    }
+                })
+                .catch(error => {
+                    console.error("Error uploading files:", error);
+                    setUploadingLoading(false);
+                    setErrorMessage("Error uploading files: " + errorMessage);
+                    // Handle network or other errors
+                });
+        };
 
+        useEffect(() => {
+            setTimeout(() => {
+                setSuccessMessage(undefined);
+                setErrorMessage(undefined);
+            }, 5000);
+        }, [errorMessage, successMessage]);
         const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
         return (
-            <div {...getRootProps()} className={styles.dropzone} key={projectID}>
-                <input {...getInputProps()} />
-                {!filePath && (
+            <>
+                {!uploadingLoading && (
                     <>
-                        <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                        <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
+                        <div {...getRootProps()} className={styles.dropzone} key={projectID}>
+                            <input {...getInputProps()} />
+                            {!filePath && (
+                                <>
+                                    <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                                    <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
+                                </>
+                            )}
+                            {filePath && (
+                                <>
+                                    <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
+                                    <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
+                                </>
+                            )}
+                        </div>
+                        <Button appearance="primary" disabled={!files} style={{ marginTop: "10px" }} onClick={onUploadClick}>
+                            Upload file
+                        </Button>
                     </>
                 )}
-                {filePath && (
-                    <>
-                        <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                        <p style={{ margin: "0", textAlign: "center" }}>{filePath}</p>
-                    </>
+                {uploadingLoading && (
+                    <div className={styles.dropzone}>
+                        <Spinner label="Uploading..." labelPosition="below" size="medium" />
+                    </div>
                 )}
-            </div>
+                {successMessage && <p style={{ color: "green", margin: "0px", textAlign: "center" }}>{successMessage}</p>}
+                {errorMessage && <p style={{ color: "red", margin: "0px", textAlign: "center" }}>{errorMessage}</p>}
+            </>
         );
     }
 
@@ -489,19 +525,22 @@ export default function Manage(): JSX.Element {
                                     {userData &&
                                         (userData.projectRole === "Admin" ||
                                             userData.projectRole === "Owner" ||
-                                            (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
+                                            (project.users &&
+                                                project.users.some(
+                                                    user => user.uuid === userData.uuid && (user.projectRole === "Owner" || user.projectRole === "Admin")
+                                                ))) && (
                                             <div style={{ display: "flex", flexDirection: "column" }}>
                                                 <Dropzone projectID={project.projectID} />
-                                                <Button appearance="primary" style={{ marginTop: "10px" }}>
-                                                    Upload file
-                                                </Button>
                                             </div>
                                         )}
                                 </div>
                                 {userData &&
                                     (userData.projectRole === "Admin" ||
                                         userData.projectRole === "Owner" ||
-                                        (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
+                                        (project.users &&
+                                            project.users.some(
+                                                user => user.uuid === userData.uuid && (user.projectRole === "Owner" || user.projectRole === "Admin")
+                                            ))) && (
                                         <Button
                                             appearance="primary"
                                             onClick={() => handleOpenCreateUser(project)}
