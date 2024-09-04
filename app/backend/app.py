@@ -211,6 +211,14 @@ async def upload_files():
     # Ensure the data folder exists, create it if it doesn't
     if not os.path.exists(DATA_FOLDER):
         os.makedirs(DATA_FOLDER)
+    else:
+        # Delete all files in the data folder
+        for filename in os.listdir(DATA_FOLDER):
+            file_path = os.path.join(DATA_FOLDER, filename)
+            try:
+                os.unlink(file_path)  # Remove the file or symbolic link
+            except Exception as e:
+                print(f'Failed to delete {file_path}. Reason: {e}')
  
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 415
