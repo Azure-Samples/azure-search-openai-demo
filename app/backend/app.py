@@ -115,11 +115,17 @@ def error_response(error: Exception, route: str, status_code: int = 500):
     return jsonify(error_dict(error)), status_code
 
 
-def run_prepdocs_script():
+def run_prepdocs_script(index: str, container: str):
     script_path = os.path.join(os.path.dirname(__file__), 'scripts', 'prepdocs.sh')
 
     try:
-        result = subprocess.run(['sh', script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Pass the index and container as arguments to the shell script
+        result = subprocess.run(
+            ['sh', script_path, index, container],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
         print(f"Script output: {result.stdout.decode()}")
     except subprocess.CalledProcessError as e:
         print(f"Script failed with error: {e.stderr.decode()}")
@@ -192,60 +198,10 @@ async def runScript():
     return jsonify({"result":"ranScript"})
 
 
-# @bp.route("/uploadFiles", methods=["POST"])
-# async def upload_files():
-
-#     # Get the current working directory
-#     current_directory = os.getcwd()
-#     DATA_FOLDER = os.path.join(current_directory, "data")
-
-#     if not request.is_json:
-#         return jsonify({"error": "Request must be JSON"}), 415
-
-#     request_json = await request.get_json()
-
-#     azure_index = request_json.get("azureIndex")
-#     azure_container = request_json.get("azureContainer")
-
-#     if not azure_index or not azure_container:
-#         return jsonify({"error": "azureIndex and azureContainer are required"}), 400
-
-#     files = request_json.get("files", [])
-
-#     if not files:
-#         return jsonify({"error": "No files provided"}), 400
-
-#     # Save the files to the data folder
-#     for file in files:
-#         file_name = file["name"]
-#         file_content = file["content"].split(",")[1]  # Split to remove the metadata prefix
-#         file_type = file["type"]
-
-#         # Decode the base64 content
-#         file_data = base64.b64decode(file_content)
-
-#         # Save the file to the data folder
-#         file_path = os.path.join(DATA_FOLDER, file_name)
-#         with open(file_path, "wb") as f:
-#             f.write(file_data)
-
-#     # Handle the index and container logic here
-#     await set_index_and_container(azure_index, azure_container)
-
-#     return jsonify({
-#         "result": "Files uploaded and processed successfully",
-#         "azureIndex": azure_index,
-#         "azureContainer": azure_container
-#     })
-
-
 @bp.route("/uploadFiles", methods=["POST"])
 async def upload_files():
-# Get the current working directory
+    # Get the current working directory
     current_directory = os.getcwd()
-
-
-    
     print(f"Current working directory: {current_directory}")
  
     # Set the data folder path relative to the current directory
@@ -254,14 +210,7 @@ async def upload_files():
  
     # Ensure the data folder exists, create it if it doesn't
     if not os.path.exists(DATA_FOLDER):
-        print(f"Data folder does not exist. Creating {DATA_FOLDER}...")
         os.makedirs(DATA_FOLDER)
-    
-    print(f"Folder Created")
- 
-    # List the directories and files at the current level (for debugging)print("Contents of the current directory:")
-    for item in os.listdir(current_directory):
-        print(item)
  
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 415
@@ -283,7 +232,6 @@ async def upload_files():
     for file in files:
         file_name = file["name"]
         file_content = file["content"].split(",")[1]  # Split to remove the metadata prefix
-        file_type = file["type"]
 
         # Decode the base64 content
         file_data = base64.b64decode(file_content)
@@ -296,7 +244,9 @@ async def upload_files():
         with open(file_path, "wb") as f:
             f.write(file_data)
  
-    # Handle the index and container logic hereawait set_index_and_container(azure_index, azure_container)
+    # Handle the index and container logic here
+    await set_index_and_container(azure_index, azure_container)
+    run_prepdocs_script(azure_index, azure_container)
  
     return jsonify({
         "result": "Files uploaded and processed successfully",
