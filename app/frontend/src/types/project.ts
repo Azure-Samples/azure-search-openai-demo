@@ -10,6 +10,7 @@ interface NewProject {
     projectID: string;
     projectName: string;
     dateCreated: string;
+    users: User[];
     projectIndex?: string;
     projectContainer?: string;
 }

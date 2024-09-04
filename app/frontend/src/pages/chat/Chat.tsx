@@ -1,7 +1,22 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, IDropdownOption, Dropdown } from "@fluentui/react";
-import { useId, Dropdown as DropdownComponent, Option, Button } from "@fluentui/react-components";
+import {
+    useId,
+    Dropdown as DropdownComponent,
+    Option,
+    Button,
+    Dialog,
+    DialogTrigger,
+    DialogSurface,
+    DialogTitle,
+    DialogBody,
+    DialogActions,
+    DialogContent,
+    Label,
+    Input,
+    Spinner
+} from "@fluentui/react-components";
 import { SparkleFilled } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 import { auth } from "../../";
@@ -20,6 +35,7 @@ import { ClearChatButton } from "../../components/ClearChatButton";
 import { useLogin, getToken } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
+import { v4 as uuidv4 } from "uuid";
 
 const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -58,8 +74,12 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
     const [index, setIndex] = useState<string>("gptkbindex");
     const [container, setContainer] = useState<string>("content");
+    // const [savedChats, setSavedChats] = useState<any>([]);
+    // const [openSave, setOpenSave] = useState<boolean>(false);
+    // const [loadingSaveChat, setLoadingSaveChat] = useState<boolean>(false);
+    // const [chatName, setChatName] = useState<string>("");
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
-
+    // const baseURL = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
     const navigate = useNavigate();
     const dropdownId = useId("dropdown-default");
 
@@ -295,10 +315,44 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             }
         }
     };
+    // const openSaveChatDialog = () => {
+    //     setOpenSave(true);
+    // };
+
+    // const handleSaveChat = (event: FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+
+    //     const request = {
+    //         userUid: auth.currentUser?.uid,
+    //         chatName: chatName,
+    //         answers: answers,
+    //         project: currentProject,
+    //         date: new Date().toISOString(),
+    //         id: uuidv4()
+    //     };
+    //     axios.post(baseURL + "saveChatMessage", { request }).then(response => {
+    //         setLoadingSaveChat(false);
+    //         setOpenSave(false);
+    //         setSavedChats([...savedChats, [chatName, answers]]);
+    //     });
+    // };
+
+    // const loadChat = (chatId: string) => {};
+
     useEffect(() => {
         if (!auth.currentUser) {
             navigate("/login");
         } else {
+            // if (localStorage.getItem("user")) {
+            //     const userString = localStorage.getItem("user");
+            //     if (userString) {
+            //         const user = JSON.parse(userString);
+            //         if (user.chats) {
+            //             setSavedChats(user.chats);
+            //         }
+            //     }
+            // }
+
             const projectString = localStorage.getItem("projects");
             if (projectString) {
                 const projects = JSON.parse(projectString);
@@ -307,8 +361,8 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                     // console.log("PROJECT", project)
                     compArray.push({
                         projectName: project.projectName ?? "",
-                        projectIndex: project.projectID ?? "",
-                        projectContainer: project.projectID ?? ""
+                        projectIndex: project.projectIndex ?? project.projectID ?? "",
+                        projectContainer: project.projectContainer ?? project.projectID ?? ""
                     });
                 });
                 setProjectOptions(compArray);
@@ -318,32 +372,52 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             }
         }
     }, []);
-    console.log(answers);
-    console.log(isStreaming);
     return (
         <div className={styles.container}>
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
-                    {projectOptions && projectOptions.length > 1 && (
-                        <div className={styles.projectSelection}>
-                            <h2 style={{ color: "#409ece", textAlign: "right" }}>Select project</h2>
-                            <DropdownComponent
-                                style={{ minWidth: "200px" }}
-                                name="projectDropdown"
-                                aria-labelledby={dropdownId}
-                                defaultValue={projectOptions[0].projectName}
-                                defaultSelectedOptions={[projectOptions[0].projectName]}
-                                onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
-                                {...dropdownProps}
+                    {/* {savedChats && <div className={styles.savedChats}>Saved chats</div>}
+
+
+                    <Dialog open={openSave} onOpenChange={(_, data) => setOpenSave(data.open)}>
+                        <DialogSurface style={{ maxWidth: "400px" }}>
+                            <DialogBody
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    flexDirection: "column"
+                                }}
                             >
-                                {projectOptions.map(option => (
-                                    <Option key={option.projectName} text={option.projectName} value={option.projectName}>
-                                        {option.projectName}
-                                    </Option>
-                                ))}
-                            </DropdownComponent>
-                        </div>
-                    )}
+                                <DialogTitle>Save current chat</DialogTitle>
+                                <form onSubmit={handleSaveChat} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                                    <DialogContent>
+                                        <div className={`${styles.inputColumn} ${styles.edit}`}>
+                                            <div className={styles.inputGroup}>
+                                                <Label>Chat Name</Label>
+                                                <Input
+                                                    name="chatName"
+                                                    placeholder="Chat name"
+                                                    aria-label="Chat name"
+                                                    onChange={e => setChatName(e.target.value)}
+                                                    required
+                                                />
+                                                {loadingSaveChat && <Spinner label="Loading..." labelPosition="below" size="large" />}
+                                            </div>
+                                        </div>
+                                    </DialogContent>
+                                    <DialogActions style={{ justifyContent: "space-between" }}>
+                                        <DialogTrigger disableButtonEnhancement>
+                                            <Button appearance="secondary">Close</Button>
+                                        </DialogTrigger>
+                                        <Button appearance="primary" type="submit" disabled={loadingSaveChat}>
+                                            Save chat
+                                        </Button>
+                                    </DialogActions>
+                                </form>
+                            </DialogBody>
+                        </DialogSurface>
+                    </Dialog> */}
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your project data</h1>
@@ -418,6 +492,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                             onSend={question => makeApiRequest(question)}
                         />
                     </div>
+                    {/* {lastQuestionRef.current && <Button onClick={openSaveChatDialog}>Save current Chat</Button>} */}
                     {localStorage.getItem("streamedAnswers") && <Button onClick={handleSetAnswersFromStreamed}>View previous chat</Button>}
 
                     <div className={styles.parameterContainer}>
@@ -493,6 +568,26 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                 ))}
                             </DropdownComponent>
                         </div>
+                        {projectOptions && projectOptions.length > 1 && (
+                            <div className={styles.parameterColumn}>
+                                <h2 style={{ color: "#409ece" }}>Select project</h2>
+                                <DropdownComponent
+                                    style={{ minWidth: "200px" }}
+                                    name="projectDropdown"
+                                    aria-labelledby={dropdownId}
+                                    defaultValue={projectOptions[0].projectName}
+                                    defaultSelectedOptions={[projectOptions[0].projectName]}
+                                    onOptionSelect={(_, selected) => handleSetProject(selected.optionValue || "")}
+                                    {...dropdownProps}
+                                >
+                                    {projectOptions.map(option => (
+                                        <Option key={option.projectName} text={option.projectName} value={option.projectName}>
+                                            {option.projectName}
+                                        </Option>
+                                    ))}
+                                </DropdownComponent>
+                            </div>
+                        )}
                     </div>
                 </div>
 

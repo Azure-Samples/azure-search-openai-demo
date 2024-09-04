@@ -61,7 +61,8 @@ export default function Manage(): JSX.Element {
     const [newProjectInputs, setNewProjectInputs] = useState<NewProject>({
         projectID: "",
         projectName: "",
-        dateCreated: ""
+        dateCreated: "",
+        users: []
     });
     const [openCreateUser, setOpenCreateUser] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -74,16 +75,6 @@ export default function Manage(): JSX.Element {
 
     const currentUser = useLocation().state;
     const navigate = useNavigate();
-
-    const [currentProject, setCurrentProject] = useState<string>("default");
-    const [projectOptions, setProjectOptions] = useState<ProjectOptions[]>([]);
-    const [index, setIndex] = useState<string>("gptkbindex");
-    const [container, setContainer] = useState<string>("content");
-
-
-    const [showFileUploaded, setShowFileUploaded] = useState(false);
-    const [showFileAdded, setShowFileAdded] = useState(false);
-
 
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
@@ -252,7 +243,8 @@ export default function Manage(): JSX.Element {
         const newProject: NewProject = {
             projectID: projectID,
             projectName: projectName,
-            dateCreated: new Date().toISOString()
+            dateCreated: new Date().toISOString(),
+            users: []
         };
         axios.post(baseURL + "createNewProject", newProject).then(response => {
             console.log("New project created");
@@ -260,7 +252,8 @@ export default function Manage(): JSX.Element {
             setNewProjectInputs({
                 projectID: "",
                 projectName: "",
-                dateCreated: ""
+                dateCreated: "",
+                users: []
             });
             setLoadingSettings(false);
             setOpenCreateProject(false);
@@ -303,7 +296,7 @@ export default function Manage(): JSX.Element {
         });
     };
 
-    function Dropzone({ projectID }: { projectID: string }) {
+    function Dropzone({ project }: { project: Project }) {
         const [filePath, setFilePath] = useState("");
         const [token, setToken] = useState<string | undefined>(undefined);
         const [files, setFiles] = useState<any>();
@@ -311,6 +304,8 @@ export default function Manage(): JSX.Element {
         const [uploadingLoading, setUploadingLoading] = useState(false);
         const [successMessage, setSuccessMessage] = useState<string | undefined>(undefined);
         const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+        const index = project.projectIndex || project.projectID || "";
+        const container = project.projectContainer || project.projectID || "";
         // Retrieve the token asynchronously
         useEffect(() => {
             const fetchToken = async () => {
@@ -345,15 +340,15 @@ export default function Manage(): JSX.Element {
 
                 // console.log("Index & Container: " + projectIndex + " " + projectContainer);
 
-                console.log("Index & Container: " + projectID + " " + projectID);
+                console.log("Index & Container: " + index + " " + container);
                 // Build the request object
             },
             [token, index, container]
         );
         const onUploadClick = () => {
             const request: FileUploadRequest = {
-                azureIndex: projectID,
-                azureContainer: projectID,
+                azureIndex: index,
+                azureContainer: container,
                 files: files
             };
             setUploadingLoading(true);
@@ -397,13 +392,13 @@ export default function Manage(): JSX.Element {
                 setErrorMessage(undefined);
             }, 5000);
         }, [errorMessage, successMessage]);
-        const { getRootProps, getInputProps } = useDropzone({ onDrop,multiple: false  });
+        const { getRootProps, getInputProps } = useDropzone({ onDrop, multiple: false });
 
         return (
             <>
                 {!uploadingLoading && (
                     <>
-                        <div {...getRootProps()} className={styles.dropzone} key={projectID}>
+                        <div {...getRootProps()} className={styles.dropzone} key={index}>
                             <input {...getInputProps()} />
                             {!filePath && (
                                 <>
@@ -437,26 +432,8 @@ export default function Manage(): JSX.Element {
     useEffect(() => {
         if (!auth.currentUser) {
             navigate("/login");
-        } else {
-            const projectString = localStorage.getItem("projects");
-            if (projectString) {
-                const projects = JSON.parse(projectString);
-                let compArray: ProjectOptions[] = [];
-                projects.forEach((project: Project) => {
-                    compArray.push({
-                        projectName: project.projectName ?? "",
-                        projectIndex: project.projectIndex ?? "",
-                        projectContainer: project.projectContainer ?? ""
-                    });
-                });
-                setProjectOptions(compArray);
-                setCurrentProject(compArray[0].projectName);
-                setIndex(compArray[0].projectIndex);
-                setContainer(compArray[0].projectContainer);
-            }
         }
     }, []);
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
@@ -543,9 +520,15 @@ export default function Manage(): JSX.Element {
                                                     user => user.uuid === userData.uuid && (user.projectRole === "Owner" || user.projectRole === "Admin")
                                                 ))) && (
                                             <div style={{ display: "flex", flexDirection: "column" }}>
-                                                <Dropzone projectID={project.projectID}/>
-                                                {showFileUploaded && <span className="fileUploadText">File uploaded successfully, wait 2 minutes for it to be added to the knowledge base.<br/><strong>Do not close this tab until added</strong></span>}
-                                                {showFileAdded && <span className="fileUploadText">File added to the knowledge base</span>}
+                                                <Dropzone project={project} />
+                                                {/* {showFileUploaded && (
+                                                    <span className="fileUploadText">
+                                                        File uploaded successfully, wait 2 minutes for it to be added to the knowledge base.
+                                                        <br />
+                                                        <strong>Do not close this tab until added</strong>
+                                                    </span>
+                                                )}
+                                                {showFileAdded && <span className="fileUploadText">File added to the knowledge base</span>} */}
                                                 {/* <Button appearance="primary" style={{ marginTop: "10px" }}>
                                                     Upload file
                                                 </Button> */}
