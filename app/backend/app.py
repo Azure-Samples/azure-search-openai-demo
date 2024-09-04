@@ -247,6 +247,14 @@ async def upload_files():
     # Handle the index and container logic here
     await set_index_and_container(azure_index, azure_container)
     run_prepdocs_script(azure_index, azure_container)
+
+    # Delete contents of the data folder
+    for filename in os.listdir(DATA_FOLDER):
+        file_path = os.path.join(DATA_FOLDER, filename)
+        try:
+            os.unlink(file_path)  # Remove the file or symbolic link
+        except Exception as e:
+            print(f'Failed to delete {file_path}. Reason: {e}')
  
     return jsonify({
         "result": "Files uploaded and processed successfully",
