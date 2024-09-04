@@ -85,10 +85,10 @@
 .palAIIcon {
     height: 166px;
     width: 249px;
-    margin-top: 305px;
 }
 
 .logoContainer {
+    z-index: -1;
     position: absolute;
     bottom: 0;
     right: 0;
