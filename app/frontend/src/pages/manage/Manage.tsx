@@ -80,6 +80,11 @@ export default function Manage(): JSX.Element {
     const [index, setIndex] = useState<string>("gptkbindex");
     const [container, setContainer] = useState<string>("content");
 
+
+    const [showFileUploaded, setShowFileUploaded] = useState(false);
+    const [showFileAdded, setShowFileAdded] = useState(false);
+
+
     const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
     const baseURL2 = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
 
@@ -333,21 +338,28 @@ export default function Manage(): JSX.Element {
 
                 console.log("Files added: " + filePaths.join(", "));
 
-                console.log("Index & Container: " + index + " " + container);
+                // console.log("Index & Container: " + projectIndex + " " + projectContainer);
+
+                console.log("Index & Container: " + projectID + " " + projectID);
                 // Build the request object
                 const request: FileUploadRequest = {
-                    azureIndex: index,
-                    azureContainer: container,
+                    azureIndex: projectID,
+                    azureContainer: projectID,
                     files: acceptedFiles
                 };
 
                 console.log("Request: " + JSON.stringify(request));
+
+                setShowFileAdded(false)
+                setShowFileUploaded(false)
 
                 // Call the uploadFilesApi function to upload the files
                 uploadFilesApi(request, token)
                     .then(async response => {
                         if (response.ok) {
                             console.log("Files uploaded successfully:", response);
+                            setFilePath("")
+                            setShowFileAdded(true)
                             // Handle success (e.g., show a success message)
                         } else {
                             // Parse and log the error message from the response body
@@ -364,15 +376,15 @@ export default function Manage(): JSX.Element {
             [token, index, container]
         );
 
-        const { getRootProps, getInputProps } = useDropzone({ onDrop });
+        const { getRootProps, getInputProps } = useDropzone({ onDrop,multiple: false });
 
         return (
             <div {...getRootProps()} className={styles.dropzone} key={projectID}>
-                <input {...getInputProps()} />
+                <input {...getInputProps()} multiple={false}/>
                 {!filePath && (
                     <>
                         <DocumentArrowUpRegular fontSize={40} style={{ color: "#409ece" }} />
-                        <p style={{ margin: "0", textAlign: "center" }}>Drag and drop your project files here</p>
+                        <p style={{ margin: "0", textAlign: "center" }}>Click here or drag and drop to add your project files</p>
                     </>
                 )}
                 {filePath && (
@@ -396,8 +408,8 @@ export default function Manage(): JSX.Element {
                 projects.forEach((project: Project) => {
                     compArray.push({
                         projectName: project.projectName ?? "",
-                        projectIndex: project.projectID ?? "",
-                        projectContainer: project.projectID ?? ""
+                        projectIndex: project.projectIndex ?? "",
+                        projectContainer: project.projectContainer ?? ""
                     });
                 });
                 setProjectOptions(compArray);
@@ -491,10 +503,12 @@ export default function Manage(): JSX.Element {
                                             userData.projectRole === "Owner" ||
                                             (project.users && project.users.some(user => user.uuid === userData.uuid && user.projectRole === "Owner"))) && (
                                             <div style={{ display: "flex", flexDirection: "column" }}>
-                                                <Dropzone projectID={project.projectID} />
-                                                <Button appearance="primary" style={{ marginTop: "10px" }}>
+                                                <Dropzone projectID={project.projectID}/>
+                                                {showFileUploaded && <span className="fileUploadText">File uploaded successfully, wait 2 minutes for it to be added to the knowledge base.<br/><strong>Do not close this tab until added</strong></span>}
+                                                {showFileAdded && <span className="fileUploadText">File added to the knowledge base</span>}
+                                                {/* <Button appearance="primary" style={{ marginTop: "10px" }}>
                                                     Upload file
-                                                </Button>
+                                                </Button> */}
                                             </div>
                                         )}
                                 </div>

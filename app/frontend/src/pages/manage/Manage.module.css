@@ -67,3 +67,8 @@ input[type="file"] {
     cursor: pointer;
     overflow-x: auto;
 }
+
+
+.fileUploadText{
+    font-size: 10px;
+}
