@@ -391,7 +391,7 @@ export default function Manage(): JSX.Element {
                 setErrorMessage(undefined);
             }, 5000);
         }, [errorMessage, successMessage]);
-        const { getRootProps, getInputProps } = useDropzone({ onDrop, multiple: false });
+        const { getRootProps, getInputProps } = useDropzone({ onDrop, multiple: false, accept: { "application/pdf": [".pdf"],"text/plain": [".txt"]} });
         return (
             <>
                 {!uploadingLoading && (
