@@ -360,6 +360,8 @@ export default function Manage(): JSX.Element {
                         console.log("Files uploaded successfully:", response);
                         setUploadingLoading(false);
                         setSuccessMessage("Files uploaded successfully");
+                        setFiles(undefined);
+                        setFilePath("");
                         // Handle success (e.g., show a success message)
                     } else {
                         // Parse and log the error message from the response body
@@ -367,6 +369,8 @@ export default function Manage(): JSX.Element {
                         console.error("Error uploading files:", errorMessage);
                         setUploadingLoading(false);
                         setErrorMessage("Error uploading files: " + errorMessage);
+                        setFiles(undefined);
+                        setFilePath("");
                         // Optionally, you could display the error to the user here
                     }
                 })
@@ -374,6 +378,8 @@ export default function Manage(): JSX.Element {
                     console.error("Error uploading files:", error);
                     setUploadingLoading(false);
                     setErrorMessage("Error uploading files: " + errorMessage);
+                    setFiles(undefined);
+                    setFilePath("");
                     // Handle network or other errors
                 });
         };
