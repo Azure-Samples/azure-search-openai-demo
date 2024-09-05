@@ -1,6 +1,11 @@
  #!/bin/sh
 
-. ./scripts/loadenv.sh
+# Get the project root of the current script
+project_root="$(cd "$(dirname $(dirname $0))" && pwd)"
+script_dir="$project_root/scripts"
+data_dir="$project_root/data"
+
+. $script_dir/loadenv.sh
 
 echo 'Running "prepdocs.py"'
 
@@ -74,7 +79,8 @@ if [ $# -gt 0 ]; then
   additionalArgs="$@"
 fi
 
-./.venv/bin/python ./app/backend/prepdocs.py './data/*' --verbose \
+
+./.venv/bin/python $app_dir/backend/prepdocs.py "$data_dir/*" --verbose \
 --subscriptionid $AZURE_SUBSCRIPTION_ID  \
 --storageaccount "$AZURE_STORAGE_ACCOUNT" --container "$AZURE_STORAGE_CONTAINER" --storageresourcegroup $AZURE_STORAGE_RESOURCE_GROUP \
 --searchservice "$AZURE_SEARCH_SERVICE" --index "$AZURE_SEARCH_INDEX" \

@@ -1,4 +1,5 @@
-./scripts/loadenv.ps1
+$projectRoot = Split-Path -Parent $PSScriptRoot
+& $projectRoot/scripts/loadenv.ps1
 
 $venvPythonPath = "./.venv/scripts/python.exe"
 if (Test-Path -Path "/usr") {
@@ -71,14 +72,13 @@ if ($env:AZURE_OPENAI_API_KEY_OVERRIDE) {
   $openaiApiKeyArg = "--openaikey $env:OPENAI_API_KEY"
 }
 
-$cwd = (Get-Location)
-$dataArg = "`"$cwd/data/*`""
+$dataArg = "`"$projectRoot/data/*`""
 $additionalArgs = ""
 if ($args) {
   $additionalArgs = "$args"
 }
 
-$argumentList = "./app/backend/prepdocs.py $dataArg --verbose " + `
+$argumentList = "$projectRoot/app/backend/prepdocs.py $dataArg --verbose " + `
 "--subscriptionid $env:AZURE_SUBSCRIPTION_ID " + `
 "--storageaccount $env:AZURE_STORAGE_ACCOUNT --container $env:AZURE_STORAGE_CONTAINER --storageresourcegroup $env:AZURE_STORAGE_RESOURCE_GROUP " + `
 "--searchservice $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX " + `

@@ -1,5 +1,9 @@
  #!/bin/sh
 
-. ./scripts/load_azd_env.sh
+# Get the project root of the current script
+project_root="$(cd "$(dirname $(dirname $0))" && pwd)"
+script_dir="$project_root/scripts"
 
-. ./scripts/load_python_env.sh
+. $script_dir/load_azd_env.sh
+
+. $script_dir/load_python_env.sh
