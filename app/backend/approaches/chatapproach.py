@@ -75,7 +75,9 @@ class ChatApproach(Approach, ABC):
                 return query_text
         return user_query
 
-    def extract_followup_questions(self, content: str):
+    def extract_followup_questions(self, content: Optional[str]):
+        if content is None:
+            return content, []
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
 
     async def run_without_streaming(
@@ -89,15 +91,17 @@ class ChatApproach(Approach, ABC):
             messages, overrides, auth_claims, should_stream=False
         )
         chat_completion_response: ChatCompletion = await chat_coroutine
-        chat_resp = chat_completion_response.model_dump()  # Convert to dict to make it JSON serializable
-        chat_resp = chat_resp["choices"][0]
-        chat_resp["context"] = extra_info
+        content = chat_completion_response.choices[0].message.content
+        role = chat_completion_response.choices[0].message.role
         if overrides.get("suggest_followup_questions"):
-            content, followup_questions = self.extract_followup_questions(chat_resp["message"]["content"])
-            chat_resp["message"]["content"] = content
-            chat_resp["context"]["followup_questions"] = followup_questions
-        chat_resp["session_state"] = session_state
-        return chat_resp
+            content, followup_questions = self.extract_followup_questions(content)
+            extra_info["followup_questions"] = followup_questions
+        chat_app_response = {
+            "message": {"content": content, "role": role},
+            "context": extra_info,
+            "session_state": session_state,
+        }
+        return chat_app_response
 
     async def run_with_streaming(
         self,
@@ -117,7 +121,12 @@ class ChatApproach(Approach, ABC):
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
-                completion = {"delta": event["choices"][0]["delta"]}
+                completion = {
+                    "delta": {
+                        "content": event["choices"][0]["delta"].get("content"),
+                        "role": event["choices"][0]["delta"]["role"],
+                    }
+                }
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = completion["delta"].get("content")
                 content = content or ""  # content may either not exist in delta, or explicitly be None

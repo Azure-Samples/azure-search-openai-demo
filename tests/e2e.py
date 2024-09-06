@@ -48,6 +48,7 @@ def run_server(port: int):
             "AZURE_STORAGE_CONTAINER": "test-storage-container",
             "AZURE_STORAGE_RESOURCE_GROUP": "test-storage-rg",
             "AZURE_SUBSCRIPTION_ID": "test-storage-subid",
+            "ENABLE_LANGUAGE_PICKER": "false",
             "USE_SPEECH_INPUT_BROWSER": "false",
             "USE_SPEECH_OUTPUT_AZURE": "false",
             "AZURE_SEARCH_INDEX": "test-search-index",
