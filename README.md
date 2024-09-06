@@ -134,7 +134,7 @@ Follow these steps to provision Azure resources and deploy the application code:
     azd auth login
     ```
 
-    For GitHub Codespaces users, if the previous command fails, try 
+    For GitHub Codespaces users, if the previous command fails, try: 
    ```shell
     azd auth login --use-device-code 
     ```
