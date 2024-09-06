@@ -23,7 +23,6 @@ services:
 infra:
   provider: bicep
   path: ../infra
-  module: main-aca
 
 pipeline:
   variables:
