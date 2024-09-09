@@ -153,6 +153,18 @@ It will look like the following:
 
 > NOTE: It may take 5-10 minutes after you see 'SUCCESS' for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page. See [guide on debugging App Service deployments](docs/appservice.md).
 
+### Deploying to Azure Container Apps
+
+By default, this project is deployed to Azure App Service. If you want to deploy to Azure Container Apps, please run:
+
+```bash
+cd containerapps
+azd env new
+azd env set DEPLOYMENT_TARGET containerapps
+azd up
+```
+The `.azure/{env name}/.env` file can be found in the `containerapps` folder. 
+
 ### Deploying again
 
 If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
