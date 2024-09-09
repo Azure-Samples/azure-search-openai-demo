@@ -980,3 +980,4 @@ output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 
 output BACKEND_URI string = deploymentTarget == 'appservice' ? backend.outputs.uri : acaBackend.outputs.uri
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'containerapps' ? containerApps.outputs.registryLoginServer : ''
