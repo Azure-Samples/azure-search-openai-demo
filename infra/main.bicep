@@ -394,7 +394,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend-${resourceToken}'
     location: location
-    identityName: (deploymentTarget == 'containerapps') ? acaIdentity.name : ''
+    identityName: (deploymentTarget == 'containerapps') ? acaIdentityName : ''
     exists: webAppExists
     workloadProfile: azureContainerAppsWorkloadProfile
     containerRegistryName: (deploymentTarget == 'containerapps') ? containerApps.outputs.registryName : ''
@@ -402,8 +402,8 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     identityType: 'UserAssigned'
     tags: union(tags, { 'azd-service-name': 'backend' })
     targetPort: 8000
-    containerCpuCoreCount: '2.0'
-    containerMemory: '4Gi'
+    containerCpuCoreCount: '1.0'
+    containerMemory: '2Gi'
     allowedOrigins: [ allowedOrigin ]
     env: {
       AZURE_STORAGE_ACCOUNT: storage.outputs.name
