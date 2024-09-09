@@ -362,7 +362,7 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
 
 // identity for pulling images from ACR
 module acaIdentity 'core/security/aca-identity.bicep' = if (deploymentTarget == 'containerapps') {
-  name: acaIdentityName
+  name: 'aca-identity'
   scope: resourceGroup
   params: {
     identityName: acaIdentityName
@@ -394,11 +394,11 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend-${resourceToken}'
     location: location
-    identityName: acaIdentity.name
+    identityName: (deploymentTarget == 'containerapps') ? acaIdentity.name : ''
     exists: webAppExists
     workloadProfile: azureContainerAppsWorkloadProfile
-    containerRegistryName: containerApps.outputs.registryName
-    containerAppsEnvironmentName: containerApps.outputs.environmentName
+    containerRegistryName: (deploymentTarget == 'containerapps') ? containerApps.outputs.registryName : ''
+    containerAppsEnvironmentName: (deploymentTarget == 'containerapps') ? containerApps.outputs.environmentName : ''
     identityType: 'UserAssigned'
     tags: union(tags, { 'azd-service-name': 'backend' })
     targetPort: 8000
@@ -460,7 +460,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
       USE_LOCAL_PDF_PARSER: useLocalPdfParser
       USE_LOCAL_HTML_PARSER: useLocalHtmlParser
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
-      AZURE_CLIENT_ID: acaIdentity.outputs.clientId
+      AZURE_CLIENT_ID: (deploymentTarget == 'containerapps') ? acaIdentity.outputs.clientId : ''
     }
   }
 }
