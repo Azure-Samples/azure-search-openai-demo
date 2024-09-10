@@ -1,31 +1,22 @@
 # Deploying on Azure Container Apps
 
-Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of azd, the azure.yaml file for deploying to Azure Container Apps lives in folder `aca-host` along with symbolic links to `app`,`data` and `scripts` folder.
-
-## For Linux/MacOS users
-
-If you are on Linux/MacOS, it should work without any extra settings to deploy on Azure Container Apps. Please use:
+Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of azd, the azure.yaml file for deploying to Azure Container Apps lives here.
+To deploy to azure container apps, please run from project root folder:
 
 ```bash
-cd aca-host
+cd containerapps
+azd env new
+azd env set DEPLOYMENT_TARGET containerapps
 azd up
 ```
 
-## For Windows users
+## Customizing Workload Profile
 
-Because Windows [doesn't enable symbolic links by default](https://stackoverflow.com/questions/5917249/git-symbolic-links-in-windows), you may need to enable [Developer Mode](https://learn.microsoft.com/windows/apps/get-started/enable-your-device-for-development) and symlinks for git before cloning this repo.
-To enable symlinks for git, please use
-
-```bash
-# local setting
-git config core.symlinks true
-# Alternatively, enable symlinks globally
-git config --global core.symlinks true
-```
-
-Please check whether the symlink works correctly and then run:
+The default workload profile is Consumption. If you want to use a dedicated workload profile like D4, please run:
 
 ```bash
-cd aca-host
-azd up
+azd env AZURE_CONTAINER_APPS_WORKLOAD_PROFILE D4
 ```
+
+For a full list of workload profiles, please check [here](https://learn.microsoft.com/azure/container-apps/workload-profiles-overview#profile-types).
+Please note dedicated workload profiles have a different billing model than Consumption plan. Please check [here](https://learn.microsoft.com/azure/container-apps/billing) for details.
