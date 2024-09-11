@@ -444,7 +444,7 @@ async def setup_clients():
     # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
     # The managed identity is setup in the infra/ folder.
     azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
-    if os.getenv("WEBSITE_HOSTNAME"):
+    if os.getenv("WEBSITE_HOSTNAME"):  # Environment variable set on Azure Web Apps
         current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
         azure_credential = ManagedIdentityCredential()
     elif AZURE_TENANT_ID:
