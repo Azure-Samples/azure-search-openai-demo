@@ -443,7 +443,7 @@ async def setup_clients():
     # Use the current user identity for keyless authentication to Azure services.
     # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
     # The managed identity is setup in the infra/ folder.
-    if os.getenv("WEBSITE_HOSTNAME"):
+    if os.getenv("WEBSITE_HOSTNAME"):  # Environment variable set on Azure Web Apps
         azure_credential = ManagedIdentityCredential()
     else:
         azure_credential = AzureDeveloperCliCredential(tenant_id=AZURE_TENANT_ID)
