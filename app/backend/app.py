@@ -443,10 +443,18 @@ async def setup_clients():
     # Use the current user identity for keyless authentication to Azure services.
     # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
     # The managed identity is setup in the infra/ folder.
+    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
     if os.getenv("WEBSITE_HOSTNAME"):
+        current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
         azure_credential = ManagedIdentityCredential()
-    else:
+    elif AZURE_TENANT_ID:
+        current_app.logger.info(
+            "Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", AZURE_TENANT_ID
+        )
         azure_credential = AzureDeveloperCliCredential(tenant_id=AZURE_TENANT_ID)
+    else:
+        current_app.logger.info("Setting up Azure credential using AzureDeveloperCliCredential for home tenant")
+        azure_credential = AzureDeveloperCliCredential()
 
     # Set up clients for AI Search and Storage
     search_client = SearchClient(
