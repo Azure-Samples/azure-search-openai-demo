@@ -191,9 +191,6 @@
     "enableUnauthenticatedAccess": {
       "value": "${AZURE_ENABLE_UNAUTHENTICATED_ACCESS=false}"
     },
-    "tenantId": {
-      "value": "${AZURE_TENANT_ID}"
-    },
     "authTenantId": {
       "value": "${AZURE_AUTH_TENANT_ID}"
     },
