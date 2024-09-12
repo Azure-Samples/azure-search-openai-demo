@@ -451,10 +451,10 @@ async def setup_clients():
         current_app.logger.info(
             "Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", AZURE_TENANT_ID
         )
-        azure_credential = AzureDeveloperCliCredential(tenant_id=AZURE_TENANT_ID)
+        azure_credential = AzureDeveloperCliCredential(tenant_id=AZURE_TENANT_ID, process_timeout=60)
     else:
         current_app.logger.info("Setting up Azure credential using AzureDeveloperCliCredential for home tenant")
-        azure_credential = AzureDeveloperCliCredential()
+        azure_credential = AzureDeveloperCliCredential(process_timeout=60)
 
     # Set up clients for AI Search and Storage
     search_client = SearchClient(

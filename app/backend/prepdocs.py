@@ -386,7 +386,7 @@ if __name__ == "__main__":
         azd_credential = AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     else:
         logger.info("Connecting to Azure services using the azd credential for home tenant")
-        azd_credential = AzureDeveloperCliCredential()
+        azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
     if args.removeall:
         document_action = DocumentAction.RemoveAll
