@@ -355,7 +355,7 @@ var appEnvVariables = {
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
 }
 
-// The application frontend
+// App Service for the web application (Python Quart app with JS frontend)
 module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservice') {
   name: 'web'
   scope: resourceGroup
@@ -411,7 +411,7 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
   }
 }
 
-// The application frontend
+// Container Apps for the web application (Python Quart app with JS frontend)
 module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget == 'containerapps') {
   name: 'aca-web'
   scope: resourceGroup
