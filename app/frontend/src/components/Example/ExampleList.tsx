@@ -3,15 +3,14 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "What are the major types of genetic mutations that can lead to the development of diseases?",
-    "How has the COVID-19 pandemic accelerated healthcare innovation and improved management protocols for respiratory diseases?",
-    "What are the primary differences between antigenic drift and antigenic shift in influenza viruses?"
+    "What are the essential procedures for obtaining a license to operate a home healthcare facility in Dubai?",
+    "Explain the primary goal of the Clinical Governance Framework outlined by DHA.",
+    "What are the key licensure requirements for establishing a dental laboratory that I need to follow?"
 ];
-
 const GPT4V_EXAMPLES: string[] = [
-    "What are the major types of genetic mutations that can lead to the development of diseases?",
-    "How has the COVID-19 pandemic accelerated healthcare innovation and improved management protocols for respiratory diseases?",
-    "What are the primary differences between antigenic drift and antigenic shift in influenza viruses?"
+    "What are the essential procedures for obtaining a license to operate a home healthcare facility in Dubai?",
+    "Explain the primary goal of the Clinical Governance Framework outlined by DHA.",
+    "What are the key licensure requirements for establishing a dental laboratory that I need to follow?"
 ];
 
 interface Props {
