@@ -1,12 +1,23 @@
 # Deploying on Azure Container Apps
 
-Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of azd, the azure.yaml file for deploying to Azure Container Apps lives here.
-To deploy to azure container apps, please run from project root folder:
+Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of azd, there could be only one host option in the [azure.yaml](../azure.yaml) file.
+By default, `host: appservice` is used and `host: containerapp` is commented out.
+
+To deploy to azure container apps, please follow the following steps:
+
+1. Comment out `host: appservice` and uncomment `host: containerapp` in the [azure.yaml](../azure.yaml) file.
+
+1. Run
 
 ```bash
-cd containerapps
+# Login to your azure account
+azd auth login
+
+# Create a new env 
 azd env new
+# Set deployment target to containerapps
 azd env set DEPLOYMENT_TARGET containerapps
+
 azd up
 ```
 
