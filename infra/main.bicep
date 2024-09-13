@@ -385,9 +385,9 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
   }
 }
 
-// Azure container apps resources
+// Azure container apps resources (Only deployed if deploymentTarget is 'containerapps')
 
-// identity for pulling images from ACR
+// User-assigned identity for pulling images from ACR
 module acaIdentity 'core/security/aca-identity.bicep' = if (deploymentTarget == 'containerapps') {
   name: 'aca-identity'
   scope: resourceGroup
