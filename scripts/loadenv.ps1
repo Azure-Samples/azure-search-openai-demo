@@ -1,5 +1,3 @@
-$projectRoot = Split-Path -Parent $PSScriptRoot
+./scripts/load_azd_env.ps1
 
-& $projectRoot/scripts/load_azd_env.ps1
-
-& $projectRoot/scripts/load_python_env.ps1
+./scripts/load_python_env.ps1

@@ -98,22 +98,22 @@ hooks:
     preprovision:
       windows:
         shell: pwsh
-        run: ../scripts/auth_init.ps1
+        run: ./scripts/auth_init.ps1
         interactive: true
         continueOnError: false
       posix:
         shell: sh
-        run: ../scripts/auth_init.sh
+        run: ./scripts/auth_init.sh
         interactive: true
         continueOnError: false
     postprovision:
       windows:
         shell: pwsh
-        run: ../scripts/auth_update.ps1; ../scripts/prepdocs.ps1
+        run: ./scripts/auth_update.ps1;./scripts/prepdocs.ps1
         interactive: true
         continueOnError: false
       posix:
         shell: sh
-        run: ../scripts/auth_update.sh; ../scripts/prepdocs.sh
+        run: ./scripts/auth_update.sh;./scripts/prepdocs.sh
         interactive: true
         continueOnError: false

@@ -1,4 +1,3 @@
-$projectRoot = Split-Path -Parent $PSScriptRoot
 $pythonCmd = Get-Command python -ErrorAction SilentlyContinue
 if (-not $pythonCmd) {
   # fallback to python3 if python not found
@@ -15,4 +14,4 @@ if (Test-Path -Path "/usr") {
 }
 
 Write-Host 'Installing dependencies from "requirements.txt" into virtual environment'
-Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r $projectRoot/app/backend/requirements.txt" -Wait -NoNewWindow
+Start-Process -FilePath $venvPythonPath -ArgumentList "-m pip install -r app/backend/requirements.txt" -Wait -NoNewWindow

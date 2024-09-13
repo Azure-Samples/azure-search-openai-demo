@@ -9,7 +9,5 @@ if (Test-Path -Path "/usr") {
   $venvPythonPath = "./.venv/bin/python"
 }
 
-$projectRoot = Split-Path -Parent $PSScriptRoot
-
 Write-Host "Running manageacl.py. Arguments to script: $args"
-Start-Process -FilePath $venvPythonPath -ArgumentList "$projectRoot/scripts/manageacl.py --search-service $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX $args" -Wait -NoNewWindow
+Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/manageacl.py --search-service $env:AZURE_SEARCH_SERVICE --index $env:AZURE_SEARCH_INDEX $args" -Wait -NoNewWindow
