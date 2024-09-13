@@ -7,7 +7,7 @@ services:
   backend:
     project: ./app/backend
     language: py
-    # Please check docs/azure_container_apps.md for more information on how to deploy to azure container apps
+    # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
     # host: containerapp
     host: appservice
     hooks:
