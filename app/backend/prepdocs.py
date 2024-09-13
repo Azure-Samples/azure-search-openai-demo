@@ -381,11 +381,12 @@ if __name__ == "__main__":
     use_int_vectorization = args.useintvectorization and args.useintvectorization.lower() == "true"
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
-    azd_credential = (
-        AzureDeveloperCliCredential()
-        if args.tenantid is None
-        else AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
-    )
+    if args.tenantid:
+        logger.info("Connecting to Azure services using the azd credential for tenant %s", args.tenantid)
+        azd_credential = AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
+    else:
+        logger.info("Connecting to Azure services using the azd credential for home tenant")
+        azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
     if args.removeall:
         document_action = DocumentAction.RemoveAll
