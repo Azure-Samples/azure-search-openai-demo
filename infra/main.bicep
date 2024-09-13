@@ -21,13 +21,15 @@ param searchServiceName string = '' // Set in main.parameters.json
 param searchServiceResourceGroupName string = '' // Set in main.parameters.json
 param searchServiceLocation string = '' // Set in main.parameters.json
 // The free tier does not support managed identity (required) or semantic search (optional)
-@allowed([ 'free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2' ])
+@allowed(['free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
-var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free') ? 'disabled' : searchServiceSemanticRankerLevel
+var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free')
+  ? 'disabled'
+  : searchServiceSemanticRankerLevel
 
 param storageAccountName string = '' // Set in main.parameters.json
 param storageResourceGroupName string = '' // Set in main.parameters.json
@@ -40,7 +42,7 @@ param userStorageContainerName string = 'user-content'
 
 param appServiceSkuName string // Set in main.parameters.json
 
-@allowed([ 'azure', 'openai', 'azure_custom' ])
+@allowed(['azure', 'openai', 'azure_custom'])
 param openAiHost string // Set in main.parameters.json
 param isAzureOpenAiHost bool = startsWith(openAiHost, 'azure')
 param deployAzureOpenAi bool = openAiHost == 'azure'
@@ -58,7 +60,18 @@ param speechServiceSkuName string // Set in main.parameters.json
 param useGPT4V bool = false
 
 @description('Location for the OpenAI resource group')
-@allowed([ 'canadaeast', 'eastus', 'eastus2', 'francecentral', 'switzerlandnorth', 'uksouth', 'japaneast', 'northcentralus', 'australiaeast', 'swedencentral' ])
+@allowed([
+  'canadaeast'
+  'eastus'
+  'eastus2'
+  'francecentral'
+  'switzerlandnorth'
+  'uksouth'
+  'japaneast'
+  'northcentralus'
+  'australiaeast'
+  'swedencentral'
+])
 @metadata({
   azd: {
     type: 'location'
@@ -78,7 +91,7 @@ param documentIntelligenceResourceGroupName string = '' // Set in main.parameter
 // Limited regions for new version:
 // https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
 @description('Location for the Document Intelligence resource group')
-@allowed([ 'eastus', 'westus2', 'westeurope' ])
+@allowed(['eastus', 'westus2', 'westeurope'])
 @metadata({
   azd: {
     type: 'location'
@@ -98,7 +111,9 @@ param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
 param chatGptDeploymentCapacity int = 0
 var chatGpt = {
-  modelName: !empty(chatGptModelName) ? chatGptModelName : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
+  modelName: !empty(chatGptModelName)
+    ? chatGptModelName
+    : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
@@ -143,12 +158,12 @@ param clientAppSecret string = ''
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
-@allowed([ 'None', 'AzureServices' ])
+@allowed(['None', 'AzureServices'])
 @description('If allowedIp is set, whether azure services are allowed to bypass the storage and AI services firewall.')
 param bypass string = 'AzureServices'
 
 @description('Public network access value for all deployed resources')
-@allowed([ 'Enabled', 'Disabled' ])
+@allowed(['Enabled', 'Disabled'])
 param publicNetworkAccess string = 'Enabled'
 
 @description('Add a private endpoints for network connectivity')
@@ -229,8 +244,12 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
   params: {
     location: location
     tags: tags
-    applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
-    logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    applicationInsightsName: !empty(applicationInsightsName)
+      ? applicationInsightsName
+      : '${abbrs.insightsComponents}${resourceToken}'
+    logAnalyticsName: !empty(logAnalyticsName)
+      ? logAnalyticsName
+      : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
   }
 }
@@ -239,7 +258,9 @@ module applicationInsightsDashboard 'backend-dashboard.bicep' = if (useApplicati
   name: 'application-insights-dashboard'
   scope: resourceGroup
   params: {
-    name: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
+    name: !empty(applicationInsightsDashboardName)
+      ? applicationInsightsDashboardName
+      : '${abbrs.portalDashboards}${resourceToken}'
     location: location
     applicationInsightsName: useApplicationInsights ? monitoring.outputs.applicationInsightsName : ''
   }
@@ -277,7 +298,7 @@ module backend 'core/host/appservice.bicep' = {
     managedIdentity: true
     virtualNetworkSubnetId: isolation.outputs.appSubnetId
     publicNetworkAccess: publicNetworkAccess
-    allowedOrigins: [ allowedOrigin ]
+    allowedOrigins: [allowedOrigin]
     clientAppId: clientAppId
     serverAppId: serverAppId
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
@@ -295,7 +316,9 @@ module backend 'core/host/appservice.bicep' = {
       AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
       AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
       AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
-      APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights ? monitoring.outputs.applicationInsightsConnectionString : ''
+      APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights
+        ? monitoring.outputs.applicationInsightsConnectionString
+        : ''
       AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
       AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
       ENABLE_LANGUAGE_PICKER: enableLanguagePicker
@@ -372,20 +395,25 @@ var defaultOpenAiDeployments = [
   }
 ]
 
-var openAiDeployments = concat(defaultOpenAiDeployments, useGPT4V ? [
-    {
-      name: gpt4vDeploymentName
-      model: {
-        format: 'OpenAI'
-        name: gpt4vModelName
-        version: gpt4vModelVersion
-      }
-      sku: {
-        name: 'Standard'
-        capacity: gpt4vDeploymentCapacity
-      }
-    }
-  ] : [])
+var openAiDeployments = concat(
+  defaultOpenAiDeployments,
+  useGPT4V
+    ? [
+        {
+          name: gpt4vDeploymentName
+          model: {
+            format: 'OpenAI'
+            name: gpt4vModelName
+            version: gpt4vModelVersion
+          }
+          sku: {
+            name: 'Standard'
+            capacity: gpt4vDeploymentCapacity
+          }
+        }
+      ]
+    : []
+)
 
 module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzureOpenAiHost && deployAzureOpenAi) {
   name: 'openai'
@@ -395,7 +423,9 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzure
     location: openAiResourceGroupLocation
     tags: tags
     kind: 'OpenAI'
-    customSubDomainName: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+    customSubDomainName: !empty(openAiServiceName)
+      ? openAiServiceName
+      : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
@@ -413,9 +443,13 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4'
   name: 'documentintelligence'
   scope: documentIntelligenceResourceGroup
   params: {
-    name: !empty(documentIntelligenceServiceName) ? documentIntelligenceServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
+    name: !empty(documentIntelligenceServiceName)
+      ? documentIntelligenceServiceName
+      : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     kind: 'FormRecognizer'
-    customSubDomainName: !empty(documentIntelligenceServiceName) ? documentIntelligenceServiceName : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
+    customSubDomainName: !empty(documentIntelligenceServiceName)
+      ? documentIntelligenceServiceName
+      : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
@@ -456,7 +490,9 @@ module speech 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useSpee
     networkAcls: {
       defaultAction: 'Allow'
     }
-    customSubDomainName: !empty(speechServiceName) ? speechServiceName : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
+    customSubDomainName: !empty(speechServiceName)
+      ? speechServiceName
+      : '${abbrs.cognitiveServicesSpeech}${resourceToken}'
     location: !empty(speechServiceLocation) ? speechServiceLocation : location
     tags: tags
     sku: speechServiceSkuName
@@ -474,8 +510,10 @@ module searchService 'core/search/search-services.bicep' = {
       name: searchServiceSkuName
     }
     semanticSearch: actualSearchServiceSemanticRankerLevel
-    publicNetworkAccess: publicNetworkAccess == 'Enabled' ? 'enabled' : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [ storage.outputs.id ] : []
+    publicNetworkAccess: publicNetworkAccess == 'Enabled'
+      ? 'enabled'
+      : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
+    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [storage.outputs.id] : []
   }
 }
 
@@ -519,7 +557,9 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
   name: 'user-storage'
   scope: storageResourceGroup
   params: {
-    name: !empty(userStorageAccountName) ? userStorageAccountName : 'user${abbrs.storageStorageAccounts}${resourceToken}'
+    name: !empty(userStorageAccountName)
+      ? userStorageAccountName
+      : 'user${abbrs.storageStorageAccounts}${resourceToken}'
     location: storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
@@ -720,36 +760,38 @@ module isolation 'network-isolation.bicep' = {
 
 var environmentData = environment()
 
-var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi) ? [{
-  groupId: 'account'
-  dnsZoneName: 'privatelink.openai.azure.com'
-  resourceIds: concat(
-    [ openAi.outputs.resourceId ],
-    useGPT4V ? [ computerVision.outputs.resourceId ] : [],
-    !useLocalPdfParser ? [ documentIntelligence.outputs.resourceId ] : []
-  )
-}] : []
-var otherPrivateEndpointConnections = usePrivateEndpoint ? [
-  {
-    groupId: 'blob'
-    dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
-    resourceIds: concat(
-      [ storage.outputs.id ],
-      useUserUpload ? [ userStorage.outputs.id ] : []
-    )
-  }
-  {
-    groupId: 'searchService'
-    dnsZoneName: 'privatelink.search.windows.net'
-    resourceIds: [ searchService.outputs.id ]
-  }
-  {
-    groupId: 'sites'
-    dnsZoneName: 'privatelink.azurewebsites.net'
-    resourceIds: [ backend.outputs.id ]
-  }
-] : []
-
+var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi)
+  ? [
+      {
+        groupId: 'account'
+        dnsZoneName: 'privatelink.openai.azure.com'
+        resourceIds: concat(
+          [openAi.outputs.resourceId],
+          useGPT4V ? [computerVision.outputs.resourceId] : [],
+          !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
+        )
+      }
+    ]
+  : []
+var otherPrivateEndpointConnections = usePrivateEndpoint
+  ? [
+      {
+        groupId: 'blob'
+        dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
+        resourceIds: concat([storage.outputs.id], useUserUpload ? [userStorage.outputs.id] : [])
+      }
+      {
+        groupId: 'searchService'
+        dnsZoneName: 'privatelink.search.windows.net'
+        resourceIds: [searchService.outputs.id]
+      }
+      {
+        groupId: 'sites'
+        dnsZoneName: 'privatelink.azurewebsites.net'
+        resourceIds: [backend.outputs.id]
+      }
+    ]
+  : []
 
 var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection)
 
