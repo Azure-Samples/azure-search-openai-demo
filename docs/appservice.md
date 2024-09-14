@@ -631,15 +631,17 @@ To see any exceptions and server errors, navigate to the _Investigate -> Failure
 
 ## Configuring log levels
 
-By default, the deployed app only logs messages with a level of `WARNING` or higher.
+By default, the deployed app only logs messages from packages with a level of `WARNING` or higher,
+but logs all messages from the app with a level of `INFO` or higher.
 
 These lines of code in `app/backend/app.py` configure the logging level:
 
 ```python
+# Set root level to WARNING to avoid seeing overly verbose logs from SDKS
+logging.basicConfig(level=logging.WARNING)
+# Set the app logger level to INFO by default
 default_level = "INFO"
-if os.getenv("WEBSITE_HOSTNAME"):  # In production, don't log as heavily
-    default_level = "WARNING"
-logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
+app.logger.setLevel(os.getenv("APP_LOG_LEVEL", default_level))
 ```
 
 To change the default level, either change `default_level` or set the `APP_LOG_LEVEL` environment variable

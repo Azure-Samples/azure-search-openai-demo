@@ -353,6 +353,7 @@ var appEnvVariables = {
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
+  RUNNING_IN_PRODUCTION: 'true'
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
