@@ -49,3 +49,7 @@ azd env AZURE_CONTAINER_APPS_WORKLOAD_PROFILE D4
 
 For a full list of workload profiles, please check [here](https://learn.microsoft.com/azure/container-apps/workload-profiles-overview#profile-types).
 Please note dedicated workload profiles have a different billing model than Consumption plan. Please check [here](https://learn.microsoft.com/azure/container-apps/billing) for details.
+
+## Private endpoints
+
+Private endpoints is still in private preview for Azure Conainer Apps and not supported for now.
