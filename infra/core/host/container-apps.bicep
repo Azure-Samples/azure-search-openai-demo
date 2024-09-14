@@ -52,7 +52,6 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.5.2
     // Non-required parameters
     infrastructureResourceGroupName: containerRegistryResourceGroupName
     infrastructureSubnetId: virtualNetworkSubnetId
-    // internal: true
     location: location
     tags: tags
     zoneRedundant: false
