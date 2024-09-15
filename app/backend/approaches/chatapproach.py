@@ -16,6 +16,9 @@ class ChatApproach(Approach, ABC):
         {"role": "user", "content": "Who can help me with R&D funding in New Zealand?"},
         {"role": "assistant",
             "content": "Show all R&D funding options available in New Zealand."},
+        {"role": "user", "content": "Tell me more about this assistant."},
+        {"role": "assistant",
+            "content": "Show detailed information about GovGPT."},
     ]
     NO_RESPONSE = "0"
 
