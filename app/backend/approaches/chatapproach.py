@@ -20,6 +20,7 @@ class ChatApproach(Approach, ABC):
     NO_RESPONSE = "0"
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
+    Use the system message to ensure your overall tone and style are consistent with the conversation so far.
     Enclose the follow-up questions in double angle brackets. Example:
     <<Which agency can help me with that?>>
     <<Are there specific requirements?>>
