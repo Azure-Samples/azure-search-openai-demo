@@ -100,8 +100,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_semantic_captions = True if overrides.get(
             "semantic_captions") else True
         top = overrides.get("top", 3)
-        minimum_search_score = overrides.get("minimum_search_score", 0.0)
-        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        minimum_search_score = overrides.get("minimum_search_score", 0.02)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 1.5)
         filter = self.build_filter(overrides, auth_claims)
 
         original_user_query = messages[-1]["content"]
@@ -196,7 +196,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             system_prompt=system_message,
             past_messages=messages[:-1],
             # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
-            new_user_content=original_user_query + "\n\nSources:\n" + content,
+            new_user_content=original_user_query + "\n\nRespond based exclusively on the data provided below." + "\n\nSources:\n" + content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 

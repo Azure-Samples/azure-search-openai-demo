@@ -12,10 +12,10 @@ class ChatApproach(Approach, ABC):
     query_prompt_few_shots: list[ChatCompletionMessageParam] = [
         {"role": "user", "content": "What funding is available to start a new business in New Zealand?"},
         {"role": "assistant",
-            "content": "Summarize all the funding options available to start a new business in New Zealand"},
+            "content": "Summarize all the funding options available to start a new business in New Zealand."},
         {"role": "user", "content": "Who can help me with R&D funding in New Zealand?"},
         {"role": "assistant",
-            "content": "Show all R&D funding options available in New Zealand?"},
+            "content": "Show all R&D funding options available in New Zealand."},
     ]
     NO_RESPONSE = "0"
 
@@ -29,7 +29,7 @@ class ChatApproach(Approach, ABC):
     """
 
     query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
-    You have access to Azure AI Search index with 100's of documents.
+    You have access to Azure AI Search index with 1000's of documents.
     Generate a search query based on the conversation and the new question.
     Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
     Do not include any text inside [] or <<>> in the search query terms.
