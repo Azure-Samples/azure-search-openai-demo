@@ -5,5 +5,8 @@
     "@fluentui/react-hooks": "^8.8.12",
     "@fluentui/react-icons": "^2.0.258",
     "ndjson-readablestream": "^1.2.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.5"
   }
 }
