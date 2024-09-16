@@ -162,7 +162,7 @@ const Chat = () => {
         const token = client ? await getToken(client) : undefined;
 
         try {
-            const messages: ResponseMessage[] = answers.flatMap(a => [
+            const messages: ResponseMessage[] = answers.flatMap((a: { message: { content: any; }; }[]) => [
                 { content: a[0], role: "user" },
                 { content: a[1].message.content, role: "assistant" }
             ]);
@@ -359,7 +359,7 @@ const Chat = () => {
                     ) : (
                         <div className={styles.chatMessageStream}>
                             {isStreaming &&
-                                streamedAnswers.map((streamedAnswer, index) => (
+                                streamedAnswers.map((streamedAnswer: ChatAppResponse[], index: number) => (
                                     <div key={index}>
                                         <UserChatMessage message={streamedAnswer[0]} />
                                         <div className={styles.chatMessageGpt}>
@@ -382,7 +382,7 @@ const Chat = () => {
                                     </div>
                                 ))}
                             {!isStreaming &&
-                                answers.map((answer, index) => (
+                                answers.map((answer: ChatAppResponse[], index: number) => (
                                     <div key={index}>
                                         <UserChatMessage message={answer[0]} />
                                         <div className={styles.chatMessageGpt}>
