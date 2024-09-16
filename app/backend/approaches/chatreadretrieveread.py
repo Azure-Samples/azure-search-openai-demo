@@ -15,7 +15,6 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 
-
 class ChatReadRetrieveReadApproach(ChatApproach):
     """
     A multi-step approach that first uses OpenAI to turn the user's question into a search query,
