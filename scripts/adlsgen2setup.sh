@@ -2,7 +2,7 @@
 
 . ./scripts/loadenv.sh
 
-if [ -n "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
+if [ -z "$AZURE_ADLS_GEN2_STORAGE_ACCOUNT" ]; then
     echo 'AZURE_ADLS_GEN2_STORAGE_ACCOUNT must be set to continue'
     exit 1
 fi
