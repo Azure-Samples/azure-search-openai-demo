@@ -1,4 +1,5 @@
 import dataclasses
+import datetime
 import io
 import json
 import logging
@@ -22,6 +23,8 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import ContainerClient
 from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
+from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob import generate_blob_sas, BlobSasPermissions
 from azure.storage.filedatalake.aio import FileSystemClient
 from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
 from openai import AsyncAzureOpenAI, AsyncOpenAI
@@ -72,6 +75,7 @@ from config import (
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
+    CONFIG_BLOB_SERVICE_CLIENT
 )
 from core.authentication import AuthenticationHelper
 from decorators import authenticated, authenticated_path
@@ -232,6 +236,11 @@ async def chat_stream(auth_claims: Dict[str, Any]):
     context = request_json.get("context", {})
     context["auth_claims"] = auth_claims
     try:
+        # Extract the image URL from the request_json
+        image_url = request_json.get("image")
+        if image_url:
+            #context["image_url"] = image_url
+            context.setdefault("overrides", {})["image_url"] = image_url
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
@@ -242,7 +251,7 @@ async def chat_stream(auth_claims: Dict[str, Any]):
         result = await approach.run_stream(
             request_json["messages"],
             context=context,
-            session_state=request_json.get("session_state"),
+            session_state=request_json.get("session_state")
         )
         response = await make_response(format_as_ndjson(result))
         response.timeout = None  # type: ignore
@@ -346,6 +355,50 @@ async def upload(auth_claims: dict[str, Any]):
     await ingester.add_file(File(content=file_io, acls={"oids": [user_oid]}, url=file_client.url))
     return jsonify({"message": "File uploaded successfully"}), 200
 
+@bp.post("/upload_new")
+async def upload_new():
+    request_files = await request.files
+    if "file" not in request_files:
+        # If no files were included in the request, return an error response
+        return jsonify({"message": "No file part in the request", "status": "failed"}), 400
+
+    file = request_files.getlist("file")[0]
+    blob_container_client: ContainerClient = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    
+    # Use a generic blob client instead of user-specific directory
+    blob_client = blob_container_client.get_blob_client(file.filename)
+    
+    file_io = file
+    file_io.name = file.filename
+    file_io = io.BufferedReader(file_io)
+    
+    # Upload the file without user-specific metadata
+    await blob_client.upload_blob(file_io, overwrite=True)
+    file_io.seek(0)
+
+    start_time = datetime.datetime.now(datetime.timezone.utc)
+    expiry_time = start_time + datetime.timedelta(days=1)
+
+    blob_service_client: BlobServiceClient = current_app.config[CONFIG_BLOB_SERVICE_CLIENT]
+    # Generate User Delegation Key
+    user_delegation_key = await blob_service_client.get_user_delegation_key(
+        key_start_time=start_time,
+        key_expiry_time=expiry_time
+    )
+
+    # Generate SAS URL
+    sas_token = generate_blob_sas(
+        account_name=blob_service_client.account_name,
+        container_name=blob_client.container_name,
+        blob_name=blob_client.blob_name,
+        user_delegation_key=user_delegation_key,
+        permission=BlobSasPermissions(read=True),
+        expiry=expiry_time
+    )
+    sas_url = f"{blob_client.url}?{sas_token}"
+    print("sas url is ", sas_url)
+    
+    return jsonify({"message": "File uploaded successfully", "file_url": sas_url}), 200
 
 @bp.post("/delete_uploaded")
 @authenticated
@@ -449,6 +502,8 @@ async def setup_clients():
     blob_container_client = ContainerClient(
         f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", AZURE_STORAGE_CONTAINER, credential=azure_credential
     )
+
+    blob_service_client = BlobServiceClient(f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", credential=azure_credential)
 
     # Set up authentication helper
     search_index = None
@@ -570,6 +625,7 @@ async def setup_clients():
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    current_app.config[CONFIG_BLOB_SERVICE_CLIENT] = blob_service_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)

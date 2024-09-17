@@ -9,11 +9,15 @@ from approaches.approach import Approach
 
 
 class ChatApproach(Approach, ABC):
-    query_prompt_few_shots: list[ChatCompletionMessageParam] = [
-        {"role": "user", "content": "How did crypto do last year?"},
-        {"role": "assistant", "content": "Summarize Cryptocurrency Market Dynamics from last year"},
-        {"role": "user", "content": "What are my health plans?"},
-        {"role": "assistant", "content": "Show available health plans"},
+    query_prompt_few_shots = [
+        {"role": "user", "content": "What's the best way to control weeds in my cornfield?"},
+        {"role": "assistant", "content": "Recommendations for weed control in cornfields"},
+        {"role": "user", "content": "How can I improve soil fertility for better crop yields?"},
+        {"role": "assistant", "content": "Strategies to enhance soil fertility and increase crop yields"},
+        {"role": "user", "content": "What's the most effective method for pest management in soybean crops?"},
+        {"role": "assistant", "content": "Integrated pest management techniques for soybean crops"},
+        {"role": "user", "content": "Which fertilizer should I use for my wheat fields?"},
+        {"role": "assistant", "content": "Recommendations for fertilizers suitable for wheat cultivation"},
     ]
     NO_RESPONSE = "0"
 

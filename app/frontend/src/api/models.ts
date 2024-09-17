@@ -77,6 +77,7 @@ export type ChatAppRequest = {
     messages: ResponseMessage[];
     context?: ChatAppRequestContext;
     session_state: any;
+    image?: string;
 };
 
 export type Config = {

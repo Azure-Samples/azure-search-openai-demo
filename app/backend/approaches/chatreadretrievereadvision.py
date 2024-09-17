@@ -1,8 +1,11 @@
+import json
 from typing import Any, Awaitable, Callable, Coroutine, Optional, Union
+
+import requests
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
-from openai import AsyncOpenAI, AsyncStream
+from openai import AsyncOpenAI, AsyncStream, AsyncAzureOpenAI
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
@@ -16,7 +19,6 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
-
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
     """
@@ -68,7 +70,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
     @property
     def system_message_chat_conversation(self):
         return """
-        You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images.
+        Assistant helps the Agronomist who will get queries from growers about various questions that growers would have about their fields,
+        agro-chemicals, pest control, nutrients, fertilizers etc. The job of agronomist is to use this knowledge base of documents and answer based on it., The documents contain text, graphs, tables and images.
         Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
         Each text source starts in a new line and has the file name followed by colon and the actual information
         Always include the source name from the image or text for each fact you use in the response in the format: [filename]
@@ -81,6 +84,54 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         {follow_up_questions_prompt}
         {injected_prompt}
         """
+    async def analyze_image(self, image_url: str) -> str:
+        import requests
+        from io import BytesIO
+        from PIL import Image
+        import base64
+        # Step 1: Fetch the image from the URL
+        response = requests.get(image_url)
+        encoded_image = ""
+        # Step 2: Ensure the request was successful
+        if response.status_code == 200:
+            # Step 3: Load the image into memory
+            image_data = BytesIO(response.content)
+
+            # Step 4: Convert image to base64
+            # If you need the image in Base64 format
+            encoded_image = base64.b64encode(response.content).decode('utf-8')
+
+            #print("Base64 Encoded Image:")
+            #print(encoded_image)
+        else:
+            print(f"Failed to retrieve image. Status code: {response.status_code}")
+
+        """Analyze the image using Azure Computer Vision API for plant diseases."""
+        deployment_name = self.gpt4v_deployment
+        response = await self.openai_client.chat.completions.create(
+            model=deployment_name,
+            messages=[
+                { "role": "system", "content": "You are an expert agronomist specializing in plant pathology and crop health. Your task is to analyze images of agricultural crops, focusing on corn, soybean, wheat, and other common global crops. Provide precise identifications of plant health issues, diseases, pest damage, nutrient deficiencies, or environmental stress." },
+                { "role": "user", "content": [  
+                    { 
+                        "type": "text", 
+                        "text": "Analyze the provided image and respond with the following information:\n1. Crop Identification: Specify the crop (e.g., corn, soybean, wheat).\n2. Plant Part: Identify the part of the plant shown (e.g., leaf, stem, root, fruit).\n3. Health Status: State whether the plant appears healthy or shows signs of issues.\n4. If issues are present, provide:\n   a) Primary Condition: The most prominent disease, pest, or deficiency.\n   b) Secondary Conditions: Any other noticeable issues.\n   c) Severity: Estimate the severity as mild, moderate, or severe.\n5. Key Visual Indicators: List 2-3 key visual cues that led to your diagnosis.\n\nRespond in a structured format suitable for database querying. If the image is unclear or not plant-related, state 'Image unclear or not plant-related'. If you cannot confidently identify an issue, state 'Unable to determine specific condition'." 
+                    },
+                    { 
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "data:image/jpeg;base64," + encoded_image
+                        }
+                    }
+                ] } 
+            ],
+            max_tokens=2000 
+        )
+        # Access the response
+        assistant_response = response.choices[0].message.content
+        print(assistant_response)
+        return assistant_response
+
 
     async def run_until_final_call(
         self,
@@ -108,8 +159,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
         past_messages: list[ChatCompletionMessageParam] = messages[:-1]
 
+        print("Override is ", overrides)
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        user_query_request = "Generate search query for: " + original_user_query
+        #user_query_request = "Generate search query for: " + original_user_query
+        #image_analysis = await self.analyze_image("https://stv3od7n6qiv4m2.blob.core.windows.net/content/corn-BLS-irregular-lesions.jpg?sp=r&st=2024-09-10T14:45:19Z&se=2024-09-10T22:45:19Z&skoid=44d37ec7-fae7-4a3b-9f41-b8f3539805da&sktid=c6c1e9da-5d0c-4f8f-9a02-3c67206efbd6&skt=2024-09-10T14:45:19Z&ske=2024-09-10T22:45:19Z&sks=b&skv=2022-11-02&spr=https&sv=2022-11-02&sr=b&sig=wn6yZRtzLkEPun65ed7BPxzU3bhkBOY9KJ5j%2F0B8aEE%3D")
+        image_received = overrides.get("image_url", "")
+        print("Image received in vision method is ", image_received)
+        image_analysis = await self.analyze_image(image_received)
+        #image_analysis = await self.analyze_image("https://stv3od7n6qiv4m2.blob.core.windows.net/content/beacterial-leaf-streak.jfif?sp=r&st=2024-09-10T17:27:30Z&se=2024-09-11T01:27:30Z&skoid=44d37ec7-fae7-4a3b-9f41-b8f3539805da&sktid=c6c1e9da-5d0c-4f8f-9a02-3c67206efbd6&skt=2024-09-10T17:27:30Z&ske=2024-09-11T01:27:30Z&sks=b&skv=2022-11-02&spr=https&sv=2022-11-02&sr=b&sig=7LG3gwgQ9vmu3pVt8Vb1Exh1EGVMkAR3QC%2Fc2BLH8Co%3D")
+        user_query_request = f"Generate search query for: {image_analysis}"
+        print(user_query_request)
 
         query_response_token_limit = 100
         query_model = self.chatgpt_model
@@ -132,7 +191,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             seed=seed,
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_text = self.get_search_query(chat_completion, image_analysis)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -170,7 +229,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
         )
 
-        user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
+        user_content: list[ChatCompletionContentPartParam] = [{"text": image_analysis, "type": "text"}]
         image_list: list[ChatCompletionContentPartImageParam] = []
 
         if send_text_to_gptvision:
@@ -181,6 +240,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 if url:
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
+        if image_analysis:
+            image_list.append({"image_url": image_analysis, "type": "image_url"})
 
         response_token_limit = 1024
         messages = build_messages(

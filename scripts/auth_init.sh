@@ -4,13 +4,11 @@ echo "Checking if authentication should be setup..."
 
 . ./scripts/load_azd_env.sh
 
-if [ -z "$AZURE_USE_AUTHENTICATION" ]; then
-  echo "AZURE_USE_AUTHENTICATION is not set, skipping authentication setup."
-  exit 0
+if [ "$AZURE_USE_AUTHENTICATION" = "true" ]; then
+    echo "AZURE_USE_AUTHENTICATION is true, proceeding with authentication setup..."
+    . ./scripts/load_python_env.sh
+    ./.venv/bin/python ./scripts/auth_init.py
+else
+    echo "AZURE_USE_AUTHENTICATION is not true, skipping authentication setup."
+    exit 0
 fi
-
-echo "AZURE_USE_AUTHENTICATION is set, proceeding with authentication setup..."
-
-. ./scripts/load_python_env.sh
-
-./.venv/bin/python ./scripts/auth_init.py
