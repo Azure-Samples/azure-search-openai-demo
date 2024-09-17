@@ -10,18 +10,18 @@ from approaches.approach import Approach
 
 class ChatApproach(Approach, ABC):
     query_prompt_few_shots: list[ChatCompletionMessageParam] = [
-         {"role": "user", "content": "How has the COVID-19 pandemic accelerated healthcare innovation and improved management protocols for respiratory diseases?"},
-        {"role": "assistant", "content": "The COVID-19 pandemic has accelerated healthcare innovation and improved management protocols for respiratory diseases by prompting the revision of influenza preparedness guidelines, the development of novel tools and technologies, and the acceleration of pharmaceutical research. Improved global surveillance and digital healthcare delivery have also been significant advancements. Machine learning has enhanced disease outbreak predictions."},
-        {"role": "user", "content": "What are the primary differences between antigenic drift and antigenic shift in influenza viruses?"},
-        {"role": "assistant", "content": "Antigenic drift involves small genetic changes over time that allow the virus to evade the immune system, while antigenic shift involves a major genetic change resulting in new H or N proteins, potentially leading to pandemics."}
+         {"role": "user", "content": "What happens if an existing facility undergoes significant refurbishment?"},
+        {"role": "assistant", "content": "If an existing health facility undergoes substantial changes, such as increasing its size or changing the scope of services, it must comply fully with the latest DHA Health Facility Guidelines. For example, converting an inpatient unit into an ICU would require the new design to fully meet the current guidelines."},
+        {"role": "user", "content": "How does the Clinical Governance Framework ensure continuous quality improvement in healthcare facilities, and what role do clinical audits play in this process?"},
+        {"role": "assistant", "content": "The Clinical Governance Framework ensures continuous quality improvement through regular monitoring and evaluation of clinical care and services. Clinical audits are a key component of this process. They involve systematically reviewing clinical practices against established standards to identify areas for improvement. Health facilities are required to conduct clinical audits biannually, submit reports to the DHA, and implement action plans to address identified issues. The findings from these audits help inform quality improvement initiatives, ensuring that healthcare services remain safe, effective, and aligned with best practices."
     ]
     NO_RESPONSE = "0"
 
     follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
     Enclose the follow-up questions in double angle brackets. Example:
-    <<What specific novel tools have been developed to manage respiratory diseases?>>
-    <<How has digital healthcare delivery changed during the COVID-19 pandemic?>>
-    <<How does antigenic drift affect vaccine effectiveness?>>
+    <<What specific areas or services must be updated to comply with the latest guidelines during a significant refurbishment?>>
+    <<How does the DHA assess whether a facility’s refurbishment qualifies as significant enough to require compliance with current standards?>>
+    <<Are there any exemptions or grandfathering clauses for certain facilities undergoing refurbishment, and how are these determined?>>
     Do no repeat questions that have already been asked.
     Make sure the last question ends with ">>".
     """
