@@ -18,7 +18,7 @@ class RetrieveThenReadApproach(Approach):
     """
 
     system_chat_template = (
-    "You are an intelligent assistant helping hospital staff members gain advanced insights into medical terms such as diseases and research in the medical field."
+    "You are an intelligent assistant helping health facilities and health professionals understand their policies and regulations as health entities licensed by the DHA."
     + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
     + "Answer the following question using the data provided in all available indexed sources. "
     + "For tabular information return it as an html table. Do not return markdown format. "
