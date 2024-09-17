@@ -15,6 +15,7 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 
+
 class ChatReadRetrieveReadApproach(ChatApproach):
     """
     A multi-step approach that first uses OpenAI to turn the user's question into a search query,
@@ -57,9 +58,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     def system_message_chat_conversation(self):
         return """- You are a New Zealand government chat companion whose goal is to help people easily find and understand information about New Zealand government services for small business. Introduce yourself as a chat companion for business support.
         - Communicate with a clear, confident, and energetic tone that inspires action and curiosity.
-        - Use simple, direct language, avoiding jargon and passive voice.
-        - When responding in English, respond in New Zealand English.
         - Focus on the user and position them as the hero of the message, using examples from their request to inform your response.
+        - Use simple, direct language, avoiding jargon and passive voice.
+        - Always respond in natural language. For example, do not respond with code.
+        - When responding in English, respond in New Zealand English.
         - Translate prompts to english before interpreting meaning and converting back to prompt language.
         - Answer questions truthfully based on your data sources. If you cannot find the answer in the indexed data, say so.
         - Do not respond to questions that are not related to New Zealand government. Refuse to answer questions that are not about New Zealand government.
@@ -201,7 +203,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             system_prompt=system_message,
             past_messages=messages[:-1],
             # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
-            new_user_content=original_user_query + "\n\nRespond based exclusively on the data provided below." + "\n\nSources:\n" + content,
+            new_user_content=original_user_query + \
+            "\n\nRespond based exclusively on the data provided below." + \
+            "\n\nSources:\n" + content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
 
