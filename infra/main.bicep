@@ -195,7 +195,7 @@ param useLocalHtmlParser bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
-var tags = { 'azd-env-name': environmentName }
+var tags = { 'azd-env-name': environmentName, 'Department': 'GAP', 'Environment': 'DEV', 'Project': 'AIAVATAR', 'ProjectOwner': 'ocalland@ryanair.com', 'TechnicalOwner': 'oliveirae@ryanair.com' }
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
