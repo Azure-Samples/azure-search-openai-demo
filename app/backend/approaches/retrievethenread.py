@@ -25,16 +25,16 @@ class RetrieveThenReadApproach(Approach):
     + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
     + "If you cannot answer using the available sources, say you don't know. Use the example below to answer."
     )
-    
+
     # shots/sample conversation
     question = """
-'How has the COVID-19 pandemic accelerated healthcare innovation and improved management protocols for respiratory diseases?
+'What are the main requirements for outpatient care facilities to ensure patient safety and quality of care according to DHA regulations?
 
 Sources:
-info1.pdf: The pandemic prompted the revision of influenza preparedness guidelines, the development of novel tools and technologies, and the acceleration of pharmaceutical research. 
-info2.pdf: Improved global surveillance and digital healthcare delivery have also been significant advancements. Machine learning has enhanced disease outbreak predictions.
+info1.pdf: Main requirements include maintaining accurate and secure patient records, adhering to stringent infection control measures, ensuring healthcare professionals meet licensure and competency standards, and complying with facility design and operational guidelines.
+info2.pdf: Regular inspections and compliance reviews are conducted to ensure ongoing adherence to DHA standards.
 """
-    answer = " The COVID-19 pandemic has accelerated healthcare innovation and improved management protocols for respiratory diseases by prompting the revision of influenza preparedness guidelines, the development of novel tools and technologies, and the acceleration of pharmaceutical research. Improved global surveillance and digital healthcare delivery have also been significant advancements. Machine learning has enhanced disease outbreak predictions [info1.pdf][info2.pdf]."
+    answer = "Main requirements include maintaining accurate and secure patient records, adhering to stringent infection control measures, ensuring healthcare professionals meet licensure and competency standards, and complying with facility design and operational guidelines. Regular inspections and compliance reviews are conducted to ensure ongoing adherence to DHA standards [info1.pdf][info2.pdf]."
 
     def __init__(
         self,
