@@ -449,7 +449,16 @@ async def setup_clients():
     azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
     if RUNNING_ON_AZURE:
         current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
-        azure_credential = ManagedIdentityCredential()
+        if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
+            # ManagedIdentityCredential should use AZURE_CLIENT_ID if set in env, but its not working for some reason,
+            # so we explicitly pass it in as the client ID here. This is necessary for user-assigned managed identities.
+            current_app.logger.info(
+                "Setting up Azure credential using ManagedIdentityCredential with client_id %s", AZURE_CLIENT_ID
+            )
+            azure_credential = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
+        else:
+            current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
+            azure_credential = ManagedIdentityCredential()
     elif AZURE_TENANT_ID:
         current_app.logger.info(
             "Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", AZURE_TENANT_ID
