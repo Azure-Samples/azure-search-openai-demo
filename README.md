@@ -66,6 +66,7 @@ Pricing varies per region and usage, so it isn't possible to predict exact costs
 However, you can try the [Azure pricing calculator](https://azure.com/e/a87a169b256e43c089015fda8182ca87) for the resources below.
 
 - Azure App Service: Basic Tier with 1 CPU core, 1.75 GB RAM. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/app-service/linux/)
+- Azure Container Apps: Only provisioned if you deploy to Azure Container Apps following [the ACA deployment guide](docs/azure_container_apps.md). Consumption plan with 1 CPU core, 2.0 GB RAM. Pricing with Pay-as-You-Go. [Pricing](https://azure.microsoft.com/pricing/details/container-apps/)
 - Azure OpenAI: Standard tier, GPT and Ada models. Pricing per 1K tokens used, and at least 1K tokens are used per question. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
 - Azure AI Document Intelligence: SO (Standard) tier using pre-built layout. Pricing per document page, sample documents have 261 pages total. [Pricing](https://azure.microsoft.com/pricing/details/form-recognizer/)
 - Azure AI Search: Basic tier, 1 replica, free level of semantic search. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/search/)
@@ -126,7 +127,7 @@ A related option is VS Code Dev Containers, which will open the project in your 
 
 ## Deploying
 
-Follow these steps to provision Azure resources and deploy the application code:
+The steps below will provision Azure resources and deploy the application code to Azure App Service. To deploy to Azure Container Apps instead, follow [the container apps deployment guide](docs/azure_container_apps.md).
 
 1. Login to your Azure account:
 
@@ -134,9 +135,9 @@ Follow these steps to provision Azure resources and deploy the application code:
     azd auth login
     ```
 
-    For GitHub Codespaces users, if the previous command fails, try: 
+    For GitHub Codespaces users, if the previous command fails, try:
    ```shell
-    azd auth login --use-device-code 
+    azd auth login --use-device-code
     ```
 
 1. Create a new azd environment:

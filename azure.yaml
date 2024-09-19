@@ -7,9 +7,11 @@ services:
   backend:
     project: ./app/backend
     language: py
+    # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
+    # host: containerapp
     host: appservice
     hooks:
-      prepackage:
+      prebuild:
         windows:
           shell: pwsh
           run:  cd ../frontend;npm install;npm run build
@@ -86,6 +88,8 @@ pipeline:
       - AZURE_ADLS_GEN2_STORAGE_ACCOUNT
       - AZURE_ADLS_GEN2_FILESYSTEM_PATH
       - AZURE_ADLS_GEN2_FILESYSTEM
+      - DEPLOYMENT_TARGET
+      - AZURE_CONTAINER_APPS_WORKLOAD_PROFILE
   secrets:
       - AZURE_SERVER_APP_SECRET
       - AZURE_CLIENT_APP_SECRET
