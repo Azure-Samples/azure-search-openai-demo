@@ -13,7 +13,7 @@ from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
 
-logger = logging.getLogger("ingester")
+logger = logging.getLogger("ragapp")
 
 
 class File:

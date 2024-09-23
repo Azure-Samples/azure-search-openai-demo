@@ -1,6 +1,5 @@
-. ./scripts/load_azd_env.ps1
-
-if (-not $env:AZURE_USE_AUTHENTICATION) {
+$AZURE_USE_AUTHENTICATION = (azd env get-value AZURE_USE_AUTHENTICATION)
+if (-not $?) {
   Exit 0
 }
 

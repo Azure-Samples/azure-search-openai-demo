@@ -51,7 +51,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.content_field = content_field
         self.query_language = query_language
         self.query_speller = query_speller
-        self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        self.chatgpt_token_limit = get_token_limit(chatgpt_model, default_to_minimum=True)
 
     @property
     def system_message_chat_conversation(self):
