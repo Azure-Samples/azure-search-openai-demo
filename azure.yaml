@@ -9,8 +9,6 @@ services:
     language: py
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
     # host: containerapp
-    docker:
-      remoteBuild: true
     host: appservice
     hooks:
       prebuild:

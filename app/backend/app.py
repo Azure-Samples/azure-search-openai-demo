@@ -448,6 +448,7 @@ async def setup_clients():
     # The managed identity is setup in the infra/ folder.
     azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
     if RUNNING_ON_AZURE:
+        current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
         if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
             # ManagedIdentityCredential should use AZURE_CLIENT_ID if set in env, but its not working for some reason,
             # so we explicitly pass it in as the client ID here. This is necessary for user-assigned managed identities.
