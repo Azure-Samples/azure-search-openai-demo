@@ -147,5 +147,6 @@ node_modules
 static/
 
 data
+data.holding
 
 .DS_Store

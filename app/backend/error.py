@@ -3,13 +3,11 @@ import logging
 from openai import APIError
 from quart import jsonify
 
-ERROR_MESSAGE = """The app encountered an error processing your request.
-If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
-Error type: {error_type}
-"""
-ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
+ERROR_MESSAGE = """Oops! GovGPT needs to take a break. As this is a proof of concept, we have limited capacity. Please try again later."""
 
-ERROR_MESSAGE_LENGTH = """Your message exceeded the context length limit for this OpenAI model. Please shorten your message or change your settings to retrieve fewer search results."""
+ERROR_MESSAGE_FILTER = """Sorry. Your message contains content that is automatically flagged by the built-in content filter. Please try a different topic or question that avoids themes of hate, violence, harm or sex. If you are in danger or an emergency situation, please contact 111."""
+
+ERROR_MESSAGE_LENGTH = """Oops! Your question is too long. As this is a proof of concept, we have limited capacity. Please try to keep your question to about 75 words."""
 
 
 def error_dict(error: Exception) -> dict:
