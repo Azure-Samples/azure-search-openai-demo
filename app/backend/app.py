@@ -715,7 +715,7 @@ def create_app():
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS
     logging.basicConfig(level=logging.WARNING)
     # Set the app logger level to INFO by default
-    default_level = "INFO"
+    default_level = "WARNING"
     app.logger.setLevel(os.getenv("APP_LOG_LEVEL", default_level))
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
