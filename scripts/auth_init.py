@@ -172,12 +172,12 @@ async def main():
         print("Not setting up authentication.")
         exit(0)
 
-    if not os.getenv("AZURE_AUTH_TENANT_ID") and not os.getenv("AZURE_TENANT_ID"):
+    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.getenv("AZURE_TENANT_ID"))
+    if not auth_tenant:
         print(
             "Error: No tenant ID set for authentication. Run `azd env set AZURE_AUTH_TENANT_ID tenant-id` to set the tenant ID."
         )
         exit(1)
-    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.getenv("AZURE_TENANT_ID"))
     print("Setting up authentication for tenant", auth_tenant)
     credential = AzureDeveloperCliCredential(tenant_id=auth_tenant)
 

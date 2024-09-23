@@ -165,7 +165,7 @@ async def main(args: Any):
             data_access_control_format = json.load(f)
         command = AdlsGen2Setup(
             data_directory=args.data_directory,
-            storage_account_name=os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"),
+            storage_account_name=os.environ["AZURE_ADLS_GEN2_STORAGE_ACCOUNT"],
             filesystem_name="gptkbcontainer",
             security_enabled_groups=args.create_security_enabled_groups,
             credentials=credentials,

@@ -313,10 +313,10 @@ if __name__ == "__main__":
     )
     blob_manager = setup_blob_manager(
         azure_credential=azd_credential,
-        storage_account=os.getenv("AZURE_STORAGE_ACCOUNT"),
-        storage_container=os.getenv("AZURE_STORAGE_CONTAINER"),
-        storage_resource_group=os.getenv("AZURE_STORAGE_RESOURCE_GROUP"),
-        subscription_id=os.getenv("AZURE_SUBSCRIPTION_ID"),
+        storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
+        storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
+        storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
         search_images=use_gptvision,
         storage_key=clean_key_if_exists(args.storagekey),
     )
@@ -336,14 +336,17 @@ if __name__ == "__main__":
     elif not openai_host.startswith("azure") and os.getenv("OPENAI_API_KEY"):
         openai_key = os.getenv("OPENAI_API_KEY")
 
+    openai_dimensions = 1536
+    if os.getenv("AZURE_OPENAI_EMB_DIMENSIONS"):
+        openai_dimensions = int(os.environ["AZURE_OPENAI_EMB_DIMENSIONS"])
     openai_embeddings_service = setup_embeddings_service(
         azure_credential=azd_credential,
         openai_host=openai_host,
-        openai_model_name=os.getenv("AZURE_OPENAI_EMB_MODEL_NAME"),
+        openai_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
         openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
         openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
         openai_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
-        openai_dimensions=os.getenv("AZURE_OPENAI_EMB_DIMENSIONS"),
+        openai_dimensions=openai_dimensions,
         openai_key=clean_key_if_exists(openai_key),
         openai_org=os.getenv("OPENAI_ORGANIZATION"),
         disable_vectors=dont_use_vectors,
@@ -358,7 +361,7 @@ if __name__ == "__main__":
             blob_manager=blob_manager,
             document_action=document_action,
             embeddings=openai_embeddings_service,
-            subscription_id=os.getenv("AZURE_SUBSCRIPTION_ID"),
+            subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
             search_service_user_assigned_id=args.searchserviceassignedid,
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             use_acls=use_acls,
