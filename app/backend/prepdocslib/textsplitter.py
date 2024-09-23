@@ -6,7 +6,7 @@ import tiktoken
 
 from .page import Page, SplitPage
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 class TextSplitter(ABC):

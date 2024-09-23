@@ -395,7 +395,7 @@ async def setup_clients():
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
-    OPENAI_CHATGPT_MODEL = "phi3.5:latest"
+    OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", 1536))
     # Used with Azure OpenAI deployments
@@ -717,7 +717,7 @@ def create_app():
     # Set our own logger levels to INFO by default
     app_level = os.getenv("APP_LOG_LEVEL", "INFO")
     app.logger.setLevel(os.getenv("APP_LOG_LEVEL", app_level))
-    logging.getLogger("ragapp").setLevel(app_level)
+    logging.getLogger("scripts").setLevel(app_level)
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("ALLOWED_ORIGIN is set, enabling CORS for %s", allowed_origin)

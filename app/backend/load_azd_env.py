@@ -4,7 +4,7 @@ import subprocess
 
 from dotenv import load_dotenv
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 def load_azd_env():

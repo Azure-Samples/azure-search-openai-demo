@@ -8,7 +8,7 @@ from .listfilestrategy import File, ListFileStrategy
 from .searchmanager import SearchManager, Section
 from .strategy import DocumentAction, SearchInfo, Strategy
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 async def parse_file(

@@ -15,7 +15,7 @@ from azure.storage.filedatalake.aio import (
 
 from load_azd_env import load_azd_env
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 class AdlsGen2Setup:

@@ -33,7 +33,7 @@ from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:

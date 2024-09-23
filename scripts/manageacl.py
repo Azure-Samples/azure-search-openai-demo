@@ -18,7 +18,7 @@ from azure.search.documents.indexes.models import (
 
 from load_azd_env import load_azd_env
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 class ManageAcl:

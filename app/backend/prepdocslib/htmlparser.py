@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from .page import Page
 from .parser import Parser
 
-logger = logging.getLogger("ragapp")
+logger = logging.getLogger("scripts")
 
 
 def cleanup_data(data: str) -> str:
