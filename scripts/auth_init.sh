@@ -3,7 +3,7 @@
 echo "Checking if authentication should be setup..."
 
 AZURE_USE_AUTHENTICATION=$(azd env get-value AZURE_USE_AUTHENTICATION)
-if [ $? -ne 0 ]; then
+if [ "$AZURE_USE_AUTHENTICATION" != "true" ]; then
   echo "AZURE_USE_AUTHENTICATION is not set, skipping authentication setup."
   exit 0
 fi
