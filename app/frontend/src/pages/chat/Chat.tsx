@@ -37,11 +37,11 @@ import { stubbedPublicClientApplication } from "@azure/msal-browser";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [temperature, setTemperature] = useState<number>(0);
+    const [temperature, setTemperature] = useState<number>(0.02);
     const [seed, setSeed] = useState<number | null>(1000);
-    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
-    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
-    const [retrieveCount, setRetrieveCount] = useState<number>(15);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.5);
+    const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0.02);
+    const [retrieveCount, setRetrieveCount] = useState<number>(6);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
