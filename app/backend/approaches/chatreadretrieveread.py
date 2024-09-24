@@ -140,7 +140,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         ]
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 2048
+        query_response_token_limit = 100
         query_messages = build_messages(
             model=self.chatgpt_model,
             system_prompt=self.query_prompt_template,
@@ -155,7 +155,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             messages=query_messages,  # type: ignore
             # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            temperature=0.0,  # Minimize creativity for search query generation
+            temperature=0.02,  # Minimize creativity for search query generation
             # Setting too low risks malformed JSON, setting too high may affect performance
             max_tokens=query_response_token_limit,
             n=1,
@@ -199,7 +199,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 "suggest_followup_questions") else "",
         )
 
-        response_token_limit = 2048
+        response_token_limit = 100
         messages = build_messages(
             model=self.chatgpt_model,
             system_prompt=system_message,
@@ -258,7 +258,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             messages=messages,
-            temperature=overrides.get("temperature", 0.3),
+            temperature=overrides.get("temperature", 0.02),
             max_tokens=response_token_limit,
             n=1,
             stream=should_stream,
