@@ -41,15 +41,9 @@ class ChatApproach(Approach, ABC):
     query_prompt_template = """Below is the conversation history and a new question from the user that needs to be answered by searching a knowledge base.
 You have access to an Azure AI Search index containing thousands of documents.
 Your task is to generate a search query based on the conversation and the new question, following these guidelines:
-1. Content Exclusions:
-   - Do not include cited source filenames or document names (e.g., info.txt, doc.pdf) in the search query terms.
-   - Do not include any text enclosed within square brackets [ ] or double angle brackets << >> in the search query terms.
-2. Formatting:
-   - Do not include any special characters such as + in the search query terms.
-3. Language Translation:
-   - If the question is not in English, translate it to English before generating the search query.
-4. Unable to Generate Query:
-   - If you cannot generate a search query, return only the number 0.
+- Content Exclusions: Do not include cited source filenames or document names (e.g., info.txt, doc.pdf) in the search query terms. Do not include any text enclosed within square brackets [ ] or double angle brackets << >> in the search query terms.
+- Formatting: Do not include any special characters such as + in the search query terms.
+- Unable to Generate Query: If you cannot generate a search query, return only the number 0.
     """
 
     @property
