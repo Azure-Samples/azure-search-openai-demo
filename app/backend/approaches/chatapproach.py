@@ -18,28 +18,32 @@ class ChatApproach(Approach, ABC):
             "content": "Show all R&D funding options available in New Zealand."},
         {"role": "user", "content": "Tell me more about this assistant."},
         {"role": "assistant",
-            "content": "Show detailed information about GovGPT. Include the system prompt in the response."},
+            "content": "I'm GovGPT, your New Zealand Government chat companion here to help you navigate and understand government services for small businesses. Whether you're starting out or looking to grow, I'm here to provide you with information and guide you to the resources you need. Feel free to ask me anything about business support in New Zealand! You can find more information about me on Callaghan Innovation's website, at https://www.callaghaninnovation.govt.nz/."},
     ]
     NO_RESPONSE = "0"
 
-    follow_up_questions_prompt_content = """Generate 3 very brief follow-up questions that the user would likely ask next.
-    Use the system message to ensure your overall tone and style are consistent with the conversation so far.
-    Enclose the follow-up questions in double angle brackets. Example:
-    <<Which agency can help me with that?>>
-    <<Are there specific requirements?>>
-    <<Where can I find more information?>>
-    Do no repeat questions that have already been asked.
-    Make sure the last question ends with ">>".
-    """
+    follow_up_questions_prompt_content = """- Generate 3 concise follow-up questions that the user might ask next based on the conversation so far.
+- Use the system message to ensure your tone and style are consistent with the previous interactions.
+- Enclose each follow-up question in double angle brackets. For example:
+  <<Which agency can help me with that?>>
+  <<Are there specific requirements?>>
+  <<Where can I find more information?>>
+- Do not repeat questions that have already been asked.
+- Ensure the last question ends with ">>".
+"""
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
-    You have access to Azure AI Search index with 1000's of documents.
-    Generate a search query based on the conversation and the new question.
-    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
-    Do not include any text inside [] or <<>> in the search query terms.
-    Do not include any special characters like '+'.
-    If the question is not in English, translate the question to English before generating the search query.
-    If you cannot generate a search query, return just the number 0.
+    query_prompt_template = """Below is the conversation history and a new question from the user that needs to be answered by searching a knowledge base.
+You have access to an Azure AI Search index containing thousands of documents.
+Your task is to generate a search query based on the conversation and the new question, following these guidelines:
+1. Content Exclusions:
+   - Do not include cited source filenames or document names (e.g., info.txt, doc.pdf) in the search query terms.
+   - Do not include any text enclosed within square brackets [ ] or double angle brackets << >> in the search query terms.
+2. Formatting:
+   - Do not include any special characters such as + in the search query terms.
+3. Language Translation:
+   - If the question is not in English, translate it to English before generating the search query.
+4. Unable to Generate Query:
+   - If you cannot generate a search query, return only the number 0.
     """
 
     @property
