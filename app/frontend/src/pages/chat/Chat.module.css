@@ -157,3 +157,22 @@
     flex-direction: column;
     gap: 5px;
 }
+
+.chatRow {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    transform: translateX(48px);
+}
+
+.chatColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.moduleColumn {
+    width: 150px;
+}
