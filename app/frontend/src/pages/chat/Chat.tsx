@@ -41,7 +41,7 @@ const Chat = () => {
     const [seed, setSeed] = useState<number | null>(1000);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.5);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0.02);
-    const [retrieveCount, setRetrieveCount] = useState<number>(6);
+    const [retrieveCount, setRetrieveCount] = useState<number>(8);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
@@ -75,7 +75,7 @@ const Chat = () => {
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(true);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
-    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(true);
+    const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
