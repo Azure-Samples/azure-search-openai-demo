@@ -18,7 +18,7 @@ class ChatApproach(Approach, ABC):
         {"role": "user", "content": "Who can help me with R&D funding in New Zealand?"},
         {
             "role": "assistant",
-            "content": "There are several agencies who can help you find R&D funding in New Zealand. Can you tell me more about the type of R&D funding you're looking for?",
+            "content": "There are several agencies who can help you find R&D funding in New Zealand, such as Callaghan Innovation and NZ Trade and Enterprise. Can you tell me more about the type of R&D funding you're looking for?",
         },
         {"role": "user", "content": "Tell me more about this assistant."},
         {

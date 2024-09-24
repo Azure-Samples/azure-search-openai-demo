@@ -3,15 +3,15 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "How do I start a new business in New Zealand?",
-    "What funding is available for a small business in New Zealand?",
-    "What are my responsibilities as a small business owner in New Zealand?"
+    "What funding is available to start a new business in New Zealand?",
+    "Tell me more about this assistant.",
+    "Who can help me with R&D funding in New Zealand?"
 ];
 
 const GPT4V_EXAMPLES: string[] = [
-    "How do I start a new business in New Zealand?",
-    "What funding is available for a small business in New Zealand?",
-    "What are my responsibilities as a small business owner in New Zealand?"
+    "What funding is available to start a new business in New Zealand?",
+    "Tell me more about this assistant.",
+    "Who can help me with R&D funding in New Zealand?"
 ];
 
 interface Props {
