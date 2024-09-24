@@ -206,7 +206,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             past_messages=messages[:-1],
             # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
             new_user_content=original_user_query + \
-            "\n\nRespond based exclusively on the data provided below." + \
             "\n\nSources:\n" + content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
         )
