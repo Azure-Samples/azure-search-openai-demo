@@ -615,7 +615,6 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                         )}
                     </div>
                 </div>
-                git commit -m "fixing chat width bug, added project selection in chat screen"
                 {answers.length > 0 && activeAnalysisPanelTab && (
                     <AnalysisPanel
                         className={styles.chatAnalysisPanel}
