@@ -11,14 +11,17 @@ from approaches.approach import Approach
 class ChatApproach(Approach, ABC):
     query_prompt_few_shots: list[ChatCompletionMessageParam] = [
         {"role": "user", "content": "What funding is available to start a new business in New Zealand?"},
-        {"role": "assistant",
-            "content": "Summarize all the funding options available to start a new business in New Zealand."},
+        {
+            "role": "assistant",
+            "content": "Summarize all the funding options available to start a new business in New Zealand.",
+        },
         {"role": "user", "content": "Who can help me with R&D funding in New Zealand?"},
-        {"role": "assistant",
-            "content": "Show all R&D funding options available in New Zealand."},
+        {"role": "assistant", "content": "Show all R&D funding options available in New Zealand."},
         {"role": "user", "content": "Tell me more about this assistant."},
-        {"role": "assistant",
-            "content": "I'm GovGPT, your New Zealand Government chat companion here to help you navigate and understand government services for small businesses. Whether you're starting out or looking to grow, I'm here to provide you with information and guide you to the resources you need. Feel free to ask me anything about business support in New Zealand! You can find more information about me on Callaghan Innovation's website, at https://www.callaghaninnovation.govt.nz/."},
+        {
+            "role": "assistant",
+            "content": "I'm GovGPT, your New Zealand Government chat companion here to help you navigate and understand government services for small businesses. Whether you're starting out or looking to grow, I'm here to provide you with information and guide you to the resources you need. Feel free to ask me anything about business support in New Zealand! You can find more information about me on Callaghan Innovation's website, at https://www.callaghaninnovation.govt.nz/.",
+        },
     ]
     NO_RESPONSE = "0"
 
@@ -104,8 +107,7 @@ Your task is to generate a search query based on the conversation and the new qu
         content = chat_completion_response.choices[0].message.content
         role = chat_completion_response.choices[0].message.role
         if overrides.get("suggest_followup_questions"):
-            content, followup_questions = self.extract_followup_questions(
-                content)
+            content, followup_questions = self.extract_followup_questions(content)
             extra_info["followup_questions"] = followup_questions
         chat_app_response = {
             "message": {"content": content, "role": role},
@@ -147,14 +149,13 @@ Your task is to generate a search query based on the conversation and the new qu
                     if earlier_content:
                         completion["delta"]["content"] = earlier_content
                         yield completion
-                    followup_content += content[content.index("<<"):]
+                    followup_content += content[content.index("<<") :]
                 elif followup_questions_started:
                     followup_content += content
                 else:
                     yield completion
         if followup_content:
-            _, followup_questions = self.extract_followup_questions(
-                followup_content)
+            _, followup_questions = self.extract_followup_questions(followup_content)
             yield {"delta": {"role": "assistant"}, "context": {"followup_questions": followup_questions}}
 
     async def run(
