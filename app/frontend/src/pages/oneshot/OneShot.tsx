@@ -141,7 +141,7 @@ export function Component(): JSX.Element {
     const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
         setUseGroupsSecurityFilter(!!checked);
     };
-
+    const module = "Content Creation";
     return (
         <div className={styles.oneshotContainer}>
             <div className={styles.oneshotTopSection}>
@@ -157,7 +157,7 @@ export function Component(): JSX.Element {
             </div>
             <div className={styles.oneshotBottomSection}>
                 {isLoading && <Spinner label="Generating answer" />}
-                {!lastQuestionRef.current && <ExampleList onExampleClicked={onExampleClicked} />}
+                {!lastQuestionRef.current && <ExampleList onExampleClicked={onExampleClicked} module={module} />}
                 {!isLoading && answer && !error && (
                     <div className={styles.oneshotAnswerContainer}>
                         <Answer
