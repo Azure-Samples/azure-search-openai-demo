@@ -144,19 +144,16 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
     try:
         blob = await blob_container_client.get_blob_client(path).download_blob()
     except ResourceNotFoundError:
-        current_app.logger.info(
-            "Path not found in general Blob container: %s", path)
+        current_app.logger.info("Path not found in general Blob container: %s", path)
         if current_app.config[CONFIG_USER_UPLOAD_ENABLED]:
             try:
                 user_oid = auth_claims["oid"]
                 user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-                user_directory_client: FileSystemClient = user_blob_container_client.get_directory_client(
-                    user_oid)
+                user_directory_client: FileSystemClient = user_blob_container_client.get_directory_client(user_oid)
                 file_client = user_directory_client.get_file_client(path)
                 blob = await file_client.download_file()
             except ResourceNotFoundError:
-                current_app.logger.exception(
-                    "Path not found in DataLake: %s", path)
+                current_app.logger.exception("Path not found in DataLake: %s", path)
                 abort(404)
         else:
             abort(404)
@@ -183,13 +180,11 @@ async def ask(auth_claims: Dict[str, Any]):
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
-            approach = cast(
-                Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
+            approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
         r = await approach.run(
-            request_json["messages"], context=context, session_state=request_json.get(
-                "session_state")
+            request_json["messages"], context=context, session_state=request_json.get("session_state")
         )
         return jsonify(r)
     except Exception as error:
@@ -208,8 +203,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         async for event in r:
             yield json.dumps(event, ensure_ascii=False, cls=JSONEncoder) + "\n"
     except Exception as error:
-        logging.exception(
-            "Exception while generating response stream: %s", error)
+        logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps(error_dict(error))
 
 
@@ -225,8 +219,7 @@ async def chat(auth_claims: Dict[str, Any]):
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
-            approach = cast(
-                Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
+            approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
@@ -252,8 +245,7 @@ async def chat_stream(auth_claims: Dict[str, Any]):
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
-            approach = cast(
-                Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
+            approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
@@ -315,15 +307,11 @@ async def speech():
             + "#"
             + current_app.config[CONFIG_SPEECH_SERVICE_TOKEN].token
         )
-        speech_config = SpeechConfig(
-            auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_SERVICE_LOCATION])
-        speech_config.speech_synthesis_voice_name = current_app.config[
-            CONFIG_SPEECH_SERVICE_VOICE]
+        speech_config = SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_SERVICE_LOCATION])
+        speech_config.speech_synthesis_voice_name = current_app.config[CONFIG_SPEECH_SERVICE_VOICE]
         speech_config.speech_synthesis_output_format = SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
-        synthesizer = SpeechSynthesizer(
-            speech_config=speech_config, audio_config=None)
-        result: SpeechSynthesisResult = synthesizer.speak_text_async(
-            text).get()
+        synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+        result: SpeechSynthesisResult = synthesizer.speak_text_async(text).get()
         if result.reason == ResultReason.SynthesizingAudioCompleted:
             return result.audio_data, 200, {"Content-Type": "audio/mp3"}
         elif result.reason == ResultReason.Canceled:
@@ -331,11 +319,9 @@ async def speech():
             current_app.logger.error(
                 "Speech synthesis canceled: %s %s", cancellation_details.reason, cancellation_details.error_details
             )
-            raise Exception(
-                "Speech synthesis canceled. Check logs for details.")
+            raise Exception("Speech synthesis canceled. Check logs for details.")
         else:
-            current_app.logger.error(
-                "Unexpected result reason: %s", result.reason)
+            current_app.logger.error("Unexpected result reason: %s", result.reason)
             raise Exception("Speech synthesis failed. Check logs for details.")
     except Exception as e:
         current_app.logger.exception("Exception in /speech")
@@ -352,10 +338,8 @@ async def upload(auth_claims: dict[str, Any]):
 
     user_oid = auth_claims["oid"]
     file = request_files.getlist("file")[0]
-    user_blob_container_client: FileSystemClient = current_app.config[
-        CONFIG_USER_BLOB_CONTAINER_CLIENT]
-    user_directory_client = user_blob_container_client.get_directory_client(
-        user_oid)
+    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+    user_directory_client = user_blob_container_client.get_directory_client(user_oid)
     try:
         await user_directory_client.get_directory_properties()
     except ResourceNotFoundError:
@@ -379,10 +363,8 @@ async def delete_uploaded(auth_claims: dict[str, Any]):
     request_json = await request.get_json()
     filename = request_json.get("filename")
     user_oid = auth_claims["oid"]
-    user_blob_container_client: FileSystemClient = current_app.config[
-        CONFIG_USER_BLOB_CONTAINER_CLIENT]
-    user_directory_client = user_blob_container_client.get_directory_client(
-        user_oid)
+    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+    user_directory_client = user_blob_container_client.get_directory_client(user_oid)
     file_client = user_directory_client.get_file_client(filename)
     await file_client.delete_file()
     ingester = current_app.config[CONFIG_INGESTER]
@@ -394,8 +376,7 @@ async def delete_uploaded(auth_claims: dict[str, Any]):
 @authenticated
 async def list_uploaded(auth_claims: dict[str, Any]):
     user_oid = auth_claims["oid"]
-    user_blob_container_client: FileSystemClient = current_app.config[
-        CONFIG_USER_BLOB_CONTAINER_CLIENT]
+    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
     files = []
     try:
         all_paths = user_blob_container_client.get_paths(path=user_oid)
@@ -419,20 +400,16 @@ async def setup_clients():
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    OPENAI_EMB_MODEL = os.getenv(
-        "AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
+    OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", 1536))
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
-    AZURE_OPENAI_GPT4V_DEPLOYMENT = os.environ.get(
-        "AZURE_OPENAI_GPT4V_DEPLOYMENT")
+    AZURE_OPENAI_GPT4V_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT4V_DEPLOYMENT")
     AZURE_OPENAI_GPT4V_MODEL = os.environ.get("AZURE_OPENAI_GPT4V_MODEL")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = (
-        os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST.startswith(
-            "azure") else None
+        os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     )
-    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv(
-        "AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
+    AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     # Used only with non-Azure OpenAI deployments
@@ -440,14 +417,10 @@ async def setup_clients():
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
 
     AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
-    AZURE_USE_AUTHENTICATION = os.getenv(
-        "AZURE_USE_AUTHENTICATION", "").lower() == "true"
-    AZURE_ENFORCE_ACCESS_CONTROL = os.getenv(
-        "AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
-    AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS = os.getenv(
-        "AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
-    AZURE_ENABLE_UNAUTHENTICATED_ACCESS = os.getenv(
-        "AZURE_ENABLE_UNAUTHENTICATED_ACCESS", "").lower() == "true"
+    AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    AZURE_ENFORCE_ACCESS_CONTROL = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
+    AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
+    AZURE_ENABLE_UNAUTHENTICATED_ACCESS = os.getenv("AZURE_ENABLE_UNAUTHENTICATED_ACCESS", "").lower() == "true"
     AZURE_SERVER_APP_ID = os.getenv("AZURE_SERVER_APP_ID")
     AZURE_SERVER_APP_SECRET = os.getenv("AZURE_SERVER_APP_SECRET")
     AZURE_CLIENT_APP_ID = os.getenv("AZURE_CLIENT_APP_ID")
@@ -456,33 +429,25 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
-    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv(
-        "AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
-    AZURE_SEARCH_QUERY_SPELLER = os.getenv(
-        "AZURE_SEARCH_QUERY_SPELLER", "lexicon")
-    AZURE_SEARCH_SEMANTIC_RANKER = os.getenv(
-        "AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
+    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
+    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+    AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
-    AZURE_SPEECH_VOICE = os.getenv(
-        "AZURE_SPEECH_VOICE", "en-US-AndrewMultilingualNeural")
+    AZURE_SPEECH_VOICE = os.getenv("AZURE_SPEECH_VOICE", "en-US-AndrewMultilingualNeural")
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
-    USE_SPEECH_INPUT_BROWSER = os.getenv(
-        "USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
-    USE_SPEECH_OUTPUT_BROWSER = os.getenv(
-        "USE_SPEECH_OUTPUT_BROWSER", "").lower() == "true"
-    USE_SPEECH_OUTPUT_AZURE = os.getenv(
-        "USE_SPEECH_OUTPUT_AZURE", "").lower() == "true"
+    USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
+    USE_SPEECH_OUTPUT_BROWSER = os.getenv("USE_SPEECH_OUTPUT_BROWSER", "").lower() == "true"
+    USE_SPEECH_OUTPUT_AZURE = os.getenv("USE_SPEECH_OUTPUT_AZURE", "").lower() == "true"
 
     # Use the current user identity to authenticate with Azure OpenAI, AI Search and Blob Storage (no secrets needed,
     # just use 'az login' locally, and managed identity when deployed on Azure). If you need to use keys, use separate AzureKeyCredential instances with the
     # keys for each service
     # If you encounter a blocking error during a DefaultAzureCredential resolution, you can exclude the problematic credential by using a parameter (ex. exclude_shared_token_cache_credential=True)
-    azure_credential = DefaultAzureCredential(
-        exclude_shared_token_cache_credential=True)
+    azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
 
     # Set up clients for AI Search and Storage
     search_client = SearchClient(
@@ -498,8 +463,7 @@ async def setup_clients():
     # Set up authentication helper
     search_index = None
     if AZURE_USE_AUTHENTICATION:
-        current_app.logger.info(
-            "AZURE_USE_AUTHENTICATION is true, setting up search index client")
+        current_app.logger.info("AZURE_USE_AUTHENTICATION is true, setting up search index client")
         search_index_client = SearchIndexClient(
             endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
             credential=azure_credential,
@@ -519,8 +483,7 @@ async def setup_clients():
     )
 
     if USE_USER_UPLOAD:
-        current_app.logger.info(
-            "USE_USER_UPLOAD is true, setting up user upload feature")
+        current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
         if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:
             raise ValueError(
                 "AZURE_USERSTORAGE_ACCOUNT and AZURE_USERSTORAGE_CONTAINER must be set when USE_USER_UPLOAD is true"
@@ -535,12 +498,9 @@ async def setup_clients():
         # Set up ingester
         file_processors = setup_file_processors(
             azure_credential=azure_credential,
-            document_intelligence_service=os.getenv(
-                "AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
-            local_pdf_parser=os.getenv(
-                "USE_LOCAL_PDF_PARSER", "").lower() == "true",
-            local_html_parser=os.getenv(
-                "USE_LOCAL_HTML_PARSER", "").lower() == "true",
+            document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
+            local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER", "").lower() == "true",
+            local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER", "").lower() == "true",
             search_images=USE_GPT4V,
         )
         search_info = await setup_search_info(
@@ -567,14 +527,11 @@ async def setup_clients():
     openai_client: AsyncOpenAI
 
     if USE_SPEECH_OUTPUT_AZURE:
-        current_app.logger.info(
-            "USE_SPEECH_OUTPUT_AZURE is true, setting up Azure speech service")
+        current_app.logger.info("USE_SPEECH_OUTPUT_AZURE is true, setting up Azure speech service")
         if not AZURE_SPEECH_SERVICE_ID or AZURE_SPEECH_SERVICE_ID == "":
-            raise ValueError(
-                "Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_ID")
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_ID")
         if not AZURE_SPEECH_SERVICE_LOCATION or AZURE_SPEECH_SERVICE_LOCATION == "":
-            raise ValueError(
-                "Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
         current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
         current_app.config[CONFIG_SPEECH_SERVICE_LOCATION] = AZURE_SPEECH_SERVICE_LOCATION
         current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_VOICE
@@ -583,40 +540,30 @@ async def setup_clients():
         current_app.config[CONFIG_CREDENTIAL] = azure_credential
 
     if OPENAI_HOST.startswith("azure"):
-        api_version = os.getenv(
-            "AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
         if OPENAI_HOST == "azure_custom":
-            current_app.logger.info(
-                "OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
+            current_app.logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
             if not AZURE_OPENAI_CUSTOM_URL:
-                raise ValueError(
-                    "AZURE_OPENAI_CUSTOM_URL must be set when OPENAI_HOST is azure_custom")
+                raise ValueError("AZURE_OPENAI_CUSTOM_URL must be set when OPENAI_HOST is azure_custom")
             endpoint = AZURE_OPENAI_CUSTOM_URL
         else:
-            current_app.logger.info(
-                "OPENAI_HOST is azure, setting up Azure OpenAI client")
+            current_app.logger.info("OPENAI_HOST is azure, setting up Azure OpenAI client")
             if not AZURE_OPENAI_SERVICE:
-                raise ValueError(
-                    "AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
+                raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
         if api_key := os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"):
-            current_app.logger.info(
-                "AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
-            openai_client = AsyncAzureOpenAI(
-                api_version=api_version, azure_endpoint=endpoint, api_key=api_key)
+            current_app.logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
+            openai_client = AsyncAzureOpenAI(api_version=api_version, azure_endpoint=endpoint, api_key=api_key)
         else:
-            current_app.logger.info(
-                "Using Azure credential (passwordless authentication) for Azure OpenAI client")
-            token_provider = get_bearer_token_provider(
-                azure_credential, "https://cognitiveservices.azure.com/.default")
+            current_app.logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
+            token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
             openai_client = AsyncAzureOpenAI(
                 api_version=api_version,
                 azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
             )
     elif OPENAI_HOST == "local":
-        current_app.logger.info(
-            "OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
+        current_app.logger.info("OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
         openai_client = AsyncOpenAI(
             base_url=os.environ["OPENAI_BASE_URL"],
             api_key="no-key-required",
@@ -637,8 +584,7 @@ async def setup_clients():
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
-    current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv(
-        "USE_VECTORS", "").lower() != "false"
+    current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_SPEECH_INPUT_ENABLED] = USE_SPEECH_INPUT_BROWSER
     current_app.config[CONFIG_SPEECH_OUTPUT_BROWSER_ENABLED] = USE_SPEECH_OUTPUT_BROWSER
@@ -679,10 +625,8 @@ async def setup_clients():
     if USE_GPT4V:
         current_app.logger.info("USE_GPT4V is true, setting up GPT4V approach")
         if not AZURE_OPENAI_GPT4V_MODEL:
-            raise ValueError(
-                "AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
-        token_provider = get_bearer_token_provider(
-            azure_credential, "https://cognitiveservices.azure.com/.default")
+            raise ValueError("AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
+        token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
             search_client=search_client,
@@ -736,8 +680,7 @@ def create_app():
     app.register_blueprint(bp)
 
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
-        app.logger.info(
-            "APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
+        app.logger.info("APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
         configure_azure_monitor()
         # This tracks HTTP requests made by aiohttp:
         AioHttpClientInstrumentor().instrument()
@@ -746,8 +689,7 @@ def create_app():
         # This tracks OpenAI SDK requests:
         OpenAIInstrumentor().instrument()
         # This middleware tracks app route requests:
-        app.asgi_app = OpenTelemetryMiddleware(
-            app.asgi_app)  # type: ignore[assignment]
+        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[assignment]
 
     # Log levels should be one of https://docs.python.org/3/library/logging.html#logging-levels
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS
@@ -757,7 +699,6 @@ def create_app():
     app.logger.setLevel(os.getenv("APP_LOG_LEVEL", default_level))
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
-        app.logger.info(
-            "ALLOWED_ORIGIN is set, enabling CORS for %s", allowed_origin)
+        app.logger.info("ALLOWED_ORIGIN is set, enabling CORS for %s", allowed_origin)
         cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
     return app
