@@ -20,6 +20,7 @@ from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.jsonparser import JsonParser
+from prepdocslib.csvparser import CsvParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
@@ -183,6 +184,7 @@ def setup_file_processors(
         ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
+        ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
         ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
