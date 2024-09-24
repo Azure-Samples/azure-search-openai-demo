@@ -30,6 +30,7 @@ class ChatApproach(Approach, ABC):
 
     follow_up_questions_prompt_content = """- Generate 3 concise follow-up questions that the user might ask next based on the conversation so far.
 - Use the system message to ensure your tone and style are consistent with the previous interactions.
+- You don't need to preface these with any additional context, that will be provided via static text.
 - Enclose each follow-up question in double angle brackets. For example:
   <<Which agency can help me with that?>>
   <<Are there specific requirements?>>
