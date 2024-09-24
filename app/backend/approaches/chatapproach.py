@@ -13,10 +13,13 @@ class ChatApproach(Approach, ABC):
         {"role": "user", "content": "What funding is available to start a new business in New Zealand?"},
         {
             "role": "assistant",
-            "content": "Summarize all the funding options available to start a new business in New Zealand.",
+            "content": "There are a lot of funding options available to start a new business in New Zealand. Some of the options include grants, loans, and equity investment. Can you tell me more about the type of funding you're looking for?",
         },
         {"role": "user", "content": "Who can help me with R&D funding in New Zealand?"},
-        {"role": "assistant", "content": "Show all R&D funding options available in New Zealand."},
+        {
+            "role": "assistant",
+            "content": "There are several agencies who can help you find R&D funding in New Zealand. Can you tell me more about the type of R&D funding you're looking for?",
+        },
         {"role": "user", "content": "Tell me more about this assistant."},
         {
             "role": "assistant",
