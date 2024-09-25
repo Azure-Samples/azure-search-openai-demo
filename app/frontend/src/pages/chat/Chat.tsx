@@ -26,6 +26,9 @@ import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
 import { HelpCallout } from "../../components/HelpCallout";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
+import { HistoryPanel } from "../../components/HistoryPanel";
+import { HistoryProviderOptions, useHistoryManager } from "../../components/HistoryProviders";
+import { HistoryButton } from "../../components/HistoryButton";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 import { UploadFile } from "../../components/UploadFile";
@@ -39,6 +42,7 @@ import { LanguagePicker } from "../../i18n/LanguagePicker";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    const [isHistoryPanelOpen, setIsHistoryPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
     const [seed, setSeed] = useState<number | null>(null);
@@ -80,6 +84,7 @@ const Chat = () => {
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
+    const [showChatHistory, setShowChatHistory] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -105,6 +110,7 @@ const Chat = () => {
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
+            setShowChatHistory(config.showChatHistory);
         });
     };
 
@@ -154,6 +160,9 @@ const Chat = () => {
     const client = useLogin ? useMsal().instance : undefined;
     const { loggedIn } = useContext(LoginContext);
 
+    const historyProvider: HistoryProviderOptions = showChatHistory ? HistoryProviderOptions.IndexedDB : HistoryProviderOptions.None;
+    const historyManager = useHistoryManager(historyProvider);
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -194,7 +203,8 @@ const Chat = () => {
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
-                session_state: answers.length ? answers[answers.length - 1][1].session_state : null
+                // Set new UUID as session state for the first request
+                session_state: answers.length ? answers[answers.length - 1][1].session_state : crypto.randomUUID()
             };
 
             const response = await chatApi(request, shouldStream, token);
@@ -207,12 +217,14 @@ const Chat = () => {
             if (shouldStream) {
                 const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
+                historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]]);
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {
                     throw Error(parsedResponse.error);
                 }
                 setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
+                historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse as ChatAppResponse]]);
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {
@@ -352,12 +364,17 @@ const Chat = () => {
             <Helmet>
                 <title>{t("pageTitle")}</title>
             </Helmet>
-            <div className={styles.commandsContainer}>
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
-                <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+            <div className={styles.commandsSplitContainer}>
+                <div className={styles.commandsContainer}>
+                    {showChatHistory && <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />}
+                </div>
+                <div className={styles.commandsContainer}>
+                    <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
+                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                </div>
             </div>
-            <div className={styles.chatRoot}>
+            <div className={styles.chatRoot} style={{ marginLeft: isHistoryPanelOpen ? "300px" : "0" }}>
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
@@ -455,6 +472,20 @@ const Chat = () => {
                         citationHeight="810px"
                         answer={answers[selectedAnswer][1]}
                         activeTab={activeAnalysisPanelTab}
+                    />
+                )}
+
+                {showChatHistory && (
+                    <HistoryPanel
+                        provider={historyProvider}
+                        isOpen={isHistoryPanelOpen}
+                        notify={!isStreaming && !isLoading}
+                        onClose={() => setIsHistoryPanelOpen(false)}
+                        onChatSelected={answers => {
+                            if (answers.length === 0) return;
+                            setAnswers(answers);
+                            lastQuestionRef.current = answers[answers.length - 1][0];
+                        }}
                     />
                 )}
 
