@@ -1,6 +1,6 @@
 # This is the main branch for GovGPT, powered by Callaghan Innovation
-## This code is based on Microsoft's azure-search-openai-demo code, with significant modification. Some tweaks may be pushed back to the main rep. You can find previous versions in the other branches, as well as iterative tweaks we've made to front-end design.
-### MINOR versioning (x.N.x) represents significant changes from the previous version. PATCH versioning (x.x.N) represents UI updates. Major versioning (N.x.x) will be used if this product reaches a production-level deployment.
+## This code is based on Microsoft's azure-search-openai-demo code, with significant modification.
+### Some tweaks may be pushed back to the main rep. You can find previous versions in the other branches, as well as iterative tweaks we've made to front-end design. MINOR versioning (x.N.x) represents significant changes from the previous version. PATCH versioning (x.x.N) represents UI updates. Major versioning (N.x.x) will be used if this product reaches a production-level deployment.
 
 **Microsoft documentation continues below**
 
