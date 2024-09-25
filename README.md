@@ -1,3 +1,7 @@
+# This is the main branch for GovGPT, powered by Callaghan Innovation
+## This code is based on Microsoft's azure-search-openai-demo code, with significant modification. Some tweaks may be pushed back to the main rep. You can find previous versions in the other branches, as well as iterative tweaks we've made to front-end design.
+MINOR versioning (x.N.x) represents significant changes from the previous version. PATCH versioning (x.x.N) represents UI updates. Major versioning (N.x.x) will be used if this product reaches a production-level deployment.
+
 # ChatGPT-like app with your data using Azure OpenAI and Azure AI Search (Python)
 
 This solution's backend is written in Python. There are also [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one. Learn more about [developing AI apps using Azure AI Services](https://aka.ms/azai).
