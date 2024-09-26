@@ -81,7 +81,7 @@ If you're running the app inside a VS Code Dev Container, use this local URL ins
 azd env set OPENAI_BASE_URL http://host.docker.internal:11434/v1
 ```
 
-# Using llamafile server
+### Using llamafile server
 
 To point at a local llamafile server running on its default port:
 
