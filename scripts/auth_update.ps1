@@ -1,5 +1,5 @@
 $AZURE_USE_AUTHENTICATION = (azd env get-value AZURE_USE_AUTHENTICATION)
-if (-not $?) {
+if ($AZURE_USE_AUTHENTICATION -ne "true") {
   Exit 0
 }
 
