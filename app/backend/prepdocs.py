@@ -158,7 +158,7 @@ def setup_file_processors(
 ):
     html_parser: Parser
     pdf_parser: Parser
-    doc_int_parser: DocumentAnalysisParser
+    doc_int_parser: DocumentAnalysisParser = None
 
     # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service is not None:
@@ -178,22 +178,32 @@ def setup_file_processors(
     else:
         html_parser = doc_int_parser
     sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=search_images)
-    return {
+
+    # These file formats can always be parsed, thanks to local packages
+    file_processors = {
         ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
         ".html": FileProcessor(html_parser, sentence_text_splitter),
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
-        ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
-        ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".md": FileProcessor(TextParser(), sentence_text_splitter),
         ".txt": FileProcessor(TextParser(), sentence_text_splitter),
     }
+
+    # These file formats require Document Intelligence
+    if doc_int_parser is not None:
+        file_processors.update(
+            {
+                ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
+            }
+        )
+    return file_processors
 
 
 def setup_image_embeddings_service(
