@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import json
 import logging
+import os
 from typing import Any, Union
 from urllib.parse import urljoin
 
@@ -15,7 +16,9 @@ from azure.search.documents.indexes.models import (
     SimpleField,
 )
 
-logger = logging.getLogger("manageacl")
+from load_azd_env import load_azd_env
+
+logger = logging.getLogger("scripts")
 
 
 class ManageAcl:
@@ -202,6 +205,8 @@ class ManageAcl:
 
 
 async def main(args: Any):
+    load_azd_env()
+
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (
         AzureDeveloperCliCredential()
@@ -213,8 +218,8 @@ async def main(args: Any):
         search_credential = AzureKeyCredential(args.search_key)
 
     command = ManageAcl(
-        service_name=args.search_service,
-        index_name=args.index,
+        service_name=os.environ["AZURE_SEARCH_SERVICE"],
+        index_name=os.environ["AZURE_SEARCH_INDEX"],
         url=args.url,
         acl_action=args.acl_action,
         acl_type=args.acl_type,
@@ -227,22 +232,12 @@ async def main(args: Any):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Manage ACLs in a search index",
-        epilog="Example: manageacl.py --searchservice mysearch --index myindex --acl-action enable_acls",
-    )
-    parser.add_argument(
-        "--search-service",
-        required=True,
-        help="Name of the Azure AI Search service where content should be indexed (must exist already)",
-    )
-    parser.add_argument(
-        "--index",
-        required=True,
-        help="Name of the Azure AI Search index where content should be indexed (will be created if it doesn't exist)",
+        epilog="Example: manageacl.py --acl-action enable_acls",
     )
     parser.add_argument(
         "--search-key",
         required=False,
-        help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+        help="Optional. Use this Azure AI Search account key instead of the current user identity to login",
     )
     parser.add_argument("--acl-type", required=False, choices=["oids", "groups"], help="Optional. Type of ACL")
     parser.add_argument(

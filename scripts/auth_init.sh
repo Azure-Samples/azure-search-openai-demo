@@ -2,9 +2,8 @@
 
 echo "Checking if authentication should be setup..."
 
-. ./scripts/load_azd_env.sh
-
-if [ -z "$AZURE_USE_AUTHENTICATION" ]; then
+AZURE_USE_AUTHENTICATION=$(azd env get-value AZURE_USE_AUTHENTICATION)
+if [ "$AZURE_USE_AUTHENTICATION" != "true" ]; then
   echo "AZURE_USE_AUTHENTICATION is not set, skipping authentication setup."
   exit 0
 fi

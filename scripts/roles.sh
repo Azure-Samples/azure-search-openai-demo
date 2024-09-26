@@ -1,12 +1,3 @@
-output=$(azd env get-values)
-
-while IFS= read -r line; do
-  name=$(echo "$line" | cut -d '=' -f 1)
-  value=$(echo "$line" | cut -d '=' -f 2 | sed 's/^\"//;s/\"$//')
-  export "$name"="$value"
-done <<< "$output"
-
-echo "Environment variables set."
 
 roles=(
     "5e0bd9bd-7b93-4f28-af87-19fc36ad61bd" # Cognitive Services OpenAI User
@@ -16,11 +7,15 @@ roles=(
     "8ebe5a00-799e-43f5-93ac-243d3dce84a7" # Search Index Data Contributor
 )
 
+AZURE_RESOURCE_GROUP=$(azd env get-value AZURE_RESOURCE_GROUP)
 if [ -z "$AZURE_RESOURCE_GROUP" ]; then
-    export AZURE_RESOURCE_GROUP="rg-$AZURE_ENV_NAME"
+    AZURE_ENV_NAME=$(azd env get-value AZURE_ENV_NAME)
+    AZURE_RESOURCE_GROUP="rg-$AZURE_ENV_NAME"
     azd env set AZURE_RESOURCE_GROUP "$AZURE_RESOURCE_GROUP"
 fi
 
+AZURE_PRINCIPAL_ID=$(azd env get-value AZURE_PRINCIPAL_ID)
+AZURE_SUBSCRIPTION_ID=$(azd env get-value AZURE_SUBSCRIPTION_ID)
 for role in "${roles[@]}"; do
     az role assignment create \
         --role "$role" \

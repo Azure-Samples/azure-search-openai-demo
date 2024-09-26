@@ -714,9 +714,10 @@ def create_app():
     # Log levels should be one of https://docs.python.org/3/library/logging.html#logging-levels
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS
     logging.basicConfig(level=logging.WARNING)
-    # Set the app logger level to INFO by default
-    default_level = "INFO"
-    app.logger.setLevel(os.getenv("APP_LOG_LEVEL", default_level))
+    # Set our own logger levels to INFO by default
+    app_level = os.getenv("APP_LOG_LEVEL", "INFO")
+    app.logger.setLevel(os.getenv("APP_LOG_LEVEL", app_level))
+    logging.getLogger("scripts").setLevel(app_level)
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("ALLOWED_ORIGIN is set, enabling CORS for %s", allowed_origin)
