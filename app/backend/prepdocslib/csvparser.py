@@ -1,5 +1,6 @@
 import csv
 from typing import IO, AsyncGenerator
+
 from .page import Page
 from .parser import Parser
 
@@ -10,11 +11,20 @@ class CsvParser(Parser):
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        # Ensure the file is read in text mode
-        text_content = content.read().decode('utf-8')  # Decode bytes to string if opened in binary mode
-        reader = csv.reader(text_content.splitlines())  # Create CSV reader from text lines
+        # Check if content is in bytes (binary file) and decode to string
+        if isinstance(content, (bytes, bytearray)):
+            content = content.decode("utf-8")
+        elif hasattr(content, "read"):  # Handle BufferedReader
+            content = content.read().decode("utf-8")
+
+        # Create a CSV reader from the text content
+        reader = csv.reader(content.splitlines())
         offset = 0
+
+        # Skip the header row
+        next(reader, None)
+
         for i, row in enumerate(reader):
-            page_text = ",".join(row)  # Combine CSV row elements back to a string
+            page_text = ",".join(row)
             yield Page(i, offset, page_text)
-            offset += len(page_text) + 1  # Add 1 for the newline character or comma
+            offset += len(page_text) + 1  # Account for newline character
