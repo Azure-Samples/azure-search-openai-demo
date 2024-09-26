@@ -46,25 +46,59 @@ You may want to save costs by developing against a local LLM server, such as
 [llamafile](https://github.com/Mozilla-Ocho/llamafile/). Note that a local LLM
 will generally be slower and not as sophisticated.
 
-Once you've got your local LLM running and serving an OpenAI-compatible endpoint, set these environment variables:
+Once the local LLM server is running and serving an OpenAI-compatible endpoint, set these environment variables:
+
+```shell
+azd env set USE_VECTORS false
+azd env set OPENAI_HOST local
+azd env set OPENAI_BASE_URL <your local endpoint>
+azd env set AZURE_OPENAI_CHATGPT_MODEL local-model-name
+```
+
+Then restart the local development server.
+You should now be able to use the "Ask" tab.
+
+⚠️ Limitations:
+
+- The "Chat" tab will only work if the local language model supports function calling.
+- Your search mode must be text only (no vectors), since the search index is only populated with OpenAI-generated embeddings, and the local OpenAI host can't generate those.
+- The conversation history will be truncated using the GPT tokenizers, which may not be the same as the local model's tokenizer, so if you have a long conversation, you may end up with token limit errors.
+
+> [!NOTE]
+> You must set `OPENAI_HOST` back to a non-local value ("azure", "azure_custom", or "openai")
+> before running `azd up` or `azd provision`, since the deployed backend can't access your local server.
+
+### Using Ollama server
+
+For example, to point at a local Ollama server running the `llama3.1:8b` model:
 
 ```shell
 azd env set OPENAI_HOST local
-azd env set OPENAI_BASE_URL <your local endpoint>
+azd env set OPENAI_BASE_URL http://localhost:11434/v1
+azd env set AZURE_OPENAI_CHATGPT_MODEL llama3.1:8b
+azd env set USE_VECTORS false
 ```
 
-For example, to point at a local llamafile server running on its default port:
+If you're running the app inside a VS Code Dev Container, use this local URL instead:
 
 ```shell
-azd env set OPENAI_BASE_URL http://localhost:8080/v1
+azd env set OPENAI_BASE_URL http://host.docker.internal:11434/v1
 ```
 
-If you're running inside a dev container, use this local URL instead:
+### Using llamafile server
+
+To point at a local llamafile server running on its default port:
+
+```shell
+azd env set OPENAI_HOST local
+azd env set OPENAI_BASE_URL http://localhost:8080/v1
+azd env set USE_VECTORS false
+```
+
+Llamafile does *not* require a model name to be specified.
+
+If you're running the app inside a VS Code Dev Container, use this local URL instead:
 
 ```shell
 azd env set OPENAI_BASE_URL http://host.docker.internal:8080/v1
 ```
-
-> [!NOTE]
-> You must set this back to a non-local value ("azure", "azure_custom", or "openai")
-> before running `azd up` or `azd provision`, since the deployed backend can't access your local server.
