@@ -28,7 +28,7 @@ from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
 
-logger = logging.getLogger("ingester")
+logger = logging.getLogger("scripts")
 
 
 class IntegratedVectorizerStrategy(Strategy):

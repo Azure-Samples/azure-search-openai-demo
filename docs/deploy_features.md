@@ -224,13 +224,13 @@ and will have ACLs associated with that directory. When the ingester runs, it wi
 If you are enabling this feature on an existing index, you should also update your index to have the new `storageUrl` field:
 
 ```shell
-./scripts/manageacl.ps1  -v --acl-action enable_acls
+python ./scripts/manageacl.py  -v --acl-action enable_acls
 ```
 
 And then update existing search documents with the storage URL of the main Blob container:
 
 ```shell
-./scripts/manageacl.ps1  -v --acl-action update_storage_urls --url <https://YOUR-MAIN-STORAGE-ACCOUNT.blob.core.windows.net/content/>
+python ./scripts/manageacl.py  -v --acl-action update_storage_urls --url <https://YOUR-MAIN-STORAGE-ACCOUNT.blob.core.windows.net/content/>
 ```
 
 Going forward, all uploaded documents will have their `storageUrl` set in the search index.

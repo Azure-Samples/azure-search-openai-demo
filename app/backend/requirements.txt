@@ -81,7 +81,7 @@ click==8.1.7
     #   flask
     #   quart
     #   uvicorn
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   -r requirements.in
     #   azure-identity
@@ -348,6 +348,8 @@ python-dateutil==2.9.0.post0
     #   microsoft-kiota-serialization-text
     #   pendulum
     #   time-machine
+python-dotenv==1.0.1
+    # via -r requirements.in
 quart==0.19.6
     # via
     #   -r requirements.in

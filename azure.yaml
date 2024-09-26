@@ -9,8 +9,23 @@ services:
     language: py
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
     # host: containerapp
+    # docker:
+    #  remoteBuild: true
     host: appservice
     hooks:
+      # This hook is called when App Service is the host
+      prepackage:
+        windows:
+          shell: pwsh
+          run:  cd ../frontend;npm install;npm run build
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run:  cd ../frontend;npm install;npm run build
+          interactive: false
+          continueOnError: false
+      # This hook is called when Azure Container Apps is the host
       prebuild:
         windows:
           shell: pwsh

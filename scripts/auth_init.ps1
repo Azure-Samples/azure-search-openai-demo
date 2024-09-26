@@ -1,6 +1,8 @@
-. ./scripts/load_azd_env.ps1
+Write-Host "Checking if authentication should be setup..."
 
-if (-not $env:AZURE_USE_AUTHENTICATION) {
+$AZURE_USE_AUTHENTICATION = (azd env get-value AZURE_USE_AUTHENTICATION)
+if ($AZURE_USE_AUTHENTICATION -ne "true") {
+  Write-Host "AZURE_USE_AUTHENTICATION is not set, skipping authentication setup."
   Exit 0
 }
 

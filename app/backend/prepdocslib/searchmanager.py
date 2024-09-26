@@ -26,7 +26,7 @@ from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import SplitPage
 
-logger = logging.getLogger("ingester")
+logger = logging.getLogger("scripts")
 
 
 class Section:
