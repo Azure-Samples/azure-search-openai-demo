@@ -1,6 +1,9 @@
 import io
+
 import pytest
+
 from prepdocslib.csvparser import CsvParser  # Adjust import to the correct module
+
 
 @pytest.mark.asyncio
 async def test_csvparser_single_row():
@@ -34,7 +37,7 @@ async def test_csvparser_multiple_rows():
     assert pages[0].page_num == 0
     assert pages[0].offset == 0
     assert pages[0].text == "value1,value2,value3"
-    
+
     assert pages[1].page_num == 1
     assert pages[1].offset == len(pages[0].text) + 1  # Length of the first row plus a newline
     assert pages[1].text == "value4,value5,value6"
