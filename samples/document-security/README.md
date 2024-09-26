@@ -23,21 +23,22 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
 ## Table of Contents
 
 - [Requirements](#requirements)
-- [Setting up Microsoft Entra ID Apps](#setting-up-entra-id-apps)
+- [Setting up Microsoft Entra applications](#setting-up-microsoft-entra-applications)
   - [Automatic Setup](#automatic-setup)
   - [Manual Setup](#manual-setup)
-    - [Server App](#setting-up-the-server-app)
+    - [Server App](#server-app)
     - [Client App](#client-app)
     - [Configure Server App Known Client Applications](#configure-server-app-known-client-applications)
     - [Testing](#testing)
-  - [Troubleshooting Entra ID Setup](#troubleshooting-entra-id-setup)
+    - [Programmatic Access With Authentication](#programmatic-access-with-authentication)
+  - [Troubleshooting](#troubleshooting)
 - [Adding data with document level access control](#adding-data-with-document-level-access-control)
   - [Using the Add Documents API](#using-the-add-documents-api)
   - [Azure Data Lake Storage Gen2 and prepdocs](#azure-data-lake-storage-gen2-setup)
-- [Environment Variables Reference](#environment-variables-reference)
-  - [Authentication Behavior by Environment](#authentication-behavior-by-environment)
+- [Environment variables reference](#environment-variables-reference)
+  - [Authentication behavior by environment](#authentication-behavior-by-environment)
 
-This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra ID groups](https://learn.microsoft.com/azure/active-directory/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
+This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
 ![AppLoginArchitecture](/docs/images/applogincomponents.png)
 
@@ -56,7 +57,7 @@ Two Microsoft Entra applications must be registered in order to make the optiona
 The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
 
 1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and use App Service authentication by default.
-1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
+1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `python ./scripts/manageacl.py --acl-action enable_acls`.
 1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`. Authentication is always required to search on documents with access control assigned, regardless of if unauthenticated access is enabled or not.
 1. (Optional) To allow authenticated users to search on documents that have no access controls assigned, even when access control is required, run `azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true`.
 1. (Optional) To allow unauthenticated users to use the app, even when access control is enforced, run `azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true`. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true if you want unauthenticated users to be able to search on documents with no access control.
@@ -175,7 +176,7 @@ print(token.token)
 - If any Entra apps need to be recreated, you can avoid redeploying the app by [changing the app settings in the portal](https://learn.microsoft.com/azure/app-service/configure-common?tabs=portal#configure-app-settings). Any of the [required environment variables](#environment-variables-reference) can be changed. Once the environment variables have been changed, restart the web app.
 - It's possible a consent dialog will not appear when you log into the app for the first time. If this consent dialog doesn't appear, you will be unable to use the security filters because the API server app does not have permission to read your authorization information. A consent dialog can be forced to appear by adding `"prompt": "consent"` to the `loginRequest` property in [`authentication.py`](../app/backend/core/authentication.py)
 - It's possible that your tenant admin has placed a restriction on consent to apps with [unverified publishers](https://learn.microsoft.com/entra/identity-platform/publisher-verification-overview). In this case, only admins may consent to the client and server apps, and normal user accounts are unable to use the login system until the admin consents on behalf of the entire organization.
-- It's possible that your tenant admin requires [admin approval of all new apps](https://learn.microsoft.com/entra/identity/enterprise-apps/manage-consent-requests). Regardless of whether you select the delegated or admin permissions, the app will not work without tenant admin consent.
+- It's possible that your tenant admin requires [admin approval of all new apps](https://learn.microsoft.com/entra/identity/enterprise-apps/manage-consent-requests). Regardless of whether you select the delegated or admin permissions, the app will not work without tenant admin consent. See this guide for [granting consent to an app](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent?pivots=portal).
 
 ## Adding data with document level access control
 
@@ -186,50 +187,53 @@ The sample supports 2 main strategies for adding data with document level access
 
 ### Using the Add Documents API
 
-Manually enable document level access control on a search index and manually set access control values using the [manageacl.ps1](../scripts/manageacl.ps1) script.
+Manually enable document level access control on a search index and manually set access control values using the [manageacl.py](../scripts/manageacl.py) script.
 
-Run `azd up` or use `azd env set` to manually set `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` environment variables prior to running the script.
+Prior to running the script:
 
-The script supports the following commands. Note that the syntax is the same regardless of whether [manageacl.ps1](../scripts/manageacl.ps1) or [manageacl.sh](../scripts/manageacl.sh) is used. All commands support `-v` for verbose logging.
+- Run `azd up` or use `azd env set` to manually set the `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` azd environment variables
+- Activate the Python virtual environment for your shell session
 
-- `./scripts/manageacl.ps1 --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index, as well as the `storageUrl` field for storing the Blob storage URL. Does nothing if these fields already exist.
+The script supports the following commands. All commands support `-v` for verbose logging.
+
+- `python ./scripts/manageacl.py --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index, as well as the `storageUrl` field for storing the Blob storage URL. Does nothing if these fields already exist.
 
   Example usage:
 
   ```shell
-  ./scripts/manageacl.ps1  -v --acl-action enable_acls
+  python ./scripts/manageacl.py -v --acl-action enable_acls
   ```
 
-- `./scripts/manageacl.ps1 --acl-type [oids or groups]--acl-action view --url [https://url.pdf]`: Prints access control values associated with either User IDs or Group IDs for the document at the specified URL.
+- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action view --url [https://url.pdf]`: Prints access control values associated with either User IDs or Group IDs for the document at the specified URL.
 
   Example to view all Group IDs:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
+- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action add --acl [ID of group or user] --url [https://url.pdf]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
 
   Example to add a Group ID:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
+- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action remove_all --url [https://url.pdf]`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
 
   Example to remove all Group IDs:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action remove_all --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type groups --acl-action remove_all --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
+- `python ./scripts/manageacl.py --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
 
   Example to remove a specific User ID:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
 ### Azure Data Lake Storage Gen2 Setup

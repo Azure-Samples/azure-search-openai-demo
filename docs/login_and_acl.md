@@ -20,7 +20,7 @@
 
 This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
-![AppLoginArchitecture](./images/applogincomponents.png)
+![AppLoginArchitecture](/docs/images/applogincomponents.png)
 
 ## Requirements
 
