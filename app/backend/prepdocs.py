@@ -1,14 +1,12 @@
 import argparse
 import asyncio
 import logging
-import os
 from typing import Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
 
-from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
@@ -34,7 +32,7 @@ from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
-logger = logging.getLogger("scripts")
+logger = logging.getLogger("ingester")
 
 
 def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
@@ -45,7 +43,10 @@ def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
 
 
 async def setup_search_info(
-    search_service: str, index_name: str, azure_credential: AsyncTokenCredential, search_key: Union[str, None] = None
+    search_service: str,
+    index_name: str,
+    azure_credential: AsyncTokenCredential,
+    search_key: Union[str, None] = None,
 ) -> SearchInfo:
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
@@ -67,7 +68,9 @@ def setup_blob_manager(
     search_images: bool,
     storage_key: Union[str, None] = None,
 ):
-    storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
+    storage_creds: Union[AsyncTokenCredential, str] = (
+        azure_credential if storage_key is None else storage_key
+    )
     return BlobManager(
         endpoint=f"https://{storage_account}.blob.core.windows.net",
         container=storage_container,
@@ -90,9 +93,15 @@ def setup_list_file_strategy(
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
         if datalake_filesystem is None or datalake_path is None:
-            raise ValueError("DataLake file system and path are required when using Azure Data Lake Gen2")
-        adls_gen2_creds: Union[AsyncTokenCredential, str] = azure_credential if datalake_key is None else datalake_key
-        logger.info("Using Data Lake Gen2 Storage Account: %s", datalake_storage_account)
+            raise ValueError(
+                "DataLake file system and path are required when using Azure Data Lake Gen2"
+            )
+        adls_gen2_creds: Union[AsyncTokenCredential, str] = (
+            azure_credential if datalake_key is None else datalake_key
+        )
+        logger.info(
+            "Using Data Lake Gen2 Storage Account: %s", datalake_storage_account
+        )
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=datalake_storage_account,
             data_lake_filesystem=datalake_filesystem,
@@ -103,7 +112,9 @@ def setup_list_file_strategy(
         logger.info("Using local files: %s", local_files)
         list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
     else:
-        raise ValueError("Either local_files or datalake_storage_account must be provided.")
+        raise ValueError(
+            "Either local_files or datalake_storage_account must be provided."
+        )
     return list_file_strategy
 
 
@@ -139,7 +150,9 @@ def setup_embeddings_service(
         )
     else:
         if openai_key is None:
-            raise ValueError("OpenAI key is required when using the non-Azure OpenAI API")
+            raise ValueError(
+                "OpenAI key is required when using the non-Azure OpenAI API"
+            )
         return OpenAIEmbeddingService(
             open_ai_model_name=openai_model_name,
             open_ai_dimensions=openai_dimensions,
@@ -157,37 +170,33 @@ def setup_file_processors(
     local_html_parser: bool = False,
     search_images: bool = False,
 ):
-    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=search_images)
+    html_parser: Parser
+    pdf_parser: Parser
+    doc_int_parser: DocumentAnalysisParser
 
-    doc_int_parser: Optional[DocumentAnalysisParser] = None
     # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service is not None:
         documentintelligence_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
-            azure_credential if document_intelligence_key is None else AzureKeyCredential(document_intelligence_key)
+            azure_credential
+            if document_intelligence_key is None
+            else AzureKeyCredential(document_intelligence_key)
         )
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=documentintelligence_creds,
         )
-
-    pdf_parser: Optional[Parser] = None
     if local_pdf_parser or document_intelligence_service is None:
         pdf_parser = LocalPdfParser()
-    elif document_intelligence_service is not None:
-        pdf_parser = doc_int_parser
     else:
-        logger.warning("No PDF parser available")
-
-    html_parser: Optional[Parser] = None
+        pdf_parser = doc_int_parser
     if local_html_parser or document_intelligence_service is None:
         html_parser = LocalHTMLParser()
-    elif document_intelligence_service is not None:
-        html_parser = doc_int_parser
     else:
-        logger.warning("No HTML parser available")
-
-    # These file formats can always be parsed:
-    file_processors = {
+        html_parser = doc_int_parser
+    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=search_images)
+    return {
+        ".pdf": FileProcessor(pdf_parser, sentence_text_splitter),
+        ".html": FileProcessor(html_parser, sentence_text_splitter),
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
         ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
         ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
@@ -202,39 +211,24 @@ def setup_file_processors(
         ".md": FileProcessor(TextParser(), sentence_text_splitter),
         ".txt": FileProcessor(TextParser(), sentence_text_splitter),
     }
-    # These require either a Python package or Document Intelligence
-    if pdf_parser is not None:
-        file_processors.update({".pdf": FileProcessor(pdf_parser, sentence_text_splitter)})
-    if html_parser is not None:
-        file_processors.update({".html": FileProcessor(html_parser, sentence_text_splitter)})
-    # These file formats require Document Intelligence
-    if doc_int_parser is not None:
-        file_processors.update(
-            {
-                ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
-                ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
-            }
-        )
-    return file_processors
 
 
 def setup_image_embeddings_service(
-    azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], search_images: bool
+    azure_credential: AsyncTokenCredential,
+    vision_endpoint: Union[str, None],
+    search_images: bool,
 ) -> Union[ImageEmbeddings, None]:
     image_embeddings_service: Optional[ImageEmbeddings] = None
     if search_images:
         if vision_endpoint is None:
-            raise ValueError("A computer vision endpoint is required when GPT-4-vision is enabled.")
+            raise ValueError(
+                "A computer vision endpoint is required when GPT-4-vision is enabled."
+            )
         image_embeddings_service = ImageEmbeddings(
             endpoint=vision_endpoint,
-            token_provider=get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default"),
+            token_provider=get_bearer_token_provider(
+                azure_credential, "https://cognitiveservices.azure.com/.default"
+            ),
         )
     return image_embeddings_service
 
@@ -249,18 +243,136 @@ async def main(strategy: Strategy, setup_index: bool = True):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
-        epilog="Example: prepdocs.py '.\\data\*' -v",
+        epilog="Example: prepdocs.py '.\\data\*' --storageaccount myaccount --container mycontainer --searchservice mysearch --index myindex -v",
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
+    parser.add_argument(
+        "--datalakestorageaccount",
+        required=False,
+        help="Optional. Azure Data Lake Storage Gen2 Account name",
+    )
+    parser.add_argument(
+        "--datalakefilesystem",
+        required=False,
+        default="gptkbcontainer",
+        help="Optional. Azure Data Lake Storage Gen2 filesystem name",
+    )
+    parser.add_argument(
+        "--datalakepath",
+        required=False,
+        help="Optional. Azure Data Lake Storage Gen2 filesystem path containing files to index. If omitted, index the entire filesystem",
+    )
+    parser.add_argument(
+        "--datalakekey",
+        required=False,
+        help="Optional. Use this key when authenticating to Azure Data Lake Gen2",
+    )
+    parser.add_argument(
+        "--useacls",
+        action="store_true",
+        help="Store ACLs from Azure Data Lake Gen2 Filesystem in the search index",
+    )
+    parser.add_argument(
+        "--category",
+        help="Value for the category field in the search index for all sections indexed in this run",
+    )
+    parser.add_argument(
+        "--skipblobs",
+        action="store_true",
+        help="Skip uploading individual pages to Azure Blob Storage",
+    )
+    parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
+    parser.add_argument("--container", help="Azure Blob Storage container name")
+    parser.add_argument(
+        "--storageresourcegroup", help="Azure blob storage resource group"
+    )
+    parser.add_argument(
+        "--storagekey",
+        required=False,
+        help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)",
+    )
+    parser.add_argument(
+        "--tenantid",
+        required=False,
+        help="Optional. Use this to define the Azure directory where to authenticate)",
+    )
+    parser.add_argument(
+        "--subscriptionid",
+        required=False,
+        help="Optional. Use this to define managed identity connection string in integrated vectorization",
+    )
+    parser.add_argument(
+        "--searchservice",
+        help="Name of the Azure AI Search service where content should be indexed (must exist already)",
+    )
+    parser.add_argument(
+        "--searchserviceassignedid",
+        required=False,
+        help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
+    )
+    parser.add_argument(
+        "--index",
+        help="Name of the Azure AI Search index where content should be indexed (will be created if it doesn't exist)",
+    )
+    parser.add_argument(
+        "--searchkey",
+        required=False,
+        help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+    )
+    parser.add_argument(
+        "--searchanalyzername",
+        required=False,
+        default="en.microsoft",
+        help="Optional. Name of the Azure AI Search analyzer to use for the content field in the index",
+    )
+    parser.add_argument(
+        "--openaihost",
+        help="Host of the API used to compute embeddings ('azure' or 'openai')",
+    )
+    parser.add_argument(
+        "--openaiservice",
+        help="Name of the Azure OpenAI service used to compute embeddings",
+    )
+    parser.add_argument(
+        "--openaideployment",
+        help="Name of the Azure OpenAI model deployment for an embedding model ('text-embedding-ada-002' recommended)",
+    )
+    parser.add_argument(
+        "--openaimodelname",
+        help="Name of the Azure OpenAI embedding model ('text-embedding-ada-002' recommended)",
+    )
+    parser.add_argument(
+        "--openaidimensions",
+        required=False,
+        default=1536,
+        type=int,
+        help="Dimensions for the embedding model (defaults to 1536 for 'text-embedding-ada-002')",
+    )
+    parser.add_argument(
+        "--novectors",
+        action="store_true",
+        help="Don't compute embeddings for the sections (e.g. don't call the OpenAI embeddings API during indexing)",
+    )
+    parser.add_argument(
+        "--disablebatchvectors",
+        action="store_true",
+        help="Don't compute embeddings in batch for the sections",
+    )
 
     parser.add_argument(
-        "--category", help="Value for the category field in the search index for all sections indexed in this run"
+        "--openaicustomurl",
+        required=False,
+        help="Optional. Use this custom OpenAI URL instead of the default OpenAI URL",
     )
     parser.add_argument(
-        "--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage"
+        "--openaikey",
+        required=False,
+        help="Optional. Use this OpenAI account key instead of the current Azure user identity to login.",
     )
     parser.add_argument(
-        "--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections"
+        "--openaiorg",
+        required=False,
+        help="This is required only when using non-Azure endpoints.",
     )
     parser.add_argument(
         "--remove",
@@ -272,20 +384,20 @@ if __name__ == "__main__":
         action="store_true",
         help="Remove all blobs from blob storage and documents from the search index",
     )
-
-    # Optional key specification:
     parser.add_argument(
-        "--searchkey",
-        required=False,
-        help="Optional. Use this Azure AI Search account key instead of the current user identity to login (use az login to set current user for Azure)",
+        "--localpdfparser",
+        action="store_true",
+        help="Use PyPdf local PDF parser (supports only digital PDFs) instead of Azure Document Intelligence service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
-        "--storagekey",
-        required=False,
-        help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)",
+        "--localhtmlparser",
+        action="store_true",
+        help="Use Beautiful soap local HTML parser instead of Azure Document Intelligence service to extract text, tables and layout from the documents",
     )
     parser.add_argument(
-        "--datalakekey", required=False, help="Optional. Use this key when authenticating to Azure Data Lake Gen2"
+        "--documentintelligenceservice",
+        required=False,
+        help="Optional. Name of the Azure Document Intelligence service which will be used to extract text, tables and layout from the documents (must exist already)",
     )
     parser.add_argument(
         "--documentintelligencekey",
@@ -293,11 +405,21 @@ if __name__ == "__main__":
         help="Optional. Use this Azure Document Intelligence account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
     parser.add_argument(
-        "--searchserviceassignedid",
+        "--searchimages",
+        action="store_true",
         required=False,
-        help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
+        help="Optional. Generate image embeddings to enable each page to be searched as an image",
     )
-
+    parser.add_argument(
+        "--visionendpoint",
+        required=False,
+        help="Optional, required if --searchimages is specified. Endpoint of Azure AI Vision service to use when embedding images.",
+    )
+    parser.add_argument(
+        "--useintvectorization",
+        required=False,
+        help="Required if --useintvectorization is specified. Enable Integrated vectorizer indexer support which is in preview)",
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
@@ -307,19 +429,23 @@ if __name__ == "__main__":
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.INFO)
 
-    load_azd_env()
+    use_int_vectorization = (
+        args.useintvectorization and args.useintvectorization.lower() == "true"
+    )
 
-    use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
-    use_gptvision = os.getenv("USE_GPT4V", "").lower() == "true"
-    use_acls = os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT") is not None
-    dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
-
-    # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
-    if tenant_id := os.getenv("AZURE_TENANT_ID"):
-        logger.info("Connecting to Azure services using the azd credential for tenant %s", tenant_id)
-        azd_credential = AzureDeveloperCliCredential(tenant_id=tenant_id, process_timeout=60)
+    # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
+    if args.tenantid:
+        logger.info(
+            "Connecting to Azure services using the azd credential for tenant %s",
+            args.tenantid,
+        )
+        azd_credential = AzureDeveloperCliCredential(
+            tenant_id=args.tenantid, process_timeout=60
+        )
     else:
-        logger.info("Connecting to Azure services using the azd credential for home tenant")
+        logger.info(
+            "Connecting to Azure services using the azd credential for home tenant"
+        )
         azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
     if args.removeall:
@@ -334,51 +460,40 @@ if __name__ == "__main__":
 
     search_info = loop.run_until_complete(
         setup_search_info(
-            search_service=os.environ["AZURE_SEARCH_SERVICE"],
-            index_name=os.environ["AZURE_SEARCH_INDEX"],
+            search_service=args.searchservice,
+            index_name=args.index,
             azure_credential=azd_credential,
             search_key=clean_key_if_exists(args.searchkey),
         )
     )
     blob_manager = setup_blob_manager(
         azure_credential=azd_credential,
-        storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
-        storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
-        storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
-        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-        search_images=use_gptvision,
+        storage_account=args.storageaccount,
+        storage_container=args.container,
+        storage_resource_group=args.storageresourcegroup,
+        subscription_id=args.subscriptionid,
+        search_images=args.searchimages,
         storage_key=clean_key_if_exists(args.storagekey),
     )
     list_file_strategy = setup_list_file_strategy(
         azure_credential=azd_credential,
         local_files=args.files,
-        datalake_storage_account=os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"),
-        datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
-        datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
+        datalake_storage_account=args.datalakestorageaccount,
+        datalake_filesystem=args.datalakefilesystem,
+        datalake_path=args.datalakepath,
         datalake_key=clean_key_if_exists(args.datalakekey),
     )
-
-    openai_host = os.environ["OPENAI_HOST"]
-    openai_key = None
-    if os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"):
-        openai_key = os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE")
-    elif not openai_host.startswith("azure") and os.getenv("OPENAI_API_KEY"):
-        openai_key = os.getenv("OPENAI_API_KEY")
-
-    openai_dimensions = 1536
-    if os.getenv("AZURE_OPENAI_EMB_DIMENSIONS"):
-        openai_dimensions = int(os.environ["AZURE_OPENAI_EMB_DIMENSIONS"])
     openai_embeddings_service = setup_embeddings_service(
         azure_credential=azd_credential,
-        openai_host=openai_host,
-        openai_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
-        openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
-        openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
-        openai_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
-        openai_dimensions=openai_dimensions,
-        openai_key=clean_key_if_exists(openai_key),
-        openai_org=os.getenv("OPENAI_ORGANIZATION"),
-        disable_vectors=dont_use_vectors,
+        openai_host=args.openaihost,
+        openai_model_name=args.openaimodelname,
+        openai_service=args.openaiservice,
+        openai_custom_url=args.openaicustomurl,
+        openai_deployment=args.openaideployment,
+        openai_dimensions=args.openaidimensions,
+        openai_key=clean_key_if_exists(args.openaikey),
+        openai_org=args.openaiorg,
+        disable_vectors=args.novectors,
         disable_batch_vectors=args.disablebatchvectors,
     )
 
@@ -390,25 +505,25 @@ if __name__ == "__main__":
             blob_manager=blob_manager,
             document_action=document_action,
             embeddings=openai_embeddings_service,
-            subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+            subscription_id=args.subscriptionid,
             search_service_user_assigned_id=args.searchserviceassignedid,
-            search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
-            use_acls=use_acls,
+            search_analyzer_name=args.searchanalyzername,
+            use_acls=args.useacls,
             category=args.category,
         )
     else:
         file_processors = setup_file_processors(
             azure_credential=azd_credential,
-            document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
+            document_intelligence_service=args.documentintelligenceservice,
             document_intelligence_key=clean_key_if_exists(args.documentintelligencekey),
-            local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
-            local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
-            search_images=use_gptvision,
+            local_pdf_parser=args.localpdfparser,
+            local_html_parser=args.localhtmlparser,
+            search_images=args.searchimages,
         )
         image_embeddings_service = setup_image_embeddings_service(
             azure_credential=azd_credential,
-            vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
-            search_images=use_gptvision,
+            vision_endpoint=args.visionendpoint,
+            search_images=args.searchimages,
         )
 
         ingestion_strategy = FileStrategy(
@@ -419,10 +534,12 @@ if __name__ == "__main__":
             document_action=document_action,
             embeddings=openai_embeddings_service,
             image_embeddings=image_embeddings_service,
-            search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
-            use_acls=use_acls,
+            search_analyzer_name=args.searchanalyzername,
+            use_acls=args.useacls,
             category=args.category,
         )
 
-    loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
+    loop.run_until_complete(
+        main(ingestion_strategy, setup_index=not args.remove and not args.removeall)
+    )
     loop.close()
