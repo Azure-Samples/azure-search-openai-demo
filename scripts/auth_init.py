@@ -22,6 +22,7 @@ from msgraph.generated.models.spa_application import SpaApplication
 from msgraph.generated.models.web_application import WebApplication
 
 from auth_common import get_application, test_authentication_enabled
+from load_azd_env import load_azd_env
 
 
 async def create_application(graph_client: GraphServiceClient, request_app: Application) -> Tuple[str, str]:
@@ -165,11 +166,18 @@ def server_app_known_client_application(client_app_id: str) -> Application:
 
 
 async def main():
+    load_azd_env()
+
     if not test_authentication_enabled():
         print("Not setting up authentication.")
         exit(0)
 
-    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.environ["AZURE_TENANT_ID"])
+    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.getenv("AZURE_TENANT_ID"))
+    if not auth_tenant:
+        print(
+            "Error: No tenant ID set for authentication. Run `azd env set AZURE_AUTH_TENANT_ID tenant-id` to set the tenant ID."
+        )
+        exit(1)
     print("Setting up authentication for tenant", auth_tenant)
     credential = AzureDeveloperCliCredential(tenant_id=auth_tenant)
 

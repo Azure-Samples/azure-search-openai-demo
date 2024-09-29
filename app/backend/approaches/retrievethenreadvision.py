@@ -66,7 +66,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-        self.gpt4v_token_limit = get_token_limit(gpt4v_model)
+        self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
 
     async def run(
         self,
@@ -140,6 +140,7 @@ class RetrieveThenReadVisionApproach(Approach):
             system_prompt=overrides.get("prompt_template", self.system_chat_template_gpt4v),
             new_user_content=user_content,
             max_tokens=self.gpt4v_token_limit - response_token_limit,
+            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
         chat_completion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
