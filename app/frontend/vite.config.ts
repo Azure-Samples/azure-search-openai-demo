@@ -24,6 +24,8 @@ export default defineConfig({
         target: "esnext"
     },
     server: {
+        host: "localhost",
+        port: 50505,
         proxy: {
             "/content/": "http://localhost:50505",
             "/auth_setup": "http://localhost:50505",

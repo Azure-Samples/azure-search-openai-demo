@@ -20,7 +20,7 @@ interface Props {
     isSelected?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
-    onThoughtProcessClicked: () => void;
+    // onThoughtProcessClicked: () => void;
     onSupportingContentClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
@@ -35,7 +35,7 @@ export const Answer = ({
     isSelected,
     isStreaming,
     onCitationClicked,
-    onThoughtProcessClicked,
+    // onThoughtProcessClicked,
     onSupportingContentClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions,
@@ -54,14 +54,14 @@ export const Answer = ({
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
                     <div>
-                        <IconButton
+                        {/* <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "Lightbulb" }}
                             title={t("tooltips.showThoughtProcess")}
                             ariaLabel={t("tooltips.showThoughtProcess")}
                             onClick={() => onThoughtProcessClicked()}
                             disabled={!answer.context.thoughts?.length}
-                        />
+                        /> */}
                         <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: "ClipboardList" }}
