@@ -22,7 +22,7 @@
     "developerSettings": "Developer settings",
 
     "chatEmptyStateTitle": "Tutoring",
-    "chatEmptyStateSubtitle": "Ask anything or try an example",
+    "chatEmptyStateSubtitle": "Tutoring with AI Tutor",
     "defaultExamples": {
         "1": "What is included in my Northwind Health Plus plan that is not in standard?",
         "2": "What happens in a performance review?",
