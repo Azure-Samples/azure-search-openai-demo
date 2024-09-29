@@ -11,7 +11,7 @@
         "uploadedFilesLabel": "Previously uploaded files:",
         "noFilesUploaded": "No files uploaded yet",
         "loading": "Loading...",
-        "manageFileUploads": "Manage file uploads",
+        "manageFileUploads": "Custom Learning Uploads",
         "uploadingFiles": "Uploading files...",
         "uploadedFileError": "Error uploading file - please try again or contact admin.",
         "deleteFile": "Delete file",

@@ -11,7 +11,7 @@
         "uploadedFilesLabel": "Fichiers précédemment téléchargés:",
         "noFilesUploaded": "Aucun fichier téléchargé pour le moment",
         "loading": "Chargement...",
-        "manageFileUploads": "Gérer les téléchargements de fichiers",
+        "manageFileUploads": "Téléchargements pour apprentissage personnalisé",
         "uploadingFiles": "Téléchargement de fichiers...",
         "uploadedFileError": "Erreur lors du téléchargement du fichier - veuillez réessayer ou contacter l'administrateur.",
         "deleteFile": "Supprimer le fichier",
