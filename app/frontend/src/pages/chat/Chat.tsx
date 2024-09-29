@@ -100,7 +100,7 @@ const Chat = () => {
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
             }
-            setShowUserUpload(config.showUserUpload);
+            setShowUserUpload(false);
             setshowLanguagePicker(config.showLanguagePicker);
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
