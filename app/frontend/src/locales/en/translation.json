@@ -1,8 +1,8 @@
 {
     "pageTitle": "Tutor AI - Student App",
     "headerTitle": "Tutor AI - Student App",
-    "chat": "Chat",
-    "qa": "Ask a question",
+    "chat": "Tutoring",
+    "qa": "Learning",
     "login": "Login",
     "logout": "Logout",
     "clearChat": "Clear chat",
@@ -21,7 +21,7 @@
     },
     "developerSettings": "Developer settings",
 
-    "chatEmptyStateTitle": "Chat with your data",
+    "chatEmptyStateTitle": "Tutoring",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
         "1": "What is included in my Northwind Health Plus plan that is not in standard?",
@@ -29,7 +29,7 @@
         "3": "What does a Product Manager do?",
         "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
     },
-    "askTitle": "Ask your data",
+    "askTitle": "Learning",
     "gpt4vExamples": {
         "1": "Compare the impact of interest rates and GDP in financial markets.",
         "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",

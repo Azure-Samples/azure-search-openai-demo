@@ -1,8 +1,8 @@
 {
     "pageTitle": "Tutor AI - Student App",
     "headerTitle": "Tutor AI - Student App",
-    "chat": "Chat",
-    "qa": "Puneti o intrebare",
+    "chat": "Tutoring",
+    "qa": "Invatare",
     "login": "Conectare",
     "logout": "Deconectare",
     "clearChat": "Vidare chat",
@@ -21,7 +21,7 @@
     },
     "developerSettings": "Setari dezvoltator",
 
-    "chatEmptyStateTitle": "Bine ati venit!",
+    "chatEmptyStateTitle": "Tutoring",
     "chatEmptyStateSubtitle": "Puneti o intrebare pentru a incepe.",
     "defaultExamples": {
         "1": "Ce este inclus in planul meu de asigurare?",
@@ -29,7 +29,7 @@
         "3": "Ce face un manager de produs?",
         "placeholder": "Formulati o noua intrebare"
     },
-    "askTitle": "Puneti o intrebare",
+    "askTitle": "Invatare",
     "gpt4vExamples": {
         "1": "Comparez l'impact des taux d'intérêt et du PIB sur les marchés financiers.",
         "2": "Quelle est la tendance prévue pour l'indice S&P 500 au cours des cinq prochaines années? Comparez-le aux performances passées de l'S&P 500",
