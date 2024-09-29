@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "Tutor AI - Student App",
+    "headerTitle": "Tutor AI - Student App",
     "chat": "Chat",
     "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
@@ -51,7 +51,7 @@
         "save": "Guardar"
     },
 
-    "headerTexts":{
+    "headerTexts": {
         "thoughtProcess": "Proceso de Pensamiento",
         "supportingContent": "Contenido de apoyo",
         "citation": "Cita"
@@ -103,32 +103,20 @@
     },
 
     "helpTexts": {
-        "promptTemplate":
-            "Sobrescribe el aviso utilizado para generar la respuesta basada en la pregunta y los resultados de la búsqueda. Para agregar al aviso existente en lugar de reemplazar todo el aviso, comienza tu aviso con '>>>'.",
-        "temperature":
-            "Establece la temperatura de la solicitud al LLM que genera la respuesta. Temperaturas más altas dan como resultado respuestas más creativas, pero pueden ser menos realistas.",
-        "seed":
-            "Define un número entero para mejorar la reproducibilidad de las respuestas del modelo. El número de semilla se utiliza para generar respuestas más consistentes. El número de semilla puede ser cualquier número.",
-        "searchScore":
-            "Establece una puntuación mínima para los resultados de búsqueda que vuelven de Azure AI search. El rango de puntuaciones depende de si estás utilizando híbrido (predeterminado), solo vectores o solo texto.",
-        "rerankerScore":
-            "Establece una puntuación mínima para los resultados de búsqueda que vuelven del re-clasificador semántico. La puntuación siempre varía entre 0-4. Cuanto mayor es la puntuación, más relevante es semánticamente el resultado a la pregunta.",
-        "retrieveNumber":
-            "Establece el número de resultados de búsqueda para recuperar de Azure AI search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero pueden provocar que el modelo se 'pierda en el medio'.",
-        "excludeCategory":
-            "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
-        "useSemanticReranker":
-            "Habilita el re-clasificador semántico de Azure AI Search, un modelo que re-clasifica los resultados de búsqueda basándose en la similitud semántica con la consulta del usuario.",
-        "useSemanticCaptions":
-            "Envía subtítulos semánticos al LLM en lugar del resultado de búsqueda completo. Un subtítulo semántico se extrae de un resultado de búsqueda durante el proceso de clasificación semántica.",
+        "promptTemplate": "Sobrescribe el aviso utilizado para generar la respuesta basada en la pregunta y los resultados de la búsqueda. Para agregar al aviso existente en lugar de reemplazar todo el aviso, comienza tu aviso con '>>>'.",
+        "temperature": "Establece la temperatura de la solicitud al LLM que genera la respuesta. Temperaturas más altas dan como resultado respuestas más creativas, pero pueden ser menos realistas.",
+        "seed": "Define un número entero para mejorar la reproducibilidad de las respuestas del modelo. El número de semilla se utiliza para generar respuestas más consistentes. El número de semilla puede ser cualquier número.",
+        "searchScore": "Establece una puntuación mínima para los resultados de búsqueda que vuelven de Azure AI search. El rango de puntuaciones depende de si estás utilizando híbrido (predeterminado), solo vectores o solo texto.",
+        "rerankerScore": "Establece una puntuación mínima para los resultados de búsqueda que vuelven del re-clasificador semántico. La puntuación siempre varía entre 0-4. Cuanto mayor es la puntuación, más relevante es semánticamente el resultado a la pregunta.",
+        "retrieveNumber": "Establece el número de resultados de búsqueda para recuperar de Azure AI search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero pueden provocar que el modelo se 'pierda en el medio'.",
+        "excludeCategory": "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
+        "useSemanticReranker": "Habilita el re-clasificador semántico de Azure AI Search, un modelo que re-clasifica los resultados de búsqueda basándose en la similitud semántica con la consulta del usuario.",
+        "useSemanticCaptions": "Envía subtítulos semánticos al LLM en lugar del resultado de búsqueda completo. Un subtítulo semántico se extrae de un resultado de búsqueda durante el proceso de clasificación semántica.",
         "suggestFollowupQuestions": "Pide al LLM que sugiera preguntas de seguimiento basándose en la consulta del usuario.",
         "useGPT4Vision": "Utiliza GPT-4-Turbo con Visión para generar respuestas basándose en imágenes y texto del índice.",
-        "vectorFields":
-            "Especifica qué campos de incrustación en el índice de búsqueda de Azure AI se buscarán, tanto las incrustaciones de 'Imágenes y texto', solo 'Imagenes', o solo 'Texto'.",
-        "gpt4VisionInputs":
-            "Establece lo que se enviará al modelo de visión. 'Imágenes y texto' envía tanto imágenes como texto al modelo, 'Imágenes' solo envía imágenes y 'Texto' solo envía texto.",
-        "retrievalMode":
-            "Establece el modo de recuperación para la consulta de búsqueda de Azure AI. Vectores + Texto (Híbrido) utiliza una combinación de búsqueda vectorial y búsqueda de texto completo, Vectores utiliza solo la búsqueda vectorial y Texto utiliza solo la búsqueda de texto completo. Generalmente, el modo híbrido es óptimo.",
+        "vectorFields": "Especifica qué campos de incrustación en el índice de búsqueda de Azure AI se buscarán, tanto las incrustaciones de 'Imágenes y texto', solo 'Imagenes', o solo 'Texto'.",
+        "gpt4VisionInputs": "Establece lo que se enviará al modelo de visión. 'Imágenes y texto' envía tanto imágenes como texto al modelo, 'Imágenes' solo envía imágenes y 'Texto' solo envía texto.",
+        "retrievalMode": "Establece el modo de recuperación para la consulta de búsqueda de Azure AI. Vectores + Texto (Híbrido) utiliza una combinación de búsqueda vectorial y búsqueda de texto completo, Vectores utiliza solo la búsqueda vectorial y Texto utiliza solo la búsqueda de texto completo. Generalmente, el modo híbrido es óptimo.",
         "streamChat": "Transmite continuamente la respuesta a la interfaz de usuario del chat mientras se genera.",
         "useOidSecurityFilter": "Filtra los resultados de búsqueda en función del OID del usuario autenticado.",
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado."

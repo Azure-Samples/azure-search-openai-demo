@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "Tutor AI - Student App",
+    "headerTitle": "Tutor AI - Student App",
     "chat": "Chat",
     "qa": "Posez une question",
     "login": "Connexion",
@@ -51,7 +51,7 @@
         "save": "Sauvegarder"
     },
 
-    "headerTexts":{
+    "headerTexts": {
         "thoughtProcess": "Processus de Réflexion",
         "supportingContent": "Contenu d'Appui",
         "citation": "Citation"
@@ -103,34 +103,22 @@
     },
 
     "helpTexts": {
-        "promptTemplate":
-            "Remplace le prompt utilisé pour générer la réponse en fonction de la question et des résultats de la recherche. Pour ajouter à l'invite existante au lieu de remplacer l'invite entière, commencez votre invite par '>>>'.",
-        "temperature":
-            "Définit la température de la requête à le Grand modèle de langage (LLM) qui génère la réponse. Des températures plus élevées donnent lieu à des réponses plus créatives, mais elles peuvent être moins ancrées.",
-        "seed":
-            "Détermine un numéro premier qui servira à améliorer la répétabilité des réponses du modèle. Le numéro premier doit être un entier quelconque.",
-        "searchScore":
-            "Définit un score minimum pour les résultats de recherche provenant d'Azure AI Search. La plage de scores dépend si vous utilisez l'hybride (par défaut), uniquement les vecteurs, ou uniquement le texte.",
-        "rerankerScore":
-            "Définit un score minimum pour les résultats de recherche provenant du reranker sémantique. Le score varie toujours entre 0 et 4. Plus le score est élevé, plus le résultat est sémantiquement pertinent par rapport à la question.",
-        "retrieveNumber":
-            "Définit le nombre de résultats de recherche à récupérer d'Azure AI Search. Plus de résultats peuvent augmenter la probabilité de trouver la bonne réponse, mais peuvent amener le modèle à se 'perdre au milieu'.",
-        "excludeCategory":
-            "Spécifie une catégorie à exclure des résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
-        "useSemanticReranker":
-            "Active le classement sémantique d'Azure AI Search, un modèle qui réorganise les résultats de recherche en fonction de la similarité sémantique avec la requête de l'utilisateur.",
-        "useSemanticCaptions":
-            "Envoie des légendes sémantiques à l'LLM au lieu du résultat de recherche complet. Une légende sémantique est extraite d'un résultat de recherche lors du processus de classement sémantique.",
+        "promptTemplate": "Remplace le prompt utilisé pour générer la réponse en fonction de la question et des résultats de la recherche. Pour ajouter à l'invite existante au lieu de remplacer l'invite entière, commencez votre invite par '>>>'.",
+        "temperature": "Définit la température de la requête à le Grand modèle de langage (LLM) qui génère la réponse. Des températures plus élevées donnent lieu à des réponses plus créatives, mais elles peuvent être moins ancrées.",
+        "seed": "Détermine un numéro premier qui servira à améliorer la répétabilité des réponses du modèle. Le numéro premier doit être un entier quelconque.",
+        "searchScore": "Définit un score minimum pour les résultats de recherche provenant d'Azure AI Search. La plage de scores dépend si vous utilisez l'hybride (par défaut), uniquement les vecteurs, ou uniquement le texte.",
+        "rerankerScore": "Définit un score minimum pour les résultats de recherche provenant du reranker sémantique. Le score varie toujours entre 0 et 4. Plus le score est élevé, plus le résultat est sémantiquement pertinent par rapport à la question.",
+        "retrieveNumber": "Définit le nombre de résultats de recherche à récupérer d'Azure AI Search. Plus de résultats peuvent augmenter la probabilité de trouver la bonne réponse, mais peuvent amener le modèle à se 'perdre au milieu'.",
+        "excludeCategory": "Spécifie une catégorie à exclure des résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
+        "useSemanticReranker": "Active le classement sémantique d'Azure AI Search, un modèle qui réorganise les résultats de recherche en fonction de la similarité sémantique avec la requête de l'utilisateur.",
+        "useSemanticCaptions": "Envoie des légendes sémantiques à l'LLM au lieu du résultat de recherche complet. Une légende sémantique est extraite d'un résultat de recherche lors du processus de classement sémantique.",
         "suggestFollowupQuestions": "Demande à l'LLM de suggérer des questions de suivi en fonction de la requête de l'utilisateur.",
         "useGPT4Vision": "Utilise GPT-4-Turbo avec Vision pour générer des réponses basées sur des images et du texte de l'index.",
-        "vectorFields":
-            "Spécifie quels champs d'incorporation dans l'index de recherche Azure AI seront recherchés, à la fois les incorporations 'Images et texte', 'Images' seulement, ou 'Texte' seulement.",
-        "gpt4VisionInputs":
-            "Définit ce qui sera envoyé au modèle de vision. 'Images et texte' envoie à la fois des images et du texte au modèle, 'Images' envoie seulement des images, et 'Texte' envoie seulement du texte.",
-        "retrievalMode":
-            "Définit le mode de récupération pour la requête Azure AI Search. Vecteurs + Texte (Hybride) utilise une combinaison de recherche vectorielle et de recherche en texte intégral, Vecteurs utilise uniquement la recherche vectorielle, et Texte utilise uniquement la recherche en texte intégral. Hybride est généralement optimal.",
+        "vectorFields": "Spécifie quels champs d'incorporation dans l'index de recherche Azure AI seront recherchés, à la fois les incorporations 'Images et texte', 'Images' seulement, ou 'Texte' seulement.",
+        "gpt4VisionInputs": "Définit ce qui sera envoyé au modèle de vision. 'Images et texte' envoie à la fois des images et du texte au modèle, 'Images' envoie seulement des images, et 'Texte' envoie seulement du texte.",
+        "retrievalMode": "Définit le mode de récupération pour la requête Azure AI Search. Vecteurs + Texte (Hybride) utilise une combinaison de recherche vectorielle et de recherche en texte intégral, Vecteurs utilise uniquement la recherche vectorielle, et Texte utilise uniquement la recherche en texte intégral. Hybride est généralement optimal.",
         "streamChat": "Diffuse en continu la réponse à l'interface utilisateur du chat au fur et à mesure de sa génération.",
-        "useOidSecurityFilter":"Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
+        "useOidSecurityFilter": "Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié."
     }
 }
