@@ -19,7 +19,7 @@
         "errorDeleting": "Erreur lors de la suppression.",
         "fileDeleted": "Fichier supprimé"
     },
-    "developerSettings": "Paramètres développeur",
+    "developerSettings": "",
 
     "chatEmptyStateTitle": "Tutoring",
     "chatEmptyStateSubtitle": "Démarrons la session",

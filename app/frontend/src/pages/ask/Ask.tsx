@@ -278,7 +278,7 @@ export function Component(): JSX.Element {
                             speechConfig={speechConfig}
                             isStreaming={false}
                             onCitationClicked={x => onShowCitation(x)}
-                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
+                            // onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
                             showSpeechOutputAzure={showSpeechOutputAzure}
                             showSpeechOutputBrowser={showSpeechOutputBrowser}
