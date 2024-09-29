@@ -20,7 +20,7 @@
 
 This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
 
-![AppLoginArchitecture](./images/applogincomponents.png)
+![AppLoginArchitecture](/docs/images/applogincomponents.png)
 
 ## Requirements
 
@@ -37,7 +37,7 @@ Two Microsoft Entra applications must be registered in order to make the optiona
 The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
 
 1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and use App Service authentication by default.
-1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `pwsh ./scripts/manageacl.ps1 --acl-action enable_acls`.
+1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `python ./scripts/manageacl.py --acl-action enable_acls`.
 1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`. Authentication is always required to search on documents with access control assigned, regardless of if unauthenticated access is enabled or not.
 1. (Optional) To allow authenticated users to search on documents that have no access controls assigned, even when access control is required, run `azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true`.
 1. (Optional) To allow unauthenticated users to use the app, even when access control is enforced, run `azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true`. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true if you want unauthenticated users to be able to search on documents with no access control.
@@ -154,9 +154,9 @@ print(token.token)
 
 - If your primary tenant restricts the ability to create Entra applications, you'll need to use a separate tenant to create the Entra applications. You can create a new tenant by following [these instructions](https://learn.microsoft.com/entra/identity-platform/quickstart-create-new-tenant). Then run `azd env set AZURE_AUTH_TENANT_ID <YOUR-AUTH-TENANT-ID>` before running `azd up`.
 - If any Entra apps need to be recreated, you can avoid redeploying the app by [changing the app settings in the portal](https://learn.microsoft.com/azure/app-service/configure-common?tabs=portal#configure-app-settings). Any of the [required environment variables](#environment-variables-reference) can be changed. Once the environment variables have been changed, restart the web app.
-- It's possible a consent dialog will not appear when you log into the app for the first time. If this consent dialog doesn't appear, you will be unable to use the security filters because the API server app does not have permission to read your authorization information. A consent dialog can be forced to appear by adding `"prompt": "consent"` to the `loginRequest` property in [`authentication.py`](../app/backend/core/authentication.py)
+- It's possible a consent dialog will not appear when you log into the app for the first time. If this consent dialog doesn't appear, you will be unable to use the security filters because the API server app does not have permission to read your authorization information. A consent dialog can be forced to appear by adding `"prompt": "consent"` to the `loginRequest` property in [`authentication.py`](/app/backend/core/authentication.py)
 - It's possible that your tenant admin has placed a restriction on consent to apps with [unverified publishers](https://learn.microsoft.com/entra/identity-platform/publisher-verification-overview). In this case, only admins may consent to the client and server apps, and normal user accounts are unable to use the login system until the admin consents on behalf of the entire organization.
-- It's possible that your tenant admin requires [admin approval of all new apps](https://learn.microsoft.com/entra/identity/enterprise-apps/manage-consent-requests). Regardless of whether you select the delegated or admin permissions, the app will not work without tenant admin consent.
+- It's possible that your tenant admin requires [admin approval of all new apps](https://learn.microsoft.com/entra/identity/enterprise-apps/manage-consent-requests). Regardless of whether you select the delegated or admin permissions, the app will not work without tenant admin consent. See this guide for [granting consent to an app](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent?pivots=portal).
 
 ## Adding data with document level access control
 
@@ -167,65 +167,74 @@ The sample supports 2 main strategies for adding data with document level access
 
 ### Using the Add Documents API
 
-Manually enable document level access control on a search index and manually set access control values using the [manageacl.ps1](../scripts/manageacl.ps1) script.
+Manually enable document level access control on a search index and manually set access control values using the [manageacl.py](/scripts/manageacl.py) script.
 
-Run `azd up` or use `azd env set` to manually set `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` environment variables prior to running the script.
+Prior to running the script:
 
-The script supports the following commands. Note that the syntax is the same regardless of whether [manageacl.ps1](../scripts/manageacl.ps1) or [manageacl.sh](../scripts/manageacl.sh) is used. All commands support `-v` for verbose logging.
+- Run `azd up` or use `azd env set` to manually set the `AZURE_SEARCH_SERVICE` and `AZURE_SEARCH_INDEX` azd environment variables
+- Activate the Python virtual environment for your shell session
 
-- `./scripts/manageacl.ps1 --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index, as well as the `storageUrl` field for storing the Blob storage URL. Does nothing if these fields already exist.
+The script supports the following commands. All commands support `-v` for verbose logging.
+
+- `python ./scripts/manageacl.py --acl-action enable_acls`: Creates the required `oids` (User ID) and `groups` (Group IDs) [security filter](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) fields for document level access control on your index, as well as the `storageUrl` field for storing the Blob storage URL. Does nothing if these fields already exist.
 
   Example usage:
 
   ```shell
-  ./scripts/manageacl.ps1  -v --acl-action enable_acls
+  python ./scripts/manageacl.py -v --acl-action enable_acls
   ```
 
-- `./scripts/manageacl.ps1 --acl-type [oids or groups]--acl-action view --url [https://url.pdf]`: Prints access control values associated with either User IDs or Group IDs for the document at the specified URL.
+- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action view --url [https://url.pdf]`: Prints access control values associated with either User IDs or Group IDs for the document at the specified URL.
 
   Example to view all Group IDs:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action add --acl [ID of group or user]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
+- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action add --acl [ID of group or user] --url [https://url.pdf]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
 
   Example to add a Group ID:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove_all`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
+- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action remove_all --url [https://url.pdf]`: Removes all access control values associated with either User IDs or Group IDs for a specific document.
 
   Example to remove all Group IDs:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type groups --acl-action remove_all --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type groups --acl-action remove_all --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `./scripts/manageacl.ps1 --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
+- `python ./scripts/manageacl.py --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]`: Removes an access control value associated with either User IDs or Group IDs for a specific document.
 
   Example to remove a specific User ID:
 
   ```shell
-  ./scripts/manageacl.ps1 -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
+  python ./scripts/manageacl.py -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
 ### Azure Data Lake Storage Gen2 Setup
 
-[Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) implements an [access control model](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) that can be used for document level access control. The [adlsgen2setup.ps1](../scripts/adlsgen2setup.ps1) script uploads the sample data included in the [data](./data) folder to a Data Lake Storage Gen2 storage account. The [Storage Blob Data Owner](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control-model#role-based-access-control-azure-rbac) role is required to use the script.
+[Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) implements an [access control model](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) that can be used for document level access control. The [adlsgen2setup.py](/scripts/adlsgen2setup.py) script uploads the sample data included in the [data](./data) folder to a Data Lake Storage Gen2 storage account. The [Storage Blob Data Owner](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control-model#role-based-access-control-azure-rbac) role is required to use the script.
 
 In order to use this script, an existing Data Lake Storage Gen2 storage account is required. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <your-storage-account>` prior to running the script.
 
-To run the script, run the following command: `/scripts/adlsgen2setup.ps1`. The script performs the following steps:
+Then run the script inside your Python environment:
 
-- Creates example [groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) listed in the [sampleacls.json](../scripts/sampleacls.json) file.
+```shell
+python /scripts/adlsgen2setup.py './data/*' --data-access-control './scripts/sampleacls.json' -v
+```
+
+The script performs the following steps:
+
+- Creates example [groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) listed in the [sampleacls.json](/scripts/sampleacls.json) file.
 - Creates a filesystem / container `gptkbcontainer` in the storage account.
-- Creates the directories listed in the [sampleacls.json](../scripts/sampleacls.json) file.
-- Uploads the sample PDFs referenced in the [sampleacls.json](../scripts/sampleacls.json) file into the appropriate directories.
-- [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) using the information from the [sampleacls.json](../scripts/sampleacls.json) file.
+- Creates the directories listed in the [sampleacls.json](/scripts/sampleacls.json) file.
+- Uploads the sample PDFs referenced in the [sampleacls.json](/scripts/sampleacls.json) file into the appropriate directories.
+- [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) using the information from the [sampleacls.json](/scripts/sampleacls.json) file.
 
 In order to use the sample access control, you need to join these groups in your Microsoft Entra tenant.
 
@@ -233,7 +242,7 @@ Note that this optional script may not work in Codespaces if your administrator 
 
 #### Azure Data Lake Storage Gen2 Prep Docs
 
-Once a Data Lake Storage Gen2 storage account has been setup with sample data and access control lists, [prepdocs.py](../app/backend/prepdocs.py) can be used to automatically process PDFs in the storage account and store them with their [access control lists in the search index](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control).
+Once a Data Lake Storage Gen2 storage account has been setup with sample data and access control lists, [prepdocs.py](/app/backend/prepdocs.py) can be used to automatically process PDFs in the storage account and store them with their [access control lists in the search index](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control).
 
 To run this script with a Data Lake Storage Gen2 account, first set the following environment variables:
 

@@ -5,7 +5,7 @@ import { initReactI18next } from "react-i18next";
 
 import enTranslation from "../locales/en/translation.json";
 import esTranslation from "../locales/es/translation.json";
-import jaTranslation from "../locales/ja/translation.json";
+import roTranslation from "../locales/ro/translation.json";
 import frTranslation from "../locales/fr/translation.json";
 
 export const supportedLngs: { [key: string]: { name: string; locale: string } } = {
@@ -21,9 +21,9 @@ export const supportedLngs: { [key: string]: { name: string; locale: string } } 
         name: "Français",
         locale: "fr-FR"
     },
-    ja: {
-        name: "日本語",
-        locale: "ja-JP"
+    ro: {
+        name: "Româna",
+        locale: "ro-RO"
     }
 };
 
@@ -38,7 +38,7 @@ i18next
             en: { translation: enTranslation },
             es: { translation: esTranslation },
             fr: { translation: frTranslation },
-            ja: { translation: jaTranslation }
+            ro: { translation: roTranslation }
         },
         fallbackLng: "en",
         supportedLngs: Object.keys(supportedLngs),

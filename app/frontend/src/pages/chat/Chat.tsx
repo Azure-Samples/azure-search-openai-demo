@@ -27,7 +27,7 @@ import { UserChatMessage } from "../../components/UserChatMessage";
 import { HelpCallout } from "../../components/HelpCallout";
 import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
 import { SettingsButton } from "../../components/SettingsButton";
-import { ClearChatButton } from "../../components/ClearChatButton";
+// import { ClearChatButton } from "../../components/ClearChatButton";
 import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { VectorSettings } from "../../components/VectorSettings";
@@ -100,7 +100,7 @@ const Chat = () => {
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
             }
-            setShowUserUpload(config.showUserUpload);
+            setShowUserUpload(false);
             setshowLanguagePicker(config.showLanguagePicker);
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
@@ -131,7 +131,7 @@ const Chat = () => {
                 if (event["context"] && event["context"]["data_points"]) {
                     event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
-                } else if (event["delta"]["content"]) {
+                } else if (event["delta"] && event["delta"]["content"]) {
                     setIsLoading(false);
                     await updateState(event["delta"]["content"]);
                 } else if (event["context"]) {
@@ -353,7 +353,7 @@ const Chat = () => {
                 <title>{t("pageTitle")}</title>
             </Helmet>
             <div className={styles.commandsContainer}>
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                {/*<ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />*/}
                 {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                 <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>

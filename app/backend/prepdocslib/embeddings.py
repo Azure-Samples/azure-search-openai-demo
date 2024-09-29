@@ -17,7 +17,7 @@ from tenacity import (
 )
 from typing_extensions import TypedDict
 
-logger = logging.getLogger("ingester")
+logger = logging.getLogger("scripts")
 
 
 class EmbeddingBatch:

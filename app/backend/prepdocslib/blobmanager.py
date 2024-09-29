@@ -18,7 +18,7 @@ from pypdf import PdfReader
 
 from .listfilestrategy import File
 
-logger = logging.getLogger("ingester")
+logger = logging.getLogger("scripts")
 
 
 class BlobManager:
