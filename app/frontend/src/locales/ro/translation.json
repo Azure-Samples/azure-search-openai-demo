@@ -24,9 +24,9 @@
     "chatEmptyStateTitle": "Tutoring",
     "chatEmptyStateSubtitle": "Sa incepem sessionea",
     "defaultExamples": {
-        "1": "Ce este inclus in planul meu de asigurare?",
-        "2": "Ce se intample la un examen de performanta?",
-        "3": "Ce face un manager de produs?",
+        "1": "Tutoring complet",
+        "2": "Conversatie socratica",
+        "3": "Exercitii cantitative",
         "placeholder": "Formulati o noua intrebare"
     },
     "askTitle": "Invatare",

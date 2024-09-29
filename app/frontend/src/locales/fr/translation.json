@@ -24,9 +24,9 @@
     "chatEmptyStateTitle": "Tutoring",
     "chatEmptyStateSubtitle": "Démarrons la session",
     "defaultExamples": {
-        "1": "Qu'est-ce qui est inclus dans mon plan Northwind Health Plus qui n'est pas dans le standard?",
-        "2": "Qu'arrive-t-il lors d'un examen de performance?",
-        "3": "Qu'est-ce qu'un Product Manager fait?",
+        "1": "Tutoring complet",
+        "2": "Conversation socratique",
+        "3": "Exercices quantitatifs",
         "placeholder": "Tapez une nouvelle question (par exemple, mon plan couvre-t-il les examens oculaires annuels?)"
     },
     "askTitle": "Apprentissage",
