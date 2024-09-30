@@ -83,6 +83,8 @@ const Chat = () => {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
+    const [workflowStateNo, setWorkflowStateNo] = useState<number>(0);
+
     const speechConfig: SpeechConfig = {
         speechUrls,
         setSpeechUrls,
@@ -207,12 +209,14 @@ const Chat = () => {
             if (shouldStream) {
                 const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
+                setWorkflowStateNo(workflowStateNo + 1);
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {
                     throw Error(parsedResponse.error);
                 }
                 setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
+                setWorkflowStateNo(workflowStateNo + 1);
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {
@@ -233,6 +237,8 @@ const Chat = () => {
         setIsLoading(false);
         setIsStreaming(false);
     };
+
+    console.log("Workflow State No: ", workflowStateNo);
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
@@ -352,6 +358,7 @@ const Chat = () => {
             <Helmet>
                 <title>{t("pageTitle")}</title>
             </Helmet>
+
             <div className={styles.commandsContainer}>
                 {/*<ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />*/}
                 {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
@@ -363,14 +370,42 @@ const Chat = () => {
                         <div className={styles.chatEmptyState}>
                             <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
                             <h1 className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
+                            <h2 className={styles.chatEmptyStateSubtitle}>Hello Nicolas! Are you ready for today's tutoring session? Let's get started!</h2>
+                            <hr />
                             {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
 
                             <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
-                            {isStreaming &&
+                            {isStreaming && workflowStateNo > 0 && (
+                                <div key={0}>
+                                    {/* <UserChatMessage message={streamedAnswers[0] ? streamedAnswers[0][0] : ""} /> */}
+                                    <div className={styles.chatMessageGpt}>
+                                        <Answer
+                                            isStreaming={true}
+                                            key="0"
+                                            answer={
+                                                streamedAnswers[0] && typeof streamedAnswers[0][1] !== "string"
+                                                    ? streamedAnswers[0][1]
+                                                    : ({} as ChatAppResponse)
+                                            }
+                                            index={0}
+                                            speechConfig={speechConfig}
+                                            isSelected={false}
+                                            onCitationClicked={c => onShowCitation(c, 0)}
+                                            // onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, 0)}
+                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === 0}
+                                            showSpeechOutputAzure={showSpeechOutputAzure}
+                                            showSpeechOutputBrowser={showSpeechOutputBrowser}
+                                            workflowStateNo={workflowStateNo}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {/* {isStreaming &&
                                 streamedAnswers.map((streamedAnswer, index) => (
                                     <div key={index}>
                                         <UserChatMessage message={streamedAnswer[0]} />
@@ -389,11 +424,35 @@ const Chat = () => {
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutputAzure={showSpeechOutputAzure}
                                                 showSpeechOutputBrowser={showSpeechOutputBrowser}
+                                                workflowStateNo={workflowStateNo}
                                             />
                                         </div>
                                     </div>
-                                ))}
-                            {!isStreaming &&
+                                ))} */}
+                            {!isStreaming && workflowStateNo > 0 && (
+                                <div key={0}>
+                                    {/* <UserChatMessage message={answers[0] ? answers[0][0] : ""} /> */}
+                                    <div className={styles.chatMessageGpt}>
+                                        <Answer
+                                            isStreaming={false}
+                                            key={0}
+                                            answer={answers[0] && typeof answers[0][1] !== "string" ? answers[0][1] : ({} as ChatAppResponse)}
+                                            index={0}
+                                            speechConfig={speechConfig}
+                                            isSelected={selectedAnswer === 0 && activeAnalysisPanelTab !== undefined}
+                                            onCitationClicked={c => onShowCitation(c, 0)}
+                                            // onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab, index)}
+                                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab, 0)}
+                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === 0}
+                                            showSpeechOutputAzure={showSpeechOutputAzure}
+                                            showSpeechOutputBrowser={showSpeechOutputBrowser}
+                                            workflowStateNo={workflowStateNo}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {/* {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
                                         <UserChatMessage message={answer[0]} />
@@ -412,10 +471,11 @@ const Chat = () => {
                                                 showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
                                                 showSpeechOutputAzure={showSpeechOutputAzure}
                                                 showSpeechOutputBrowser={showSpeechOutputBrowser}
+                                                workflowStateNo={workflowStateNo}
                                             />
                                         </div>
                                     </div>
-                                ))}
+                                ))} */}
                             {isLoading && (
                                 <>
                                     <UserChatMessage message={lastQuestionRef.current} />

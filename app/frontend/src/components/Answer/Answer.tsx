@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import { useTranslation } from "react-i18next";
 import DOMPurify from "dompurify";
@@ -26,6 +26,7 @@ interface Props {
     showFollowupQuestions?: boolean;
     showSpeechOutputBrowser?: boolean;
     showSpeechOutputAzure?: boolean;
+    workflowStateNo: number;
 }
 
 export const Answer = ({
@@ -40,7 +41,8 @@ export const Answer = ({
     onFollowupQuestionClicked,
     showFollowupQuestions,
     showSpeechOutputAzure,
-    showSpeechOutputBrowser
+    showSpeechOutputBrowser,
+    workflowStateNo
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
     const messageContent = answer.message.content;
@@ -50,6 +52,11 @@ export const Answer = ({
 
     return (
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
+            {/* <Stack.Item>
+                <Stack horizontal horizontalAlign="space-between">
+                    {workflowStateNo === 0 && <div>Hello Nicolas! Are you ready for today's tutoring session? Let's get started!</div>}
+                </Stack>
+            </Stack.Item> */}
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
@@ -70,18 +77,242 @@ export const Answer = ({
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.context.data_points}
                         />
-                        {showSpeechOutputAzure && (
-                            <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+
+                        {workflowStateNo === 1 && (
+                            <div>
+                                <form onSubmit={event => event.preventDefault()}>
+                                    <p>
+                                        QUESTION 1. <strong>Which of the following is considered a risk-free interest rate?</strong>
+                                    </p>
+                                    <div>
+                                        <input type="radio" id="libor" name="riskFreeRate" value="LIBOR" />
+                                        <label htmlFor="libor">LIBOR</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="repoRate" name="riskFreeRate" value="Repo rate" />
+                                        <label htmlFor="repoRate">Repo rate</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="treasuryRate" name="riskFreeRate" value="Treasury rate" />
+                                        <label htmlFor="treasuryRate">Treasury rate</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="fedFundsRate" name="riskFreeRate" value="Fed funds rate" />
+                                        <label htmlFor="fedFundsRate">Fed funds rate</label>
+                                    </div>
+                                </form>
+                                <div></div>
+                            </div>
                         )}
-                        {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+
+                        {workflowStateNo === 2 && (
+                            <div>
+                                <p>
+                                    <strong>Correct answer:</strong> C
+                                </p>
+                                <form onSubmit={event => event.preventDefault()}>
+                                    <p>
+                                        QUESTION 2. <strong>What does the term LIBOR stand for?</strong>
+                                    </p>
+                                    <div>
+                                        <input type="radio" id="liborA" name="liborMeaning" value="London Interbank Offered Rate" />
+                                        <label htmlFor="liborA">London Interbank Offered Rate</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="liborB" name="liborMeaning" value="London Investment Bank Operational Rate" />
+                                        <label htmlFor="liborB">London Investment Bank Operational Rate</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="liborC" name="liborMeaning" value="Low-Interest Bond Offer Rate" />
+                                        <label htmlFor="liborC">Low-Interest Bond Offer Rate</label>
+                                    </div>
+                                </form>
+                            </div>
+                        )}
+
+                        {workflowStateNo === 3 && (
+                            <div>
+                                <p>
+                                    <strong>Correct answer:</strong> A
+                                </p>
+                                <p>
+                                    QUESTION 3.
+                                    <strong>
+                                        When a bank states that the interest rate on one-year deposits is 10% per annum with annual compounding, how much will
+                                        $100 grow to at the end of one year?
+                                    </strong>
+                                </p>
+                                <form onSubmit={event => event.preventDefault()}>
+                                    <div>
+                                        <input type="radio" id="q3A" name="q3" value="$105" />
+                                        <label htmlFor="q3A">$105</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="q3B" name="q3" value="$110" />
+                                        <label htmlFor="q3B">$110</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="q3C" name="q3" value="$110.25" />
+                                        <label htmlFor="q3C">$110.25</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="q3D" name="q3" value="$110.38" />
+                                        <label htmlFor="q3D">$110.38</label>
+                                    </div>
+                                </form>
+                            </div>
+                        )}
+                        {workflowStateNo === 4 && (
+                            <div>
+                                <p>
+                                    <strong>Correct answer:</strong> C
+                                </p>
+                                <p>
+                                    Let's move to <strong>open-ended questions</strong>, shall we?
+                                </p>
+                                <div>
+                                    <div className={styles.answerText}>
+                                        <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {workflowStateNo === 5 && (
+                            <div>
+                                {showSpeechOutputAzure && (
+                                    <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                                )}
+                                {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                                <div className={styles.answerText}>
+                                    <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
+                                </div>
+                            </div>
+                        )}
+                        {workflowStateNo === 6 && (
+                            <div>
+                                {showSpeechOutputAzure && (
+                                    <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                                )}
+                                {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                                <div className={styles.answerText}>
+                                    <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
+                                </div>
+                            </div>
+                        )}
+                        {workflowStateNo === 7 && (
+                            <div>
+                                {showSpeechOutputAzure && (
+                                    <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                                )}
+                                {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                                <div className={styles.answerText}>
+                                    <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
+                                </div>
+                            </div>
+                        )}
+                        {workflowStateNo === 8 && (
+                            <div>
+                                <p>
+                                    Good, let's do some <strong>quantitative exercises:</strong>
+                                </p>
+                                <div>
+                                    Exercise 11 - A deposit account pays 12% per annum with continuous compounding, but interest is actually paid quarterly. How
+                                    much interest will be paid each quarter on a $10,000 deposit?{" "}
+                                </div>
+                                {false && (
+                                    <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                                )}
+                                {false && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                            </div>
+                        )}
+                        {workflowStateNo === 9 && (
+                            <div>
+                                <p>
+                                    Your answer is: <strong>CORRECT:</strong>
+                                </p>
+                                <div>
+                                    <div>
+                                        <p>SOLUTION</p>
+                                        <p>
+                                            To find how much interest will be paid each quarter on a $10,000 deposit, given a 12% annual interest rate with
+                                            continuous compounding, we will follow these steps:
+                                        </p>
+                                        <p>
+                                            <strong>Step 1: Use the formula for continuous compounding</strong>
+                                        </p>
+                                        <p>The formula for the balance after time \( t \) with continuous compounding is:</p>
+                                        <p>A = P * e^(rt)</p>
+                                        <p>
+                                            Where:
+                                            <br />
+                                            - \( A \) is the amount after time \( t \),
+                                            <br />
+                                            - \( P \) is the principal (initial amount),
+                                            <br />
+                                            - \( r \) is the annual interest rate,
+                                            <br />
+                                            - \( t \) is the time in years,
+                                            <br />- \( e \) is Euler’s number (approximately 2.71828).
+                                        </p>
+                                        <p>
+                                            <strong>Step 2: Break the year into quarters</strong>
+                                            <br />
+                                            Since interest is paid quarterly, we calculate the interest for each quarter. Each quarter is \( \frac{1}
+                                            {4} \) of a year, so:
+                                        </p>
+                                        <p>
+                                            t = \( \frac{1}
+                                            {4} \)
+                                        </p>
+                                        <p>The rate \( r = 0.12 \) (since 12% is expressed as 0.12 in decimal form).</p>
+                                        <p>
+                                            <strong>Step 3: Calculate the amount after one quarter</strong>
+                                            <br />
+                                            Using the formula:
+                                        </p>
+                                        <p>
+                                            A = 10,000 * e^(0.12 * \( \frac{1}
+                                            {4} \))
+                                        </p>
+                                        <p>We can now calculate this value.</p>
+                                        <p>
+                                            After one quarter, the total amount will be approximately $10,304.55.
+                                            <br />
+                                            The interest earned for the quarter is approximately $304.55 on the $10,000 deposit.
+                                        </p>
+                                        <p>
+                                            <strong>Python Code</strong>
+                                        </p>
+                                        <pre>
+                                            <code>
+                                                {`import math
+
+# Given values
+P = 10000  # Principal amount
+r = 0.12   # Annual interest rate (12%)
+t = 1/4    # One quarter of a year
+
+# Calculate the amount after one quarter with continuous compounding
+A = P * math.exp(r * t)
+A, A - P  # Return total amount and the interest earned`}
+                                            </code>
+                                        </pre>
+                                    </div>
+                                </div>
+                                {false && (
+                                    <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                                )}
+                                {false && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                            </div>
+                        )}
                     </div>
                 </Stack>
             </Stack.Item>
 
             <Stack.Item grow>
-                <div className={styles.answerText}>
+                {/* <div className={styles.answerText}>
                     <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
-                </div>
+                </div> */}
             </Stack.Item>
 
             {!!parsedAnswer.citations.length && (

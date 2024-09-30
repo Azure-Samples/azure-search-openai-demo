@@ -29,11 +29,14 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     }, [initQuestion]);
 
     const sendQuestion = () => {
-        if (disabled || !question.trim()) {
-            return;
+        var sendQ = question;
+        if (!question.trim()) {
+            //return;
+            sendQ = "Default question.";
+            setQuestion(sendQ);
         }
 
-        onSend(question);
+        onSend(sendQ);
 
         if (clearOnSend) {
             setQuestion("");
@@ -88,7 +91,7 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
             />
             <div className={styles.questionInputButtonsContainer}>
                 <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} onClick={sendQuestion} />
                 </Tooltip>
             </div>
             {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}

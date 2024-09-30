@@ -282,6 +282,7 @@ export function Component(): JSX.Element {
                             onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
                             showSpeechOutputAzure={showSpeechOutputAzure}
                             showSpeechOutputBrowser={showSpeechOutputBrowser}
+                            workflowStateNo={0}
                         />
                     </div>
                 )}
