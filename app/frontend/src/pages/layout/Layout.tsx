@@ -36,7 +36,7 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
-                    <h3 className={styles.headerTitle}>GovGPT</h3>
+                    <h3 className={styles.headerTitle}>GovGPT - Pilot</h3>
                 </div>
             </header>
 
