@@ -27,7 +27,7 @@
         "1": "Full Tutoring",
         "2": "Socratic Conversation",
         "3": "Quantitative Exercices",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "placeholder": ""
     },
     "askTitle": "Learning",
     "gpt4vExamples": {

@@ -27,7 +27,7 @@
         "1": "Tutoring complet",
         "2": "Conversation socratique",
         "3": "Exercices quantitatifs",
-        "placeholder": "Tapez une nouvelle question (par exemple, mon plan couvre-t-il les examens oculaires annuels?)"
+        "placeholder": ""
     },
     "askTitle": "Apprentissage",
     "gpt4vExamples": {
