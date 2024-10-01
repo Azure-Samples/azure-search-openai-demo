@@ -84,7 +84,7 @@ const Chat = () => {
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
-    const [showChatHistory, setShowChatHistory] = useState<boolean>(false);
+    const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -110,7 +110,7 @@ const Chat = () => {
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
-            setShowChatHistory(config.showChatHistory);
+            setShowChatHistoryBrowser(config.showChatHistoryBrowser);
         });
     };
 
@@ -160,7 +160,7 @@ const Chat = () => {
     const client = useLogin ? useMsal().instance : undefined;
     const { loggedIn } = useContext(LoginContext);
 
-    const historyProvider: HistoryProviderOptions = showChatHistory ? HistoryProviderOptions.IndexedDB : HistoryProviderOptions.None;
+    const historyProvider: HistoryProviderOptions = showChatHistoryBrowser ? HistoryProviderOptions.IndexedDB : HistoryProviderOptions.None;
     const historyManager = useHistoryManager(historyProvider);
 
     const makeApiRequest = async (question: string) => {
@@ -366,7 +366,7 @@ const Chat = () => {
             </Helmet>
             <div className={styles.commandsSplitContainer}>
                 <div className={styles.commandsContainer}>
-                    {showChatHistory && <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />}
+                    {showChatHistoryBrowser && <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />}
                 </div>
                 <div className={styles.commandsContainer}>
                     <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
@@ -475,7 +475,7 @@ const Chat = () => {
                     />
                 )}
 
-                {showChatHistory && (
+                {showChatHistoryBrowser && (
                     <HistoryPanel
                         provider={historyProvider}
                         isOpen={isHistoryPanelOpen}

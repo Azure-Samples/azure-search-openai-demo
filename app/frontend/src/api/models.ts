@@ -89,7 +89,7 @@ export type Config = {
     showSpeechInput: boolean;
     showSpeechOutputBrowser: boolean;
     showSpeechOutputAzure: boolean;
-    showChatHistory: boolean;
+    showChatHistoryBrowser: boolean;
 };
 
 export type SimpleAPIResponse = {
