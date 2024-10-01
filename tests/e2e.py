@@ -90,9 +90,11 @@ def test_chat(sized_page: Page, live_server_url: str):
 
     # Set up a mock route to the /chat endpoint with streaming results
     def handle(route: Route):
-        # Assert that session_state is specified in the request (None for now)
+        # Assert that session_state is specified in the request
         session_state = route.request.post_data_json["session_state"]
-        assert session_state is None
+        # Assert session state is a random UUID generated from crypto.randomUUID()
+        assert session_state is not None
+        assert len(session_state) == 36
         # Read the JSONL from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
         jsonl = f.read()
