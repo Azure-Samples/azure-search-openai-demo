@@ -12,13 +12,14 @@ class CsvParser(Parser):
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         # Check if content is in bytes (binary file) and decode to string
+        content_str: str
         if isinstance(content, (bytes, bytearray)):
-            content = content.decode("utf-8")
+            content_str = content.decode("utf-8")
         elif hasattr(content, "read"):  # Handle BufferedReader
-            content = content.read().decode("utf-8")
+            content_str = content.read().decode("utf-8")
 
         # Create a CSV reader from the text content
-        reader = csv.reader(content.splitlines())
+        reader = csv.reader(content_str.splitlines())
         offset = 0
 
         # Skip the header row
