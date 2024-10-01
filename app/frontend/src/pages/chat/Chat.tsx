@@ -496,15 +496,17 @@ const Chat = () => {
                         </div>
                     )}
 
-                    <div className={styles.chatInput}>
-                        <QuestionInput
-                            clearOnSend
-                            placeholder={t("defaultExamples.placeholder")}
-                            disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
-                            showSpeechInput={showSpeechInput}
-                        />
-                    </div>
+                    {workflowStateNo < 9 && (
+                        <div className={styles.chatInput}>
+                            <QuestionInput
+                                clearOnSend
+                                placeholder={t("defaultExamples.placeholder")}
+                                disabled={isLoading}
+                                onSend={question => makeApiRequest(question)}
+                                showSpeechInput={showSpeechInput}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {answers.length > 0 && activeAnalysisPanelTab && (

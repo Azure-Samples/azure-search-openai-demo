@@ -1,52 +1,48 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python: Quart",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "quart",
-            "cwd": "${workspaceFolder}/app/backend",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "env": {
-                "QUART_APP": "main:app",
-                "QUART_ENV": "development",
-                "QUART_DEBUG": "0"
-            },
-            "args": [
-                "run",
-                "--no-reload",
-                "-p 50505"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false,
-            "envFile": "${input:dotEnvFilePath}",
-        },
-        {
-            "name": "Frontend: watch",
-            "type": "node-terminal",
-            "request": "launch",
-            "command": "npm run dev",
-            "cwd": "${workspaceFolder}/app/frontend",
-        },
-        {
-            "name": "Python: Debug Tests",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "purpose": ["debug-test"],
-            "console": "integratedTerminal",
-            "justMyCode": false
-          }
-    ],
-    "inputs": [
-        {
-            "id": "dotEnvFilePath",
-            "type": "command",
-            "command": "azure-dev.commands.getDotEnvFilePath"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Quart",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "quart",
+      "cwd": "${workspaceFolder}/app/backend",
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "env": {
+        "QUART_APP": "main:app",
+        "QUART_ENV": "development",
+        "QUART_DEBUG": "0"
+      },
+      "args": ["run", "--no-reload", "-p 50505"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "envFile": "${input:dotEnvFilePath}"
+    },
+    {
+      "name": "Frontend: watch",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/app/frontend"
+    },
+    {
+      "name": "Python: Debug Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "purpose": ["debug-test"],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ],
+  "inputs": [
+    {
+      "id": "dotEnvFilePath",
+      "type": "command",
+      "command": "azure-dev.commands.getDotEnvFilePath"
+    }
+  ]
 }

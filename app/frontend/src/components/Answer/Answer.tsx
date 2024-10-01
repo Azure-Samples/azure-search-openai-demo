@@ -52,11 +52,13 @@ export const Answer = ({
 
     return (
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
-            {/* <Stack.Item>
+            <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
-                    {workflowStateNo === 0 && <div>Hello Nicolas! Are you ready for today's tutoring session? Let's get started!</div>}
+                    {workflowStateNo >= 1 && workflowStateNo <= 3 && <h1>Multi-Choice Questions</h1>}
+                    {workflowStateNo >= 4 && workflowStateNo <= 7 && <h1>Open-Ended Questions</h1>}
+                    {workflowStateNo >= 8 && workflowStateNo <= 9 && <h1>Exercises</h1>}
                 </Stack>
-            </Stack.Item> */}
+            </Stack.Item>
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
@@ -86,19 +88,19 @@ export const Answer = ({
                                     </p>
                                     <div>
                                         <input type="radio" id="libor" name="riskFreeRate" value="LIBOR" />
-                                        <label htmlFor="libor">LIBOR</label>
+                                        <label htmlFor="libor">A. LIBOR</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="repoRate" name="riskFreeRate" value="Repo rate" />
-                                        <label htmlFor="repoRate">Repo rate</label>
+                                        <label htmlFor="repoRate">B. Repo rate</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="treasuryRate" name="riskFreeRate" value="Treasury rate" />
-                                        <label htmlFor="treasuryRate">Treasury rate</label>
+                                        <label htmlFor="treasuryRate">C. Treasury rate</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="fedFundsRate" name="riskFreeRate" value="Fed funds rate" />
-                                        <label htmlFor="fedFundsRate">Fed funds rate</label>
+                                        <label htmlFor="fedFundsRate">D. Fed funds rate</label>
                                     </div>
                                 </form>
                                 <div></div>
@@ -116,15 +118,15 @@ export const Answer = ({
                                     </p>
                                     <div>
                                         <input type="radio" id="liborA" name="liborMeaning" value="London Interbank Offered Rate" />
-                                        <label htmlFor="liborA">London Interbank Offered Rate</label>
+                                        <label htmlFor="liborA">A. London Interbank Offered Rate</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="liborB" name="liborMeaning" value="London Investment Bank Operational Rate" />
-                                        <label htmlFor="liborB">London Investment Bank Operational Rate</label>
+                                        <label htmlFor="liborB">B. London Investment Bank Operational Rate</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="liborC" name="liborMeaning" value="Low-Interest Bond Offer Rate" />
-                                        <label htmlFor="liborC">Low-Interest Bond Offer Rate</label>
+                                        <label htmlFor="liborC">C. Low-Interest Bond Offer Rate</label>
                                     </div>
                                 </form>
                             </div>
@@ -145,19 +147,19 @@ export const Answer = ({
                                 <form onSubmit={event => event.preventDefault()}>
                                     <div>
                                         <input type="radio" id="q3A" name="q3" value="$105" />
-                                        <label htmlFor="q3A">$105</label>
+                                        <label htmlFor="q3A">A. $105</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="q3B" name="q3" value="$110" />
-                                        <label htmlFor="q3B">$110</label>
+                                        <label htmlFor="q3B">B. $110</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="q3C" name="q3" value="$110.25" />
-                                        <label htmlFor="q3C">$110.25</label>
+                                        <label htmlFor="q3C">C. $110.25</label>
                                     </div>
                                     <div>
                                         <input type="radio" id="q3D" name="q3" value="$110.38" />
-                                        <label htmlFor="q3D">$110.38</label>
+                                        <label htmlFor="q3D">D. $110.38</label>
                                     </div>
                                 </form>
                             </div>
@@ -168,7 +170,7 @@ export const Answer = ({
                                     <strong>Correct answer:</strong> C
                                 </p>
                                 <p>
-                                    Let's move to <strong>open-ended questions</strong>, shall we?
+                                    Let's move to <strong>open-ended questions</strong>, shall we? For example:
                                 </p>
                                 <div>
                                     <div className={styles.answerText}>
@@ -297,6 +299,12 @@ A = P * math.exp(r * t)
 A, A - P  # Return total amount and the interest earned`}
                                             </code>
                                         </pre>
+                                        <strong>
+                                            Excellent session, Nicolas! You have successfully completed the last part of the session; the quantitative
+                                            exercises.
+                                            <br />
+                                            See you next time!
+                                        </strong>
                                     </div>
                                 </div>
                                 {false && (

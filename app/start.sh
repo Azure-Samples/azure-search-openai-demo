@@ -29,12 +29,6 @@ echo ""
 echo "Building frontend"
 echo ""
 
-npm run build
-if [ $? -ne 0 ]; then
-    echo "Failed to build frontend"
-    exit $?
-fi
-
 echo ""
 echo "Starting backend"
 echo ""
@@ -46,5 +40,12 @@ host=localhost
 ../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 if [ $? -ne 0 ]; then
     echo "Failed to start backend"
+    exit $?
+fi
+
+#npm run build
+npm run dev
+if [ $? -ne 0 ]; then
+    echo "Failed to build frontend"
     exit $?
 fi
