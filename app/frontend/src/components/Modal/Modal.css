@@ -8,29 +8,42 @@
     align-items: center;
     justify-content: center;
     box-shadow:
-        0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
-        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
-    border-radius: 0.5rem;
+        0px 0.03125rem 0.0625rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.0078125rem rgba(0, 0, 0, 0.12);
+    border-radius: 0.03125rem;
+    z-index: 9999;
     background-color: rgba(87, 85, 85, 0.5);
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     background: white;
-    padding: 20px;
-    border-radius: 5px;
+    padding: 1.25rem;
+    border-radius: 0.3125rem;
     text-align: center;
     color: black;
-    margin-left: 60px;
-    margin-right: 60px;
-  }
+    margin-left: 3.75rem;
+    margin-right: 3.75rem;
+}
 
-  .modal-button {
-    /* display: block; Makes the button a block element */
-    margin-top: 20px; /* Adds space above the button */
-    align-self: flex-end; 
+.modal-button {
+    margin-top: 1.25rem;
+    align-self: flex-end;
     background-color: #33bfc7;
     box-shadow:
-        0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
-        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
-  }
-  
+        0px 0.03125rem 0.0625rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.0078125rem rgba(0, 0, 0, 0.12);
+    border-radius: 3rem;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+}
+
+.modal-button:hover {
+    background-color: #2a9c9f;
+    transform: translateY(-0.03125rem);
+}
+
+.modal-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.1875rem rgba(51, 191, 199, 0.5);
+}

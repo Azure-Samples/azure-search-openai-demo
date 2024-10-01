@@ -348,11 +348,12 @@ const Chat = () => {
 
     return (
         <div className={styles.container}>
+            {isModalVisible && <Modal onClose={closeModal} />}
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
             </div>
             <div className={styles.chatRoot}>
-                {isModalVisible && <Modal onClose={closeModal} />}
+                
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
