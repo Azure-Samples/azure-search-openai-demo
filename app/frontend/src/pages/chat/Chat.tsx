@@ -5,6 +5,7 @@ import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
+import Modal from "../../components/Modal/Modal";
 
 import {
     chatApi,
@@ -311,6 +312,12 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const [isModalVisible, setModalVisible] = useState(true);
+
+    const closeModal = () => {
+        setModalVisible(false);
+    };
+
     // IDs for form labels and their associated callouts
     const promptTemplateId = useId("promptTemplate");
     const promptTemplateFieldId = useId("promptTemplateField");
@@ -345,6 +352,7 @@ const Chat = () => {
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
             </div>
             <div className={styles.chatRoot}>
+                {isModalVisible && <Modal onClose={closeModal} />}
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
