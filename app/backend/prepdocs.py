@@ -68,9 +68,7 @@ def setup_blob_manager(
     search_images: bool,
     storage_key: Union[str, None] = None,
 ):
-    storage_creds: Union[AsyncTokenCredential, str] = (
-        azure_credential if storage_key is None else storage_key
-    )
+    storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
     return BlobManager(
         endpoint=f"https://{storage_account}.blob.core.windows.net",
         container=storage_container,
@@ -93,15 +91,9 @@ def setup_list_file_strategy(
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
         if datalake_filesystem is None or datalake_path is None:
-            raise ValueError(
-                "DataLake file system and path are required when using Azure Data Lake Gen2"
-            )
-        adls_gen2_creds: Union[AsyncTokenCredential, str] = (
-            azure_credential if datalake_key is None else datalake_key
-        )
-        logger.info(
-            "Using Data Lake Gen2 Storage Account: %s", datalake_storage_account
-        )
+            raise ValueError("DataLake file system and path are required when using Azure Data Lake Gen2")
+        adls_gen2_creds: Union[AsyncTokenCredential, str] = azure_credential if datalake_key is None else datalake_key
+        logger.info("Using Data Lake Gen2 Storage Account: %s", datalake_storage_account)
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=datalake_storage_account,
             data_lake_filesystem=datalake_filesystem,
@@ -112,9 +104,7 @@ def setup_list_file_strategy(
         logger.info("Using local files: %s", local_files)
         list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
     else:
-        raise ValueError(
-            "Either local_files or datalake_storage_account must be provided."
-        )
+        raise ValueError("Either local_files or datalake_storage_account must be provided.")
     return list_file_strategy
 
 
@@ -150,9 +140,7 @@ def setup_embeddings_service(
         )
     else:
         if openai_key is None:
-            raise ValueError(
-                "OpenAI key is required when using the non-Azure OpenAI API"
-            )
+            raise ValueError("OpenAI key is required when using the non-Azure OpenAI API")
         return OpenAIEmbeddingService(
             open_ai_model_name=openai_model_name,
             open_ai_dimensions=openai_dimensions,
@@ -177,9 +165,7 @@ def setup_file_processors(
     # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service is not None:
         documentintelligence_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
-            azure_credential
-            if document_intelligence_key is None
-            else AzureKeyCredential(document_intelligence_key)
+            azure_credential if document_intelligence_key is None else AzureKeyCredential(document_intelligence_key)
         )
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
@@ -221,14 +207,10 @@ def setup_image_embeddings_service(
     image_embeddings_service: Optional[ImageEmbeddings] = None
     if search_images:
         if vision_endpoint is None:
-            raise ValueError(
-                "A computer vision endpoint is required when GPT-4-vision is enabled."
-            )
+            raise ValueError("A computer vision endpoint is required when GPT-4-vision is enabled.")
         image_embeddings_service = ImageEmbeddings(
             endpoint=vision_endpoint,
-            token_provider=get_bearer_token_provider(
-                azure_credential, "https://cognitiveservices.azure.com/.default"
-            ),
+            token_provider=get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default"),
         )
     return image_embeddings_service
 
@@ -283,9 +265,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--storageaccount", help="Azure Blob Storage account name")
     parser.add_argument("--container", help="Azure Blob Storage container name")
-    parser.add_argument(
-        "--storageresourcegroup", help="Azure blob storage resource group"
-    )
+    parser.add_argument("--storageresourcegroup", help="Azure blob storage resource group")
     parser.add_argument(
         "--storagekey",
         required=False,
@@ -429,9 +409,7 @@ if __name__ == "__main__":
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.INFO)
 
-    use_int_vectorization = (
-        args.useintvectorization and args.useintvectorization.lower() == "true"
-    )
+    use_int_vectorization = args.useintvectorization and args.useintvectorization.lower() == "true"
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     if args.tenantid:
@@ -439,13 +417,9 @@ if __name__ == "__main__":
             "Connecting to Azure services using the azd credential for tenant %s",
             args.tenantid,
         )
-        azd_credential = AzureDeveloperCliCredential(
-            tenant_id=args.tenantid, process_timeout=60
-        )
+        azd_credential = AzureDeveloperCliCredential(tenant_id=args.tenantid, process_timeout=60)
     else:
-        logger.info(
-            "Connecting to Azure services using the azd credential for home tenant"
-        )
+        logger.info("Connecting to Azure services using the azd credential for home tenant")
         azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
     if args.removeall:
@@ -539,7 +513,5 @@ if __name__ == "__main__":
             category=args.category,
         )
 
-    loop.run_until_complete(
-        main(ingestion_strategy, setup_index=not args.remove and not args.removeall)
-    )
+    loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
     loop.close()
