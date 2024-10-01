@@ -203,8 +203,7 @@ const Chat = () => {
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
-                // Set new UUID as session state for the first request
-                session_state: answers.length ? answers[answers.length - 1][1].session_state : crypto.randomUUID()
+                session_state: answers.length ? answers[answers.length - 1][1].session_state : null
             };
 
             const response = await chatApi(request, shouldStream, token);
@@ -217,14 +216,18 @@ const Chat = () => {
             if (shouldStream) {
                 const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
                 setAnswers([...answers, [question, parsedResponse]]);
-                historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]]);
+                if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
+                    historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]]);
+                }
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {
                     throw Error(parsedResponse.error);
                 }
                 setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
-                historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse as ChatAppResponse]]);
+                if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
+                    historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse as ChatAppResponse]]);
+                }
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {

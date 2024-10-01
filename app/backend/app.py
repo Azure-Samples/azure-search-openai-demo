@@ -80,6 +80,7 @@ from config import (
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
 from core.authentication import AuthenticationHelper
+from core.sessionhelper import create_session_id
 from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
 from prepdocs import (
@@ -219,10 +220,15 @@ async def chat(auth_claims: Dict[str, Any]):
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
+        # If session state is provided, persists the session state,
+        # else creates a new session_id depending on the chat history options enabled.
+        session_state = request_json.get("session_state")
+        if session_state is None:
+            session_state = create_session_id(current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED])
         result = await approach.run(
             request_json["messages"],
             context=context,
-            session_state=request_json.get("session_state"),
+            session_state=session_state,
         )
         return jsonify(result)
     except Exception as error:
@@ -245,10 +251,15 @@ async def chat_stream(auth_claims: Dict[str, Any]):
         else:
             approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
+        # If session state is provided, persists the session state,
+        # else creates a new session_id depending on the chat history options enabled.
+        session_state = request_json.get("session_state")
+        if session_state is None:
+            session_state = create_session_id(current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED])
         result = await approach.run_stream(
             request_json["messages"],
             context=context,
-            session_state=request_json.get("session_state"),
+            session_state=session_state,
         )
         response = await make_response(format_as_ndjson(result))
         response.timeout = None  # type: ignore
