@@ -8,6 +8,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
 
 from prepdocslib.blobmanager import BlobManager
+from prepdocslib.csvparser import CsvParser
 from prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     ImageEmbeddings,
@@ -20,7 +21,6 @@ from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.jsonparser import JsonParser
-from prepdocslib.csvparser import CsvParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
