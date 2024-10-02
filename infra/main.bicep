@@ -109,13 +109,16 @@ param computerVisionSkuName string // Set in main.parameters.json
 param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
+param chatGptDeploymentSkuName string = ''
 param chatGptDeploymentCapacity int = 0
+
 var chatGpt = {
   modelName: !empty(chatGptModelName)
     ? chatGptModelName
     : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
+  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
 
@@ -450,7 +453,7 @@ var defaultOpenAiDeployments = [
       version: chatGpt.deploymentVersion
     }
     sku: {
-      name: 'Standard'
+      name: chatGpt.deploymentSkuName
       capacity: chatGpt.deploymentCapacity
     }
   }
