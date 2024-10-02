@@ -10,6 +10,7 @@ from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_pro
 
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
+from prepdocslib.csvparser import CsvParser
 from prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     ImageEmbeddings,
@@ -190,6 +191,7 @@ def setup_file_processors(
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
         ".md": FileProcessor(TextParser(), sentence_text_splitter),
         ".txt": FileProcessor(TextParser(), sentence_text_splitter),
+        ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
     }
     # These require either a Python package or Document Intelligence
     if pdf_parser is not None:

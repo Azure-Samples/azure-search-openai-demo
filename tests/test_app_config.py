@@ -63,7 +63,7 @@ async def test_app_user_upload_processors(monkeypatch, minimal_env):
     async with quart_app.test_app():
         ingester = quart_app.config[app.CONFIG_INGESTER]
         assert ingester is not None
-        assert len(ingester.file_processors.keys()) == 5
+        assert len(ingester.file_processors.keys()) == 6
 
 
 @pytest.mark.asyncio
@@ -77,7 +77,7 @@ async def test_app_user_upload_processors_docint(monkeypatch, minimal_env):
     async with quart_app.test_app():
         ingester = quart_app.config[app.CONFIG_INGESTER]
         assert ingester is not None
-        assert len(ingester.file_processors.keys()) == 14
+        assert len(ingester.file_processors.keys()) == 15
 
 
 @pytest.mark.asyncio
@@ -92,7 +92,7 @@ async def test_app_user_upload_processors_docint_localpdf(monkeypatch, minimal_e
     async with quart_app.test_app():
         ingester = quart_app.config[app.CONFIG_INGESTER]
         assert ingester is not None
-        assert len(ingester.file_processors.keys()) == 14
+        assert len(ingester.file_processors.keys()) == 15
         assert ingester.file_processors[".pdf"] is not ingester.file_processors[".pptx"]
 
 
@@ -108,7 +108,7 @@ async def test_app_user_upload_processors_docint_localhtml(monkeypatch, minimal_
     async with quart_app.test_app():
         ingester = quart_app.config[app.CONFIG_INGESTER]
         assert ingester is not None
-        assert len(ingester.file_processors.keys()) == 14
+        assert len(ingester.file_processors.keys()) == 15
         assert ingester.file_processors[".html"] is not ingester.file_processors[".pptx"]
 
 
