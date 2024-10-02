@@ -7,6 +7,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using GPT-4](#using-gpt-4)
 * [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
+* [Enabling chat history](#enabling-chat-history)
 * [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
@@ -141,6 +142,16 @@ If you have already deployed:
 ## Enabling GPT-4 Turbo with Vision
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
+
+## Enabling chat history
+
+This feature allows users to view the chat history of their conversation, stored in the browser using [IndexedDB](https://developer.mozilla.org/docs/Web/API/IndexedDB_API). That means the chat history will be available only on the device where the chat was initiated. To enable browser-stored chat history, run:
+
+```shell
+azd env set USE_CHAT_HISTORY_BROWSER true
+```
+
+In the future, we plan to add support for optionally storing chat history in a server-side storage such as Cosmos DB.
 
 ## Enabling language picker
 

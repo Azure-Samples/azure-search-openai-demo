@@ -165,6 +165,7 @@ If you followed the steps above to install the pre-commit hooks, then you can ju
 ## Adding new azd environment variables
 
 When adding new azd environment variables, please remember to update:
+
 1. App Service's [azure.yaml](./azure.yaml)
 1. [ADO pipeline](.azdo/pipelines/azure-dev.yml).
 1. [Github workflows](.github/workflows/azure-dev.yml)
