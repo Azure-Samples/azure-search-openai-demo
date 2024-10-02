@@ -84,7 +84,7 @@
       "value": "${AZURE_APP_SERVICE_PLAN}"
     },
     "appServiceSkuName": {
-      "value": "${AZURE_APP_SERVICE_SKU=B1}"
+      "value": "${AZURE_APP_SERVICE_SKU=S1}"
     },
     "backendServiceName": {
       "value": "${AZURE_APP_SERVICE}"
@@ -117,7 +117,7 @@
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
     "gpt4vDeploymentCapacity":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY=10}"
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"

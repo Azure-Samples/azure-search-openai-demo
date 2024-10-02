@@ -13,7 +13,7 @@ module main 'main.bicep' = {
   params: {
     environmentName: environmentName
     location: location
-    appServiceSkuName: 'B1'
+    appServiceSkuName: 'S1'
     computerVisionSkuName: 'S1'
     documentIntelligenceResourceGroupLocation: location
     documentIntelligenceSkuName: 'S0'

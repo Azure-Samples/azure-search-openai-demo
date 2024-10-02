@@ -114,9 +114,9 @@ var chatGpt = {
   modelName: !empty(chatGptModelName)
     ? chatGptModelName
     : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
-  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
+  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'opensourcerer-completions-35t'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
-  deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
+  deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 50
 }
 
 param embeddingModelName string = ''
@@ -126,16 +126,16 @@ param embeddingDeploymentCapacity int = 0
 param embeddingDimensions int = 0
 var embedding = {
   modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
-  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
+  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'opensourcerer-embeddings'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
-  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 50
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
 param gpt4vModelName string = 'gpt-4o'
-param gpt4vDeploymentName string = 'gpt-4o'
+param gpt4vDeploymentName string = 'opensourcerer-completions-4o'
 param gpt4vModelVersion string = '2024-05-13'
-param gpt4vDeploymentCapacity int = 10
+param gpt4vDeploymentCapacity int = 50
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -380,8 +380,8 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     disableAppServicesAuthentication: disableAppServicesAuthentication
     clientSecretSettingName: !empty(clientAppSecret) ? 'AZURE_CLIENT_APP_SECRET' : ''
     authenticationIssuerUri: authenticationIssuerUri
-    use32BitWorkerProcess: appServiceSkuName == 'F1'
-    alwaysOn: appServiceSkuName != 'F1'
+    use32BitWorkerProcess: appServiceSkuName == 'S1'
+    alwaysOn: appServiceSkuName != 'S1'
     appSettings: appEnvVariables
   }
 }
