@@ -113,6 +113,9 @@
     "embeddingDeploymentVersion":{
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
     },
+    "cembeddingDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_SKUNAME}"
+    },
     "embeddingDeploymentCapacity":{
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
