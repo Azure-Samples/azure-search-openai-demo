@@ -57,7 +57,9 @@ param speechServiceResourceGroupName string = ''
 param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
-param useGPT4V bool = false
+param useGPT4v bool = false
+param useGPT4 bool = true
+param altEmb bool = false
 
 @description('Location for the OpenAI resource group')
 @allowed([
@@ -110,32 +112,44 @@ param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
 param chatGptDeploymentCapacity int = 0
-var chatGpt = {
-  modelName: !empty(chatGptModelName)
-    ? chatGptModelName
-    : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
-  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'opensourcerer-completions-35t'
-  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
-  deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 50
-}
 
-param embeddingModelName string = ''
-param embeddingDeploymentName string = ''
-param embeddingDeploymentVersion string = ''
-param embeddingDeploymentCapacity int = 0
-param embeddingDimensions int = 0
-var embedding = {
-  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
-  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'opensourcerer-embeddings'
-  deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
-  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 50
-  dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
-}
-
+// To be removed during cleanup now that 4V is no longer the default
 param gpt4vModelName string = 'gpt-4o'
-param gpt4vDeploymentName string = 'opensourcerer-completions-4o'
+param gpt4vDeploymentName string = 'gpt-4o'
 param gpt4vModelVersion string = '2024-05-13'
-param gpt4vDeploymentCapacity int = 50
+param gpt4vDeploymentCapacity int = 10
+
+param gpt4ModelName string = 'gpt-4o'
+param gpt4DeploymentName string = 'opensourcerer-completions-4o'
+param gpt4ModelVersion string = '2024-05-13'
+param gpt4DeploymentCapacity int = 50
+
+var chatGpt = {
+  modelName: !useGPT4 ? chatGptModelName : gpt4ModelName  
+  deploymentName: !useGPT4 ? chatGptDeploymentName : gpt4DeploymentName  
+  deploymentVersion: !useGPT4 ? chatGptDeploymentVersion : gpt4ModelVersion  
+  deploymentCapacity: !useGPT4 ? chatGptDeploymentCapacity : gpt4DeploymentCapacity
+}
+
+param embeddingModelName string = 'text-embedding-ada-002'
+param embeddingDeploymentName string = 'opensourcerer-embeddings'
+param embeddingDeploymentVersion string = '2'
+param embeddingDeploymentCapacity int = 50
+param embeddingDimensions int = 1536
+
+param AlternateEmbeddingModelName string = 'text-embedding-3-large'
+param AlternateEmbeddingDeploymentName string = 'opensourcerer-embeddings-003'
+param AlternateEmbeddingDeploymentVersion string = '1'
+param AlternateEmbeddingDeploymentCapacity int = 50
+param AlternateEmbeddingDimensions int = 1536
+
+var embedding = {
+  modelName: !altEmb ? embeddingModelName : AlternateEmbeddingModelName
+  deploymentName: !altEmb ? embeddingDeploymentName : AlternateEmbeddingDeploymentName
+  deploymentVersion: !altEmb ? embeddingDeploymentVersion : AlternateEmbeddingDeploymentVersion
+  deploymentCapacity: !altEmb ? embeddingDeploymentCapacity : AlternateEmbeddingDeploymentCapacity
+  dimensions: !altEmb ? embeddingDimensions : AlternateEmbeddingDimensions
+}
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -302,7 +316,7 @@ var appEnvVariables = {
   AZURE_SEARCH_INDEX: searchIndexName
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
-  AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useGPT4 ? computerVision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights
@@ -324,7 +338,7 @@ var appEnvVariables = {
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
-  AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4vDeploymentName : ''
+  AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4 ? gpt4vDeploymentName : ''
   AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
   AZURE_OPENAI_API_KEY_OVERRIDE: azureOpenAiApiKey
   AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
@@ -346,7 +360,7 @@ var appEnvVariables = {
   // CORS support, for frontends on other hosts
   ALLOWED_ORIGIN: allowedOrigin
   USE_VECTORS: useVectors
-  USE_GPT4V: useGPT4V
+  USE_GPT4V: useGPT4
   USE_USER_UPLOAD: useUserUpload
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
@@ -470,7 +484,7 @@ var defaultOpenAiDeployments = [
 
 var openAiDeployments = concat(
   defaultOpenAiDeployments,
-  useGPT4V
+  useGPT4v
     ? [
         {
           name: gpt4vDeploymentName
@@ -534,7 +548,7 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4'
   }
 }
 
-module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useGPT4V) {
+module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useGPT4) {
   name: 'computerVision'
   scope: computerVisionResourceGroup
   params: {
@@ -856,7 +870,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
         dnsZoneName: 'privatelink.openai.azure.com'
         resourceIds: concat(
           [openAi.outputs.resourceId],
-          useGPT4V ? [computerVision.outputs.resourceId] : [],
+          useGPT4 ? [computerVision.outputs.resourceId] : [],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
         )
       }
@@ -927,7 +941,7 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload) 
 }
 
 // For computer vision access by the backend
-module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4) {
   scope: computerVisionResourceGroup
   name: 'computervision-role-backend'
   params: {
@@ -974,7 +988,7 @@ output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4vDeploymen
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
-output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useGPT4 ? computerVision.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
