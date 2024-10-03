@@ -34,6 +34,7 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { toolTipText } from "../../i18n/tooltips.js";
 import { LoginContext } from "../../loginContext";
 import { stubbedPublicClientApplication } from "@azure/msal-browser";
+import DisclaimerModal from "../../components/Modal/Modal";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -312,12 +313,6 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
-    const [isModalVisible, setModalVisible] = useState(true);
-
-    const closeModal = () => {
-        setModalVisible(false);
-    };
-
     // IDs for form labels and their associated callouts
     const promptTemplateId = useId("promptTemplate");
     const promptTemplateFieldId = useId("promptTemplateField");
@@ -348,12 +343,11 @@ const Chat = () => {
 
     return (
         <div className={styles.container}>
-            {isModalVisible && <Modal onClose={closeModal} />}
+            <DisclaimerModal />
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
             </div>
             <div className={styles.chatRoot}>
-                
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>

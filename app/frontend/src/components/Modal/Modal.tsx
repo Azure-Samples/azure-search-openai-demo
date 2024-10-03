@@ -1,29 +1,35 @@
-import React from "react";
-import "./Modal.css";
+import * as React from "react";
+import { Dialog, DialogSurface, DialogTitle, DialogContent, DialogBody, DialogActions, Button } from "@fluentui/react-components";
+import "./Modal.css"; // Adjust the path as necessary
 
-interface Modal {
-    onClose: () => void;
-}
+export const DisclaimerModal: React.FC = () => {
+    const [open, setOpen] = React.useState(true);
 
-const DisclaimerModal: React.FC<Modal> = ({ onClose }) => {
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>GovGPT Pilot</h2>
-                <p>GovGPT allows you to query New Zealand government websites in an easy and convient way.</p>
-                <p>
-                    This product is built on top Microsoft's Azure AI platform to assist with business inquireies and is aligned with the city's AI principles.
-                </p>
-                <p>
-                    As a proof of concept product still being tested, it may occasionally provide incomplete or inaccurate responses. Verify information with
-                    links provided after the response or by visiting the relevant ministry's website. Do not use its responses as a legal or professional adivce
-                    nor provide sensitive information to the chatbot.
-                </p>
-                <button className="modal-button" onClick={onClose}>
-                    Accept
-                </button>
-            </div>
-        </div>
+        <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)}>
+            <DialogSurface id="my-dialog-surface" className="dialog-surface">
+                <DialogBody>
+                    <DialogTitle id="custom-dialog-title">Pilot</DialogTitle>
+                    <DialogContent>
+                        <p>GovGPT allows you to query New Zealand government websites in an easy and convient way.</p>
+                        <p>
+                            This product is built on top Microsoft's Azure AI platform to assist with business inquireies and is aligned with the city's AI
+                            principles.
+                        </p>
+                        <p>
+                            As a proof of concept product still being tested, it may occasionally provide incomplete or inaccurate responses. Verify information
+                            with links provided after the response or by visiting the relevant ministry's website. Do not use its responses as a legal or
+                            professional adivce nor provide sensitive information to the chatbot.
+                        </p>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button className="tcmodal-button" onClick={() => setOpen(false)}>
+                            Accept
+                        </Button>
+                    </DialogActions>
+                </DialogBody>
+            </DialogSurface>
+        </Dialog>
     );
 };
 
