@@ -95,7 +95,7 @@ jobs:
       AZURE_ADLS_GEN2_FILESYSTEM: ${{ vars.AZURE_ADLS_GEN2_FILESYSTEM }}
       DEPLOYMENT_TARGET: ${{ vars.DEPLOYMENT_TARGET }}
       AZURE_CONTAINER_APPS_WORKLOAD_PROFILE: ${{ vars.AZURE_CONTAINER_APPS_WORKLOAD_PROFILE }}
-
+      USE_CHAT_HISTORY_BROWSER: ${{ vars.USE_CHAT_HISTORY_BROWSER }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -6,6 +6,19 @@
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "clearChat": "Borrar chat",
+    "history": {
+        "chatHistory": "Historial de chat",
+        "openChatHistory": "Abrir historial de chat",
+        "noHistory": "No hay historial de chat",
+        "deleteModalTitle": "Eliminar historial de chat",
+        "deleteModalDescription": "Esta acción no se puede deshacer. ¿Eliminar este historial de chat?",
+        "deleteLabel": "Eliminar",
+        "cancelLabel": "Cancelar",
+        "today": "Hoy",
+        "yesterday": "Ayer",
+        "last7days": "Últimos 7 días",
+        "last30days": "Últimos 30 días"
+    },
     "upload": {
         "fileLabel": "Subir archivo:",
         "uploadedFilesLabel": "Archivos subidos previamente:",
