@@ -91,6 +91,11 @@
     font-size: 1.75rem;
 }
 
+.commandsSplitContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
 .commandsContainer {
     display: flex;
     padding-left: 1rem;
@@ -117,6 +122,10 @@
 
     .chatInput {
         padding: 0.75rem 1.5rem 1.5rem;
+    }
+
+    .commandsSplitContainer {
+        padding-left: 1rem;
     }
 
     .commandsContainer {

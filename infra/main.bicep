@@ -183,6 +183,8 @@ param useSpeechInputBrowser bool = false
 param useSpeechOutputBrowser bool = false
 @description('Use Azure speech service for reading out text')
 param useSpeechOutputAzure bool = false
+@description('Use chat history feature in browser')
+param useChatHistoryBrowser bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
 param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
@@ -314,6 +316,7 @@ var appEnvVariables = {
   USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
+  USE_CHAT_HISTORY_BROWSER: useChatHistoryBrowser
   // Shared by all OpenAI deployments
   OPENAI_HOST: openAiHost
   AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName

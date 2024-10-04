@@ -6,6 +6,19 @@
     "login": "Connexion",
     "logout": "Déconnexion",
     "clearChat": "Effacer le chat",
+    "history": {
+        "chatHistory": "Historique du chat",
+        "openChatHistory": "Ouvrir l'historique du chat",
+        "noHistory": "Pas d'historique dans ce chat",
+        "deleteModalTitle": "Supprimer l'historique du chat",
+        "deleteModalDescription": "Cette action est irréversible. Supprimer l'historique de ce chat ?",
+        "deleteLabel": "Supprimer",
+        "cancelLabel": "Annuler",
+        "today": "Aujourd'hui",
+        "yesterday": "Hier",
+        "last7days": "7 derniers jours",
+        "last30days": "30 derniers jours"
+    },
     "upload": {
         "fileLabel": "Télécharger le fichier:",
         "uploadedFilesLabel": "Fichiers précédemment téléchargés:",

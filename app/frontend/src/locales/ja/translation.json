@@ -6,6 +6,19 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "clearChat": "チャットをクリア",
+    "history": {
+        "chatHistory": "チャット履歴",
+        "openChatHistory": "チャット履歴を開く",
+        "noHistory": "チャット履歴がありません",
+        "deleteModalTitle": "チャット履歴の削除",
+        "deleteModalDescription": "この操作は取り消せません。このチャット履歴を削除しますか？",
+        "deleteLabel": "削除",
+        "cancelLabel": "キャンセル",
+        "today": "今日",
+        "yesterday": "昨日",
+        "last7days": "過去7日間",
+        "last30days": "過去30日間"
+    },
     "upload": {
         "fileLabel": "ファイルをアップロード：",
         "uploadedFilesLabel": "アップロード済みのファイル：",

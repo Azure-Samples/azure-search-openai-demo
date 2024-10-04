@@ -167,6 +167,9 @@
     "useSpeechOutputAzure": {
       "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
     },
+    "useChatHistoryBrowser": {
+      "value": "${USE_CHAT_HISTORY_BROWSER=false}"
+    },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
     },
