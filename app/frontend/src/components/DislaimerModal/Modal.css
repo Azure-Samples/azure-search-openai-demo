@@ -1,5 +1,6 @@
 .dialog-surface {
     position: relative;
+    width: 100%;
     max-width: 500px;
     margin: 20px;
     z-index: 1000;
@@ -56,4 +57,10 @@
     box-shadow:
         0px 0.5rem 1rem rgba(0, 0, 0, 0.24),
         0px 0px 0.125rem rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 600px) {
+    .dialog-surface {
+        width: calc(100% - 80px);
+    }
 }
