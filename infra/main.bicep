@@ -766,9 +766,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
-    principalId: (deploymentTarget == 'appservice')
-      ? backend.outputs.identityPrincipalId
-      : acaBackend.outputs.identityPrincipalId
+    principalId: searchService.outputs.principalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
     principalType: 'ServicePrincipal'
   }
@@ -802,9 +800,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
-    principalId: (deploymentTarget == 'appservice')
-      ? backend.outputs.identityPrincipalId
-      : acaBackend.outputs.identityPrincipalId
+    principalId: searchService.outputs.principalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
     principalType: 'ServicePrincipal'
   }

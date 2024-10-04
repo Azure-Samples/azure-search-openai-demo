@@ -11,7 +11,7 @@ from pypdf import PdfReader
 from .page import Page
 from .parser import Parser
 
-logger = logging.getLogger("ingester")
+logger = logging.getLogger("scripts")
 
 
 class LocalPdfParser(Parser):

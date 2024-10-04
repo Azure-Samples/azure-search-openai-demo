@@ -137,7 +137,7 @@ const Chat = () => {
                 if (event["context"] && event["context"]["data_points"]) {
                     event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
-                } else if (event["delta"]["content"]) {
+                } else if (event["delta"] && event["delta"]["content"]) {
                     setIsLoading(false);
                     await updateState(event["delta"]["content"]);
                 } else if (event["context"]) {

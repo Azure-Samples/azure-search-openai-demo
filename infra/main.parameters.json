@@ -116,6 +116,9 @@
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
+    "gpt4vDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY=10}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
