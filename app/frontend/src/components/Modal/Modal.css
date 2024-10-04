@@ -27,18 +27,15 @@
 .dialog-surface .tcmodal-button {
     align-self: flex-end;
     background-color: #33bfc7;
-    box-shadow:
-        0px 0.5rem 1rem rgba(0, 0, 0, 0.24),
-        0px 0px 0.125rem rgba(0, 0, 0, 0.2);
     border: none;
     outline: none;
     border-radius: 0.3rem;
     font-size: 1.125rem;
-    padding: 0.5rem 1rem;
+    padding: 0.15rem 0.35rem;
 }
 
 .dialog-surface .tcmodal-button:focus {
-    box-shadow: 0 0 0 0.1875rem rgba(51, 191, 199, 0.5);
+    box-shadow: 0 0 0 0.1875rem rgba(255, 255, 255, 0);
     border: none;
     outline: none;
 }

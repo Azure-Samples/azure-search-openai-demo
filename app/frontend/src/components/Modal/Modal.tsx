@@ -6,10 +6,10 @@ export const DisclaimerModal: React.FC = () => {
     const [open, setOpen] = React.useState(true);
 
     return (
-        <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)}>
+        <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)} modalType="non-modal">
             <DialogSurface id="my-dialog-surface" className="dialog-surface">
                 <DialogBody>
-                    <DialogTitle id="custom-dialog-title">Pilot</DialogTitle>
+                    <DialogTitle id="custom-dialog-title">GovGPT - Pilot</DialogTitle>
                     <DialogContent>
                         <p>GovGPT allows you to query New Zealand government websites in an easy and convient way.</p>
                         <p>
@@ -18,7 +18,7 @@ export const DisclaimerModal: React.FC = () => {
                         </p>
                         <p>
                             As a proof of concept product still being tested, it may occasionally provide incomplete or inaccurate responses. Verify information
-                            with links provided after the response or by visiting the relevant ministry's website. Do not use its responses as a legal or
+                            with links provided after the response or by visiting the relevant ministry's website. <b>Do not</b> use its responses as a legal or
                             professional adivce nor provide sensitive information to the chatbot.
                         </p>
                     </DialogContent>
