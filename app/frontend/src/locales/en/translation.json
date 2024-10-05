@@ -132,7 +132,7 @@
         "retrieveNumber":
              "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
         "includeCategory":
-            "Specifies a category to include in the search results. There are no categories used in the default data set.",  
+            "Specifies a category to include in the search results. There are no categories used in the default data set.",
          "excludeCategory":
             "Specifies a category to exclude from the search results. There are no categories used in the default data set.",
          "useSemanticReranker":

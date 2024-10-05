@@ -1,17 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import {
-    Checkbox,
-    Panel,
-    DefaultButton,
-    TextField,
-    ITextFieldProps,
-    ICheckboxProps,
-    Dropdown,
-    IDropdownOption,
-    IDropdownProps
-} from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps, Dropdown, IDropdownOption, IDropdownProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
@@ -633,7 +623,7 @@ const Chat = () => {
                         onChange={onIncludeCategoryChanged}
                         aria-labelledby={includeCategoryId}
                         options={[
-                            { key: '', text: t("labels.includeCategoryOptions.all") },
+                            { key: "", text: t("labels.includeCategoryOptions.all") }
                             // You can add a category key here for ingested data like below:
                             // { key: 'categoryName', text: 'Meaningful Category Name' }
                             // Alternatively, display the key to guide the user on what to type

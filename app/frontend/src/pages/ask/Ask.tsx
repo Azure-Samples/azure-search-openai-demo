@@ -427,23 +427,21 @@ export function Component(): JSX.Element {
                 />
 
                 <Dropdown
-                        id={includeCategoryFieldId}
-                        className={styles.chatSettingsSeparator}
-                        label={t("labels.includeCategory")}
-                        selectedKey={includeCategory}
-                        onChange={onIncludeCategoryChanged}
-                        aria-labelledby={includeCategoryId}
-                        options={[
-                            { key: '', text: t("labels.includeCategoryOptions.all") }
-                        ]}
-                        onRenderLabel={(props: IDropdownProps | undefined) => (
-                            <HelpCallout
-                                labelId={includeCategoryId}
-                                fieldId={includeCategoryFieldId}
-                                helpText={t("helpTexts.includeCategory")}
-                                label={props?.label}
-                            />
-                        )}
+                    id={includeCategoryFieldId}
+                    className={styles.chatSettingsSeparator}
+                    label={t("labels.includeCategory")}
+                    selectedKey={includeCategory}
+                    onChange={onIncludeCategoryChanged}
+                    aria-labelledby={includeCategoryId}
+                    options={[{ key: "", text: t("labels.includeCategoryOptions.all") }]}
+                    onRenderLabel={(props: IDropdownProps | undefined) => (
+                        <HelpCallout
+                            labelId={includeCategoryId}
+                            fieldId={includeCategoryFieldId}
+                            helpText={t("helpTexts.includeCategory")}
+                            label={props?.label}
+                        />
+                    )}
                 />
 
                 <TextField
