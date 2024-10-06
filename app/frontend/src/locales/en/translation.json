@@ -6,6 +6,19 @@
     "login": "Login",
     "logout": "Logout",
     "clearChat": "Clear chat",
+    "history": {
+        "chatHistory": "Chat history",
+        "openChatHistory": "Open chat history",
+        "noHistory": "No chat history",
+        "deleteModalTitle": "Delete chat history",
+        "deleteModalDescription": "This action cannot be undone. Delete this chat history?",
+        "deleteLabel": "Delete",
+        "cancelLabel": "Cancel",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "last7days": "Last 7 days",
+        "last30days": "Last 30 days"
+    },
     "upload": {
         "fileLabel": "Upload file:",
         "uploadedFilesLabel": "Previously uploaded files:",
