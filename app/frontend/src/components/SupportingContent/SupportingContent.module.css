@@ -8,7 +8,7 @@
 
 .supportingContentItem {
     word-break: break-word;
-    background: rgb(249, 249, 249);
+    background: rgb(249, 249, 249, 0.1);
     border-radius: 0.5em;
     box-shadow:
         rgb(0 0 0 / 5%) 0px 0px 0px 0.0625em,

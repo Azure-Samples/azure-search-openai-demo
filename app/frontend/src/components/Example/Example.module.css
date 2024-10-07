@@ -11,7 +11,7 @@
 
 .example {
     word-break: break-word;
-    background: #dbdbdb;
+    background: #eaf5f7;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -23,7 +23,7 @@
     box-shadow:
         0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
         0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
-    outline: 0.125rem solid rgb(114, 114, 114);
+    outline: 0.125rem solid rgb(41, 152, 177);
 }
 
 .exampleText {
