@@ -52,4 +52,4 @@ Please note dedicated workload profiles have a different billing model than Cons
 
 ## Private endpoints
 
-Private endpoints is still in private preview for Azure Conainer Apps and not supported for now.
+Private endpoints is still in private preview for Azure Container Apps and not supported for now.
