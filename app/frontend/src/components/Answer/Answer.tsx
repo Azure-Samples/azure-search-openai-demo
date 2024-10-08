@@ -110,6 +110,14 @@ export const Answer = ({
                     </Stack>
                 </Stack.Item>
             )}
+            <div className={styles.disclaimerContainer}>
+                <div className={styles.disclaimer}>
+                    <p>
+                        <b>IMPORTANT: </b>Response from GovGPT may include incomplete or incorrect content. Make Sure to check citations and verify answers with
+                        relevant cited organisations.
+                    </p>
+                </div>
+            </div>
         </Stack>
     );
 };
