@@ -6,6 +6,7 @@ import styles from "./Layout.module.css";
 import { useLogin } from "../../authConfig";
 import { LoginButton } from "../../components/LoginButton";
 import { IconButton } from "@fluentui/react";
+import FeedbackButton from "../../components/FeedbackButton/FeedbackButton";
 
 const Layout = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -37,6 +38,8 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
                     <h3 className={styles.headerTitle}>GovGPT - Pilot</h3>
+                    <h5 className={styles.poweredByHeader}>Powered by Callaghan Innovation</h5>
+                    <FeedbackButton />
                 </div>
             </header>
 

@@ -9,6 +9,10 @@
     color: #f2f2f2;
 }
 
+.poweredByHeader {
+    color: black;
+}
+
 .headerContainer {
     display: flex;
     align-items: center;
