@@ -57,7 +57,7 @@ param speechServiceResourceGroupName string = ''
 param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
-param useGPT4V bool = true
+param useGPT4V bool = false
 
 @description('Location for the OpenAI resource group')
 @allowed([
