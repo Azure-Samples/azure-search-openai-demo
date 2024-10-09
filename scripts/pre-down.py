@@ -25,6 +25,8 @@ deployments = client.deployments.list(
 # Delete each deployment and wait for the operation to complete
 for deployment in deployments:
     deployment_name = deployment.name
+    if not deployment_name:
+        continue
     poller = client.deployments.begin_delete(
         resource_group_name=args.resource_group, account_name=args.resource_name, deployment_name=deployment_name
     )
