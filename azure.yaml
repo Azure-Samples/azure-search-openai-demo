@@ -132,3 +132,12 @@ hooks:
         run: ./scripts/auth_update.sh;./scripts/prepdocs.sh
         interactive: true
         continueOnError: false
+    predown:
+      windows:
+        shell: pwsh
+        run: ./scripts/pre-down.ps1
+        continueOnError: true
+      posix:
+        shell: sh
+        run: ./scripts/pre-down.sh
+        continueOnError: true

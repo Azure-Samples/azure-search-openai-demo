@@ -1,4 +1,5 @@
 -r app/backend/requirements.txt
+azure-mgmt-cognitiveservices
 ruff
 black
 pytest
