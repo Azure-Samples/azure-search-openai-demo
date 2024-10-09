@@ -80,8 +80,8 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     // const [openSave, setOpenSave] = useState<boolean>(false);
     // const [loadingSaveChat, setLoadingSaveChat] = useState<boolean>(false);
     // const [chatName, setChatName] = useState<string>("");
-    const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
-    // const baseURL = "http://127.0.0.1:5001/projectpalai-83a5f/us-central1/";
+    // const baseURL = import.meta.env.VITE_FIREBASE_BASE_URL;
+
     const navigate = useNavigate();
     const dropdownId = useId("dropdown-default");
 
