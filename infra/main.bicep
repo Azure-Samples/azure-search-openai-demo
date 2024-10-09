@@ -57,7 +57,7 @@ param speechServiceResourceGroupName string = ''
 param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
-param useGPT4V bool = false
+param useGPT4V bool = true
 
 @description('Location for the OpenAI resource group')
 @allowed([
@@ -110,6 +110,7 @@ param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
 param chatGptDeploymentCapacity int = 0
+param chatGptDeploymentSkuName string = ''
 var chatGpt = {
   modelName: !empty(chatGptModelName)
     ? chatGptModelName
@@ -117,6 +118,7 @@ var chatGpt = {
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
+  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard'
 }
 
 param embeddingModelName string = ''
@@ -124,11 +126,13 @@ param embeddingDeploymentName string = ''
 param embeddingDeploymentVersion string = ''
 param embeddingDeploymentCapacity int = 0
 param embeddingDimensions int = 0
+param embeddingDeploymentSkuName string = ''
 var embedding = {
   modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+  deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : 'Standard'
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
@@ -136,6 +140,7 @@ param gpt4vModelName string = 'gpt-4o'
 param gpt4vDeploymentName string = 'gpt-4o'
 param gpt4vModelVersion string = '2024-05-13'
 param gpt4vDeploymentCapacity int = 10
+param gpt4vDeploymentSkuName string = 'GlobalStandard'
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -453,7 +458,7 @@ var defaultOpenAiDeployments = [
       version: chatGpt.deploymentVersion
     }
     sku: {
-      name: 'Standard'
+      name: chatGpt.deploymentSkuName
       capacity: chatGpt.deploymentCapacity
     }
   }
@@ -465,7 +470,7 @@ var defaultOpenAiDeployments = [
       version: embedding.deploymentVersion
     }
     sku: {
-      name: 'Standard'
+      name: embedding.deploymentSkuName
       capacity: embedding.deploymentCapacity
     }
   }
@@ -483,7 +488,7 @@ var openAiDeployments = concat(
             version: gpt4vModelVersion
           }
           sku: {
-            name: 'Standard'
+            name: gpt4vDeploymentSkuName
             capacity: gpt4vDeploymentCapacity
           }
         }

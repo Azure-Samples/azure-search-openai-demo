@@ -101,6 +101,9 @@
     "chatGptDeploymentCapacity":{
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
     },
+    "chatGptDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU=Standard}"
+    },
     "embeddingModelName":{
       "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
     },
@@ -113,11 +116,26 @@
     "embeddingDeploymentCapacity":{
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
+    "embeddingDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_SKU=Standard}"
+    },
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
+    "gpt4vModelName": {
+      "value": "${AZURE_OPENAI_GPT4V_MODEL_NAME=gpt-4o}"
+    },
+    "gpt4vDeploymentName": {
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT=gpt-4o}"
+    },
+    "gpt4vDeploymentVersion":{
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION=2024-05-13}"
+    },
     "gpt4vDeploymentCapacity":{
       "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY=10}"
+    },
+    "gpt4vDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU=GlobalStandard}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
@@ -153,7 +171,7 @@
       "value": "${USE_VECTORS=true}"
     },
     "useGPT4V": {
-      "value": "${USE_GPT4V=false}"
+      "value": "${USE_GPT4V=true}"
     },
     "enableLanguagePicker": {
       "value": "${ENABLE_LANGUAGE_PICKER=false}"
