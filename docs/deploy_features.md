@@ -59,7 +59,7 @@ Execute the following commands inside your terminal:
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
     ```
 
-1. To set the Azure OpenAI deployment Sku name, run this command with the desired Sku name.
+1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKUNAME GlobalStandard
