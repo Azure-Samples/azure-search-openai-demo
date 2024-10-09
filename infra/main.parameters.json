@@ -99,7 +99,7 @@
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
     },
     "chatGptDeploymentSkuName":{
-      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKUNAME}"
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU}"
     },
     "chatGptDeploymentCapacity":{
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
