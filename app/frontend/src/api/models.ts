@@ -54,6 +54,10 @@ export type ChatAppRequest = {
     messages: ResponseMessage[];
     azureIndex?: string;
     azureContainer?: string;
+    communicationFrameworkIndex: number;
+    toneIndex: number;
+    readabilityIndex: number;
+    wordCountIndex: number;
     context?: ChatAppRequestContext;
     stream?: boolean;
     session_state: any;

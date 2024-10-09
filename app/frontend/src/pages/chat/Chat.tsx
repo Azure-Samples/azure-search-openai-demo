@@ -64,11 +64,11 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
     const [answers, setAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
-    const [parameters, setParameters] = useState<Record<string, string>>({
-        tone: "",
-        readability: "",
-        wordCount: "",
-        communicationFramework: ""
+    const [parameters, setParameters] = useState<Record<string, number>>({
+        toneIndex: 0,
+        readabilityIndex: 0,
+        wordCountIndex: 0,
+        communicationFrameworkIndex: 0
     });
     const [module, setModule] = useState<string>("Chat");
     const [currentProject, setCurrentProject] = useState<string>("default");
@@ -134,22 +134,22 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
         let questionWithParameters = question;
-        if (module === "Content Creation") {
-            const toneString = parameters.tone === "" ? "" : `Respond in a tone that is ${parameters.tone}.`;
-            const readabilityString =
-                parameters.readability === ""
-                    ? ""
-                    : `The readability of the response should be of ${parameters.readability} readability, using a Flesch-Kincaid approach.`;
-            const wordCountString =
-                parameters.wordCount === "" ? "" : `Make absolutely certain that your answer does not exceed ${parameters.wordCount} words.`;
-            const communicationFrameworkString =
-                parameters.communicationFramework === ""
-                    ? ""
-                    : `The communication framework for the response should utilize a ${parameters.communicationFramework} model.`;
+        // if (module === "Content Creation") {
+        //     const toneString = parameters.tone === "" ? "" : `Respond in a tone that is ${parameters.tone}.`;
+        //     const readabilityString =
+        //         parameters.readability === ""
+        //             ? ""
+        //             : `The readability of the response should be of ${parameters.readability} readability, using a Flesch-Kincaid approach.`;
+        //     const wordCountString =
+        //         parameters.wordCount === "" ? "" : `Make absolutely certain that your answer does not exceed ${parameters.wordCount} words.`;
+        //     const communicationFrameworkString =
+        //         parameters.communicationFramework === ""
+        //             ? ""
+        //             : `The communication framework for the response should utilize a ${parameters.communicationFramework} model.`;
 
-            const parameterString = `${toneString} ${readabilityString} ${wordCountString} ${communicationFrameworkString}`;
-            questionWithParameters = question + ". Respond using the following rules: " + parameterString + ".";
-        }
+        //     const parameterString = `${toneString} ${readabilityString} ${wordCountString} ${communicationFrameworkString}`;
+        //     questionWithParameters = question + ". Respond using the following rules: " + parameterString + ".";
+        // }
         error && setError(undefined);
         setIsLoading(true);
         setActiveCitation(undefined);
@@ -167,6 +167,10 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                 messages: [...messages, { content: questionWithParameters, role: "user" }],
                 azureIndex: index,
                 azureContainer: container,
+                communicationFrameworkIndex: parameters.communicationFrameworkIndex,
+                toneIndex: parameters.toneIndex,
+                readabilityIndex: parameters.readabilityIndex,
+                wordCountIndex: parameters.wordCountIndex,
                 stream: shouldStream,
                 context: {
                     overrides: {
@@ -384,6 +388,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             }
         }
     }, []);
+    console.log(parameters);
     return (
         <div className={styles.container}>
             <div className={styles.chatRoot}>
@@ -527,7 +532,11 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                         aria-labelledby={dropdownId}
                                         defaultValue="Select an option"
                                         // defaultSelectedOptions={["Formal"]}
-                                        onOptionSelect={(_, selected) => setParameters({ ...parameters, tone: selected.optionValue || "" })}
+                                        onOptionSelect={(_, selected) => {
+                                            if (selected.optionValue) {
+                                                setParameters({ ...parameters, toneIndex: toneOptions.indexOf(selected.optionValue) + 1 });
+                                            }
+                                        }}
                                         {...dropdownProps}
                                     >
                                         {toneOptions.map(option => (
@@ -545,7 +554,11 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                         aria-labelledby={dropdownId}
                                         defaultValue="Select an option"
                                         // defaultSelectedOptions={["Medium"]}
-                                        onOptionSelect={(_, selected) => setParameters({ ...parameters, readability: selected.optionValue || "" })}
+                                        onOptionSelect={(_, selected) => {
+                                            if (selected.optionValue) {
+                                                setParameters({ ...parameters, readabilityIndex: readabilityOptions.indexOf(selected.optionValue + 1) });
+                                            }
+                                        }}
                                         {...dropdownProps}
                                     >
                                         {readabilityOptions.map(option => (
@@ -563,7 +576,11 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                         aria-labelledby={dropdownId}
                                         defaultValue="Select an option"
                                         // defaultSelectedOptions={["200"]}
-                                        onOptionSelect={(_, selected) => setParameters({ ...parameters, wordCount: selected.optionValue || "" })}
+                                        onOptionSelect={(_, selected) => {
+                                            if (selected.optionValue) {
+                                                setParameters({ ...parameters, wordCountIndex: wordCountOptions.indexOf(selected.optionValue) + 1 });
+                                            }
+                                        }}
                                         {...dropdownProps}
                                     >
                                         {wordCountOptions.map(option => (
@@ -577,11 +594,18 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                     <h2 style={{ color: "#409ece" }}>Communication framework</h2>
                                     <DropdownComponent
                                         style={{ minWidth: "200px" }}
-                                        name="communicationFramewrokDropdown"
+                                        name="communicationFrameworkDropdown"
                                         aria-labelledby={dropdownId}
                                         defaultValue="Select an option"
                                         // defaultSelectedOptions={["Think/Feel/Do"]}
-                                        onOptionSelect={(_, selected) => setParameters({ ...parameters, communicationFramework: selected.optionValue || "" })}
+                                        onOptionSelect={(_, selected) => {
+                                            if (selected.optionValue) {
+                                                setParameters({
+                                                    ...parameters,
+                                                    communicationFrameworkIndex: communicationFrameworkOptions.indexOf(selected.optionValue) + 1
+                                                });
+                                            }
+                                        }}
                                         {...dropdownProps}
                                     >
                                         {communicationFrameworkOptions.map(option => (
