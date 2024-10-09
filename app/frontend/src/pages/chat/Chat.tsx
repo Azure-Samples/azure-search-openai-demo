@@ -133,23 +133,6 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
-        let questionWithParameters = question;
-        // if (module === "Content Creation") {
-        //     const toneString = parameters.tone === "" ? "" : `Respond in a tone that is ${parameters.tone}.`;
-        //     const readabilityString =
-        //         parameters.readability === ""
-        //             ? ""
-        //             : `The readability of the response should be of ${parameters.readability} readability, using a Flesch-Kincaid approach.`;
-        //     const wordCountString =
-        //         parameters.wordCount === "" ? "" : `Make absolutely certain that your answer does not exceed ${parameters.wordCount} words.`;
-        //     const communicationFrameworkString =
-        //         parameters.communicationFramework === ""
-        //             ? ""
-        //             : `The communication framework for the response should utilize a ${parameters.communicationFramework} model.`;
-
-        //     const parameterString = `${toneString} ${readabilityString} ${wordCountString} ${communicationFrameworkString}`;
-        //     questionWithParameters = question + ". Respond using the following rules: " + parameterString + ".";
-        // }
         error && setError(undefined);
         setIsLoading(true);
         setActiveCitation(undefined);
@@ -164,7 +147,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             ]);
 
             const request: ChatAppRequest = {
-                messages: [...messages, { content: questionWithParameters, role: "user" }],
+                messages: [...messages, { content: question, role: "user" }],
                 azureIndex: index,
                 azureContainer: container,
                 communicationFrameworkIndex: parameters.communicationFrameworkIndex,
