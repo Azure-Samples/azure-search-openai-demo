@@ -18,9 +18,7 @@ credential = DefaultAzureCredential()
 client = CognitiveServicesManagementClient(credential, subscription_id=args.subscription_id)
 
 # List all deployments
-deployments = client.deployments.list(
-    resource_group_name=args.resource_group, account_name=args.resource_name
-)
+deployments = client.deployments.list(resource_group_name=args.resource_group, account_name=args.resource_name)
 
 # Delete each deployment and wait for the operation to complete
 for deployment in deployments:
