@@ -556,7 +556,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
                                         // defaultSelectedOptions={["Medium"]}
                                         onOptionSelect={(_, selected) => {
                                             if (selected.optionValue) {
-                                                setParameters({ ...parameters, readabilityIndex: readabilityOptions.indexOf(selected.optionValue + 1) });
+                                                setParameters({ ...parameters, readabilityIndex: readabilityOptions.indexOf(selected.optionValue) + 1 });
                                             }
                                         }}
                                         {...dropdownProps}

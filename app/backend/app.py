@@ -8,6 +8,7 @@ import base64
 import subprocess
 from pathlib import Path
 from typing import AsyncGenerator
+import json
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
@@ -116,7 +117,8 @@ def error_response(error: Exception, route: str, status_code: int = 500):
 
 
 def run_prepdocs_script(index: str, container: str):
-    script_path = os.path.join(os.path.dirname(__file__), 'scripts', 'prepdocs.sh')
+    script_path = os.path.join(os.path.dirname(
+        __file__), 'scripts', 'prepdocs.sh')
 
     try:
         # Pass the index and container as arguments to the shell script
@@ -170,7 +172,37 @@ async def chat():
     await set_index_and_container(
         request_json["azureIndex"], request_json["azureContainer"])
     context = request_json.get("context", {})
+    communicationFrameworkIndex = request_json["communicationFrameworkIndex"]
+    toneIndex = request_json["toneIndex"]
+    readabilityIndex = request_json["readabilityIndex"]
+    wordCountIndex = request_json["wordCountIndex"]
 
+    with open("prompts.json") as json_file:
+        prompt_settings = json.load(json_file)
+
+    initial_instructions = "I am sending a list of parameters alongside my query. The parameters are wrapped in curly braces and will describe the communication framework, tone, readability and wordcount of the response that is expected from you. Under no circumstances should you make any direct mention of these parameters in your response. My actual query will be appended at the very end, after all of the parameters. Some or all of these parameters may not exist, ignore this initial message if that is the case. "
+    communication_framework_settings = ""
+    tone_settings = ""
+    readability_settings = ""
+    wordcount_settings = ""
+
+    if (communicationFrameworkIndex != 0):
+        communication_framework_settings = "{communication_framework_settings: " + str(prompt_settings["communication_framework_settings"][str(
+            communicationFrameworkIndex)]) + " } "
+    if (toneIndex != 0):
+        tone_settings = "{tone_settings: " + str(prompt_settings["tone_settings"][str(
+            toneIndex)]) + " } "
+    if (readabilityIndex != 0):
+        readability_settings = "{readability_settings: " + str(prompt_settings["readability_settings"][str(
+            readabilityIndex)]) + " } "
+    if (wordCountIndex != 0):
+        wordcount_settings = "{wordcount_settings: " + str(prompt_settings["wordcount_settings"][str(
+            wordCountIndex)]) + " } "
+
+    request_json["messages"][0]["content"] = initial_instructions + communication_framework_settings + tone_settings + \
+        readability_settings + wordcount_settings + \
+        request_json["messages"][0]["content"]
+    print(request_json["messages"])
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
@@ -190,12 +222,12 @@ async def chat():
             return response
     except Exception as error:
         return error_response(error, "/chat")
-    
+
 
 @bp.route("/runScript", methods=["POST"])
 async def runScript():
     run_prepdocs_script()
-    return jsonify({"result":"ranScript"})
+    return jsonify({"result": "ranScript"})
 
 
 @bp.route("/uploadFiles", methods=["POST"])
@@ -203,11 +235,11 @@ async def upload_files():
     # Get the current working directory
     current_directory = os.getcwd()
     print(f"Current working directory: {current_directory}")
- 
+
     # Set the data folder path relative to the current directory
     DATA_FOLDER = os.path.join(current_directory, "data")
     print(f"Data folder path: {DATA_FOLDER}")
- 
+
     # Ensure the data folder exists, create it if it doesn't
     if not os.path.exists(DATA_FOLDER):
         os.makedirs(DATA_FOLDER)
@@ -219,27 +251,28 @@ async def upload_files():
                 os.unlink(file_path)  # Remove the file or symbolic link
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
- 
+
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 415
- 
+
     request_json = await request.get_json()
-    
+
     azure_index = request_json.get("azureIndex")
     azure_container = request_json.get("azureContainer")
- 
+
     if not azure_index or not azure_container:
         return jsonify({"error": "azureIndex and azureContainer are required"}), 400
- 
+
     files = request_json.get("files", [])
- 
+
     if not files:
         return jsonify({"error": "No files provided"}), 400
-    
+
     # Save the files to the data folder
     for file in files:
         file_name = file["name"]
-        file_content = file["content"].split(",")[1]  # Split to remove the metadata prefix
+        # Split to remove the metadata prefix
+        file_content = file["content"].split(",")[1]
 
         # Decode the base64 content
         file_data = base64.b64decode(file_content)
@@ -247,11 +280,11 @@ async def upload_files():
         # Construct the file path using the relative data folder
         file_path = os.path.join(DATA_FOLDER, file_name)
         print(f"Saving file to: {file_path}")
- 
+
         # Save the file to the data folder
         with open(file_path, "wb") as f:
             f.write(file_data)
- 
+
     # Handle the index and container logic here
     await set_index_and_container(azure_index, azure_container)
     run_prepdocs_script(azure_index, azure_container)
@@ -263,7 +296,7 @@ async def upload_files():
             os.unlink(file_path)  # Remove the file or symbolic link
         except Exception as e:
             print(f'Failed to delete {file_path}. Reason: {e}')
- 
+
     return jsonify({
         "result": "Files uploaded and processed successfully",
         "azureIndex": azure_index,
@@ -467,16 +500,13 @@ async def set_index_and_container(index, container):
 
 
 def create_app():
-    
-    
+
     logging.info("CREATE APP 1000")
     logging.info(f"CREATE APP 1500")
 
     print("CREATE APP 200")
     logging.error(f"ERRoR TEST 40000")
 
-    
-    
     app = Quart(__name__)
     app.register_blueprint(bp)
 
@@ -496,17 +526,14 @@ def create_app():
         default_level = "WARNING"
     logging.basicConfig(level=os.getenv("APP_LOG_LEVEL", default_level))
 
-
     logger = logging.getLogger(__name__)
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
-
 
     logging.info("CREATE APP 1000 2")
     logging.error("ERRoR TEST 40000 3")
 
     app.logger.info("App logger")
-
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         app.logger.info("CORS enabled for %s", allowed_origin)
