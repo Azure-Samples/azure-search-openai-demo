@@ -140,6 +140,7 @@ var embedding = {
 param gpt4vModelName string = 'gpt-4o'
 param gpt4vDeploymentName string = 'gpt-4o'
 param gpt4vModelVersion string = '2024-05-13'
+param gpt4vDeploymentSkuName string = 'Standard'
 param gpt4vDeploymentCapacity int = 10
 
 param tenantId string = tenant().tenantId
@@ -488,7 +489,7 @@ var openAiDeployments = concat(
             version: gpt4vModelVersion
           }
           sku: {
-            name: 'Standard'
+            name: gpt4vDeploymentSkuName
             capacity: gpt4vDeploymentCapacity
           }
         }
