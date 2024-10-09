@@ -3,12 +3,17 @@
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .chatRoot {
     flex: 1;
     display: flex;
+    flex-direction: row-reverse;
     margin-left: 45px;
+    max-width: 1280px;
 }
 
 .chatContainer {
@@ -19,6 +24,7 @@
     align-items: center;
     width: 100%;
     height: 100%;
+    z-index: 10;
 }
 
 .chatEmptyState {
@@ -156,21 +162,6 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-}
-
-.chatRow {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-    transform: translateX(48px);
-}
-
-.chatColumn {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-right: 20px;
 }
 
 .moduleColumn {

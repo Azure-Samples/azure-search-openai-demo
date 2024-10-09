@@ -32,7 +32,6 @@ const Layout = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
-                console.log(user);
                 axios.get(baseURL + "getProjects", { params: { clientID: user.uid } }).then(response => {
                     getAccountDetail(user.uid);
                     setLoggedIn(true);
@@ -136,10 +135,10 @@ const Layout = () => {
                     </div>
                 </div>
             </div>
+            <Outlet />
             <div className={styles.logoContainer}>
                 <img src={PalAILogo} className={styles.palAIIcon} />
             </div>
-            <Outlet />
         </div>
     );
 };

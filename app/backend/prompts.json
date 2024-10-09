@@ -1,0 +1,177 @@
+{
+  "communication_framework_settings": {
+    "1": {
+      "description": "I am a project manager and I would like you to help me create a piece of project communication using the Think/Feel/Do framework. Using information available to you through the documents you have access to, please structure the communication with the following focus:",
+      "Think": "Outline what we want the reader to think or know—this should include key facts, figures, dates, and important information relevant to the project. Ensure that this section communicates the critical knowledge points clearly.",
+      "Feel": "Craft the message in a way that establishes an emotional connection with the reader. This could include making them feel included, consulted, valued, or listened to, depending on the project's goals. The aim is to foster positive engagement and alignment with the project's objectives.",
+      "Do": "Specify what we want the reader to do next. This should be a clear call-to-action, indicating the desired action, response, or participation needed from the reader.",
+      "note": "Please ensure that the communication is professional, aligned with the project's tone, and concise. Avoid using section headers (Think, Feel, Do) in the final text, but ensure each part is addressed within the flow of the communication."
+    },
+    "2": {
+      "description": "I am a project manager and I would like you to help me create a piece of project communication using the Before/During/After framework.Using information available to you through the documents you have access to, please structure the communication with the following focus:",
+      "Before": "Describe the situation in the organisation prior to the project. This should include what the catalyst was for initiating the project, the reason for undertaking it, and the business case or rationale behind it. If the document doesn't provide all the necessary details, please note that and optionally suggest what could be the catalyst or business reason based on typical project scenarios.",
+      "During": "Explain what is happening during the project. Include the main activities, the key milestones, project duration, important dates, and the people or teams involved in the work. If some information is missing, please highlight that and optionally provide general suggestions based on common project timelines and activities.",
+      "After": "Describe what the organisation will look like once the project is complete. This should include the expected benefits, the timeline for when these benefits will be realised, and how the project outcomes will position the organisation for future success or competitive advantage. Again, if some information isn't provided in the document, please mention this and suggest potential benefits based on the nature of the project.",
+      "note": "Please ensure the communication is concise, professional, and free from section headings (Before, During, After), but ensure the content is clearly aligned with these stages of the project lifecycle."
+    },
+    "3": {
+      "description": "I am a project manager and I would like you to help me create a piece of project communication using the Concentric Circles framework.Using information available to you through the documents you have access to, please structure the communication with the following focus:",
+      "Employee": "Describe the direct impact and implications for individual employees. This should include how the project affects their day-to-day work, changes to their responsibilities, any new skills or processes they need to learn, and what they can expect moving forward. If information about the employee impact is missing in the document, please mention this and optionally provide suggestions based on typical project scenarios.",
+      "Team": "Outline the impact and implications for teams. This should cover how team dynamics, collaboration, and workflows will be affected during and after the project. Include details on how teams will need to work together, if there are any new team structures or roles, and what teams need to focus on to support the project's success. If the document doesn't provide team-related details, please note that and optionally provide general suggestions based on common project impacts on teams.",
+      "Organisation": "Describe the broader organisational impact. This should include how the project aligns with strategic objectives, the expected business benefits, and how the organisation as a whole will be positioned for success in the future. If organisational-level information is missing, please highlight that and suggest potential impacts or benefits based on the type of project."
+    }
+  },
+  "tone_settings": {
+    "1": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a formal tone.",
+      "guidelines": [
+        "Use professional language and a formal style of writing.",
+        "Avoid contractions and colloquial expressions.",
+        "Maintain a respectful and authoritative tone suitable for a business setting.",
+        "Ensure the communication is clear, concise, and free from informal language or slang."
+      ],
+      "sample_phrases": [
+        "We are pleased to inform you that the project has reached a significant milestone.",
+        "Your attention to detail and dedication to the project are greatly appreciated.",
+        "Please be advised that the upcoming deadline is fast approaching.",
+        "We kindly request your prompt response to the latest project update.",
+        "Your cooperation in this matter is essential for the project's success.",
+        "We trust that you will adhere to the project guidelines and timelines.",
+        "Your commitment to excellence is evident in your contributions to the project.",
+        "We expect all team members to adhere to the project's code of conduct.",
+        "Your professionalism and expertise are invaluable to the project's progress.",
+        "We appreciate your ongoing support and cooperation in this project."
+      ]
+    },
+    "2": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with an informal tone.",
+      "guidelines": [
+        "Use a friendly and approachable style of writing.",
+        "Incorporate casual language and a conversational tone.",
+        "Encourage engagement and interaction with the reader.",
+        "Ensure the communication is warm, inviting, and easy to read."
+      ],
+      "sample_phrases": [
+        "Hey team, just a quick update on our project progress!",
+        "Great job so far, everyone! Let's keep the momentum going.",
+        "Just a heads-up, we have a meeting scheduled for next week.",
+        "Feel free to reach out if you have any questions or need assistance.",
+        "Let's make sure we're all on the same page moving forward.",
+        "Thanks for your hard work and dedication!",
+        "Looking forward to seeing everyone's contributions in the next phase.",
+        "Keep up the great work, team!",
+        "Don't hesitate to share your thoughts or feedback.",
+        "Let's stay focused and keep pushing towards our goals!"
+      ]
+    },
+    "3": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a motivational tone. You have access to project documents that contain relevant objectives and upcoming milestones. Using these documents, please craft the communication to motivate and encourage the readers to stay committed to the project's goals and to keep moving forward toward its successful completion.",
+      "guidelines": [
+        "Use words and phrases that inspire action, determination, and positivity.",
+        "Reference specific project objectives and upcoming milestones from the document to provide a sense of progress and purpose.",
+        "Encourage the readers to continue their hard work, overcome challenges, and focus on the bigger picture.",
+        "The communication should be energizing and forward-looking, highlighting how everyone's efforts are contributing to the overall success of the project."
+      ],
+      "sample_phrases": [
+        "We're making incredible progress—let's keep the momentum going!",
+        "Every step we take brings us closer to achieving our goals!",
+        "Your dedication is what's driving us toward success—keep up the great work!",
+        "Together, we can overcome any challenge and reach new heights.",
+        "The finish line is in sight, and with your commitment, we'll get there!",
+        "Let's stay focused and push forward—we've got this!",
+        "Great things are never easy, but every effort we make counts!",
+        "We've come so far—now's the time to give it that final push.",
+        "Challenges are opportunities in disguise—let's turn them into wins!",
+        "The future success of this project depends on the effort we put in today.",
+        "Keep believing in the goal—our hard work is paying off!",
+        "With every milestone we achieve, we get closer to something great.",
+        "Stay motivated, stay committed, and we'll reach the top together.",
+        "Your contribution is crucial—every task brings us closer to our objective.",
+        "Success is built on perseverance—let's continue making it happen!"
+      ]
+    },
+    "4": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a celebratory tone. You have access to project documents that contain details on recent milestones, positive feedback, go-live announcements, and achievements. Using these documents, please craft the communication to acknowledge and celebrate the hard work and dedication of the team and the organisation.",
+      "guidelines": [
+        "Recognize specific milestones achieved and highlight any positive feedback from stakeholders or clients.",
+        "If the project has reached a key phase, such as a go-live or a successful implementation, make sure to celebrate this accomplishment.",
+        "Focus on expressing gratitude, appreciation, and pride in the team's contributions.",
+        "If certain details are not provided in the document, please note this and optionally suggest common achievements or milestones that projects of this nature may reach, based on your training data, but clearly indicate they are suggestions."
+      ],
+      "sample_phrases": [
+        "Congratulations to the entire team on reaching this incredible milestone!",
+        "We've achieved something truly amazing—well done, everyone!",
+        "Your hard work and dedication have paid off—let's take a moment to celebrate this success!",
+        "We've made remarkable progress, and it's thanks to the fantastic effort of each and every one of you.",
+        "This is a significant achievement, and it wouldn't have been possible without your commitment!",
+        "A huge thank you to the team for hitting this major milestone—we couldn't have done it without you!",
+        "Let's take pride in what we've accomplished together—this is a moment to remember!",
+        "We've reached a key milestone, and your contributions have been outstanding—bravo!",
+        "Today, we celebrate not just the achievement, but the teamwork and collaboration that made it possible.",
+        "This success is a testament to the effort and dedication you've shown—great job, everyone!",
+        "Here's to the amazing progress we've made—let's continue building on this momentum!",
+        "We've done it! This accomplishment is something we can all be proud of.",
+        "Our collective effort has brought us here—let's enjoy this success before we push toward the next goal!",
+        "It's moments like this that remind us of the power of teamwork and perseverance—well done!",
+        "With this milestone behind us, we're one step closer to our ultimate goal—congratulations to all!"
+      ]
+    },
+    "5": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a cautious tone. You havea ccess to project documents to contain information about risks, challenges, and areas where the project could potentially go off track. Using these documents, please craft the communication to convey a sense of careful consideration and responsibility, ensuring that the team remains aware of the potential risks while reinforcing the idea that success is still within our control.",
+      "guidelines": [
+        "Highlight key risks or challenges that the project may face, ensuring the team is aware of potential pitfalls that could impact the desired objectives.",
+        "Balance this by reinforcing that with the right focus, collaboration, and attention to detail, we can mitigate these risks and steer the project towards success.",
+        "Use language that encourages a sense of vigilance, caution, and preparedness, while maintaining confidence in the team's ability to stay on track.",
+        "If risk-related information is not provided in the document, please note this and optionally suggest common risks or challenges typical to this type of project based on your training data, but be clear these are suggestions."
+      ],
+      "sample_phrases": [
+        "While we've made great progress, it's crucial we remain mindful of the challenges ahead.",
+        "We're on track, but we must stay vigilant to avoid any setbacks.",
+        "To ensure success, it's important that we continue to monitor potential risks closely.",
+        "We've come this far, but we need to stay focused to ensure we don't lose momentum.",
+        "There are key areas we need to watch carefully to prevent unexpected issues from arising.",
+        "Let's stay cautious and double-check our progress to make sure we remain aligned with our objectives.",
+        "It's essential that we anticipate potential roadblocks and address them before they impact our timeline.",
+        "We've identified some risks, but with careful planning, we can manage and mitigate them effectively.",
+        "As we move forward, we must ensure that every step is taken with precision to avoid any missteps.",
+        "We're in control, but it's important to continue assessing the situation to avoid going off course.",
+        "Success is within reach, but let's take care to address any issues that could hinder our progress.",
+        "It's crucial that we keep a close eye on the details to ensure we meet all our objectives.",
+        "Let's remain cautious and ensure that we're prepared for any challenges that might arise.",
+        "Staying on track requires careful attention to both the opportunities and risks ahead.",
+        "We can achieve our goals, but we need to stay alert and focused on potential challenges to ensure nothing derails our progress."
+      ]
+    }
+  },
+  "readability_settings": {
+    "1": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a Low readability level. This communication should be easily understood by most people, using clear, simple, and concise language. The text should aim for a low Gunning Fogg Index or Flesch-Kincaid grade level, ensuring that:",
+      "guidelines": [
+        "Sentences are short and straightforward.",
+        "Complex terminology or jargon is avoided or explained in simple terms.",
+        "The tone is clear and accessible, suitable for a broad audience, ensuring that even those with limited familiarity with the project can understand it."
+      ]
+    },
+    "2": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a Medium readability level. The communication should balance clarity with some degree of complexity, making it suitable for an audience with a moderate understanding of the subject matter. The text should aim for a medium Gunning Fogg Index or Flesch-Kincaid grade level, ensuring that:",
+      "guidelines": [
+        "Sentences are moderately complex but still easy to follow.",
+        "Industry-specific terms or jargon may be used, but they should be clear within the context.",
+        "The tone should remain professional and engaging without being too simplistic, allowing for some detailed explanation while remaining approachable."
+      ]
+    },
+    "3": {
+      "description": "I am a project manager, and I would like you to help me create a piece of project communication with a High readability level. This communication should use more complex and dense language, appropriate for a knowledgeable audience familiar with the project or industry. The text should aim for a higher Gunning Fogg Index or Flesch-Kincaid grade level, ensuring that:",
+      "guidelines": [
+        "Sentences are longer and more intricate, incorporating layered ideas and advanced vocabulary.",
+        "Industry-specific terminology and jargon are used freely without needing excessive explanation.",
+        "The tone should reflect a high degree of professionalism and expertise, expecting the reader to engage with more detailed and nuanced information."
+      ]
+    }
+  },
+  "wordcount_settings": {
+    "1": "Ensure that your response absolutely does not exceed 100 words",
+    "2": "Ensure that your response absolutely does not exceed 200 words",
+    "3": "Ensure that your response absolutely does not exceed 300 words"
+  }
+}
