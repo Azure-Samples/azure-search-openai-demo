@@ -135,13 +135,7 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
     ```
 
-4. Set the deployment Sku name to "GlobalStandard" :
-
-    ```shell
-    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKUNAME GlobalStandard
-    ```
-
-5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
+4. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
 
 If you have already deployed:
 
