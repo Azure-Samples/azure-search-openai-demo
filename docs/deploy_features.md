@@ -62,7 +62,7 @@ Execute the following commands inside your terminal:
 1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKUNAME GlobalStandard
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
     ```
 
 1. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
