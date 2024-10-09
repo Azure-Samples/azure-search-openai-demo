@@ -135,10 +135,10 @@ const Layout = () => {
                     </div>
                 </div>
             </div>
+            <Outlet />
             <div className={styles.logoContainer}>
                 <img src={PalAILogo} className={styles.palAIIcon} />
             </div>
-            <Outlet />
         </div>
     );
 };

@@ -88,8 +88,11 @@
 }
 
 .logoContainer {
-    z-index: -1;
-    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 9;
+    position: sticky;
+    width: "fit-content";
     bottom: 0;
     right: 0;
 }

@@ -202,7 +202,7 @@ async def chat():
     request_json["messages"][0]["content"] = initial_instructions + communication_framework_settings + tone_settings + \
         readability_settings + wordcount_settings + \
         request_json["messages"][0]["content"]
-    print(request_json["messages"])
+
     auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
     context["auth_claims"] = await auth_helper.get_auth_claims_if_enabled(request.headers)
     try:
