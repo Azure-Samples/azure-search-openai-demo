@@ -388,7 +388,7 @@ const Chat = (dropdownProps: Partial<DropdownProps>) => {
             }
         }
     }, []);
-    console.log(parameters);
+
     return (
         <div className={styles.container}>
             <div className={styles.chatRoot}>
