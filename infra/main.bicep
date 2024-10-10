@@ -141,7 +141,7 @@ param gpt4vModelName string = ''
 param gpt4vDeploymentName string = ''
 param gpt4vModelVersion string = ''
 param gpt4vDeploymentSkuName string = ''
-param gpt4vDeploymentCapacity int = 10
+param gpt4vDeploymentCapacity int = 0
 var gpt4v = {
   modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
   deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'gpt-4o'
