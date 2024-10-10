@@ -122,8 +122,20 @@
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
+    "gpt4vModelName":{
+      "value": "${AZURE_OPENAI_GPT4V_MODEL}"
+    },
+    "gpt4vDeploymentName": {
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT}"
+    },
+    "gpt4vDeploymentVersion":{
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION}"
+    },
+    "gpt4vDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU}"
+    },
     "gpt4vDeploymentCapacity":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY=10}"
+      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
