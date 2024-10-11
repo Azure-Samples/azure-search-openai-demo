@@ -8,7 +8,6 @@
 .tList {
     padding: 1.25em 1.25em 0 1.25em;
     display: inline-block;
-    /* background: #e9e9e9; */
 }
 
 .tListItem {
@@ -46,10 +45,11 @@
 
 .tCodeBlock {
     max-height: 18.75em;
+    background: white !important;
 }
 
 .tProp {
-    /* background-color: #d7d7d7; */
+    background-color: rgb(245, 245, 245);
     color: #333232;
     font-size: 0.75em;
     padding: 0.1875em 0.625em;
