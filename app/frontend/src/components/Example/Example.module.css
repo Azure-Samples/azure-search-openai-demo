@@ -57,6 +57,15 @@
     display: block; /* Default to showing two list items */
 }
 
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.headerImage {
+    margin-right: 8px;
+}
+
 @media only screen and (min-width: 992px) {
     .examplesNavList {
         flex-direction: row; /* Switch to row layout for wider screens */
