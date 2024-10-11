@@ -38,7 +38,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
                     <h3 className={styles.headerTitle}>GovGPT - Pilot</h3>
-                    <h5 className={styles.poweredByHeader}>Powered by Callaghan Innovation</h5>
+                    <img src="/CI_Logo_Powered_green.png" alt="description of image" className={styles.headerImg}></img>
                     <FeedbackButton />
                 </div>
             </header>

@@ -9,10 +9,10 @@
     color: black;
 }
 
-.poweredByHeader {
-    color: black;
+.headerImg {
+    max-width: 10rem;
+    max-height: 10rem;
 }
-
 .headerContainer {
     display: flex;
     align-items: center;
