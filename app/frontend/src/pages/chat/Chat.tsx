@@ -350,9 +350,10 @@ const Chat = () => {
                         <div className={styles.chatEmptyState}>
                             <img className={styles.responsivelogo} src="/chat.png" aria-hidden="true" aria-label="Chat logo" />
                             <h2 className={styles.chatEmptyStateSubtitle}>
-                                GovGPT is an AI assistant designed to help New Zealand businesses get started. Ask anything or try an example.
+                                Our pilot AI conversation tool. Experience the power of AI generated answers to your small business questions - all grounded on
+                                public facing government websites.
                             </h2>
-                            <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
+                            <ExampleList onExampleClicked={onExampleClicked} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>

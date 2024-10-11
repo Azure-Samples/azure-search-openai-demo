@@ -11,27 +11,40 @@
 
 .example {
     word-break: break-word;
-    background: #dbdbdb;
+    background: white;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
     margin-bottom: 0.3125rem;
     cursor: pointer;
+    height: 6rem;
+    box-shadow:
+        0px 0.25rem 0.5rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
+}
+
+.exampleContainer {
+    background-color: #f2f2f2;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow:
+        0px 0.25rem 0.5rem rgba(0, 0, 0, 0.14),
+        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
 }
 
 .example:hover {
     box-shadow:
         0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
         0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
-    outline: 0.125rem solid rgb(114, 114, 114);
+    outline: 0.125rem solid rgb(41, 151, 177);
 }
 
 .exampleText {
     margin: 0;
-    font-size: 1.25rem;
-    width: 25rem;
+    font-size: 1rem;
+    width: 15rem;
     padding: 0.5rem;
-    min-height: 4.5rem;
+    min-height: 3rem;
 }
 
 .examplesNavList li {
@@ -39,7 +52,8 @@
 }
 
 .examplesNavList li:nth-of-type(1),
-.examplesNavList li:nth-of-type(2) {
+.examplesNavList li:nth-of-type(2),
+.examplesNavList li:nth-of-type(3) {
     display: block; /* Default to showing two list items */
 }
 
@@ -53,16 +67,18 @@
     .example {
         margin-bottom: 0.3125rem;
         padding: 1.25rem;
+        height: 7rem;
     }
 
+    .examplesNavList li:nth-of-type(1),
     .examplesNavList li:nth-of-type(2),
     .examplesNavList li:nth-of-type(3) {
         display: block; /* Show an additional list item for medium heights */
     }
     .exampleText {
-        font-size: 1.375rem;
-        width: 17.5rem;
+        font-size: 1rem;
+        width: 15rem;
         padding: 0;
-        min-height: 6.25rem;
+        min-height: 3rem;
     }
 }
