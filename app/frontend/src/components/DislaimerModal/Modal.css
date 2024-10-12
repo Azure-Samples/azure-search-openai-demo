@@ -33,6 +33,7 @@
     border-radius: 0.3rem;
     font-size: 1.125rem;
     padding: 0.15rem 0.35rem;
+    margin: 0.5rem;
 }
 
 .dialog-surface .tcmodal-button:focus {
@@ -57,6 +58,7 @@
     box-shadow:
         0px 0.5rem 1rem rgba(0, 0, 0, 0.24),
         0px 0px 0.125rem rgba(0, 0, 0, 0.2);
+    max-height: calc(100% - 20px);
 }
 
 @media (max-width: 600px) {
