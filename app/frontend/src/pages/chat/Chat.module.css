@@ -159,3 +159,9 @@
         height: auto;
     }
 }
+
+@media (max-width: 440px) {
+    .responsivelogo {
+        padding-top: 350px;
+    }
+}
