@@ -9,7 +9,7 @@ const Questions: string[] = [
 const Features: string[] = [
     "Summarised searches from NZ small-business facing ministries and organisations.",
     "Does not record data from your chat.",
-    "Multi-lingual. With increasing performance across many labguages of Aotearoa."
+    "Multi-lingual. Reo Maha. Gagana e Tele. Lea Lahi."
 ];
 
 const Limitations: string[] = [
