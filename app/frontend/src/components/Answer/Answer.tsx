@@ -114,7 +114,7 @@ export const Answer = ({
                 <div className={styles.disclaimer}>
                     <p>
                         <b>IMPORTANT: </b>GovGPT is currently in a pilot stage and may include incomplete or incorrect content. Please ensure you check
-                        citations and verify answers with the relevant cited organizations..
+                        citations and verify answers with the relevant cited organisations..
                     </p>
                 </div>
             </div>
