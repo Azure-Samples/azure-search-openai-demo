@@ -120,6 +120,16 @@ sup {
     width: fit-content;
 }
 
+.disclaimerContainer {
+    padding-top: 1rem;
+}
+
+.disclaimer {
+    background-color: #f5dfe3;
+    padding: 1rem 1rem;
+    border-radius: 0.4rem;
+}
+
 @keyframes loading {
     0% {
         content: "";
