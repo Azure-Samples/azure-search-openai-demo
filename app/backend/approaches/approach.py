@@ -120,12 +120,10 @@ class Approach(ABC):
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         exclude_category = overrides.get("exclude_category")
-        security_filter = self.auth_helper.build_security_filters(
-            overrides, auth_claims)
+        security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
         filters = []
         if exclude_category:
-            filters.append("category ne '{}'".format(
-                exclude_category.replace("'", "''")))
+            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
         if security_filter:
             filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
@@ -180,8 +178,7 @@ class Approach(ABC):
                         sourcefile=document.get("sourcefile"),
                         oids=document.get("oids"),
                         groups=document.get("groups"),
-                        captions=cast(List[QueryCaptionResult],
-                                      document.get("@search.captions")),
+                        captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
                         score=document.get("@search.score"),
                         reranker_score=document.get("@search.reranker_score"),
                     )
@@ -205,14 +202,12 @@ class Approach(ABC):
             return [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))
                 + ": "
-                + nonewlines(" . ".join([cast(str, c.text)
-                             for c in (doc.captions or [])]))
+                + nonewlines(" . ".join([cast(str, c.text) for c in (doc.captions or [])]))
                 for doc in results
             ]
         else:
             return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation)
-                 ) + ": " + nonewlines(doc.content or "")
+                (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
                 for doc in results
             ]
 
@@ -223,7 +218,7 @@ class Approach(ABC):
             path, ext = os.path.splitext(sourcepage)
             if ext.lower() == ".png":
                 page_idx = path.rfind("-")
-                page_number = int(path[page_idx + 1:])
+                page_number = int(path[page_idx + 1 :])
                 return f"{path[:page_idx]}.pdf#page={page_number}"
 
             return sourcepage
@@ -239,8 +234,7 @@ class Approach(ABC):
             dimensions: int
 
         dimensions_args: ExtraArgs = (
-            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {
-            }
+            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
         )
         embedding = await self.openai_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name
@@ -252,11 +246,9 @@ class Approach(ABC):
         return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")
 
     async def compute_image_embedding(self, q: str):
-        endpoint = urljoin(self.vision_endpoint,
-                           "computervision/retrieval:vectorizeText")
+        endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
         headers = {"Content-Type": "application/json"}
-        params = {"api-version": "2023-02-01-preview",
-                  "modelVersion": "latest"}
+        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
         data = {"text": q}
 
         headers["Authorization"] = "Bearer " + await self.vision_token_provider()
