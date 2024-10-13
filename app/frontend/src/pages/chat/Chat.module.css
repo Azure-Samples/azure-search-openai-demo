@@ -36,7 +36,7 @@
 }
 
 .responsivelogo {
-    max-width: 80%;
+    max-width: 30%;
     height: auto;
 }
 
@@ -47,6 +47,7 @@
     max-width: 65rem;
     padding-left: 1rem;
     padding-right: 1rem;
+    font-size: 0.8rem;
 }
 
 .chatMessageStream {
@@ -155,7 +156,7 @@
         min-width: 31.25rem;
     }
     .responsivelogo {
-        max-width: 80%;
+        max-width: 30%;
         height: auto;
     }
 }

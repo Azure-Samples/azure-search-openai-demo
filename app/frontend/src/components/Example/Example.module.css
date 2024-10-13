@@ -54,7 +54,7 @@
 .examplesNavList li:nth-of-type(1),
 .examplesNavList li:nth-of-type(2),
 .examplesNavList li:nth-of-type(3) {
-    display: block; /* Default to showing two list items */
+    display: block;
 }
 
 .header {
@@ -68,7 +68,7 @@
 
 @media only screen and (min-width: 992px) {
     .examplesNavList {
-        flex-direction: row; /* Switch to row layout for wider screens */
+        flex-direction: row;
         padding-left: 0;
         padding-right: 0;
     }
@@ -82,7 +82,7 @@
     .examplesNavList li:nth-of-type(1),
     .examplesNavList li:nth-of-type(2),
     .examplesNavList li:nth-of-type(3) {
-        display: block; /* Show an additional list item for medium heights */
+        display: block;
     }
     .exampleText {
         font-size: 1rem;
