@@ -94,3 +94,9 @@
         height: 5rem;
     }
 }
+
+@media (max-width: 720px) {
+    .examplesNavList {
+        padding-bottom: 30%;
+    }
+}
