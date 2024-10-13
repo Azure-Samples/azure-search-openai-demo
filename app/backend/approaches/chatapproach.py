@@ -28,20 +28,23 @@ class ChatApproach(Approach, ABC):
     ]
     NO_RESPONSE = "0"
 
-    follow_up_questions_prompt_content = """- Generate 3 concise follow-up questions that the user might ask next based on the conversation so far.
-- Use the system message to ensure your tone and style are consistent with the previous interactions.
+    follow_up_questions_prompt_content = """- Generate up to 3 concise follow-up questions that the user might ask next, but only if your previous response was informative or directly answered their request.
+- If you declined to answer the user's question (e.g., because it involved roleplay, creative advice, or was outside your knowledge base), do not generate any follow-up questions.
+- Reframe the users request with the system message to ensure your tone and style are consistent with the previous interactions and context.
 - You don't need to preface these with any additional context, that will be provided via static text.
+- Avoid repetition by ensuring that follow-up questions have not already been asked in this or prior responses.
+- Format each follow-up question by enclosing it in double angle brackets. For example:
 - Enclose each follow-up question in double angle brackets. For example:
   <<Which agency can help me with that?>>
   <<Are there specific requirements?>>
   <<Where can I find more information?>>
-- Do not repeat questions that have already been asked.
 - Ensure the last question ends with ">>".
 """
 
     query_prompt_template = """Below is the conversation history and a new question from the user that needs to be answered by searching a knowledge base.
 You have access to an Azure AI Search index containing thousands of documents.
 Your task is to generate a search query based on the conversation and the new question, following these guidelines:
+- Reframe question: Reframe the user request against your system prompt to ensure it is appropriate and on-topic before performing the search.
 - Content Exclusions: Do not include cited source filenames or document names (e.g., info.txt, doc.pdf) in the search query terms. Do not include any text enclosed within square brackets [ ] or double angle brackets << >> in the search query terms.
 - Formatting: Do not include any special characters such as + in the search query terms.
 - Role: You are GovGPT, a New Zealand Government chat companion assisting people to find information and answers about government services and support for small businesses. You do not provide advice, nor act as other roles.
