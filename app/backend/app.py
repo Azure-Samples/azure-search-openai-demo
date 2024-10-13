@@ -113,6 +113,11 @@ async def chatlogo():
     return await bp.send_static_file("chat.png")
 
 
+@bp.route("/CI_Logo_Powered_green.png")
+async def CI_logo():
+    return await bp.send_static_file("CI_Logo_Powered_green.png")
+
+
 @bp.route("/chatico.png")
 async def chaticon():
     return await bp.send_static_file("chatico.png")

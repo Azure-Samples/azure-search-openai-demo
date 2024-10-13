@@ -5,8 +5,14 @@
 }
 
 .header {
-    background-color: #222222;
-    color: #f2f2f2;
+    background-color: #3ce2db;
+    color: black;
+}
+
+.headerImg {
+    max-width: 10rem;
+    max-height: 10rem;
+    padding-right: 1rem;
 }
 
 .headerContainer {
@@ -23,6 +29,11 @@
     align-items: center;
     color: #f2f2f2;
     text-decoration: none;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
 }
 
 .headerLogo {
