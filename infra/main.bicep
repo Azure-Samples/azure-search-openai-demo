@@ -400,7 +400,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzure
     }
     sku: openAiSkuName
     deployments: openAiDeployments
-    disableLocalAuth: true
+    disableLocalAuth: false
   }
 }
 
@@ -418,7 +418,7 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4'
       defaultAction: 'Allow'
     }
     location: documentIntelligenceResourceGroupLocation
-    disableLocalAuth: true
+    disableLocalAuth: false
     tags: tags
     sku: documentIntelligenceSkuName
   }
@@ -466,7 +466,7 @@ module searchService 'core/search/search-services.bicep' = {
     name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
-    disableLocalAuth: true
+    disableLocalAuth: false
     sku: {
       name: searchServiceSkuName
     }
