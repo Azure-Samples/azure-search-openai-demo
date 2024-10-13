@@ -58,6 +58,13 @@
     flex-direction: column;
 }
 
+@media only screen and (max-width: 760px) {
+    .chatMessageStream {
+        padding: 0 1rem 100px;
+        width: 100%;
+    }
+}
+
 .chatMessageGpt {
     margin-bottom: 1.25rem;
     max-width: 100%;
