@@ -161,8 +161,14 @@
     }
 }
 
-@media (max-width: 440px) {
+@media (max-width: 420px) {
     .responsivelogo {
-        padding-top: 350px;
+        padding-top: 40%;
+    }
+}
+
+@media (max-height: 800px) {
+    .chatEmptyState {
+        padding-top: 0rem;
     }
 }

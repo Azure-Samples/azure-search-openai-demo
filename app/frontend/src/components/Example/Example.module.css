@@ -10,14 +10,12 @@
 }
 
 .example {
-    word-break: break-word;
     background: white;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
     margin-bottom: 0.3125rem;
     cursor: pointer;
-    height: 6rem;
     box-shadow:
         0px 0.25rem 0.5rem rgba(0, 0, 0, 0.08),
         0px 0px 0.125rem rgba(0, 0, 0, 0.08);
@@ -26,7 +24,7 @@
 .exampleContainer {
     background-color: white;
     border-radius: 0.5rem;
-    padding: 1rem;
+    padding: 0.5rem;
     box-shadow:
         0px 0.25rem 0.5rem rgba(0, 0, 0, 0.08),
         0px 0px 0.125rem rgba(0, 0, 0, 0.08);
@@ -41,7 +39,7 @@
 
 .exampleText {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.8rem;
     width: 15rem;
     padding: 0.5rem;
     min-height: 3rem;
@@ -75,8 +73,7 @@
 
     .example {
         margin-bottom: 0.3125rem;
-        padding: 1.25rem;
-        height: 7rem;
+        padding: 0.5rem;
     }
 
     .examplesNavList li:nth-of-type(1),
@@ -85,9 +82,15 @@
         display: block;
     }
     .exampleText {
-        font-size: 1rem;
+        font-size: 0.8rem;
         width: 15rem;
         padding: 0;
         min-height: 3rem;
+    }
+}
+
+@media (min-width: 410px) {
+    .example {
+        height: 5rem;
     }
 }
