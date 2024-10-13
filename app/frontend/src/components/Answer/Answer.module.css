@@ -1,6 +1,6 @@
 .answerContainer {
     padding: 1.25em;
-    background: rgb(249, 249, 249);
+    background: rgb(249, 249, 249, 0.1);
     border-radius: 0.5em;
     box-shadow:
         0em 0.125em 0.25em rgba(0, 0, 0, 0.14),
@@ -54,7 +54,7 @@ h2 {
     text-align: center;
     border-radius: 0.25em;
     padding: 0em 0.5em;
-    background: #d1dbfa;
+    background: #eaf5f7;
     color: #123bb6;
     text-decoration: none;
     cursor: pointer;
@@ -80,7 +80,7 @@ h2 {
     text-align: center;
     border-radius: 0.25em;
     padding: 0em 0.5em;
-    background: #e8ebfa;
+    background: #eaf5f7;
     color: black;
     font-style: italic;
     text-decoration: none;
@@ -109,7 +109,7 @@ sup {
     min-width: 0.875em;
     height: 0.875em;
     border-radius: 0.1875em;
-    background: #d1dbfa;
+    background: #eaf5f7;
     color: #123bb6;
     text-decoration-color: transparent;
     outline: transparent solid 0.0625em;
