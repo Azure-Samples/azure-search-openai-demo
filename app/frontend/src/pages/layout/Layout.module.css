@@ -12,7 +12,9 @@
 .headerImg {
     max-width: 10rem;
     max-height: 10rem;
+    padding-right: 1rem;
 }
+
 .headerContainer {
     display: flex;
     align-items: center;
@@ -27,6 +29,11 @@
     align-items: center;
     color: #f2f2f2;
     text-decoration: none;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
 }
 
 .headerLogo {

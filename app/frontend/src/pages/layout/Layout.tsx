@@ -35,14 +35,15 @@ const Layout = () => {
 
     return (
         <div className={styles.layout}>
-            <header className={styles.header} role={"banner"}>
+            <header className={styles.header} role="banner">
                 <div className={styles.headerContainer} ref={menuRef}>
                     <h3 className={styles.headerTitle}>GovGPT - Pilot</h3>
-                    <img src="/CI_Logo_Powered_green.png" alt="description of image" className={styles.headerImg}></img>
-                    <FeedbackButton />
+                    <div className={styles.headerRight}>
+                        <img src="/CI_Logo_Powered_green.png" alt="description of image" className={styles.headerImg} />
+                        <FeedbackButton />
+                    </div>
                 </div>
             </header>
-
             <Outlet />
         </div>
     );
