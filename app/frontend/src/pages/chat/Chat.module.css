@@ -36,7 +36,7 @@
 }
 
 .responsivelogo {
-    max-width: 80%;
+    max-width: 30%;
     height: auto;
 }
 
@@ -44,6 +44,10 @@
     font-weight: 600;
     margin-bottom: 0.625rem;
     text-align: center;
+    max-width: 65rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 0.8rem;
 }
 
 .chatMessageStream {
@@ -159,7 +163,19 @@
         min-width: 31.25rem;
     }
     .responsivelogo {
-        max-width: 80%;
+        max-width: 30%;
         height: auto;
+    }
+}
+
+@media (max-width: 420px) {
+    .responsivelogo {
+        padding-top: 40%;
+    }
+}
+
+@media (max-height: 800px) {
+    .chatEmptyState {
+        padding-top: 0rem;
     }
 }
