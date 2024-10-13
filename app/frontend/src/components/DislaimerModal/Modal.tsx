@@ -47,12 +47,17 @@ export const DisclaimerModal: React.FC = () => {
                             1986. These terms are governed by the laws of New Zealand.
                         </p>
                         <p>We may update these terms of use at any time by way of a pop-up notice.</p>
-                        <p><b>By [clicking I ACCEPT], you accept these terms of use.  If you do not accept these terms of use, please do not click or access GovGPT.</b></p>
+                        <p>
+                            <b>
+                                By [clicking I ACCEPT], you accept these terms of use. If you do not accept these terms of use, please do not click or access
+                                GovGPT.
+                            </b>
+                        </p>
                         <p>For more information on GovGPT, see our Frequently Asked Questions.</p>
                     </DialogContent>
                     <DialogActions>
                         <Button className="tcmodal-button" onClick={() => setOpen(false)}>
-                            Accept
+                            I Accept
                         </Button>
                     </DialogActions>
                 </DialogBody>
