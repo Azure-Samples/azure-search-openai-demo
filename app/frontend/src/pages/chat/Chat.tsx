@@ -5,6 +5,7 @@ import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
 
 import styles from "./Chat.module.css";
+import Modal from "../../components/DislaimerModal/Modal";
 
 import {
     chatApi,
@@ -33,6 +34,7 @@ import { GPT4VSettings } from "../../components/GPT4VSettings";
 import { toolTipText } from "../../i18n/tooltips.js";
 import { LoginContext } from "../../loginContext";
 import { stubbedPublicClientApplication } from "@azure/msal-browser";
+import DisclaimerModal from "../../components/DislaimerModal/Modal";
 
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -341,6 +343,7 @@ const Chat = () => {
 
     return (
         <div className={styles.container}>
+            <DisclaimerModal />
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
             </div>
