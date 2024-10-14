@@ -115,6 +115,10 @@
     align-self: flex-end;
 }
 
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
 .commandButton {
     margin-bottom: 1.25rem;
 }
