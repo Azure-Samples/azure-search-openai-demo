@@ -118,7 +118,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
         user_query_request = (
-            str(chat_rules) + "Generate search query for: " + original_user_query + str(ethical_guidelines)
+            str(chat_rules) + str(ethical_guidelines) + "Generate search query for: " + original_user_query
         )
 
         tools: List[ChatCompletionToolParam] = [
