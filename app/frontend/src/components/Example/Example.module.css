@@ -9,7 +9,19 @@
     justify-content: center;
 }
 
-.example {
+.exampleQuestion {
+    background: white;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.3125rem;
+    cursor: pointer;
+    box-shadow:
+        0px 0.25rem 0.5rem rgba(0, 0, 0, 0.08),
+        0px 0px 0.125rem rgba(0, 0, 0, 0.08);
+}
+
+.exampleOther {
     background: white;
     border-radius: 0.5rem;
     display: flex;
@@ -30,7 +42,7 @@
         0px 0px 0.125rem rgba(0, 0, 0, 0.08);
 }
 
-.example:hover {
+.exampleQuestion:hover {
     box-shadow:
         0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
         0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
@@ -71,7 +83,12 @@
         padding-right: 0;
     }
 
-    .example {
+    .exampleQuestion {
+        margin-bottom: 0.3125rem;
+        padding: 0.5rem;
+    }
+
+    .exampleOther {
         margin-bottom: 0.3125rem;
         padding: 0.5rem;
     }
@@ -90,7 +107,11 @@
 }
 
 @media (min-width: 410px) {
-    .example {
+    .exampleQuestion {
+        height: 5rem;
+    }
+
+    .exampleOther {
         height: 5rem;
     }
 }

@@ -47,16 +47,46 @@ export const Example = ({ exampleType, onClick }: Props) => {
                 <img src="/chatico.png" className={styles.headerImage} />
                 <h3>{exampleType}</h3>
             </div>
-            {textList.map((text, index) => (
-                <div
-                    key={index}
-                    className={styles.example}
-                    onClick={exampleType === "Questions" ? () => onClick(text) : undefined}
-                    style={{ cursor: exampleType === "Questions" ? "pointer" : "default" }}
-                >
-                    <p className={styles.exampleText}>{text}</p>
-                </div>
-            ))}
+            {textList.map((text, index) => {
+                const isQuestion = exampleType === "Questions";
+
+                // Determine if the text contains the word "web pages" (case-insensitive)
+                const containsWeb = /web pages/i.test(text);
+
+                const containerClassName = isQuestion ? styles.exampleQuestion : styles.exampleOther;
+
+                const containerStyle = { cursor: isQuestion ? "pointer" : "default" };
+                const onClickHandler = isQuestion ? () => onClick(text) : undefined;
+
+                // Process the text to include a hyperlink if it contains "web pages"
+                let content;
+                if (containsWeb) {
+                    const parts = text.split(/(web pages)/i);
+                    content = (
+                        <p className={styles.exampleText}>
+                            {parts.map((part, i) => {
+                                if (part.toLowerCase() === "web pages") {
+                                    return (
+                                        <a key={i} href="https://ai-activator.circle.so/c/govchat-faq/indexed-sites" target="_blank" rel="noopener noreferrer">
+                                            {part}
+                                        </a>
+                                    );
+                                } else {
+                                    return part;
+                                }
+                            })}
+                        </p>
+                    );
+                } else {
+                    content = <p className={styles.exampleText}>{text}</p>;
+                }
+
+                return (
+                    <div key={index} className={containerClassName} onClick={onClickHandler} style={containerStyle}>
+                        {content}
+                    </div>
+                );
+            })}
         </div>
     );
 };
