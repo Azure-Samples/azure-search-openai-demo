@@ -39,7 +39,9 @@ const Layout = () => {
                 <div className={styles.headerContainer} ref={menuRef}>
                     <h3 className={styles.headerTitle}>GovGPT - Pilot</h3>
                     <div className={styles.headerRight}>
-                        <img src="/CI_Logo_Powered_green.png" alt="description of image" className={styles.headerImg} />
+                        <a href="https://www.callaghaninnovation.govt.nz/" target="_blank" rel="noopener noreferrer">
+                            <img src="/CI_Logo_Powered_green.png" alt="description of image" className={styles.headerImg} />
+                        </a>
                         <FeedbackButton />
                     </div>
                 </div>
