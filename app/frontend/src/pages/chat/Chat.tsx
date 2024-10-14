@@ -39,7 +39,7 @@ import DisclaimerModal from "../../components/DislaimerModal/Modal";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
-    const [temperature, setTemperature] = useState<number>(0.02);
+    const [temperature, setTemperature] = useState<number>(0);
     const [seed, setSeed] = useState<number | null>(1000);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.5);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0.02);
@@ -249,15 +249,15 @@ const Chat = () => {
     };
 
     const onMinimumSearchScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumSearchScore(parseFloat(newValue || "0"));
+        setMinimumSearchScore(parseFloat(newValue || "0.02"));
     };
 
     const onMinimumRerankerScoreChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setMinimumRerankerScore(parseFloat(newValue || "0"));
+        setMinimumRerankerScore(parseFloat(newValue || "1.5"));
     };
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
-        setRetrieveCount(parseInt(newValue || "15"));
+        setRetrieveCount(parseInt(newValue || "5"));
     };
 
     const onUseSemanticRankerChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
