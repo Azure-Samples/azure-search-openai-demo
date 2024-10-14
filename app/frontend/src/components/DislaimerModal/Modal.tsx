@@ -54,6 +54,12 @@ export const DisclaimerModal: React.FC = () => {
                             </b>
                         </p>
                         <p>For more information on GovGPT, see our Frequently Asked Questions.</p>
+                        <br></br>
+                        <p>
+                            This site is protected by reCAPTCHA and the Google
+                            <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                            <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+                        </p>
                     </DialogContent>
                     <DialogActions>
                         <Button className="tcmodal-button" onClick={() => setOpen(false)}>

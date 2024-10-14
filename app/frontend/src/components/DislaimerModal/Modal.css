@@ -47,6 +47,10 @@
     transform: translateY(-0.03125rem);
 }
 
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
 #custom-dialog-title {
     font-size: 19px;
     font-weight: bold;
