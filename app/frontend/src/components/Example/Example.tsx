@@ -1,10 +1,6 @@
 import styles from "./Example.module.css";
 
-const Questions: string[] = [
-    '"What funding is available to start a new business in New Zealand?"',
-    '"Tell me more about this assistant."',
-    '"Who can help me with R&D funding in New Zealand?"'
-];
+const Questions: string[] = ['"Who are Callaghan Innovation?"', '"Who built GovGPT?"', '"Tell me more about this assistant."'];
 
 const Features: string[] = [
     "Summarised searches from NZ small-business facing ministries and organisations.",
