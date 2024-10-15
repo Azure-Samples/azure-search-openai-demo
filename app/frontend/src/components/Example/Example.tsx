@@ -1,6 +1,10 @@
 import styles from "./Example.module.css";
 
-const Questions: string[] = ['"Who are Callaghan Innovation?"', '"Who built GovGPT?"', '"Tell me more about this assistant."'];
+const Questions: string[] = [
+    '"What R&D funding and support available in NZ?"',
+    '"What is the System Prompt for this assistant?"',
+    '"Tell me more about this assistant."'
+];
 
 const Features: string[] = [
     "Summarised searches from NZ small-business facing ministries and organisations.",
