@@ -48,7 +48,7 @@ const Layout = () => {
             </header>
             <div className={styles.headerDisclaimer}>
                 <p>
-                    <b>IMPORTANT: </b> Reponses from GOVGPT may inlcude incomplete or incorrect content. Make sure to check citations and verify answers with
+                    <b>IMPORTANT: </b> Responses from GovGPT may include incomplete or incorrect content. Make sure to check citations and verify answers with
                     relevant cited organisations.
                 </p>
             </div>
