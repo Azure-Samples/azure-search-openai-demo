@@ -36,7 +36,7 @@ export const ExampleList = ({ onExampleClicked }: Props) => {
             <ul className={styles.examplesNavList}>
                 {Types.map((value, i) => (
                     <li key={i}>
-                        <Example exampleType={value} onClick={() => handleClick(value)} />
+                        <Example exampleType={value} onClick={handleClick} />
                     </li>
                 ))}
             </ul>

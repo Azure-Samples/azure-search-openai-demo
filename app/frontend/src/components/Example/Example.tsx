@@ -20,7 +20,7 @@ const Limitations: string[] = [
 
 interface Props {
     exampleType: string;
-    onClick: (exampleType: string) => void;
+    onClick: (question: string) => void;
 }
 
 export const Example = ({ exampleType, onClick }: Props) => {
