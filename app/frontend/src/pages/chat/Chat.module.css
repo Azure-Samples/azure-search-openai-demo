@@ -16,6 +16,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-height: calc(100vh - 10rem);
 }
 
 .chatEmptyState {
@@ -43,11 +44,10 @@
 .chatMessageStream {
     flex-grow: 1;
     max-height: 64rem;
-    max-width: 64.25rem;
     width: 100%;
     overflow-y: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 15vw;
+    padding-right: 15vw;
     display: flex;
     flex-direction: column;
 }
