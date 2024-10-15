@@ -7,7 +7,7 @@ param tags object = {}
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 
-module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.4.0' = {
+module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.7.0' = {
   name: 'loganalytics'
   params: {
     name: logAnalyticsName
@@ -21,7 +21,7 @@ module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.4.0' = {
   }
 }
 
-module applicationInsights 'br/public:avm/res/insights/component:0.3.1' = {
+module applicationInsights 'br/public:avm/res/insights/component:0.4.1' = {
   name: 'applicationinsights'
   params: {
     name: applicationInsightsName
