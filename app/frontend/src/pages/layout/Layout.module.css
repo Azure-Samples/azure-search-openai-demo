@@ -114,6 +114,14 @@
     gap: 0; /* Ensure no gap between login button and menu toggle */
 }
 
+.headerDisclaimer {
+    background: #f5dfe3;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
 @media (min-width: 992px) {
     .headerTitle {
         font-weight: 600;
