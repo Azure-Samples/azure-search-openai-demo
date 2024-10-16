@@ -504,7 +504,7 @@ var openAiDeployments = concat(
     : []
 )
 
-module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzureOpenAiHost && deployAzureOpenAi) {
+module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzureOpenAiHost && deployAzureOpenAi) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
@@ -528,7 +528,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.5.4' = if (isAzure
 
 // Formerly known as Form Recognizer
 // Does not support bypass
-module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4' = {
+module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2' = {
   name: 'documentintelligence'
   scope: documentIntelligenceResourceGroup
   params: {
@@ -550,7 +550,7 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.5.4'
   }
 }
 
-module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useGPT4V) {
+module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useGPT4V) {
   name: 'computerVision'
   scope: computerVisionResourceGroup
   params: {
@@ -570,7 +570,7 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.5.4' = if 
   }
 }
 
-module speech 'br/public:avm/res/cognitive-services/account:0.5.4' = if (useSpeechOutputAzure) {
+module speech 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useSpeechOutputAzure) {
   name: 'speech-service'
   scope: speechResourceGroup
   params: {
