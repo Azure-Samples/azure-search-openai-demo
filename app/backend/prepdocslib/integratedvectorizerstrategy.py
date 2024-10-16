@@ -6,8 +6,6 @@ from azure.search.documents.indexes._generated.models import (
 )
 from azure.search.documents.indexes.models import (
     AzureOpenAIEmbeddingSkill,
-    AzureOpenAIParameters,
-    AzureOpenAIVectorizer,
     FieldMapping,
     IndexProjectionMode,
     InputFieldMappingEntry,
@@ -15,7 +13,8 @@ from azure.search.documents.indexes.models import (
     SearchIndexer,
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
-    SearchIndexerIndexProjections,
+    SearchIndexerDataSourceType,
+    SearchIndexerIndexProjection,
     SearchIndexerIndexProjectionSelector,
     SearchIndexerIndexProjectionsParameters,
     SearchIndexerSkillset,
@@ -67,6 +66,7 @@ class IntegratedVectorizerStrategy(Strategy):
         skillset_name = f"{index_name}-skillset"
 
         split_skill = SplitSkill(
+            name=f"{index_name}-split-skill",
             description="Split skill to chunk documents",
             text_split_mode="pages",
             context="/document",
@@ -82,17 +82,20 @@ class IntegratedVectorizerStrategy(Strategy):
             raise ValueError("Expecting Azure Open AI instance")
 
         embedding_skill = AzureOpenAIEmbeddingSkill(
+            name=f"{index_name}-embedding-skill",
             description="Skill to generate embeddings via Azure OpenAI",
             context="/document/pages/*",
-            resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-            deployment_id=self.embeddings.open_ai_deployment,
+            resource_url=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
+            deployment_name=self.embeddings.open_ai_deployment,
+            model_name=self.embeddings.open_ai_model_name,
+            dimensions=self.embeddings.open_ai_dimensions,
             inputs=[
                 InputFieldMappingEntry(name="text", source="/document/pages/*"),
             ],
             outputs=[OutputFieldMappingEntry(name="embedding", target_name="vector")],
         )
 
-        index_projections = SearchIndexerIndexProjections(
+        index_projection = SearchIndexerIndexProjection(
             selectors=[
                 SearchIndexerIndexProjectionSelector(
                     target_index_name=index_name,
@@ -114,7 +117,7 @@ class IntegratedVectorizerStrategy(Strategy):
             name=skillset_name,
             description="Skillset to chunk documents and generate embeddings",
             skills=[split_skill, embedding_skill],
-            index_projections=index_projections,
+            index_projection=index_projection,
         )
 
         return skillset
@@ -132,25 +135,14 @@ class IntegratedVectorizerStrategy(Strategy):
         if self.embeddings is None:
             raise ValueError("Expecting Azure Open AI instance")
 
-        await search_manager.create_index(
-            vectorizers=[
-                AzureOpenAIVectorizer(
-                    name=f"{self.search_info.index_name}-vectorizer",
-                    kind="azureOpenAI",
-                    azure_open_ai_parameters=AzureOpenAIParameters(
-                        resource_uri=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-                        deployment_id=self.embeddings.open_ai_deployment,
-                    ),
-                ),
-            ]
-        )
+        await search_manager.create_index()
 
         # create indexer client
         ds_client = self.search_info.create_search_indexer_client()
         ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)
         data_source_connection = SearchIndexerDataSourceConnection(
             name=f"{self.search_info.index_name}-blob",
-            type="azureblob",
+            type=SearchIndexerDataSourceType.AZURE_BLOB,
             connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
             data_deletion_detection_policy=NativeBlobSoftDeleteDeletionDetectionPolicy(),

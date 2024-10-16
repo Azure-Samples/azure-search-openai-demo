@@ -4,6 +4,8 @@ import os
 from typing import List, Optional
 
 from azure.search.documents.indexes.models import (
+    AzureOpenAIVectorizer,
+    AzureOpenAIVectorizerParameters,
     HnswAlgorithmConfiguration,
     HnswParameters,
     SearchableField,
@@ -174,12 +176,21 @@ class SearchManager:
                         VectorSearchProfile(
                             name="embedding_config",
                             algorithm_configuration_name="hnsw_config",
-                            vectorizer=(
+                            vectorizer_name=(
                                 f"{self.search_info.index_name}-vectorizer" if self.use_int_vectorization else None
                             ),
                         ),
                     ],
-                    vectorizers=vectorizers,
+                    vectorizers=[
+                        AzureOpenAIVectorizer(
+                            vectorizer_name=f"{self.search_info.index_name}-vectorizer",
+                            parameters=AzureOpenAIVectorizerParameters(
+                                resource_url=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
+                                deployment_name=self.embeddings.open_ai_deployment,
+                                model_name=self.embeddings.open_ai_model_name,
+                            ),
+                        ),
+                    ],
                 ),
             )
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
