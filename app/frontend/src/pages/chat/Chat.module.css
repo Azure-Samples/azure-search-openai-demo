@@ -46,10 +46,11 @@
     max-height: 64rem;
     width: 100%;
     overflow-y: auto;
-    padding-left: 15vw;
-    padding-right: 15vw;
+    padding: 0 2rem;
+    max-width: 80vw;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .chatMessageGpt {
