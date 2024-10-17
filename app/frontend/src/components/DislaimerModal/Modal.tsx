@@ -8,9 +8,9 @@ export const DisclaimerModal: React.FC = () => {
     return (
         <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)} modalType="alert">
             <DialogSurface id="my-dialog-surface" className="dialog-surface">
-                <DialogBody>
+                <DialogBody id="my-dialog-body">
                     <DialogTitle id="custom-dialog-title">GovGPT - Pilot</DialogTitle>
-                    <DialogContent>
+                    <DialogContent id="custom-dialog-content">
                         <p>
                             <b>IMPORTANT TERMS OF USE FOR GOVGPT</b>
                         </p>
