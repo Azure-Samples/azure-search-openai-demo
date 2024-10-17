@@ -18,11 +18,13 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                         <div className={styles.tStep}>{t.title}</div>
                         <Stack horizontal tokens={{ childrenGap: 5 }}>
                             {t.props &&
-                                (Object.keys(t.props) || []).map((k: any) => (
-                                    <span className={styles.tProp}>
-                                        {k}: {JSON.stringify(t.props?.[k])}
-                                    </span>
-                                ))}
+                                (Object.keys(t.props) || [])
+                                    .filter((k: string) => !k.includes("deployment"))
+                                    .map((k: any) => (
+                                        <span className={styles.tProp}>
+                                            {k}: {JSON.stringify(t.props?.[k])}
+                                        </span>
+                                    ))}
                         </Stack>
                         {Array.isArray(t.description) ? (
                             <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock}>
