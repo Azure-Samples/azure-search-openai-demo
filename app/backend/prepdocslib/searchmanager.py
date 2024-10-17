@@ -233,7 +233,7 @@ class SearchManager:
                     existing_index.vector_search.vectorizers is None
                     or len(existing_index.vector_search.vectorizers) == 0
                 ):
-                    if self.embeddings is not None:
+                    if self.embeddings is not None and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
                         logger.info("Adding vectorizer to search index %s", self.search_info.index_name)
                         existing_index.vector_search.vectorizers = [
                             AzureOpenAIVectorizer(
@@ -248,7 +248,7 @@ class SearchManager:
                         await search_index_client.create_or_update_index(existing_index)
                     else:
                         logger.info(
-                            "Can't add vectorizer to search index %s since embeddings service isn't defined",
+                            "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
 
