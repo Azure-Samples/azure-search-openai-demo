@@ -210,12 +210,26 @@ Azure AI search recently introduced an [integrated vectorization feature in prev
 
 To enable integrated vectorization with this sample:
 
-1. If you've previously deployed, delete the existing search index.
-2. Run `azd env set USE_FEATURE_INT_VECTORIZATION true`
-3. Run `azd up` to update system and user roles
+1. If you've previously deployed, delete the existing search index. 🗑️
+2. To enable the use of integrated vectorization, run:
+
+    ```shell
+    azd env set USE_FEATURE_INT_VECTORIZATION true
+    ```
+
+3. If you've already deployed your app, then you can run just the `provision` step:
+
+    ```shell
+    azd provision
+    ```
+
+    That will set up necessary RBAC roles and configure the integrated vectorization feature on your search service.
+
+    If you haven't deployed your app yet, then you should run the full `azd up` after configuring all optional features.
+
 4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
 
-This feature is not currently compatible with GPT4-vision or the newer text-embedding-3 models.
+⚠️ This feature is not currently compatible with the [GPT vision integration](./gpt4v.md).
 
 ## Enabling authentication
 

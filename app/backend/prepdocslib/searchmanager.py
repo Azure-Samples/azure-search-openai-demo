@@ -4,6 +4,8 @@ import os
 from typing import List, Optional
 
 from azure.search.documents.indexes.models import (
+    AzureOpenAIVectorizer,
+    AzureOpenAIVectorizerParameters,
     HnswAlgorithmConfiguration,
     HnswParameters,
     SearchableField,
@@ -21,7 +23,7 @@ from azure.search.documents.indexes.models import (
 )
 
 from .blobmanager import BlobManager
-from .embeddings import OpenAIEmbeddings
+from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import SplitPage
@@ -65,132 +67,159 @@ class SearchManager:
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
-        logger.info("Ensuring search index %s exists", self.search_info.index_name)
+        logger.info("Checking whether search index %s exists...", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
-            fields = [
-                (
-                    SimpleField(name="id", type="Edm.String", key=True)
-                    if not self.use_int_vectorization
-                    else SearchField(
-                        name="id",
+
+            if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
+                logger.info("Creating new search index %s", self.search_info.index_name)
+                fields = [
+                    (
+                        SimpleField(name="id", type="Edm.String", key=True)
+                        if not self.use_int_vectorization
+                        else SearchField(
+                            name="id",
+                            type="Edm.String",
+                            key=True,
+                            sortable=True,
+                            filterable=True,
+                            facetable=True,
+                            analyzer_name="keyword",
+                        )
+                    ),
+                    SearchableField(
+                        name="content",
                         type="Edm.String",
-                        key=True,
-                        sortable=True,
-                        filterable=True,
-                        facetable=True,
-                        analyzer_name="keyword",
-                    )
-                ),
-                SearchableField(
-                    name="content",
-                    type="Edm.String",
-                    analyzer_name=self.search_analyzer_name,
-                ),
-                SearchField(
-                    name="embedding",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                    hidden=False,
-                    searchable=True,
-                    filterable=False,
-                    sortable=False,
-                    facetable=False,
-                    vector_search_dimensions=self.embedding_dimensions,
-                    vector_search_profile_name="embedding_config",
-                ),
-                SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-                SimpleField(
-                    name="sourcepage",
-                    type="Edm.String",
-                    filterable=True,
-                    facetable=True,
-                ),
-                SimpleField(
-                    name="sourcefile",
-                    type="Edm.String",
-                    filterable=True,
-                    facetable=True,
-                ),
-                SimpleField(
-                    name="storageUrl",
-                    type="Edm.String",
-                    filterable=True,
-                    facetable=False,
-                ),
-            ]
-            if self.use_acls:
-                fields.append(
-                    SimpleField(
-                        name="oids",
-                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                        filterable=True,
-                    )
-                )
-                fields.append(
-                    SimpleField(
-                        name="groups",
-                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                        filterable=True,
-                    )
-                )
-            if self.use_int_vectorization:
-                fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
-            if self.search_images:
-                fields.append(
+                        analyzer_name=self.search_analyzer_name,
+                    ),
                     SearchField(
-                        name="imageEmbedding",
+                        name="embedding",
                         type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                         hidden=False,
                         searchable=True,
                         filterable=False,
                         sortable=False,
                         facetable=False,
-                        vector_search_dimensions=1024,
+                        vector_search_dimensions=self.embedding_dimensions,
                         vector_search_profile_name="embedding_config",
+                    ),
+                    SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+                    SimpleField(
+                        name="sourcepage",
+                        type="Edm.String",
+                        filterable=True,
+                        facetable=True,
+                    ),
+                    SimpleField(
+                        name="sourcefile",
+                        type="Edm.String",
+                        filterable=True,
+                        facetable=True,
+                    ),
+                    SimpleField(
+                        name="storageUrl",
+                        type="Edm.String",
+                        filterable=True,
+                        facetable=False,
+                    ),
+                ]
+                if self.use_acls:
+                    fields.append(
+                        SimpleField(
+                            name="oids",
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                            filterable=True,
+                        )
+                    )
+                    fields.append(
+                        SimpleField(
+                            name="groups",
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                            filterable=True,
+                        )
+                    )
+                if self.use_int_vectorization:
+                    logger.info("Including parent_id field in new index %s", self.search_info.index_name)
+                    fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
+                if self.search_images:
+                    logger.info("Including imageEmbedding field in new index %s", self.search_info.index_name)
+                    fields.append(
+                        SearchField(
+                            name="imageEmbedding",
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                            hidden=False,
+                            searchable=True,
+                            filterable=False,
+                            sortable=False,
+                            facetable=False,
+                            vector_search_dimensions=1024,
+                            vector_search_profile_name="embedding_config",
+                        ),
+                    )
+
+                vectorizers = []
+                if self.embeddings and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                    logger.info(
+                        "Including vectorizer for search index %s, using Azure OpenAI service %s",
+                        self.search_info.index_name,
+                        self.embeddings.open_ai_service,
+                    )
+                    vectorizers.append(
+                        AzureOpenAIVectorizer(
+                            vectorizer_name=f"{self.search_info.index_name}-vectorizer",
+                            parameters=AzureOpenAIVectorizerParameters(
+                                resource_url=self.embeddings.open_ai_endpoint,
+                                deployment_name=self.embeddings.open_ai_deployment,
+                                model_name=self.embeddings.open_ai_model_name,
+                            ),
+                        )
+                    )
+                else:
+                    logger.info(
+                        "Not including vectorizer for search index %s, no Azure OpenAI service found",
+                        self.search_info.index_name,
+                    )
+
+                index = SearchIndex(
+                    name=self.search_info.index_name,
+                    fields=fields,
+                    semantic_search=SemanticSearch(
+                        configurations=[
+                            SemanticConfiguration(
+                                name="default",
+                                prioritized_fields=SemanticPrioritizedFields(
+                                    title_field=None, content_fields=[SemanticField(field_name="content")]
+                                ),
+                            )
+                        ]
+                    ),
+                    vector_search=VectorSearch(
+                        algorithms=[
+                            HnswAlgorithmConfiguration(
+                                name="hnsw_config",
+                                parameters=HnswParameters(metric="cosine"),
+                            )
+                        ],
+                        profiles=[
+                            VectorSearchProfile(
+                                name="embedding_config",
+                                algorithm_configuration_name="hnsw_config",
+                                vectorizer_name=(
+                                    f"{self.search_info.index_name}-vectorizer" if self.use_int_vectorization else None
+                                ),
+                            ),
+                        ],
+                        vectorizers=vectorizers,
                     ),
                 )
 
-            index = SearchIndex(
-                name=self.search_info.index_name,
-                fields=fields,
-                semantic_search=SemanticSearch(
-                    configurations=[
-                        SemanticConfiguration(
-                            name="default",
-                            prioritized_fields=SemanticPrioritizedFields(
-                                title_field=None, content_fields=[SemanticField(field_name="content")]
-                            ),
-                        )
-                    ]
-                ),
-                vector_search=VectorSearch(
-                    algorithms=[
-                        HnswAlgorithmConfiguration(
-                            name="hnsw_config",
-                            parameters=HnswParameters(metric="cosine"),
-                        )
-                    ],
-                    profiles=[
-                        VectorSearchProfile(
-                            name="embedding_config",
-                            algorithm_configuration_name="hnsw_config",
-                            vectorizer=(
-                                f"{self.search_info.index_name}-vectorizer" if self.use_int_vectorization else None
-                            ),
-                        ),
-                    ],
-                    vectorizers=vectorizers,
-                ),
-            )
-            if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
-                logger.info("Creating %s search index", self.search_info.index_name)
                 await search_index_client.create_index(index)
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
-                index_definition = await search_index_client.get_index(self.search_info.index_name)
-                if not any(field.name == "storageUrl" for field in index_definition.fields):
+                existing_index = await search_index_client.get_index(self.search_info.index_name)
+                if not any(field.name == "storageUrl" for field in existing_index.fields):
                     logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
-                    index_definition.fields.append(
+                    existing_index.fields.append(
                         SimpleField(
                             name="storageUrl",
                             type="Edm.String",
@@ -198,7 +227,30 @@ class SearchManager:
                             facetable=False,
                         ),
                     )
-                    await search_index_client.create_or_update_index(index_definition)
+                    await search_index_client.create_or_update_index(existing_index)
+
+                if existing_index.vector_search is not None and (
+                    existing_index.vector_search.vectorizers is None
+                    or len(existing_index.vector_search.vectorizers) == 0
+                ):
+                    if self.embeddings is not None and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                        logger.info("Adding vectorizer to search index %s", self.search_info.index_name)
+                        existing_index.vector_search.vectorizers = [
+                            AzureOpenAIVectorizer(
+                                vectorizer_name=f"{self.search_info.index_name}-vectorizer",
+                                parameters=AzureOpenAIVectorizerParameters(
+                                    resource_url=self.embeddings.open_ai_endpoint,
+                                    deployment_name=self.embeddings.open_ai_deployment,
+                                    model_name=self.embeddings.open_ai_model_name,
+                                ),
+                            )
+                        ]
+                        await search_index_client.create_or_update_index(existing_index)
+                    else:
+                        logger.info(
+                            "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
+                            self.search_info,
+                        )
 
     async def update_content(
         self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
