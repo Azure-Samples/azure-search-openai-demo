@@ -375,6 +375,10 @@ if __name__ == "__main__":
 
     ingestion_strategy: Strategy
     if use_int_vectorization:
+
+        if not openai_embeddings_service or not isinstance(openai_embeddings_service, AzureOpenAIEmbeddingService):
+            raise Exception("Integrated vectorization strategy requires an Azure OpenAI embeddings service")
+
         ingestion_strategy = IntegratedVectorizerStrategy(
             search_info=search_info,
             list_file_strategy=list_file_strategy,

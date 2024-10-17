@@ -40,7 +40,7 @@ class IntegratedVectorizerStrategy(Strategy):
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
         search_info: SearchInfo,
-        embeddings: Optional[AzureOpenAIEmbeddingService],
+        embeddings: AzureOpenAIEmbeddingService,
         subscription_id: str,
         search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
@@ -48,8 +48,6 @@ class IntegratedVectorizerStrategy(Strategy):
         use_acls: bool = False,
         category: Optional[str] = None,
     ):
-        if not embeddings or not isinstance(embeddings, AzureOpenAIEmbeddingService):
-            raise Exception("Expecting AzureOpenAI embedding service")
 
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -77,9 +75,6 @@ class IntegratedVectorizerStrategy(Strategy):
             ],
             outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
         )
-
-        if self.embeddings is None:
-            raise ValueError("Expecting Azure Open AI instance")
 
         embedding_skill = AzureOpenAIEmbeddingSkill(
             name=f"{index_name}-embedding-skill",
@@ -123,6 +118,7 @@ class IntegratedVectorizerStrategy(Strategy):
         return skillset
 
     async def setup(self):
+        logger.info("Setting up search index using integrated vectorization...")
         search_manager = SearchManager(
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
@@ -132,12 +128,8 @@ class IntegratedVectorizerStrategy(Strategy):
             search_images=False,
         )
 
-        if self.embeddings is None:
-            raise ValueError("Expecting Azure Open AI instance")
-
         await search_manager.create_index()
 
-        # create indexer client
         ds_client = self.search_info.create_search_indexer_client()
         ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)
         data_source_connection = SearchIndexerDataSourceConnection(
@@ -149,7 +141,6 @@ class IntegratedVectorizerStrategy(Strategy):
         )
 
         await ds_client.create_or_update_data_source_connection(data_source_connection)
-        logger.info("Search indexer data source connection updated.")
 
         embedding_skillset = await self.create_embedding_skill(self.search_info.index_name)
         await ds_client.create_or_update_skillset(embedding_skillset)
