@@ -27,7 +27,7 @@ export const supportedLngs: { [key: string]: { name: string; locale: string } } 
         locale: "ja-JP"
     },
     ptBR: {
-        name: "Português",
+        name: "Português Brasileiro",
         locale: "pt-BR"
     }
 };
