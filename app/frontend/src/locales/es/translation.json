@@ -133,7 +133,7 @@
         "retrieveNumber":
             "Establece el número de resultados de búsqueda para recuperar de Azure AI search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero pueden provocar que el modelo se 'pierda en el medio'.",
         "includeCategory":
-            "Especifica una categoría para incluir en los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
+            "Especifica una categoría para incluir en los resultados de la búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
         "excludeCategory":
             "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
         "useSemanticReranker":
