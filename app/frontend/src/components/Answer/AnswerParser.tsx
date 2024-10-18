@@ -6,6 +6,13 @@ type HtmlParsedAnswer = {
     citations: string[];
 };
 
+// Function to check citation format
+// Citation format: AnyFileName.anyExtension
+function isValidCitation(citation: string): boolean {
+    const regex = /^[^\s]+\.[a-zA-Z0-9]+/;
+    return regex.test(citation);
+}
+
 export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
     const citations: string[] = [];
 
@@ -34,6 +41,11 @@ export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitati
             return part;
         } else {
             let citationIndex: number;
+
+            if (!isValidCitation(part)) {
+                return `[${part}]`;
+            }
+
             if (citations.indexOf(part) !== -1) {
                 citationIndex = citations.indexOf(part) + 1;
             } else {
