@@ -56,17 +56,29 @@
     font-weight: bold;
 }
 
+#my-dialog-body {
+    max-height: calc(-48px + 90vh);
+}
+
 #my-dialog-surface {
     border-radius: 0.5rem;
     background-color: white;
     box-shadow:
         0px 0.5rem 1rem rgba(0, 0, 0, 0.24),
         0px 0px 0.125rem rgba(0, 0, 0, 0.2);
-    max-height: calc(100% - 20px);
+    max-height: 90%;
+}
+
+#custom-dialog-content {
+    height: 100%;
 }
 
 @media (max-width: 600px) {
     .dialog-surface {
         width: calc(100% - 80px);
+    }
+
+    #my-dialog-body {
+        max-height: calc(-48px + 80vh);
     }
 }
