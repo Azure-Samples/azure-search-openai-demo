@@ -57,7 +57,7 @@
 }
 
 #my-dialog-body {
-    max-height: calc(-48px + 90vh);
+    max-height: calc(80vh - 48px);
 }
 
 #my-dialog-surface {
@@ -79,6 +79,6 @@
     }
 
     #my-dialog-body {
-        max-height: calc(-48px + 80vh);
+        max-height: calc(80vh - 48px);
     }
 }

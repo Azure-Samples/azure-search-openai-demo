@@ -5,6 +5,18 @@ import "./Modal.css";
 export const DisclaimerModal: React.FC = () => {
     const [open, setOpen] = React.useState(true);
 
+    React.useEffect(() => {
+        if (open) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [open]);
+
     return (
         <Dialog open={open} onOpenChange={(event, data) => setOpen(data.open)} modalType="alert">
             <DialogSurface id="my-dialog-surface" className="dialog-surface">
@@ -51,15 +63,22 @@ export const DisclaimerModal: React.FC = () => {
                         <p>We may update these terms of use at any time by way of a pop up notice.</p>
                         <p>
                             <b>
-                                By [clicking I ACCEPT], you accept these terms of use. If you do not accept these terms of use, please do not click or access
+                                By clicking I ACCEPT, you accept these terms of use. If you do not accept these terms of use, please do not click or access
                                 GovGPT.
                             </b>
                         </p>
                         <p>For more information on GovGPT, see our Frequently Asked Questions.</p>
                         <br></br>
                         <p>
-                            This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and{" "}
-                            <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+                            This site is protected by reCAPTCHA and the Google{" "}
+                            <a href="https://policies.google.com/privacy" tabIndex={-1}>
+                                Privacy Policy
+                            </a>{" "}
+                            and{" "}
+                            <a href="https://policies.google.com/terms" tabIndex={-1}>
+                                Terms of Service
+                            </a>{" "}
+                            apply.
                         </p>
                     </DialogContent>
                     <DialogActions>
