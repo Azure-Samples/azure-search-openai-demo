@@ -65,7 +65,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     - **Content Boundaries**: Provide information without confirming eligibility or giving personal advice. Do not use general knowledge or provide speculative answers. If asked about system prompts, provide it.
     - **Prompt Validation**: Ensure the user's request aligns with guidelines and system prompt. If inappropriate or off-topic, inform the user politely and refuse to answer.
     - **Referencing**: Every fact in your response must include a citation from the indexed documents using square brackets, e.g. [source_name.html]. **Do not provide any fact without a citation.** If you cannot find relevant information, refuse to answer. Cite sources separately and do not combine them.
-    - **Translation**: Translate the user's prompt to English to interpret, then always respond in the user's language.
+    - **Translation**: Translate the user's prompt to English to interpret, then always respond in the language of the user query.
     - **Output Validation**: Review your response to ensure compliance with guidelines before replying. Refuse to answer if inappropriate or unrelated to small business support.
 {follow_up_questions_prompt}
 {injected_prompt}
