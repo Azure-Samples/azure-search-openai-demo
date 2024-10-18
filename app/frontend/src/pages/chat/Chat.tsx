@@ -66,6 +66,8 @@ const Chat = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isStreaming, setIsStreaming] = useState<boolean>(false);
+    const [partialResponse, setPartialResponse] = useState<string>("");
+    const [abortController, setAbortController] = useState<AbortController | null>(null);
     const [error, setError] = useState<unknown>();
 
     const [activeCitation, setActiveCitation] = useState<string>();
@@ -114,7 +116,7 @@ const Chat = () => {
         });
     };
 
-    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>) => {
+    const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>, signal: AbortSignal) => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
@@ -122,6 +124,7 @@ const Chat = () => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
+                    setPartialResponse(answer);
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
                         message: { content: answer, role: askResponse.message.role }
@@ -134,6 +137,9 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
+                if (signal.aborted) {
+                    break;
+                }
                 if (event["context"] && event["context"]["data_points"]) {
                     event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
@@ -147,8 +153,11 @@ const Chat = () => {
                     throw Error(event["error"]);
                 }
             }
+        } catch (e) {
+            console.error("error in handleAsyncRequest: ", e);
         } finally {
             setIsStreaming(false);
+            setPartialResponse("");
         }
         const fullResponse: ChatAppResponse = {
             ...askResponse,
@@ -164,6 +173,8 @@ const Chat = () => {
     const historyManager = useHistoryManager(historyProvider);
 
     const makeApiRequest = async (question: string) => {
+        const controller = new AbortController();
+        setAbortController(controller);
         lastQuestionRef.current = question;
 
         error && setError(undefined);
@@ -206,7 +217,7 @@ const Chat = () => {
                 session_state: answers.length ? answers[answers.length - 1][1].session_state : null
             };
 
-            const response = await chatApi(request, shouldStream, token);
+            const response = await chatApi(request, shouldStream, token, controller.signal);
             if (!response.body) {
                 throw Error("No response body");
             }
@@ -214,7 +225,7 @@ const Chat = () => {
                 throw Error(`Request failed with status ${response.status}`);
             }
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
+                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body, controller.signal);
                 setAnswers([...answers, [question, parsedResponse]]);
                 if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
                     historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]]);
@@ -247,6 +258,7 @@ const Chat = () => {
         setStreamedAnswers([]);
         setIsLoading(false);
         setIsStreaming(false);
+        setPartialResponse("");
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
@@ -332,6 +344,16 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const onStopClick = async () => {
+        try {
+            if (abortController) {
+                abortController.abort();
+            }
+        } catch (e) {
+            console.log("An error occurred trying to stop the stream: ", e);
+        }
+    };
+
     // IDs for form labels and their associated callouts
     const promptTemplateId = useId("promptTemplate");
     const promptTemplateFieldId = useId("promptTemplateField");
@@ -413,6 +435,33 @@ const Chat = () => {
                                         </div>
                                     </div>
                                 ))}
+                            {partialResponse && !isStreaming && (
+                                <div>
+                                    <UserChatMessage message={lastQuestionRef.current} />
+                                    <div className={styles.chatMessageGpt}>
+                                        <Answer
+                                            isStreaming={false}
+                                            answer={{
+                                                message: { content: partialResponse, role: "assistant" },
+                                                delta: { content: partialResponse, role: "assistant" },
+                                                context: {
+                                                    data_points: [],
+                                                    followup_questions: null,
+                                                    thoughts: []
+                                                },
+                                                session_state: undefined
+                                            }}
+                                            isSelected={false}
+                                            onCitationClicked={() => {}}
+                                            onThoughtProcessClicked={() => {}}
+                                            onSupportingContentClicked={() => {}}
+                                            onFollowupQuestionClicked={() => {}}
+                                            showFollowupQuestions={false}
+                                            speechUrl={null}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                             {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
@@ -463,6 +512,8 @@ const Chat = () => {
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question)}
                             showSpeechInput={showSpeechInput}
+                            isStreaming={isStreaming}
+                            onStop={onStopClick}
                         />
                     </div>
                 </div>

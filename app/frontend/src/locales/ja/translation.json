@@ -55,6 +55,7 @@
 
     "tooltips":{
         "submitQuestion": "質問を送信",
+        "stopStreaming": "ストリーミングを停止",
         "askWithVoice": "音声で質問",
         "stopRecording": "質問の記録を停止",
         "showThoughtProcess": "思考プロセスの表示",
