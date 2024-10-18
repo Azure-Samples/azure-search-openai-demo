@@ -59,6 +59,12 @@ Execute the following commands inside your terminal:
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
     ```
 
+1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+    ```
+
 1. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
 
     ```bash
@@ -97,6 +103,7 @@ Execute the following commands inside your terminal:
 > * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat` to set the name of your old GPT 3.5 deployment.
 > * `azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo` to set the name of your old GPT 3.5 model.
 > * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 30` to set the capacity of your old GPT 3.5 deployment.
+> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU Standard` to set the Sku name back to Standard.
 > * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0613` to set the version number of your old GPT 3.5.
 > * `azd up` to update the provisioned resources.
 >
@@ -203,12 +210,26 @@ Azure AI search recently introduced an [integrated vectorization feature in prev
 
 To enable integrated vectorization with this sample:
 
-1. If you've previously deployed, delete the existing search index.
-2. Run `azd env set USE_FEATURE_INT_VECTORIZATION true`
-3. Run `azd up` to update system and user roles
+1. If you've previously deployed, delete the existing search index. 🗑️
+2. To enable the use of integrated vectorization, run:
+
+    ```shell
+    azd env set USE_FEATURE_INT_VECTORIZATION true
+    ```
+
+3. If you've already deployed your app, then you can run just the `provision` step:
+
+    ```shell
+    azd provision
+    ```
+
+    That will set up necessary RBAC roles and configure the integrated vectorization feature on your search service.
+
+    If you haven't deployed your app yet, then you should run the full `azd up` after configuring all optional features.
+
 4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
 
-This feature is not currently compatible with GPT4-vision or the newer text-embedding-3 models.
+⚠️ This feature is not currently compatible with the [GPT vision integration](./gpt4v.md).
 
 ## Enabling authentication
 

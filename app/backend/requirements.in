@@ -7,7 +7,7 @@ tiktoken
 tenacity
 azure-ai-documentintelligence
 azure-cognitiveservices-speech
-azure-search-documents==11.6.0b1
+azure-search-documents==11.6.0b6
 azure-storage-blob
 azure-storage-file-datalake
 uvicorn
