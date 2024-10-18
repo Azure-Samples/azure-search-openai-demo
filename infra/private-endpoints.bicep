@@ -113,7 +113,7 @@ resource monitorPrivateLinkScope 'microsoft.insights/privateLinkScopes@2021-07-0
   }
 }
 
-// Private endpoint 
+// Private endpoint
 module monitorPrivateEndpoint './core/networking/private-endpoint.bicep' = {
   name: 'monitor-privatendpoint'
   params: {
