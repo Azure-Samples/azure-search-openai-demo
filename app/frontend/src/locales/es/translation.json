@@ -80,7 +80,7 @@
         "seed": "Seed",
         "minimumSearchScore": "Puntaje mínimo de búsqueda",
         "minimumRerankerScore": "Puntaje mínimo de re-clasificación",
-        "retrieveCount": "Obtén éste número resultados de búsqueda:",
+        "retrieveCount": "Obtén éste número de resultados de la búsqueda:",
         "includeCategory": "Incluir categoría",
         "includeCategoryOptions": {
             "all": "Todos"
