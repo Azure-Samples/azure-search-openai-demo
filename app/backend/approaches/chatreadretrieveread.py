@@ -98,7 +98,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else True
-        use_semantic_captions = True if overrides.get("semantic_captions") else True
+        use_semantic_captions = False if overrides.get("semantic_captions") else False
         top = overrides.get("top", 0.9)
         minimum_search_score = overrides.get("minimum_search_score", 0.02)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 1.5)
