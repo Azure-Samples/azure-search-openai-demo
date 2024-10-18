@@ -73,6 +73,11 @@
     height: 100%;
 }
 
+#close-tc-modal-button {
+    display: block;
+    margin: 0 auto;
+}
+
 @media (max-width: 600px) {
     .dialog-surface {
         width: calc(100% - 80px);
@@ -80,5 +85,6 @@
 
     #my-dialog-body {
         max-height: calc(80vh - 48px);
+        overflow-y: auto;
     }
 }

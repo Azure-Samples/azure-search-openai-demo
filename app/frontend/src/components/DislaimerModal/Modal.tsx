@@ -80,12 +80,13 @@ export const DisclaimerModal: React.FC = () => {
                             </a>{" "}
                             apply.
                         </p>
+                        <div id="close-tc-modal-button" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Button className="tcmodal-button" onClick={() => setOpen(false)} tabIndex={-1}>
+                                I Accept
+                            </Button>
+                        </div>
                     </DialogContent>
-                    <DialogActions>
-                        <Button className="tcmodal-button" onClick={() => setOpen(false)}>
-                            I Accept
-                        </Button>
-                    </DialogActions>
+                    <DialogActions></DialogActions>
                 </DialogBody>
             </DialogSurface>
         </Dialog>
