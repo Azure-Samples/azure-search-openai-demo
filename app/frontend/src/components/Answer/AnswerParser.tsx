@@ -1,23 +1,44 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { getCitationFilePath } from "../../api";
+import { ChatAppResponse, getCitationFilePath } from "../../api";
 
 type HtmlParsedAnswer = {
     answerHtml: string;
     citations: string[];
 };
 
-// Function to check citation format
-// Citation format: AnyFileName.anyExtension
-function isValidCitation(citation: string): boolean {
+// Function to validate citation format and check if it is a valid citation within the context
+function isCitationValid(contextDataPoints: any, citationCandidate: string): boolean {
     const regex = /^[^\s]+\.[a-zA-Z0-9]+/;
-    return regex.test(citation);
+    if (!regex.test(citationCandidate)) {
+        return false;
+    }
+
+    // Check if contextDataPoints is an object with a text property that is an array
+    let dataPointsArray: string[];
+    if (Array.isArray(contextDataPoints)) {
+        dataPointsArray = contextDataPoints;
+    } else if (contextDataPoints && Array.isArray(contextDataPoints.text)) {
+        dataPointsArray = contextDataPoints.text;
+    } else {
+        return false;
+    }
+
+    // Check if the citation is included in any of the strings within the text array
+    const isValidCitation = dataPointsArray.some(dataPoint => dataPoint.includes(citationCandidate));
+
+    if (!isValidCitation) {
+        return false;
+    }
+
+    return true;
 }
 
-export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
+export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
+    const contextDataPoints = answer.context.data_points;
     const citations: string[] = [];
 
     // trim any whitespace from the end of the answer after removing follow-up questions
-    let parsedAnswer = answer.trim();
+    let parsedAnswer = answer.message.content.trim();
 
     // Omit a citation that is still being typed during streaming
     if (isStreaming) {
@@ -42,7 +63,7 @@ export function parseAnswerToHtml(answer: string, isStreaming: boolean, onCitati
         } else {
             let citationIndex: number;
 
-            if (!isValidCitation(part)) {
+            if (!isCitationValid(contextDataPoints, part)) {
                 return `[${part}]`;
             }
 
