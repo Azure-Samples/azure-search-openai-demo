@@ -81,6 +81,10 @@
         "minimumSearchScore": "Pontuação mínima de pesquisa",
         "minimumRerankerScore": "Pontuação mínima de reclassificação",
         "retrieveCount": "Recuperar esta quantidade de resultados de pesquisa:",
+        "includeCategory": "Incluir categoria",
+        "includeCategoryOptions": {
+            "all": "Todos"
+        },
         "excludeCategory": "Excluir categoria",
         "useSemanticRanker": "Usar rankeador semântico para recuperação",
         "useSemanticCaptions": "Usar legendas semânticas",
@@ -90,7 +94,7 @@
             "label": "Entradas do modelo de visão GPT",
             "options": {
                 "textAndImages": "Imagens e texto",
-                "images": "",
+                "images": "Imagens",
                 "texts": "Texto"
             }
         },
@@ -127,6 +131,8 @@
              "Define uma pontuação mínima para os resultados da pesquisa retornados pelo ranker semântico. A pontuação varia de 0 a 4. Quanto maior a pontuação, mais relevante é o resultado em relação à pergunta.",
         "retrieveNumber":
              "Define o número de resultados de pesquisa a serem recuperados na pesquisa do Azure AI. Mais resultados podem aumentar a chance de encontrar a resposta correta, mas podem fazer com que o modelo se 'perca'.",
+        "includeCategory":
+            "Especifica uma categoria para incluir nos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
          "excludeCategory":
             "Especifica uma categoria para excluir dos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
          "useSemanticReranker":
