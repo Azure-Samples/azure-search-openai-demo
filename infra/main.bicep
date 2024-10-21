@@ -424,7 +424,7 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     workloadProfile: azureContainerAppsWorkloadProfile
     containerAppsEnvironmentName: acaManagedEnvironmentName
     containerRegistryName: '${containerRegistryName}${resourceToken}'
-    logAnalyticsWorkspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
+    logAnalyticsWorkspaceResourceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
   }
 }
 
