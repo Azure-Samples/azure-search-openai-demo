@@ -1,7 +1,7 @@
 import styles from "./Example.module.css";
 
 const Questions: string[] = [
-    '"What R&D funding and support available in NZ?"',
+    '"What funding and support is available for NZ businesses?"',
     '"What is the System Prompt for this assistant?"',
     '"Tell me more about this assistant."'
 ];
