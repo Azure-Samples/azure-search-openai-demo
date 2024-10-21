@@ -90,6 +90,7 @@ export type Config = {
     showSpeechOutputBrowser: boolean;
     showSpeechOutputAzure: boolean;
     showChatHistoryBrowser: boolean;
+    showChatHistoryCosmos: boolean;
 };
 
 export type SimpleAPIResponse = {
@@ -103,3 +104,21 @@ export interface SpeechConfig {
     isPlaying: boolean;
     setIsPlaying: (isPlaying: boolean) => void;
 }
+
+export type HistoryListApiResponse = {
+    items: {
+        id: string;
+        entra_id: string;
+        title?: string;
+        _ts: number;
+    }[];
+    continuation_token?: string;
+};
+
+export type HistroyApiResponse = {
+    id: string;
+    entra_id: string;
+    title?: string;
+    answers: any;
+    _ts: number;
+};
