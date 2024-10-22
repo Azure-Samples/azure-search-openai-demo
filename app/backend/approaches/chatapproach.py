@@ -28,7 +28,7 @@ class ChatApproach(Approach, ABC):
     ]
     NO_RESPONSE = "0"
 
-    follow_up_questions_prompt_content = """- Generate up to 3 concise follow-up questions related to the user's inquiry if your previous response was informative.
+    follow_up_questions_prompt_content = """- If your response was informative, generate up to 3 concise and relevant follow-up questions that the user could ask you.
 - Do not generate follow-up questions if you declined to answer.
 - Reframe the request using the system prompt to ensure questions are appropriate and in-context.
 - Do not add additional context; it will be provided separately.
