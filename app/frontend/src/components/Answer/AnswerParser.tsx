@@ -6,7 +6,7 @@ type HtmlParsedAnswer = {
     citations: string[];
 };
 
-// Function to validate citation format and check if it is a valid citation within the context
+// Function to validate citation format and check if dataPoint starts with possible citation
 function isCitationValid(contextDataPoints: any, citationCandidate: string): boolean {
     const regex = /^[^\s]+\.[a-zA-Z0-9]+/;
     if (!regex.test(citationCandidate)) {
@@ -23,7 +23,6 @@ function isCitationValid(contextDataPoints: any, citationCandidate: string): boo
         return false;
     }
 
-    // Check if dataPoint starts with citation
     const isValidCitation = dataPointsArray.some(dataPoint => dataPoint.startsWith(citationCandidate));
 
     if (!isValidCitation) {
@@ -37,7 +36,7 @@ export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean,
     const contextDataPoints = answer.context.data_points;
     const citations: string[] = [];
 
-    // trim any whitespace from the end of the answer after removing follow-up questions
+    // Trim any whitespace from the end of the answer after removing follow-up questions
     let parsedAnswer = answer.message.content.trim();
 
     // Omit a citation that is still being typed during streaming
