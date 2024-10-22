@@ -23,8 +23,8 @@ function isCitationValid(contextDataPoints: any, citationCandidate: string): boo
         return false;
     }
 
-    // Check if the citation is included in any of the strings within the text array
-    const isValidCitation = dataPointsArray.some(dataPoint => dataPoint.includes(citationCandidate));
+    // Check if dataPoint starts with citation
+    const isValidCitation = dataPointsArray.some(dataPoint => dataPoint.startsWith(citationCandidate));
 
     if (!isValidCitation) {
         return false;
