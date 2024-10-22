@@ -108,7 +108,7 @@ export interface SpeechConfig {
 export type HistoryListApiResponse = {
     items: {
         id: string;
-        entra_id: string;
+        entra_oid: string;
         title?: string;
         _ts: number;
     }[];
@@ -117,7 +117,7 @@ export type HistoryListApiResponse = {
 
 export type HistroyApiResponse = {
     id: string;
-    entra_id: string;
+    entra_oid: string;
     title?: string;
     answers: any;
     _ts: number;
