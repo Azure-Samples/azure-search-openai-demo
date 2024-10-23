@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip } from "@fluentui/react-components";
-import { Send28Filled } from "@fluentui/react-icons";
+import { Send28Filled, Stop24Filled } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 
 import styles from "./QuestionInput.module.css";
@@ -16,9 +16,11 @@ interface Props {
     placeholder?: string;
     clearOnSend?: boolean;
     showSpeechInput?: boolean;
+    onStop?: () => void;
+    isStreaming: boolean;
 }
 
-export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput }: Props) => {
+export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput, isStreaming }: Props) => {
     const [question, setQuestion] = useState<string>("");
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
@@ -87,9 +89,20 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
                 onCompositionEnd={handleCompositionEnd}
             />
             <div className={styles.questionInputButtonsContainer}>
-                <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
-                </Tooltip>
+                {isStreaming ? (
+                    <Tooltip content={t("tooltips.stopStreaming")} relationship="label">
+                        <Button size="large" icon={<Stop24Filled primaryFill="rgba(255, 0, 0, 1)" />} onClick={onStop} />
+                    </Tooltip>
+                ) : (
+                    <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
+                        <Button
+                            size="large"
+                            icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />}
+                            disabled={sendQuestionDisabled}
+                            onClick={sendQuestion}
+                        />
+                    </Tooltip>
+                )}
             </div>
             {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
         </Stack>

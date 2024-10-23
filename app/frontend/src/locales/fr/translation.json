@@ -55,6 +55,7 @@
 
     "tooltips": {
         "submitQuestion": "Soumettre une question",
+        "stopStreaming": "Arrêter la diffusion",
         "askWithVoice": "Poser une question à l'aide de la voix",
         "stopRecording": "Arrêter l'enregistrement de la question",
         "showThoughtProcess": "Montrer le processus de réflexion",

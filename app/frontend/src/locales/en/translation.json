@@ -55,6 +55,7 @@
 
     "tooltips": {
         "submitQuestion": "Submit question",
+        "stopStreaming": "Stop streaming",
         "askWithVoice": "Ask question with voice",
         "stopRecording": "Stop recording question",
         "showThoughtProcess": "Show thought process",
