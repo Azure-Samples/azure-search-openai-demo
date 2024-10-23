@@ -43,8 +43,7 @@ export const Answer = ({
     showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
-    const messageContent = answer.message.content;
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(messageContent, isStreaming, onCitationClicked), [answer]);
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer]);
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
 
