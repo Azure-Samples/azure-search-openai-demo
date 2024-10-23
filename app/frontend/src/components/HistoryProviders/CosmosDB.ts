@@ -25,8 +25,8 @@ export class CosmosDBProvider implements IHistoryProvider {
             }
             return response.items.map(item => ({
                 id: item.id,
-                title: item.title || "untitled",
-                timestamp: item._ts * 1000
+                title: item.title,
+                timestamp: item.timestamp
             }));
         } catch (e) {
             console.error(e);

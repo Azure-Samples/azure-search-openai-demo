@@ -109,8 +109,8 @@ export type HistoryListApiResponse = {
     items: {
         id: string;
         entra_oid: string;
-        title?: string;
-        _ts: number;
+        title: string;
+        timestamp: number;
     }[];
     continuation_token?: string;
 };
@@ -118,7 +118,7 @@ export type HistoryListApiResponse = {
 export type HistroyApiResponse = {
     id: string;
     entra_oid: string;
-    title?: string;
+    title: string;
     answers: any;
-    _ts: number;
+    timestamp: number;
 };

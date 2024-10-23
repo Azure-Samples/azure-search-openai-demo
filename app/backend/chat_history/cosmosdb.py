@@ -1,4 +1,5 @@
 import os
+import time
 from typing import Any, Dict, Union, cast
 
 from azure.cosmos.aio import ContainerProxy, CosmosClient
@@ -36,8 +37,11 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
         id = request_json.get("id")
         answers = request_json.get("answers")
         title = answers[0][0][:50] + "..." if len(answers[0][0]) > 50 else answers[0][0]
+        timestamp = int(time.time() * 1000)
 
-        await container.upsert_item({"id": id, "entra_oid": entra_oid, "title": title, "answers": answers})
+        await container.upsert_item(
+            {"id": id, "entra_oid": entra_oid, "title": title, "answers": answers, "timestamp": timestamp}
+        )
 
         return jsonify({}), 201
     except Exception as error:
@@ -64,7 +68,7 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
         continuation_token = request_json.get("continuation_token")
 
         res = container.query_items(
-            query="SELECT c.id, c.entra_oid, c.title, c._ts FROM c WHERE c.entra_oid = @entra_oid ORDER BY c._ts DESC",
+            query="SELECT c.id, c.entra_oid, c.title, c.timestamp FROM c WHERE c.entra_oid = @entra_oid ORDER BY c.timestamp DESC",
             parameters=[dict(name="@entra_oid", value=entra_oid)],
             max_item_count=count,
         )
@@ -79,7 +83,14 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
 
             items = []
             async for item in page:
-                items.append(item)
+                items.append(
+                    {
+                        "id": item.get("id"),
+                        "entra_oid": item.get("entra_oid"),
+                        "title": item.get("title", "untitled"),
+                        "timestamp": item.get("timestamp"),
+                    }
+                )
 
         # If there are no page, StopAsyncIteration is raised
         except StopAsyncIteration:
@@ -111,7 +122,18 @@ async def get_chat_history_session(path: str, auth_claims: Dict[str, Any]):
 
     try:
         res = await container.read_item(item=path, partition_key=entra_oid)
-        return jsonify(res), 200
+        return (
+            jsonify(
+                {
+                    "id": res.get("id"),
+                    "entra_oid": res.get("entra_oid"),
+                    "title": res.get("title", "untitled"),
+                    "timestamp": res.get("timestamp"),
+                    "answers": res.get("answers", []),
+                }
+            ),
+            200,
+        )
     except Exception as error:
         return error_response(error, f"/chat_history/items/{path}")
 
