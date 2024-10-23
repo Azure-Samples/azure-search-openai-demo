@@ -71,6 +71,14 @@ However, if your goal is to minimize costs while prototyping your application, f
       azd env set USE_LOCAL_HTML_PARSER true
       ```
 
+1. Use the free tier of Azure Cosmos DB:
+
+    ```shell
+    azd env set AZURE_COSMOSDB_SKU free
+    ```
+
+    Limitation: You can have only one free Cosmos DB account. To keep your account free of charge, ensure that you do not exceed the free tier limits. For more information, see the [Azure Cosmos DB lifetime free tier](https://learn.microsoft.com/azure/cosmos-db/free-tier).
+
 1. Turn off Azure Monitor (Application Insights):
 
     ```shell

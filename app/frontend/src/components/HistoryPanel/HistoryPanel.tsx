@@ -1,4 +1,6 @@
-import { Panel, PanelType } from "@fluentui/react";
+import { useMsal } from "@azure/msal-react";
+import { getToken, useLogin } from "../../authConfig";
+import { Panel, PanelType, Spinner } from "@fluentui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HistoryData, HistoryItem } from "../HistoryItem";
 import { Answers, HistoryProviderOptions } from "../HistoryProviders/IProvider";
@@ -26,6 +28,8 @@ export const HistoryPanel = ({
     const [isLoading, setIsLoading] = useState(false);
     const [hasMoreHistory, setHasMoreHistory] = useState(false);
 
+    const client = useLogin ? useMsal().instance : undefined;
+
     useEffect(() => {
         if (!isOpen) return;
         if (notify) {
@@ -37,7 +41,8 @@ export const HistoryPanel = ({
 
     const loadMoreHistory = async () => {
         setIsLoading(() => true);
-        const items = await historyManager.getNextItems(HISTORY_COUNT_PER_LOAD);
+        const token = client ? await getToken(client) : undefined;
+        const items = await historyManager.getNextItems(HISTORY_COUNT_PER_LOAD, token);
         if (items.length === 0) {
             setHasMoreHistory(false);
         }
@@ -46,14 +51,16 @@ export const HistoryPanel = ({
     };
 
     const handleSelect = async (id: string) => {
-        const item = await historyManager.getItem(id);
+        const token = client ? await getToken(client) : undefined;
+        const item = await historyManager.getItem(id, token);
         if (item) {
             onChatSelected(item);
         }
     };
 
     const handleDelete = async (id: string) => {
-        await historyManager.deleteItem(id);
+        const token = client ? await getToken(client) : undefined;
+        await historyManager.deleteItem(id, token);
         setHistory(prevHistory => prevHistory.filter(item => item.id !== id));
     };
 
@@ -85,7 +92,8 @@ export const HistoryPanel = ({
                         ))}
                     </div>
                 ))}
-                {history.length === 0 && <p>{t("history.noHistory")}</p>}
+                {isLoading && <Spinner style={{ marginTop: "10px" }} />}
+                {history.length === 0 && !isLoading && <p>{t("history.noHistory")}</p>}
                 {hasMoreHistory && !isLoading && <InfiniteLoadingButton func={loadMoreHistory} />}
             </div>
         </Panel>
