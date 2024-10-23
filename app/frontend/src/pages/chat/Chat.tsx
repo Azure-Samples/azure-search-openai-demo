@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps } from "@fluentui/react";
+import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxProps, Dropdown, IDropdownOption, IDropdownProps } from "@fluentui/react";
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
@@ -53,6 +53,7 @@ const Chat = () => {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
+    const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
     const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding]);
@@ -184,6 +185,7 @@ const Chat = () => {
                 context: {
                     overrides: {
                         prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
+                        include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         temperature: temperature,
@@ -291,6 +293,10 @@ const Chat = () => {
         setShouldStream(!!checked);
     };
 
+    const onIncludeCategoryChanged = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => {
+        setIncludeCategory((option?.key as string) || "");
+    };
+
     const onExcludeCategoryChanged = (_ev?: React.FormEvent, newValue?: string) => {
         setExcludeCategory(newValue || "");
     };
@@ -345,6 +351,8 @@ const Chat = () => {
     const rerankerScoreFieldId = useId("rerankerScoreField");
     const retrieveCountId = useId("retrieveCount");
     const retrieveCountFieldId = useId("retrieveCountField");
+    const includeCategoryId = useId("includeCategory");
+    const includeCategoryFieldId = useId("includeCategoryField");
     const excludeCategoryId = useId("excludeCategory");
     const excludeCategoryFieldId = useId("excludeCategoryField");
     const semanticRankerId = useId("semanticRanker");
@@ -602,6 +610,30 @@ const Chat = () => {
                                 labelId={retrieveCountId}
                                 fieldId={retrieveCountFieldId}
                                 helpText={t("helpTexts.retrieveNumber")}
+                                label={props?.label}
+                            />
+                        )}
+                    />
+
+                    <Dropdown
+                        id={includeCategoryFieldId}
+                        className={styles.chatSettingsSeparator}
+                        label={t("labels.includeCategory")}
+                        selectedKey={includeCategory}
+                        onChange={onIncludeCategoryChanged}
+                        aria-labelledby={includeCategoryId}
+                        options={[
+                            { key: "", text: t("labels.includeCategoryOptions.all") }
+                            // You can add a category key here for ingested data like below:
+                            // { key: 'categoryName', text: 'Meaningful Category Name' }
+                            // Alternatively, display the key to guide the user on what to type
+                            // in the "Exclude category" field (e.g., 'Meaningful Category Name(categoryName)').
+                        ]}
+                        onRenderLabel={(props: IDropdownProps | undefined) => (
+                            <HelpCallout
+                                labelId={includeCategoryId}
+                                fieldId={includeCategoryFieldId}
+                                helpText={t("helpTexts.includeCategory")}
                                 label={props?.label}
                             />
                         )}

@@ -5,6 +5,7 @@ This guide provides more details for using the `prepdocs` script to index docume
 - [Supported document formats](#supported-document-formats)
 - [Overview of the manual indexing process](#overview-of-the-manual-indexing-process)
   - [Chunking](#chunking)
+  - [Categorizing data for enhanced search](#enhancing-search-functionality-with-data-categorization)
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Overview of Integrated Vectorization](#overview-of-integrated-vectorization)
@@ -40,6 +41,12 @@ The script uses the following steps to index documents:
 2. Upload the PDFs to Azure Blob Storage.
 3. Split the PDFs into chunks of text.
 4. Upload the chunks to Azure AI Search. If using vectors (the default), also compute the embeddings and upload those alongside the text.
+
+### Enhancing search functionality with data categorization
+
+To enhance search functionality, categorize data during the ingestion process with the `--category` argument, for example `scripts/prepdocs.ps1 --category ExampleCategoryName`. This argument specifies the category to which the data belongs, enabling you to filter search results based on these categories.
+
+After running the script with the desired category, ensure these categories are added to the 'Include Category' dropdown list. This can be found in the developer settings of [`Chat.tsx`](../app/frontend/src/pages/chat/Chat.tsx) and [`Ask.tsx`](../app/frontend/src/pages/ask/Ask.tsx). The default option for this dropdown is "All". By including specific categories, you can refine your search results more effectively.
 
 ### Chunking
 

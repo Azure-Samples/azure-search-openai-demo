@@ -80,7 +80,11 @@
         "seed": "Seed",
         "minimumSearchScore": "Puntaje mínimo de búsqueda",
         "minimumRerankerScore": "Puntaje mínimo de re-clasificación",
-        "retrieveCount": "Obtén éste número resultados de búsqueda:",
+        "retrieveCount": "Obtén éste número de resultados de la búsqueda:",
+        "includeCategory": "Incluir categoría",
+        "includeCategoryOptions": {
+            "all": "Todas"
+        },
         "excludeCategory": "Excluir categoría",
         "useSemanticRanker": "Usar clasificador semántico para la recuperación",
         "useSemanticCaptions": "Usar subtítulos semánticos",
@@ -128,6 +132,8 @@
             "Establece una puntuación mínima para los resultados de búsqueda que vuelven del re-clasificador semántico. La puntuación siempre varía entre 0-4. Cuanto mayor es la puntuación, más relevante es semánticamente el resultado a la pregunta.",
         "retrieveNumber":
             "Establece el número de resultados de búsqueda para recuperar de Azure AI search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero pueden provocar que el modelo se 'pierda en el medio'.",
+        "includeCategory":
+            "Especifica una categoría para incluir en los resultados de la búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
         "excludeCategory":
             "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
         "useSemanticReranker":

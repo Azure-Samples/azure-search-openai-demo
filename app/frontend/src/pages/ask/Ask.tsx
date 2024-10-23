@@ -1,7 +1,18 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import { Checkbox, Panel, DefaultButton, Spinner, TextField, ICheckboxProps, ITextFieldProps } from "@fluentui/react";
+import {
+    Checkbox,
+    Panel,
+    DefaultButton,
+    Spinner,
+    TextField,
+    ICheckboxProps,
+    ITextFieldProps,
+    Dropdown,
+    IDropdownOption,
+    IDropdownProps
+} from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 
 import styles from "./Ask.module.css";
@@ -38,6 +49,7 @@ export function Component(): JSX.Element {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
+    const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [question, setQuestion] = useState<string>("");
     const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding, VectorFieldOptions.ImageEmbedding]);
@@ -120,6 +132,7 @@ export function Component(): JSX.Element {
                         prompt_template: promptTemplate.length === 0 ? undefined : promptTemplate,
                         prompt_template_prefix: promptTemplatePrefix.length === 0 ? undefined : promptTemplatePrefix,
                         prompt_template_suffix: promptTemplateSuffix.length === 0 ? undefined : promptTemplateSuffix,
+                        include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         temperature: temperature,
@@ -181,6 +194,10 @@ export function Component(): JSX.Element {
         setUseSemanticCaptions(!!checked);
     };
 
+    const onIncludeCategoryChanged = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => {
+        setIncludeCategory((option?.key as string) || "");
+    };
+
     const onExcludeCategoryChanged = (_ev?: React.FormEvent, newValue?: string) => {
         setExcludeCategory(newValue || "");
     };
@@ -228,6 +245,8 @@ export function Component(): JSX.Element {
     const rerankerScoreFieldId = useId("rerankerScoreField");
     const retrieveCountId = useId("retrieveCount");
     const retrieveCountFieldId = useId("retrieveCountField");
+    const includeCategoryId = useId("includeCategory");
+    const includeCategoryFieldId = useId("includeCategoryField");
     const excludeCategoryId = useId("excludeCategory");
     const excludeCategoryFieldId = useId("excludeCategoryField");
     const semanticRankerId = useId("semanticRanker");
@@ -404,6 +423,24 @@ export function Component(): JSX.Element {
                     aria-labelledby={retrieveCountId}
                     onRenderLabel={(props: ITextFieldProps | undefined) => (
                         <HelpCallout labelId={retrieveCountId} fieldId={retrieveCountFieldId} helpText={t("helpTexts.retrieveNumber")} label={props?.label} />
+                    )}
+                />
+
+                <Dropdown
+                    id={includeCategoryFieldId}
+                    className={styles.chatSettingsSeparator}
+                    label={t("labels.includeCategory")}
+                    selectedKey={includeCategory}
+                    onChange={onIncludeCategoryChanged}
+                    aria-labelledby={includeCategoryId}
+                    options={[{ key: "", text: t("labels.includeCategoryOptions.all") }]}
+                    onRenderLabel={(props: IDropdownProps | undefined) => (
+                        <HelpCallout
+                            labelId={includeCategoryId}
+                            fieldId={includeCategoryFieldId}
+                            helpText={t("helpTexts.includeCategory")}
+                            label={props?.label}
+                        />
                     )}
                 />
 
