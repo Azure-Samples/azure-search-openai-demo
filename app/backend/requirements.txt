@@ -350,7 +350,7 @@ python-dateutil==2.9.0.post0
     #   time-machine
 python-dotenv==1.0.1
     # via -r requirements.in
-quart==0.19.6
+quart==0.19.7
     # via
     #   -r requirements.in
     #   quart-cors
@@ -403,6 +403,7 @@ typing-extensions==4.12.2
     #   azure-ai-documentintelligence
     #   azure-core
     #   azure-identity
+    #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
     #   openai
