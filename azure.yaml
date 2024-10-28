@@ -8,10 +8,11 @@ services:
     project: ./app/backend
     language: py
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
-    # host: containerapp
-    # docker:
-    #  remoteBuild: true
-    host: appservice
+    host: containerapp
+    docker:
+      remoteBuild: true
+    # Please check docs/azure_app_service.md for more information on how to deploy to Azure App Service
+    # host: appservice
     hooks:
       # This hook is called when App Service is the host
       prepackage:

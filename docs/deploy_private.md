@@ -1,6 +1,8 @@
 
 # Deploying with private access
 
+⚠️ This feature is not yet compatible with Azure Container Apps, so you will need to [deploy to Azure App Service](./azure_app_service.md) instead.
+
 If you want to disable public access when deploying the Chat App, you can do so by setting `azd` environment values.
 
 ## Before you begin
