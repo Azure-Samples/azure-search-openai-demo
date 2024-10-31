@@ -8,7 +8,7 @@ type HtmlParsedAnswer = {
 
 // Function to validate citation format and check if dataPoint starts with possible citation
 function isCitationValid(contextDataPoints: any, citationCandidate: string): boolean {
-    const regex = /^[^\s]+\.[a-zA-Z0-9]+/;
+    const regex = /.+\.\w{1,}(?:#\S*)?$/;
     if (!regex.test(citationCandidate)) {
         return false;
     }
@@ -23,13 +23,11 @@ function isCitationValid(contextDataPoints: any, citationCandidate: string): boo
         return false;
     }
 
-    const isValidCitation = dataPointsArray.some(dataPoint => dataPoint.startsWith(citationCandidate));
+    const isValidCitation = dataPointsArray.some(dataPoint => {
+        return dataPoint.startsWith(citationCandidate);
+    });
 
-    if (!isValidCitation) {
-        return false;
-    }
-
-    return true;
+    return isValidCitation;
 }
 
 export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
