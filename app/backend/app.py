@@ -573,7 +573,8 @@ async def setup_clients():
         current_app.config[CONFIG_CREDENTIAL] = azure_credential
 
     if OPENAI_HOST.startswith("azure"):
-        api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
+        # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
         if OPENAI_HOST == "azure_custom":
             current_app.logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
             if not AZURE_OPENAI_CUSTOM_URL:

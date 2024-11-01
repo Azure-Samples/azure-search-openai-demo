@@ -275,6 +275,7 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
         open_ai_deployment="x",
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        open_ai_api_version="test-api-version",
         credential=AzureKeyCredential("test"),
         disable_batch=True,
     )

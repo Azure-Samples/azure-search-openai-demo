@@ -163,6 +163,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_deployment: Union[str, None],
         open_ai_model_name: str,
         open_ai_dimensions: int,
+        open_ai_api_version: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         open_ai_custom_url: Union[str, None] = None,
         disable_batch: bool = False,
@@ -176,6 +177,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         else:
             raise ValueError("Either open_ai_service or open_ai_custom_url must be provided")
         self.open_ai_deployment = open_ai_deployment
+        self.open_ai_api_version = open_ai_api_version
         self.credential = credential
 
     async def create_client(self) -> AsyncOpenAI:
@@ -196,7 +198,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         return AsyncAzureOpenAI(
             azure_endpoint=self.open_ai_endpoint,
             azure_deployment=self.open_ai_deployment,
-            api_version="2023-05-15",
+            api_version=self.open_ai_api_version,
             **auth_args,
         )
 
