@@ -57,6 +57,7 @@ param speechServiceResourceGroupName string = ''
 param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
+param speechServiceVoice string = ''
 param useGPT4V bool = false
 
 @description('Location for the OpenAI resource group')
@@ -325,6 +326,7 @@ var appEnvVariables = {
     : ''
   AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
   AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
+  AZURE_SPEECH_SERVICE_VOICE: useSpeechOutputAzure ? speechServiceVoice : ''
   ENABLE_LANGUAGE_PICKER: enableLanguagePicker
   USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
