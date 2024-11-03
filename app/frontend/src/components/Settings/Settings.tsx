@@ -67,7 +67,6 @@ export const Settings = ({
     requireAccessControl,
     className,
     onChange,
-    // Add new parameters
     shouldStream,
     useSuggestFollowupQuestions,
     promptTemplatePrefix,
@@ -101,7 +100,6 @@ export const Settings = ({
     const useOidSecurityFilterFieldId = useId("useOidSecurityFilterField");
     const useGroupsSecurityFilterId = useId("useGroupsSecurityFilter");
     const useGroupsSecurityFilterFieldId = useId("useGroupsSecurityFilterField");
-    // Add new field IDs
     const shouldStreamId = useId("shouldStream");
     const shouldStreamFieldId = useId("shouldStreamField");
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
@@ -286,7 +284,7 @@ export const Settings = ({
                 />
             )}
 
-            {/* Add optional streaming checkbox for Chat */}
+            {/* Streaming checkbox for Chat */}
             {shouldStream !== undefined && (
                 <Checkbox
                     id={shouldStreamFieldId}
@@ -299,7 +297,7 @@ export const Settings = ({
                 />
             )}
 
-            {/* Add optional followup questions checkbox for Chat */}
+            {/* Followup questions checkbox for Chat */}
             {showSuggestFollowupQuestions && (
                 <Checkbox
                     id={suggestFollowupQuestionsFieldId}
