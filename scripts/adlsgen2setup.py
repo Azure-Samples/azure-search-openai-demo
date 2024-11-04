@@ -181,7 +181,7 @@ class AdlsGen2Setup:
         # if there is a file called .md5 in this directory, see if its updated
         stored_hash = None
         hash_path = f"{path}.md5"
-        os.path.exists(hash_path):
+        if os.path.exists(hash_path):
             with open(hash_path, encoding="utf-8") as md5_f:
                 stored_hash = md5_f.read()
 
