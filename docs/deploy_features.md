@@ -1,5 +1,5 @@
 
-# Enabling optional features
+# RAG chat: Enabling optional features
 
 This document covers optional features that can be enabled in the deployed Azure resources.
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).

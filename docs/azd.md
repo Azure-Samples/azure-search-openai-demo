@@ -1,4 +1,4 @@
-# Deploying with the Azure Developer CLI
+# RAG chat: Deploying with the Azure Developer CLI
 
 This guide includes advanced topics that are not necessary for a basic deployment. If you are new to the project, please consult the main [README](../README.md#deploying) for steps on deploying the project.
 
