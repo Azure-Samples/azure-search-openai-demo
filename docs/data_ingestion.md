@@ -14,6 +14,7 @@ The chat app provides two ways to ingest data: manual indexing and integrated ve
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
+- [Debugging tips](#debugging-tips)
 
 ## Manual indexing process
 
@@ -101,3 +102,30 @@ The Azure AI Search indexer will take care of removing those documents from the 
 ### Scheduled indexing
 
 If you would like the indexer to run automatically, you can set it up to [run on a schedule](https://learn.microsoft.com/azure/search/search-howto-schedule-indexers).
+
+## Debugging tips
+
+If you are not sure if a file successfully uploaded, you can query the index from the Azure Portal or from the REST API. Open the index and paste the queries below into the search bar.
+
+To see all the filenames uploaded to the index:
+
+```json
+{
+  "search": "*",
+  "count": true,
+  "top": 1,
+  "facets": ["sourcefile"]
+}
+```
+
+To search for specific filenames:
+
+```json
+{
+  "search": "*",
+  "count": true,
+  "top": 1,
+  "filter": "sourcefile eq '209884Orig1s000RiskR.pdf'",
+  "facets": ["sourcefile"]
+}
+```
