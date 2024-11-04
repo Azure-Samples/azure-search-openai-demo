@@ -4,8 +4,8 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
 
 The chat app provides two ways to ingest data: manual indexing and integrated vectorization. This document explains the differences between the two approaches and provides an overview of the manual indexing process.
 
+- [Supported document formats](#supported-document-formats)
 - [Manual indexing process](#manual-indexing-process)
-  - [Supported document formats](#supported-document-formats)
   - [Chunking](#chunking)
   - [Categorizing data for enhanced search](#enhancing-search-functionality-with-data-categorization)
   - [Indexing additional documents](#indexing-additional-documents)
@@ -15,6 +15,22 @@ The chat app provides two ways to ingest data: manual indexing and integrated ve
   - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
 - [Debugging tips](#debugging-tips)
+
+## Supported document formats
+
+In order to ingest a document format, we need a tool that can turn it into text. By default, the manual indexing uses Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
+
+| Format | Manual indexing                      | Integrated Vectorization |
+| ------ | ------------------------------------ | ------------------------ |
+| PDF    | Yes (DI or local with PyPDF)         | Yes                      |
+| HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
+| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
+| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
+| TXT    | Yes (Local)                          | Yes                      |
+| JSON   | Yes (Local)                          | Yes                      |
+| CSV    | Yes (Local)                          | Yes                      |
+
+The Blob indexer used by the Integrated Vectorization approach also supports a few [additional formats](https://learn.microsoft.com/azure/search/search-howto-indexing-azure-blob-storage#supported-document-formats).
 
 ## Manual indexing process
 
@@ -28,22 +44,6 @@ The script uses the following steps to index documents:
 2. Upload the PDFs to Azure Blob Storage.
 3. Split the PDFs into chunks of text.
 4. Upload the chunks to Azure AI Search. If using vectors (the default), also compute the embeddings and upload those alongside the text.
-
-### Supported document formats
-
-In order to ingest a document format, we need a tool that can turn it into text. By default, use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
-
-| Format | Manual indexing                      | Integrated Vectorization |
-| ------ | ------------------------------------ | ------------------------ |
-| PDF    | Yes (DI or local with PyPDF)         | Yes                      |
-| HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
-| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
-| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
-| TXT    | Yes (Local)                          | Yes                      |
-| JSON   | Yes (Local)                          | Yes                      |
-| CSV    | Yes (Local)                          | Yes                      |
-
-The Blob indexer used by the Integrated Vectorization approach also supports a few [additional formats](https://learn.microsoft.com/azure/search/search-howto-indexing-azure-blob-storage#supported-document-formats).
 
 ### Chunking
 
