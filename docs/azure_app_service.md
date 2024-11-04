@@ -3,7 +3,7 @@
 Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of the Azure Developer CLI (`azd`), there can be only one host option in the [azure.yaml](../azure.yaml) file.
 By default, `host: containerapp` is used and `host: appservice` is commented out.
 
-To deploy to Azure Container Apps, please follow the following steps:
+To deploy to Azure App Service, please follow the following steps:
 
 1. Comment out `host: containerapp` and uncomment `host: appservice` in the [azure.yaml](../azure.yaml) file.
 
