@@ -81,9 +81,9 @@ You should now be able to use the "Ask" tab.
 
 ⚠️ Limitations:
 
-- The "Chat" tab will only work if the local language model supports function calling.
-- Your search mode must be text only (no vectors), since the search index is only populated with OpenAI-generated embeddings, and the local OpenAI host can't generate those.
-- The conversation history will be truncated using the GPT tokenizers, which may not be the same as the local model's tokenizer, so if you have a long conversation, you may end up with token limit errors.
+* The "Chat" tab will only work if the local language model supports function calling.
+* Your search mode must be text only (no vectors), since the search index is only populated with OpenAI-generated embeddings, and the local OpenAI host can't generate those.
+* The conversation history will be truncated using the GPT tokenizers, which may not be the same as the local model's tokenizer, so if you have a long conversation, you may end up with token limit errors.
 
 > [!NOTE]
 > You must set `OPENAI_HOST` back to a non-local value ("azure", "azure_custom", or "openai")
