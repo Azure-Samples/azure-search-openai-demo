@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Quart",
+            "name": "Backend (Python)",
             "type": "debugpy",
             "request": "launch",
             "module": "quart",
@@ -22,18 +22,17 @@
                 "-p 50505"
             ],
             "console": "integratedTerminal",
-            "justMyCode": false,
-            "envFile": "${input:dotEnvFilePath}",
+            "justMyCode": false
         },
         {
-            "name": "Frontend: watch",
+            "name": "Frontend",
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}/app/frontend",
         },
         {
-            "name": "Python: Debug Tests",
+            "name": "Tests (Python)",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
@@ -42,11 +41,11 @@
             "justMyCode": false
           }
     ],
-    "inputs": [
+    "compounds": [
         {
-            "id": "dotEnvFilePath",
-            "type": "command",
-            "command": "azure-dev.commands.getDotEnvFilePath"
+          "name": "Frontend & Backend",
+          "configurations": ["Backend (Python)", "Frontend"],
+          "stopAll": true
         }
     ]
 }
