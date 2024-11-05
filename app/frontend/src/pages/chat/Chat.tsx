@@ -49,7 +49,7 @@ const Chat = () => {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
-    const [includeCategory, setIncludeCategory] = useState<string>("All");
+    const [includeCategory, setIncludeCategory] = useState<string>(""); //This is where you set the category that is searched for
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(true);
     const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding]);
