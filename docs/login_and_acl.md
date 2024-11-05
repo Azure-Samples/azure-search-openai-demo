@@ -1,4 +1,25 @@
-# Setting up optional login and document level access control
+<!--
+---
+name: RAG chat with document security
+description: This guide demonstrates how to add an optional login and document level access control system to a RAG chat app for your domain data. This system can be used to restrict access to indexed data to specific users.
+languages:
+- python
+- typescript
+- bicep
+- azdeveloper
+products:
+- azure-openai
+- azure-cognitive-search
+- azure-app-service
+- azure
+page_type: sample
+urlFragment: azure-search-openai-demo-document-security
+---
+-->
+
+# RAG chat: Setting up optional login and document level access control
+
+The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring login and access control.
 
 ## Table of Contents
 

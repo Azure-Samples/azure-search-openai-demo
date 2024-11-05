@@ -1,4 +1,4 @@
-# Debugging the app on App Service
+# RAG chat: Debugging the app on App Service
 
 When you run `azd up` or `azd deploy`, it deploys your application to App Service,
 and displays the deployed endpoint in the console.

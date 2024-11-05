@@ -420,6 +420,8 @@ async def setup_clients():
     )
     AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
+    # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
+    AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -444,7 +446,7 @@ async def setup_clients():
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
-    AZURE_SPEECH_VOICE = os.getenv("AZURE_SPEECH_VOICE", "en-US-AndrewMultilingualNeural")
+    AZURE_SPEECH_SERVICE_VOICE = os.getenv("AZURE_SPEECH_SERVICE_VOICE") or "en-US-AndrewMultilingualNeural"
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
@@ -547,6 +549,7 @@ async def setup_clients():
             openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
             openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
             openai_dimensions=OPENAI_EMB_DIMENSIONS,
+            openai_api_version=AZURE_OPENAI_API_VERSION,
             openai_key=clean_key_if_exists(OPENAI_API_KEY),
             openai_org=OPENAI_ORGANIZATION,
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
@@ -567,13 +570,12 @@ async def setup_clients():
             raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
         current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
         current_app.config[CONFIG_SPEECH_SERVICE_LOCATION] = AZURE_SPEECH_SERVICE_LOCATION
-        current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_VOICE
+        current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_SERVICE_VOICE
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
         current_app.config[CONFIG_CREDENTIAL] = azure_credential
 
     if OPENAI_HOST.startswith("azure"):
-        api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-03-01-preview"
         if OPENAI_HOST == "azure_custom":
             current_app.logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
             if not AZURE_OPENAI_CUSTOM_URL:
@@ -586,12 +588,14 @@ async def setup_clients():
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
         if api_key := os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"):
             current_app.logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
-            openai_client = AsyncAzureOpenAI(api_version=api_version, azure_endpoint=endpoint, api_key=api_key)
+            openai_client = AsyncAzureOpenAI(
+                api_version=AZURE_OPENAI_API_VERSION, azure_endpoint=endpoint, api_key=api_key
+            )
         else:
             current_app.logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
             token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
             openai_client = AsyncAzureOpenAI(
-                api_version=api_version,
+                api_version=AZURE_OPENAI_API_VERSION,
                 azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
             )
