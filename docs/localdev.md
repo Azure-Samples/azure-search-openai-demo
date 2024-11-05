@@ -1,4 +1,4 @@
-# Local development of Chat App
+# RAG chat: Local development of chat app
 
 You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the steps in [Azure deployment](../README.md#azure-deployment) above.
 
