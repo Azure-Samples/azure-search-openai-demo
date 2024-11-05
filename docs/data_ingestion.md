@@ -125,7 +125,7 @@ To search for specific filenames:
   "search": "*",
   "count": true,
   "top": 1,
-  "filter": "sourcefile eq '209884Orig1s000RiskR.pdf'",
+  "filter": "sourcefile eq 'employee_handbook.pdf'",
   "facets": ["sourcefile"]
 }
 ```
