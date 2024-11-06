@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-import datetime
+from datetime import datetime
 import json
 import logging
 import os
@@ -83,7 +83,7 @@ class AdlsGen2Setup:
                         directories[directory] = directory_client
 
                     logger.info("Uploading scanned files...")
-                    if scandirs and directory != "/":
+                    if scandirs:
                         await self.scan_and_upload_directories(directories, filesystem_client)
 
                     logger.info("Uploading files...")
@@ -122,35 +122,37 @@ class AdlsGen2Setup:
             
             #iterate through the files currently obtained by os.walk() and
             #create the filepath string for that file and add it to the filepath_list list
+            root_found: bool = False
             for file in files:
                 #Checks to see if the root is '.' and changes it to the correct current
-                #working directory by calling os.getcwd(). Otherwise root_path will just be the root variable value.
-                if root == '.':
-                    root_path = os.getcwd() + "/"
+                #working directory by calling os.getcwd(). Otherwise root_path will just be the root variable value.                
+                
+                if not root_found and root == '.':
+                    filepath =os.path.join(os.getcwd() + "/", file)
+                    root_found = True
                 else:
-                    root_path = root
-                
-                filepath = os.path.join(root_path, file)
-                
+                    filepath = os.path.join(root, file)
+               
                 #Appends filepath to filepath_list if filepath does not currently exist in filepath_list
                 if filepath not in filepath_list:
-                    filepath_list.append(filepath)
+                    filepath_list.append(filepath)               
                     
         #Return filepath_list        
         return filepath_list
 
     async def scan_and_upload_directories(self, directories: dict[str, DataLakeDirectoryClient], filesystem_client):
         logger.info("Scanning and uploading files from directories recursively...")
+        
         for directory, directory_client in directories.items():
             directory_path = os.path.join(self.data_directory, directory)
+            if directory == "/":
+                continue
             
-             # Überprüfen, ob 'scandir' existiert und auf False gesetzt ist
+             # Check if 'scandir' exists and is set to False
             if not self.data_access_control_format["directories"][directory].get("scandir", True):
                 logger.info(f"Skipping directory {directory} as 'scandir' is set to False")
                 continue
             
-            groups = self.data_access_control_format["directories"][directory].get("groups", [])
-
             # Check if the directory exists before walking it
             if not os.path.exists(directory_path):
                 logger.warning(f"Directory does not exist: {directory_path}")
@@ -161,7 +163,7 @@ class AdlsGen2Setup:
 
             # Upload each file collected
             for file_path in file_paths:
-                await self.upload_file(directory_client, file_path)
+                await self.upload_file(directory_client, file_path, directory)
                 logger.info(f"Uploaded {file_path} to {directory}")
 
     def create_service_client(self):
@@ -195,7 +197,7 @@ class AdlsGen2Setup:
 
         return False
 
-    async def upload_file(self, directory_client: DataLakeDirectoryClient, file_path: str, category: str):
+    async def upload_file(self, directory_client: DataLakeDirectoryClient, file_path: str, category: str = ""):
         # Calculate MD5 hash once
         md5_hash = await self.calc_md5(file_path)
 
@@ -207,7 +209,8 @@ class AdlsGen2Setup:
         # Proceed with the upload since the file has changed
         with open(file=file_path, mode="rb") as f:
             file_client = directory_client.get_file_client(file=os.path.basename(file_path))
-            last_modified = datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat()
+            tmtime = os.path.getmtime(file_path)
+            last_modified = datetime.fromtimestamp(tmtime).isoformat()
             title = os.path.splitext(os.path.basename(file_path))[0]
             metadata = {
                 "md5": md5_hash,
