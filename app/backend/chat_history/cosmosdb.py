@@ -24,7 +24,7 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 405
 
-    container = cast(ContainerProxy, current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER])
+    container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
         return jsonify({"error": "Chat history not enabled"}), 405
 
@@ -193,6 +193,6 @@ async def setup_clients():
 
 @chat_history_cosmosdb_bp.after_app_serving
 async def close_clients():
-    cosmos_client = cast(CosmosClient, current_app.config.get(CONFIG_COSMOS_HISTORY_CLIENT))
+    cosmos_client: CosmosClient = current_app.config.get(CONFIG_COSMOS_HISTORY_CLIENT)
     if cosmos_client:
         await cosmos_client.close()
