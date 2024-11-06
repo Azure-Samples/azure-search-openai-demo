@@ -18,7 +18,9 @@ from azure.storage.filedatalake.aio import (
 from load_azd_env import load_azd_env
 
 logger = logging.getLogger("scripts")
-
+# Set the logging level for the azure package to DEBUG
+logging.getLogger("azure").setLevel(logging.DEBUG)
+logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.DEBUG)
 
 class AdlsGen2Setup:
     """
@@ -162,9 +164,12 @@ class AdlsGen2Setup:
             file_paths = await self.walk_files(directory_path)
 
             # Upload each file collected
+            count =0
+            num = len(file_paths)
             for file_path in file_paths:
                 await self.upload_file(directory_client, file_path, directory)
-                logger.info(f"Uploaded {file_path} to {directory}")
+                count=+1
+                logger.info(f"Uploaded [{count}/{num}] {directory}/{file_path}")
 
     def create_service_client(self):
         return DataLakeServiceClient(
@@ -172,54 +177,52 @@ class AdlsGen2Setup:
         )
 
     async def calc_md5(self, path: str) -> str:
+        hash_md5 = hashlib.md5()
         with open(path, "rb") as file:
-            return hashlib.md5(file.read()).hexdigest()
+            for chunk in iter(lambda: file.read(4096), b""):
+                hash_md5.update(chunk)
+        return hash_md5.hexdigest()
 
-    async def check_md5(self, path: str, md5_hash: str) -> bool:
-        # if filename ends in .md5 skip
-        if path.endswith(".md5"):
-            return True
-
-        # if there is a file called .md5 in this directory, see if its updated
-        stored_hash = None
-        hash_path = f"{path}.md5"
-        if os.path.exists(hash_path):
-            with open(hash_path, encoding="utf-8") as md5_f:
-                stored_hash = md5_f.read()
-
-        if stored_hash and stored_hash.strip() == md5_hash.strip():
-            logger.info("Skipping %s, no changes detected.", path)
-            return True
-
-        # Write the hash
-        with open(hash_path, "w", encoding="utf-8") as md5_f:
-            md5_f.write(md5_hash)
-
-        return False
-
+    async def get_blob_md5(self, directory_client: DataLakeDirectoryClient, filename: str) -> Optional[str]:
+        """
+        Retrieves the MD5 checksum from the metadata of the specified blob.
+        """
+        file_client = directory_client.get_file_client(filename)
+        try:
+            properties = await file_client.get_file_properties()
+            return properties.metadata.get('md5')
+        except Exception as e:
+            logger.error(f"Error getting blob properties for {filename}: {e}")
+            return None
+    
     async def upload_file(self, directory_client: DataLakeDirectoryClient, file_path: str, category: str = ""):
         # Calculate MD5 hash once
         md5_hash = await self.calc_md5(file_path)
 
-        # Check if the file has been uploaded or if it has changed
-        if await self.check_md5(file_path, md5_hash):
-            logger.info("File %s has already been uploaded, skipping upload.", file_path)
-            return  # Skip uploading if the MD5 check indicates no changes
+        # Get the filename
+        filename = os.path.basename(file_path)
 
-        # Proceed with the upload since the file has changed
-        with open(file=file_path, mode="rb") as f:
-            file_client = directory_client.get_file_client(file=os.path.basename(file_path))
-            tmtime = os.path.getmtime(file_path)
-            last_modified = datetime.fromtimestamp(tmtime).isoformat()
-            title = os.path.splitext(os.path.basename(file_path))[0]
-            metadata = {
-                "md5": md5_hash,
-                "category": category,
-                "updated": last_modified,
-                "title": title
-            }
-            await file_client.upload_data(f, overwrite=True, metadata=metadata)
-            logger.info("File %s uploaded with metadata %s.", file_path, metadata)
+        # Get the MD5 checksum from the blob metadata
+        blob_md5 = await self.get_blob_md5(directory_client, filename)
+
+        # Upload the file if it does not exist or the checksum differs
+        if blob_md5 is None or md5_hash != blob_md5:
+            with open(file_path, "rb") as f:
+                file_client = directory_client.get_file_client(filename)
+                tmtime = os.path.getmtime(file_path)
+                last_modified = datetime.fromtimestamp(tmtime).isoformat()
+                title = os.path.splitext(filename)[0]
+                metadata = {
+                    "md5": md5_hash,
+                    "category": category,
+                    "updated": last_modified,
+                    "title": title
+                }
+                await file_client.upload_data(f, overwrite=True)
+                await file_client.set_metadata(metadata)
+                logger.info(f"Uploaded and updated metadata for {filename}")
+        else:
+            logger.info(f"No upload needed for {filename}, checksums match")
 
     async def create_or_get_group(self, group_name: str):
         group_id = None
@@ -296,6 +299,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.verbose:
         logging.basicConfig()
-        logging.getLogger().setLevel(logging.INFO)
+        logging.getLogger().setLevel(logging.INFO)        
 
     asyncio.run(main(args))
