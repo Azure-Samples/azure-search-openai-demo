@@ -117,7 +117,7 @@ You can also try changing the ChatCompletion parameters, like temperature, to se
 
 ### Improving Azure AI Search results
 
-If the problem is with Azure AI Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however. Check out this blog post which [evaluates AI search strategies](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid/ba-p/3929167) for a better understanding of the differences.
+If the problem is with Azure AI Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however. Check out this blog post which [evaluates AI search strategies](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167) for a better understanding of the differences.
 
 #### Configuring parameters in the app
 
