@@ -1,4 +1,4 @@
-# Customizing the Chat App
+# RAG chat: Customizing the chat app
 
 This guide provides more details for customizing the Chat App.
 

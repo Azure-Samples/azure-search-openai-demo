@@ -200,6 +200,9 @@
     "speechServiceLocation": {
       "value": "${AZURE_SPEECH_SERVICE_LOCATION}"
     },
+    "speechServiceVoice": {
+      "value": "${AZURE_SPEECH_SERVICE_VOICE}"
+    },
     "useAuthentication": {
       "value": "${AZURE_USE_AUTHENTICATION=false}"
     },
