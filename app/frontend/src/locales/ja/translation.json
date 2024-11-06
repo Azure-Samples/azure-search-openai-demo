@@ -83,7 +83,8 @@
         "retrieveCount": "ここで指定する検索結果数を取得：",
         "includeCategory": "カテゴリを指定",
         "includeCategoryOptions": {
-            "all": "全て"
+            "all": "全て",
+            "none": "无"
         },
         "excludeCategory": "カテゴリを除外",
         "useSemanticRanker": "取得にセマンティック・ランカーを使用",

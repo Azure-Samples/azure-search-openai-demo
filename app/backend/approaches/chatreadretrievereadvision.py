@@ -69,9 +69,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
     def system_message_chat_conversation(self):
         return """
         You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images.
-        Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
-        Each text source starts in a new line and has the file name followed by colon and the actual information
-        Always include the source name from the image or text for each fact you use in the response in the format: [filename]
+        {sources_reference_content}
         Answer the following question using only the data provided in the sources below.
         If asking a clarifying question to the user would help, ask the question.
         Be brief in your answers.
@@ -96,6 +94,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        include_category = overrides.get("include_category")
         filter = self.build_filter(overrides, auth_claims)
 
         vector_fields = overrides.get("vector_fields", ["embedding"])
@@ -107,66 +106,79 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
         past_messages: list[ChatCompletionMessageParam] = messages[:-1]
 
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        user_query_request = "Generate search query for: " + original_user_query
+        sources_content = []
+        content = ""
+        image_list: list[ChatCompletionContentPartImageParam] = []
 
-        query_response_token_limit = 100
-        query_model = self.chatgpt_model
-        query_deployment = self.chatgpt_deployment
-        query_messages = build_messages(
-            model=query_model,
-            system_prompt=self.query_prompt_template,
-            few_shots=self.query_prompt_few_shots,
-            past_messages=past_messages,
-            new_user_content=user_query_request,
-            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
-        )
+        if include_category != "__NONE__":
+            # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
+            user_query_request = "Generate search query for: " + original_user_query
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            model=query_deployment if query_deployment else query_model,
-            messages=query_messages,
-            temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=query_response_token_limit,
-            n=1,
-            seed=seed,
-        )
+            query_response_token_limit = 100
+            query_model = self.chatgpt_model
+            query_deployment = self.chatgpt_deployment
+            query_messages = build_messages(
+                model=query_model,
+                system_prompt=self.query_prompt_template,
+                few_shots=self.query_prompt_few_shots,
+                past_messages=past_messages,
+                new_user_content=user_query_request,
+                max_tokens=self.chatgpt_token_limit - query_response_token_limit,
+            )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+            chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+                model=query_deployment if query_deployment else query_model,
+                messages=query_messages,
+                temperature=0.0,  # Minimize creativity for search query generation
+                max_tokens=query_response_token_limit,
+                n=1,
+                seed=seed,
+            )
 
-        # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
+            query_text = self.get_search_query(chat_completion, original_user_query)
 
-        # If retrieval mode includes vectors, compute an embedding for the query
-        vectors = []
-        if use_vector_search:
-            for field in vector_fields:
-                vector = (
-                    await self.compute_text_embedding(query_text)
-                    if field == "embedding"
-                    else await self.compute_image_embedding(query_text)
-                )
-                vectors.append(vector)
+            # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
-        results = await self.search(
-            top,
-            query_text,
-            filter,
-            vectors,
-            use_text_search,
-            use_vector_search,
-            use_semantic_ranker,
-            use_semantic_captions,
-            minimum_search_score,
-            minimum_reranker_score,
-        )
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
-        content = "\n".join(sources_content)
+            # If retrieval mode includes vectors, compute an embedding for the query
+            vectors = []
+            if use_vector_search:
+                for field in vector_fields:
+                    vector = (
+                        await self.compute_text_embedding(query_text)
+                        if field == "embedding"
+                        else await self.compute_image_embedding(query_text)
+                    )
+                    vectors.append(vector)
+
+            results = await self.search(
+                top,
+                query_text,
+                filter,
+                vectors,
+                use_text_search,
+                use_vector_search,
+                use_semantic_ranker,
+                use_semantic_captions,
+                minimum_search_score,
+                minimum_reranker_score,
+            )
+            sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
+            content = "\n".join(sources_content)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
+        # Additional prompt injected into the masterprompt if RAG is enabled
+        sources_reference_content = """
+        Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
+        Each text source starts in a new line and has the file name followed by colon and the actual information
+        Always include the source name from the image or text for each fact you use in the response in the format: [filename]
+        """ if include_category != "__NONE__" else ""
+        
         # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
         system_message = self.get_system_prompt(
             overrides.get("prompt_template"),
             self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
+            sources_reference_content=sources_reference_content
         )
 
         user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
@@ -198,43 +210,50 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         extra_info = {
             "data_points": data_points,
-            "thoughts": [
-                ThoughtStep(
-                    "Prompt to generate search query",
-                    query_messages,
-                    (
-                        {"model": query_model, "deployment": query_deployment}
-                        if query_deployment
-                        else {"model": query_model}
-                    ),
-                ),
-                ThoughtStep(
-                    "Search using generated search query",
-                    query_text,
-                    {
-                        "use_semantic_captions": use_semantic_captions,
-                        "use_semantic_ranker": use_semantic_ranker,
-                        "top": top,
-                        "filter": filter,
-                        "vector_fields": vector_fields,
-                        "use_text_search": use_text_search,
-                    },
-                ),
-                ThoughtStep(
-                    "Search results",
-                    [result.serialize_for_results() for result in results],
-                ),
-                ThoughtStep(
-                    "Prompt to generate answer",
-                    messages,
-                    (
-                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
-                        if self.gpt4v_deployment
-                        else {"model": self.gpt4v_model}
-                    ),
-                ),
-            ],
+            "thoughts": []
         }
+
+        # Overwrite extra_info with extended version if RAG is enabled
+        if include_category != "__NONE__": 
+            extra_info = {
+                "data_points": data_points,
+                "thoughts": [
+                    ThoughtStep(
+                        "Prompt to generate search query",
+                        query_messages,
+                        (
+                            {"model": query_model, "deployment": query_deployment}
+                            if query_deployment
+                            else {"model": query_model}
+                        ),
+                    ),
+                    ThoughtStep(
+                        "Search using generated search query",
+                        query_text,
+                        {
+                            "use_semantic_captions": use_semantic_captions,
+                            "use_semantic_ranker": use_semantic_ranker,
+                            "top": top,
+                            "filter": filter,
+                            "vector_fields": vector_fields,
+                            "use_text_search": use_text_search,
+                        },
+                    ),
+                    ThoughtStep(
+                        "Search results",
+                        [result.serialize_for_results() for result in results],
+                    ),
+                    ThoughtStep(
+                        "Prompt to generate answer",
+                        messages,
+                        (
+                            {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                            if self.gpt4v_deployment
+                            else {"model": self.gpt4v_model}
+                        ),
+                    ),
+                ],
+            }
 
         chat_coroutine = self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,

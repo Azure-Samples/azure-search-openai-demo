@@ -83,7 +83,8 @@
         "retrieveCount": "Obtén éste número de resultados de la búsqueda:",
         "includeCategory": "Incluir categoría",
         "includeCategoryOptions": {
-            "all": "Todas"
+            "all": "Todas",
+            "none": "Ninguna"
         },
         "excludeCategory": "Excluir categoría",
         "useSemanticRanker": "Usar clasificador semántico para la recuperación",

@@ -11,7 +11,7 @@
         "openChatHistory": "Open chatgeschiedenis",
         "noHistory": "Geen chatgeschiedenis",
         "deleteModalTitle": "Chatgeschiedenis verwijderen",
-        "deleteModalDescription": "Deze actie kan niet ongedaan worden gemaakt. Deze chatgeschiedenis verwijderen?",
+        "deleteModalDescription": "Deze actie kan niet ongedaan worden gemaakt. Wil je deze chatgeschiedenis verwijderen?",
         "deleteLabel": "Verwijderen",
         "cancelLabel": "Annuleren",
         "today": "Vandaag",
@@ -34,11 +34,11 @@
     },
     "developerSettings": "Ontwikkelaarinstellingen",
 
-    "chatEmptyStateTitle": "Chat met je gegevens",
+    "chatEmptyStateTitle": "Chat met je data",
     "chatEmptyStateSubtitle": "Stel een vraag of probeer een voorbeeld",
     "defaultExamples": {
         "1": "Wat zit er in mijn Northwind Health Plus-pakket dat niet in het standaardpakket zit?",
-        "2": "Wat gebeurt er tijdens een functioneringsgesprek?",
+        "2": "Hoe gaat een functioneringsgesprek?",
         "3": "Wat doet een Product Manager?",
         "placeholder": "Typ een nieuwe vraag (bijv. dekt mijn pakket jaarlijkse oogonderzoeken?)"
     },
@@ -83,7 +83,8 @@
         "retrieveCount": "Dit aantal zoekresultaten ophalen:",
         "includeCategory": "Categorie opnemen", 
         "includeCategoryOptions": {
-            "all": "Alle"
+            "all": "Alle",
+            "none": "Geen"
         },
         "excludeCategory": "Categorie uitsluiten",
         "useSemanticRanker": "Semantische rangschikking gebruiken",
@@ -107,7 +108,7 @@
             }
         },
         "vector": {
-            "label": "Vectorvelden (Multi-query vectorzoektocht)",
+            "label": "Vectorvelden (Multi-query vectorsearch)",
             "options": {
                 "embedding": "Tekst Embeddings",
                 "imageEmbedding": "Afbeelding Embeddings",

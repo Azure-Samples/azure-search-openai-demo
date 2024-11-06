@@ -45,17 +45,24 @@ class ChatApproach(Approach, ABC):
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
-    def get_system_prompt(self, override_prompt: Optional[str], follow_up_questions_prompt: str) -> str:
+    def get_system_prompt(self, override_prompt: Optional[str], follow_up_questions_prompt: str, sources_reference_content: str = "") -> str:
         if override_prompt is None:
             return self.system_message_chat_conversation.format(
-                injected_prompt="", follow_up_questions_prompt=follow_up_questions_prompt
+                injected_prompt="",
+                follow_up_questions_prompt=follow_up_questions_prompt,
+                sources_reference_content=sources_reference_content
             )
         elif override_prompt.startswith(">>>"):
             return self.system_message_chat_conversation.format(
-                injected_prompt=override_prompt[3:] + "\n", follow_up_questions_prompt=follow_up_questions_prompt
+                injected_prompt=override_prompt[3:] + "\n",
+                follow_up_questions_prompt=follow_up_questions_prompt,
+                sources_reference_content=sources_reference_content
             )
         else:
-            return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt)
+            return override_prompt.format(
+                follow_up_questions_prompt=follow_up_questions_prompt,
+                sources_reference_content=sources_reference_content
+            )
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message

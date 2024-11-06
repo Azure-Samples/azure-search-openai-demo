@@ -79,7 +79,8 @@
         "retrieveCount": "Hent dette antal søgeresultater:",
         "includeCategory": "Inkludér kategori",
         "includeCategoryOptions": {
-            "all": "Alle"
+            "all": "Alle",
+            "none": "Ingen"
         },
         "excludeCategory": "Ekskludér kategori",
         "useSemanticRanker": "Brug semantisk ranking til søgning",

@@ -58,7 +58,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         return """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
         Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
         If the question is not in English, answer in the language used in the question.
-        Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
+        {sources_reference_content}
         {follow_up_questions_prompt}
         {injected_prompt}
         """
@@ -96,6 +96,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        include_category = overrides.get("include_category")
         filter = self.build_filter(overrides, auth_claims)
 
         original_user_query = messages[-1]["content"]
@@ -103,99 +104,81 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
         user_query_request = "Generate search query for: " + original_user_query
 
-        tools: List[ChatCompletionToolParam] = [
-            {
-                "type": "function",
-                "function": {
-                    "name": "search_sources",
-                    "description": "Retrieve sources from the Azure AI Search index",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "search_query": {
-                                "type": "string",
-                                "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
-                            }
+        sources_content = []
+        extra_info = {"thoughts": [], 'data_points': []}
+
+        if include_category != "__NONE__":
+            tools: List[ChatCompletionToolParam] = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "search_sources",
+                        "description": "Retrieve sources from the Azure AI Search index",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "search_query": {
+                                    "type": "string",
+                                    "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
+                                }
+                            },
+                            "required": ["search_query"],
                         },
-                        "required": ["search_query"],
                     },
-                },
-            }
-        ]
+                }
+            ]
 
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 100
-        query_messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=self.query_prompt_template,
-            tools=tools,
-            few_shots=self.query_prompt_few_shots,
-            past_messages=messages[:-1],
-            new_user_content=user_query_request,
-            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
-        )
+            # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
+            query_response_token_limit = 100
+            query_messages = build_messages(
+                model=self.chatgpt_model,
+                system_prompt=self.query_prompt_template,
+                tools=tools,
+                few_shots=self.query_prompt_few_shots,
+                past_messages=messages[:-1],
+                new_user_content=user_query_request,
+                max_tokens=self.chatgpt_token_limit - query_response_token_limit,
+                fallback_to_default=self.ALLOW_NON_GPT_MODELS,
+            )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=query_messages,  # type: ignore
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
-            n=1,
-            tools=tools,
-            seed=seed,
-        )
+            chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+                messages=query_messages,  # type: ignore
+                # Azure OpenAI takes the deployment name as the model name
+                model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+                temperature=0.0,  # Minimize creativity for search query generation
+                max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
+                n=1,
+                tools=tools,
+                seed=seed,
+            )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+            query_text = self.get_search_query(chat_completion, original_user_query)
 
-        # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
+            # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
-        # If retrieval mode includes vectors, compute an embedding for the query
-        vectors: list[VectorQuery] = []
-        if use_vector_search:
-            vectors.append(await self.compute_text_embedding(query_text))
+            # If retrieval mode includes vectors, compute an embedding for the query
+            vectors: list[VectorQuery] = []
+            if use_vector_search:
+                vectors.append(await self.compute_text_embedding(query_text))
 
-        results = await self.search(
-            top,
-            query_text,
-            filter,
-            vectors,
-            use_text_search,
-            use_vector_search,
-            use_semantic_ranker,
-            use_semantic_captions,
-            minimum_search_score,
-            minimum_reranker_score,
-        )
+            results = await self.search(
+                top,
+                query_text,
+                filter,
+                vectors,
+                use_text_search,
+                use_vector_search,
+                use_semantic_ranker,
+                use_semantic_captions,
+                minimum_search_score,
+                minimum_reranker_score,
+            )
 
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        content = "\n".join(sources_content)
+            sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+            if sources_content:
+                extra_info["data_points"] = {"text": sources_content}
 
-        # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-
-        # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        system_message = self.get_system_prompt(
-            overrides.get("prompt_template"),
-            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
-        )
-
-        response_token_limit = 1024
-        messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=system_message,
-            past_messages=messages[:-1],
-            # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
-            new_user_content=original_user_query + "\n\nSources:\n" + content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
-        )
-
-        data_points = {"text": sources_content}
-
-        extra_info = {
-            "data_points": data_points,
-            "thoughts": [
+            extra_info["thoughts"].extend([
                 ThoughtStep(
                     "Prompt to generate search query",
                     query_messages,
@@ -221,20 +204,47 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                ThoughtStep(
-                    "Prompt to generate answer",
-                    messages,
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+            ])
+
+        # STEP 3: Generate a contextual and content specific answer
+
+        # Additional prompt injected into the masterprompt if RAG is enabled
+        sources_reference_content = """
+        Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
+        """ if include_category != "__NONE__" else ""
+
+        # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
+        system_message = self.get_system_prompt(
+            overrides.get("prompt_template"),
+            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
+            sources_reference_content=sources_reference_content
+        )
+
+        response_token_limit = 1024
+        messages = build_messages(
+            model=self.chatgpt_model,
+            system_prompt=system_message,
+            past_messages=messages[:-1],
+            new_user_content=original_user_query + ("\n\nSources:\n" + "\n".join(sources_content) if sources_content else ""),
+            max_tokens=self.chatgpt_token_limit - response_token_limit,
+            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
+        )
+
+        data_points = {"text": sources_content}
+
+        extra_info["thoughts"].append(
+            ThoughtStep(
+                "Prompt to generate answer",
+                messages,
+                (
+                    {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                    if self.chatgpt_deployment
+                    else {"model": self.chatgpt_model}
                 ),
-            ],
-        }
+            )
+        )
 
         chat_coroutine = self.openai_client.chat.completions.create(
-            # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             messages=messages,
             temperature=overrides.get("temperature", 0.3),
