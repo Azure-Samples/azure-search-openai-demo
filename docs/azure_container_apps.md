@@ -1,7 +1,9 @@
-# Deploying on Azure Container Apps
+# RAG chat: Deploying on Azure Container Apps
 
 Due to [a limitation](https://github.com/Azure/azure-dev/issues/2736) of the Azure Developer CLI (`azd`), there can be only one host option in the [azure.yaml](../azure.yaml) file.
-By default, `host: appservice` is used and `host: containerapp` is commented out.
+By default, `host: containerapp` is used and `host: appservice` is commented out.
+
+However, if you have an older version of the repo, you may need to follow these steps to deploy to Container Apps instead, or you can stick with Azure App Service.
 
 To deploy to Azure Container Apps, please follow the following steps:
 
@@ -52,4 +54,4 @@ Please note dedicated workload profiles have a different billing model than Cons
 
 ## Private endpoints
 
-Private endpoints is still in private preview for Azure Conainer Apps and not supported for now.
+Private endpoints is still in private preview for Azure Container Apps and not supported for now.

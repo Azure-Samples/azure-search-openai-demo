@@ -1,4 +1,4 @@
-# Deploying with minimal costs
+# RAG chat: Deploying with minimal costs
 
 This AI RAG chat application is designed to be easily deployed using the Azure Developer CLI, which provisions the infrastructure according to the Bicep files in the `infra` folder. Those files describe each of the Azure resources needed, and configures their SKU (pricing tier) and other parameters. Many Azure services offer a free tier, but the infrastructure files in this project do *not* default to the free tier as there are often limitations in that tier.
 
@@ -40,7 +40,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     If you have one already, either delete that service or follow instructions to
     reuse your [existing search service](../README.md#existing-azure-ai-search-resource).
     2. The free tier does not support semantic ranker, so the app UI will no longer display
-    the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid/ba-p/3929167).
+    the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167).
 
 1. Use the free tier of Azure Document Intelligence (used in analyzing files):
 

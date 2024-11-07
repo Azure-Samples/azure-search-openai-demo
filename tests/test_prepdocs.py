@@ -62,6 +62,7 @@ async def test_compute_embedding_success(monkeypatch):
         open_ai_deployment="x",
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        open_ai_api_version="test-api-version",
         credential=MockAzureCredential(),
         disable_batch=False,
     )
@@ -79,6 +80,7 @@ async def test_compute_embedding_success(monkeypatch):
         open_ai_deployment="x",
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        open_ai_api_version="test-api-version",
         credential=MockAzureCredential(),
         disable_batch=True,
     )
@@ -149,6 +151,7 @@ async def test_compute_embedding_ratelimiterror_batch(monkeypatch, caplog):
                 open_ai_deployment="x",
                 open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
                 open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+                open_ai_api_version="test-api-version",
                 credential=MockAzureCredential(),
                 disable_batch=False,
             )
@@ -167,6 +170,7 @@ async def test_compute_embedding_ratelimiterror_single(monkeypatch, caplog):
                 open_ai_deployment="x",
                 open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
                 open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+                open_ai_api_version="test-api-version",
                 credential=MockAzureCredential(),
                 disable_batch=True,
             )
@@ -193,6 +197,7 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
             open_ai_deployment="x",
             open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
             open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+            open_ai_api_version="test-api-version",
             credential=MockAzureCredential(),
             disable_batch=False,
         )
@@ -205,6 +210,7 @@ async def test_compute_embedding_autherror(monkeypatch, capsys):
             open_ai_deployment="x",
             open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
             open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+            open_ai_api_version="test-api-version",
             credential=MockAzureCredential(),
             disable_batch=True,
         )

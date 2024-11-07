@@ -15,7 +15,7 @@
     "@azure/msal-browser": "^3.26.1",
     "@azure/msal-react": "^2.0.21",
     "@fluentui/react": "^8.112.5",
-    "@fluentui/react-components": "^9.54.13",
+    "@fluentui/react-components": "^9.55.1",
     "@fluentui/react-icons": "^2.0.249",
     "@react-spring/web": "^9.7.3",
     "dompurify": "^3.1.6",
@@ -39,12 +39,12 @@
     "@types/dom-speech-recognition": "^0.0.4",
     "@types/dompurify": "^3.0.5",
     "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
+    "@types/react-dom": "^18.3.1",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "@vitejs/plugin-react": "^4.3.2",
-    "prettier": "^3.0.3",
+    "@vitejs/plugin-react": "^4.3.3",
+    "prettier": "^3.3.3",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8",
+    "vite": "^5.4.10",
     "rollup-plugin-visualizer": "^5.12.0"
   }
 }

@@ -57,6 +57,7 @@ param speechServiceResourceGroupName string = ''
 param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
+param speechServiceVoice string = ''
 param useGPT4V bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
@@ -68,6 +69,7 @@ param cosmosDbThroughput int = 400
 param chatHistoryDatabaseName string = 'chat-database'
 param chatHistoryContainerName string = 'chat-history'
 
+// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cstandard%2Cstandard-chat-completions#standard-deployment-model-availability
 @description('Location for the OpenAI resource group')
 @allowed([
   'canadaeast'
@@ -154,7 +156,7 @@ param gpt4vDeploymentCapacity int = 0
 var gpt4v = {
   modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
   deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'gpt-4o'
-  deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-05-13'
+  deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-08-06'
   deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'Standard'
   deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
@@ -340,6 +342,7 @@ var appEnvVariables = {
     : ''
   AZURE_SPEECH_SERVICE_ID: useSpeechOutputAzure ? speech.outputs.resourceId : ''
   AZURE_SPEECH_SERVICE_LOCATION: useSpeechOutputAzure ? speech.outputs.location : ''
+  AZURE_SPEECH_SERVICE_VOICE: useSpeechOutputAzure ? speechServiceVoice : ''
   ENABLE_LANGUAGE_PICKER: enableLanguagePicker
   USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
@@ -444,7 +447,7 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     workloadProfile: azureContainerAppsWorkloadProfile
     containerAppsEnvironmentName: acaManagedEnvironmentName
     containerRegistryName: '${containerRegistryName}${resourceToken}'
-    logAnalyticsWorkspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
+    logAnalyticsWorkspaceResourceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
   }
 }
 

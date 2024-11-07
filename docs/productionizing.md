@@ -1,4 +1,4 @@
-# Productionizing the Chat App
+# RAG chat: Productionizing the app
 
 This sample is designed to be a starting point for your own production application,
 but you should do a thorough review of the security and performance before deploying
@@ -83,7 +83,7 @@ and scale up the maximum/minimum based on load.
 * **Networking**: We recommend [deploying inside a Virtual Network](./deploy_private.md). If the app is only for
   internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
   for firewalls and other forms of protection.
-  For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/t5/azure-architecture-blog/azure-openai-landing-zone-reference-architecture/ba-p/3882102).
+  For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/blog/azurearchitectureblog/azure-openai-landing-zone-reference-architecture/3882102).
 
 ## Load testing
 

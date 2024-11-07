@@ -1,4 +1,4 @@
-# Alternative RAG chat samples
+# RAG chat: Alternative RAG chat samples
 
 There are an increasingly large number of ways to build RAG chat apps.
 

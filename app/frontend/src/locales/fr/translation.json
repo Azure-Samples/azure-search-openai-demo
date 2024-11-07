@@ -81,6 +81,10 @@
         "minimumSearchScore": "Score de recherche minimum",
         "minimumRerankerScore": "Score minimum du reclasseur sémantique",
         "retrieveCount": "Récupérer ce nombre de résultats de recherche :",
+        "includeCategory": "Inclure la catégorie",
+        "includeCategoryOptions": {
+            "all": "Toutes"
+        },
         "excludeCategory": "Exclure la catégorie",
         "useSemanticRanker": "Utiliser le reclasseur sémantique",
         "useSemanticCaptions": "Utiliser les titres sémantiques",
@@ -128,6 +132,8 @@
             "Définit un score minimum pour les résultats de recherche provenant du reranker sémantique. Le score varie toujours entre 0 et 4. Plus le score est élevé, plus le résultat est sémantiquement pertinent par rapport à la question.",
         "retrieveNumber":
             "Définit le nombre de résultats de recherche à récupérer d'Azure AI Search. Plus de résultats peuvent augmenter la probabilité de trouver la bonne réponse, mais peuvent amener le modèle à se 'perdre au milieu'.",
+        "includeCategory":
+            "Spécifie une catégorie à inclure dans les résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
         "excludeCategory":
             "Spécifie une catégorie à exclure des résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
         "useSemanticReranker":

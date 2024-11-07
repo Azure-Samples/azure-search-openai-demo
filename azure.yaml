@@ -8,10 +8,11 @@ services:
     project: ./app/backend
     language: py
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
-    # host: containerapp
-    # docker:
-    #  remoteBuild: true
-    host: appservice
+    host: containerapp
+    docker:
+      remoteBuild: true
+    # Please check docs/azure_app_service.md for more information on how to deploy to Azure App Service
+    # host: appservice
     hooks:
       # This hook is called when App Service is the host
       prepackage:
@@ -99,6 +100,7 @@ pipeline:
       - AZURE_SPEECH_SERVICE_RESOURCE_GROUP
       - AZURE_SPEECH_SERVICE_LOCATION
       - AZURE_SPEECH_SERVICE_SKU
+      - AZURE_SPEECH_SERVICE_VOICE
       - AZURE_KEY_VAULT_NAME
       - AZURE_USE_AUTHENTICATION
       - AZURE_ENFORCE_ACCESS_CONTROL

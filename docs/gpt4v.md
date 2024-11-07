@@ -1,4 +1,4 @@
-# Using GPT vision model with RAG approach
+# RAG chat: Using GPT vision model with RAG approach
 
 This repository now includes an example of integrating a GPT Vision model with Azure AI Search. This feature enables indexing and searching images and graphs, such as financial documents, in addition to text-based content, and then sending the retrieved content to the GPT model for response generation.
 
