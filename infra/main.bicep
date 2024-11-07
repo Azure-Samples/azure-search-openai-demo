@@ -117,10 +117,10 @@ param chatGptDeploymentCapacity int = 0
 var chatGpt = {
   modelName: !empty(chatGptModelName)
     ? chatGptModelName
-    : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
-  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
-  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
-  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard'
+    : startsWith(openAiHost, 'azure') ? 'gpt-4o' : 'gpt-4o'
+  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'Truong_GPT4o'
+  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2024-05-13'
+  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
 
@@ -131,11 +131,11 @@ param embeddingDeploymentSkuName string = ''
 param embeddingDeploymentCapacity int = 0
 param embeddingDimensions int = 0
 var embedding = {
-  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
-  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
-  deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
+  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-3-large'
+  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'Truong_embedding'
+  deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '1'
   deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : 'Standard'
-  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 120
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
 }
 
