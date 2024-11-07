@@ -81,7 +81,7 @@
         "minimumSearchScore": "Minimale zoekscore",
         "minimumRerankerScore": "Minimale reranker score",
         "retrieveCount": "Dit aantal zoekresultaten ophalen:",
-        "includeCategory": "Categorie opnemen", 
+        "includeCategory": "Categorie opnemen",
         "includeCategoryOptions": {
             "all": "Alle"
         },
