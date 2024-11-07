@@ -57,7 +57,7 @@ If needed, you can modify the chunking algorithm in `scripts/prepdocslib/textspl
 
 To enhance search functionality, categorize data during the ingestion process with the `--category` argument, for example `scripts/prepdocs.ps1 --category ExampleCategoryName`. This argument specifies the category to which the data belongs, enabling you to filter search results based on these categories.
 
-After running the script with the desired category, ensure these categories are added to the 'Include Category' dropdown list. This can be found in the developer settings in [`Settings.tsx`](https://github.com/Azure-Samples/azure-search-openai-demo/app/frontend/src/components/settings/Settings.tsx). The default option for this dropdown is "All". By including specific categories, you can refine your search results more effectively.
+After running the script with the desired category, ensure these categories are added to the 'Include Category' dropdown list. This can be found in the developer settings in [`Settings.tsx`](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/frontend/src/components/Settings/Settings.tsx). The default option for this dropdown is "All". By including specific categories, you can refine your search results more effectively.
 
 ### Indexing additional documents
 
