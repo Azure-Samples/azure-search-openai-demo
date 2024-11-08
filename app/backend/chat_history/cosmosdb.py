@@ -22,11 +22,11 @@ chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_fol
 @authenticated
 async def post_chat_history(auth_claims: Dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     entra_oid = auth_claims.get("oid")
     if not entra_oid:
@@ -52,11 +52,11 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
 @authenticated
 async def get_chat_history(auth_claims: Dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     entra_oid = auth_claims.get("oid")
     if not entra_oid:
@@ -92,7 +92,7 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
                     }
                 )
 
-        # If there are no page, StopAsyncIteration is raised
+        # If there are no more pages, StopAsyncIteration is raised
         except StopAsyncIteration:
             items = []
             continuation_token = None
@@ -107,11 +107,11 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
 @authenticated
 async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     if not item_id:
         return jsonify({"error": "Invalid item ID specifier"}), 400
@@ -142,11 +142,11 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
 @authenticated
 async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
-        return jsonify({"error": "Chat history not enabled"}), 405
+        return jsonify({"error": "Chat history not enabled"}), 400
 
     if not item_id:
         return jsonify({"error": "Invalid path"}), 400
