@@ -187,6 +187,6 @@ async def setup_clients():
 
 @chat_history_cosmosdb_bp.after_app_serving
 async def close_clients():
-    cosmos_client: CosmosClient = current_app.config.get(CONFIG_COSMOS_HISTORY_CLIENT)
-    if cosmos_client:
+    if current_app.config.get(CONFIG_COSMOS_HISTORY_CLIENT):
+        cosmos_client: CosmosClient = current_app.config[CONFIG_COSMOS_HISTORY_CLIENT]
         await cosmos_client.close()
