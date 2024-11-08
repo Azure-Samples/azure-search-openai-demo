@@ -113,9 +113,6 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
     if not container:
         return jsonify({"error": "Chat history not enabled"}), 400
 
-    if not item_id:
-        return jsonify({"error": "Invalid item ID specifier"}), 400
-
     entra_oid = auth_claims.get("oid")
     if not entra_oid:
         return jsonify({"error": "User OID not found"}), 401
@@ -148,16 +145,13 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str)
     if not container:
         return jsonify({"error": "Chat history not enabled"}), 400
 
-    if not item_id:
-        return jsonify({"error": "Invalid path"}), 400
-
     entra_oid = auth_claims.get("oid")
     if not entra_oid:
         return jsonify({"error": "User OID not found"}), 401
 
     try:
         await container.delete_item(item=item_id, partition_key=entra_oid)
-        return jsonify({}), 200
+        return jsonify({}), 204
     except Exception as error:
         return error_response(error, f"/chat_history/items/{item_id}")
 
