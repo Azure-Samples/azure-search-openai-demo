@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, Union
 
 from azure.cosmos.aio import ContainerProxy, CosmosClient
 from azure.identity.aio import AzureDeveloperCliCredential, ManagedIdentityCredential
@@ -12,7 +12,7 @@ from config import (
     CONFIG_COSMOS_HISTORY_CONTAINER,
     CONFIG_CREDENTIAL,
 )
-from decorators import authenticated, authenticated_path
+from decorators import authenticated
 from error import error_response
 
 chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_folder="static")
@@ -54,7 +54,7 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 405
 
-    container = cast(ContainerProxy, current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER])
+    container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
         return jsonify({"error": "Chat history not enabled"}), 405
 
@@ -103,25 +103,25 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
         return error_response(error, "/chat_history/items")
 
 
-@chat_history_cosmosdb_bp.get("/chat_history/items/<path>")
-@authenticated_path
-async def get_chat_history_session(path: str, auth_claims: Dict[str, Any]):
+@chat_history_cosmosdb_bp.get("/chat_history/items/<item_id>")
+@authenticated
+async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 405
 
-    container = cast(ContainerProxy, current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER])
+    container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
         return jsonify({"error": "Chat history not enabled"}), 405
 
-    if not path:
-        return jsonify({"error": "Invalid path"}), 400
+    if not item_id:
+        return jsonify({"error": "Invalid item ID specifier"}), 400
 
     entra_oid = auth_claims.get("oid")
     if not entra_oid:
         return jsonify({"error": "User OID not found"}), 401
 
     try:
-        res = await container.read_item(item=path, partition_key=entra_oid)
+        res = await container.read_item(item=item_id, partition_key=entra_oid)
         return (
             jsonify(
                 {
@@ -135,20 +135,20 @@ async def get_chat_history_session(path: str, auth_claims: Dict[str, Any]):
             200,
         )
     except Exception as error:
-        return error_response(error, f"/chat_history/items/{path}")
+        return error_response(error, f"/chat_history/items/{item_id}")
 
 
-@chat_history_cosmosdb_bp.delete("/chat_history/items/<path>")
-@authenticated_path
-async def delete_chat_history_session(path: str, auth_claims: Dict[str, Any]):
+@chat_history_cosmosdb_bp.delete("/chat_history/items/<item_id>")
+@authenticated
+async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 405
 
-    container = cast(ContainerProxy, current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER])
+    container: ContainerProxy = current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER]
     if not container:
         return jsonify({"error": "Chat history not enabled"}), 405
 
-    if not path:
+    if not item_id:
         return jsonify({"error": "Invalid path"}), 400
 
     entra_oid = auth_claims.get("oid")
@@ -156,10 +156,10 @@ async def delete_chat_history_session(path: str, auth_claims: Dict[str, Any]):
         return jsonify({"error": "User OID not found"}), 401
 
     try:
-        await container.delete_item(item=path, partition_key=entra_oid)
+        await container.delete_item(item=item_id, partition_key=entra_oid)
         return jsonify({}), 200
     except Exception as error:
-        return error_response(error, f"/chat_history/items/{path}")
+        return error_response(error, f"/chat_history/items/{item_id}")
 
 
 @chat_history_cosmosdb_bp.before_app_serving
@@ -169,9 +169,9 @@ async def setup_clients():
     AZURE_CHAT_HISTORY_DATABASE = os.getenv("AZURE_CHAT_HISTORY_DATABASE")
     AZURE_CHAT_HISTORY_CONTAINER = os.getenv("AZURE_CHAT_HISTORY_CONTAINER")
 
-    azure_credential = cast(
-        Union[AzureDeveloperCliCredential, ManagedIdentityCredential], current_app.config[CONFIG_CREDENTIAL]
-    )
+    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential] = current_app.config[
+        CONFIG_CREDENTIAL
+    ]
 
     if USE_CHAT_HISTORY_COSMOS:
         current_app.logger.info("USE_CHAT_HISTORY_COSMOS is true, setting up CosmosDB client")

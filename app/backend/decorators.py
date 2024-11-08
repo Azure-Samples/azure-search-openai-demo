@@ -43,13 +43,13 @@ def authenticated(route_fn: Callable[[Dict[str, Any]], Any]):
     """
 
     @wraps(route_fn)
-    async def auth_handler():
+    async def auth_handler(*args, **kwargs):
         auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
         try:
             auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
         except AuthError:
             abort(403)
 
-        return await route_fn(auth_claims)
+        return await route_fn(auth_claims, *args, **kwargs)
 
     return auth_handler
