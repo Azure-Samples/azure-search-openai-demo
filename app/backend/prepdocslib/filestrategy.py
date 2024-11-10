@@ -1,6 +1,10 @@
 import logging
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional
-
+from concurrent.futures import ThreadPoolExecutor
+from typing import List, Optional
+from tqdm.asyncio import tqdm
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
@@ -22,16 +26,15 @@ async def parse_file(
     if processor is None:
         logger.info("Skipping '%s', no parser found.", file.filename())
         return []
-    logger.info("Ingesting '%s'", file.filename())
+    logger.debug("Ingesting '%s'", file.filename())
     pages = [page async for page in processor.parser.parse(content=file.content)]
-    logger.info("Splitting '%s' into sections", file.filename())
+    logger.debug("Splitting '%s' into sections", file.filename())
     if image_embeddings:
-        logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
+        logger.debug("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
     ]
     return sections
-
 
 class FileStrategy(Strategy):
     """
@@ -44,6 +47,7 @@ class FileStrategy(Strategy):
         blob_manager: BlobManager,
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
+        ignore_checksum: bool,
         document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
@@ -55,6 +59,7 @@ class FileStrategy(Strategy):
         self.blob_manager = blob_manager
         self.file_processors = file_processors
         self.document_action = document_action
+        self.ignore_checksum = ignore_checksum
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_analyzer_name = search_analyzer_name
@@ -77,28 +82,60 @@ class FileStrategy(Strategy):
         search_manager = SearchManager(
             self.search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings
         )
+        doccount = self.list_file_strategy.count_docs()
+        logger.info(f"Processing {doccount} files")
+        processed_count = 0
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
-                    if sections:
-                        blob_sas_uris = await self.blob_manager.upload_blob(file)
-                        blob_image_embeddings: Optional[List[List[float]]] = None
-                        if self.image_embeddings and blob_sas_uris:
-                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                    if self.ignore_checksum or not await search_manager.file_exists(file):
+                        sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+                        if sections:
+                            blob_sas_uris = await self.blob_manager.upload_blob(file)
+                            blob_image_embeddings: Optional[List[List[float]]] = None
+                            if self.image_embeddings and blob_sas_uris:
+                                blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                            await search_manager.update_content(sections=sections, file=file, image_embeddings=blob_image_embeddings)
                 finally:
                     if file:
                         file.close()
+                processed_count += 1
+                if processed_count % 10 == 0:
+                    remaining = max(doccount - processed_count, 1)
+                    logger.info(f"{processed_count} processed, {remaining} documents remaining")
+
         elif self.document_action == DocumentAction.Remove:
+            doccount = self.list_file_strategy.count_docs()
             paths = self.list_file_strategy.list_paths()
             async for path in paths:
                 await self.blob_manager.remove_blob(path)
                 await search_manager.remove_content(path)
+                processed_count += 1
+                if processed_count % 10 == 0:
+                    remaining = max(doccount - processed_count, 1)
+                    logger.info(f"{processed_count} removed, {remaining} documents remaining")
+
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
             await search_manager.remove_content()
+
+    async def process_file(self, file, search_manager):
+        try:
+            sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+            if sections:
+                blob_sas_uris = await self.blob_manager.upload_blob(file)
+                blob_image_embeddings: Optional[List[List[float]]] = None
+                if self.image_embeddings and blob_sas_uris:
+                    blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                await search_manager.update_content(sections=sections, file=file, image_embeddings=blob_image_embeddings)
+        finally:
+            if file:
+                file.close()
+
+    async def remove_file(self, path, search_manager):
+        await self.blob_manager.remove_blob(path)
+        await search_manager.remove_content(path)
 
 
 class UploadUserFileStrategy:
@@ -124,7 +161,7 @@ class UploadUserFileStrategy:
             logging.warning("Image embeddings are not currently supported for the user upload feature")
         sections = await parse_file(file, self.file_processors)
         if sections:
-            await self.search_manager.update_content(sections, url=file.url)
+            await self.search_manager.update_content(sections=sections, file=file)
 
     async def remove_file(self, filename: str, oid: str):
         if filename is None or filename == "":
