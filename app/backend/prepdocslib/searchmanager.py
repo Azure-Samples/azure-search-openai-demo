@@ -1,7 +1,9 @@
 import asyncio
+import datetime
+import dateutil.parser as parser
 import logging
 import os
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
@@ -70,92 +72,107 @@ class SearchManager:
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
-
-            if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
-                logger.info("Creating new search index %s", self.search_info.index_name)
-                fields = [
-                    (
-                        SimpleField(name="id", type="Edm.String", key=True)
-                        if not self.use_int_vectorization
-                        else SearchField(
-                            name="id",
-                            type="Edm.String",
-                            key=True,
-                            sortable=True,
-                            filterable=True,
-                            facetable=True,
-                            analyzer_name="keyword",
-                        )
-                    ),
-                    SearchableField(
-                        name="content",
+            fields = [
+                (
+                    SimpleField(name="id", type="Edm.String", key=True)
+                    if not self.use_int_vectorization
+                    else SearchField(
+                        name="id",
                         type="Edm.String",
-                        analyzer_name=self.search_analyzer_name,
-                    ),
+                        key=True,
+                        sortable=True,
+                        filterable=True,
+                        facetable=True,
+                        analyzer_name="keyword",
+                    )
+                ),
+                SearchableField(
+                    name="content",
+                    type="Edm.String",
+                    analyzer_name=self.search_analyzer_name,
+                ),
+                SearchField(
+                    name="embedding",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    hidden=False,
+                    searchable=True,
+                    filterable=False,
+                    sortable=False,
+                    facetable=False,
+                    vector_search_dimensions=self.embedding_dimensions,
+                    vector_search_profile_name="embedding_config",
+                ),
+                SimpleField(name="category",
+                            type="Edm.String",
+                            filterable=True,
+                            facetable=True),
+                SimpleField(name="md5",
+                            type="Edm.String",
+                            filterable=True,
+                            facetable=True),
+                SimpleField(name="deeplink",
+                            type="Edm.String",
+                            filterable=True,
+                            facetable=False),
+                SimpleField(name="updated",
+                            type="Edm.DateTimeOffset", 
+                            filterable=True,
+                            facetable=True),
+                SimpleField(
+                    name="sourcepage",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=True,
+                ),
+                SimpleField(
+                    name="sourcefile",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=True,
+                ),
+                SimpleField(
+                    name="storageUrl",
+                    type="Edm.String",
+                    filterable=True,
+                    facetable=False,
+                ),
+            ]
+            if self.use_acls:
+                fields.append(
+                    SimpleField(
+                        name="oids",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
+                    )
+                )
+                fields.append(
+                    SimpleField(
+                        name="groups",
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                        filterable=True,
+                    )
+                )
+            if self.use_int_vectorization:
+                logger.info("Including parent_id field in new index %s", self.search_info.index_name)
+                fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
+            if self.search_images:
+                logger.info("Including imageEmbedding field in new index %s", self.search_info.index_name)
+                fields.append(
                     SearchField(
-                        name="embedding",
+                        name="imageEmbedding",
                         type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                         hidden=False,
                         searchable=True,
                         filterable=False,
                         sortable=False,
                         facetable=False,
-                        vector_search_dimensions=self.embedding_dimensions,
+                        vector_search_dimensions=1024,
                         vector_search_profile_name="embedding_config",
                     ),
-                    SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
-                    SimpleField(
-                        name="sourcepage",
-                        type="Edm.String",
-                        filterable=True,
-                        facetable=True,
-                    ),
-                    SimpleField(
-                        name="sourcefile",
-                        type="Edm.String",
-                        filterable=True,
-                        facetable=True,
-                    ),
-                    SimpleField(
-                        name="storageUrl",
-                        type="Edm.String",
-                        filterable=True,
-                        facetable=False,
-                    ),
-                ]
-                if self.use_acls:
-                    fields.append(
-                        SimpleField(
-                            name="oids",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                        )
-                    )
-                    fields.append(
-                        SimpleField(
-                            name="groups",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                        )
-                    )
-                if self.use_int_vectorization:
-                    logger.info("Including parent_id field in new index %s", self.search_info.index_name)
-                    fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
-                if self.search_images:
-                    logger.info("Including imageEmbedding field in new index %s", self.search_info.index_name)
-                    fields.append(
-                        SearchField(
-                            name="imageEmbedding",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                            hidden=False,
-                            searchable=True,
-                            filterable=False,
-                            sortable=False,
-                            facetable=False,
-                            vector_search_dimensions=1024,
-                            vector_search_profile_name="embedding_config",
-                        ),
-                    )
+                )
+
+            if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
+                logger.info("Creating new search index %s", self.search_info.index_name)
 
                 vectorizers = []
                 if self.embeddings and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
@@ -217,16 +234,13 @@ class SearchManager:
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
                 existing_index = await search_index_client.get_index(self.search_info.index_name)
-                if not any(field.name == "storageUrl" for field in existing_index.fields):
-                    logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
-                    existing_index.fields.append(
-                        SimpleField(
-                            name="storageUrl",
-                            type="Edm.String",
-                            filterable=True,
-                            facetable=False,
-                        ),
-                    )
+                existing_field_names = {field.name for field in existing_index.fields}
+
+                # Check and add missing fields
+                missing_fields = [field for field in fields if field.name not in existing_field_names]
+                if missing_fields:
+                    logger.info("Adding missing fields to index %s: %s", self.search_info.index_name, [field.name for field in missing_fields])
+                    existing_index.fields.extend(missing_fields)
                     await search_index_client.create_or_update_index(existing_index)
 
                 if existing_index.vector_search is not None and (
@@ -252,19 +266,52 @@ class SearchManager:
                             self.search_info,
                         )
 
+    async def file_exists(self, file : File ) -> bool:
+        async with self.search_info.create_search_client() as search_client:
+            ## make sure that we don't update unchanged sections, by if sourcefile and md5 are the same
+            if file.metadata.get('md5')!= None:
+                filter = None
+                assert file.filename() is not None             
+                filter = f"sourcefile eq '{str(file.filename())}'  and md5 eq '{file.metadata.get('md5')}'"
+                
+                # make sure (when applicable) that we don't skip if different categories have same file.filename()
+                #TODO: refactoring: check if using file.filename() as primary for blob is a good idea, or better use sha256(instead as md5) as reliable  for blob and index primary key
+                if file.metadata.get('category') is not None:
+                    filter = filter + f" and category eq '{file.metadata.get('category')}'"
+                max_results = 1
+                result = await search_client.search(
+                    search_text="", filter=filter, top=max_results, include_total_count=True
+                )
+                result_count = await result.get_count()
+                if result_count > 0:
+                    logger.debug("Skipping %s, no changes detected.", file.filename())
+                    return  True
+                else:
+                    return False
+            ## -- end of check
+
     async def update_content(
-        self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
-    ):
+        self, sections: List[Section], file : File ,image_embeddings: Optional[List[List[float]]] = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
         async with self.search_info.create_search_client() as search_client:
+             
+            ## caluclate a (default) updated timestamp in format of index
+            if file.metadata.get('updated') is None:
+                docdate = datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+            else:
+                docdate = parser.isoparse(file.metadata.get('updated')).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+                
             for batch_index, batch in enumerate(section_batches):
                 documents = [
                     {
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
                         "content": section.split_page.text,
-                        "category": section.category,
+                        "category": file.metadata.get('category'),
+                        "md5": file.metadata.get('md5'),
+                        "deeplink": file.metadata.get('deeplink'), # optional deel link original doc source for citiation,inline view
+                        "updated": docdate,
                         "sourcepage": (
                             BlobManager.blob_image_name_from_file_page(
                                 filename=section.content.filename(),
@@ -281,9 +328,9 @@ class SearchManager:
                     }
                     for section_index, section in enumerate(batch)
                 ]
-                if url:
+                if file.url:
                     for document in documents:
-                        document["storageUrl"] = url
+                        document["storageUrl"] = file.url
                 if self.embeddings:
                     embeddings = await self.embeddings.create_embeddings(
                         texts=[section.split_page.text for section in batch]
