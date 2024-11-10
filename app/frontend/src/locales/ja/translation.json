@@ -84,7 +84,7 @@
         "includeCategory": "カテゴリを指定",
         "includeCategoryOptions": {
             "all": "全て",
-            "none": "无"
+            "none": "なし"
         },
         "excludeCategory": "カテゴリを除外",
         "useSemanticRanker": "取得にセマンティック・ランカーを使用",
