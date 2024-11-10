@@ -350,7 +350,7 @@ python-dateutil==2.9.0.post0
     #   time-machine
 python-dotenv==1.0.1
     # via -r requirements.in
-quart==0.19.7
+quart==0.19.6
     # via
     #   -r requirements.in
     #   quart-cors
@@ -403,7 +403,6 @@ typing-extensions==4.12.2
     #   azure-ai-documentintelligence
     #   azure-core
     #   azure-identity
-    #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
     #   openai
@@ -416,7 +415,7 @@ urllib3==2.2.2
     # via requests
 uvicorn==0.30.6
     # via -r requirements.in
-werkzeug==3.0.6
+werkzeug==3.0.4
     # via
     #   flask
     #   quart
@@ -434,8 +433,9 @@ yarl==1.9.4
 zipp==3.20.0
     # via importlib-metadata
 
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
+
 # used for adlsgen2setup.py
 datetime==4.3.0
     # via -r requirements.in
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
