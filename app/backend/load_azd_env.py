@@ -20,4 +20,4 @@ def load_azd_env():
     if not env_file_path:
         raise Exception("No default azd env file found")
     logger.info(f"Loading azd env from {env_file_path}")
-    load_dotenv(env_file_path, override=True)
+    load_dotenv(env_file_path, override=False)
