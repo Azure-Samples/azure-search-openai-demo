@@ -5,7 +5,7 @@
         0px 0px 0.125rem rgba(0, 0, 0, 0.12);
     width: 100%;
     padding: 0.8rem;
-    background: white;
+    background: var(--background);
 }
 
 .questionInputTextArea {

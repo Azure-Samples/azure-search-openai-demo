@@ -26,8 +26,16 @@ body {
     padding: 0;
 }
 
-#root {
+:root {
     height: 100%;
+    --primary-colour: #3ce2db;
+    --feedback-button: black;
+    --disclaimer: #f5dfe3;
+    --user-chat-bubble: #eaf5f7;
+    --background: white;
+    --example-conatianer: #f7f7f7;
+    --primary-dark: #2997b1;
+    --link: #123bbb;
 }
 
 @media (min-width: 480px) {

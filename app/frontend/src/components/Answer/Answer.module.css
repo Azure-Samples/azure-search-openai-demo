@@ -54,8 +54,8 @@ h2 {
     text-align: center;
     border-radius: 0.25em;
     padding: 0em 0.5em;
-    background: #eaf5f7;
-    color: #123bb6;
+    background: var(--user-chat-bubble);
+    color: var(--link);
     text-decoration: none;
     cursor: pointer;
 }
@@ -80,7 +80,7 @@ h2 {
     text-align: center;
     border-radius: 0.25em;
     padding: 0em 0.5em;
-    background: #eaf5f7;
+    background: var(--user-chat-bubble);
     color: black;
     font-style: italic;
     text-decoration: none;
@@ -109,8 +109,8 @@ sup {
     min-width: 0.875em;
     height: 0.875em;
     border-radius: 0.1875em;
-    background: #eaf5f7;
-    color: #123bb6;
+    background: var(--user-chat-bubble);
+    color: var(--link);
     text-decoration-color: transparent;
     outline: transparent solid 0.0625em;
     cursor: pointer;
@@ -125,7 +125,7 @@ sup {
 }
 
 .disclaimer {
-    background-color: #f5dfe3;
+    background-color: var(--disclaimer);
     padding: 1rem 1rem;
     border-radius: 0.4rem;
 }

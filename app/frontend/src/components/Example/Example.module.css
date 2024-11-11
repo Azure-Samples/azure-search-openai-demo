@@ -10,7 +10,7 @@
 }
 
 .exampleQuestion {
-    background: white;
+    background: var(--background);
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
 }
 
 .exampleOther {
-    background: white;
+    background: var(--background);
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -34,7 +34,7 @@
 }
 
 .exampleContainer {
-    background-color: #f7f7f7;
+    background-color: var(--example-container);
     border-radius: 0.5rem;
     padding: 0.5rem;
     box-shadow:
@@ -46,7 +46,7 @@
     box-shadow:
         0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
         0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
-    outline: 0.125rem solid rgb(41, 151, 177);
+    outline: 0.125rem solid var(--primary-colour);
 }
 
 .exampleText {
