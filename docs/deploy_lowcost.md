@@ -40,7 +40,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     If you have one already, either delete that service or follow instructions to
     reuse your [existing search service](../README.md#existing-azure-ai-search-resource).
     2. The free tier does not support semantic ranker, so the app UI will no longer display
-    the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid/ba-p/3929167).
+    the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167).
 
 1. Use the free tier of Azure Document Intelligence (used in analyzing files):
 
@@ -70,6 +70,14 @@ However, if your goal is to minimize costs while prototyping your application, f
       ```shell
       azd env set USE_LOCAL_HTML_PARSER true
       ```
+
+1. Use the free tier of Azure Cosmos DB:
+
+    ```shell
+    azd env set AZURE_COSMOSDB_SKU free
+    ```
+
+    Limitation: You can have only one free Cosmos DB account. To keep your account free of charge, ensure that you do not exceed the free tier limits. For more information, see the [Azure Cosmos DB lifetime free tier](https://learn.microsoft.com/azure/cosmos-db/free-tier).
 
 1. Turn off Azure Monitor (Application Insights):
 
