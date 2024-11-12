@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd "${0%/*}" || exit 1
+
 cd ../
 echo 'Creating python virtual environment ".venv"'
 python3 -m venv .venv
@@ -9,9 +11,10 @@ echo "Restoring backend python packages"
 echo ""
 
 ./.venv/bin/python -m pip install -r app/backend/requirements.txt
-if [ $? -ne 0 ]; then
+out=$?
+if [ $out -ne 0 ]; then
     echo "Failed to restore backend python packages"
-    exit $?
+    exit $out
 fi
 
 echo ""
@@ -20,9 +23,10 @@ echo ""
 
 cd app/frontend
 npm install
-if [ $? -ne 0 ]; then
+out=$?
+if [ $out -ne 0 ]; then
     echo "Failed to restore frontend npm packages"
-    exit $?
+    exit $out
 fi
 
 echo ""
@@ -30,9 +34,10 @@ echo "Building frontend"
 echo ""
 
 npm run build
-if [ $? -ne 0 ]; then
+out=$?
+if [ $out -ne 0 ]; then
     echo "Failed to build frontend"
-    exit $?
+    exit $out
 fi
 
 echo ""
@@ -44,7 +49,8 @@ cd ../backend
 port=50505
 host=localhost
 ../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
-if [ $? -ne 0 ]; then
+out=$?
+if [ $out -ne 0 ]; then
     echo "Failed to start backend"
-    exit $?
+    exit $out
 fi
