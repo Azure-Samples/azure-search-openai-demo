@@ -7,6 +7,7 @@ tiktoken
 tenacity
 azure-ai-documentintelligence
 azure-cognitiveservices-speech
+azure-cosmos
 azure-search-documents==11.6.0b6
 azure-storage-blob
 azure-storage-file-datalake

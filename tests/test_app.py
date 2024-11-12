@@ -514,6 +514,8 @@ async def test_chat_text_filter_public_documents(auth_public_documents_client, s
         == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
     )
     result = await response.get_json()
+    if result.get("session_state"):
+        del result["session_state"]
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
