@@ -61,7 +61,9 @@
         "showSupportingContent": "サポート内容の表示",
         "speakAnswer": "音声による回答",
         "info": "情報",
-        "save": "保存"
+        "save": "保存",
+        "copy": "コピー",
+        "copied": "コピーしました！"
     },
 
     "headerTexts":{
