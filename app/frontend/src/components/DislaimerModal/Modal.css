@@ -22,12 +22,12 @@
 
 .dialog-title,
 .dialog-content {
-    color: black;
+    color: var(--feedback-button);
 }
 
 .dialog-surface .tcmodal-button {
     align-self: flex-end;
-    background-color: #33bfc7;
+    background-color: var(--primary-colour);
     border: none;
     outline: none;
     border-radius: 0.3rem;
@@ -43,7 +43,7 @@
 }
 
 .dialog-surface .tcmodal-button:hover {
-    background-color: #2a9c9f;
+    background-color: var(--primary-dark);
     transform: translateY(-0.03125rem);
 }
 
@@ -62,7 +62,7 @@
 
 #my-dialog-surface {
     border-radius: 0.5rem;
-    background-color: white;
+    background-color: var(--background);
     box-shadow:
         0px 0.5rem 1rem rgba(0, 0, 0, 0.24),
         0px 0px 0.125rem rgba(0, 0, 0, 0.2);

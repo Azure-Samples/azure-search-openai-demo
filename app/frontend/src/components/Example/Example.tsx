@@ -44,7 +44,7 @@ export const Example = ({ exampleType, onClick }: Props) => {
     return (
         <div className={styles.exampleContainer}>
             <div className={styles.header}>
-                <img src="/chatico.png" className={styles.headerImage} />
+                <img src="/icon.png" className={styles.headerImage} />
                 <h3>{exampleType}</h3>
             </div>
             {textList.map((text, index) => {

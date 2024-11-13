@@ -8,19 +8,19 @@
     box-shadow:
         #0000000d 0 0 0 0.0625em,
         #0000001a 0 0.125em 0.1875em;
-    background-color: white;
+    background-color: var(--background);
     margin: 1.25em 0;
 }
 
 .loading {
     padding: 6.25em;
     height: 100vh;
-    background-color: white;
+    background-color: var(--background);
 }
 
 .error {
     height: 100vh;
-    background-color: white;
+    background-color: var(--background);
 }
 
 .markdown {

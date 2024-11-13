@@ -121,9 +121,9 @@ async def favicon():
     return await bp.send_static_file("favicon.ico")
 
 
-@bp.route("/chat.png")
+@bp.route("/logo.png")
 async def chatlogo():
-    return await bp.send_static_file("chat.png")
+    return await bp.send_static_file("logo.png")
 
 
 @bp.route("/CI_Logo_Powered_green.png")
@@ -131,9 +131,9 @@ async def CI_logo():
     return await bp.send_static_file("CI_Logo_Powered_green.png")
 
 
-@bp.route("/chatico.png")
+@bp.route("/icon.png")
 async def chaticon():
-    return await bp.send_static_file("chatico.png")
+    return await bp.send_static_file("icon.png")
 
 
 @bp.route("/assets/<path:path>")

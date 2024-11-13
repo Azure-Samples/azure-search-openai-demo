@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #3ce2db;
+    background-color: var(--primary-colour);
     color: black;
 }
 
@@ -50,7 +50,7 @@
     z-index: 100;
     display: none;
     flex-direction: column;
-    background-color: #222222;
+    background-color: var(--feedback-button);
     position: absolute;
     top: 2.7rem;
     right: 0;
@@ -115,7 +115,7 @@
 }
 
 .headerDisclaimer {
-    background: #f5dfe3;
+    background: var(--disclaimer);
     padding-left: 1rem;
     padding-right: 1rem;
     text-align: center;

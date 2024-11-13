@@ -15,7 +15,7 @@
     margin: auto;
     margin-left: 1.25em;
     min-height: 3.125em;
-    border-left: 0.0625em solid #2997b1;
+    border-left: 0.0625em solid var(--primary-dark);
     padding: 0 0 1.875em 1.875em;
     position: relative;
 }
@@ -31,13 +31,13 @@
     content: " ";
     border: 8px solid #d1dbfa;
     border-radius: 500%;
-    background: #2997b1;
+    background: var(--primary-dark);
     height: 20px;
     width: 20px;
 }
 
 .tStep {
-    color: #2997b1;
+    color: var(--primary-dark);
     position: relative;
     font-size: 0.875em;
     margin-bottom: 0.5em;
@@ -45,11 +45,11 @@
 
 .tCodeBlock {
     max-height: 18.75em;
-    background: white !important;
+    background: var(--background) !important;
 }
 
 .tProp {
-    background-color: rgb(245, 245, 245);
+    background-color: var(--background);
     color: #333232;
     font-size: 0.75em;
     padding: 0.1875em 0.625em;
@@ -61,4 +61,8 @@
     height: 28.125rem;
     max-width: 100%;
     object-fit: contain;
+}
+
+.root-131 {
+    color: var(--primary-dark) !important;
 }
