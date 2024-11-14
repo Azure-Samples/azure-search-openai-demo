@@ -7,7 +7,8 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using GPT-4](#using-gpt-4)
 * [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
-* [Enabling chat history](#enabling-chat-history)
+* [Enabling client-side chat history](#enabling-client-side-chat-history)
+* [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
 * [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
 * [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
@@ -150,7 +151,7 @@ If you have already deployed:
 
 This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
 
-## Enabling chat history
+## Enabling client-side chat history
 
 This feature allows users to view the chat history of their conversation, stored in the browser using [IndexedDB](https://developer.mozilla.org/docs/Web/API/IndexedDB_API). That means the chat history will be available only on the device where the chat was initiated. To enable browser-stored chat history, run:
 
@@ -158,7 +159,15 @@ This feature allows users to view the chat history of their conversation, stored
 azd env set USE_CHAT_HISTORY_BROWSER true
 ```
 
-In the future, we plan to add support for optionally storing chat history in a server-side storage such as Cosmos DB.
+## Enabling persistent chat history with Azure Cosmos DB
+
+This feature allows authenticated users to view the chat history of their conversations, stored in the server-side storage using [Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/).This option requires that authentication be enabled. The chat history will be persistent and accessible from any device where the user logs in with the same account. To enable server-stored chat history, run:
+
+```shell
+azd env set USE_CHAT_HISTORY_COSMOS true
+```
+
+When both the browser-stored and Cosmos DB options are enabled, Cosmos DB will take precedence over browser-stored chat history.
 
 ## Enabling language picker
 

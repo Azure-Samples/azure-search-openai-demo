@@ -185,9 +185,6 @@
     "useSpeechOutputAzure": {
       "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
     },
-    "useChatHistoryBrowser": {
-      "value": "${USE_CHAT_HISTORY_BROWSER=false}"
-    },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
     },
@@ -199,6 +196,27 @@
     },
     "speechServiceLocation": {
       "value": "${AZURE_SPEECH_SERVICE_LOCATION}"
+    },
+    "useChatHistoryBrowser": {
+      "value": "${USE_CHAT_HISTORY_BROWSER=false}"
+    },
+    "useChatHistoryCosmos": {
+      "value": "${USE_CHAT_HISTORY_COSMOS=false}"
+    },
+    "cosmosDbSkuName": {
+      "value": "${AZURE_COSMOSDB_SKU=serverless}"
+    },
+    "cosmodDbResourceGroupName": {
+      "value": "${AZURE_COSMOSDB_RESOURCE_GROUP}"
+    },
+    "cosmosDbLocation": {
+      "value": "${AZURE_COSMOSDB_LOCATION}"
+    },
+    "cosmosDbAccountName": {
+      "value": "${AZURE_COSMOSDB_ACCOUNT}"
+    },
+    "cosmosDbThroughput": {
+      "value": "${AZURE_COSMOSDB_THROUGHPUT}"
     },
     "speechServiceVoice": {
       "value": "${AZURE_SPEECH_SERVICE_VOICE}"
