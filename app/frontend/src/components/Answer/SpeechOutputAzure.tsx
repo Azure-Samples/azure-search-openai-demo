@@ -44,7 +44,7 @@ export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: 
             return;
         }
         if (speechConfig.speechUrls[index]) {
-            playAudio(speechConfig.speechUrls[index]);
+            playAudio(speechConfig.speechUrls[index] ?? "");
             return;
         }
         setIsLoading(true);
