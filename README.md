@@ -227,7 +227,7 @@ The resource group and all the resources will be deleted.
 
 ## Guidance
 
-You can find extensive documentation in the [docs](docs/README.md) folder.
+You can find extensive documentation in the [docs](docs/README.md) folder:
 
 - Deploying:
   - [Troubleshooting deployment](docs/deploy_troubleshooting.md)
