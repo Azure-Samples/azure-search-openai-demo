@@ -1,10 +1,14 @@
 from typing import Any, Optional
+import json
+import re
+import ast
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 from openai_messages_token_helper import build_messages, get_token_limit
+from jinja2 import Environment, FileSystemLoader
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
@@ -16,26 +20,6 @@ class RetrieveThenReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-
-    system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
-        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
-        + "Answer the following question using only the data provided in the sources below. "
-        + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
-        + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
-    )
-
-    # shots/sample conversation
-    question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
-
-Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
-"""
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
     def __init__(
         self,
@@ -67,6 +51,36 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
+
+        self._initialize_templates()
+
+    def _initialize_templates(self):
+        self.env = Environment(loader=FileSystemLoader('approaches/prompts/ask'))
+        self.system_chat_template = self.env.get_template('system_message.jinja').render()
+        self.few_shots = self._process_few_shots()
+    
+    def _process_few_shots(self) -> Any:
+        raw_few_shots = self.env.get_template('few_shots.jinja').render()
+        json_str_few_shots = self._clean_json_string(raw_few_shots)
+        processed_few_shots = self._escape_newlines_in_json(json_str_few_shots)
+        return json.loads(processed_few_shots)
+
+    @staticmethod
+    def _clean_json_string(json_str: str) -> str:
+        return re.sub(r'^\s+|\s+$', '', json_str)
+
+    @staticmethod
+    def _escape_newlines_in_json(json_str: str) -> str:
+        in_string = False
+        result = []
+        for char in json_str:
+            if char == '"' and (not result or result[-1] != '\\'):
+                in_string = not in_string
+            elif char == '\n' and in_string:
+                result.append('\\n')
+                continue
+            result.append(char)
+        return ''.join(result)
 
     async def run(
         self,
@@ -118,7 +132,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         updated_messages = build_messages(
             model=self.chatgpt_model,
             system_prompt=overrides.get("prompt_template", self.system_chat_template),
-            few_shots=[{"role": "user", "content": self.question}, {"role": "assistant", "content": self.answer}],
+            few_shots=[{"role": "user", "content": self.few_shots["question"]}, {"role": "assistant", "content": self.few_shots["answer"]}],
             new_user_content=user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,

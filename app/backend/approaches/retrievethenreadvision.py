@@ -9,6 +9,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 from openai_messages_token_helper import build_messages, get_token_limit
+from jinja2 import Environment, FileSystemLoader
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
@@ -21,16 +22,6 @@ class RetrieveThenReadVisionApproach(Approach):
     top documents including images from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-
-    system_chat_template_gpt4v = (
-        "You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images. "
-        + "Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name> "
-        + "Each text source starts in a new line and has the file name followed by colon and the actual information "
-        + "Always include the source name from the image or text for each fact you use in the response in the format: [filename] "
-        + "Answer the following question using only the data provided in the sources below. "
-        + "The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned "
-        + "If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts "
-    )
 
     def __init__(
         self,
@@ -67,6 +58,10 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
+
+        self.env = Environment(loader=FileSystemLoader('approaches/prompts/ask'))
+        self.system_chat_template_gpt4v = self.env.get_template('system_message_vision.jinja').render()
+
 
     async def run(
         self,

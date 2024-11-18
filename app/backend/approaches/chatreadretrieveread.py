@@ -39,6 +39,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_language: str,
         query_speller: str,
     ):
+        super().__init__()
         self.search_client = search_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
@@ -55,13 +56,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
     @property
     def system_message_chat_conversation(self):
-        return """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
-        Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-        If the question is not in English, answer in the language used in the question.
-        Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
-        {follow_up_questions_prompt}
-        {injected_prompt}
-        """
+        return self.system_message_chat_conversation_template.render(
+            follow_up_questions_prompt="",
+            injected_prompt=""
+        )
 
     @overload
     async def run_until_final_call(
@@ -177,7 +175,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
         system_message = self.get_system_prompt(
             overrides.get("prompt_template"),
-            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
+            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
         )
 
         response_token_limit = 1024
