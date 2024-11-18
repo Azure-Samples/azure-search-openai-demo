@@ -57,11 +57,11 @@ azure-monitor-opentelemetry-exporter==1.0.0b32
     # via azure-monitor-opentelemetry
 azure-search-documents==11.6.0b6
     # via -r requirements.in
-azure-storage-blob==12.24.0
+azure-storage-blob==12.22.0
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
-azure-storage-file-datalake==12.18.0
+azure-storage-file-datalake==12.16.0
     # via -r requirements.in
 beautifulsoup4==4.12.3
     # via -r requirements.in
