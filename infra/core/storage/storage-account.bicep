@@ -25,11 +25,18 @@ param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
 @allowed([ 'None', 'AzureServices' ])
 param bypass string = 'AzureServices'
+param storageInfrastructureEncryption string = 'Disabled'
 
 var networkAcls = (publicNetworkAccess == 'Enabled') ? {
   bypass: bypass
   defaultAction: 'Allow'
 } : { defaultAction: 'Deny' }
+
+var encryption = (storageInfrastructureEncryption == 'Enabled') ? {
+  requireInfrastructureEncryption: true
+} : {
+  requireInfrastructureEncryption: false
+}
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: name
@@ -49,6 +56,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     networkAcls: networkAcls
     publicNetworkAccess: publicNetworkAccess
     supportsHttpsTrafficOnly: supportsHttpsTrafficOnly
+    encryption: encryption
   }
 
   resource blobServices 'blobServices' = if (!empty(containers)) {
