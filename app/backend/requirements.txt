@@ -8,7 +8,7 @@ aiofiles==24.1.0
     # via quart
 aiohappyeyeballs==2.4.0
     # via aiohttp
-aiohttp==3.10.5
+aiohttp==3.10.11
     # via
     #   -r requirements.in
     #   microsoft-kiota-authentication-azure
@@ -328,6 +328,8 @@ portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
+propcache==0.2.0
+    # via yarl
 psutil==5.9.8
     # via azure-monitor-opentelemetry-exporter
 pycparser==2.22
@@ -433,7 +435,7 @@ wrapt==1.16.0
     #   opentelemetry-instrumentation-urllib3
 wsproto==1.2.0
     # via hypercorn
-yarl==1.9.4
+yarl==1.17.2
     # via aiohttp
 zipp==3.20.0
     # via importlib-metadata
