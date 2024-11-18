@@ -198,10 +198,24 @@ azd up
 
 You can only run a development server locally **after** having successfully run the `azd up` command. If you haven't yet, follow the [deploying](#deploying) steps above.
 
-1. Run `azd auth login`
-2. Change dir to `app`
-3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
+1. Run `azd auth login` if you have not logged in recently.
+2. Start the server:
 
+  Windows:
+
+  ```shell
+  ./app/start.ps1
+  ```
+
+  Linux/Mac:
+
+  ```shell
+  ./app/start.sh
+  ```
+
+  VS Code: Run the "VS Code Task: Start App" task.
+
+It's also possible to enable hotloading or the VS Code debugger.
 See more tips in [the local development guide](docs/localdev.md).
 
 ## Using the app
