@@ -58,10 +58,7 @@ class RetrieveThenReadApproach(Approach):
         self.env = Environment(loader=FileSystemLoader('approaches/prompts/ask'))
         self.system_chat_template = self.env.get_template('system_message.jinja').render()
         json_content = self.env.loader.get_source(self.env, 'few_shots.json')[0]
-        print(f"HOOOOI2: {json_content}")
         self.few_shots = json.loads(json_content)
-
-        # self.few_shots = self._process_few_shots()
 
     async def run(
         self,
