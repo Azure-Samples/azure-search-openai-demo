@@ -25,7 +25,7 @@ PyJWT
 Pillow
 types-Pillow
 pypdf
-PyMuPDF
+PyMuPDF==1.24.9
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk==1.1.0
