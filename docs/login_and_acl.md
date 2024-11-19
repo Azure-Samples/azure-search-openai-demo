@@ -62,7 +62,7 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
 1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`. Authentication is always required to search on documents with access control assigned, regardless of if unauthenticated access is enabled or not.
 1. (Optional) To allow authenticated users to search on documents that have no access controls assigned, even when access control is required, run `azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true`.
 1. (Optional) To allow unauthenticated users to use the app, even when access control is enforced, run `azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true`. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true if you want unauthenticated users to be able to search on documents with no access control.
-1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
+1. Run `azd env set AZURE_AUTH_TENANT_ID 9f820e47-621b-4f31-8927-57d2ef4725af` to set the tenant ID associated with authentication.
 1. If your auth tenant ID is different from your currently logged in tenant ID, run `azd auth login --tenant-id <YOUR-TENANT-ID>` to login to the authentication tenant simultaneously.
 1. Run `azd up` to deploy the app.
 
@@ -241,12 +241,12 @@ The script supports the following commands. All commands support `-v` for verbos
 
 [Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) implements an [access control model](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) that can be used for document level access control. The [adlsgen2setup.py](/scripts/adlsgen2setup.py) script uploads the sample data included in the [data](./data) folder to a Data Lake Storage Gen2 storage account. The [Storage Blob Data Owner](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control-model#role-based-access-control-azure-rbac) role is required to use the script.
 
-In order to use this script, an existing Data Lake Storage Gen2 storage account is required. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <your-storage-account>` prior to running the script.
+In order to use this script, an existing Data Lake Storage Gen2 storage account is required. Run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT stjoshh2jzxm5iq` prior to running the script.
 
 Then run the script inside your Python environment:
 
 ```shell
-python /scripts/adlsgen2setup.py './data/*' --data-access-control './scripts/sampleacls.json' -v
+python ./scripts/adlsgen2setup.py './data' --data-access-control './scripts/sampleacls.json' -v
 ```
 
 The script performs the following steps:

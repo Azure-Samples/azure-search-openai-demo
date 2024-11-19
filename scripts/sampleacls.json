@@ -1,38 +1,32 @@
 {
     "files": {
-        "Benefit_Options.pdf": {
-            "directory": "benefitinfo"
+        "2. BUV-OCT24-FREQUENTLY ASKED QUESTIONS.pdf": {
+            "directory": "studenhandbook"
         },
-        "employee_handbook.pdf": {
-            "directory": "employeeinfo"
+        "3. SU-OCT24-FREQUENTLY ASKED QUESTIONS.pdf": {
+            "directory": "studenhandbook"
         },
-        "Northwind_Health_Plus_Benefits_Details.pdf": {
-            "directory": "benefitinfo"
+        "7. PSG Programme Handbook_Oct 2024.pdf": {
+            "directory": "studenhandbook"
         },
-        "Northwind_Standard_Benefits_Details.pdf": {
-            "directory": "benefitinfo"
-        },
-        "PerksPlus.pdf": {
-            "directory": "benefitinfo"
-        },
-        "role_library.pdf": {
-            "directory": "employeeinfo"
+        "8. Student Handbook 2024-2025 - Oct 2024.pdf": {
+            "directory": "studenhandbook"
         }
     },
     "directories": {
-        "employeeinfo": {
-            "groups": ["GPTKB_HRTest"]
+        "teacher": {
+            "groups": ["BUV_TeacherTest"]
         },
-        "benefitinfo": {
-            "groups": ["GPTKB_EmployeeTest", "GPTKB_HRTest"]
+        "studenhandbook": {
+            "groups": ["BUV_EmployeeTest", "BUV_TeacherTest"]
         },
         "/": {
-            "groups": ["GPTKB_AdminTest"]
+            "groups": ["BUV_AdminTest"]
         }
     },
     "groups": [
-        "GPTKB_AdminTest",
-        "GPTKB_HRTest",
-        "GPTKB_EmployeeTest"
+        "BUV_AdminTest",
+        "BUV_TeacherTest",
+        "BUV_EmployeeTest"
     ]
 }
