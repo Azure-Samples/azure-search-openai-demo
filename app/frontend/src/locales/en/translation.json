@@ -61,7 +61,9 @@
         "showSupportingContent": "Show supporting content",
         "speakAnswer": "Speak answer",
         "info": "Info",
-        "save": "Save"
+        "save": "Save",
+        "copy": "Copy",
+        "copied": "Copied!"
     },
 
     "headerTexts":{
