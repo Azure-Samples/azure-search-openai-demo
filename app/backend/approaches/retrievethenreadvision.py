@@ -1,5 +1,6 @@
 from typing import Any, Awaitable, Callable, Optional
 
+import prompty
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI
@@ -9,7 +10,6 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 from openai_messages_token_helper import build_messages, get_token_limit
-from jinja2 import Environment, FileSystemLoader
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
@@ -58,10 +58,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
-
-        self.env = Environment(loader=FileSystemLoader('approaches/prompts/ask'))
-        self.system_chat_template_gpt4v = self.env.get_template('system_message_vision.jinja').render()
-
+        self.answer_prompt = self.load_prompty("ask/answer_question_vision.prompty")
 
     async def run(
         self,
@@ -129,11 +126,13 @@ class RetrieveThenReadVisionApproach(Approach):
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
 
+        messages = prompty.prepare(self.answer_prompt, {"user_query": q, "content": content})
+
         response_token_limit = 1024
         updated_messages = build_messages(
             model=self.gpt4v_model,
-            system_prompt=overrides.get("prompt_template", self.system_chat_template_gpt4v),
-            new_user_content=user_content,
+            system_prompt=overrides.get("prompt_template", messages[0]["content"]),
+            new_user_content=messages[-1]["content"],
             max_tokens=self.gpt4v_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )

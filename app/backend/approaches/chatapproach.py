@@ -2,50 +2,40 @@ import json
 import re
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional
-from jinja2 import Environment, FileSystemLoader
 
+import prompty
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach
 
+
 class ChatApproach(Approach, ABC):
-    
+
     NO_RESPONSE = "0"
-
-    def __init__(self):
-        self._initialize_templates()
-    
-    def _initialize_templates(self):
-        self.env = Environment(loader=FileSystemLoader('approaches/prompts/chat'))
-        json_content = self.env.loader.get_source(self.env, 'query_few_shots.json')[0]
-        self.query_prompt_few_shots: list[ChatCompletionMessageParam] = json.loads(json_content)
-        self.query_prompt_template = self.env.get_template('query_template.jinja').render()
-        self.follow_up_questions_prompt = self.env.get_template('follow_up_questions.jinja').render()
-        self.system_message_chat_conversation_template = self.env.get_template('system_message.jinja')
-        self.system_message_chat_conversation_vision_template = self.env.get_template('system_message_vision.jinja')
-
-    @property
-    @abstractmethod
-    def system_message_chat_conversation(self) -> str:
-        pass
 
     @abstractmethod
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
-    def get_system_prompt(self, override_prompt: Optional[str], follow_up_questions_prompt: str) -> str:
-        if override_prompt is None:
-            return self.system_message_chat_conversation_template.render(
-                follow_up_questions_prompt=follow_up_questions_prompt,
-                injected_prompt=""
-            )
-        elif override_prompt.startswith(">>>"):
-            return self.system_message_chat_conversation_template.render(
-                follow_up_questions_prompt=follow_up_questions_prompt,
-                injected_prompt=override_prompt[3:] + "\n"
+    def get_messages(
+        self, override_prompt: Optional[str], include_follow_up_questions: bool, user_query: str, content: str
+    ) -> list[ChatCompletionMessageParam]:
+        if override_prompt is None or override_prompt.startswith(">>>"):
+            injected_prompt = "" if override_prompt is None else override_prompt[3:]
+            return prompty.prepare(
+                self.answer_prompt,
+                {
+                    "include_follow_up_questions": include_follow_up_questions,
+                    "injected_prompt": injected_prompt,
+                    "user_query": user_query,
+                    "content": content,
+                },
             )
         else:
-            return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt)
+            # TODO: Warn if follow-up is specified, follow-up won't be injected
+            return prompty.prepare(
+                self.answer_prompt, {"override_prompt": override_prompt, "user_query": user_query, "content": content}
+            )
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
@@ -153,4 +143,4 @@ class ChatApproach(Approach, ABC):
     ) -> AsyncGenerator[dict[str, Any], None]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        return self.run_with_streaming(messages, overrides, auth_claims, session_state)
+        return self.run_with_streaming(messages, overrides, auth_claims, session_state)  #

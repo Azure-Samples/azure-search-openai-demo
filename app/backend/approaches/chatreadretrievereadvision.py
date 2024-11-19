@@ -1,5 +1,6 @@
-from typing import Any, Awaitable, Callable, Coroutine, Optional, Union
+from typing import Any, Awaitable, Callable, Coroutine, List, Optional, Union
 
+import prompty
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI, AsyncStream
@@ -9,6 +10,7 @@ from openai.types.chat import (
     ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
     ChatCompletionMessageParam,
+    ChatCompletionToolParam,
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
@@ -46,7 +48,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]]
     ):
-        super().__init__()
         self.search_client = search_client
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
@@ -65,13 +66,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.chatgpt_token_limit = get_token_limit(gpt4v_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
-
-    @property
-    def system_message_chat_conversation(self):
-        return self.system_message_chat_conversation_vision_template.render(
-            follow_up_questions_prompt="",
-            injected_prompt=""
-        )
+        self.query_rewrite_prompt = self.load_prompty("chat/query_rewrite.prompty")
+        self.query_rewrite_tools = self.load_tools("chat/query_rewrite_tools.json")
+        self.answer_prompt = self.load_prompty("chat/answer_question_vision.prompty")
 
     async def run_until_final_call(
         self,
@@ -97,29 +94,32 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
-        past_messages: list[ChatCompletionMessageParam] = messages[:-1]
+
+        # Use prompty to prepare the query prompt
+        query_messages = prompty.prepare(self.query_rewrite_prompt, inputs={"user_query": original_user_query})
+        tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        user_query_request = "Generate search query for: " + original_user_query
-
         query_response_token_limit = 100
         query_model = self.chatgpt_model
         query_deployment = self.chatgpt_deployment
         query_messages = build_messages(
             model=query_model,
-            system_prompt=self.query_prompt_template,
-            few_shots=self.query_prompt_few_shots,
-            past_messages=past_messages,
-            new_user_content=user_query_request,
+            system_prompt=query_messages[0]["content"],
+            few_shots=query_messages[1:-1],
+            past_messages=messages[:-1],
+            new_user_content=query_messages[-1]["content"],
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            model=query_deployment if query_deployment else query_model,
             messages=query_messages,
+            # Azure OpenAI takes the deployment name as the model name
+            model=query_deployment if query_deployment else query_model,
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=query_response_token_limit,
             n=1,
+            tools=tools,
             seed=seed,
         )
 
@@ -156,12 +156,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
-        system_message = self.get_system_prompt(
+        formatted_messages = self.get_messages(
             overrides.get("prompt_template"),
-            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
+            include_follow_up_questions=bool(overrides.get("suggest_followup_questions")),
+            user_query=original_user_query,
+            content=content,
         )
 
-        user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
+        user_content: list[ChatCompletionContentPartParam] = [
+            {"text": formatted_messages[-1]["content"], "type": "text"}
+        ]
         image_list: list[ChatCompletionContentPartImageParam] = []
 
         if send_text_to_gptvision:
@@ -176,7 +180,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         response_token_limit = 1024
         messages = build_messages(
             model=self.gpt4v_model,
-            system_prompt=system_message,
+            system_prompt=formatted_messages[0]["content"],
             past_messages=messages[:-1],
             new_user_content=user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,

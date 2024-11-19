@@ -1,14 +1,11 @@
 from typing import Any, Optional
-import json
-import re
-import ast
 
+import prompty
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 from openai_messages_token_helper import build_messages, get_token_limit
-from jinja2 import Environment, FileSystemLoader
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
@@ -51,14 +48,7 @@ class RetrieveThenReadApproach(Approach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
-
-        self._initialize_templates()
-
-    def _initialize_templates(self):
-        self.env = Environment(loader=FileSystemLoader('approaches/prompts/ask'))
-        self.system_chat_template = self.env.get_template('system_message.jinja').render()
-        json_content = self.env.loader.get_source(self.env, 'few_shots.json')[0]
-        self.few_shots = json.loads(json_content)
+        self.answer_prompt = self.load_prompty("ask/answer_question.prompty")
 
     async def run(
         self,
@@ -104,25 +94,15 @@ class RetrieveThenReadApproach(Approach):
 
         # Append user message
         content = "\n".join(sources_content)
-        user_content = q + "\n" + f"Sources:\n {content}"
 
-        few_shots = [
-            {
-                "role": "user",
-                "content": f"{self.few_shots['question']}\nSources:\n" + "\n".join([f"{k}: {v}" for k, v in self.few_shots['sources'].items()])
-            },
-            {
-                "role": "assistant",
-                "content": self.few_shots["answer"]
-            }
-        ]
+        messages = prompty.prepare(self.answer_prompt, {"user_query": q, "content": content})
 
         response_token_limit = 1024
         updated_messages = build_messages(
             model=self.chatgpt_model,
-            system_prompt=overrides.get("prompt_template", self.system_chat_template),
-            few_shots=[{"role": "user", "content": self.few_shots["question"]}, {"role": "assistant", "content": self.few_shots["answer"]}],
-            new_user_content=user_content,
+            system_prompt=overrides.get("prompt_template", messages[0]["content"]),
+            few_shots=messages[1:-1],
+            new_user_content=messages[-1]["content"],
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
