@@ -113,8 +113,8 @@ export const Answer = ({
             <div className={styles.disclaimerContainer}>
                 <div className={styles.disclaimer}>
                     <p>
-                        <b>IMPORTANT: </b>GovGPT is currently in a pilot stage and may include incomplete or incorrect content. Please ensure you check
-                        citations and verify answers with the relevant cited organisations. If you notice mistakes or irrelevant responses, use the{" "}
+                        <b>IMPORTANT: </b>EduGPT is currently in a beta stage and may include incomplete or incorrect content. Please ensure you check citations
+                        and verify answers with the relevant cited organisations. If you notice mistakes or irrelevant responses, use the{" "}
                         <a href="https://ai-activator.circle.so/c/open-feedback-questions/" target="_blank" rel="noopener noreferrer">
                             feedback
                         </a>{" "}
