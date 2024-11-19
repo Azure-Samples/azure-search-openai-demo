@@ -30,7 +30,7 @@
     "react-router-dom": "^6.26.2",
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^15.1.1",
-    "react-syntax-highlighter": "^15.5.0",
+    "react-syntax-highlighter": "^15.6.1",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "scheduler": "^0.20.2"
