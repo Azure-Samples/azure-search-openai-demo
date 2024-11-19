@@ -57,30 +57,11 @@ class RetrieveThenReadApproach(Approach):
     def _initialize_templates(self):
         self.env = Environment(loader=FileSystemLoader('approaches/prompts/ask'))
         self.system_chat_template = self.env.get_template('system_message.jinja').render()
-        self.few_shots = self._process_few_shots()
-    
-    def _process_few_shots(self) -> Any:
-        raw_few_shots = self.env.get_template('few_shots.jinja').render()
-        json_str_few_shots = self._clean_json_string(raw_few_shots)
-        processed_few_shots = self._escape_newlines_in_json(json_str_few_shots)
-        return json.loads(processed_few_shots)
+        json_content = self.env.loader.get_source(self.env, 'few_shots.json')[0]
+        print(f"HOOOOI2: {json_content}")
+        self.few_shots = json.loads(json_content)
 
-    @staticmethod
-    def _clean_json_string(json_str: str) -> str:
-        return re.sub(r'^\s+|\s+$', '', json_str)
-
-    @staticmethod
-    def _escape_newlines_in_json(json_str: str) -> str:
-        in_string = False
-        result = []
-        for char in json_str:
-            if char == '"' and (not result or result[-1] != '\\'):
-                in_string = not in_string
-            elif char == '\n' and in_string:
-                result.append('\\n')
-                continue
-            result.append(char)
-        return ''.join(result)
+        # self.few_shots = self._process_few_shots()
 
     async def run(
         self,
@@ -127,6 +108,17 @@ class RetrieveThenReadApproach(Approach):
         # Append user message
         content = "\n".join(sources_content)
         user_content = q + "\n" + f"Sources:\n {content}"
+
+        few_shots = [
+            {
+                "role": "user",
+                "content": f"{self.few_shots['question']}\nSources:\n" + "\n".join([f"{k}: {v}" for k, v in self.few_shots['sources'].items()])
+            },
+            {
+                "role": "assistant",
+                "content": self.few_shots["answer"]
+            }
+        ]
 
         response_token_limit = 1024
         updated_messages = build_messages(

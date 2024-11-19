@@ -9,15 +9,16 @@ from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 from approaches.approach import Approach
 
 class ChatApproach(Approach, ABC):
+    
+    NO_RESPONSE = "0"
+
     def __init__(self):
         self._initialize_templates()
-        self.NO_RESPONSE = "0"
     
     def _initialize_templates(self):
         self.env = Environment(loader=FileSystemLoader('approaches/prompts/chat'))
-        self.query_prompt_few_shots: list[ChatCompletionMessageParam] = json.loads(
-            self.env.get_template('query_few_shots.jinja').render()
-        )
+        json_content = self.env.loader.get_source(self.env, 'query_few_shots.json')[0]
+        self.query_prompt_few_shots: list[ChatCompletionMessageParam] = json.loads(json_content)
         self.query_prompt_template = self.env.get_template('query_template.jinja').render()
         self.follow_up_questions_prompt = self.env.get_template('follow_up_questions.jinja').render()
         self.system_message_chat_conversation_template = self.env.get_template('system_message.jinja')
@@ -44,7 +45,7 @@ class ChatApproach(Approach, ABC):
                 injected_prompt=override_prompt[3:] + "\n"
             )
         else:
-            return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt) ## check if correct
+            return override_prompt.format(follow_up_questions_prompt=follow_up_questions_prompt)
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
