@@ -376,8 +376,8 @@ const Chat = () => {
                         <div className={styles.chatEmptyState}>
                             <img className={styles.responsivelogo} src="/logo.png" aria-hidden="true" aria-label="Chat logo" />
                             <h2 className={styles.chatEmptyStateSubtitle}>
-                                Our pilot AI conversation tool. Experience the power of AI generated answers to your small business questions - all grounded on
-                                public facing government websites.
+                                Our pilot AI conversation tool. Experience the power of AI generated answers to your education curriculum content. <br />
+                                Grounded on the public-facing Ministry of Education Curriculum (Tāhūrangi) web site.
                             </h2>
                             <ExampleList onExampleClicked={onExampleClicked} />
                         </div>

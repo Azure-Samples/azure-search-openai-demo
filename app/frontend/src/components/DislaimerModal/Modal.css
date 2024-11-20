@@ -28,6 +28,7 @@
 .dialog-surface .tcmodal-button {
     align-self: flex-end;
     background-color: var(--primary-colour);
+    color: var(--primary-text);
     border: none;
     outline: none;
     border-radius: 0.3rem;
@@ -44,6 +45,7 @@
 
 .dialog-surface .tcmodal-button:hover {
     background-color: var(--primary-dark);
+    color: var(--primary-text);
     transform: translateY(-0.03125rem);
 }
 
