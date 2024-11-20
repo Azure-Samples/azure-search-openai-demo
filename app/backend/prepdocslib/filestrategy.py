@@ -26,7 +26,7 @@ async def parse_file(
     pages = [page async for page in processor.parser.parse(content=file.content)]
     logger.info("Splitting '%s' into sections", file.filename())
     if image_embeddings:
-        logger.info("Each page will be split into smaller chunks of text, but images will be of the entire page.")
+        logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
     ]
@@ -120,25 +120,6 @@ class FileStrategy(Strategy):
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
             await search_manager.remove_content()
-
-    async def process_file(self, file, search_manager):
-        try:
-            sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
-            if sections:
-                blob_sas_uris = await self.blob_manager.upload_blob(file)
-                blob_image_embeddings: Optional[List[List[float]]] = None
-                if self.image_embeddings and blob_sas_uris:
-                    blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                await search_manager.update_content(
-                    sections=sections, file=file, image_embeddings=blob_image_embeddings
-                )
-        finally:
-            if file:
-                file.close()
-
-    async def remove_file(self, path, search_manager):
-        await self.blob_manager.remove_blob(path)
-        await search_manager.remove_content(path)
 
 
 class UploadUserFileStrategy:
