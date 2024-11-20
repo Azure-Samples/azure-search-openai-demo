@@ -1,10 +1,10 @@
 import asyncio
 import datetime
-import dateutil.parser as parser
 import logging
 import os
-from typing import Dict, List, Optional
+from typing import List, Optional
 
+import dateutil.parser as parser
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
     AzureOpenAIVectorizerParameters,
@@ -102,22 +102,10 @@ class SearchManager:
                     vector_search_dimensions=self.embedding_dimensions,
                     vector_search_profile_name="embedding_config",
                 ),
-                SimpleField(name="category",
-                            type="Edm.String",
-                            filterable=True,
-                            facetable=True),
-                SimpleField(name="md5",
-                            type="Edm.String",
-                            filterable=True,
-                            facetable=True),
-                SimpleField(name="deeplink",
-                            type="Edm.String",
-                            filterable=True,
-                            facetable=False),
-                SimpleField(name="updated",
-                            type="Edm.DateTimeOffset", 
-                            filterable=True,
-                            facetable=True),
+                SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="md5", type="Edm.String", filterable=True, facetable=True),
+                SimpleField(name="deeplink", type="Edm.String", filterable=True, facetable=False),
+                SimpleField(name="updated", type="Edm.DateTimeOffset", filterable=True, facetable=True),
                 SimpleField(
                     name="sourcepage",
                     type="Edm.String",
@@ -239,7 +227,11 @@ class SearchManager:
                 # Check and add missing fields
                 missing_fields = [field for field in fields if field.name not in existing_field_names]
                 if missing_fields:
-                    logger.info("Adding missing fields to index %s: %s", self.search_info.index_name, [field.name for field in missing_fields])
+                    logger.info(
+                        "Adding missing fields to index %s: %s",
+                        self.search_info.index_name,
+                        [field.name for field in missing_fields],
+                    )
                     existing_index.fields.extend(missing_fields)
                     await search_index_client.create_or_update_index(existing_index)
 
@@ -266,17 +258,17 @@ class SearchManager:
                             self.search_info,
                         )
 
-    async def file_exists(self, file : File ) -> bool:
+    async def file_exists(self, file: File) -> bool:
         async with self.search_info.create_search_client() as search_client:
             ## make sure that we don't update unchanged sections, by if sourcefile and md5 are the same
-            if file.metadata.get('md5')!= None:
+            if file.metadata.get("md5") is not None:
                 filter = None
-                assert file.filename() is not None             
+                assert file.filename() is not None
                 filter = f"sourcefile eq '{str(file.filename())}'  and md5 eq '{file.metadata.get('md5')}'"
-                
+
                 # make sure (when applicable) that we don't skip if different categories have same file.filename()
-                #TODO: refactoring: check if using file.filename() as primary for blob is a good idea, or better use sha256(instead as md5) as reliable  for blob and index primary key
-                if file.metadata.get('category') is not None:
+                # TODO: refactoring: check if using file.filename() as primary for blob is a good idea, or better use sha256(instead as md5) as reliable  for blob and index primary key
+                if file.metadata.get("category") is not None:
                     filter = filter + f" and category eq '{file.metadata.get('category')}'"
                 max_results = 1
                 result = await search_client.search(
@@ -285,32 +277,35 @@ class SearchManager:
                 result_count = await result.get_count()
                 if result_count > 0:
                     logger.debug("Skipping %s, no changes detected.", file.filename())
-                    return  True
+                    return True
                 else:
                     return False
             ## -- end of check
 
     async def update_content(
-        self, sections: List[Section], file : File ,image_embeddings: Optional[List[List[float]]] = None):
+        self, sections: List[Section], file: File, image_embeddings: Optional[List[List[float]]] = None
+    ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
         async with self.search_info.create_search_client() as search_client:
-             
+
             ## caluclate a (default) updated timestamp in format of index
-            if file.metadata.get('updated') is None:
-                docdate = datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+            if file.metadata.get("updated") is None:
+                docdate = datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
             else:
-                docdate = parser.isoparse(file.metadata.get('updated')).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
-                
+                docdate = parser.isoparse(file.metadata.get("updated")).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
             for batch_index, batch in enumerate(section_batches):
                 documents = [
                     {
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
                         "content": section.split_page.text,
-                        "category": file.metadata.get('category'),
-                        "md5": file.metadata.get('md5'),
-                        "deeplink": file.metadata.get('deeplink'), # optional deel link original doc source for citiation,inline view
+                        "category": file.metadata.get("category"),
+                        "md5": file.metadata.get("md5"),
+                        "deeplink": file.metadata.get(
+                            "deeplink"
+                        ),  # optional deel link original doc source for citiation,inline view
                         "updated": docdate,
                         "sourcepage": (
                             BlobManager.blob_image_name_from_file_page(

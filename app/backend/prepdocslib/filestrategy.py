@@ -1,10 +1,6 @@
 import logging
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional
-from concurrent.futures import ThreadPoolExecutor
-from typing import List, Optional
-from tqdm.asyncio import tqdm
+
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
@@ -35,6 +31,7 @@ async def parse_file(
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
     ]
     return sections
+
 
 class FileStrategy(Strategy):
     """
@@ -96,7 +93,9 @@ class FileStrategy(Strategy):
                             blob_image_embeddings: Optional[List[List[float]]] = None
                             if self.image_embeddings and blob_sas_uris:
                                 blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                            await search_manager.update_content(sections=sections, file=file, image_embeddings=blob_image_embeddings)
+                            await search_manager.update_content(
+                                sections=sections, file=file, image_embeddings=blob_image_embeddings
+                            )
                 finally:
                     if file:
                         file.close()
@@ -128,7 +127,9 @@ class FileStrategy(Strategy):
                 blob_image_embeddings: Optional[List[List[float]]] = None
                 if self.image_embeddings and blob_sas_uris:
                     blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                await search_manager.update_content(sections=sections, file=file, image_embeddings=blob_image_embeddings)
+                await search_manager.update_content(
+                    sections=sections, file=file, image_embeddings=blob_image_embeddings
+                )
         finally:
             if file:
                 file.close()

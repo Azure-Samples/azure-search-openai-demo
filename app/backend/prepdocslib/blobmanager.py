@@ -3,15 +3,16 @@ import io
 import logging
 import os
 import re
-from typing import List, Optional, Union, NamedTuple, Tuple
+from enum import Enum
+from typing import List, Optional, Union
 
 import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
+    BlobClient,
     BlobSasPermissions,
     UserDelegationKey,
-    generate_blob_sas, 
-    BlobClient
+    generate_blob_sas,
 )
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from PIL import Image, ImageDraw, ImageFont
@@ -20,6 +21,7 @@ from pypdf import PdfReader
 from .listfilestrategy import File
 
 logger = logging.getLogger("scripts")
+
 
 class BlobManager:
     """
@@ -45,58 +47,60 @@ class BlobManager:
         self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
-    #async def upload_blob(self, file: File, container_client:ContainerClient) -> Optional[List[str]]:
-        
-    async def _create_new_blob(self, file: File, container_client:ContainerClient) -> BlobClient:
+    async def _create_new_blob(self, file: File, container_client: ContainerClient) -> BlobClient:
         with open(file.content.name, "rb") as reopened_file:
-                                blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                                logger.info("Uploading blob for whole file -> %s", blob_name)
-                                return await container_client.upload_blob(blob_name, reopened_file, overwrite=True, metadata=file.metadata)
+            blob_name = BlobManager.blob_name_from_file_name(file.content.name)
+            logger.info("Uploading blob for whole file -> %s", blob_name)
+            return await container_client.upload_blob(blob_name, reopened_file, overwrite=True, metadata=file.metadata)
 
-    async def _file_blob_update_needed(self, blob_client: BlobClient, file : File) -> bool:
-        md5_check : int = 0 # 0= not done, 1, positive,. 2 negative
+    async def _file_blob_update_needed(self, blob_client: BlobClient, file: File) -> bool:
         # Get existing blob properties
         blob_properties = await blob_client.get_blob_properties()
         blob_metadata = blob_properties.metadata
-        
+
         # Check if the md5 values are the same
-        file_md5 = file.metadata.get('md5')
-        blob_md5 = blob_metadata.get('md5')
-        
-        # Remove md5 from file metadata if it matches the blob metadata
-        if file_md5 and file_md5 != blob_md5:
-            return True
-        else:
-            return False
-                    
+        file_md5 = file.metadata.get("md5")
+        blob_md5 = blob_metadata.get("md5")
+
+        # If the file has an md5 value, check if it is different from the blob
+        return file_md5 and file_md5 != blob_md5
+
     async def upload_blob(self, file: File) -> Optional[List[str]]:
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
         ) as service_client, service_client.get_container_client(self.container) as container_client:
             if not await container_client.exists():
                 await container_client.create_container()
-            
-             # Re-open and upload the original file
-            md5_check : int = 0 # 0= not done, 1, positive,. 2 negative
-            
-            # upload  the file local storage zu azure  storage
+
+            # Re-open and upload the original file if the blob does not exist or the md5 values do not match
+            class MD5Check(Enum):
+                NOT_DONE = 0
+                MATCH = 1
+                NO_MATCH = 2
+
+            md5_check = MD5Check.NOT_DONE
+
+            # Upload the file to Azure Storage
             # file.url is only None if files are not uploaded yet, for datalake it is set
             if file.url is None:
                 blob_client = container_client.get_blob_client(file.url)
 
                 if not await blob_client.exists():
+                    logger.info("Blob %s does not exist, uploading", file.url)
                     blob_client = await self._create_new_blob(file, container_client)
                 else:
                     if self._blob_update_needed(blob_client, file):
-                        md5_check = 2
+                        logger.info("Blob %s exists but md5 values do not match, updating", file.url)
+                        md5_check = MD5Check.NO_MATCH
                         # Upload the file with the updated metadata
                         with open(file.content.name, "rb") as data:
                             await blob_client.upload_blob(data, overwrite=True, metadata=file.metadata)
                     else:
-                        md5_check = 1                        
+                        logger.info("Blob %s exists and md5 values match, skipping upload", file.url)
+                        md5_check = MD5Check.MATCH
                 file.url = blob_client.url
-                
-            if md5_check!=1 and self.store_page_images:
+
+            if md5_check != MD5Check.MATCH and self.store_page_images:
                 if os.path.splitext(file.content.name)[1].lower() == ".pdf":
                     return await self.upload_pdf_blob_images(service_client, container_client, file)
                 else:
@@ -127,20 +131,19 @@ class BlobManager:
 
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
-            
+
             blob_client = container_client.get_blob_client(blob_name)
-            do_upload : bool = True
             if await blob_client.exists():
                 # Get existing blob properties
                 blob_properties = await blob_client.get_blob_properties()
                 blob_metadata = blob_properties.metadata
-                        
+
                 # Check if the md5 values are the same
-                file_md5 = file.metadata.get('md5')
-                blob_md5 = blob_metadata.get('md5')
+                file_md5 = file.metadata.get("md5")
+                blob_md5 = blob_metadata.get("md5")
                 if file_md5 == blob_md5:
-                    continue #  documemt already uploaded
-            
+                    continue  #  documemt already uploaded
+
             logger.debug("Converting page %s to image and uploading -> %s", i, blob_name)
 
             doc = fitz.open(file.content.name)
@@ -167,7 +170,7 @@ class BlobManager:
             output = io.BytesIO()
             new_img.save(output, format="PNG")
             output.seek(0)
-                
+
             await blob_client.upload_blob(data=output, overwrite=True, metadata=file.metadata)
             if not self.user_delegation_key:
                 self.user_delegation_key = await service_client.get_user_delegation_key(start_time, expiry_time)
@@ -181,7 +184,7 @@ class BlobManager:
                     permission=BlobSasPermissions(read=True),
                     expiry=expiry_time,
                     start=start_time,
-                )                
+                )
                 sas_uris.append(f"{blob_client.url}?{sas_token}")
 
         return sas_uris

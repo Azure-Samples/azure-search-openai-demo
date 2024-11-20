@@ -1,10 +1,10 @@
 import argparse
 import asyncio
-from datetime import datetime
+import hashlib
 import json
 import logging
 import os
-import hashlib
+from datetime import datetime
 from typing import Any, Optional
 
 import aiohttp
@@ -20,7 +20,8 @@ from load_azd_env import load_azd_env
 logger = logging.getLogger("scripts")
 # Set the logging level for the azure package to DEBUG
 logging.getLogger("azure").setLevel(logging.DEBUG)
-logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.DEBUG)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.DEBUG)
+
 
 class AdlsGen2Setup:
     """
@@ -94,7 +95,9 @@ class AdlsGen2Setup:
                         if directory not in directories:
                             logger.error(f"File {file} has unknown directory {directory}, exiting...")
                             return
-                        await self.upload_file(directory_client=directories[directory], file_path=os.path.join(self.data_directory, file))
+                        await self.upload_file(
+                            directory_client=directories[directory], file_path=os.path.join(self.data_directory, file)
+                        )
 
                     logger.info("Setting access control...")
                     for directory, access_control in self.data_access_control_format["directories"].items():
@@ -106,7 +109,8 @@ class AdlsGen2Setup:
                                         f"Directory {directory} has unknown group {group_name} in access control list, exiting"
                                     )
                                     return
-                                await directory_client.update_access_control_recursive(acl=f"group:{groups[group_name]}:r-x"
+                                await directory_client.update_access_control_recursive(
+                                    acl=f"group:{groups[group_name]}:r-x"
                                 )
                         if "oids" in access_control:
                             for oid in access_control["oids"]:
@@ -115,60 +119,60 @@ class AdlsGen2Setup:
                     for directory_client in directories.values():
                         await directory_client.close()
 
-    async def walk_files(self, src_filepath = "."):
+    async def walk_files(self, src_filepath="."):
         filepath_list = []
-    
-        #This for loop uses the os.walk() function to walk through the files and directories
-        #and records the filepaths of the files to a list
+
+        # This for loop uses the os.walk() function to walk through the files and directories
+        # and records the filepaths of the files to a list
         for root, dirs, files in os.walk(src_filepath):
-            
-            #iterate through the files currently obtained by os.walk() and
-            #create the filepath string for that file and add it to the filepath_list list
+
+            # iterate through the files currently obtained by os.walk() and
+            # create the filepath string for that file and add it to the filepath_list list
             root_found: bool = False
             for file in files:
-                #Checks to see if the root is '.' and changes it to the correct current
-                #working directory by calling os.getcwd(). Otherwise root_path will just be the root variable value.                
-                
-                if not root_found and root == '.':
-                    filepath =os.path.join(os.getcwd() + "/", file)
+                # Checks to see if the root is '.' and changes it to the correct current
+                # working directory by calling os.getcwd(). Otherwise root_path will just be the root variable value.
+
+                if not root_found and root == ".":
+                    filepath = os.path.join(os.getcwd() + "/", file)
                     root_found = True
                 else:
                     filepath = os.path.join(root, file)
-               
-                #Appends filepath to filepath_list if filepath does not currently exist in filepath_list
+
+                # Appends filepath to filepath_list if filepath does not currently exist in filepath_list
                 if filepath not in filepath_list:
-                    filepath_list.append(filepath)               
-                    
-        #Return filepath_list        
+                    filepath_list.append(filepath)
+
+        # Return filepath_list
         return filepath_list
 
     async def scan_and_upload_directories(self, directories: dict[str, DataLakeDirectoryClient], filesystem_client):
         logger.info("Scanning and uploading files from directories recursively...")
-        
+
         for directory, directory_client in directories.items():
             directory_path = os.path.join(self.data_directory, directory)
             if directory == "/":
                 continue
-            
-             # Check if 'scandir' exists and is set to False
+
+            # Check if 'scandir' exists and is set to False
             if not self.data_access_control_format["directories"][directory].get("scandir", True):
                 logger.info(f"Skipping directory {directory} as 'scandir' is set to False")
                 continue
-            
+
             # Check if the directory exists before walking it
             if not os.path.exists(directory_path):
                 logger.warning(f"Directory does not exist: {directory_path}")
                 continue
-            
+
             # Get all file paths using the walk_files function
             file_paths = await self.walk_files(directory_path)
 
             # Upload each file collected
-            count =0
+            count = 0
             num = len(file_paths)
             for file_path in file_paths:
                 await self.upload_file(directory_client, file_path, directory)
-                count=+1
+                count = +1
                 logger.info(f"Uploaded [{count}/{num}] {directory}/{file_path}")
 
     def create_service_client(self):
@@ -190,11 +194,11 @@ class AdlsGen2Setup:
         file_client = directory_client.get_file_client(filename)
         try:
             properties = await file_client.get_file_properties()
-            return properties.metadata.get('md5')
+            return properties.metadata.get("md5")
         except Exception as e:
             logger.error(f"Error getting blob properties for {filename}: {e}")
             return None
-    
+
     async def upload_file(self, directory_client: DataLakeDirectoryClient, file_path: str, category: str = ""):
         # Calculate MD5 hash once
         md5_hash = await self.calc_md5(file_path)
@@ -212,12 +216,7 @@ class AdlsGen2Setup:
                 tmtime = os.path.getmtime(file_path)
                 last_modified = datetime.fromtimestamp(tmtime).isoformat()
                 title = os.path.splitext(filename)[0]
-                metadata = {
-                    "md5": md5_hash,
-                    "category": category,
-                    "updated": last_modified,
-                    "title": title
-                }
+                metadata = {"md5": md5_hash, "category": category, "updated": last_modified, "title": title}
                 await file_client.upload_data(f, overwrite=True)
                 await file_client.set_metadata(metadata)
                 logger.info(f"Uploaded and updated metadata for {filename}")
@@ -248,7 +247,6 @@ class AdlsGen2Setup:
                     # If Unified does not work for you, then you may need the following settings instead:
                     # "mailEnabled": False,
                     # "mailNickname": group_name,
-
                 }
                 async with session.post("https://graph.microsoft.com/v1.0/groups", json=group) as response:
                     content = await response.json()
@@ -270,7 +268,7 @@ async def main(args: Any):
             data_access_control_format = json.load(f)
         command = AdlsGen2Setup(
             data_directory=args.data_directory,
-            storage_account_name=os.environ["AZURE_ADLS_GEN2_STORAGE_ACCOUNT"],            
+            storage_account_name=os.environ["AZURE_ADLS_GEN2_STORAGE_ACCOUNT"],
             filesystem_name=os.environ["AZURE_ADLS_GEN2_FILESYSTEM"],
             security_enabled_groups=args.create_security_enabled_groups,
             credentials=credentials,
@@ -295,10 +293,12 @@ if __name__ == "__main__":
         "--data-access-control", required=True, help="JSON file describing access control for the sample data"
     )
     parser.add_argument("--verbose", "-v", required=False, action="store_true", help="Verbose output")
-    parser.add_argument("--scandirs", required=False, action="store_true", help="Scan and upload all files from directories recursively")
+    parser.add_argument(
+        "--scandirs", required=False, action="store_true", help="Scan and upload all files from directories recursively"
+    )
     args = parser.parse_args()
     if args.verbose:
         logging.basicConfig()
-        logging.getLogger().setLevel(logging.INFO)        
+        logging.getLogger().setLevel(logging.INFO)
 
     asyncio.run(main(args))
