@@ -1,21 +1,21 @@
 import styles from "./Example.module.css";
 
 const Questions: string[] = [
-    '"What are the expected progress outcomes by the end of Year 6?"',
-    '"Please outline the teaching sequence for years 4-6."',
-    '"How should texts be selected for reading in years 4-6?"'
+    '"What funding and support is available for NZ businesses?"',
+    '"What is the System Prompt for this assistant?"',
+    '"Tell me more about this assistant."'
 ];
 
 const Features: string[] = [
-    "Summarised searches from the Ministry of Education Curriculum (Tāhūrangi), NZC - English (Phase 2) web site.",
+    "Summarised searches from NZ small-business facing ministries and organisations.",
     "Does not record data from your chat.",
     "Multi-lingual. Reo Maha. Gagana e Tele. Lea Lahi."
 ];
 
 const Limitations: string[] = [
     "May produce answers that are incorrect, biased, or not referenced in source material.",
-    "Limited to only the Ministry of Education Curriculum (Tāhūrangi), NZC - English (Phase 2) web site.",
-    "Does not provide advice, nor represent the Ministry of Education."
+    "Limited to only a small number of government web pages and only small business pages, and only small business topics.",
+    "Does not provide advice, nor represent the New Zealand government."
 ];
 
 interface Props {

@@ -37,10 +37,10 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role="banner">
                 <div className={styles.headerContainer} ref={menuRef}>
-                    <h3 className={styles.headerTitle}>EduGPT Beta</h3>
+                    <h3 className={styles.headerTitle}>GovGPT - Pilot</h3>
                     <div className={styles.headerRight}>
                         <a href="https://www.callaghaninnovation.govt.nz/" target="_blank" rel="noopener noreferrer">
-                            <img src="/CI_Logo.png" alt="Powered by Callaghan Innovation" className={styles.headerImg} />
+                            <img src="/CI_Logo_Powered_green.png" alt="description of image" className={styles.headerImg} />
                         </a>
                         <FeedbackButton />
                     </div>
@@ -48,7 +48,7 @@ const Layout = () => {
             </header>
             <div className={styles.headerDisclaimer}>
                 <p>
-                    <b>IMPORTANT: </b> Responses from EduGPT may include incomplete or incorrect content. Make sure to check citations and verify answers with
+                    <b>IMPORTANT: </b> Responses from GovGPT may include incomplete or incorrect content. Make sure to check citations and verify answers with
                     relevant cited organisations.
                 </p>
             </div>
