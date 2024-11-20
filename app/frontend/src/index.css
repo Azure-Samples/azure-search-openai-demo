@@ -28,15 +28,14 @@ body {
 
 :root {
     height: 100%;
-    --primary-colour: #1a3d21;
+    --primary-colour: #3ce2db;
     --feedback-button: black;
     --disclaimer: #f5dfe3;
     --user-chat-bubble: #eaf5f7;
     --background: white;
     --example-conatianer: #f7f7f7;
-    --primary-dark: black;
-    --primary-text: white;
-    --link: #2b2bab;
+    --primary-dark: #2997b1;
+    --link: #123bbb;
 }
 
 @media (min-width: 480px) {
