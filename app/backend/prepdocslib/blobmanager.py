@@ -142,9 +142,10 @@ class BlobManager:
                 file_md5 = file.metadata.get("md5")
                 blob_md5 = blob_metadata.get("md5")
                 if file_md5 == blob_md5:
-                    continue  #  documemt already uploaded
+                    logger.info("Blob %s exists and md5 values match, skipping upload", blob_name)
+                    continue  #  document already uploaded
 
-            logger.debug("Converting page %s to image and uploading -> %s", i, blob_name)
+            logger.info("Converting page %s to image and uploading -> %s", i, blob_name)
 
             doc = fitz.open(file.content.name)
             page = doc.load_page(i)

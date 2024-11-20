@@ -22,11 +22,11 @@ async def parse_file(
     if processor is None:
         logger.info("Skipping '%s', no parser found.", file.filename())
         return []
-    logger.debug("Ingesting '%s'", file.filename())
+    logger.info("Ingesting '%s'", file.filename())
     pages = [page async for page in processor.parser.parse(content=file.content)]
-    logger.debug("Splitting '%s' into sections", file.filename())
+    logger.info("Splitting '%s' into sections", file.filename())
     if image_embeddings:
-        logger.debug("Each page will be split into smaller chunks of text, but images will be of the entire page.")
+        logger.info("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
     ]
@@ -79,41 +79,43 @@ class FileStrategy(Strategy):
         search_manager = SearchManager(
             self.search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings
         )
-        doccount = self.list_file_strategy.count_docs()
-        logger.info(f"Processing {doccount} files")
+        doc_count = self.list_file_strategy.count_docs()
+        logger.info("Processing %s files", doc_count)
         processed_count = 0
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    if self.ignore_checksum or not await search_manager.file_exists(file):
-                        sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
-                        if sections:
-                            blob_sas_uris = await self.blob_manager.upload_blob(file)
-                            blob_image_embeddings: Optional[List[List[float]]] = None
-                            if self.image_embeddings and blob_sas_uris:
-                                blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                            await search_manager.update_content(
-                                sections=sections, file=file, image_embeddings=blob_image_embeddings
-                            )
+                    if not self.ignore_checksum and await search_manager.file_exists(file):
+                        logger.info("'%s' has already been processed", file.filename())
+                        continue
+                    sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+                    if sections:
+                        blob_sas_uris = await self.blob_manager.upload_blob(file)
+                        blob_image_embeddings: Optional[List[List[float]]] = None
+                        if self.image_embeddings and blob_sas_uris:
+                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                        await search_manager.update_content(
+                            sections=sections, file=file, image_embeddings=blob_image_embeddings
+                        )
                 finally:
                     if file:
                         file.close()
                 processed_count += 1
                 if processed_count % 10 == 0:
-                    remaining = max(doccount - processed_count, 1)
-                    logger.info(f"{processed_count} processed, {remaining} documents remaining")
+                    remaining = max(doc_count - processed_count, 1)
+                    logger.info("%s processed, %s documents remaining", processed_count, remaining)
 
         elif self.document_action == DocumentAction.Remove:
-            doccount = self.list_file_strategy.count_docs()
+            doc_count = self.list_file_strategy.count_docs()
             paths = self.list_file_strategy.list_paths()
             async for path in paths:
                 await self.blob_manager.remove_blob(path)
                 await search_manager.remove_content(path)
                 processed_count += 1
                 if processed_count % 10 == 0:
-                    remaining = max(doccount - processed_count, 1)
-                    logger.info(f"{processed_count} removed, {remaining} documents remaining")
+                    remaining = max(doc_count - processed_count, 1)
+                    logger.info("%s removed, %s documents remaining", processed_count, remaining)
 
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
