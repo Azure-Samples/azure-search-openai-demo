@@ -9,7 +9,6 @@ from glob import glob
 from typing import IO, AsyncGenerator, Dict, List, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from azure.storage.filedatalake.aio import DataLakeServiceClient
 
@@ -214,7 +213,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         # Create a BlobServiceClient using account URL and credentials
         service_client = BlobServiceClient(
             account_url=f"https://{self.data_lake_storage_account}.blob.core.windows.net",
-            credential=DefaultAzureCredential(),
+            credential=self.credential,
         )
 
         # Get the container client
