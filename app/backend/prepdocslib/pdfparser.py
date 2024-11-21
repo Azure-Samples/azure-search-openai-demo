@@ -6,6 +6,7 @@ from typing import IO, AsyncGenerator, Union
 
 import pymupdf
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 from azure.ai.documentintelligence.models import DocumentTable
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -14,6 +15,7 @@ from pypdf import PdfReader
 
 from .page import Page
 from .parser import Parser
+from .cu_image import ContentUnderstandingManager
 
 logger = logging.getLogger("scripts")
 
@@ -48,24 +50,28 @@ class DocumentAnalysisParser(Parser):
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         model_id="prebuilt-layout",
         use_content_understanding=True,
+        content_understanding_endpoint: str = None,
     ):
         self.model_id = model_id
         self.endpoint = endpoint
         self.credential = credential
         self.use_content_understanding = use_content_understanding
+        self.content_understanding_endpoint = content_understanding_endpoint
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
 
-        # TODO: do we also need output=figures on the client itself? seems odd.
+        cu_manager = ContentUnderstandingManager(self.content_understanding_endpoint, self.credential)
         async with DocumentIntelligenceClient(
-            endpoint=self.endpoint, credential=self.credential, output="figures"
+            endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
+            # turn content into bytes
+            content_bytes = content.read()
             if self.use_content_understanding:
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id="prebuilt-layout",
-                    analyze_request=content,
-                    content_type="application/octet-stream",
+                    analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
+                    # content_type="application/octet-stream",
                     output=["figures"],
                     features=["ocrHighResolution"],
                     output_content_format="markdown",
@@ -109,7 +115,9 @@ class DocumentAnalysisParser(Parser):
                 yield Page(page_num=page_num, offset=offset, text=page_text)
                 offset += len(page_text)
 
+            figure_results = {}
             if form_recognizer_results.figures:
+                doc = pymupdf.open(stream=io.BytesIO(content_bytes))
                 for figures_idx, figure in enumerate(form_recognizer_results.figures):
                     for region in figure.bounding_regions:
                         print(f"\tFigure body bounding regions: {region}")
@@ -121,28 +129,44 @@ class DocumentAnalysisParser(Parser):
                             region.polygon[5],  # y1 (bottom)
                         )
                     page_number = figure.bounding_regions[0]["pageNumber"]
-                    cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(
-                        content, page_number - 1, bounding_box
-                    )
-
-                    os.makedirs("figures", exist_ok=True)
-
-                    filename = "figure_imagecrop" + str(figures_idx) + ".png"
-                    # Full path for the file
-                    filepath = os.path.join("figures", filename)
+                    cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
 
                     # Save the figure
-                    cropped_img.save(filepath)
                     bytes_io = io.BytesIO()
                     cropped_img.save(bytes_io, format="PNG")
-                    cropped_img = bytes_io.getvalue()
-                    # _ , figure_description = run_cu_image(analyzer_name, filepath)
+                    image_fields = await cu_manager.run_cu_image(bytes_io.getvalue())
+                    figure_results[figure.id] = image_fields
 
-                    # md_content = replace_figure_description(md_content, figure_description, figures_idx+1)
-                    # figure_content.append(figure_description)
+        md_content = analyze_result.content
+        page_to_figure = {}
+        for figure in analyze_result.figures:
+            # Parse figure id
+            # https://learn.microsoft.com/azure/ai-services/document-intelligence/concept/analyze-document-response?view=doc-intel-4.0.0#figures
+            figure_id = figure.id.split(".")  # 3.1 where 3 is the page number and 1 is the figure number, 1-indexed
+            page = int(figure_id[0])
+            if page not in page_to_figure:
+                page_to_figure[page] = []
+            page_to_figure[page].append(figure.id)
+        for page in form_recognizer_results.pages:
+            # Use the text span to extract the markdown on the page
+            span = page.spans[0]
+            page_md_content = md_content[span.offset : span.offset + span.length]
+            if page.page_number in page_to_figure:
+                page_figures = page_to_figure[page.page_number]
+                # split the content on the figure tag
+                parts = page_md_content.split("\n<figure>\n")
+                for i, figure_id in enumerate(page_figures):
+                    with open(
+                        os.path.join(figures_directory, f"figure_imagecrop_{figure_id}_verbalized.json"), "r"
+                    ) as f:
+                        figure_content = json.dumps(json.load(f)["result"]["contents"][0])
+                        parts[i] = parts[i] + f'<!-- FigureContent="{figure_content}" -->'
+                    page_md_content = "\n".join(parts)
+            with open(os.path.join(pages_md_directory, f"page_{page.page_number}.md"), "w", encoding="utf-8") as f:
+                f.write(page_md_content)
 
-    @classmethod
-    def table_to_html(cls, table: DocumentTable):
+    @staticmethod
+    def table_to_html(table: DocumentTable):
         table_html = "<table>"
         rows = [
             sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index)
@@ -162,8 +186,8 @@ class DocumentAnalysisParser(Parser):
         table_html += "</table>"
         return table_html
 
-    @classmethod
-    def crop_image_from_pdf_page(pdf_path, page_number, bounding_box):
+    @staticmethod
+    def crop_image_from_pdf_page(doc: pymupdf.Document, page_number, bounding_box):
         """
         Crops a region from a given page in a PDF and returns it as an image.
 
@@ -172,16 +196,13 @@ class DocumentAnalysisParser(Parser):
         :param bounding_box: A tuple of (x0, y0, x1, y1) coordinates for the bounding box.
         :return: A PIL Image of the cropped area.
         """
-        doc = pymupdf.open(pdf_path)
+        logger.info(f"Cropping image from PDF page {page_number} with bounding box {bounding_box}")
         page = doc.load_page(page_number)
 
         # Cropping the page. The rect requires the coordinates in the format (x0, y0, x1, y1).
         bbx = [x * 72 for x in bounding_box]
         rect = pymupdf.Rect(bbx)
+        # 72 is the DPI ? what? explain this from CU
         pix = page.get_pixmap(matrix=pymupdf.Matrix(300 / 72, 300 / 72), clip=rect)
 
-        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-
-        doc.close()
-
-        return img
+        return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)

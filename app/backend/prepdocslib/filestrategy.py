@@ -7,6 +7,7 @@ from .fileprocessor import FileProcessor
 from .listfilestrategy import File, ListFileStrategy
 from .searchmanager import SearchManager, Section
 from .strategy import DocumentAction, SearchInfo, Strategy
+from .cu_image import ContentUnderstandingManager
 
 logger = logging.getLogger("scripts")
 
@@ -50,6 +51,8 @@ class FileStrategy(Strategy):
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
+        use_content_understanding: bool = False,
+        content_understanding_endpoint: Optional[str] = None,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -61,6 +64,8 @@ class FileStrategy(Strategy):
         self.search_info = search_info
         self.use_acls = use_acls
         self.category = category
+        self.use_content_understanding = use_content_understanding
+        self.content_understanding_endpoint = content_understanding_endpoint
 
     async def setup(self):
         search_manager = SearchManager(
@@ -72,6 +77,10 @@ class FileStrategy(Strategy):
             search_images=self.image_embeddings is not None,
         )
         await search_manager.create_index()
+
+        if self.use_content_understanding:
+            cu_manager = ContentUnderstandingManager(self.content_understanding_endpoint, self.search_info.credential)
+            await cu_manager.create_analyzer()
 
     async def run(self):
         search_manager = SearchManager(
