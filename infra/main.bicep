@@ -245,7 +245,7 @@ param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
-  ? '${replace(environmentName, '-', '')}acr'
+  ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
 
 // Organize resources in a resource group
