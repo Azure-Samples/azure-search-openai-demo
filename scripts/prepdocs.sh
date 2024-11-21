@@ -1,6 +1,6 @@
  #!/bin/sh
 
-#. ./scripts/load_python_env.sh
+. ./scripts/load_python_env.sh
 
 echo 'Running "prepdocs.py"'
 

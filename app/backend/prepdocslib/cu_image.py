@@ -1,13 +1,10 @@
-from typing import Union
 import logging
+from typing import Union
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
-from tenacity import retry, stop_after_attempt, wait_fixed
-from tenacity import retry_if_exception_type
-
 from azure.identity.aio import get_bearer_token_provider
-
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 logger = logging.getLogger("scripts")
 
@@ -97,7 +94,6 @@ class ContentUnderstandingManager:
                     response_json = await response.json()
                     if response_json["status"] != "Succeeded":
                         raise ValueError("Retry")
-                    print(response_json)
 
             await poll()
 
@@ -107,7 +103,7 @@ class ContentUnderstandingManager:
         model_output_raw = str(model_output)
         return model_output, model_output_raw
 
-    async def run_cu_image(self, image_bytes):
+    async def verbalize_figure(self, image_bytes) -> str:
         async with aiohttp.ClientSession() as session:
             token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
             headers = {"Authorization": "Bearer " + token.token}
@@ -119,8 +115,7 @@ class ContentUnderstandingManager:
                 headers=headers,
                 data=image_bytes,
             ) as response:
-                result = await response.json()
-                print(result)
+                response.raise_for_status()
                 poll_url = response.headers["Operation-Location"]
 
                 @retry(stop=stop_after_attempt(60), wait=wait_fixed(2), retry=retry_if_exception_type(ValueError))
@@ -129,11 +124,13 @@ class ContentUnderstandingManager:
                         response.raise_for_status()
                         response_json = await response.json()
                         print(response_json)
+                        # rich.print it all pretty progress-y
                         if response_json["status"] == "Failed":
                             raise Exception("Failed")
                         if response_json["status"] == "Running":
                             raise ValueError("Running")
                         return response_json
 
-                response = await poll()
-                return response["result"]["contents"][0]["fields"]
+                results = await poll()
+                fields = results["result"]["contents"][0]["fields"]
+                return f"Title: {fields['Title']['valueString']}\n\nType: {fields['ImageType']['valueString']}\n\nDescription: {fields['MarkdownDescription']['valueString']}"

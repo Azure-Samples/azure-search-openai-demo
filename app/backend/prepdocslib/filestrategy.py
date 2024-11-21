@@ -2,12 +2,12 @@ import logging
 from typing import List, Optional
 
 from .blobmanager import BlobManager
+from .cu_image import ContentUnderstandingManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
 from .listfilestrategy import File, ListFileStrategy
 from .searchmanager import SearchManager, Section
 from .strategy import DocumentAction, SearchInfo, Strategy
-from .cu_image import ContentUnderstandingManager
 
 logger = logging.getLogger("scripts")
 

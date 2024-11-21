@@ -1,21 +1,24 @@
 import html
 import io
 import logging
-import os
+from enum import Enum
 from typing import IO, AsyncGenerator, Union
 
 import pymupdf
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
-from azure.ai.documentintelligence.models import DocumentTable
+from azure.ai.documentintelligence.models import (
+    AnalyzeDocumentRequest,
+    DocumentFigure,
+    DocumentTable,
+)
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from PIL import Image
 from pypdf import PdfReader
 
+from .cu_image import ContentUnderstandingManager
 from .page import Page
 from .parser import Parser
-from .cu_image import ContentUnderstandingManager
 
 logger = logging.getLogger("scripts")
 
@@ -71,11 +74,11 @@ class DocumentAnalysisParser(Parser):
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id="prebuilt-layout",
                     analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
-                    # content_type="application/octet-stream",
                     output=["figures"],
                     features=["ocrHighResolution"],
                     output_content_format="markdown",
                 )
+                doc_for_pymupdf = pymupdf.open(stream=io.BytesIO(content_bytes))
             else:
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
@@ -89,81 +92,74 @@ class DocumentAnalysisParser(Parser):
                     for table in (form_recognizer_results.tables or [])
                     if table.bounding_regions and table.bounding_regions[0].page_number == page_num + 1
                 ]
+                figures_on_page = [
+                    figure
+                    for figure in (form_recognizer_results.figures or [])
+                    if figure.bounding_regions and figure.bounding_regions[0].page_number == page_num + 1
+                ]
+
+                class ObjectType(Enum):
+                    NONE = -1
+                    TABLE = 0
+                    FIGURE = 1
 
                 # mark all positions of the table spans in the page
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                table_chars = [-1] * page_length
-                for table_id, table in enumerate(tables_on_page):
+                mask_chars = [(ObjectType.NONE, None)] * page_length
+                for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:
                         # replace all table spans with "table_id" in table_chars array
                         for i in range(span.length):
                             idx = span.offset - page_offset + i
                             if idx >= 0 and idx < page_length:
-                                table_chars[idx] = table_id
+                                mask_chars[idx] = (ObjectType.TABLE, table_idx)
+                for figure_idx, figure in enumerate(figures_on_page):
+                    for span in figure.spans:
+                        # replace all figure spans with "figure_id" in figure_chars array
+                        for i in range(span.length):
+                            idx = span.offset - page_offset + i
+                            if idx >= 0 and idx < page_length:
+                                mask_chars[idx] = (ObjectType.FIGURE, figure_idx)
 
                 # build page text by replacing characters in table spans with table html
                 page_text = ""
-                added_tables = set()
-                for idx, table_id in enumerate(table_chars):
-                    if table_id == -1:
+                added_objects = set()  # set of object types todo mypy
+                for idx, mask_char in enumerate(mask_chars):
+                    object_type, object_idx = mask_char
+                    if object_type == ObjectType.NONE:
                         page_text += form_recognizer_results.content[page_offset + idx]
-                    elif table_id not in added_tables:
-                        page_text += DocumentAnalysisParser.table_to_html(tables_on_page[table_id])
-                        added_tables.add(table_id)
-
+                    elif object_type == ObjectType.TABLE:
+                        if mask_char not in added_objects:
+                            page_text += DocumentAnalysisParser.table_to_html(tables_on_page[object_idx])
+                            added_objects.add(mask_char)
+                    elif object_type == ObjectType.FIGURE:
+                        if mask_char not in added_objects:
+                            page_text += await DocumentAnalysisParser.figure_to_html(
+                                doc_for_pymupdf, cu_manager, figures_on_page[object_idx]
+                            )
+                            added_objects.add(mask_char)
+                # TODO: reset page numbers based on the mask
                 yield Page(page_num=page_num, offset=offset, text=page_text)
                 offset += len(page_text)
 
-            figure_results = {}
-            if form_recognizer_results.figures:
-                doc = pymupdf.open(stream=io.BytesIO(content_bytes))
-                for figures_idx, figure in enumerate(form_recognizer_results.figures):
-                    for region in figure.bounding_regions:
-                        print(f"\tFigure body bounding regions: {region}")
-                        # To learn more about bounding regions, see https://aka.ms/bounding-region
-                        bounding_box = (
-                            region.polygon[0],  # x0 (left)
-                            region.polygon[1],  # y0 (top
-                            region.polygon[4],  # x1 (right)
-                            region.polygon[5],  # y1 (bottom)
-                        )
-                    page_number = figure.bounding_regions[0]["pageNumber"]
-                    cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
-
-                    # Save the figure
-                    bytes_io = io.BytesIO()
-                    cropped_img.save(bytes_io, format="PNG")
-                    image_fields = await cu_manager.run_cu_image(bytes_io.getvalue())
-                    figure_results[figure.id] = image_fields
-
-        md_content = analyze_result.content
-        page_to_figure = {}
-        for figure in analyze_result.figures:
-            # Parse figure id
-            # https://learn.microsoft.com/azure/ai-services/document-intelligence/concept/analyze-document-response?view=doc-intel-4.0.0#figures
-            figure_id = figure.id.split(".")  # 3.1 where 3 is the page number and 1 is the figure number, 1-indexed
-            page = int(figure_id[0])
-            if page not in page_to_figure:
-                page_to_figure[page] = []
-            page_to_figure[page].append(figure.id)
-        for page in form_recognizer_results.pages:
-            # Use the text span to extract the markdown on the page
-            span = page.spans[0]
-            page_md_content = md_content[span.offset : span.offset + span.length]
-            if page.page_number in page_to_figure:
-                page_figures = page_to_figure[page.page_number]
-                # split the content on the figure tag
-                parts = page_md_content.split("\n<figure>\n")
-                for i, figure_id in enumerate(page_figures):
-                    with open(
-                        os.path.join(figures_directory, f"figure_imagecrop_{figure_id}_verbalized.json"), "r"
-                    ) as f:
-                        figure_content = json.dumps(json.load(f)["result"]["contents"][0])
-                        parts[i] = parts[i] + f'<!-- FigureContent="{figure_content}" -->'
-                    page_md_content = "\n".join(parts)
-            with open(os.path.join(pages_md_directory, f"page_{page.page_number}.md"), "w", encoding="utf-8") as f:
-                f.write(page_md_content)
+    @staticmethod
+    async def figure_to_html(
+        doc: pymupdf.Document, cu_manager: ContentUnderstandingManager, figure: DocumentFigure
+    ) -> str:
+        for region in figure.bounding_regions:
+            # To learn more about bounding regions, see https://aka.ms/bounding-region
+            bounding_box = (
+                region.polygon[0],  # x0 (left)
+                region.polygon[1],  # y0 (top
+                region.polygon[4],  # x1 (right)
+                region.polygon[5],  # y1 (bottom)
+            )
+        page_number = figure.bounding_regions[0]["pageNumber"]  # 1-indexed
+        cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
+        figure_description = await cu_manager.verbalize_figure(cropped_img)
+        # TODO: add DI's original figcaption to this caption - figure.caption.content
+        return f"<figure><figcaption>{figure_description}</figcaption></figure>"
 
     @staticmethod
     def table_to_html(table: DocumentTable):
@@ -187,7 +183,7 @@ class DocumentAnalysisParser(Parser):
         return table_html
 
     @staticmethod
-    def crop_image_from_pdf_page(doc: pymupdf.Document, page_number, bounding_box):
+    def crop_image_from_pdf_page(doc: pymupdf.Document, page_number, bounding_box) -> bytes:
         """
         Crops a region from a given page in a PDF and returns it as an image.
 
@@ -205,4 +201,7 @@ class DocumentAnalysisParser(Parser):
         # 72 is the DPI ? what? explain this from CU
         pix = page.get_pixmap(matrix=pymupdf.Matrix(300 / 72, 300 / 72), clip=rect)
 
-        return Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        bytes_io = io.BytesIO()
+        img.save(bytes_io, format="PNG")
+        return bytes_io.getvalue()
