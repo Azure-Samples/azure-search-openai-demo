@@ -103,6 +103,7 @@ class SentenceTextSplitter(TextSplitter):
         tokens = bpe.encode(text)
         if len(tokens) <= self.max_tokens_per_section:
             # Section is already within max tokens, return
+            print(f"Page {page_num}: {text}")
             yield SplitPage(page_num=page_num, text=text)
         else:
             # Start from the center and try and find the closest sentence ending by spiralling outward.
@@ -192,24 +193,15 @@ class SentenceTextSplitter(TextSplitter):
             section_text = all_text[start:end]
             yield from self.split_page_by_max_tokens(page_num=find_page(start), text=section_text)
 
-            last_table_start = section_text.rfind("<table")
             last_figure_start = section_text.rfind("<figure")
-            if last_table_start > 2 * self.sentence_search_limit and last_table_start > section_text.rfind("</table"):
-                # If the section ends with an unclosed table, we need to start the next section with the table.
-                # If table starts inside sentence_search_limit, we ignore it, as that will cause an infinite loop for tables longer than MAX_SECTION_LENGTH
-                # If last table starts inside section_overlap, keep overlapping
-                logger.info(
-                    f"Section ends with unclosed table, starting next section with the table at page {find_page(start)} offset {start} table start {last_table_start}"
-                )
-                start = min(end - self.section_overlap, start + last_table_start)
-            elif last_figure_start > 2 * self.sentence_search_limit and last_figure_start > section_text.rfind(
+            if last_figure_start > 2 * self.sentence_search_limit and last_figure_start > section_text.rfind(
                 "</figure"
             ):
                 # If the section ends with an unclosed figure, we need to start the next section with the figure.
+                start = min(end - self.section_overlap, start + last_figure_start)
                 logger.info(
                     f"Section ends with unclosed figure, starting next section with the figure at page {find_page(start)} offset {start} figure start {last_figure_start}"
                 )
-                start = min(end - self.section_overlap, start + last_figure_start)
             else:
                 start = end - self.section_overlap
 

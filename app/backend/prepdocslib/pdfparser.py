@@ -1,5 +1,6 @@
 import html
 import io
+import json
 import logging
 from enum import Enum
 from typing import IO, AsyncGenerator, Union
@@ -8,6 +9,7 @@ import pymupdf
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     AnalyzeDocumentRequest,
+    AnalyzeResult,
     DocumentFigure,
     DocumentTable,
 )
@@ -83,19 +85,20 @@ class DocumentAnalysisParser(Parser):
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
                 )
-            form_recognizer_results = await poller.result()
+            form_recognizer_results: AnalyzeResult = await poller.result()
 
             offset = 0
-            for page_num, page in enumerate(form_recognizer_results.pages):
+            pages_json = []
+            for page in form_recognizer_results.pages:
                 tables_on_page = [
                     table
                     for table in (form_recognizer_results.tables or [])
-                    if table.bounding_regions and table.bounding_regions[0].page_number == page_num + 1
+                    if table.bounding_regions and table.bounding_regions[0].page_number == page.page_number
                 ]
                 figures_on_page = [
                     figure
                     for figure in (form_recognizer_results.figures or [])
-                    if figure.bounding_regions and figure.bounding_regions[0].page_number == page_num + 1
+                    if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
                 ]
 
                 class ObjectType(Enum):
@@ -135,13 +138,26 @@ class DocumentAnalysisParser(Parser):
                             added_objects.add(mask_char)
                     elif object_type == ObjectType.FIGURE:
                         if mask_char not in added_objects:
-                            page_text += await DocumentAnalysisParser.figure_to_html(
+                            figure_html = await DocumentAnalysisParser.figure_to_html(
                                 doc_for_pymupdf, cu_manager, figures_on_page[object_idx]
                             )
+                            page_text += figure_html
                             added_objects.add(mask_char)
-                # TODO: reset page numbers based on the mask
-                yield Page(page_num=page_num, offset=offset, text=page_text)
+                # We remove these comments since they are not needed and skew the page numbers
+                page_text = page_text.replace("<!-- PageBreak -->", "")
+                # We remove excess newlines at the beginning and end of the page
+                page_text = page_text.strip()
+                yield Page(page_num=page.page_number - 1, offset=offset, text=page_text)
+                # Serialize the page text to a JSON and save it locally
+                page_json = {
+                    "page_num": page.page_number - 1,
+                    "offset": offset,
+                    "text": page_text,
+                }
+                pages_json.append(page_json)
                 offset += len(page_text)
+            with open("pages.json", "w") as f:
+                json.dump(pages_json, f)
 
     @staticmethod
     async def figure_to_html(
@@ -158,12 +174,12 @@ class DocumentAnalysisParser(Parser):
         page_number = figure.bounding_regions[0]["pageNumber"]  # 1-indexed
         cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
         figure_description = await cu_manager.verbalize_figure(cropped_img)
-        # TODO: add DI's original figcaption to this caption - figure.caption.content
-        return f"<figure><figcaption>{figure_description}</figcaption></figure>"
+        figure_title = (figure.caption and figure.caption.content) or ""
+        return f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
 
     @staticmethod
     def table_to_html(table: DocumentTable):
-        table_html = "<table>"
+        table_html = "<figure><table>"
         rows = [
             sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index)
             for i in range(table.row_count)
@@ -179,7 +195,7 @@ class DocumentAnalysisParser(Parser):
                     cell_spans += f" rowSpan={cell.row_span}"
                 table_html += f"<{tag}{cell_spans}>{html.escape(cell.content)}</{tag}>"
             table_html += "</tr>"
-        table_html += "</table>"
+        table_html += "</table></figure>"
         return table_html
 
     @staticmethod

@@ -17,7 +17,7 @@ PATH_ANALYZER_MANAGEMENT_OPERATION = "/analyzers/{analyzerId}/operations/{operat
 PATH_ANALYZER_INFERENCE = "/analyzers/{analyzerId}:analyze"
 PATH_ANALYZER_INFERENCE_GET_IMAGE = "/analyzers/{analyzerId}/results/{operationId}/images/{imageId}"
 
-analyzer_name = "image_schema_analyzer"
+analyzer_name = "image_analyzer"
 image_schema = {
     "analyzerId": analyzer_name,
     "name": "Image understanding",
@@ -27,33 +27,11 @@ image_schema = {
     "config": {"returnDetails": False},
     "fieldSchema": {
         "name": "ImageInformation",
-        "descriptions": "Structured information from images.",
+        "descriptions": "Description of image.",
         "fields": {
-            "Title": {
+            "Description": {
                 "type": "string",
-                "description": "Title for the image (either taken from the image directly or a good short title based off content)",
-            },
-            "ImageType": {
-                "type": "string",
-                "description": "The type of image.",
-                "kind": "classify",
-                "enum": [
-                    "chart",
-                    "diagram",
-                    "table",
-                    "figure",
-                    "photo",
-                    "screenshot",
-                    "logo",
-                    "icon",
-                    "map",
-                    "infographic",
-                    "other",
-                ],
-            },
-            "MarkdownDescription": {
-                "type": "string",
-                "description": "Description of the image in markdown format. Start with a 2-sentence summary. If the image is a chart, diagram, or table, include the underlying data in tabular markdown format, with valid syntax and accurate numbers. If the image is a chart, describe any axis or legends.",
+                "description": "Description of the image. If the image has a title, start with the title. Include a 2-sentence summary. If the image is a chart, diagram, or table, include the underlying data in an HTML table tag, with accurate numbers. If the image is a chart, describe any axis or legends. The only allowed HTML tags are the table/thead/tr/td/tbody tags.",
             },
         },
     },
@@ -133,4 +111,4 @@ class ContentUnderstandingManager:
 
                 results = await poll()
                 fields = results["result"]["contents"][0]["fields"]
-                return f"Title: {fields['Title']['valueString']}\n\nType: {fields['ImageType']['valueString']}\n\nDescription: {fields['MarkdownDescription']['valueString']}"
+                return fields["DescriptionHTML"]["valueString"]

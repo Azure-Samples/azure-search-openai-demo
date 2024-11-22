@@ -69,7 +69,7 @@ A [recent change](https://github.com/Azure-Samples/azure-search-openai-demo/pull
 
 You may want to remove documents from the index. For example, if you're using the sample data, you may want to remove the documents that are already in the index before adding your own.
 
-To remove all documents, use `scripts/prepdocs.sh --removeall` or `scripts/prepdocs.ps1 --removeall`.
+To remove all documents, use `./scripts/prepdocs.sh --removeall` or `./scripts/prepdocs.ps1 --removeall`.
 
 You can also remove individual documents by using the `--remove` flag. Open either `scripts/prepdocs.sh` or `scripts/prepdocs.ps1` and replace `/data/*` with `/data/YOUR-DOCUMENT-FILENAME-GOES-HERE.pdf`. Then run `scripts/prepdocs.sh --remove` or `scripts/prepdocs.ps1 --remove`.
 
