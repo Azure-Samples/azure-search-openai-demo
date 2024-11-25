@@ -17,7 +17,7 @@
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.56.2",
     "@fluentui/react-icons": "^2.0.265",
-    "@react-spring/web": "^9.7.3",
+    "@react-spring/web": "^9.7.5",
     "dompurify": "^3.2.0",
     "i18next": "^23.16.5",
     "i18next-browser-languagedetector": "^8.0.0",
