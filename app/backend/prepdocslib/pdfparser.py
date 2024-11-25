@@ -95,11 +95,13 @@ class DocumentAnalysisParser(Parser):
                     for table in (form_recognizer_results.tables or [])
                     if table.bounding_regions and table.bounding_regions[0].page_number == page.page_number
                 ]
-                figures_on_page = [
-                    figure
-                    for figure in (form_recognizer_results.figures or [])
-                    if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
-                ]
+                figures_on_page = []
+                if self.use_content_understanding:
+                    figures_on_page = [
+                        figure
+                        for figure in (form_recognizer_results.figures or [])
+                        if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
+                    ]
 
                 class ObjectType(Enum):
                     NONE = -1
@@ -163,6 +165,7 @@ class DocumentAnalysisParser(Parser):
     async def figure_to_html(
         doc: pymupdf.Document, cu_manager: ContentUnderstandingManager, figure: DocumentFigure
     ) -> str:
+        logger.info("Describing figure '%s'", figure.id)
         for region in figure.bounding_regions:
             # To learn more about bounding regions, see https://aka.ms/bounding-region
             bounding_box = (
@@ -173,7 +176,7 @@ class DocumentAnalysisParser(Parser):
             )
         page_number = figure.bounding_regions[0]["pageNumber"]  # 1-indexed
         cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
-        figure_description = await cu_manager.verbalize_figure(cropped_img)
+        figure_description = await cu_manager.describe_image(cropped_img)
         figure_title = (figure.caption and figure.caption.content) or ""
         return f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
 
@@ -208,7 +211,6 @@ class DocumentAnalysisParser(Parser):
         :param bounding_box: A tuple of (x0, y0, x1, y1) coordinates for the bounding box.
         :return: A PIL Image of the cropped area.
         """
-        logger.info(f"Cropping image from PDF page {page_number} with bounding box {bounding_box}")
         page = doc.load_page(page_number)
 
         # Cropping the page. The rect requires the coordinates in the format (x0, y0, x1, y1).

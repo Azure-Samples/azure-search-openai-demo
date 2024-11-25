@@ -7,6 +7,7 @@ from typing import Optional, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
+from rich.logging import RichHandler
 
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
@@ -161,7 +162,7 @@ def setup_file_processors(
     use_content_understanding: bool = False,
     content_understanding_endpoint: Union[str, None] = None,
 ):
-    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=search_images)
+    sentence_text_splitter = SentenceTextSplitter()
 
     doc_int_parser: Optional[DocumentAnalysisParser] = None
     # check if Azure Document Intelligence credentials are provided
@@ -245,8 +246,7 @@ async def main(strategy: Strategy, setup_index: bool = True):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
-        epilog="Example: prepdocs.py '.\\data\*' -v",
+        description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index."
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
 
@@ -299,7 +299,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.verbose:
-        logging.basicConfig(format="%(message)s")
+        logging.basicConfig(format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)])
         # We only set the level to INFO for our logger,
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.DEBUG)
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     use_gptvision = os.getenv("USE_GPT4V", "").lower() == "true"
     use_acls = os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT") is not None
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
-    use_content_understanding = os.getenv("USE_CONTENT_UNDERSTANDING", "").lower() == "true"
+    use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):

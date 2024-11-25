@@ -22,7 +22,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 - [Running unit tests](#running-unit-tests)
 - [Running E2E tests](#running-e2e-tests)
 - [Code Style](#code-style)
-- [Adding new azd environment variables](#add-new-azd-environment-variables)
+- [Adding new azd environment variables](#adding-new-azd-environment-variables)
 
 ## Code of Conduct
 
@@ -166,6 +166,8 @@ If you followed the steps above to install the pre-commit hooks, then you can ju
 
 When adding new azd environment variables, please remember to update:
 
+1. [main.parameters.json](./main.parameters.json)
+1. [appEnvVariables in main.bicep](./main.bicep)
 1. App Service's [azure.yaml](./azure.yaml)
 1. [ADO pipeline](.azdo/pipelines/azure-dev.yml).
 1. [Github workflows](.github/workflows/azure-dev.yml)
