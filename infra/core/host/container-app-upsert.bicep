@@ -67,6 +67,9 @@ param keyvaultIdentities object = {}
 @description('The environment variables for the container in key value pairs')
 param env object = {}
 
+@description('The environment variables with secret references')
+param envSecrets array = []
+
 @description('Specifies if the resource ingress is exposed externally')
 param external bool = true
 
@@ -84,6 +87,13 @@ param allowedOrigins array = []
 resource existingApp 'Microsoft.App/containerApps@2023-05-02-preview' existing = if (exists) {
   name: name
 }
+
+var envAsArray = [
+  for key in objectKeys(env): {
+    name: key
+    value: '${env[key]}'
+  }
+]
 
 module app 'container-app.bicep' = {
   name: '${deployment().name}-update'
@@ -110,12 +120,7 @@ module app 'container-app.bicep' = {
     keyvaultIdentities: keyvaultIdentities
     allowedOrigins: allowedOrigins
     external: external
-    env: [
-      for key in objectKeys(env): {
-        name: key
-        value: '${env[key]}'
-      }
-    ]
+    env: concat(envAsArray, envSecrets)
     imageName: !empty(imageName) ? imageName : exists ? existingApp.properties.template.containers[0].image : ''
     targetPort: targetPort
     serviceBinds: serviceBinds
