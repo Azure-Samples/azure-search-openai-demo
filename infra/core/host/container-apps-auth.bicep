@@ -13,6 +13,8 @@ param serverAppId string = ''
 param clientSecretSettingName string = ''
 param authenticationIssuerUri string = ''
 param enableUnauthenticatedAccess bool = false
+param blobContainerUri string = ''
+param appIdentityResourceId string = ''
 
 // .default must be the 1st scope for On-Behalf-Of-Flow combined consent to work properly
 // Please see https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#default-and-combined-consent
@@ -23,7 +25,7 @@ resource app 'Microsoft.App/containerApps@2023-05-01' existing = {
   name: name
 }
 
-resource auth 'Microsoft.App/containerApps/authConfigs@2024-03-01' = {
+resource auth 'Microsoft.App/containerApps/authConfigs@2024-10-02-preview' = {
   parent: app
   name: 'current'
   properties: {
@@ -53,11 +55,15 @@ resource auth 'Microsoft.App/containerApps/authConfigs@2024-03-01' = {
         }
       }
     }
-    /*login: {
-    https://learn.microsoft.com/en-us/azure/container-apps/token-store
+    login: {
+      // https://learn.microsoft.com/en-us/azure/container-apps/token-store
       tokenStore: {
         enabled: true
+        azureBlobStorage: {
+          blobContainerUri: blobContainerUri
+          managedIdentityResourceId: appIdentityResourceId
+        }
       }
-    }*/
+    }
   }
 }

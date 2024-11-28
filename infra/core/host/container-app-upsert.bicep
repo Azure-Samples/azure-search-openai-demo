@@ -133,3 +133,4 @@ output name string = app.outputs.name
 output uri string = app.outputs.uri
 output id string = app.outputs.id
 output identityPrincipalId string = app.outputs.identityPrincipalId
+output identityResourceId string = app.outputs.identityResourceId

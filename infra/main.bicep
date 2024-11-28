@@ -40,6 +40,8 @@ param storageSkuName string // Set in main.parameters.json
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
 
+param tokenStorageContainerName string = 'tokens'
+
 param appServiceSkuName string // Set in main.parameters.json
 
 @allowed(['azure', 'openai', 'azure_custom'])
@@ -515,6 +517,8 @@ module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == '
     clientSecretSettingName: !empty(clientAppSecret) ? 'azureclientappsecret' : ''
     authenticationIssuerUri: authenticationIssuerUri
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
+    blobContainerUri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${tokenStorageContainerName}'
+    appIdentityResourceId: (deploymentTarget == 'appservice') ? '' : acaBackend.outputs.identityResourceId
   }
 }
 
@@ -697,6 +701,10 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }
+      {
+        name: tokenStorageContainerName
         publicAccess: 'None'
       }
     ]
