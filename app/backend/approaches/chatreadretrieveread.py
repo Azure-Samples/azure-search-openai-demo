@@ -14,6 +14,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
+from guardrails.orchestrator import GuardrailsOrchestrator
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):
@@ -39,6 +40,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
+        input_guardrails: Optional[GuardrailsOrchestrator],
+        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -53,6 +56,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
+        self.input_guardrails = input_guardrails
+        self.output_guardrails = output_guardrails
 
     @property
     def system_message_chat_conversation(self):
@@ -96,6 +101,39 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        # Input guardrail check
+        if self.input_guardrails:
+            guardrail_results, messages, return_response_immediately = (
+                await self.input_guardrails.update_chat_history(messages)
+            )
+            if return_response_immediately:
+                extra_info = {}
+                chat_coroutine = None
+                #TODO write a code for erly refusal message
+                # extra_info = {
+                #     "data_points": [],
+                #     "thoughts": [
+                #         ThoughtStep(
+                #             "Guardrail answer",
+                #             [str(message) for message in messages],
+                #             (
+                #                 {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                #                 if self.chatgpt_deployment
+                #                 else {"model": self.chatgpt_model}
+                #             )
+                #         )
+                #     ]
+                # }
+                # chat_coroutine = self.openai_client.chat.completions.create(
+                # #     # Azure OpenAI takes the deployment name as the model name
+                #     model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+                #     messages=messages,
+                #     temperature=overrides.get("temperature", 0),
+                #     n=1,
+                #     stream=should_stream,
+                # )
+                return (extra_info, chat_coroutine)
+
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -249,6 +287,14 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),
             ],
         }
+        # Output guardrail check
+        if self.output_guardrails:
+            guardrail_results, messages, return_response_immediately = (
+                await self.output_guardrails.update_chat_history(messages)
+            )
+            if return_response_immediately:
+                # TODO will need to debug
+                return (None, messages)
 
         chat_coroutine = self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name

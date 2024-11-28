@@ -13,6 +13,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from guardrails.orchestrator import GuardrailsOrchestrator
 
 
 class RetrieveThenReadVisionApproach(Approach):
@@ -49,7 +50,9 @@ class RetrieveThenReadVisionApproach(Approach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
+        input_guardrails: Optional[GuardrailsOrchestrator],
+        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -67,6 +70,8 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model)
+        self.input_guardrails = input_guardrails
+        self.output_guardrails = output_guardrails
 
     async def run(
         self,
@@ -76,7 +81,17 @@ class RetrieveThenReadVisionApproach(Approach):
     ) -> dict[str, Any]:
         q = messages[-1]["content"]
         if not isinstance(q, str):
-            raise ValueError("The most recent message content must be a string.")
+            raise ValueError("The most recent message content must be a string.")       
+        # Input guardrail check
+        if self.input_guardrails:
+            guardrail_results, messages, return_response_immediately = (
+                await self.input_guardrails.update_chat_history(messages)
+            )
+            print(guardrail_results, messages, return_response_immediately)
+        #     if return_response_immediately:
+        #         # TODO will need to debug
+        #         return (None, messages) 
+
 
         overrides = context.get("overrides", {})
         seed = overrides.get("seed", None)
@@ -186,6 +201,14 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
             ],
         }
+        # Output guardrail check
+        if self.output_guardrails:
+            guardrail_results, messages, return_response_immediately = (
+                await self.output_guardrails.update_chat_history(messages)
+            )
+            if return_response_immediately:
+                # TODO will need to debug
+                return (None, messages)
 
         return {
             "message": {

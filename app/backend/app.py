@@ -86,6 +86,15 @@ from prepdocs import (
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
+from guardrails.orchestrator import GuardrailsOrchestrator
+from guardrails.dummy_guard import DetectDummy
+
+#setup guardrails
+dummy_guard = DetectDummy()
+input_guardrails = GuardrailsOrchestrator([dummy_guard])
+output_guardrails = None
+# output_guardrails = GuardrailsOrchestrator([dummy_guard])
+
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
@@ -612,6 +621,8 @@ async def setup_clients():
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        input_guardrails=input_guardrails,
+        output_guardrails=output_guardrails,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
@@ -627,6 +638,8 @@ async def setup_clients():
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        input_guardrails=input_guardrails,
+        output_guardrails=output_guardrails,
     )
 
     if USE_GPT4V:
@@ -651,6 +664,8 @@ async def setup_clients():
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
+            input_guardrails=input_guardrails,
+            output_guardrails=output_guardrails,
         )
 
         current_app.config[CONFIG_CHAT_VISION_APPROACH] = ChatReadRetrieveReadVisionApproach(
@@ -671,6 +686,8 @@ async def setup_clients():
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
+            input_guardrails=input_guardrails,
+            output_guardrails=output_guardrails,
         )
 
 
