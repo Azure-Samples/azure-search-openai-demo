@@ -14,7 +14,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
-from guardrails.orchestrator import GuardrailsOrchestrator
+from guardrails import GuardrailsOrchestrator
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):
@@ -40,8 +40,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
-        input_guardrails: Optional[GuardrailsOrchestrator],
-        output_guardrails: Optional[GuardrailsOrchestrator],
+        input_guardrails: Optional[GuardrailsOrchestrator] = None,
+        output_guardrails: Optional[GuardrailsOrchestrator] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -103,36 +103,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         # Input guardrail check
         if self.input_guardrails:
-            guardrail_results, messages, return_response_immediately = (
-                await self.input_guardrails.update_chat_history(messages)
-            )
-            if return_response_immediately:
+            guardrail_results = await self.input_guardrails.process_chat_history(messages)
+            messages = guardrail_results.messages
+            if guardrail_results.immediate_response:
                 extra_info = {}
-                chat_coroutine = None
-                #TODO write a code for erly refusal message
-                # extra_info = {
-                #     "data_points": [],
-                #     "thoughts": [
-                #         ThoughtStep(
-                #             "Guardrail answer",
-                #             [str(message) for message in messages],
-                #             (
-                #                 {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                #                 if self.chatgpt_deployment
-                #                 else {"model": self.chatgpt_model}
-                #             )
-                #         )
-                #     ]
-                # }
-                # chat_coroutine = self.openai_client.chat.completions.create(
-                # #     # Azure OpenAI takes the deployment name as the model name
-                #     model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-                #     messages=messages,
-                #     temperature=overrides.get("temperature", 0),
-                #     n=1,
-                #     stream=should_stream,
-                # )
-                return (extra_info, chat_coroutine)
+                return (extra_info, guardrail_results.immediate_response_coroutine())
 
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
@@ -289,8 +264,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         }
         # Output guardrail check
         if self.output_guardrails:
-            guardrail_results, messages, return_response_immediately = (
-                await self.output_guardrails.update_chat_history(messages)
+            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
+                messages
             )
             if return_response_immediately:
                 # TODO will need to debug

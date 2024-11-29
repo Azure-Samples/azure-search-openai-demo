@@ -8,7 +8,8 @@ from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
 from core.authentication import AuthenticationHelper
-from guardrails.orchestrator import GuardrailsOrchestrator
+from guardrails import GuardrailsOrchestrator
+
 
 class RetrieveThenReadApproach(Approach):
     """
@@ -53,7 +54,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         query_language: str,
         query_speller: str,
         input_guardrails: Optional[GuardrailsOrchestrator],
-        output_guardrails: Optional[GuardrailsOrchestrator],    
+        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -81,18 +82,15 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
-        
+
         # Input guardrail check
         if self.input_guardrails:
-            guardrail_results, messages, return_response_immediately = (
-                await self.input_guardrails.update_chat_history(messages)
-            )
-            print(guardrail_results, messages, return_response_immediately)
-        #     if return_response_immediately:
-        #         # TODO will need to debug
-        #         return (None, messages)
-        
-            
+            guardrail_results = await self.input_guardrails.process_chat_history(messages)
+            messages = guardrail_results.messages
+            if guardrail_results.immediate_response:
+                extra_info = {}
+                return (extra_info, guardrail_results.immediate_response_coroutine())
+
         overrides = context.get("overrides", {})
         seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
@@ -182,8 +180,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         }
         # Output guardrail check
         if self.output_guardrails:
-            guardrail_results, messages, return_response_immediately = (
-                await self.output_guardrails.update_chat_history(messages)
+            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
+                messages
             )
             if return_response_immediately:
                 # TODO will need to debug

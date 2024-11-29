@@ -1,16 +1,14 @@
 from typing import List
-
 from openai.types.chat import ChatCompletionMessageParam
+from profanity_check import predict
 from .datamodels import GuardrailOnErrorAction, GuardrailValidationResult, GuardrailStates
 from .guardrail_base import GuardrailBase
 
 
-class DetectDummy(GuardrailBase):
+class ProvanityCheck(GuardrailBase):
     """
-    Dummy guardrail to detect profanity in text.
+    A guardrail that checks for profanity in the user's message.
     """
-
-    PROHIBITED_WORDS = frozenset(["word_a", "word_b", "word_c"])
 
     def __init__(self):
         super().__init__(
@@ -23,22 +21,10 @@ class DetectDummy(GuardrailBase):
     @property
     def template(self) -> str:
         return (
-            "I apologize, but I cannot process this message as it contains "
-            "prohibited content. Please rephrase your message appropriately."
+            "I apologize, but it seems that the message contains inappropriate content. "
+            "Let's keep our conversation respectful and friendly. Could you please rephrase "
+            "your message?"
         )
-
-    def contains_prohibited_words(self, text: str) -> bool:
-        """
-        Checks if the text contains any prohibited words.
-
-        Args:
-            text: The text to check
-
-        Returns:
-            True if prohibited words are found, False otherwise
-        """
-        text_lower = text.lower()
-        return any(word in text_lower for word in self.PROHIBITED_WORDS)
 
     async def validate(
         self,
@@ -55,12 +41,13 @@ class DetectDummy(GuardrailBase):
             GuardrailValidationResult indicating whether the message passed or failed
         """
         latest_message = messages[-1]["content"]
+        prediction = predict([latest_message])
 
-        if self.contains_prohibited_words(latest_message):
+        if prediction[0] == 1:
             return GuardrailValidationResult(
                 guardrail_name=self.name,
                 state=GuardrailStates.FAILED,
-                message="Message contains prohibited content.",
+                message="This text contains profanity.",
             )
 
         return GuardrailValidationResult(

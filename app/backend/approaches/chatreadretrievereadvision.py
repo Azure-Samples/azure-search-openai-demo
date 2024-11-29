@@ -16,7 +16,8 @@ from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
-from guardrails.orchestrator import GuardrailsOrchestrator
+from guardrails import GuardrailsOrchestrator
+
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
     """
@@ -46,7 +47,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         input_guardrails: Optional[GuardrailsOrchestrator],
-        output_guardrails: Optional[GuardrailsOrchestrator],    
+        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -94,13 +95,11 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         # Input guardrail check
         if self.input_guardrails:
-            guardrail_results, messages, return_response_immediately = (
-                await self.input_guardrails.update_chat_history(messages)
-            )
-            print(guardrail_results, messages, return_response_immediately)
-        #     if return_response_immediately:
-        #         # TODO will need to debug
-        #         return (None, messages)
+            guardrail_results = await self.input_guardrails.process_chat_history(messages)
+            messages = guardrail_results.messages
+            if guardrail_results.immediate_response:
+                extra_info = {}
+                return (extra_info, guardrail_results.immediate_response_coroutine())
 
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
@@ -251,8 +250,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         # Output guardrail check
         if self.output_guardrails:
-            guardrail_results, messages, return_response_immediately = (
-                await self.output_guardrails.update_chat_history(messages)
+            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
+                messages
             )
             if return_response_immediately:
                 # TODO will need to debug
