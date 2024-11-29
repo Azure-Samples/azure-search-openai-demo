@@ -17,8 +17,11 @@ class NSFWCheck(GuardrailBase):
             continue_on_failure=False,
             validate_failed_output=True,
         )
-        self._threshold = 0.8
-        self._model = pipeline("text-classification", model="michellejieli/NSFW_text_classifier")
+
+    def __post_init__(self):
+        # Use object.__setattr__ to set attributes on a frozen dataclass
+        object.__setattr__(self, "threshold", 0.7)
+        object.__setattr__(self, "model", pipeline("text-classification", model="michellejieli/NSFW_text_classifier"))
 
     @property
     def template(self) -> str:
@@ -43,9 +46,9 @@ class NSFWCheck(GuardrailBase):
             GuardrailValidationResult indicating whether the message passed or failed
         """
         latest_message = messages[-1]["content"]
-        prediction = self._model(latest_message)
+        prediction = self.model(latest_message)
 
-        if prediction and prediction[0]["label"] == "NSFW" and prediction[0]["score"] > self._threshold:
+        if prediction and prediction[0]["label"] == "NSFW" and prediction[0]["score"] > self.threshold:
             return GuardrailValidationResult(
                 guardrail_name=self.name,
                 state=GuardrailStates.FAILED,

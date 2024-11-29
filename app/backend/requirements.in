@@ -34,3 +34,4 @@ transformers
 fuzzysearch
 presidio-analyzer
 presidio-anonymizer
+torch

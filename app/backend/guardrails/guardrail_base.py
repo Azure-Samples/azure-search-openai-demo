@@ -6,7 +6,7 @@ from openai.types.chat import ChatCompletionMessageParam
 from .datamodels import GuardrailOnErrorAction, GuardrailValidationResult
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=False, slots=True)
 class GuardrailBase(ABC):
     """
     Base class for implementing security guardrails in chat systems.
