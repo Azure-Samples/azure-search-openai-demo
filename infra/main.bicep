@@ -501,7 +501,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
       }
       {
         name: 'AZURE_SERVER_APP_SECRET'
-        secretRef: 'azureclientappsecret'
+        secretRef: 'azureserverappsecret'
       }
     ] : []
   }
