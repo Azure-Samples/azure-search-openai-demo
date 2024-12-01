@@ -51,7 +51,7 @@ We're often asked why we need to break up the PDFs into chunks when Azure AI Sea
 
 Chunking allows us to limit the amount of information we send to OpenAI due to token limits. By breaking up the content, it allows us to easily find potential chunks of text that we can inject into OpenAI. The method of chunking we use leverages a sliding window of text such that sentences that end one chunk will start the next. This allows us to reduce the chance of losing the context of the text.
 
-If needed, you can modify the chunking algorithm in `scripts/prepdocslib/textsplitter.py`.
+If needed, you can modify the chunking algorithm in `app/backend/prepdocslib/textsplitter.py`.
 
 ### Enhancing search functionality with data categorization
 
