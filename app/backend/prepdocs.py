@@ -241,8 +241,7 @@ async def main(strategy: Strategy, setup_index: bool = True):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index.",
-        epilog="Example: prepdocs.py '.\\data\*' -v",
+        description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index."
     )
     parser.add_argument("files", nargs="?", help="Files to be processed")
 
@@ -301,6 +300,10 @@ if __name__ == "__main__":
         logger.setLevel(logging.INFO)
 
     load_azd_env()
+
+    if os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled":
+        logger.error("AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting.")
+        exit(0)
 
     use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
     use_gptvision = os.getenv("USE_GPT4V", "").lower() == "true"
