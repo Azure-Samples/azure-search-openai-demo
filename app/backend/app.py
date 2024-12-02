@@ -102,6 +102,7 @@ mimetypes.add_type("text/css", ".css")
 
 @bp.route("/")
 async def index():
+    # TODO: use msal loginRedirect on a blankish page
     return await bp.send_static_file("index.html")
 
 
@@ -753,6 +754,9 @@ def create_app():
     logging.getLogger("scripts").setLevel(app_level)
 
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
-        app.logger.info("ALLOWED_ORIGIN is set, enabling CORS for %s", allowed_origin)
-        cors(app, allow_origin=allowed_origin, allow_methods=["GET", "POST"])
+        allowed_origins = allowed_origin.split(";")
+        if len(allowed_origins) > 0:
+            app.logger.info("CORS enabled for %s", allowed_origins)
+            cors(app, allow_origin=allowed_origins, allow_methods=["GET", "POST"])
+
     return app
