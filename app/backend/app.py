@@ -102,7 +102,6 @@ mimetypes.add_type("text/css", ".css")
 
 @bp.route("/")
 async def index():
-    # TODO: use msal loginRedirect on a blankish page
     return await bp.send_static_file("index.html")
 
 
