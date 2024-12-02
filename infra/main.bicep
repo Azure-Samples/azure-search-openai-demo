@@ -40,6 +40,8 @@ param storageSkuName string // Set in main.parameters.json
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
 
+param tokenStorageContainerName string = 'tokens'
+
 param appServiceSkuName string // Set in main.parameters.json
 
 @allowed(['azure', 'openai', 'azure_custom'])
@@ -248,6 +250,16 @@ param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
 
+// Configure CORS for allowing different web apps to use the backend
+// For more information please see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
+var loginEndpoint = environment().authentication.loginEndpoint
+var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
+var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [ loginEndpointFixed ]) : msftAllowedOrigins
+var allowedOrigins = union(split(allowedOrigin, ';'), allMsftAllowedOrigins)
+// Filter out any empty origin strings and remove any duplicate origins
+var allowedOriginsEnv = join(reduce(filter(allowedOrigins, o => length(trim(o)) > 0), [], (cur, next) => union(cur, [next])), ';')
+
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
@@ -376,14 +388,12 @@ var appEnvVariables = {
   AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS: enableGlobalDocuments
   AZURE_ENABLE_UNAUTHENTICATED_ACCESS: enableUnauthenticatedAccess
   AZURE_SERVER_APP_ID: serverAppId
-  AZURE_SERVER_APP_SECRET: serverAppSecret
   AZURE_CLIENT_APP_ID: clientAppId
-  AZURE_CLIENT_APP_SECRET: clientAppSecret
   AZURE_TENANT_ID: tenantId
   AZURE_AUTH_TENANT_ID: tenantIdForAuth
   AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
   // CORS support, for frontends on other hosts
-  ALLOWED_ORIGIN: allowedOrigin
+  ALLOWED_ORIGIN: allowedOriginsEnv
   USE_VECTORS: useVectors
   USE_GPT4V: useGPT4V
   USE_USER_UPLOAD: useUserUpload
@@ -412,7 +422,7 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     managedIdentity: true
     virtualNetworkSubnetId: isolation.outputs.appSubnetId
     publicNetworkAccess: publicNetworkAccess
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: allowedOrigins
     clientAppId: clientAppId
     serverAppId: serverAppId
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
@@ -421,7 +431,10 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     authenticationIssuerUri: authenticationIssuerUri
     use32BitWorkerProcess: appServiceSkuName == 'F1'
     alwaysOn: appServiceSkuName != 'F1'
-    appSettings: appEnvVariables
+    appSettings: union(appEnvVariables, {
+      AZURE_SERVER_APP_SECRET: serverAppSecret
+      AZURE_CLIENT_APP_SECRET: clientAppSecret
+    })
   }
 }
 
@@ -472,11 +485,40 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     targetPort: 8000
     containerCpuCoreCount: '1.0'
     containerMemory: '2Gi'
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
       AZURE_CLIENT_ID: (deploymentTarget == 'containerapps') ? acaIdentity.outputs.clientId : ''
     })
+    secrets: useAuthentication ? {
+      azureclientappsecret: clientAppSecret
+      azureserverappsecret: serverAppSecret
+    } : {}
+    envSecrets: useAuthentication ? [
+      {
+        name: 'AZURE_CLIENT_APP_SECRET'
+        secretRef: 'azureclientappsecret'
+      }
+      {
+        name: 'AZURE_SERVER_APP_SECRET'
+        secretRef: 'azureserverappsecret'
+      }
+    ] : []
+  }
+}
+
+module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == 'containerapps' && !empty(clientAppId)) {
+  name: 'aca-auth'
+  scope: resourceGroup
+  params: {
+    name: acaBackend.outputs.name
+    clientAppId: clientAppId
+    serverAppId: serverAppId
+    clientSecretSettingName: !empty(clientAppSecret) ? 'azureclientappsecret' : ''
+    authenticationIssuerUri: authenticationIssuerUri
+    enableUnauthenticatedAccess: enableUnauthenticatedAccess
+    blobContainerUri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${tokenStorageContainerName}'
+    appIdentityResourceId: (deploymentTarget == 'appservice') ? '' : acaBackend.outputs.identityResourceId
   }
 }
 
@@ -659,6 +701,10 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }
+      {
+        name: tokenStorageContainerName
         publicAccess: 'None'
       }
     ]
