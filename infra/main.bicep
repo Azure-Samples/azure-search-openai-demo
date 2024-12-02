@@ -256,9 +256,8 @@ var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.
 var loginEndpoint = environment().authentication.loginEndpoint
 var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
 var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [ loginEndpointFixed ]) : msftAllowedOrigins
-var allowedOrigins = union(split(allowedOrigin, ';'), allMsftAllowedOrigins)
-// Filter out any empty origin strings and remove any duplicate origins
-var allowedOriginsEnv = join(reduce(filter(allowedOrigins, o => length(trim(o)) > 0), [], (cur, next) => union(cur, [next])), ';')
+// Combine custom origins with Microsoft origins, remove any empty origin strings and remove any duplicate origins
+var allowedOrigins = reduce(filter(union(split(allowedOrigin, ';'), allMsftAllowedOrigins), o => length(trim(o)) > 0), [], (cur, next) => union(cur, [next]))
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -393,7 +392,7 @@ var appEnvVariables = {
   AZURE_AUTH_TENANT_ID: tenantIdForAuth
   AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
   // CORS support, for frontends on other hosts
-  ALLOWED_ORIGIN: allowedOriginsEnv
+  ALLOWED_ORIGIN: join(allowedOrigins, ';')
   USE_VECTORS: useVectors
   USE_GPT4V: useGPT4V
   USE_USER_UPLOAD: useUserUpload
