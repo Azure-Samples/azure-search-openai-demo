@@ -189,7 +189,7 @@ msal-extensions==1.2.0
     # via azure-identity
 msgraph-core==1.1.2
     # via msgraph-sdk
-msgraph-sdk==1.1.0
+msgraph-sdk==1.14.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
