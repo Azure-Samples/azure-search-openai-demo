@@ -93,7 +93,7 @@ However, you can try the [Azure pricing calculator](https://azure.com/e/e3490de2
 - Azure AI Search: Basic tier, 1 replica, free level of semantic search. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/search/)
 - Azure Blob Storage: Standard tier with ZRS (Zone-redundant storage). Pricing per storage and read operations. [Pricing](https://azure.microsoft.com/pricing/details/storage/blobs/)
 - Azure Cosmos DB: Only provisioned if you enabled [chat history with Cosmos DB](docs/deploy_features.md#enabling-persistent-chat-history-with-azure-cosmos-db). Serverless tier. Pricing per request unit and storage. [Pricing](https://azure.microsoft.com/pricing/details/cosmos-db/)
-- Azure AI Vision: Only provisioned if you enabled [GPT-4 with vision](docs/gpt4v.md). Pricing per 1K transactions. [Pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/computer-vision/)
+- Azure AI Vision: Only provisioned if you enabled [GPT-4 with vision](docs/gpt4v.md). Pricing per 1K transactions. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/computer-vision/)
 - Azure AI Content Understanding: Only provisioned if you enabled [media description](docs/deploy_features.md#enabling-media-description-with-azure-content-understanding). Pricing per TODO. [Pricing](TODO)
 - Azure Monitor: Pay-as-you-go tier. Costs based on data ingested. [Pricing](https://azure.microsoft.com/pricing/details/monitor/)
 
