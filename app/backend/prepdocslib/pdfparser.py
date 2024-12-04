@@ -73,7 +73,7 @@ class DocumentAnalysisParser(Parser):
             content_bytes = content.read()
             if self.use_content_understanding:
                 if self.content_understanding_endpoint is None:
-                    raise ValueError("content_understanding_endpoint should not be None")
+                    raise ValueError("Content Understanding is enabled but no endpoint was provided")
                 if isinstance(self.credential, AzureKeyCredential):
                     raise ValueError(
                         "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"

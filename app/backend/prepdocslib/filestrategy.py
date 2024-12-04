@@ -1,6 +1,8 @@
 import logging
 from typing import List, Optional
 
+from azure.core.credentials import AzureKeyCredential
+
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
@@ -79,6 +81,12 @@ class FileStrategy(Strategy):
         await search_manager.create_index()
 
         if self.use_content_understanding:
+            if self.content_understanding_endpoint is None:
+                raise ValueError("Content Understanding is enabled but no endpoint was provided")
+            if isinstance(self.search_info.credential, AzureKeyCredential):
+                raise ValueError(
+                    "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
+                )
             cu_manager = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.search_info.credential)
             await cu_manager.create_analyzer()
 
