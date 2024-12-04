@@ -108,9 +108,13 @@ Guidelines:
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=False
         )
-        chat_completion_response: ChatCompletion = await chat_coroutine
-        content = chat_completion_response.choices[0].message.content
-        role = chat_completion_response.choices[0].message.role
+        if isinstance(chat_coroutine, list):
+            content = chat_coroutine[-1]["content"]
+            role = chat_coroutine[-1]["role"]
+        else:
+            chat_completion_response: ChatCompletion = await chat_coroutine
+            content = chat_completion_response.choices[0].message.content
+            role = chat_completion_response.choices[0].message.role
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info["followup_questions"] = followup_questions
@@ -133,35 +137,45 @@ Guidelines:
         )
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
-        followup_questions_started = False
-        followup_content = ""
-        async for event_chunk in await chat_coroutine:
-            # "2023-07-01-preview" API version has a bug where first response has empty choices
-            event = event_chunk.model_dump()  # Convert pydantic model to dict
-            if event["choices"]:
-                completion = {
-                    "delta": {
-                        "content": event["choices"][0]["delta"].get("content"),
-                        "role": event["choices"][0]["delta"]["role"],
+        if isinstance(chat_coroutine, list):
+            message = chat_coroutine[-1]
+            completion = {
+                "delta": {"role": message["role"], "content": message["content"]},
+                "context": extra_info,
+                "session_state": session_state,
+            }
+            yield completion
+        else:
+            followup_questions_started = False
+            followup_content = ""
+            async for event_chunk in await chat_coroutine:
+                # "2023-07-01-preview" API version has a bug where first response has empty choices
+                event = event_chunk.model_dump()  # Convert pydantic model to dict
+                if event["choices"]:
+
+                    completion = {
+                        "delta": {
+                            "content": event["choices"][0]["delta"].get("content"),
+                            "role": event["choices"][0]["delta"]["role"],
+                        }
                     }
-                }
-                # if event contains << and not >>, it is start of follow-up question, truncate
-                content = completion["delta"].get("content")
-                content = content or ""  # content may either not exist in delta, or explicitly be None
-                if overrides.get("suggest_followup_questions") and "<<" in content:
-                    followup_questions_started = True
-                    earlier_content = content[: content.index("<<")]
-                    if earlier_content:
-                        completion["delta"]["content"] = earlier_content
+                    # if event contains << and not >>, it is start of follow-up question, truncate
+                    content = completion["delta"].get("content")
+                    content = content or ""  # content may either not exist in delta, or explicitly be None
+                    if overrides.get("suggest_followup_questions") and "<<" in content:
+                        followup_questions_started = True
+                        earlier_content = content[: content.index("<<")]
+                        if earlier_content:
+                            completion["delta"]["content"] = earlier_content
+                            yield completion
+                        followup_content += content[content.index("<<") :]
+                    elif followup_questions_started:
+                        followup_content += content
+                    else:
                         yield completion
-                    followup_content += content[content.index("<<") :]
-                elif followup_questions_started:
-                    followup_content += content
-                else:
-                    yield completion
-        if followup_content:
-            _, followup_questions = self.extract_followup_questions(followup_content)
-            yield {"delta": {"role": "assistant"}, "context": {"followup_questions": followup_questions}}
+            if followup_content:
+                _, followup_questions = self.extract_followup_questions(followup_content)
+                yield {"delta": {"role": "assistant"}, "context": {"followup_questions": followup_questions}}
 
     async def run(
         self,

@@ -1,12 +1,18 @@
 import os
 import asyncio
+import json
+import logging
+import dataclasses
+from typing import Any, AsyncGenerator, Dict, Union, cast
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from error import error_dict
 from core.authentication import AuthenticationHelper
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.identity.aio import DefaultAzureCredential
 from openai import AsyncAzureOpenAI
 from guardrails import GuardrailsOrchestrator, ProvanityCheck, NSFWCheck, DetectPIICheck, BanListCheck
+from quart import make_response
 
 
 azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
@@ -32,6 +38,22 @@ AZURE_AUTH_TENANT_ID = os.getenv("AZURE_AUTH_TENANT_ID", AZURE_TENANT_ID)
 AZURE_ENFORCE_ACCESS_CONTROL = False
 AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS = False
 AZURE_ENABLE_UNAUTHENTICATED_ACCESS = False
+
+
+async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str, None]:
+    try:
+        async for event in r:
+            yield json.dumps(event, ensure_ascii=False, cls=JSONEncoder) + "\n"
+    except Exception as error:
+        logging.exception("Exception while generating response stream: %s", error)
+        yield json.dumps(error_dict(error))
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if dataclasses.is_dataclass(o) and not isinstance(o, type):
+            return dataclasses.asdict(o)
+        return super().default(o)
 
 
 async def main():
@@ -64,7 +86,7 @@ async def main():
         enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
-    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client, guardrails=[BanListCheck(["maori"])])
+    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client, guardrails=[BanListCheck(["Christopher"])])
 
     approach = ChatReadRetrieveReadApproach(
         search_client=search_client,
@@ -82,10 +104,10 @@ async def main():
         input_guardrails=input_guardrails,
     )
 
-    message = [{"role": "user", "content": "I'm a maori"}]
-    response = await approach.run(message)
-
-    print(response["message"]["content"])
+    message = [{"role": "user", "content": "hello Christopher"}]
+    result = await approach.run_stream(message)
+    async for event_chunk in result:
+        print(event_chunk)
 
 
 if __name__ == "__main__":

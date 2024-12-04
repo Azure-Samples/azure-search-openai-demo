@@ -89,7 +89,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
             messages = guardrail_results.messages
             if guardrail_results.immediate_response:
                 extra_info = {}
-                return (extra_info, guardrail_results.immediate_response_coroutine())
+                return (extra_info, guardrail_results.messages)
 
         overrides = context.get("overrides", {})
         seed = overrides.get("seed", None)

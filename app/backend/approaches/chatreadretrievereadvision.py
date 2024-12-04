@@ -99,7 +99,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             messages = guardrail_results.messages
             if guardrail_results.immediate_response:
                 extra_info = {}
-                return (extra_info, guardrail_results.immediate_response_coroutine())
+                return (extra_info, guardrail_results.messages)
 
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]

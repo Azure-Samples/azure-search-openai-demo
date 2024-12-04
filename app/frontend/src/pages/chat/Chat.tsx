@@ -110,13 +110,13 @@ const Chat = () => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
-        const updateState = (newContent: string) => {
+        const updateState = (newContent: string, role: string | undefined) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
-                        message: { content: answer, role: askResponse.message.role }
+                        message: { content: answer, role: role ?? askResponse.message?.role }
                     };
                     setStreamedAnswers([...answers, [question, latestResponse]]);
                     resolve(null);
@@ -126,12 +126,17 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
+                console.log(event);
                 if (event["context"] && event["context"]["data_points"]) {
                     event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
                 } else if (event["delta"] && event["delta"]["content"]) {
                     setIsLoading(false);
-                    await updateState(event["delta"]["content"]);
+                    if (!askResponse.message) {
+                        event["message"] = event["delta"];
+                        askResponse = event as ChatAppResponse;
+                    }
+                    await updateState(event["delta"]["content"], event["delta"]["role"]);
                 } else if (event["context"]) {
                     // Update context with new keys from latest event
                     askResponse.context = { ...askResponse.context, ...event["context"] };
@@ -144,7 +149,7 @@ const Chat = () => {
         }
         const fullResponse: ChatAppResponse = {
             ...askResponse,
-            message: { content: answer, role: askResponse.message.role }
+            message: { content: answer, role: askResponse.message?.role }
         };
         return fullResponse;
     };

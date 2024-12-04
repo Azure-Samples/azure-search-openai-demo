@@ -2,8 +2,6 @@ from typing import List, Optional
 from enum import Enum
 from dataclasses import dataclass
 from openai.types.chat import ChatCompletionMessageParam
-from openai import AsyncStream
-from openai.types.chat import ChatCompletionChunk
 from pydantic import BaseModel, Field
 
 
@@ -58,4 +56,3 @@ class ValidationResult:
     action: Optional[GuardrailOnErrorAction] = None
     template: Optional[str] = None
     immediate_response: bool = False
-    immediate_response_coroutine: Optional[AsyncStream[ChatCompletionChunk]] = None

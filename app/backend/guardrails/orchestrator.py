@@ -1,10 +1,7 @@
 from typing import List, Tuple, Optional
 import logging
-import time
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam, ChatCompletion
-from openai.types.chat.chat_completion import Choice
-from openai.types.chat.chat_completion_message import ChatCompletionMessage
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletionAssistantMessageParam
 from .guardrail_base import GuardrailBase
 from .datamodels import GuardrailOnErrorAction, GuardrailValidationResult, ValidationResult
 
@@ -103,28 +100,9 @@ class GuardrailsOrchestrator:
         if validation.action in {GuardrailOnErrorAction.BLOCK, GuardrailOnErrorAction.TRUNCATE_HISTORY}:
             if validation.action == GuardrailOnErrorAction.TRUNCATE_HISTORY:
                 validation.messages = [messages[0]]
-
-            validation.messages.append({"role": "assistant", "content": validation.template})
+            validation.messages.append(
+                ChatCompletionAssistantMessageParam(content=validation.template, role="assistant")
+            )
             validation.immediate_response = True
-
-            async def immediate_response_coroutine():
-                return ChatCompletion(
-                    id="guardrail_immediate_response",
-                    model="manual",
-                    created=int(time.time()),
-                    object="chat.completion",
-                    choices=[
-                        Choice(
-                            message=ChatCompletionMessage(
-                                role="assistant",
-                                content=validation.template,
-                            ),
-                            finish_reason="stop",
-                            index=0,
-                        )
-                    ],
-                )
-
-            validation.immediate_response_coroutine = immediate_response_coroutine
 
         return validation

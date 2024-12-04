@@ -86,14 +86,8 @@ from prepdocs import (
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
-from guardrails.orchestrator import GuardrailsOrchestrator
-from guardrails.dummy_guard import DetectDummy
+from guardrails import GuardrailsOrchestrator, ProvanityCheck, NSFWCheck, DetectPIICheck, BanListCheck
 
-#setup guardrails
-dummy_guard = DetectDummy()
-input_guardrails = GuardrailsOrchestrator([dummy_guard])
-output_guardrails = None
-# output_guardrails = GuardrailsOrchestrator([dummy_guard])
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -271,6 +265,7 @@ async def chat_stream(auth_claims: Dict[str, Any]):
             session_state=request_json.get("session_state"),
         )
         response = await make_response(format_as_ndjson(result))
+
         response.timeout = None  # type: ignore
         response.mimetype = "application/json-lines"
         return response
@@ -592,6 +587,10 @@ async def setup_clients():
             api_key=OPENAI_API_KEY,
             organization=OPENAI_ORGANIZATION,
         )
+
+    # guardrails
+    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client, guardrails=[BanListCheck(["kill"])])
+    output_guardrails = None
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
