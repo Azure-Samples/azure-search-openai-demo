@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import subprocess
 
 from dotenv import load_dotenv
@@ -19,5 +20,10 @@ def load_azd_env():
             env_file_path = entry["DotEnvPath"]
     if not env_file_path:
         raise Exception("No default azd env file found")
-    logger.info(f"Loading azd env from {env_file_path}")
-    load_dotenv(env_file_path, override=True)
+    loading_mode = os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") or "override"
+    if loading_mode == "no-override":
+        logger.info("Loading azd env from %s, but not overriding existing environment variables", env_file_path)
+        load_dotenv(env_file_path, override=False)
+    else:
+        logger.info("Loading azd env from %s, which may override existing environment variables", env_file_path)
+        load_dotenv(env_file_path, override=True)

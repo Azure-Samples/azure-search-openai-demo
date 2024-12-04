@@ -26,6 +26,10 @@ This solution's backend is written in Python. There are also [**JavaScript**](ht
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=599293758&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
+## Important Security Notice
+
+This template, the application code and configuration it contains, has been built to showcase Microsoft Azure specific services and tools. We strongly advise our customers not to make this code part of their production environments without implementing or enabling additional security features. See our [productionizing guide](docs/productionizing.md) for tips, and consult the [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/blog/azurearchitectureblog/azure-openai-landing-zone-reference-architecture/3882102) for more best practices.
+
 ## Table of Contents
 
 - [Features](#features)
@@ -37,15 +41,10 @@ This solution's backend is written in Python. There are also [**JavaScript**](ht
   - [Local environment](#local-environment)
 - [Deploying](#deploying)
   - [Deploying again](#deploying-again)
-  - [Sharing environments](#sharing-environments)
-- [Running locally](#running-locally)
+- [Running the development server](#running-the-development-server)
 - [Using the app](#using-the-app)
 - [Clean up](#clean-up)
 - [Guidance](#guidance)
-  - [Customizing the UI and data](#customizing-the-ui-and-data)
-  - [Monitoring with Application Insights](#monitoring-with-application-insights)
-  - [Productionizing](#productionizing)
-  - [Troubleshooting](#troubleshooting)
   - [Resources](#resources)
 
 ![Chat screen](docs/images/chatscreen.png)
@@ -198,26 +197,28 @@ If you've changed the infrastructure files (`infra` folder or `azure.yaml`), the
 azd up
 ```
 
-#### Sharing environments
+## Running the development server
 
-To give someone else access to a completely deployed and existing environment,
-either you or they can follow these steps:
+You can only run a development server locally **after** having successfully run the `azd up` command. If you haven't yet, follow the [deploying](#deploying) steps above.
 
-1. Install the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
-1. Run `azd init -t azure-search-openai-demo` or clone this repository.
-1. Run `azd env refresh -e {environment name}`
-   They will need the azd environment name, subscription ID, and location to run this command. You can find those values in your `.azure/{env name}/.env` file.  This will populate their azd environment's `.env` file with all the settings needed to run the app locally.
-1. Set the environment variable `AZURE_PRINCIPAL_ID` either in that `.env` file or in the active shell to their Azure ID, which they can get with `az ad signed-in-user show`.
-1. Run `./scripts/roles.ps1` or `.scripts/roles.sh` to assign all of the necessary roles to the user.  If they do not have the necessary permission to create roles in the subscription, then you may need to run this script for them. Once the script runs, they should be able to run the app locally.
+1. Run `azd auth login` if you have not logged in recently.
+2. Start the server:
 
-## Running locally
+  Windows:
 
-You can only run locally **after** having successfully run the `azd up` command. If you haven't yet, follow the [deploying](#deploying) steps above.
+  ```shell
+  ./app/start.ps1
+  ```
 
-1. Run `azd auth login`
-2. Change dir to `app`
-3. Run `./start.ps1` or `./start.sh` or run the "VS Code Task: Start App" to start the project locally.
+  Linux/Mac:
 
+  ```shell
+  ./app/start.sh
+  ```
+
+  VS Code: Run the "VS Code Task: Start App" task.
+
+It's also possible to enable hotloading or the VS Code debugger.
 See more tips in [the local development guide](docs/localdev.md).
 
 ## Using the app
@@ -243,61 +244,35 @@ The resource group and all the resources will be deleted.
 
 ## Guidance
 
-Besides the tips below, you can find extensive documentation in the [docs](docs/README.md) folder.
+You can find extensive documentation in the [docs](docs/README.md) folder:
 
-### Customizing the UI and data
-
-Once you successfully deploy the app, you can start customizing it for your needs: changing the text, tweaking the prompts, and replacing the data. Consult the [app customization guide](docs/customization.md) as well as the [data ingestion guide](docs/data_ingestion.md) for more details.
-
-### Monitoring with Application Insights
-
-By default, deployed apps use Application Insights for the tracing of each request, along with the logging of errors.
-
-To see the performance data, go to the Application Insights resource in your resource group, click on the "Investigate -> Performance" blade and navigate to any HTTP request to see the timing data.
-To inspect the performance of chat requests, use the "Drill into Samples" button to see end-to-end traces of all the API calls made for any chat request:
-
-![Tracing screenshot](docs/images/transaction-tracing.png)
-
-To see any exceptions and server errors, navigate to the "Investigate -> Failures" blade and use the filtering tools to locate a specific exception. You can see Python stack traces on the right-hand side.
-
-You can also see chart summaries on a dashboard by running the following command:
-
-```shell
-azd monitor
-```
-
-### Productionizing
-
-This sample is designed to be a starting point for your own production application,
-but you should do a thorough review of the security and performance before deploying
-to production. Read through our [productionizing guide](docs/productionizing.md) for more details.
-
-### Troubleshooting
-
-Here are the most common failure scenarios and solutions:
-
-1. The subscription (`AZURE_SUBSCRIPTION_ID`) doesn't have access to the Azure OpenAI service. Please ensure `AZURE_SUBSCRIPTION_ID` matches the ID specified in the [OpenAI access request process](https://aka.ms/oai/access).
-
-1. You're attempting to create resources in regions not enabled for Azure OpenAI (e.g. East US 2 instead of East US), or where the model you're trying to use isn't enabled. See [this matrix of model availability](https://aka.ms/oai/models).
-
-1. You've exceeded a quota, most often number of resources per region. See [this article on quotas and limits](https://aka.ms/oai/quotas).
-
-1. You're getting "same resource name not allowed" conflicts. That's likely because you've run the sample multiple times and deleted the resources you've been creating each time, but are forgetting to purge them. Azure keeps resources for 48 hours unless you purge from soft delete. See [this article on purging resources](https://learn.microsoft.com/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource).
-
-1. You see `CERTIFICATE_VERIFY_FAILED` when the `prepdocs.py` script runs. That's typically due to incorrect SSL certificates setup on your machine. Try the suggestions in this [StackOverflow answer](https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394).
-
-1. After running `azd up` and visiting the website, you see a '404 Not Found' in the browser. Wait 10 minutes and try again, as it might be still starting up. Then try running `azd deploy` and wait again. If you still encounter errors with the deployed app and are deploying to App Service, consult the [guide on debugging App Service deployments](docs/appservice.md). Please file an issue if the logs don't help you resolve the error.
+- Deploying:
+  - [Troubleshooting deployment](docs/deploy_troubleshooting.md)
+    - [Debugging the app on App Service](docs/appservice.md)
+  - [Deploying with azd: deep dive and CI/CD](docs/azd.md)
+  - [Deploying with existing Azure resources](docs/deploy_existing.md)
+  - [Deploying from a free account](docs/deploy_lowcost.md)
+  - [Enabling optional features](docs/deploy_features.md)
+    - [Login and access control](docs/login_and_acl.md)
+    - [GPT-4 Turbo with Vision](docs/gpt4v.md)
+    - [Private endpoints](docs/deploy_private.md)
+  - [Sharing deployment environments](docs/sharing_environments.md)
+- [Local development](docs/localdev.md)
+- [Customizing the app](docs/customization.md)
+- [Data ingestion](docs/data_ingestion.md)
+- [Monitoring with Application Insights](docs/monitoring.md)
+- [Productionizing](docs/productionizing.md)
+- [Alternative RAG chat samples](docs/other_samples.md)
 
 ### Resources
 
-- [Additional documentation for this app](docs/README.md)
-- [📖 Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and AI Search](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/revolutionize-your-enterprise-data-with-chatgpt-next-gen-apps-w-azure-openai-and/3762087)
-- [📖 Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
-- [📖 Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
-- [📖 Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
-- [📖 Access Control in Generative AI applications with Azure AI Search](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/access-control-in-generative-ai-applications-with-azure-ai-search/3956408)
-- [📺 Quickly build and deploy OpenAI apps on Azure, infused with your own data](https://www.youtube.com/watch?v=j8i-OM5kwiY)
-- [📺 AI Chat App Hack series](https://www.youtube.com/playlist?list=PL5lwDBUC0ag6_dGZst5m3G72ewfwXLcXV)
+- [📖 Blog: Revolutionize your Enterprise Data with ChatGPT: Next-gen Apps w/ Azure OpenAI and AI Search](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/revolutionize-your-enterprise-data-with-chatgpt-next-gen-apps-w-azure-openai-and/3762087)
+- [📖 Docs: Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
+- [📖 Docs: Azure OpenAI Service](https://learn.microsoft.com/azure/cognitive-services/openai/overview)
+- [📖 Docs: Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
+- [📖 Blog: Access Control in Generative AI applications with Azure AI Search](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/access-control-in-generative-ai-applications-with-azure-ai-search/3956408)
+- [📺 Talk: Quickly build and deploy OpenAI apps on Azure, infused with your own data](https://www.youtube.com/watch?v=j8i-OM5kwiY)
+- [📺 Talks: AI Chat App Hack series](https://www.youtube.com/playlist?list=PL5lwDBUC0ag6_dGZst5m3G72ewfwXLcXV)
 
 ### Getting help
 
