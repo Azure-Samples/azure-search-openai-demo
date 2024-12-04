@@ -28,7 +28,7 @@ To deploy to Azure App Service, please follow the following steps:
     azd env set DEPLOYMENT_TARGET appservice
     ```
 
-5. (Optional) This is the point where you can customize the deployment by setting other `azd` environment variables, in order to [use existing resources](docs/deploy_existing.md), [enable optional features (such as auth or vision)](docs/deploy_features.md), or [deploy to free tiers](docs/deploy_lowcost.md).
+5. (Optional) This is the point where you can customize the deployment by setting other `azd` environment variables, in order to [use existing resources](deploy_existing.md), [enable optional features (such as auth or vision)](deploy_features.md), or [deploy to free tiers](deploy_lowcost.md).
 6. Provision the resources and deploy the code:
 
     ```bash

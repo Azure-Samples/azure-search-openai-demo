@@ -14,7 +14,9 @@
             "env": {
                 "QUART_APP": "main:app",
                 "QUART_ENV": "development",
-                "QUART_DEBUG": "0"
+                "QUART_DEBUG": "0",
+                // Set this to "no-override" if you want env vars here to override AZD env vars
+                "LOADING_MODE_FOR_AZD_ENV_VARS": "override"
             },
             "args": [
                 "run",
