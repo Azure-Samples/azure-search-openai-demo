@@ -216,7 +216,9 @@ class DocumentAnalysisParser(Parser):
         # Cropping the page. The rect requires the coordinates in the format (x0, y0, x1, y1).
         bbx = [x * 72 for x in bounding_box]
         rect = pymupdf.Rect(bbx)
-        # 72 is the DPI ? what? explain this from CU
+        # Bounding box is scaled to 72 dots per inch
+        # We assume the PDF has 300 DPI
+        # The matrix is used to convert between these 2 units
         pix = page.get_pixmap(matrix=pymupdf.Matrix(300 / 72, 300 / 72), clip=rect)
 
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
