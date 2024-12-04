@@ -7,7 +7,7 @@ from presidio_anonymizer import AnonymizerEngine
 import difflib
 
 
-class DetectPIICheck(GuardrailBase):
+class PIICheck(GuardrailBase):
     """
     A guardrail that checks for PII in the user's message.
     """

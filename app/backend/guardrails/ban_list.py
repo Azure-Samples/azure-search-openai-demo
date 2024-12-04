@@ -4,13 +4,71 @@ from guardrails.datamodels import GuardrailOnErrorAction, GuardrailValidationRes
 from guardrails.guardrail_base import GuardrailBase
 from fuzzysearch import find_near_matches
 
+BANNED_WORDS_DICT = {
+    "violent_and_dangerous_terms": [
+        # Weapons and explosives
+        "bomb", "explosive", "detonate", "grenade", "landmine", "missile", "nuclear weapon",
+        "firearm", "gun", "rifle", "pistol", "ammunition", "silencer", "trigger", "bullet",
+        "knife", "blade", "machete", "sword",
+        # Violent actions
+        "attack", "kill", "murder", "assassinate", "execute", "massacre", "genocide",
+        "torture", "kidnap", "hijack", "hostage", "arson", "sabotage", "terrorism",
+        "suicide bomb"
+    ],
+    "hazardous_chemicals_and_substances": [
+        # Chemical weapons and agents
+        "sarin", "ricin", "anthrax", "mustard gas", "VX nerve agent", "chlorine gas",
+        "phosgene", "cyanide", "toxin", "botulinum "
+        # Explosive compounds
+        "TNT", "RDX", "C-4", "PETN", "nitroglycerin", "ammonium", "nitrate"
+        "potassium", "TATP",
+        # Precursor chemicals
+        "hydrogen", "acetone", "peroxide", "sulfuric", "nitric", "hydrochloric", "acid"
+        "sodium azide"
+    ],
+    "illicit_drugs_and_controlled_substances": [
+        "heroin", "cocaine", "methamphetamine", "MDMA", "LSD", "fentanyl", "opium",
+        "PCP", "ketamine", "GHB", "bath salts"
+    ],
+    "cybersecurity_threats": [
+        "hack", "hacking", "cracking", "phishing", "spoofing", "DDoS", "malware", "virus",
+        "trojan", "worm", "ransomware", "spyware", "keylogger", "exploit", "zero-day exploit",
+        "backdoor"
+    ],
+    "illegal_activities": [
+        # Financial crimes
+        "fraud", "laundering", "embezzlement", "counterfeit", "tax evasion",
+        "insider trading",
+        # Other illegal acts
+        "identity theft", "bribery", "extortion", "blackmail", "forgery",
+        "smuggling", "piracy"
+    ],
+    "sexually_explicit_or_illegal_content": [
+        "human trafficking", "exploitation", "non-consensual acts", "pornography",
+        "solicitation of minors", "harassment", "assault", "voyeurism", "sexual"
+    ],
+    "medical_misinformation_and_illicit_medical_practices": [
+        "medication", "drugs", "organ trade",
+        "vaccine", "quackery"
+    ],
+    "confidential_government_information": [
+        "secret", "confidential", "restricted",
+        "compartmented information", "intelligence operations", "undercover agent",
+        "surveillance", "encryption", "Kristina Tulenkova"
+    ]
+}
+
+BANNED_WORDS = list(set(word for category in BANNED_WORDS_DICT.values() for word in category))
+
+
 
 class BanListCheck(GuardrailBase):
     """
     A guardrail that checks for banned words in the user's message using fuzzy search.
     """
 
-    def __init__(self, banned_words: List[str], max_l_dist: int = 1):
+    def __init__(self, banned_words: List[str] = BANNED_WORDS,
+                 max_l_dist: int = 1):
         super().__init__(
             name="ban_list_check",
             error_action=GuardrailOnErrorAction.BLOCK,

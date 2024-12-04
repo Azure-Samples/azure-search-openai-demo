@@ -86,8 +86,11 @@ from prepdocs import (
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
-from guardrails import GuardrailsOrchestrator, ProvanityCheck, NSFWCheck, DetectPIICheck, BanListCheck
-
+from guardrails import GuardrailsOrchestrator
+from guardrails.ban_list import BanListCheck, BANNED_WORDS
+# from guardrails.profanity_check import ProvanityCheck
+# from guardrails.nsfw_check import NSFWCheck
+# from guardrails.pii_check import PIICheck
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -589,7 +592,8 @@ async def setup_clients():
         )
 
     # guardrails
-    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client, guardrails=[BanListCheck(["kill"])])
+    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client,
+                                              guardrails=[BanListCheck(BANNED_WORDS)])
     output_guardrails = None
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client

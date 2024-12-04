@@ -142,7 +142,7 @@ Guidelines:
             completion = {
                 "delta": {"role": message["role"], "content": message["content"]},
                 "context": extra_info,
-                "session_state": session_state,
+                "session_state": None,
             }
             yield completion
         else:
