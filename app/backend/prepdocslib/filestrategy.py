@@ -2,10 +2,10 @@ import logging
 from typing import List, Optional
 
 from .blobmanager import BlobManager
-from .cu_image import ContentUnderstandingManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
 from .listfilestrategy import File, ListFileStrategy
+from .mediadescriber import ContentUnderstandingDescriber
 from .searchmanager import SearchManager, Section
 from .strategy import DocumentAction, SearchInfo, Strategy
 
@@ -79,7 +79,7 @@ class FileStrategy(Strategy):
         await search_manager.create_index()
 
         if self.use_content_understanding:
-            cu_manager = ContentUnderstandingManager(self.content_understanding_endpoint, self.search_info.credential)
+            cu_manager = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.search_info.credential)
             await cu_manager.create_analyzer()
 
     async def run(self):

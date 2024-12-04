@@ -18,7 +18,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from PIL import Image
 from pypdf import PdfReader
 
-from .cu_image import ContentUnderstandingManager
+from .mediadescriber import ContentUnderstandingDescriber
 from .page import Page
 from .parser import Parser
 
@@ -55,7 +55,7 @@ class DocumentAnalysisParser(Parser):
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         model_id="prebuilt-layout",
         use_content_understanding=True,
-        content_understanding_endpoint: str = None,
+        content_understanding_endpoint: Union[str, None] = None,
     ):
         self.model_id = model_id
         self.endpoint = endpoint
@@ -66,13 +66,19 @@ class DocumentAnalysisParser(Parser):
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
 
-        cu_manager = ContentUnderstandingManager(self.content_understanding_endpoint, self.credential)
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
             # turn content into bytes
             content_bytes = content.read()
             if self.use_content_understanding:
+                if self.content_understanding_endpoint is None:
+                    raise ValueError("content_understanding_endpoint should not be None")
+                if isinstance(self.credential, AzureKeyCredential):
+                    raise ValueError(
+                        "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
+                    )
+                cu_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id="prebuilt-layout",
                     analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
@@ -111,7 +117,7 @@ class DocumentAnalysisParser(Parser):
                 # mark all positions of the table spans in the page
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                mask_chars = [(ObjectType.NONE, None)] * page_length
+                mask_chars: list[tuple[ObjectType, Union[int, None]]] = [(ObjectType.NONE, None)] * page_length
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:
                         # replace all table spans with "table_id" in table_chars array
@@ -132,6 +138,8 @@ class DocumentAnalysisParser(Parser):
                 added_objects = set()  # set of object types todo mypy
                 for idx, mask_char in enumerate(mask_chars):
                     object_type, object_idx = mask_char
+                    if object_idx is None:
+                        raise ValueError("object_idx should not be None")
                     if object_type == ObjectType.NONE:
                         page_text += form_recognizer_results.content[page_offset + idx]
                     elif object_type == ObjectType.TABLE:
@@ -139,9 +147,11 @@ class DocumentAnalysisParser(Parser):
                             page_text += DocumentAnalysisParser.table_to_html(tables_on_page[object_idx])
                             added_objects.add(mask_char)
                     elif object_type == ObjectType.FIGURE:
+                        if cu_describer is None:
+                            raise ValueError("cu_describer should not be None, unable to describe figure")
                         if mask_char not in added_objects:
                             figure_html = await DocumentAnalysisParser.figure_to_html(
-                                doc_for_pymupdf, cu_manager, figures_on_page[object_idx]
+                                doc_for_pymupdf, cu_describer, figures_on_page[object_idx]
                             )
                             page_text += figure_html
                             added_objects.add(mask_char)
@@ -163,9 +173,12 @@ class DocumentAnalysisParser(Parser):
 
     @staticmethod
     async def figure_to_html(
-        doc: pymupdf.Document, cu_manager: ContentUnderstandingManager, figure: DocumentFigure
+        doc: pymupdf.Document, cu_describer: ContentUnderstandingDescriber, figure: DocumentFigure
     ) -> str:
-        logger.info("Describing figure '%s'", figure.id)
+        figure_title = (figure.caption and figure.caption.content) or ""
+        logger.info("Describing figure '%s' with title", figure.id, figure_title)
+        if not figure.bounding_regions:
+            return f"<figure><figcaption>{figure_title}</figcaption></figure>"
         for region in figure.bounding_regions:
             # To learn more about bounding regions, see https://aka.ms/bounding-region
             bounding_box = (
@@ -176,8 +189,7 @@ class DocumentAnalysisParser(Parser):
             )
         page_number = figure.bounding_regions[0]["pageNumber"]  # 1-indexed
         cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
-        figure_description = await cu_manager.describe_image(cropped_img)
-        figure_title = (figure.caption and figure.caption.content) or ""
+        figure_description = await cu_describer.describe_image(cropped_img)
         return f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
 
     @staticmethod
@@ -221,7 +233,7 @@ class DocumentAnalysisParser(Parser):
         # The matrix is used to convert between these 2 units
         pix = page.get_pixmap(matrix=pymupdf.Matrix(300 / 72, 300 / 72), clip=rect)
 
-        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
         bytes_io = io.BytesIO()
         img.save(bytes_io, format="PNG")
         return bytes_io.getvalue()
