@@ -105,4 +105,4 @@ class ContentUnderstandingDescriber:
                     results = await self.poll_api(session, poll_url, headers)
 
                 fields = results["result"]["contents"][0]["fields"]
-                return fields["DescriptionHTML"]["valueString"]
+                return fields["Description"]["valueString"]

@@ -203,6 +203,15 @@ def mock_computervision_response():
     )
 
 
+def mock_contentunderstanding_response():
+    return MockResponse(
+        status=200,
+        headers={
+            "Operation-Location": "https://cu-ztmfrxlgtk3nq.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2024-12-01-preview"
+        },
+    )
+
+
 class MockAudio:
     def __init__(self, audio_data):
         self.audio_data = audio_data

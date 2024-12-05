@@ -138,17 +138,19 @@ class DocumentAnalysisParser(Parser):
                 added_objects = set()  # set of object types todo mypy
                 for idx, mask_char in enumerate(mask_chars):
                     object_type, object_idx = mask_char
-                    if object_idx is None:
-                        raise ValueError("object_idx should not be None")
                     if object_type == ObjectType.NONE:
                         page_text += form_recognizer_results.content[page_offset + idx]
                     elif object_type == ObjectType.TABLE:
+                        if object_idx is None:
+                            raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
                             page_text += DocumentAnalysisParser.table_to_html(tables_on_page[object_idx])
                             added_objects.add(mask_char)
                     elif object_type == ObjectType.FIGURE:
                         if cu_describer is None:
                             raise ValueError("cu_describer should not be None, unable to describe figure")
+                        if object_idx is None:
+                            raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
                             figure_html = await DocumentAnalysisParser.figure_to_html(
                                 doc_for_pymupdf, cu_describer, figures_on_page[object_idx]
@@ -176,7 +178,7 @@ class DocumentAnalysisParser(Parser):
         doc: pymupdf.Document, cu_describer: ContentUnderstandingDescriber, figure: DocumentFigure
     ) -> str:
         figure_title = (figure.caption and figure.caption.content) or ""
-        logger.info("Describing figure '%s' with title", figure.id, figure_title)
+        logger.info("Describing figure %s with title '%s'", figure.id, figure_title)
         if not figure.bounding_regions:
             return f"<figure><figcaption>{figure_title}</figcaption></figure>"
         for region in figure.bounding_regions:
