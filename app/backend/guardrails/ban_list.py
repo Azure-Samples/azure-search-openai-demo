@@ -54,7 +54,7 @@ BANNED_WORDS_DICT = {
     "confidential_government_information": [
         "secret", "confidential", "restricted",
         "compartmented information", "intelligence operations", "undercover agent",
-        "surveillance", "encryption", "Kristina Tulenkova"
+        "surveillance", "encryption"
     ]
 }
 

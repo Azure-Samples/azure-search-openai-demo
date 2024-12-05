@@ -96,8 +96,10 @@ class GuardrailsOrchestrator:
     ) -> ValidationResult:
         """Process and update chat history based on validation results"""
         validation = await self.validate_messages(messages)
-
+        print("validation", validation)
         if validation.action in {GuardrailOnErrorAction.BLOCK, GuardrailOnErrorAction.TRUNCATE_HISTORY}:
+            # Remove failed message
+            validation.messages.pop()
             if validation.action == GuardrailOnErrorAction.TRUNCATE_HISTORY:
                 validation.messages = [messages[0]]
             validation.messages.append(
