@@ -90,20 +90,20 @@ class DocumentAnalysisParser(Parser):
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
                 )
-            form_recognizer_results: AnalyzeResult = await poller.result()
+            analyze_result: AnalyzeResult = await poller.result()
 
             offset = 0
-            for page in form_recognizer_results.pages:
+            for page in analyze_result.pages:
                 tables_on_page = [
                     table
-                    for table in (form_recognizer_results.tables or [])
+                    for table in (analyze_result.tables or [])
                     if table.bounding_regions and table.bounding_regions[0].page_number == page.page_number
                 ]
                 figures_on_page = []
                 if self.use_content_understanding:
                     figures_on_page = [
                         figure
-                        for figure in (form_recognizer_results.figures or [])
+                        for figure in (analyze_result.figures or [])
                         if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
                     ]
 
@@ -112,10 +112,10 @@ class DocumentAnalysisParser(Parser):
                     TABLE = 0
                     FIGURE = 1
 
-                # mark all positions of the table spans in the page
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
                 mask_chars: list[tuple[ObjectType, Union[int, None]]] = [(ObjectType.NONE, None)] * page_length
+                # mark all positions of the table spans in the page
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:
                         # replace all table spans with "table_id" in table_chars array
@@ -123,6 +123,7 @@ class DocumentAnalysisParser(Parser):
                             idx = span.offset - page_offset + i
                             if idx >= 0 and idx < page_length:
                                 mask_chars[idx] = (ObjectType.TABLE, table_idx)
+                # mark all positions of the figure spans in the page
                 for figure_idx, figure in enumerate(figures_on_page):
                     for span in figure.spans:
                         # replace all figure spans with "figure_id" in figure_chars array
@@ -137,7 +138,7 @@ class DocumentAnalysisParser(Parser):
                 for idx, mask_char in enumerate(mask_chars):
                     object_type, object_idx = mask_char
                     if object_type == ObjectType.NONE:
-                        page_text += form_recognizer_results.content[page_offset + idx]
+                        page_text += analyze_result.content[page_offset + idx]
                     elif object_type == ObjectType.TABLE:
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
@@ -151,7 +152,7 @@ class DocumentAnalysisParser(Parser):
                             raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
                             figure_html = await DocumentAnalysisParser.figure_to_html(
-                                doc_for_pymupdf, cu_describer, figures_on_page[object_idx]
+                                doc_for_pymupdf, figures_on_page[object_idx], cu_describer
                             )
                             page_text += figure_html
                             added_objects.add(mask_char)
@@ -164,21 +165,23 @@ class DocumentAnalysisParser(Parser):
 
     @staticmethod
     async def figure_to_html(
-        doc: pymupdf.Document, cu_describer: ContentUnderstandingDescriber, figure: DocumentFigure
+        doc: pymupdf.Document, figure: DocumentFigure, cu_describer: ContentUnderstandingDescriber
     ) -> str:
         figure_title = (figure.caption and figure.caption.content) or ""
         logger.info("Describing figure %s with title '%s'", figure.id, figure_title)
         if not figure.bounding_regions:
             return f"<figure><figcaption>{figure_title}</figcaption></figure>"
-        for region in figure.bounding_regions:
-            # To learn more about bounding regions, see https://aka.ms/bounding-region
-            bounding_box = (
-                region.polygon[0],  # x0 (left)
-                region.polygon[1],  # y0 (top
-                region.polygon[4],  # x1 (right)
-                region.polygon[5],  # y1 (bottom)
-            )
-        page_number = figure.bounding_regions[0]["pageNumber"]  # 1-indexed
+        if len(figure.bounding_regions) > 1:
+            logger.warning("Figure %s has more than one bounding region, using the first one", figure.id)
+        first_region = figure.bounding_regions[0]
+        # To learn more about bounding regions, see https://aka.ms/bounding-region
+        bounding_box = (
+            first_region.polygon[0],  # x0 (left)
+            first_region.polygon[1],  # y0 (top
+            first_region.polygon[4],  # x1 (right)
+            first_region.polygon[5],  # y1 (bottom)
+        )
+        page_number = first_region["pageNumber"]  # 1-indexed
         cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
         figure_description = await cu_describer.describe_image(cropped_img)
         return f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
@@ -205,7 +208,7 @@ class DocumentAnalysisParser(Parser):
         return table_html
 
     @staticmethod
-    def crop_image_from_pdf_page(doc: pymupdf.Document, page_number, bounding_box) -> bytes:
+    def crop_image_from_pdf_page(doc: pymupdf.Document, page_number: int, bounding_box: tuple[float]) -> bytes:
         """
         Crops a region from a given page in a PDF and returns it as an image.
 
