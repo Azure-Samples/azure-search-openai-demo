@@ -34,7 +34,6 @@ from .mocks import (
     MockBlobClient,
     MockResponse,
     mock_computervision_response,
-    mock_contentunderstanding_response,
     mock_speak_text_cancelled,
     mock_speak_text_failed,
     mock_speak_text_success,
@@ -59,8 +58,6 @@ def mock_azurehttp_calls(monkeypatch):
     def mock_post(*args, **kwargs):
         if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
             return mock_computervision_response()
-        elif kwargs.get("url").endswith("/contentunderstanding/analyzers/image_analyzer:analyze"):
-            return mock_contentunderstanding_response()
         else:
             raise Exception("Unexpected URL for mock call to ClientSession.post()")
 

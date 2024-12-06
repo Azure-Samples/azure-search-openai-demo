@@ -13,7 +13,7 @@ logger = logging.getLogger("scripts")
 class MediaDescriber(ABC):
 
     async def describe_image(self, image_bytes) -> str:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 class ContentUnderstandingDescriber:
@@ -75,8 +75,7 @@ class ContentUnderstandingDescriber:
                     return
                 elif response.status != 201:
                     data = await response.text()
-                    logger.error("Error creating analyzer: %s", data)
-                    response.raise_for_status()
+                    raise Exception("Error creating analyzer", data)
                 else:
                     poll_url = response.headers.get("Operation-Location")
 
@@ -84,7 +83,7 @@ class ContentUnderstandingDescriber:
                 progress.add_task("Creating analyzer...", total=None, start=False)
                 await self.poll_api(session, poll_url, headers)
 
-    async def describe_image(self, image_bytes) -> str:
+    async def describe_image(self, image_bytes: bytes) -> str:
         logger.info("Sending image to Azure Content Understanding service...")
         async with aiohttp.ClientSession() as session:
             token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")

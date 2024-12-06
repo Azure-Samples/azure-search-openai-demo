@@ -1,6 +1,5 @@
 import html
 import io
-import json
 import logging
 from enum import Enum
 from typing import IO, AsyncGenerator, Union
@@ -94,7 +93,6 @@ class DocumentAnalysisParser(Parser):
             form_recognizer_results: AnalyzeResult = await poller.result()
 
             offset = 0
-            pages_json = []
             for page in form_recognizer_results.pages:
                 tables_on_page = [
                     table
@@ -162,16 +160,7 @@ class DocumentAnalysisParser(Parser):
                 # We remove excess newlines at the beginning and end of the page
                 page_text = page_text.strip()
                 yield Page(page_num=page.page_number - 1, offset=offset, text=page_text)
-                # Serialize the page text to a JSON and save it locally
-                page_json = {
-                    "page_num": page.page_number - 1,
-                    "offset": offset,
-                    "text": page_text,
-                }
-                pages_json.append(page_json)
                 offset += len(page_text)
-            with open("pages.json", "w") as f:
-                json.dump(pages_json, f)
 
     @staticmethod
     async def figure_to_html(

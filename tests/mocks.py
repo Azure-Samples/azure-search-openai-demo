@@ -151,12 +151,10 @@ class MockAsyncSearchResultsIterator:
 
 
 class MockResponse:
-    def __init__(self, text, status):
-        self.text = text
+    def __init__(self, status, text=None, headers=None):
+        self._text = text or ""
         self.status = status
-
-    async def text(self):
-        return self._text
+        self.headers = headers or {}
 
     async def __aexit__(self, exc_type, exc, tb):
         pass
@@ -164,8 +162,15 @@ class MockResponse:
     async def __aenter__(self):
         return self
 
+    async def text(self):
+        return self._text
+
     async def json(self):
-        return json.loads(self.text)
+        return json.loads(self._text)
+
+    def raise_for_status(self):
+        if self.status != 200:
+            raise Exception(f"HTTP status {self.status}")
 
 
 class MockEmbeddingsClient:
@@ -200,15 +205,6 @@ def mock_computervision_response():
                 "modelVersion": "2022-04-11",
             }
         ),
-    )
-
-
-def mock_contentunderstanding_response():
-    return MockResponse(
-        status=200,
-        headers={
-            "Operation-Location": "https://cu-ztmfrxlgtk3nq.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2024-12-01-preview"
-        },
     )
 
 
