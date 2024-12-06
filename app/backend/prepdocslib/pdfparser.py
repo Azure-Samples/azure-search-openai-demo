@@ -208,7 +208,9 @@ class DocumentAnalysisParser(Parser):
         return table_html
 
     @staticmethod
-    def crop_image_from_pdf_page(doc: pymupdf.Document, page_number: int, bounding_box: tuple[float]) -> bytes:
+    def crop_image_from_pdf_page(
+        doc: pymupdf.Document, page_number: int, bounding_box: tuple[float, float, float, float]
+    ) -> bytes:
         """
         Crops a region from a given page in a PDF and returns it as an image.
 
