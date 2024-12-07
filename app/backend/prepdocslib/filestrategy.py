@@ -1,10 +1,13 @@
 import logging
 from typing import List, Optional
 
+from azure.core.credentials import AzureKeyCredential
+
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
 from .listfilestrategy import File, ListFileStrategy
+from .mediadescriber import ContentUnderstandingDescriber
 from .searchmanager import SearchManager, Section
 from .strategy import DocumentAction, SearchInfo, Strategy
 
@@ -50,6 +53,8 @@ class FileStrategy(Strategy):
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
+        use_content_understanding: bool = False,
+        content_understanding_endpoint: Optional[str] = None,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -61,6 +66,8 @@ class FileStrategy(Strategy):
         self.search_info = search_info
         self.use_acls = use_acls
         self.category = category
+        self.use_content_understanding = use_content_understanding
+        self.content_understanding_endpoint = content_understanding_endpoint
 
     async def setup(self):
         search_manager = SearchManager(
@@ -72,6 +79,16 @@ class FileStrategy(Strategy):
             search_images=self.image_embeddings is not None,
         )
         await search_manager.create_index()
+
+        if self.use_content_understanding:
+            if self.content_understanding_endpoint is None:
+                raise ValueError("Content Understanding is enabled but no endpoint was provided")
+            if isinstance(self.search_info.credential, AzureKeyCredential):
+                raise ValueError(
+                    "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
+                )
+            cu_manager = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.search_info.credential)
+            await cu_manager.create_analyzer()
 
     async def run(self):
         search_manager = SearchManager(

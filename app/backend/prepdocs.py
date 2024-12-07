@@ -7,6 +7,7 @@ from typing import Optional, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
+from rich.logging import RichHandler
 
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
@@ -158,8 +159,10 @@ def setup_file_processors(
     local_pdf_parser: bool = False,
     local_html_parser: bool = False,
     search_images: bool = False,
+    use_content_understanding: bool = False,
+    content_understanding_endpoint: Union[str, None] = None,
 ):
-    sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=search_images)
+    sentence_text_splitter = SentenceTextSplitter()
 
     doc_int_parser: Optional[DocumentAnalysisParser] = None
     # check if Azure Document Intelligence credentials are provided
@@ -170,6 +173,8 @@ def setup_file_processors(
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=documentintelligence_creds,
+            use_content_understanding=use_content_understanding,
+            content_understanding_endpoint=content_understanding_endpoint,
         )
 
     pdf_parser: Optional[Parser] = None
@@ -294,10 +299,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.verbose:
-        logging.basicConfig(format="%(message)s")
+        logging.basicConfig(format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)])
         # We only set the level to INFO for our logger,
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
 
     load_azd_env()
 
@@ -309,6 +314,7 @@ if __name__ == "__main__":
     use_gptvision = os.getenv("USE_GPT4V", "").lower() == "true"
     use_acls = os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT") is not None
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
+    use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):
@@ -406,6 +412,8 @@ if __name__ == "__main__":
             local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
             search_images=use_gptvision,
+            use_content_understanding=use_content_understanding,
+            content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
         )
         image_embeddings_service = setup_image_embeddings_service(
             azure_credential=azd_credential,
@@ -424,6 +432,8 @@ if __name__ == "__main__":
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             use_acls=use_acls,
             category=args.category,
+            use_content_understanding=use_content_understanding,
+            content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
         )
 
     loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
