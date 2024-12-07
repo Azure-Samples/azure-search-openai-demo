@@ -68,8 +68,6 @@ class DocumentAnalysisParser(Parser):
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
-            # turn content into bytes
-            content_bytes = content.read()
             if self.use_content_understanding:
                 if self.content_understanding_endpoint is None:
                     raise ValueError("Content Understanding is enabled but no endpoint was provided")
@@ -78,6 +76,7 @@ class DocumentAnalysisParser(Parser):
                         "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
                     )
                 cu_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
+                content_bytes = content.read()
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id="prebuilt-layout",
                     analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
