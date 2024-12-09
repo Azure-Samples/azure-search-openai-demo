@@ -1,5 +1,6 @@
 import logging
 from typing import List, Optional
+import sys
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
@@ -82,6 +83,7 @@ class FileStrategy(Strategy):
             async for file in files:
                 try:
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+                        
                     if sections:
                         blob_sas_uris = await self.blob_manager.upload_blob(file)
                         blob_image_embeddings: Optional[List[List[float]]] = None

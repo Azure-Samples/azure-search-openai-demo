@@ -7,6 +7,9 @@ from azure.ai.documentintelligence.models import DocumentTable
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from pypdf import PdfReader
+import pickle
+import json
+import os
 
 from .page import Page
 from .parser import Parser
@@ -31,7 +34,6 @@ class LocalPdfParser(Parser):
             yield Page(page_num=page_num, offset=offset, text=page_text)
             offset += len(page_text)
 
-
 class DocumentAnalysisParser(Parser):
     """
     Concrete parser backed by Azure AI Document Intelligence that can parse many document formats into pages
@@ -46,16 +48,41 @@ class DocumentAnalysisParser(Parser):
         self.credential = credential
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
-
+        
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
-            poller = await document_intelligence_client.begin_analyze_document(
-                model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
-            )
-            form_recognizer_results = await poller.result()
+            
 
+            # mjh Load results from file if it exists
+            cache_dir = "./data_interim/"
+            if not os.path.exists(cache_dir ):
+                os.makedirs(cache_dir )
+            base_name = content.name.replace("./data/", cache_dir)
+
+            pkl_file = f"{base_name}.pkl"
+            json_file = f"{base_name}.json"
+            print(pkl_file)
+            if os.path.exists(pkl_file):
+                with open(pkl_file, "rb") as file:
+                    logger.info(f"Loading previous form recognizer results from {pkl_file}")
+                    form_recognizer_results = pickle.load(file)
+            else:
+                logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
+                poller = await document_intelligence_client.begin_analyze_document(
+                model_id=self.model_id, 
+                analyze_request=content, 
+                content_type="application/octet-stream",
+                )
+                form_recognizer_results = await poller.result()
+
+                with open(json_file, "w") as f:
+                    form_recognizer_results_dict = form_recognizer_results.as_dict()
+                    f.write(json.dumps(form_recognizer_results_dict, indent=4))
+                with open(pkl_file, "wb") as file:
+                    pickle.dump(form_recognizer_results, file)
+
+            # mjh Converted to use JSON rather than object, so we cache results
             offset = 0
             for page_num, page in enumerate(form_recognizer_results.pages):
                 tables_on_page = [
