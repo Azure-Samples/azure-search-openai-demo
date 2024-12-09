@@ -23,17 +23,35 @@ This solution creates a ChatGPT-like frontend experience over your own documents
 
 This solution's backend is written in Python. There are also [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one. Learn more about [developing AI apps using Azure AI Services](https://aka.ms/azai).
 
+# Notes for PIA
+
 Be sure to pick the right repo after clicking this (PIA)
 
 [![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?hide_repo_select=false&ref=main&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&location=WestUs2)
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/azure-samples/azure-search-openai-demo)
 
-Also, to change models ...
+## Working with the Search AI lab repo
+
+1. Deploy that repo as instruction [here](https://github.com/Program-Integrity-Alliance/azure-ai-search-lab)
+2. TODO (this will soon change): Ass fields to the 'blob_chunks' index there for sourcepage, sourcefile, storageUrl, category all string.
+
+3. Then ...
+
+Before running the azd deploy (see instructions below) ...
 
 ```
 azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
 azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
+
+# To point at AI labs search service
+azd env set AZURE_SEARCH_SERVICE srch-zan63y6zsbmxq-search
+azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP rg-aisearchlab-test-eus2-001
+azd env set AZURE_SEARCH_INDEX blob-chunks
 ```
+
+4. `azd up`, when asked for Environment and you want to deploy into existing resource group, drop the 'rg-' prefix as the build will add one.
+
+TODO: While the two builds have different field names, need to add 'category' to the Azure search AI labs.
 
 ## Important Security Notice
 
