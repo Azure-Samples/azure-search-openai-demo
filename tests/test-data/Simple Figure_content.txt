@@ -1,0 +1,13 @@
+# Simple Figure
+
+This text is before the figure and NOT part of it.
+
+
+<figure>
+
+9
+
+</figure>
+
+
+This is text after the figure that's not part of it.

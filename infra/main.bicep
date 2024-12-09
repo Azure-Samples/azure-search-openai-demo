@@ -119,6 +119,9 @@ param computerVisionResourceGroupName string = '' // Set in main.parameters.json
 param computerVisionResourceGroupLocation string = '' // Set in main.parameters.json
 param computerVisionSkuName string // Set in main.parameters.json
 
+param contentUnderstandingServiceName string = '' // Set in main.parameters.json
+param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
+
 param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
@@ -218,6 +221,9 @@ param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
 param useIntegratedVectorization bool = false
 
+@description('Use media description feature with Azure Content Understanding during ingestion')
+param useMediaDescriberAzureCU bool = true
+
 @description('Enable user document upload feature')
 param useUserUpload bool = false
 param useLocalPdfParser bool = false
@@ -276,6 +282,10 @@ resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2
 
 resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(computerVisionResourceGroupName)) {
   name: !empty(computerVisionResourceGroupName) ? computerVisionResourceGroupName : resourceGroup.name
+}
+
+resource contentUnderstandingResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(contentUnderstandingResourceGroupName)) {
+  name: !empty(contentUnderstandingResourceGroupName) ? contentUnderstandingResourceGroupName : resourceGroup.name
 }
 
 resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
@@ -401,6 +411,8 @@ var appEnvVariables = {
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
+  USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
+  AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
 }
 
@@ -631,6 +643,28 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if 
     location: computerVisionResourceGroupLocation
     tags: tags
     sku: computerVisionSkuName
+  }
+}
+
+
+module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMediaDescriberAzureCU) {
+  name: 'content-understanding'
+  scope: contentUnderstandingResourceGroup
+  params: {
+    name: !empty(contentUnderstandingServiceName)
+      ? contentUnderstandingServiceName
+      : '${abbrs.cognitiveServicesContentUnderstanding}${resourceToken}'
+    kind: 'AIServices'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    customSubDomainName: !empty(contentUnderstandingServiceName)
+      ? contentUnderstandingServiceName
+      : '${abbrs.cognitiveServicesContentUnderstanding}${resourceToken}'
+    // Hard-coding to westus for now, due to limited availability and no overlap with Document Intelligence
+    location: 'westus'
+    tags: tags
+    sku: 'S0'
   }
 }
 
@@ -1160,6 +1194,7 @@ output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.re
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
+output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name

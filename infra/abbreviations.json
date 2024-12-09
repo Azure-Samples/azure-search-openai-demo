@@ -29,6 +29,7 @@
   "containerInstanceContainerGroups": "ci",
   "containerRegistryRegistries": "cr",
   "containerServiceManagedClusters": "aks-",
+  "cognitiveServicesContentUnderstanding": "cu-",
   "databricksWorkspaces": "dbw-",
   "dataFactoryFactories": "adf-",
   "dataLakeAnalyticsAccounts": "dla",

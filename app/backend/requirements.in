@@ -5,7 +5,7 @@ openai>=1.3.7
 numpy>=1,<2.1.0 # Used by openai embeddings.create to optimize embeddings (but not required)
 tiktoken
 tenacity
-azure-ai-documentintelligence
+azure-ai-documentintelligence==1.0.0b4
 azure-cognitiveservices-speech
 azure-cosmos
 azure-search-documents==11.6.0b6
@@ -31,3 +31,4 @@ types-beautifulsoup4
 msgraph-sdk==1.1.0
 openai-messages-token-helper
 python-dotenv
+rich
