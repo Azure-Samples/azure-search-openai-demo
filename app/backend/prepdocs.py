@@ -217,6 +217,11 @@ def setup_file_processors(
         )
     return file_processors
 
+# mjh
+def setup_interim_dir():
+    cache_dir = "./data_interim/"
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
 
 def setup_image_embeddings_service(
     azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], search_images: bool
@@ -425,6 +430,9 @@ if __name__ == "__main__":
             use_acls=use_acls,
             category=args.category,
         )
+
+    # mjh
+    setup_interim_dir()
 
     loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
     loop.close()

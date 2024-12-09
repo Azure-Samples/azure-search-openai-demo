@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from typing import List, Optional
+import json
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
@@ -252,6 +253,19 @@ class SearchManager:
                             self.search_info,
                         )
 
+    async def cache_index_files(self, documents: List):
+        cache_dir = "./data_interim/"
+        for document in documents:
+            output_dir = os.path.join(cache_dir, document["sourcefile"]) + "_index_files"
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            file_name = document["sourcefile"] + "-" + document["id"]
+            base_name = output_dir + "/" + file_name
+            base_name += ".search_index_doc.json"
+            with open(base_name, "w") as f:
+                f.write(json.dumps(document, indent=4))
+
+
     async def update_content(
         self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
     ):
@@ -293,6 +307,9 @@ class SearchManager:
                 if image_embeddings:
                     for i, (document, section) in enumerate(zip(documents, batch)):
                         document["imageEmbedding"] = image_embeddings[section.split_page.page_num]
+
+                # mjh
+                await self.cache_index_files(documents)
 
                 await search_client.upload_documents(documents)
 

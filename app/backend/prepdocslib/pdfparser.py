@@ -47,6 +47,16 @@ class DocumentAnalysisParser(Parser):
         self.endpoint = endpoint
         self.credential = credential
 
+    async def cache_doc_intelligence_results(self, form_recognizer_results, base_name):
+        cache_dir = "./data_interim/"
+        pkl_file = f"{base_name}.doc_intel_obj.pkl"
+        json_file = f"{base_name}.doc_intel_dict.json"
+        with open(json_file, "w") as f:
+            form_recognizer_results_dict = form_recognizer_results.as_dict()
+            f.write(json.dumps(form_recognizer_results_dict, indent=4))
+        with open(pkl_file, "wb") as file:
+            pickle.dump(form_recognizer_results, file)
+        
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         
         async with DocumentIntelligenceClient(
@@ -60,8 +70,8 @@ class DocumentAnalysisParser(Parser):
                 os.makedirs(cache_dir )
             base_name = content.name.replace("./data/", cache_dir)
 
-            pkl_file = f"{base_name}.pkl"
-            json_file = f"{base_name}.json"
+            pkl_file = f"{base_name}.doc_intel_obj.pkl"
+            json_file = f"{base_name}.doc_intel_dict.json"
             print(pkl_file)
             if os.path.exists(pkl_file):
                 with open(pkl_file, "rb") as file:
@@ -76,11 +86,8 @@ class DocumentAnalysisParser(Parser):
                 )
                 form_recognizer_results = await poller.result()
 
-                with open(json_file, "w") as f:
-                    form_recognizer_results_dict = form_recognizer_results.as_dict()
-                    f.write(json.dumps(form_recognizer_results_dict, indent=4))
-                with open(pkl_file, "wb") as file:
-                    pickle.dump(form_recognizer_results, file)
+                # mjh
+                await self.cache_doc_intelligence_results(form_recognizer_results, base_name)
 
             # mjh Converted to use JSON rather than object, so we cache results
             offset = 0
