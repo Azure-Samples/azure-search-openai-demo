@@ -39,7 +39,7 @@ class PIICheck(GuardrailBase):
 
     def __init__(self, pii_entities: Union[str, List[str], None] = "pii"):
         super().__init__(
-            name="detect_pii_check",
+            name="pii_check",
             error_action=GuardrailOnErrorAction.BLOCK,
             continue_on_failure=False,
             validate_failed_output=True,

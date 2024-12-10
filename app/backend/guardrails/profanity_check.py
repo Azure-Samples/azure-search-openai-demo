@@ -12,7 +12,7 @@ class ProvanityCheck(GuardrailBase):
 
     def __init__(self):
         super().__init__(
-            name="dummy",
+            name="profanity_check",
             error_action=GuardrailOnErrorAction.BLOCK,
             continue_on_failure=False,
             validate_failed_output=True,
