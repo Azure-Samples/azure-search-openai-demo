@@ -106,7 +106,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             guardrail_results = await self.input_guardrails.process_chat_history(messages)
             messages = guardrail_results.messages
             if guardrail_results.immediate_response:
-                extra_info = {}
+                extra_info = {"action": guardrail_results.action.value}  # Use the actual action
                 return (extra_info, guardrail_results.messages)
 
         seed = overrides.get("seed", None)

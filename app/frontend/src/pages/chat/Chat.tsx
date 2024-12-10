@@ -109,6 +109,7 @@ const Chat = () => {
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>) => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
+        let isBlocked = false;
 
         const updateState = (newContent: string, role: string | undefined) => {
             return new Promise(resolve => {
@@ -118,14 +119,29 @@ const Chat = () => {
                         ...askResponse,
                         message: { content: answer, role: role ?? askResponse.message?.role }
                     };
-                    setStreamedAnswers([...answers, [question, latestResponse]]);
+                    if (isBlocked) {
+                        setStreamedAnswers([...answers]);
+                    } else {
+                        setStreamedAnswers([...answers, [question, latestResponse]]);
+                    }
                     resolve(null);
                 }, 33);
             });
         };
+
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
+                
+                if (event["action"] === "truncate_history") {
+                    setStreamedAnswers([]);
+                    setAnswers([]);
+                    continue;
+                } else if (event["action"] === "block") {
+                    isBlocked = true;
+                    continue;
+                }
+
                 if (event["context"] && event["context"]["data_points"]) {
                     event["message"] = event["delta"];
                     askResponse = event as ChatAppResponse;
@@ -137,7 +153,6 @@ const Chat = () => {
                     }
                     await updateState(event["delta"]["content"], event["delta"]["role"]);
                 } else if (event["context"]) {
-                    // Update context with new keys from latest event
                     askResponse.context = { ...askResponse.context, ...event["context"] };
                 } else if (event["error"]) {
                     throw Error(event["error"]);
@@ -146,11 +161,12 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
+
         const fullResponse: ChatAppResponse = {
             ...askResponse,
             message: { content: answer, role: askResponse.message?.role }
         };
-        return fullResponse;
+        return { response: fullResponse, blocked: isBlocked };
     };
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -195,7 +211,6 @@ const Chat = () => {
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
-                // AI Chat Protocol: Client must pass on any session state received from the server
                 session_state: answers.length ? answers[answers.length - 1][1].session_state : null
             };
 
@@ -206,9 +221,14 @@ const Chat = () => {
             if (response.status > 299 || !response.ok) {
                 throw Error(`Request failed with status ${response.status}`);
             }
+
             if (shouldStream) {
-                const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body);
-                setAnswers([...answers, [question, parsedResponse]]);
+                const { response: parsedResponse, blocked } = await handleAsyncRequest(question, answers, response.body);
+                if (!blocked) {
+                    setAnswers([...answers, [question, parsedResponse]]);
+                } else {
+                    setAnswers([...answers, ["message blocked", parsedResponse]]);
+                }
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {

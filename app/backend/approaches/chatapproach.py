@@ -135,8 +135,11 @@ Guidelines:
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
+        if action := extra_info.get('action'):
+            yield {"action": action}  # Can be either "TRUNCATE_HISTORY" or "BLOCK"
+        
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
-
+        
         if isinstance(chat_coroutine, list):
             message = chat_coroutine[-1]
             completion = {

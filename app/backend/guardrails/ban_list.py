@@ -13,7 +13,7 @@ BANNED_WORDS_DICT = {
         # Violent actions
         "attack", "kill", "murder", "assassinate", "execute", "massacre", "genocide",
         "torture", "kidnap", "hijack", "hostage", "arson", "sabotage", "terrorism",
-        "suicide bomb"
+        "suicide"
     ],
     "hazardous_chemicals_and_substances": [
         # Chemical weapons and agents
