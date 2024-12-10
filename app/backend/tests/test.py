@@ -11,8 +11,9 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.identity.aio import DefaultAzureCredential
 from openai import AsyncAzureOpenAI
-from guardrails import GuardrailsOrchestrator, ProvanityCheck, NSFWCheck, DetectPIICheck, BanListCheck
+from guardrails import GuardrailsOrchestrator, ProvanityCheck, NSFWCheck, BanListCheck
 from quart import make_response
+from guardrails.ban_list import BANNED_WORDS
 
 
 azure_credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
@@ -86,7 +87,7 @@ async def main():
         enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
-    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client, guardrails=[BanListCheck(["Christopher"])])
+    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client, guardrails=[BanListCheck(BANNED_WORDS)])
 
     approach = ChatReadRetrieveReadApproach(
         search_client=search_client,
@@ -104,7 +105,7 @@ async def main():
         input_guardrails=input_guardrails,
     )
 
-    message = [{"role": "user", "content": "hello Christopher"}]
+    message = [{"role": "user", "content": "weird"}]
     result = await approach.run_stream(message)
     async for event_chunk in result:
         print(event_chunk)
