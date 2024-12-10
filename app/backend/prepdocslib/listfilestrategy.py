@@ -9,9 +9,8 @@ from glob import glob
 from typing import IO, AsyncGenerator, Dict, List, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.storage.filedatalake.aio import (
-    DataLakeServiceClient,
-)
+from azure.storage.blob import BlobServiceClient
+from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 logger = logging.getLogger("scripts")
 
@@ -22,10 +21,17 @@ class File:
     This file might contain access control information about which users or groups can access it
     """
 
-    def __init__(self, content: IO, acls: Optional[dict[str, list]] = None, url: Optional[str] = None):
+    def __init__(
+        self,
+        content: IO,
+        acls: Optional[dict[str, list]] = None,
+        url: Optional[str] = None,
+        metadata: Dict[str, str] = None,
+    ):
         self.content = content
         self.acls = acls or {}
         self.url = url
+        self.metadata = metadata
 
     def filename(self):
         return os.path.basename(self.content.name)
@@ -56,6 +62,10 @@ class ListFileStrategy(ABC):
             yield
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
+        if False:  # pragma: no cover - this is necessary for mypy to type check
+            yield
+
+    def count_docs(self) -> int:
         if False:  # pragma: no cover - this is necessary for mypy to type check
             yield
 
@@ -109,6 +119,22 @@ class LocalListFileStrategy(ListFileStrategy):
             md5_f.write(existing_hash)
 
         return False
+
+    def count_docs(self) -> int:
+        """
+        Return the number of files that match the path pattern.
+        """
+        return sum(1 for _ in self._list_paths_sync(self.path_pattern))
+
+    def _list_paths_sync(self, path_pattern: str):
+        """
+        Synchronous version of _list_paths to be used for counting files.
+        """
+        for path in glob(path_pattern):
+            if os.path.isdir(path):
+                yield from self._list_paths_sync(f"{path}/*")
+            else:
+                yield path
 
 
 class ADLSGen2ListFileStrategy(ListFileStrategy):
@@ -168,10 +194,33 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["oids"].append(acl_parts[1])
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
-                    yield File(content=open(temp_file_path, "rb"), acls=acls, url=file_client.url)
+                    properties = await file_client.get_file_properties()
+                    yield File(
+                        content=open(temp_file_path, "rb"), acls=acls, url=file_client.url, metadata=properties.metadata
+                    )
                 except Exception as data_lake_exception:
                     logger.error(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")
                     try:
                         os.remove(temp_file_path)
                     except Exception as file_delete_exception:
                         logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
+
+    def count_docs(self) -> int:
+        """
+        Return the number of blobs in the specified folder within the Azure Blob Storage container.
+        """
+
+        # Create a BlobServiceClient using account URL and credentials
+        service_client = BlobServiceClient(
+            account_url=f"https://{self.data_lake_storage_account}.blob.core.windows.net",
+            credential=self.credential,
+        )
+
+        # Get the container client
+        container_client = service_client.get_container_client(self.data_lake_filesystem)
+
+        # Count blobs within the specified folder
+        if self.data_lake_path != "/":
+            return sum(1 for _ in container_client.list_blobs(name_starts_with=self.data_lake_path))
+        else:
+            return sum(1 for _ in container_client.list_blobs())
