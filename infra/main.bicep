@@ -1071,6 +1071,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
         resourceIds: concat(
           [openAi.outputs.resourceId],
           useGPT4V ? [computerVision.outputs.resourceId] : [],
+          useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : [],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
         )
       }
