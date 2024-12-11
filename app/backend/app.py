@@ -91,6 +91,7 @@ from guardrails.ban_list import BanListCheck, BANNED_WORDS
 from guardrails.profanity_check import ProvanityCheck
 from guardrails.nsfw_check import NSFWCheck
 from guardrails.pii_check import PIICheck
+from guardrails.output_check import OutputContentCheck
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -592,13 +593,14 @@ async def setup_clients():
         )
 
     # input guardrails and early refusal handling
-    input_guardrails = GuardrailsOrchestrator(openai_client=openai_client,
-                                              guardrails=[BanListCheck(BANNED_WORDS),
+    input_guardrails = GuardrailsOrchestrator(guardrails=[BanListCheck(BANNED_WORDS),
                                                           ProvanityCheck(),
                                                           PIICheck(),
                                                           NSFWCheck()])
-    output_guardrails = None
-
+    
+    # Add output content validation
+    output_guardrails = GuardrailsOrchestrator(guardrails=[OutputContentCheck()])
+    # output_guardrails = None
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client

@@ -9,9 +9,8 @@ from .datamodels import GuardrailOnErrorAction, GuardrailValidationResult, Valid
 class GuardrailsOrchestrator:
     """Orchestrates multiple guardrails for message validation"""
 
-    def __init__(self, openai_client: AsyncOpenAI, guardrails: List[GuardrailBase]):
+    def __init__(self, guardrails: List[GuardrailBase]):
         self.guardrails = guardrails
-        self.openai_client = openai_client
         self.logger = logging.getLogger(__name__)
 
     async def _validate_single_guardrail(

@@ -58,6 +58,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
         self.input_guardrails = input_guardrails
         self.output_guardrails = output_guardrails
+        # load client into llm output guardrail
+        if self.output_guardrails:
+            for guardrail in self.output_guardrails.guardrails:
+                # check if llm_client is present in class attributes
+                if hasattr(guardrail, "llm_client"):
+                    model_name = self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model
+                    guardrail.load(self.openai_client, model_name)
 
     @property
     def system_message_chat_conversation(self):
@@ -106,7 +113,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             guardrail_results = await self.input_guardrails.process_chat_history(messages)
             messages = guardrail_results.messages
             if guardrail_results.immediate_response:
-                extra_info = {"action": guardrail_results.action.value}  # Use the actual action
+                extra_info = {"action": guardrail_results.action.value}
                 return (extra_info, guardrail_results.messages)
 
         seed = overrides.get("seed", None)
@@ -264,12 +271,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         }
         # Output guardrail check
         if self.output_guardrails:
-            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
-                messages
-            )
-            if return_response_immediately:
-                # TODO will need to debug
-                return (None, messages)
+            guardrail_results = await self.output_guardrails.process_chat_history(messages)
+            # TODO: handle guardrail results
+
 
         chat_coroutine = self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name
