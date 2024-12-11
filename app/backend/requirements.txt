@@ -270,9 +270,7 @@ opentelemetry-instrumentation-openai==0.27.0
 opentelemetry-instrumentation-psycopg2==0.47b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-requests==0.47b0
-    # via
-    #   -r requirements.in
-    #   azure-monitor-opentelemetry
+    # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-urllib==0.47b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-urllib3==0.47b0
@@ -413,6 +411,7 @@ types-pillow==10.2.0.20240822
     # via -r requirements.in
 typing-extensions==4.12.2
     # via
+    #   -r requirements.in
     #   azure-ai-documentintelligence
     #   azure-core
     #   azure-cosmos

@@ -21,11 +21,24 @@ However, if your goal is to minimize costs while prototyping your application, f
     Enter a name that will be used for the resource group.
     This will create a new folder in the `.azure` folder, and set it as the active environment for any calls to `azd` going forward.
 
-1. Use the free tier of App Service:
+1. Switch from Azure Container Apps to the free tier of Azure App Service:
 
-    ```shell
-    azd env set AZURE_APP_SERVICE_SKU F1
-    ```
+    Azure Container Apps has a consumption-based pricing model that is very low cost, but it is not free, plus Azure Container Registry costs a small amount each month.
+
+    To deploy to App Service instead:
+
+    * Comment out `host: containerapp` and uncomment `host: appservice` in the [azure.yaml](../azure.yaml) file.
+    * Set the deployment target to `appservice`:
+
+        ```shell
+        azd env set DEPLOYMENT_TARGET appservice
+        ```
+
+    * Set the App Service SKU to the free tier:
+
+        ```shell
+        azd env set AZURE_APP_SERVICE_SKU F1
+        ```
 
     Limitation: You are only allowed a certain number of free App Service instances per region. If you have exceeded your limit in a region, you will get an error during the provisioning stage. If that happens, you can run `azd down`, then `azd env new` to create a new environment with a new region.
 
@@ -88,7 +101,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     Application Insights is quite inexpensive already, so turning this off may not be worth the costs saved,
     but it is an option for those who want to minimize costs.
 
-1. Use OpenAI.com instead of Azure OpenAI: This is only a necessary step for Azure free/student accounts, as they do not currently have access to Azure OpenAI.
+1. Use OpenAI.com instead of Azure OpenAI: This should not be necessary, as the costs are same for both services, but you may need this step if your account does not have access to Azure OpenAI for some reason.
 
     ```shell
     azd env set OPENAI_HOST openai
