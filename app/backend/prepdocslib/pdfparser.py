@@ -7,9 +7,12 @@ from azure.ai.documentintelligence.models import DocumentTable
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from pypdf import PdfReader
+from .listfilestrategy import File
+from prepdocslib.blobmanager import BlobManager
 import pickle
 import json
 import os
+import sys
 
 from .page import Page
 from .parser import Parser
@@ -41,14 +44,23 @@ class DocumentAnalysisParser(Parser):
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], model_id="prebuilt-layout"
+        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], model_id="prebuilt-layout",
+        blob_manager_interim_files: BlobManager=None,
     ):
         self.model_id = model_id
         self.endpoint = endpoint
         self.credential = credential
+        self.blob_manager_interim_files = blob_manager_interim_files
+        self.cache_dir = "./data_interim/"
+        if not os.path.exists(self.cache_dir ):
+            os.makedirs(self.cache_dir )
 
-    async def cache_doc_intelligence_results(self, form_recognizer_results, base_name):
-        cache_dir = "./data_interim/"
+    async def cache_doc_intelligence_results(self, form_recognizer_results, content_name):
+        """
+        Save Document intelligence to blob as JSON and pickle
+        """
+        content_name = content_name.split("/")[-1]
+        base_name = f"{self.cache_dir}{content_name}"
         pkl_file = f"{base_name}.doc_intel_obj.pkl"
         json_file = f"{base_name}.doc_intel_dict.json"
         with open(json_file, "w") as f:
@@ -56,38 +68,48 @@ class DocumentAnalysisParser(Parser):
             f.write(json.dumps(form_recognizer_results_dict, indent=4))
         with open(pkl_file, "wb") as file:
             pickle.dump(form_recognizer_results, file)
+        print("Saving interim files")
+        for filename in [pkl_file, json_file]:
+            file = File(content=open(filename, mode="rb"))
+            blob_sas_uris = await self.blob_manager_interim_files.upload_blob(file)
+            # Remove file to save space
+            os.remove(filename)
         
+    async def check_interim_files(self, base_name):
+        """
+        Avoid reprocessing files that have already been processed
+        """
+        pkl_file = f"{base_name}.doc_intel_obj.pkl"
+        pkl_file = pkl_file.split("/")[-1]
+        files = await self.blob_manager_interim_files.list_paths()
+        for filename in files:
+            if pkl_file in filename:
+                content = await self.blob_manager_interim_files.download_blob(filename)
+                os.remove(f"{self.cache_dir}/{pkl_file}")
+                return content
+
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
             
+            # mjh Load results from blob file if it exists
+            form_recognizer_results = await self.check_interim_files(content.name)
 
-            # mjh Load results from file if it exists
-            cache_dir = "./data_interim/"
-            if not os.path.exists(cache_dir ):
-                os.makedirs(cache_dir )
-            base_name = content.name.replace("./data/", cache_dir)
-
-            pkl_file = f"{base_name}.doc_intel_obj.pkl"
-            json_file = f"{base_name}.doc_intel_dict.json"
-            print(pkl_file)
-            if os.path.exists(pkl_file):
-                with open(pkl_file, "rb") as file:
-                    logger.info(f"Loading previous form recognizer results from {pkl_file}")
-                    form_recognizer_results = pickle.load(file)
-            else:
+            if form_recognizer_results is None:
                 logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
                 poller = await document_intelligence_client.begin_analyze_document(
-                model_id=self.model_id, 
-                analyze_request=content, 
-                content_type="application/octet-stream",
+                    model_id=self.model_id, 
+                    analyze_request=content, 
+                    content_type="application/octet-stream",
                 )
                 form_recognizer_results = await poller.result()
 
                 # mjh
-                await self.cache_doc_intelligence_results(form_recognizer_results, base_name)
+                await self.cache_doc_intelligence_results(form_recognizer_results, content.name)
+            else:
+                logger.info("Extracting text from '%s' using previously parsed results", content.name)
 
             # mjh Converted to use JSON rather than object, so we cache results
             offset = 0

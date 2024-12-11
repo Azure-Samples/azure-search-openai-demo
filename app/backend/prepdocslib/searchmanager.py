@@ -37,10 +37,11 @@ class Section:
     A section of a page that is stored in a search service. These sections are used as context by Azure OpenAI service
     """
 
-    def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
+    def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None, SourceDocumentDataSource: Optional[str] = None):
         self.split_page = split_page
         self.content = content
         self.category = category
+        self.SourceDocumentDataSource = SourceDocumentDataSource
 
 
 class SearchManager:
@@ -105,6 +106,7 @@ class SearchManager:
                         vector_search_profile_name="embedding_config",
                     ),
                     SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+                    SimpleField(name="SourceDocumentDataSource", type="Edm.String", filterable=True, facetable=True),
                     SimpleField(
                         name="sourcepage",
                         type="Edm.String",
@@ -214,7 +216,7 @@ class SearchManager:
                     ),
                 )
 
-                await search_index_client.create_index(index)
+                #await search_index_client.create_index(index)
             else:
                 logger.info("Search index %s already exists", self.search_info.index_name)
                 existing_index = await search_index_client.get_index(self.search_info.index_name)
@@ -253,65 +255,53 @@ class SearchManager:
                             self.search_info,
                         )
 
-    async def cache_index_files(self, documents: List):
-        cache_dir = "./data_interim/"
-        for document in documents:
-            output_dir = os.path.join(cache_dir, document["sourcefile"]) + "_index_files"
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)
-            file_name = document["sourcefile"] + "-" + document["id"]
-            base_name = output_dir + "/" + file_name
-            base_name += ".search_index_doc.json"
-            with open(base_name, "w") as f:
-                f.write(json.dumps(document, indent=4))
-
-
     async def update_content(
         self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
     ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
-        async with self.search_info.create_search_client() as search_client:
-            for batch_index, batch in enumerate(section_batches):
-                documents = [
-                    {
-                        "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
-                        "content": section.split_page.text,
-                        "category": section.category,
-                        "sourcepage": (
-                            BlobManager.blob_image_name_from_file_page(
-                                filename=section.content.filename(),
-                                page=section.split_page.page_num,
-                            )
-                            if image_embeddings
-                            else BlobManager.sourcepage_from_file_page(
-                                filename=section.content.filename(),
-                                page=section.split_page.page_num,
-                            )
-                        ),
-                        "sourcefile": section.content.filename(),
-                        **section.content.acls,
-                    }
-                    for section_index, section in enumerate(batch)
-                ]
-                if url:
-                    for document in documents:
-                        document["storageUrl"] = url
-                if self.embeddings:
-                    embeddings = await self.embeddings.create_embeddings(
-                        texts=[section.split_page.text for section in batch]
-                    )
-                    for i, document in enumerate(documents):
-                        document["embedding"] = embeddings[i]
-                if image_embeddings:
-                    for i, (document, section) in enumerate(zip(documents, batch)):
-                        document["imageEmbedding"] = image_embeddings[section.split_page.page_num]
+        #async with self.search_info.create_search_client() as search_client:
+        for batch_index, batch in enumerate(section_batches):
+            documents = [
+                {
+                    "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
+                    "content": section.split_page.text,
+                    "category": section.category,
+                    "SourceDocumentDataSource": section.SourceDocumentDataSource,
+                    "sourcepage": (
+                        BlobManager.blob_image_name_from_file_page(
+                            filename=section.content.filename(),
+                            page=section.split_page.page_num,
+                        )
+                        if image_embeddings
+                        else BlobManager.sourcepage_from_file_page(
+                            filename=section.content.filename(),
+                            page=section.split_page.page_num,
+                        )
+                    ),
+                    "sourcefile": section.content.filename(),
+                    **section.content.acls,
+                }
+                for section_index, section in enumerate(batch)
+            ]
+            if url:
+                for document in documents:
+                    document["storageUrl"] = url
+            if self.embeddings:
+                embeddings = await self.embeddings.create_embeddings(
+                    texts=[section.split_page.text for section in batch]
+                )
+                for i, document in enumerate(documents):
+                    document["embedding"] = embeddings[i]
+            if image_embeddings:
+                for i, (document, section) in enumerate(zip(documents, batch)):
+                    document["imageEmbedding"] = image_embeddings[section.split_page.page_num]
 
-                # mjh
-                await self.cache_index_files(documents)
+            # Not sending directly to search, just saving to blob
+            #await search_client.upload_documents(documents)
 
-                await search_client.upload_documents(documents)
+            return documents
 
     async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
         logger.info(

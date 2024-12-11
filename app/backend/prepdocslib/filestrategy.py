@@ -1,6 +1,8 @@
 import logging
 from typing import List, Optional
 import sys
+import os
+import json
 
 from .blobmanager import BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
@@ -43,6 +45,8 @@ class FileStrategy(Strategy):
         self,
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
+        blob_manager_search_index_files: BlobManager,
+        blob_manager_interim_files: BlobManager,
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
         document_action: DocumentAction = DocumentAction.Add,
@@ -54,6 +58,8 @@ class FileStrategy(Strategy):
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
+        self.blob_manager_search_index_files = blob_manager_search_index_files
+        self.blob_manager_interim_files = blob_manager_interim_files
         self.file_processors = file_processors
         self.document_action = document_action
         self.embeddings = embeddings
@@ -64,15 +70,42 @@ class FileStrategy(Strategy):
         self.category = category
 
     async def setup(self):
-        search_manager = SearchManager(
-            self.search_info,
-            self.search_analyzer_name,
-            self.use_acls,
-            False,
-            self.embeddings,
-            search_images=self.image_embeddings is not None,
-        )
-        await search_manager.create_index()
+        # mjh We are only saving files 
+        logger.info("Not sending data to search, just creating files. Skipping index_update code.")
+        # search_manager = SearchManager(
+        #     self.search_info,
+        #     self.search_analyzer_name,
+        #     self.use_acls,
+        #     False,
+        #     self.embeddings,
+        #     search_images=self.image_embeddings is not None,
+        # )
+        # await search_manager.create_index()
+
+    async def cache_index_files(self, documents: List):
+        cache_dir = "./data_interim/"
+        for document in documents:
+            output_dir = os.path.join(cache_dir, document["sourcefile"]) + "_index_files"
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            file_name = document["sourcefile"] + "-" + document["id"]
+            base_name = output_dir + "/" + file_name
+            base_name += ".search_index_doc.json"
+            # Here set fields
+            if 'gao' in base_name.lower():
+                document["dataSource"] = "gao"
+            else:
+                document["dataSource"] = "Unknown"
+            if "embedding" in document:
+                document["ContentVector"] = document["embedding"]
+                del document["embedding"]
+            with open(base_name, "w") as f:
+                f.write(json.dumps(document, indent=4))
+            file = File(content=open(base_name, mode="rb"))
+            blob_sas_uris = await self.blob_manager_search_index_files.upload_blob(file)
+            # Remove file to save space
+            os.remove(base_name)
+        os.rmdir(output_dir)
 
     async def run(self):
         search_manager = SearchManager(
@@ -80,16 +113,22 @@ class FileStrategy(Strategy):
         )
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
+
             async for file in files:
                 try:
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
-                        
                     if sections:
-                        blob_sas_uris = await self.blob_manager.upload_blob(file)
+                        # mjh
+                        #blob_sas_uris = await self.blob_manager.upload_blob(file)
                         blob_image_embeddings: Optional[List[List[float]]] = None
-                        if self.image_embeddings and blob_sas_uris:
-                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                        #if self.image_embeddings and blob_sas_uris:
+                        if self.image_embeddings:
+                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris) 
+                        documents = await search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                        # Save the index files, these will be indexed by a search instance later
+                        if documents:
+                            await self.cache_index_files(documents)
+
                 finally:
                     if file:
                         file.close()

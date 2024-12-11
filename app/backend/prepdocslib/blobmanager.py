@@ -3,6 +3,7 @@ import io
 import logging
 import os
 import re
+import pickle
 from typing import List, Optional, Union
 
 import fitz  # type: ignore
@@ -161,6 +162,55 @@ class BlobManager:
                     continue
                 logger.info("Removing blob %s", blob_path)
                 await container_client.delete_blob(blob_path)
+
+    # mjh
+    async def list_paths(self, path: Optional[str] = None) -> List[str]:
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            if not await container_client.exists():
+                return []
+
+            # Set prefix for filtering blobs
+            prefix = os.path.splitext(os.path.basename(path))[0] if path else None
+
+            # List blobs with or without prefix
+            blobs = container_client.list_blob_names(name_starts_with=prefix)
+            
+            # Consume the generator and collect blob names in a list
+            blob_list = []
+            async for blob_path in blobs:
+                logger.info("Found: %s", blob_path)
+                blob_list.append(blob_path)
+
+            # Debug information
+            logger.info("Total blobs found: %d", len(blob_list))
+            print(self.endpoint, self.container)
+
+            return blob_list
+
+    async def download_blob(self, blob_name):
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            blob_client = container_client.get_blob_client(blob_name)
+            downloader = await blob_client.download_blob()
+            content = await downloader.readall() 
+
+            # # Create a temporary file to store the blob's content
+            temp_file_path = os.path.join('./data_interim', os.path.basename(blob_name))
+            with open(temp_file_path, "wb") as file_stream:
+                 stream = await blob_client.download_blob()
+                 data = await stream.readall()
+                 file_stream.write(data)
+
+            with open(temp_file_path, "rb") as f:
+                if '.pkl' in temp_file_path:
+                    obj = pickle.load(f)
+                else:
+                    obj = json.load(f)
+                    
+            return obj
 
     @classmethod
     def sourcepage_from_file_page(cls, filename, page=0) -> str:

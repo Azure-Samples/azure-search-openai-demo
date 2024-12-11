@@ -128,7 +128,7 @@ class IntegratedVectorizerStrategy(Strategy):
             search_images=False,
         )
 
-        await search_manager.create_index()
+        #await search_manager.create_index()
 
         ds_client = self.search_info.create_search_indexer_client()
         ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)

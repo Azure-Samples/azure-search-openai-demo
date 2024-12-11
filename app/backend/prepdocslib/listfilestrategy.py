@@ -12,6 +12,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
+from azure.storage.blob.aio import BlobServiceClient, BlobClient
 
 logger = logging.getLogger("scripts")
 
@@ -65,8 +66,9 @@ class LocalListFileStrategy(ListFileStrategy):
     Concrete strategy for listing files that are located in a local filesystem
     """
 
-    def __init__(self, path_pattern: str):
+    def __init__(self, path_pattern: str, force: bool = False):
         self.path_pattern = path_pattern
+        self.force = force
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async for p in self._list_paths(self.path_pattern):
@@ -83,7 +85,7 @@ class LocalListFileStrategy(ListFileStrategy):
 
     async def list(self) -> AsyncGenerator[File, None]:
         async for path in self.list_paths():
-            if not self.check_md5(path):
+            if self.force or not self.check_md5(path):
                 yield File(content=open(path, mode="rb"))
 
     def check_md5(self, path: str) -> bool:
@@ -175,3 +177,97 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                         os.remove(temp_file_path)
                     except Exception as file_delete_exception:
                         logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
+
+class BlobListFileStrategy:
+    """
+    Concrete strategy for listing files that are located in an Azure Blob Storage account
+    """
+
+    def __init__(
+        self,
+        storage_account: str,
+        storage_container: str,
+        credential: Union[AsyncTokenCredential, str],
+        force: bool = False
+    ):
+        self.storage_account = storage_account
+        self.storage_container = storage_container
+        self.credential = credential
+        self.temp_dir = './data'
+        self.force = force
+
+    async def list(self, path: Optional[str] = None) -> AsyncGenerator[File, None]:
+        account_url = f"https://{self.storage_account}.blob.core.windows.net"
+        async with BlobServiceClient(
+            account_url=account_url, credential=self.credential
+        ) as service_client, service_client.get_container_client(self.storage_container) as container_client:
+            if not await container_client.exists():
+                return
+
+            prefix = os.path.splitext(os.path.basename(path))[0] if path else None
+            blobs = container_client.list_blobs(name_starts_with=prefix)
+
+            async for blob in blobs:
+                # Ignore hash files
+                if blob.name.endswith(".md5"):
+                    continue
+
+                logger.info("Found: %s", blob.name)
+
+                async with BlobClient(
+                    account_url=account_url,
+                    container_name=self.storage_container,
+                    blob_name=blob.name,
+                    credential=self.credential,
+                ) as blob_client:
+                    # Check MD5 to determine if the blob has changed
+                    if await self.check_md5(blob_client, blob.name) and self.force is False:
+                        continue
+
+                    # Create a temporary file to store the blob's content
+                    temp_file_path = os.path.join(self.temp_dir, os.path.basename(blob.name))
+
+                    # Download blob content to the temporary file
+                    with open(temp_file_path, "wb") as file_stream:
+                        stream = await blob_client.download_blob()
+                        data = await stream.readall()
+                        file_stream.write(data)
+
+                    # Yield a File object with the downloaded content
+                    yield File(content=open(temp_file_path, "rb"), url=f"{account_url}/{self.storage_container}/{blob.name}")
+
+    async def check_md5(self, blob_client: BlobClient, blob_name: str) -> bool:
+        # Retrieve blob properties
+        properties = await blob_client.get_blob_properties()
+        blob_md5 = properties.content_settings.content_md5
+
+        if not blob_md5:
+            return False  # If no MD5 hash is present, assume the blob has changed
+
+        # Convert the MD5 to hex for comparison
+        blob_md5_hex = base64.b16encode(blob_md5).decode("ascii")
+
+        # Generate a client for the .md5 blob
+        account_url = f"https://{self.storage_account}.blob.core.windows.net"
+        hash_blob_name = f"{blob_name}.md5"
+        async with BlobClient(
+            account_url=account_url,
+            container_name=self.storage_container,
+            blob_name=hash_blob_name,
+            credential=self.credential,
+        ) as hash_blob_client:
+            try:
+                # Check if the .md5 file exists and retrieve its content
+                stored_hash = await (await hash_blob_client.download_blob()).content_as_text()
+                stored_hash = stored_hash.strip()
+            except Exception:
+                stored_hash = None
+
+            if stored_hash == blob_md5_hex:
+                logger.info("Skipping %s, no changes detected.", blob_name)
+                return True
+
+            # Upload the new hash to the .md5 file in the blob storage
+            await hash_blob_client.upload_blob(blob_md5_hex, overwrite=True)
+
+        return False

@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import logging
 import os
+import sys
 from typing import Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
@@ -27,12 +28,17 @@ from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
+    BlobListFileStrategy
 )
 from prepdocslib.parser import Parser
 from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
+
+# mjh
+from dotenv import load_dotenv
+load_dotenv()
 
 logger = logging.getLogger("scripts")
 
@@ -82,10 +88,12 @@ def setup_blob_manager(
 def setup_list_file_strategy(
     azure_credential: AsyncTokenCredential,
     local_files: Union[str, None],
+    blob_files: Union[str, None],
     datalake_storage_account: Union[str, None],
     datalake_filesystem: Union[str, None],
     datalake_path: Union[str, None],
     datalake_key: Union[str, None],
+    force: Union[str, None]
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
@@ -99,11 +107,20 @@ def setup_list_file_strategy(
             data_lake_path=datalake_path,
             credential=adls_gen2_creds,
         )
+    # mjh
+    elif blob_files:
+        logger.info("Using Blob Storage Account to find files: %s", os.environ["AZURE_STORAGE_ACCOUNT"])
+        list_file_strategy = BlobListFileStrategy(
+            storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
+            storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
+            credential=azure_credential,
+            force=force
+        )
     elif local_files:
         logger.info("Using local files: %s", local_files)
-        list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
+        list_file_strategy = LocalListFileStrategy(path_pattern=local_files, force=force)
     else:
-        raise ValueError("Either local_files or datalake_storage_account must be provided.")
+        raise ValueError("Either local_files, blob_files or datalake_storage_account must be provided.")
     return list_file_strategy
 
 
@@ -158,6 +175,7 @@ def setup_file_processors(
     local_pdf_parser: bool = False,
     local_html_parser: bool = False,
     search_images: bool = False,
+    blob_manager_interim_files: BlobManager = None
 ):
     sentence_text_splitter = SentenceTextSplitter(has_image_embeddings=search_images)
 
@@ -170,6 +188,7 @@ def setup_file_processors(
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=documentintelligence_creds,
+            blob_manager_interim_files=blob_manager_interim_files
         )
 
     pdf_parser: Optional[Parser] = None
@@ -248,7 +267,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index."
     )
-    parser.add_argument("files", nargs="?", help="Files to be processed")
+    parser.add_argument("blob_files", nargs="?", help="Use blob storage files")
+
+    parser.add_argument(
+        "--local_files", help="Look for local files"
+    )
 
     parser.add_argument(
         "--category", help="Value for the category field in the search index for all sections indexed in this run"
@@ -295,6 +318,9 @@ if __name__ == "__main__":
         help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
     )
 
+    # mjh
+    parser.add_argument("--force", "-f", action="store_true", help="Force reprocessing of files")
+
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
@@ -304,7 +330,7 @@ if __name__ == "__main__":
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.INFO)
 
-    load_azd_env()
+    #load_azd_env()
 
     if os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled":
         logger.error("AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting.")
@@ -317,11 +343,11 @@ if __name__ == "__main__":
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):
-        logger.info("Connecting to Azure services using the azd credential for tenant %s", tenant_id)
-        azd_credential = AzureDeveloperCliCredential(tenant_id=tenant_id, process_timeout=60)
+       logger.info("Connecting to Azure services using the azd credential for tenant %s", tenant_id)
+       azd_credential = AzureDeveloperCliCredential(tenant_id=tenant_id, process_timeout=60)
     else:
-        logger.info("Connecting to Azure services using the azd credential for home tenant")
-        azd_credential = AzureDeveloperCliCredential(process_timeout=60)
+       logger.info("Connecting to Azure services using the azd credential for home tenant")
+       azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
     if args.removeall:
         document_action = DocumentAction.RemoveAll
@@ -333,14 +359,17 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    search_info = loop.run_until_complete(
-        setup_search_info(
-            search_service=os.environ["AZURE_SEARCH_SERVICE"],
-            index_name=os.environ["AZURE_SEARCH_INDEX"],
-            azure_credential=azd_credential,
-            search_key=clean_key_if_exists(args.searchkey),
-        )
-    )
+    # mjh
+    #search_info = loop.run_until_complete(
+    #    setup_search_info(
+    #        search_service=os.environ["AZURE_SEARCH_SERVICE"],
+    #        index_name=os.environ["AZURE_SEARCH_INDEX"],
+    #        azure_credential=azd_credential,
+    #        search_key=clean_key_if_exists(args.searchkey),
+    #    )
+    #)
+    search_info=None
+
     blob_manager = setup_blob_manager(
         azure_credential=azd_credential,
         storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
@@ -350,13 +379,35 @@ if __name__ == "__main__":
         search_images=use_gptvision,
         storage_key=clean_key_if_exists(args.storagekey),
     )
+    # mjh. Blob manager for where we will save search documents
+    blob_manager_search_index_files = setup_blob_manager(
+        azure_credential=azd_credential,
+        storage_account=os.environ["AZURE_STORAGE_ACCOUNT_SEARCH_INDEX_FILES"],
+        storage_container=os.environ["AZURE_STORAGE_CONTAINER_SEARCH_INDEX_FILES"],
+        storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP_SEARCH_INDEX_FILES"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+        search_images=use_gptvision,
+        storage_key=clean_key_if_exists(args.storagekey),
+    )
+    # mjh. Blob manager for interim files, such as Doc intelligence objects
+    blob_manager_interim_files = setup_blob_manager(
+        azure_credential=azd_credential,
+        storage_account=os.environ["AZURE_STORAGE_ACCOUNT_INTERIM_FILES"],
+        storage_container=os.environ["AZURE_STORAGE_CONTAINER_INTERIM_FILES"],
+        storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP_INTERIM_FILES"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+        search_images=use_gptvision,
+        storage_key=clean_key_if_exists(args.storagekey),
+    )
     list_file_strategy = setup_list_file_strategy(
         azure_credential=azd_credential,
-        local_files=args.files,
+        local_files=args.local_files,
+        blob_files=args.blob_files,
         datalake_storage_account=os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"),
         datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
         datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
         datalake_key=clean_key_if_exists(args.datalakekey),
+        force=args.force
     )
 
     openai_host = os.environ["OPENAI_HOST"]
@@ -411,6 +462,7 @@ if __name__ == "__main__":
             local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
             search_images=use_gptvision,
+            blob_manager_interim_files=blob_manager_interim_files
         )
         image_embeddings_service = setup_image_embeddings_service(
             azure_credential=azd_credential,
@@ -422,6 +474,8 @@ if __name__ == "__main__":
             search_info=search_info,
             list_file_strategy=list_file_strategy,
             blob_manager=blob_manager,
+            blob_manager_search_index_files=blob_manager_search_index_files,
+            blob_manager_interim_files=blob_manager_interim_files,
             file_processors=file_processors,
             document_action=document_action,
             embeddings=openai_embeddings_service,
