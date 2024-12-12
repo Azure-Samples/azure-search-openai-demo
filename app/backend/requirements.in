@@ -16,7 +16,6 @@ aiohttp
 azure-monitor-opentelemetry
 opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-httpx
-opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
 msal
@@ -32,3 +31,4 @@ msgraph-sdk==1.1.0
 openai-messages-token-helper
 python-dotenv
 rich
+typing-extensions
