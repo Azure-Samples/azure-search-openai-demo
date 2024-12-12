@@ -179,6 +179,9 @@
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
     },
+    "useEval": {
+      "value": "${USE_EVAL=false}"
+    },
     "enableLanguagePicker": {
       "value": "${ENABLE_LANGUAGE_PICKER=false}"
     },
