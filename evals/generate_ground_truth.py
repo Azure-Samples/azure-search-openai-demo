@@ -7,13 +7,12 @@ from typing import Any, Dict, List, Optional
 
 import requests
 from azure.ai.evaluation.simulator import Simulator
-from azure.identity import AzureDeveloperCliCredential, get_bearer_token_provider
+from azure.identity import AzureDeveloperCliCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.models import (
     QueryType,
 )
 from dotenv_azd import load_azd_env
-from openai import AzureOpenAI
 
 logger = logging.getLogger("evals")
 
@@ -72,17 +71,6 @@ def get_simulator() -> Simulator:
     return simulator
 
 
-def get_openai_client():
-    azure_credential = get_azure_credential()
-    token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
-    openai_client = AzureOpenAI(
-        api_version=os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01",
-        azure_endpoint=f"https://{os.getenv('AZURE_OPENAI_SERVICE')}.openai.azure.com",
-        azure_ad_token_provider=token_provider,
-    )
-    return openai_client
-
-
 def get_azure_credential():
     AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
     if AZURE_TENANT_ID:
@@ -135,7 +123,7 @@ async def generate_ground_truth(azure_credential, simulations: list[dict], num_p
         qa_pairs = []
         for output in outputs:
             qa_pairs.append({"question": output["messages"][0]["content"], "truth": output["messages"][1]["content"]})
-        with open(CURRENT_DIR / "ground_truth_singleturn.jsonl", "a") as f:
+        with open(CURRENT_DIR / "ground_truth.jsonl", "a") as f:
             for qa_pair in qa_pairs:
                 f.write(json.dumps(qa_pair) + "\n")
 
