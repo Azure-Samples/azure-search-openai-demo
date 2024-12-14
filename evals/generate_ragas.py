@@ -8,7 +8,6 @@ import rich
 from azure.identity import AzureDeveloperCliCredential, get_bearer_token_provider
 from azure.search.documents import SearchClient
 from dotenv_azd import load_azd_env
-from langchain_community.document_loaders import JSONLoader
 from langchain_core.documents import Document as LCDocument
 from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from ragas.embeddings import LangchainEmbeddingsWrapper
@@ -40,13 +39,8 @@ def get_search_documents(azure_credential) -> str:
         index_name=os.getenv("AZURE_SEARCH_INDEX"),
         credential=azure_credential,
     )
-    search_results = search_client.search(search_text="*", top=10)
+    search_results = search_client.search(search_text="*", top=1000)
     return [result for result in search_results]
-
-
-path = root_dir / "data/Json_Examples/2189.json"
-loader = JSONLoader(path, jq_schema=".Description")
-docs = loader.load()
 
 
 azure_credential = get_azure_credential()
