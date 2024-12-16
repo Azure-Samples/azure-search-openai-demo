@@ -53,10 +53,11 @@ class LLMGuardrail(GuardrailBase):
 <{content_tag}>{message}</{content_tag}>"""
 
     def __init__(self, prompt_config: GuardrailPromptConfig,
+                 error_action: GuardrailOnErrorAction,
                  temperature: float = 0):
         super().__init__(
             name="llm_guardrail",
-            error_action=GuardrailOnErrorAction.BLOCK,
+            error_action=error_action,
             continue_on_failure=False,
             validate_failed_output=True
         )

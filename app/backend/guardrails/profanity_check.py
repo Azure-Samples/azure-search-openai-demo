@@ -48,6 +48,7 @@ class ProvanityCheck(GuardrailBase):
                 guardrail_name=self.name,
                 state=GuardrailStates.FAILED,
                 message="This text contains profanity.",
+                modified_message="content is blocked",
             )
 
         return GuardrailValidationResult(

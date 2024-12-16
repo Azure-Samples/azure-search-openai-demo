@@ -72,12 +72,13 @@ export type ChatAppResponse = {
 
 export type ChatAppRequestContext = {
     overrides?: ChatAppRequestOverrides;
+    validate_only?: boolean;
 };
 
 export type ChatAppRequest = {
     messages: ResponseMessage[];
     context?: ChatAppRequestContext;
-    session_state: any;
+    session_state?: any;
 };
 
 export type Config = {

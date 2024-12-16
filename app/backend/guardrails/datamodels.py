@@ -16,6 +16,7 @@ class GuardrailOnErrorAction(Enum):
     CONTINUE_WITH_NO_ACTION = "continue_with_no_action"
     TRUNCATE_HISTORY = "truncate_history"
     CONTINUE_WITH_RESPONSE_TEMPLATE = "continue_with_response_template"
+    CONTINUE_WITH_MODIFIED_INPUT = "continue_with_modified_input"
 
 
 class GuardrailValidationResult(BaseModel):

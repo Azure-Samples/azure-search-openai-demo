@@ -37,6 +37,12 @@ class GuardrailsOrchestrator:
         match guardrail.error_action:
             case GuardrailOnErrorAction.BLOCK:
                 return (GuardrailOnErrorAction.BLOCK, guardrail.template, True)
+            
+            case GuardrailOnErrorAction.TRUNCATE_HISTORY:
+                return (GuardrailOnErrorAction.TRUNCATE_HISTORY, guardrail.template, True)
+            
+            case GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT:
+                return (GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT, guardrail.template, True)
 
             case GuardrailOnErrorAction.CONTINUE_WITH_NO_ACTION:
                 self.logger.warning(f"Guardrail {guardrail.name} failed, continuing without action")
@@ -83,6 +89,10 @@ class GuardrailsOrchestrator:
                 validation_failed = True
             if action == GuardrailOnErrorAction.BLOCK:
                 break
+            if action == GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT:
+                break
+            if action == GuardrailOnErrorAction.TRUNCATE_HISTORY:
+                break
 
         self.logger.debug(f"Validation results: {validation_results}")
         return ValidationResult(
@@ -95,11 +105,15 @@ class GuardrailsOrchestrator:
     ) -> ValidationResult:
         """Process and update chat history based on validation results"""
         validation = await self.validate_messages(messages)
-        if validation.action in {GuardrailOnErrorAction.BLOCK, GuardrailOnErrorAction.TRUNCATE_HISTORY}:
+        if validation.action in {GuardrailOnErrorAction.BLOCK,
+                                 GuardrailOnErrorAction.TRUNCATE_HISTORY,
+                                 GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT}:
             if validation.action == GuardrailOnErrorAction.TRUNCATE_HISTORY:
                 validation.messages = []
-            else:
-                validation.messages = messages[:-1].copy()
+
+            # if validation.action == GuardrailOnErrorAction.BLOCK:
+            #     # remove the last message
+            #     validation.messages = validation.messages[:-1]
 
             validation.messages.append(
                 ChatCompletionAssistantMessageParam(content=validation.template, role="assistant")

@@ -162,8 +162,8 @@ class BanListCheck(GuardrailBase):
     def __init__(self, banned_words: List[str] = BANNED_WORDS, max_l_dist: int = 0):
         super().__init__(
             name="ban_list_check",
-            error_action=GuardrailOnErrorAction.BLOCK,
-            continue_on_failure=False,
+            error_action=GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT,
+            continue_on_failure=True,
             validate_failed_output=True,
         )
         self._banned_words = banned_words
@@ -173,7 +173,7 @@ class BanListCheck(GuardrailBase):
     def template(self) -> str:
         return (
             "I apologize, but it seems that the message contains prohibited words. "
-            "Please remove any inappropriate language and try again."
+            "I've removed the banned words for the system security reasons."
         )
 
     async def validate(
@@ -206,8 +206,8 @@ class BanListCheck(GuardrailBase):
             for match in all_matches:
                 actual_start = spaceless_index_map[match.start][1]
                 actual_end = spaceless_index_map[match.end - 1][1]
-                triggering_text = latest_message[actual_start:actual_end]
-                fix_value = fix_value.replace(triggering_text, "")
+                triggering_text = latest_message[actual_start:actual_end + 1]
+                fix_value = fix_value.replace(triggering_text, "****** ")
                 error_spans.append(
                     {
                         "start": actual_start,
@@ -219,13 +219,11 @@ class BanListCheck(GuardrailBase):
             return GuardrailValidationResult(
                 guardrail_name=self.name,
                 state=GuardrailStates.FAILED,
-                message="Output contains banned words.",
                 error_spans=error_spans,
-                fix_value=fix_value,
+                modified_message=fix_value,
             )
 
         return GuardrailValidationResult(
             guardrail_name=self.name,
-            state=GuardrailStates.PASSED,
-            message="Message passed content filter.",
+            state=GuardrailStates.PASSED
         )

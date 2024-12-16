@@ -20,7 +20,7 @@ class NSFWCheck(GuardrailBase):
 
     def __post_init__(self):
         # Use object.__setattr__ to set attributes on a frozen dataclass
-        object.__setattr__(self, "threshold", 0.7)
+        object.__setattr__(self, "threshold", 0.95)
         object.__setattr__(self, "model", pipeline("text-classification", model="michellejieli/NSFW_text_classifier"))
 
     @property
@@ -52,11 +52,10 @@ class NSFWCheck(GuardrailBase):
             return GuardrailValidationResult(
                 guardrail_name=self.name,
                 state=GuardrailStates.FAILED,
-                message="This text contains NSFW content.",
+                modified_message="content is blocked",
             )
 
         return GuardrailValidationResult(
             guardrail_name=self.name,
-            state=GuardrailStates.PASSED,
-            message="Message passed content filter.",
+            state=GuardrailStates.PASSED
         )

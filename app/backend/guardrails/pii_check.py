@@ -18,9 +18,6 @@ class PIICheck(GuardrailBase):
             "PHONE_NUMBER",
             "DOMAIN_NAME",
             "IP_ADDRESS",
-            "DATE_TIME",
-            "LOCATION",
-            "PERSON",
             "URL",
         ],
         "spi": [
@@ -40,8 +37,8 @@ class PIICheck(GuardrailBase):
     def __init__(self, pii_entities: Union[str, List[str], None] = "pii"):
         super().__init__(
             name="pii_check",
-            error_action=GuardrailOnErrorAction.BLOCK,
-            continue_on_failure=False,
+            error_action=GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT,
+            continue_on_failure=True,
             validate_failed_output=True,
         )
         self.pii_entities = pii_entities
@@ -51,8 +48,8 @@ class PIICheck(GuardrailBase):
     @property
     def template(self) -> str:
         return (
-            "It seems that the message contains sensitive information. "
-            "Please remove any personal data and try again."
+            "I notice you shared some sensitive information. I've masked it for your privacy. "
+            "Feel free to continue with your question."
         )
 
     async def validate(
@@ -76,18 +73,18 @@ class PIICheck(GuardrailBase):
         if anonymized_text == latest_message:
             return GuardrailValidationResult(
                 guardrail_name=self.name,
-                state=GuardrailStates.PASSED,
-                message="Message passed content filter.",
+                state=GuardrailStates.PASSED
             )
 
         error_spans = self._get_error_spans(latest_message, anonymized_text)
+        # Create a new message with the anonymized text
+        messages[-1]["content"] = anonymized_text
 
         return GuardrailValidationResult(
             guardrail_name=self.name,
             state=GuardrailStates.FAILED,
-            message="The message contains PII.",
             error_spans=error_spans,
-            fix_value=anonymized_text,
+            modified_message=anonymized_text,
         )
 
     def _get_entities_to_filter(self, metadata: dict) -> List[str]:
