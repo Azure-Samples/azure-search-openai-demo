@@ -289,7 +289,7 @@ opentelemetry-sdk==1.26.0
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
     #   opentelemetry-resource-detector-azure
-opentelemetry-semantic-conventions==0.47b0
+opentelemetry-semantic-conventions==0.50b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
