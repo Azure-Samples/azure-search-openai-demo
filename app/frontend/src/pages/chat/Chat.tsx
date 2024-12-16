@@ -123,9 +123,11 @@ const Chat = () => {
                         message: { content: answer, role: role ?? askResponse.message?.role }
                     };
                     if (isBlocked) {
-                        setStreamedAnswers([...answers]);
+                        setStreamedAnswers([...answers, ["message blocked", latestResponse]]);
                     } else if (isModified) {
                         setStreamedAnswers([...answers, [modifiedMessage || question, latestResponse]]);
+                    } else if (truncateHistory) {
+                        setStreamedAnswers([[question, latestResponse]]);
                     } else {
                         setStreamedAnswers([...answers, [question, latestResponse]]);
                     }
@@ -171,7 +173,7 @@ const Chat = () => {
             }
         } finally {
             setIsStreaming(false);
-            // After streaming is complete, send the full message back for validation
+            
             if (answer && !isBlocked && !isModified && !truncateHistory) {
                 try {
                     const token = client ? await getToken(client) : undefined;
@@ -199,20 +201,13 @@ const Chat = () => {
 
                     if (validationResponse.ok) {
                         const validationData = await validationResponse.json();
-                        if (validationData.context.validation_failed) {
+                        if (validationData.context?.validation_failed) {
                             console.log("validation_failed");
                             console.log(validationData);
                             if (validationData.context.action === "truncate_history") {
-                                // Display the guardrail message as a standalone message
                                 console.log("truncate_history");
                                 truncateHistory = true;
                                 answer = validationData.message.content || "Chat history has been cleared due to content validation";
-                                const guardRailResponse: ChatAppResponse = {
-                                    ...askResponse,
-                                    message: { content: answer, role: "assistant" }
-                                };
-                                setAnswers([[question, guardRailResponse]]);
-                                setStreamedAnswers([[question, guardRailResponse]]);
                             }
                         }
                     }
@@ -220,13 +215,36 @@ const Chat = () => {
                     console.error("Validation request failed:", error);
                 }
             }
-        }
 
-        const fullResponse: ChatAppResponse = {
-            ...askResponse,
-            message: { content: answer, role: askResponse.message?.role }
-        };
-        return { response: fullResponse, blocked: isBlocked, modified: isModified, modifiedMessage };
+            const fullResponse: ChatAppResponse = {
+                ...askResponse,
+                message: { 
+                    content: answer,
+                    role: askResponse.message?.role 
+                }
+            };
+
+            if (truncateHistory) {
+                setAnswers([[question, fullResponse]]);
+                setStreamedAnswers([[question, fullResponse]]);
+            } else {
+                if (isBlocked) {
+                    setAnswers([...answers, ["message blocked", fullResponse]]);
+                } else if (isModified) {
+                    setAnswers([...answers, [modifiedMessage || question, fullResponse]]);
+                } else {
+                    setAnswers([...answers, [question, fullResponse]]);
+                }
+            }
+
+            return { 
+                response: fullResponse, 
+                blocked: isBlocked, 
+                modified: isModified, 
+                truncated: truncateHistory,
+                modifiedMessage 
+            };
+        }
     };
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -283,21 +301,21 @@ const Chat = () => {
             }
 
             if (shouldStream) {
-                const { response: parsedResponse, blocked, modified, modifiedMessage } = await handleAsyncRequest(question, answers, response.body);
-                if (!blocked && !modified) {
+                const { response: parsedResponse, blocked, modified, truncated, modifiedMessage } = await handleAsyncRequest(question, answers, response.body);
+                if (truncated) {
+                    setAnswers([[question, parsedResponse]]);
+                } else if (!blocked && !modified) {
                     setAnswers([...answers, [question, parsedResponse]]);
                 } else if (modified) {
-                    console.log("modifiedMessage", modifiedMessage);
                     setAnswers([...answers, [modifiedMessage || question, parsedResponse]]);
-                } else if (blocked) {
-                    setAnswers([...answers, ["message blocked", parsedResponse]]);
                 }
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
                 if (parsedResponse.error) {
                     throw Error(parsedResponse.error);
+                } else {
+                    setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
                 }
-                setAnswers([...answers, [question, parsedResponse as ChatAppResponse]]);
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {
