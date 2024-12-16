@@ -27,6 +27,7 @@ class GuardrailBase(ABC):
     TEMPLATE_REQUIRED_ACTIONS: ClassVar[frozenset] = frozenset(
         {
             GuardrailOnErrorAction.CONTINUE_WITH_RESPONSE_TEMPLATE,
+            GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT,
             GuardrailOnErrorAction.BLOCK,
             GuardrailOnErrorAction.TRUNCATE_HISTORY,
         }
