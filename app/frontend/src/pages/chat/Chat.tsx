@@ -139,8 +139,6 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                console.log("Raw event received:", event);
-                
                 if (event["action"] === "block") {
                     isBlocked = true;
                     continue;
@@ -152,7 +150,6 @@ const Chat = () => {
                     continue;
                 } else if (event.context?.action === "continue_with_modified_input" && event.context?.modified_message) {
                     modifiedMessage = event.context.modified_message;
-                    console.log("Modified message from context:", modifiedMessage);
                 }
                 
                 if (event["context"] && event["context"]["data_points"]) {
@@ -202,10 +199,7 @@ const Chat = () => {
                     if (validationResponse.ok) {
                         const validationData = await validationResponse.json();
                         if (validationData.context?.validation_failed) {
-                            console.log("validation_failed");
-                            console.log(validationData);
                             if (validationData.context.action === "truncate_history") {
-                                console.log("truncate_history");
                                 truncateHistory = true;
                                 answer = validationData.message.content || "Chat history has been cleared due to content validation";
                             }

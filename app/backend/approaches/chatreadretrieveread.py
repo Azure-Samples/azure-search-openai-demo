@@ -109,10 +109,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
-        # Check if last response from "assistant"
-        print("--------------------------------")
-        print(f"Messages: {messages}")
-        print("--------------------------------")
         if messages[-1]["role"] == "assistant":
             if self.output_guardrails:
                 guardrail_results = await self.output_guardrails.process_chat_history(messages)
@@ -125,7 +121,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         # Input guardrail check
         if self.input_guardrails and messages[-1]["role"] == "user":
             guardrail_results = await self.input_guardrails.process_chat_history(messages)
-            print(f"Input Guardrail results: {guardrail_results}")
             if guardrail_results.immediate_response:
                 extra_info = {"action": guardrail_results.action.value}
                 if guardrail_results.action.value == GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT.value:
@@ -133,7 +128,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         if result.state == "failed" and result.modified_message:
                             extra_info["modified_message"] = result.modified_message
                             break
-                print(extra_info, guardrail_results.messages)
                 return (extra_info, guardrail_results.messages)
 
 
