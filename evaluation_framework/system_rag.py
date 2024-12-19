@@ -129,13 +129,14 @@ class RAG:
 
             return contexts
 
-    async def ask_questions(self, questions: List[str]) -> Dict[str, Any]:
+    async def ask_questions(self, questions: List[str],
+                            assistant_role: bool = False) -> Dict[str, Any]:
         """Run RAG testing on provided questions"""
         results = []
         async with self.semaphore:
             for question in questions:
                 try:
-                    result = await self._process_question(question)
+                    result = await self._process_question(question, assistant_role)
                     results.append(result)
                 except Exception as e:
                     print(f"Error processing question '{question}': {str(e)}")
@@ -148,9 +149,13 @@ class RAG:
             "results": results
         }
 
-    async def _process_question(self, question: str) -> Dict[str, Any]:
+    async def _process_question(self, question: str,
+                                assistant_role: bool = False) -> Dict[str, Any]:
         """Process a single question"""
-        messages = [{"role": "user", "content": question}]
+        if assistant_role:
+            messages = [{"role": "assistant", "content": question}]
+        else:
+            messages = [{"role": "user", "content": question}]
         context = {
             "overrides": {
                 "retrieval_mode": self.config.retrieval_mode,

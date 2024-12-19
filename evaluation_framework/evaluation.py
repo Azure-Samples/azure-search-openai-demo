@@ -52,18 +52,31 @@ class RAGEvaluator:
     async def prepare_eval_data(self,
                                 eval_data: List[Dict],
                                 rag_system: RAG,
-                                save_path: Optional[Path] = None) -> List[Dict]:
+                                save_path: Optional[Path] = None,
+                                output_guard: bool = False) -> List[Dict]:
         """Process goldens and return evaluation data"""
         # Process all questions in one batch
         questions = [eval_case["input"] for eval_case in eval_data]
         answers = await rag_system.ask_questions(questions)
         # Update eval_data_list with results
         for i, eval_case in enumerate(eval_data):
+            # if answer was blocked by input guard, "results" will be a dict
+            # check if results is a list
             _answer = answers["results"][i]["message"]["content"]
-            _context = answers["results"][i]["context"]['data_points']["text"]
+            try:
+                _context = answers["results"][i]["context"]['data_points']["text"]
+            except:
+                _context = None
             eval_case["actual_output"] = _answer
-            eval_case["retrieval_context"] = _context
-        
+            # if context is not found, use the context from the eval_case
+            eval_case["retrieval_context"] = _context or eval_case["context"]
+        print("user answers prepared")
+        if output_guard:
+            assistant_answers = [i["actual_output"] for i in eval_data]
+            output_guard_answers = await rag_system.ask_questions(assistant_answers, assistant_role=True)
+            for i, eval_case in enumerate(eval_data):
+                eval_case["actual_output"] = output_guard_answers["results"][i]["message"]["content"]
+        print("output guard answers prepared")
         if save_path:
             with open(save_path, "w") as f:
                 json.dump(eval_data, f)

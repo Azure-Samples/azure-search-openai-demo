@@ -13,7 +13,7 @@ class EvalConfig(BaseModel):
             "eval_results": Path("eval_data/results.json"),
             "custom_metrics": Path("eval_data/custom_metrics.json"),
             "synthetic_data": Path("synthetic_data"),
-            "synthetic_data_answered": Path("synthetic_data/synthetic_data_answered.json"),
+            "synthetic_data_answered": Path("synthetic_data/synthetic_data_answered_output_guard_v2.json"),
             # Added test paths
             "test_config": Path("eval_config.json"),
             "test_cases_dummy": Path("eval_data/test_cases.json"),
@@ -31,13 +31,14 @@ class EvalConfig(BaseModel):
     eval_pipeline: Dict[str, Any] = Field(
         default={
             "generate_synthetic_data": True,
-            "use_test_cases": True
+            "use_test_cases": True,
+            "output_guard": True
         }
     )
     synthetic_data: Dict[str, Any] = Field(
         default={
             "goldens_per_context": 1,
-            "num_retrieved_contexts": 5,
+            "num_retrieved_contexts": 3,
         }
     )
     # Added synthesizer configuration
