@@ -169,8 +169,22 @@ const Chat = () => {
                 }
             }
         } finally {
-            setIsStreaming(false);
-            
+            const currentStreamedResponse: ChatAppResponse = {
+                ...askResponse,
+                message: { 
+                    content: answer,
+                    role: askResponse.message?.role 
+                }
+            };
+
+            if (!isBlocked && !isModified) {
+                if (truncateHistory) {
+                    setStreamedAnswers([[question, currentStreamedResponse]]);
+                } else {
+                    setStreamedAnswers([...answers, [question, currentStreamedResponse]]);
+                }
+            }
+
             if (answer && !isBlocked && !isModified && !truncateHistory) {
                 try {
                     const token = client ? await getToken(client) : undefined;
@@ -202,6 +216,11 @@ const Chat = () => {
                             if (validationData.context.action === "truncate_history") {
                                 truncateHistory = true;
                                 answer = validationData.message.content || "Chat history has been cleared due to content validation";
+                                const validationResponse: ChatAppResponse = {
+                                    ...askResponse,
+                                    message: { content: answer, role: "assistant" }
+                                };
+                                setStreamedAnswers([[question, validationResponse]]);
                             }
                         }
                     }
@@ -230,6 +249,9 @@ const Chat = () => {
                     setAnswers([...answers, [question, fullResponse]]);
                 }
             }
+
+            setIsStreaming(false);
+            setIsLoading(false);
 
             return { 
                 response: fullResponse, 
