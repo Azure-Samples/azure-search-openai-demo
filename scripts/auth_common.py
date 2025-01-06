@@ -8,6 +8,8 @@ from msgraph import GraphServiceClient
 async def get_application(graph_client: GraphServiceClient, client_id: str) -> Optional[str]:
     try:
         app = await graph_client.applications_with_app_id(client_id).get()
+        if app is None:
+            return None
         return app.id
     except APIError:
         return None
