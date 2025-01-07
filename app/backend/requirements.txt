@@ -354,10 +354,8 @@ pyjwt[crypto]==2.9.0
     # via
     #   -r requirements.in
     #   msal
-pymupdf==1.24.9
+pymupdf==1.25.1
     # via -r requirements.in
-pymupdfb==1.24.9
-    # via pymupdf
 pypdf==4.3.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
