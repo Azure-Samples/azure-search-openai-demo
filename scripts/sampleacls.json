@@ -21,10 +21,16 @@
     },
     "directories": {
         "employeeinfo": {
-            "groups": ["GPTKB_HRTest"]
+            "groups": ["GPTKB_HRTest"],
+            "scandir": false
         },
         "benefitinfo": {
-            "groups": ["GPTKB_EmployeeTest", "GPTKB_HRTest"]
+            "groups": ["GPTKB_EmployeeTest", "GPTKB_HRTest"],
+            "scandir": false
+        },
+        "GPT4V_Examples": {
+            "groups": ["GPTKB_EmployeeTest", "GPTKB_HRTest"],
+            "scandir": true
         },
         "/": {
             "groups": ["GPTKB_AdminTest"]

@@ -47,6 +47,7 @@ class FileStrategy(Strategy):
         blob_manager: BlobManager,
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
+        ignore_checksum: bool,
         document_action: DocumentAction = DocumentAction.Add,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
@@ -60,6 +61,7 @@ class FileStrategy(Strategy):
         self.blob_manager = blob_manager
         self.file_processors = file_processors
         self.document_action = document_action
+        self.ignore_checksum = ignore_checksum
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_analyzer_name = search_analyzer_name
@@ -94,25 +96,44 @@ class FileStrategy(Strategy):
         search_manager = SearchManager(
             self.search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings
         )
+        doc_count = self.list_file_strategy.count_docs()
+        logger.info("Processing %s files", doc_count)
+        processed_count = 0
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
+                    if not self.ignore_checksum and await search_manager.file_exists(file):
+                        logger.info("'%s' has already been processed", file.filename())
+                        continue
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
                     if sections:
                         blob_sas_uris = await self.blob_manager.upload_blob(file)
                         blob_image_embeddings: Optional[List[List[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
                             blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                        await search_manager.update_content(
+                            sections=sections, file=file, image_embeddings=blob_image_embeddings
+                        )
                 finally:
                     if file:
                         file.close()
+                processed_count += 1
+                if processed_count % 10 == 0:
+                    remaining = max(doc_count - processed_count, 1)
+                    logger.info("%s processed, %s documents remaining", processed_count, remaining)
+
         elif self.document_action == DocumentAction.Remove:
+            doc_count = self.list_file_strategy.count_docs()
             paths = self.list_file_strategy.list_paths()
             async for path in paths:
                 await self.blob_manager.remove_blob(path)
                 await search_manager.remove_content(path)
+                processed_count += 1
+                if processed_count % 10 == 0:
+                    remaining = max(doc_count - processed_count, 1)
+                    logger.info("%s removed, %s documents remaining", processed_count, remaining)
+
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
             await search_manager.remove_content()
@@ -141,7 +162,7 @@ class UploadUserFileStrategy:
             logging.warning("Image embeddings are not currently supported for the user upload feature")
         sections = await parse_file(file, self.file_processors)
         if sections:
-            await self.search_manager.update_content(sections, url=file.url)
+            await self.search_manager.update_content(sections=sections, file=file)
 
     async def remove_file(self, filename: str, oid: str):
         if filename is None or filename == "":

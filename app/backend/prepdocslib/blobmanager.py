@@ -3,11 +3,13 @@ import io
 import logging
 import os
 import re
+from enum import Enum
 from typing import List, Optional, Union
 
 import fitz  # type: ignore
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
+    BlobClient,
     BlobSasPermissions,
     UserDelegationKey,
     generate_blob_sas,
@@ -45,6 +47,24 @@ class BlobManager:
         self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
+    async def _create_new_blob(self, file: File, container_client: ContainerClient) -> BlobClient:
+        with open(file.content.name, "rb") as reopened_file:
+            blob_name = BlobManager.blob_name_from_file_name(file.content.name)
+            logger.info("Uploading blob for whole file -> %s", blob_name)
+            return await container_client.upload_blob(blob_name, reopened_file, overwrite=True, metadata=file.metadata)
+
+    async def _file_blob_update_needed(self, blob_client: BlobClient, file: File) -> bool:
+        # Get existing blob properties
+        blob_properties = await blob_client.get_blob_properties()
+        blob_metadata = blob_properties.metadata
+
+        # Check if the md5 values are the same
+        file_md5 = file.metadata.get("md5")
+        blob_md5 = blob_metadata.get("md5")
+
+        # If the file has an md5 value, check if it is different from the blob
+        return file_md5 and file_md5 != blob_md5
+
     async def upload_blob(self, file: File) -> Optional[List[str]]:
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
@@ -52,21 +72,39 @@ class BlobManager:
             if not await container_client.exists():
                 await container_client.create_container()
 
-            # Re-open and upload the original file
-            if file.url is None:
-                with open(file.content.name, "rb") as reopened_file:
-                    blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                    logger.info("Uploading blob for whole file -> %s", blob_name)
-                    blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
-                    file.url = blob_client.url
+            # Re-open and upload the original file if the blob does not exist or the md5 values do not match
+            class MD5Check(Enum):
+                NOT_DONE = 0
+                MATCH = 1
+                NO_MATCH = 2
 
-            if self.store_page_images:
+            md5_check = MD5Check.NOT_DONE
+
+            # Upload the file to Azure Storage
+            # file.url is only None if files are not uploaded yet, for datalake it is set
+            if file.url is None:
+                blob_client = container_client.get_blob_client(file.url)
+
+                if not await blob_client.exists():
+                    logger.info("Blob %s does not exist, uploading", file.url)
+                    blob_client = await self._create_new_blob(file, container_client)
+                else:
+                    if self._blob_update_needed(blob_client, file):
+                        logger.info("Blob %s exists but md5 values do not match, updating", file.url)
+                        md5_check = MD5Check.NO_MATCH
+                        # Upload the file with the updated metadata
+                        with open(file.content.name, "rb") as data:
+                            await blob_client.upload_blob(data, overwrite=True, metadata=file.metadata)
+                    else:
+                        logger.info("Blob %s exists and md5 values match, skipping upload", file.url)
+                        md5_check = MD5Check.MATCH
+                file.url = blob_client.url
+
+            if md5_check != MD5Check.MATCH and self.store_page_images:
                 if os.path.splitext(file.content.name)[1].lower() == ".pdf":
                     return await self.upload_pdf_blob_images(service_client, container_client, file)
                 else:
                     logger.info("File %s is not a PDF, skipping image upload", file.content.name)
-
-        return None
 
     def get_managedidentity_connectionstring(self):
         return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
@@ -93,6 +131,20 @@ class BlobManager:
 
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
+
+            blob_client = container_client.get_blob_client(blob_name)
+            if await blob_client.exists():
+                # Get existing blob properties
+                blob_properties = await blob_client.get_blob_properties()
+                blob_metadata = blob_properties.metadata
+
+                # Check if the md5 values are the same
+                file_md5 = file.metadata.get("md5")
+                blob_md5 = blob_metadata.get("md5")
+                if file_md5 == blob_md5:
+                    logger.info("Blob %s exists and md5 values match, skipping upload", blob_name)
+                    continue  #  document already uploaded
+
             logger.info("Converting page %s to image and uploading -> %s", i, blob_name)
 
             doc = fitz.open(file.content.name)
@@ -120,15 +172,15 @@ class BlobManager:
             new_img.save(output, format="PNG")
             output.seek(0)
 
-            blob_client = await container_client.upload_blob(blob_name, output, overwrite=True)
+            await blob_client.upload_blob(data=output, overwrite=True, metadata=file.metadata)
             if not self.user_delegation_key:
                 self.user_delegation_key = await service_client.get_user_delegation_key(start_time, expiry_time)
 
-            if blob_client.account_name is not None:
+            if container_client.account_name is not None:
                 sas_token = generate_blob_sas(
-                    account_name=blob_client.account_name,
-                    container_name=blob_client.container_name,
-                    blob_name=blob_client.blob_name,
+                    account_name=container_client.account_name,
+                    container_name=container_client.container_name,
+                    blob_name=blob_name,
                     user_delegation_key=self.user_delegation_key,
                     permission=BlobSasPermissions(read=True),
                     expiry=expiry_time,
