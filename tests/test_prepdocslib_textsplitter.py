@@ -17,13 +17,13 @@ from prepdocslib.textsplitter import (
 
 
 def test_sentencetextsplitter_split_empty_pages():
-    t = SentenceTextSplitter(has_image_embeddings=False)
+    t = SentenceTextSplitter()
 
     assert list(t.split_pages([])) == []
 
 
 def test_sentencetextsplitter_split_small_pages():
-    t = SentenceTextSplitter(has_image_embeddings=False)
+    t = SentenceTextSplitter()
 
     split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text="Not a large page")]))
     assert len(split_pages) == 1
@@ -33,7 +33,7 @@ def test_sentencetextsplitter_split_small_pages():
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
-    text_splitter = SentenceTextSplitter(has_image_embeddings=False)
+    text_splitter = SentenceTextSplitter()
     pdf_parser = LocalPdfParser()
     for pdf in Path("data").glob("*.pdf"):
         shutil.copy(str(pdf.absolute()), tmp_path)
@@ -98,7 +98,7 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.asyncio
 async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
-    text_splitter = SentenceTextSplitter(has_image_embeddings=False)
+    text_splitter = SentenceTextSplitter()
     bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
     pdf_parser = LocalPdfParser()
 
@@ -133,7 +133,7 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
 
 
 def test_split_tables():
-    t = SentenceTextSplitter(has_image_embeddings=False)
+    t = SentenceTextSplitter()
 
     test_text_without_table = """Contoso Electronics is a leader in the aerospace industry, providing advanced electronic
 components for both commercial and military aircraft. We specialize in creating cutting-
@@ -166,3 +166,23 @@ an opportunity to discuss your goals and objectives for the upcoming year.
     assert "<table" in split_pages_with_table[0].text
     assert "<table" in split_pages_with_table[1].text
     assert split_pages_with_table[1].text != split_pages_without_table[1].text
+
+
+def test_pages_with_figures(snapshot):
+    # open up the serialized pages from pages_with_figures.json
+    file_path = Path(__file__).parent / "test-data" / "pages_with_figures.json"
+    with open(file_path) as f:
+        pages_dicts = json.load(f)
+
+    pages = [
+        Page(page_num=page_dict["page_num"], offset=page_dict["offset"], text=page_dict["text"])
+        for page_dict in pages_dicts
+    ]
+    # call split_pages on the pages
+    t = SentenceTextSplitter()
+    split_pages = list(t.split_pages(pages=pages))
+
+    # check that the split_pages are the same as the expected split_pages
+    split_pages_dicts = [{"text": split_page.text, "page_num": split_page.page_num} for split_page in split_pages]
+    split_pages_json = json.dumps(split_pages_dicts, indent=2)
+    snapshot.assert_match(split_pages_json, "split_pages_with_figures.json")
