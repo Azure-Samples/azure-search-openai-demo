@@ -289,7 +289,7 @@ opentelemetry-sdk==1.26.0
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
     #   opentelemetry-resource-detector-azure
-opentelemetry-semantic-conventions==0.50b0
+opentelemetry-semantic-conventions==0.47b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -359,7 +359,7 @@ python-dateutil==2.9.0.post0
     #   time-machine
 python-dotenv==1.0.1
     # via -r requirements.in
-quart==0.19.7
+quart==0.20.0
     # via
     #   -r requirements.in
     #   quart-cors
