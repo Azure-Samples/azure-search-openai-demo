@@ -153,7 +153,7 @@ jinja2==3.1.5
     # via
     #   flask
     #   quart
-jiter==0.5.0
+jiter==0.8.2
     # via openai
 markdown-it-py==3.0.0
     # via rich
@@ -168,7 +168,9 @@ microsoft-kiota-abstractions==1.3.3
     # via
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
+    #   microsoft-kiota-serialization-form
     #   microsoft-kiota-serialization-json
+    #   microsoft-kiota-serialization-multipart
     #   microsoft-kiota-serialization-text
     #   msgraph-core
     #   msgraph-sdk
@@ -180,7 +182,11 @@ microsoft-kiota-http==1.3.3
     # via
     #   msgraph-core
     #   msgraph-sdk
+microsoft-kiota-serialization-form==0.1.1
+    # via msgraph-sdk
 microsoft-kiota-serialization-json==1.3.0
+    # via msgraph-sdk
+microsoft-kiota-serialization-multipart==0.1.0
     # via msgraph-sdk
 microsoft-kiota-serialization-text==1.0.0
     # via msgraph-sdk
@@ -205,7 +211,7 @@ numpy==2.0.1
     # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
-openai==1.42.0
+openai==1.59.4
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
@@ -321,7 +327,9 @@ opentelemetry-util-http==0.47b0
 packaging==24.1
     # via opentelemetry-instrumentation-flask
 pendulum==3.0.0
-    # via microsoft-kiota-serialization-json
+    # via
+    #   microsoft-kiota-serialization-form
+    #   microsoft-kiota-serialization-json
 pillow==10.4.0
     # via
     #   -r requirements.in
@@ -346,10 +354,8 @@ pyjwt[crypto]==2.9.0
     # via
     #   -r requirements.in
     #   msal
-pymupdf==1.24.9
+pymupdf==1.25.1
     # via -r requirements.in
-pymupdfb==1.24.9
-    # via pymupdf
 pypdf==4.3.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
@@ -359,7 +365,7 @@ python-dateutil==2.9.0.post0
     #   time-machine
 python-dotenv==1.0.1
     # via -r requirements.in
-quart==0.19.7
+quart==0.20.0
     # via
     #   -r requirements.in
     #   quart-cors
@@ -394,7 +400,7 @@ std-uritemplate==1.0.5
     # via microsoft-kiota-abstractions
 tenacity==9.0.0
     # via -r requirements.in
-tiktoken==0.7.0
+tiktoken==0.8.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
