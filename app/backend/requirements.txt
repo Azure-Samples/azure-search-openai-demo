@@ -394,7 +394,7 @@ std-uritemplate==1.0.5
     # via microsoft-kiota-abstractions
 tenacity==9.0.0
     # via -r requirements.in
-tiktoken==0.7.0
+tiktoken==0.8.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
