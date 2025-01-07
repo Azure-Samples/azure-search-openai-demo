@@ -35,6 +35,12 @@
     "computerVisionSkuName": {
       "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
     },
+    "contentUnderstandingServiceName": {
+      "value": "${AZURE_CONTENT_UNDERSTANDING_SERVICE}"
+    },
+    "contentUnderstandingResourceGroupName": {
+      "value": "${AZURE_CONTENT_UNDERSTANDING_RESOURCE_GROUP}"
+    },
     "documentIntelligenceServiceName": {
       "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
     },
@@ -289,6 +295,9 @@
     },
     "azureContainerAppsWorkloadProfile": {
       "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
+    },
+    "useMediaDescriberAzureCU": {
+      "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
     }
   }
 }

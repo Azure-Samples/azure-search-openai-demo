@@ -15,7 +15,7 @@ def fake_response(http_code):
     return Response(http_code, request=Request(method="get", url="https://foo.bar/"))
 
 
-# See https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/content-filter
+# See https://learn.microsoft.com/azure/ai-services/openai/concepts/content-filter
 filtered_response = BadRequestError(
     message="The response was filtered",
     body={
