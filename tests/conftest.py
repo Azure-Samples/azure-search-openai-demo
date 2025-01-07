@@ -54,7 +54,7 @@ async def mock_search(self, *args, **kwargs):
 
 
 @pytest.fixture
-def mock_compute_embeddings_call(monkeypatch):
+def mock_azurehttp_calls(monkeypatch):
     def mock_post(*args, **kwargs):
         if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
             return mock_computervision_response()
@@ -327,7 +327,7 @@ async def client(
     mock_openai_embedding,
     mock_acs_search,
     mock_blob_container_client,
-    mock_compute_embeddings_call,
+    mock_azurehttp_calls,
 ):
     quart_app = app.create_app()
 
@@ -346,7 +346,7 @@ async def client_with_expiring_token(
     mock_openai_embedding,
     mock_acs_search,
     mock_blob_container_client,
-    mock_compute_embeddings_call,
+    mock_azurehttp_calls,
 ):
     quart_app = app.create_app()
 

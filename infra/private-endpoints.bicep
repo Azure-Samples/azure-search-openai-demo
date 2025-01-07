@@ -84,7 +84,7 @@ module monitorDnsZones './core/networking/private-dns-zones.bicep' = [for monito
 var dnsZoneBlobIndex = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')[0].dnsZoneIndex
 
 // Azure Monitor Private Link Scope
-// https://learn.microsoft.com/en-us/azure/azure-monitor/logs/private-link-security
+// https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security
 resource monitorPrivateLinkScope 'microsoft.insights/privateLinkScopes@2021-07-01-preview' = {
   name: 'mpls${resourceToken}'
   location: 'global'

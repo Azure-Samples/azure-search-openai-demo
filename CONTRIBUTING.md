@@ -122,6 +122,8 @@ If you followed the steps above to install the pre-commit hooks, then you can ju
 
 When adding new azd environment variables, please remember to update:
 
+1. [main.parameters.json](./infra/main.parameters.json)
+1. [appEnvVariables in main.bicep](./infra/main.bicep)
 1. App Service's [azure.yaml](./azure.yaml)
 1. [ADO pipeline](.azdo/pipelines/azure-dev.yml).
 1. [Github workflows](.github/workflows/azure-dev.yml)
