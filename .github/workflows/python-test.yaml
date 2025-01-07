@@ -52,7 +52,7 @@ jobs:
             npm run build
         - name: Install dependencies
           run: |
-            uv pip install -r requirements-dev.txt --verbose
+            uv pip install -r requirements-dev.txt
         - name: Lint with ruff
           run: ruff check .
         - name: Check types with mypy
