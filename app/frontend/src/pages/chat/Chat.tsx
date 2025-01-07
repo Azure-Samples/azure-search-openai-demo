@@ -82,6 +82,8 @@ const Chat = () => {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
+    const [originalUserMessages, setOriginalUserMessages] = useState<string[]>([]);
+
     const speechConfig: SpeechConfig = {
         speechUrls,
         setSpeechUrls,
@@ -179,6 +181,7 @@ const Chat = () => {
 
             if (!isBlocked && !isModified) {
                 if (truncateHistory) {
+                    setOriginalUserMessages([originalUserMessages[originalUserMessages.length - 1]]);
                     setStreamedAnswers([[question, currentStreamedResponse]]);
                 } else {
                     setStreamedAnswers([...answers, [question, currentStreamedResponse]]);
@@ -220,6 +223,7 @@ const Chat = () => {
                                     ...askResponse,
                                     message: { content: answer, role: "assistant" }
                                 };
+                                setOriginalUserMessages([originalUserMessages[originalUserMessages.length - 1]]);
                                 setStreamedAnswers([[question, validationResponse]]);
                             }
                         }
@@ -238,6 +242,7 @@ const Chat = () => {
             };
 
             if (truncateHistory) {
+                setOriginalUserMessages([originalUserMessages[originalUserMessages.length - 1]]);
                 setAnswers([[question, fullResponse]]);
                 setStreamedAnswers([[question, fullResponse]]);
             } else {
@@ -268,6 +273,7 @@ const Chat = () => {
 
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
+        setOriginalUserMessages(prev => [...prev, question]);
 
         error && setError(undefined);
         setIsLoading(true);
@@ -347,6 +353,7 @@ const Chat = () => {
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
         setAnswers([]);
+        setOriginalUserMessages([]);
         setSpeechUrls([]);
         setStreamedAnswers([]);
         setIsLoading(false);
@@ -494,7 +501,7 @@ const Chat = () => {
                             {isStreaming &&
                                 streamedAnswers.map((streamedAnswer, index) => (
                                     <div key={index}>
-                                        <UserChatMessage message={streamedAnswer[0]} />
+                                        <UserChatMessage message={originalUserMessages[index]} />
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
                                                 isStreaming={true}
@@ -517,7 +524,7 @@ const Chat = () => {
                             {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
-                                        <UserChatMessage message={answer[0]} />
+                                        <UserChatMessage message={originalUserMessages[index]} />
                                         <div className={styles.chatMessageGpt}>
                                             <Answer
                                                 isStreaming={false}
