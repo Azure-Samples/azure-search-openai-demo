@@ -69,7 +69,7 @@ param cosmosDbLocation string = ''
 param cosmosDbAccountName string = ''
 param cosmosDbThroughput int = 400
 param chatHistoryDatabaseName string = 'chat-database'
-param chatHistoryContainerName string = 'chat-history'
+param chatHistoryContainerName string = 'chat-history-container'
 
 // https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cstandard%2Cstandard-chat-completions#standard-deployment-model-availability
 @description('Location for the OpenAI resource group')
@@ -800,24 +800,25 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (use
             name: chatHistoryContainerName
             paths: [
               '/entra_oid'
+              '/session_id'
             ]
             indexingPolicy: {
               indexingMode: 'consistent'
               automatic: true
               includedPaths: [
                 {
-                  path: '/*'
+                  path: '/entra_oid/?'
+                }
+                {
+                  path: '/session_id/?'
+                }
+                {
+                  path: '/timestamp/?'
                 }
               ]
               excludedPaths: [
                 {
-                  path: '/title/?'
-                }
-                {
-                  path: '/answers/*'
-                }
-                {
-                  path: '/"_etag"/?'
+                  path: '/*'
                 }
               ]
             }

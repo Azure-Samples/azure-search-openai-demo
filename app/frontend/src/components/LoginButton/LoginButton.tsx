@@ -35,6 +35,7 @@ export const LoginButton = () => {
             })
             .catch(error => console.log(error))
             .then(async () => {
+                debugger;
                 setLoggedIn(await checkLoggedIn(instance));
                 setUsername((await getUsername(instance)) ?? "");
             });

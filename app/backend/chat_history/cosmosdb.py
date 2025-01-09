@@ -39,9 +39,32 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
         title = answers[0][0][:50] + "..." if len(answers[0][0]) > 50 else answers[0][0]
         timestamp = int(time.time() * 1000)
 
+        # Insert the session item:
         await container.upsert_item(
-            {"id": id, "entra_oid": entra_oid, "title": title, "answers": answers, "timestamp": timestamp}
+            {
+                "id": id,
+                "session_id": id,
+                "entra_oid": entra_oid,
+                "type": "session",
+                "title": title,
+                "timestamp": timestamp,
+            }
         )
+
+        # Now insert a message item for each question/response pair:
+        for ind, message_pair in enumerate(zip(answers[::2], answers[1::2])):
+            # TODO: Can I do a batch upsert?
+            await container.upsert_item(
+                {
+                    "id": f"{id}-{ind}",
+                    "session_id": id,
+                    "entra_oid": entra_oid,
+                    "type": "message",
+                    "question": message_pair[0],
+                    "response": message_pair[1],
+                    "timestamp": timestamp,
+                }
+            )
 
         return jsonify({}), 201
     except Exception as error:
@@ -68,8 +91,9 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
         continuation_token = request_json.get("continuation_token")
 
         res = container.query_items(
-            query="SELECT c.id, c.entra_oid, c.title, c.timestamp FROM c WHERE c.entra_oid = @entra_oid ORDER BY c.timestamp DESC",
-            parameters=[dict(name="@entra_oid", value=entra_oid)],
+            query="SELECT c.id, c.entra_oid, c.title, c.timestamp FROM c WHERE c.entra_oid = @entra_oid AND c.type = @type ORDER BY c.timestamp DESC",
+            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@type", value="session")],
+            partition_key=entra_oid,
             max_item_count=count,
         )
 
