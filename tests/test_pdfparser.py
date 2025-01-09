@@ -1,10 +1,10 @@
 import io
+import json
 import logging
 import math
 import pathlib
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, Mock
 
-import azure.core.exceptions
 import pymupdf
 import pytest
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
@@ -18,6 +18,7 @@ from azure.ai.documentintelligence.models import (
     DocumentTable,
     DocumentTableCell,
 )
+from azure.core.exceptions import HttpResponseError
 from PIL import Image, ImageChops
 
 from prepdocslib.mediadescriber import ContentUnderstandingDescriber
@@ -316,14 +317,29 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
     mock_poller = MagicMock()
 
     async def mock_begin_analyze_document(self, model_id, analyze_request, **kwargs):
-        class MockErrorResponse:
-            def __init__(self):
-                self.reason = "InvalidArgument"
-                self.status_code = 400
-                self.error = {"code": "InvalidArgument"}
 
         if kwargs.get("features") == ["ocrHighResolution"]:
-            raise azure.core.exceptions.HttpResponseError(message="InvalidArgument", response=MockErrorResponse())
+
+            class FakeErrorOne:
+                def __init__(self):
+                    self.error = Mock(message="A fake error", code="FakeErrorOne")
+
+            class FakeHttpResponse(HttpResponseError):
+                def __init__(self, response, error, *args, **kwargs):
+                    self.error = error
+                    super().__init__(self, response=response, *args, **kwargs)
+
+            message = {
+                "error": {
+                    "code": "InvalidArgument",
+                    "message": "A fake error",
+                }
+            }
+            response = Mock(status_code=500, headers={})
+            response.text = lambda encoding=None: json.dumps(json.dumps(message).encode("utf-8"))
+            response.headers["content-type"] = "application/json"
+            response.content_type = "application/json"
+            raise FakeHttpResponse(response, FakeErrorOne())
         else:
             return mock_poller
 
