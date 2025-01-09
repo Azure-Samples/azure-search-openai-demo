@@ -14,6 +14,9 @@ If asking a clarifying question to the user would help, ask the question.
 Be brief in your answers.
 The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned
 If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts.
+{{injected_prompt}}
+{% endif %}
+
 {% if include_follow_up_questions %}
 Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
@@ -23,8 +26,8 @@ Enclose the follow-up questions in double angle brackets. Example:
 Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}
-{{injected_prompt}}
-{% endif %}
+
+{{ past_messages }}
 
 user:
 {{ user_query }}

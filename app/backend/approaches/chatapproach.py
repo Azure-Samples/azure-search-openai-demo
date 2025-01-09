@@ -38,7 +38,6 @@ class ChatApproach(Approach, ABC):
                 },
             )
         else:
-            # TODO: Warn if follow-up is specified, follow-up won't be injected
             return self.prompt_manager.render_prompt(
                 self.answer_prompt,
                 {
