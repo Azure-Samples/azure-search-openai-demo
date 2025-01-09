@@ -40,6 +40,8 @@ param storageSkuName string // Set in main.parameters.json
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
 
+param tokenStorageContainerName string = 'tokens'
+
 param appServiceSkuName string // Set in main.parameters.json
 
 @allowed(['azure', 'openai', 'azure_custom'])
@@ -116,6 +118,9 @@ param computerVisionServiceName string = '' // Set in main.parameters.json
 param computerVisionResourceGroupName string = '' // Set in main.parameters.json
 param computerVisionResourceGroupLocation string = '' // Set in main.parameters.json
 param computerVisionSkuName string // Set in main.parameters.json
+
+param contentUnderstandingServiceName string = '' // Set in main.parameters.json
+param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
 
 param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
@@ -216,6 +221,9 @@ param useVectors bool = false
 @description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
 param useIntegratedVectorization bool = false
 
+@description('Use media description feature with Azure Content Understanding during ingestion')
+param useMediaDescriberAzureCU bool = true
+
 @description('Enable user document upload feature')
 param useUserUpload bool = false
 param useLocalPdfParser bool = false
@@ -245,8 +253,17 @@ param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
-  ? '${replace(environmentName, '-', '')}acr'
+  ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
+
+// Configure CORS for allowing different web apps to use the backend
+// For more information please see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
+var loginEndpoint = environment().authentication.loginEndpoint
+var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
+var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [ loginEndpointFixed ]) : msftAllowedOrigins
+// Combine custom origins with Microsoft origins, remove any empty origin strings and remove any duplicate origins
+var allowedOrigins = reduce(filter(union(split(allowedOrigin, ';'), allMsftAllowedOrigins), o => length(trim(o)) > 0), [], (cur, next) => union(cur, [next]))
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -265,6 +282,10 @@ resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2
 
 resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(computerVisionResourceGroupName)) {
   name: !empty(computerVisionResourceGroupName) ? computerVisionResourceGroupName : resourceGroup.name
+}
+
+resource contentUnderstandingResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(contentUnderstandingResourceGroupName)) {
+  name: !empty(contentUnderstandingResourceGroupName) ? contentUnderstandingResourceGroupName : resourceGroup.name
 }
 
 resource searchServiceResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(searchServiceResourceGroupName)) {
@@ -376,14 +397,12 @@ var appEnvVariables = {
   AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS: enableGlobalDocuments
   AZURE_ENABLE_UNAUTHENTICATED_ACCESS: enableUnauthenticatedAccess
   AZURE_SERVER_APP_ID: serverAppId
-  AZURE_SERVER_APP_SECRET: serverAppSecret
   AZURE_CLIENT_APP_ID: clientAppId
-  AZURE_CLIENT_APP_SECRET: clientAppSecret
   AZURE_TENANT_ID: tenantId
   AZURE_AUTH_TENANT_ID: tenantIdForAuth
   AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri
   // CORS support, for frontends on other hosts
-  ALLOWED_ORIGIN: allowedOrigin
+  ALLOWED_ORIGIN: join(allowedOrigins, ';')
   USE_VECTORS: useVectors
   USE_GPT4V: useGPT4V
   USE_USER_UPLOAD: useUserUpload
@@ -392,6 +411,8 @@ var appEnvVariables = {
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
+  USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
+  AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
 }
 
@@ -412,7 +433,7 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     managedIdentity: true
     virtualNetworkSubnetId: isolation.outputs.appSubnetId
     publicNetworkAccess: publicNetworkAccess
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: allowedOrigins
     clientAppId: clientAppId
     serverAppId: serverAppId
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
@@ -421,7 +442,10 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     authenticationIssuerUri: authenticationIssuerUri
     use32BitWorkerProcess: appServiceSkuName == 'F1'
     alwaysOn: appServiceSkuName != 'F1'
-    appSettings: appEnvVariables
+    appSettings: union(appEnvVariables, {
+      AZURE_SERVER_APP_SECRET: serverAppSecret
+      AZURE_CLIENT_APP_SECRET: clientAppSecret
+    })
   }
 }
 
@@ -472,11 +496,40 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     targetPort: 8000
     containerCpuCoreCount: '1.0'
     containerMemory: '2Gi'
-    allowedOrigins: [allowedOrigin]
+    allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
       AZURE_CLIENT_ID: (deploymentTarget == 'containerapps') ? acaIdentity.outputs.clientId : ''
     })
+    secrets: useAuthentication ? {
+      azureclientappsecret: clientAppSecret
+      azureserverappsecret: serverAppSecret
+    } : {}
+    envSecrets: useAuthentication ? [
+      {
+        name: 'AZURE_CLIENT_APP_SECRET'
+        secretRef: 'azureclientappsecret'
+      }
+      {
+        name: 'AZURE_SERVER_APP_SECRET'
+        secretRef: 'azureserverappsecret'
+      }
+    ] : []
+  }
+}
+
+module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == 'containerapps' && !empty(clientAppId)) {
+  name: 'aca-auth'
+  scope: resourceGroup
+  params: {
+    name: acaBackend.outputs.name
+    clientAppId: clientAppId
+    serverAppId: serverAppId
+    clientSecretSettingName: !empty(clientAppSecret) ? 'azureclientappsecret' : ''
+    authenticationIssuerUri: authenticationIssuerUri
+    enableUnauthenticatedAccess: enableUnauthenticatedAccess
+    blobContainerUri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${tokenStorageContainerName}'
+    appIdentityResourceId: (deploymentTarget == 'appservice') ? '' : acaBackend.outputs.identityResourceId
   }
 }
 
@@ -593,6 +646,28 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if 
   }
 }
 
+
+module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMediaDescriberAzureCU) {
+  name: 'content-understanding'
+  scope: contentUnderstandingResourceGroup
+  params: {
+    name: !empty(contentUnderstandingServiceName)
+      ? contentUnderstandingServiceName
+      : '${abbrs.cognitiveServicesContentUnderstanding}${resourceToken}'
+    kind: 'AIServices'
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    customSubDomainName: !empty(contentUnderstandingServiceName)
+      ? contentUnderstandingServiceName
+      : '${abbrs.cognitiveServicesContentUnderstanding}${resourceToken}'
+    // Hard-coding to westus for now, due to limited availability and no overlap with Document Intelligence
+    location: 'westus'
+    tags: tags
+    sku: 'S0'
+  }
+}
+
 module speech 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useSpeechOutputAzure) {
   name: 'speech-service'
   scope: speechResourceGroup
@@ -659,6 +734,10 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }
+      {
+        name: tokenStorageContainerName
         publicAccess: 'None'
       }
     ]
@@ -1115,6 +1194,7 @@ output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.re
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
 output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
+output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name

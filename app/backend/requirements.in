@@ -2,10 +2,10 @@ azure-identity
 quart
 quart-cors
 openai>=1.3.7
-numpy>=1,<2.1.0 # Used by openai embeddings.create to optimize embeddings (but not required)
+numpy>=1,<2.1.0 # Used by openai embeddings.create to optimize embeddings (but not required). Pinned for 3.9 support.
 tiktoken
 tenacity
-azure-ai-documentintelligence
+azure-ai-documentintelligence==1.0.0b4
 azure-cognitiveservices-speech
 azure-cosmos
 azure-search-documents==11.6.0b6
@@ -16,7 +16,6 @@ aiohttp
 azure-monitor-opentelemetry
 opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-httpx
-opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
 msal
@@ -28,7 +27,9 @@ pypdf
 PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
-msgraph-sdk==1.1.0
+msgraph-sdk
 openai-messages-token-helper
 python-dotenv
 prompty
+rich
+typing-extensions
