@@ -362,7 +362,7 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
     )
     content = io.BytesIO(b"pdf content bytes")
     content.name = "test.docx"
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level(logging.ERROR):
         pages = [page async for page in parser.parse(content)]
         assert "This document type does not support media description." in caplog.text
 

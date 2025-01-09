@@ -92,11 +92,11 @@ class DocumentAnalysisParser(Parser):
                 except HttpResponseError as e:
                     content.seek(0)
                     if e.error and e.error.code == "InvalidArgument":
-                        logger.warning(
+                        logger.error(
                             "This document type does not support media description. Proceeding with standard analysis."
                         )
                     else:
-                        logger.warning(
+                        logger.error(
                             "Unexpected error analyzing document for media description: %s. Proceeding with standard analysis.",
                             e,
                         )
