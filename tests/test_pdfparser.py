@@ -336,7 +336,7 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
                 }
             }
             response = Mock(status_code=500, headers={})
-            response.text = lambda encoding=None: json.dumps(json.dumps(message).encode("utf-8"))
+            response.text = lambda encoding=None: json.dumps(message).encode("utf-8")
             response.headers["content-type"] = "application/json"
             response.content_type = "application/json"
             raise FakeHttpResponse(response, FakeErrorOne())
