@@ -1,4 +1,5 @@
-from pymongo import MongoClient
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 
 import os
@@ -163,7 +164,7 @@ async def setup_clients():
         if not MONGODB_COLLECTION_NAME:
             raise ValueError("MONGODB_COLLECTION_NAME must be set when USE_CHAT_HISTORY_MONGODB_ATLAS is true")
 
-        mongodb_client = MongoClient(MONGODB_CONNECTION_STRING)
+        mongodb_client = MongoClient(MONGODB_CONNECTION_STRING, server_api=ServerApi('1'))
         mongodb_db = mongodb_client[MONGODB_DB_NAME]
         mongodb_collection = mongodb_db[MONGODB_COLLECTION_NAME]
 

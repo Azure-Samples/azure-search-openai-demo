@@ -13,3 +13,4 @@ pre-commit
 locust
 pip-tools
 mypy==1.13.0
+pymongo[srv]==3.12

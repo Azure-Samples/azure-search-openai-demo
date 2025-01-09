@@ -455,3 +455,5 @@ zipp==3.20.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+pymongo[srv]==3.12
