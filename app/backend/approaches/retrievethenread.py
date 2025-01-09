@@ -4,7 +4,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
-from openai_messages_token_helper import build_messages, get_token_limit
+from openai_messages_token_helper import get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
 from approaches.promptmanager import PromptManager
@@ -101,22 +101,12 @@ class RetrieveThenReadApproach(Approach):
             self.answer_prompt, {"user_query": q, "content": content}
         )
 
-        response_token_limit = 1024
-        updated_messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=overrides.get("prompt_template", rendered_answer_prompt.system_content),
-            few_shots=rendered_answer_prompt.few_shot_messages,
-            new_user_content=rendered_answer_prompt.new_user_content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
-        )
-
         chat_completion = await self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            messages=updated_messages,
+            messages=rendered_answer_prompt.all_messages,
             temperature=overrides.get("temperature", 0.3),
-            max_tokens=response_token_limit,
+            max_tokens=1024,
             n=1,
             seed=seed,
         )
@@ -143,7 +133,7 @@ class RetrieveThenReadApproach(Approach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    updated_messages,
+                    rendered_answer_prompt.all_messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment

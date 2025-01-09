@@ -33,5 +33,6 @@ module = [
     "azure.cognitiveservices.*",
     "azure.cognitiveservices.speech.*",
     "pymupdf.*",
+    "prompty.*",
 ]
 ignore_missing_imports = true

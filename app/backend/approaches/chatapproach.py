@@ -13,6 +13,8 @@ class ChatApproach(Approach, ABC):
 
     NO_RESPONSE = "0"
 
+    answer_prompt = NotImplemented
+
     @abstractmethod
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
