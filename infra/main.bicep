@@ -256,6 +256,17 @@ param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
 
+// configuration of Mongo DB for storing chat history
+@description('Use chat history feature in MongoDB')
+param useChatHistoryMongo bool = false
+@secure()
+@description('Connection string of the MongoDB')
+param mongoDbConnectionString string
+@description('Database name of the MongoDB')
+param mongoDbDatabaseName string
+@description('Collection name of the MongoDB')
+param mongoDbCollectionName string
+
 // Configure CORS for allowing different web apps to use the backend
 // For more information please see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
@@ -414,6 +425,10 @@ var appEnvVariables = {
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
+  MONGODB_CONNECTION_STRING: mongoDbConnectionString
+  MONGODB_DB_NAME : mongoDbDatabaseName
+  MONGODB_COLLECTION_NAME : mongoDbCollectionName
+  USE_CHAT_HISTORY_MONGO: useChatHistoryMongo
 }
 
 // App Service for the web application (Python Quart app with JS frontend)

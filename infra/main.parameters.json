@@ -298,6 +298,19 @@
     },
     "useMediaDescriberAzureCU": {
       "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
+    },
+
+    "useChatHistoryMongo": {
+      "value": "${USE_CHAT_HISTORY_MONGO=false}"
+    },
+    "mongoDbConnectionString": {
+      "value": "${MONGODB_CONNECTION_STRING}"
+    },
+    "mongoDbDatabaseName": {
+      "value": "${MONGODB_DB_NAME}"
+    },
+    "mongoDbCollectionName": {
+      "value": "${MONGODB_COLLECTION_NAME}"
     }
   }
 }

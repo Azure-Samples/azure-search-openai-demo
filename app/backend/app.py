@@ -54,6 +54,7 @@ from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionAppr
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
+from chat_history.mongodb import chat_history_mongodb_bp
 from config import (
     CONFIG_ASK_APPROACH,
     CONFIG_ASK_VISION_APPROACH,
@@ -730,7 +731,12 @@ async def close_clients():
 def create_app():
     app = Quart(__name__)
     app.register_blueprint(bp)
-    app.register_blueprint(chat_history_cosmosdb_bp)
+    
+    if os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true":
+        app.register_blueprint(chat_history_cosmosdb_bp)
+    
+    if os.getenv("USE_CHAT_HISTORY_MONGO", "").lower() == "true":
+        app.register_blueprint(chat_history_mongodb_bp)
 
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         app.logger.info("APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
