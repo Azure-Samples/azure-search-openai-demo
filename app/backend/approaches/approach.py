@@ -26,7 +26,6 @@ from openai.types.chat import ChatCompletionMessageParam
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
-from text import nonewlines
 
 
 @dataclass
@@ -208,6 +207,10 @@ class Approach(ABC):
     def get_sources_content(
         self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool
     ) -> list[str]:
+
+        def nonewlines(s: str) -> str:
+            return s.replace("\n", " ").replace("\r", " ")
+
         if use_semantic_captions:
             return [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))
