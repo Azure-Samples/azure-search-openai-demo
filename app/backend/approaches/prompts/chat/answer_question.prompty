@@ -21,8 +21,10 @@ Make sure the last question ends with ">>".
 {{ extra_prompt }}
 {% endif %}
 
+{{ past_messages }}
+
 user:
 {{ user_query }}
 
 Sources:
-{{ content }}
+{{ sources }}

@@ -1,6 +1,4 @@
-import json
 import os
-import pathlib
 from abc import ABC
 from dataclasses import dataclass
 from typing import (
@@ -16,7 +14,6 @@ from typing import (
 from urllib.parse import urljoin
 
 import aiohttp
-import prompty
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import (
     QueryCaptionResult,
@@ -99,8 +96,6 @@ class Approach(ABC):
     # Useful for using local small language models, for example
     ALLOW_NON_GPT_MODELS = True
 
-    PROMPTS_DIRECTORY = pathlib.Path(__file__).parent / "prompts"
-
     def __init__(
         self,
         search_client: SearchClient,
@@ -126,12 +121,6 @@ class Approach(ABC):
         self.openai_host = openai_host
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-
-    def load_prompty(self, path: str):
-        return prompty.load(self.PROMPTS_DIRECTORY / path)
-
-    def load_tools(self, path: str):
-        return json.loads(open(self.PROMPTS_DIRECTORY / path).read())
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")

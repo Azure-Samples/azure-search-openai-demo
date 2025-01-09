@@ -8,10 +8,8 @@ Answer the following question using only the data provided in the sources below.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response.
 If you cannot answer using the sources below, say you don't know. Use below example to answer.
 
-example:
-
 user:
-What is the deductible for the employee plan for a visit to Overlake in Bellevue
+(EXAMPLE) What is the deductible for the employee plan for a visit to Overlake in Bellevue
 
 Sources:
 info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.",

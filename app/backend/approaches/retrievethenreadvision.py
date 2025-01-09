@@ -1,6 +1,5 @@
 from typing import Any, Awaitable, Callable, Optional
 
-import prompty
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI
@@ -12,6 +11,7 @@ from openai.types.chat import (
 from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 
@@ -40,7 +40,8 @@ class RetrieveThenReadVisionApproach(Approach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
+        prompt_manager: PromptManager,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -58,7 +59,8 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
-        self.answer_prompt = self.load_prompty("ask/answer_question_vision.prompty")
+        self.prompt_manager = prompt_manager
+        self.answer_prompt = self.prompt_manager.load_prompt("ask/answer_question_vision.prompty")
 
     async def run(
         self,
@@ -126,14 +128,17 @@ class RetrieveThenReadVisionApproach(Approach):
                     image_list.append({"image_url": url, "type": "image_url"})
             user_content.extend(image_list)
 
-        messages = prompty.prepare(self.answer_prompt, {"user_query": q, "content": content})
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt, {"user_query": q, "content": content}
+        )
 
         response_token_limit = 1024
         updated_messages = build_messages(
-            model=self.gpt4v_model,
-            system_prompt=overrides.get("prompt_template", messages[0]["content"]),
-            new_user_content=messages[-1]["content"],
-            max_tokens=self.gpt4v_token_limit - response_token_limit,
+            model=self.chatgpt_model,
+            system_prompt=overrides.get("prompt_template", rendered_answer_prompt.system_content),
+            few_shots=rendered_answer_prompt.few_shot_messages,
+            new_user_content=rendered_answer_prompt.new_user_content,
+            max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
         chat_completion = await self.openai_client.chat.completions.create(

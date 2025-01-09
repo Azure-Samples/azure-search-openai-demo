@@ -1,6 +1,5 @@
 from typing import Any, Coroutine, List, Literal, Optional, Union, overload
 
-import prompty
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI, AsyncStream
@@ -14,6 +13,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
 
@@ -39,6 +39,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
+        prompt_manager: PromptManager
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -53,9 +54,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
-        self.query_rewrite_prompt = self.load_prompty("chat/query_rewrite.prompty")
-        self.query_rewrite_tools = self.load_tools("chat/query_rewrite_tools.json")
-        self.answer_prompt = self.load_prompty("chat/answer_question.prompty")
+        self.prompt_manager = prompt_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat/query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat/query_rewrite_tools.json")
+        self.answer_prompt = self.prompt_manager.load_prompt("chat/answer_question.prompty")
 
     @overload
     async def run_until_final_call(
@@ -96,18 +98,19 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
-        # Use prompty to prepare the query prompt
-        query_messages = prompty.prepare(self.query_rewrite_prompt, inputs={"user_query": original_user_query})
+        rendered_query_prompt = self.prompt_manager.render_prompt(
+            self.query_rewrite_prompt, {"user_query": original_user_query}
+        )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         query_response_token_limit = 100
         query_messages = build_messages(
             model=self.chatgpt_model,
-            system_prompt=query_messages[0]["content"],
-            few_shots=query_messages[1:-1],
-            past_messages=messages[:-1],
-            new_user_content=query_messages[-1]["content"],
+            system_prompt=rendered_query_prompt.system_content,
+            few_shots=rendered_query_prompt.few_shot_messages,
+            past_messages=rendered_query_prompt.past_messages,
+            new_user_content=rendered_query_prompt.new_user_content,
             tools=tools,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
@@ -152,19 +155,20 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
 
         # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
-        formatted_messages = self.get_messages(
+        rendered_answer_prompt = self.render_answer_prompt(
             overrides.get("prompt_template"),
             include_follow_up_questions=bool(overrides.get("suggest_followup_questions")),
+            past_messages=messages[:-1],
             user_query=original_user_query,
-            content=content,
+            sources=content,
         )
 
         response_token_limit = 1024
         messages = build_messages(
             model=self.chatgpt_model,
-            system_prompt=formatted_messages[0]["content"],
-            past_messages=messages[:-1],
-            new_user_content=formatted_messages[-1]["content"],
+            system_prompt=rendered_answer_prompt.system_content,
+            past_messages=rendered_answer_prompt.past_messages,
+            new_user_content=rendered_answer_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )

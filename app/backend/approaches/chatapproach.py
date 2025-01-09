@@ -3,10 +3,10 @@ import re
 from abc import ABC, abstractmethod
 from typing import Any, AsyncGenerator, Optional
 
-import prompty
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach
+from approaches.promptmanager import RenderedPrompt
 
 
 class ChatApproach(Approach, ABC):
@@ -17,24 +17,36 @@ class ChatApproach(Approach, ABC):
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
-    def get_messages(
-        self, override_prompt: Optional[str], include_follow_up_questions: bool, user_query: str, content: str
-    ) -> list[ChatCompletionMessageParam]:
+    def render_answer_prompt(
+        self,
+        override_prompt: Optional[str],
+        include_follow_up_questions: bool,
+        past_messages: list,
+        user_query: str,
+        sources: str,
+    ) -> RenderedPrompt:
         if override_prompt is None or override_prompt.startswith(">>>"):
             injected_prompt = "" if override_prompt is None else override_prompt[3:]
-            return prompty.prepare(
+            return self.prompt_manager.render_prompt(
                 self.answer_prompt,
                 {
                     "include_follow_up_questions": include_follow_up_questions,
                     "injected_prompt": injected_prompt,
+                    "past_messages": past_messages,
                     "user_query": user_query,
-                    "content": content,
+                    "sources": sources,
                 },
             )
         else:
             # TODO: Warn if follow-up is specified, follow-up won't be injected
-            return prompty.prepare(
-                self.answer_prompt, {"override_prompt": override_prompt, "user_query": user_query, "content": content}
+            return self.prompt_manager.render_prompt(
+                self.answer_prompt,
+                {
+                    "override_prompt": override_prompt,
+                    "past_messages": past_messages,
+                    "user_query": user_query,
+                    "sources": sources,
+                },
             )
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
@@ -143,4 +155,4 @@ class ChatApproach(Approach, ABC):
     ) -> AsyncGenerator[dict[str, Any], None]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        return self.run_with_streaming(messages, overrides, auth_claims, session_state)  #
+        return self.run_with_streaming(messages, overrides, auth_claims, session_state)

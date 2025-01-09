@@ -1,6 +1,5 @@
 from typing import Any, Optional
 
-import prompty
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
@@ -8,6 +7,7 @@ from openai.types.chat import ChatCompletionMessageParam
 from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
 
@@ -33,6 +33,7 @@ class RetrieveThenReadApproach(Approach):
         content_field: str,
         query_language: str,
         query_speller: str,
+        prompt_manager: PromptManager,
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -48,7 +49,8 @@ class RetrieveThenReadApproach(Approach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
-        self.answer_prompt = self.load_prompty("ask/answer_question.prompty")
+        self.prompt_manager = prompt_manager
+        self.answer_prompt = self.prompt_manager.load_prompt("ask/answer_question.prompty")
 
     async def run(
         self,
@@ -95,14 +97,16 @@ class RetrieveThenReadApproach(Approach):
         # Append user message
         content = "\n".join(sources_content)
 
-        messages = prompty.prepare(self.answer_prompt, {"user_query": q, "content": content})
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt, {"user_query": q, "content": content}
+        )
 
         response_token_limit = 1024
         updated_messages = build_messages(
             model=self.chatgpt_model,
-            system_prompt=overrides.get("prompt_template", messages[0]["content"]),
-            few_shots=messages[1:-1],
-            new_user_content=messages[-1]["content"],
+            system_prompt=overrides.get("prompt_template", rendered_answer_prompt.system_content),
+            few_shots=rendered_answer_prompt.few_shot_messages,
+            new_user_content=rendered_answer_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
