@@ -4,6 +4,7 @@ import math
 import pathlib
 from unittest.mock import AsyncMock, MagicMock
 
+import azure.core.exceptions
 import pymupdf
 import pytest
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
@@ -308,3 +309,48 @@ async def test_parse_doc_with_figures(monkeypatch):
         pages[0].text
         == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
     )
+
+
+@pytest.mark.asyncio
+async def test_parse_unsupportedformat(monkeypatch, caplog):
+    mock_poller = MagicMock()
+
+    async def mock_begin_analyze_document(self, model_id, analyze_request, **kwargs):
+        class MockErrorResponse:
+            def __init__(self):
+                self.reason = "InvalidArgument"
+                self.status_code = 400
+                self.error = {"code": "InvalidArgument"}
+
+        if kwargs.get("features") == ["ocrHighResolution"]:
+            raise azure.core.exceptions.HttpResponseError(message="InvalidArgument", response=MockErrorResponse())
+        else:
+            return mock_poller
+
+    async def mock_poller_result():
+        return AnalyzeResult(
+            content="Page content",
+            pages=[DocumentPage(page_number=1, spans=[DocumentSpan(offset=0, length=12)])],
+            tables=[],
+            figures=[],
+        )
+
+    monkeypatch.setattr(DocumentIntelligenceClient, "begin_analyze_document", mock_begin_analyze_document)
+    monkeypatch.setattr(mock_poller, "result", mock_poller_result)
+
+    parser = DocumentAnalysisParser(
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        use_content_understanding=True,
+        content_understanding_endpoint="https://example.com",
+    )
+    content = io.BytesIO(b"pdf content bytes")
+    content.name = "test.docx"
+    with caplog.at_level(logging.WARNING):
+        pages = [page async for page in parser.parse(content)]
+        assert "This document type does not support media description." in caplog.text
+
+    assert len(pages) == 1
+    assert pages[0].page_num == 0
+    assert pages[0].offset == 0
+    assert pages[0].text == "Page content"

@@ -14,6 +14,7 @@ from azure.ai.documentintelligence.models import (
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import HttpResponseError
 from PIL import Image
 from pypdf import PdfReader
 
@@ -68,6 +69,7 @@ class DocumentAnalysisParser(Parser):
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
+            file_analyzed = False
             if self.use_content_understanding:
                 if self.content_understanding_endpoint is None:
                     raise ValueError("Content Understanding is enabled but no endpoint was provided")
@@ -77,15 +79,29 @@ class DocumentAnalysisParser(Parser):
                     )
                 cu_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
                 content_bytes = content.read()
-                poller = await document_intelligence_client.begin_analyze_document(
-                    model_id="prebuilt-layout",
-                    analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
-                    output=["figures"],
-                    features=["ocrHighResolution"],
-                    output_content_format="markdown",
-                )
-                doc_for_pymupdf = pymupdf.open(stream=io.BytesIO(content_bytes))
-            else:
+                try:
+                    poller = await document_intelligence_client.begin_analyze_document(
+                        model_id="prebuilt-layout",
+                        analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
+                        output=["figures"],
+                        features=["ocrHighResolution"],
+                        output_content_format="markdown",
+                    )
+                    doc_for_pymupdf = pymupdf.open(stream=io.BytesIO(content_bytes))
+                    file_analyzed = True
+                except HttpResponseError as e:
+                    content.seek(0)
+                    if e.error.code == "InvalidArgument":
+                        logger.warning(
+                            "This document type does not support media description. Proceeding with standard analysis."
+                        )
+                    else:
+                        logger.warning(
+                            "Unexpected error analyzing document for media description: %s. Proceeding with standard analysis.",
+                            e,
+                        )
+
+            if file_analyzed is False:
                 poller = await document_intelligence_client.begin_analyze_document(
                     model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
                 )
