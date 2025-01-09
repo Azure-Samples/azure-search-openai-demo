@@ -197,7 +197,7 @@ msal==1.30.0
     #   msal-extensions
 msal-extensions==1.2.0
     # via azure-identity
-msgraph-core==1.1.8
+msgraph-core==1.1.7
     # via msgraph-sdk
 msgraph-sdk==1.16.0
     # via -r requirements.in
