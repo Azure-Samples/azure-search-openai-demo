@@ -14,7 +14,6 @@ from config import (
 )
 from decorators import authenticated
 from error import error_response
-from mongodb import MongoDBClient
 
 chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_folder="static")
 
@@ -163,11 +162,6 @@ async def setup_clients():
     AZURE_COSMOSDB_ACCOUNT = os.getenv("AZURE_COSMOSDB_ACCOUNT")
     AZURE_CHAT_HISTORY_DATABASE = os.getenv("AZURE_CHAT_HISTORY_DATABASE")
     AZURE_CHAT_HISTORY_CONTAINER = os.getenv("AZURE_CHAT_HISTORY_CONTAINER")
-
-    USE_CHAT_HISTORY_MONGODB_ATLAS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
-    MONGODB_ATLAS_URL = os.getenv("MONGODB_ATLAS_URL")
-    MONGODB_ATLA_DB_NAME = os.getenv("MONGODB_ATLA_DB_NAME")
-    MONGODB_ATLAS_COLLECTION_NAME= os.getenv("MONGODB_ATLAS_COLLECTION_NAME")
 
     azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential] = current_app.config[
         CONFIG_CREDENTIAL

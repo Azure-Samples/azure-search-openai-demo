@@ -1,5 +1,5 @@
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+import pymongo
+from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 import os
@@ -11,14 +11,12 @@ from azure.identity.aio import AzureDeveloperCliCredential, ManagedIdentityCrede
 from quart import Blueprint, current_app, jsonify, request
 
 from config import (
-    CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
-    CONFIG_COSMOS_HISTORY_CLIENT,
-    CONFIG_COSMOS_HISTORY_CONTAINER,
-    CONFIG_CREDENTIAL,
+CONFIG_CHAT_HISTORY_MONGO_ENABLED,
+CONFIG_MONGO_HISTORY_CONTAINER,
+CONFIG_MONGO_HISTORY_CLIENT
 )
 from decorators import authenticated
 from error import error_response
-from mongodb import MongoDBClient
 
 chat_history_mongodb_bp = Blueprint("chat_history_mongo", __name__, static_folder="static")
 
@@ -44,7 +42,11 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
         title = answers[0][0][:50] + "..." if len(answers[0][0]) > 50 else answers[0][0]
         timestamp = int(time.time() * 1000)
 
-        container.insert_one({"id": id, "entra_oid": entra_oid, "title": title, "answers": answers, "timestamp": timestamp})
+        container.update_one(
+            {"id": id},
+            {"$set": {"entra_oid": entra_oid, "title": title, "answers": answers, "timestamp": timestamp}},
+            upsert=True
+            )
 
         return jsonify({}), 201
     except Exception as error:
@@ -54,7 +56,7 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
 @chat_history_mongodb_bp.post("/chat_history/items")
 @authenticated
 async def get_chat_history(auth_claims: Dict[str, Any]):
-    if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
+    if not current_app.config[CONFIG_CHAT_HISTORY_MONGO_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
     container: pymongo.collection.Collection = current_app.config[CONFIG_MONGO_HISTORY_CONTAINER]
@@ -73,9 +75,9 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
 
         items = []
 
-        result = container.find().sort("timestamp", -1).limit(count)
+        result = container.find({"entra_oid": entra_oid}).sort("timestamp", -1).limit(count)
 
-        async for item in result:
+        for item in result:
             items.append(
                 {
                     "id": item.get("id"),
@@ -94,7 +96,7 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
 @chat_history_mongodb_bp.get("/chat_history/items/<item_id>")
 @authenticated
 async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
-    if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
+    if not current_app.config[CONFIG_CHAT_HISTORY_MONGO_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
     container: pymongo.collection.Collection = current_app.config[CONFIG_MONGO_HISTORY_CONTAINER]
@@ -108,7 +110,7 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
 
     try:
 
-        result = container.find_one({"_id": ObjectId(item_id)})
+        result = container.find_one({"id": item_id})
 
         return (
             jsonify(
@@ -129,7 +131,7 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
 @chat_history_mongodb_bp.delete("/chat_history/items/<item_id>")
 @authenticated
 async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
-    if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
+    if not current_app.config[CONFIG_CHAT_HISTORY_MONGO_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
     container: pymongo.collection.Collection = current_app.config[CONFIG_MONGO_HISTORY_CONTAINER]
@@ -142,7 +144,7 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str)
         return jsonify({"error": "User OID not found"}), 401
 
     try:
-        container.delete_one({"_id": ObjectId(item_id)})
+        container.delete_one({"id": item_id})
         return jsonify({}), 204
     except Exception as error:
         return error_response(error, f"/chat_history/items/{item_id}")
@@ -151,20 +153,20 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str)
 @chat_history_mongodb_bp.before_app_serving
 async def setup_clients():
     USE_CHAT_HISTORY_MONGODB = os.getenv("USE_CHAT_HISTORY_MONGO", "").lower() == "true"
-    MONGODB_CONNECTION_STRING = os.getenv("MONGODB_ATLAS_URL")
-    MONGODB_DB_NAME = os.getenv("MONGODB_ATLA_DB_NAME")
-    MONGODB_COLLECTION_NAME= os.getenv("MONGODB_ATLAS_COLLECTION_NAME")
+    MONGODB_CONNECTION_STRING = os.getenv("MONGODB_CONNECTION_STRING")
+    MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME")
+    MONGODB_COLLECTION_NAME= os.getenv("MONGODB_COLLECTION_NAME")
 
     if USE_CHAT_HISTORY_MONGODB:
         current_app.logger.info("USE_CHAT_HISTORY_MONGODB is true, setting up MongoDB client")
         if not MONGODB_CONNECTION_STRING:
-            raise ValueError("MONGODB_CONNECTION_STRING must be set when USE_CHAT_HISTORY_MONGODB_ATLAS is true")
+            raise ValueError("MONGODB_CONNECTION_STRING must be set when USE_CHAT_HISTORY_MONGODB is true")
         if not MONGODB_DB_NAME:
-            raise ValueError("MONGODB_DB_NAME must be set when USE_CHAT_HISTORY_MONGODB_ATLAS is true")
+            raise ValueError("MONGODB_DB_NAME must be set when USE_CHAT_HISTORY_MONGODB is true")
         if not MONGODB_COLLECTION_NAME:
-            raise ValueError("MONGODB_COLLECTION_NAME must be set when USE_CHAT_HISTORY_MONGODB_ATLAS is true")
+            raise ValueError("MONGODB_COLLECTION_NAME must be set when USE_CHAT_HISTORY_MONGODB is true")
 
-        mongodb_client = MongoClient(MONGODB_CONNECTION_STRING, server_api=ServerApi('1'))
+        mongodb_client = MongoClient(MONGODB_CONNECTION_STRING)
         mongodb_db = mongodb_client[MONGODB_DB_NAME]
         mongodb_collection = mongodb_db[MONGODB_COLLECTION_NAME]
 

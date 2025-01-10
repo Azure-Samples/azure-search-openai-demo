@@ -3,6 +3,7 @@ import { IHistoryProvider, HistoryProviderOptions } from "../HistoryProviders/IP
 import { NoneProvider } from "../HistoryProviders/None";
 import { IndexedDBProvider } from "../HistoryProviders/IndexedDB";
 import { CosmosDBProvider } from "../HistoryProviders/CosmosDB";
+import { MongoDBProvider } from "../HistoryProviders/MongoDB";
 
 export const useHistoryManager = (provider: HistoryProviderOptions): IHistoryProvider => {
     const providerInstance = useMemo(() => {
@@ -11,6 +12,8 @@ export const useHistoryManager = (provider: HistoryProviderOptions): IHistoryPro
                 return new IndexedDBProvider("chat-database", "chat-history");
             case HistoryProviderOptions.CosmosDB:
                 return new CosmosDBProvider();
+            case HistoryProviderOptions.MongoDB:
+                return new MongoDBProvider();
             case HistoryProviderOptions.None:
             default:
                 return new NoneProvider();

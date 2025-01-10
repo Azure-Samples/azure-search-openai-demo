@@ -8,7 +8,7 @@ import { useHistoryManager, HistoryMetaData } from "../HistoryProviders";
 import { useTranslation } from "react-i18next";
 import styles from "./HistoryPanel.module.css";
 
-const HISTORY_COUNT_PER_LOAD = 20;
+const HISTORY_COUNT_PER_LOAD = 30;
 
 export const HistoryPanel = ({
     provider,

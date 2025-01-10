@@ -185,6 +185,5 @@ export async function deleteChatHistoryApi(id: string, idToken: string): Promise
         throw new Error(`Deleting chat history failed: ${response.statusText}`);
     }
 
-    const dataResponse: any = await response.json();
-    return dataResponse;
+    return response;
 }

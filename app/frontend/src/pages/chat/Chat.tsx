@@ -84,6 +84,7 @@ const Chat = () => {
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const [showChatHistoryCosmos, setShowChatHistoryCosmos] = useState<boolean>(false);
+    const [showChatHistoryMongo, setShowChatHistoryMongo] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -111,6 +112,7 @@ const Chat = () => {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowChatHistoryBrowser(config.showChatHistoryBrowser);
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
+            setShowChatHistoryMongo(config.showChatHistoryMongo);
         });
     };
 
@@ -162,6 +164,7 @@ const Chat = () => {
 
     const historyProvider: HistoryProviderOptions = (() => {
         if (useLogin && showChatHistoryCosmos) return HistoryProviderOptions.CosmosDB;
+        if (useLogin && showChatHistoryMongo) return HistoryProviderOptions.MongoDB;
         if (showChatHistoryBrowser) return HistoryProviderOptions.IndexedDB;
         return HistoryProviderOptions.None;
     })();
@@ -356,7 +359,7 @@ const Chat = () => {
             </Helmet>
             <div className={styles.commandsSplitContainer}>
                 <div className={styles.commandsContainer}>
-                    {((useLogin && showChatHistoryCosmos) || showChatHistoryBrowser) && (
+                    {((useLogin && (showChatHistoryCosmos || showChatHistoryMongo)) || showChatHistoryBrowser) && (
                         <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />
                     )}
                 </div>
@@ -467,7 +470,7 @@ const Chat = () => {
                     />
                 )}
 
-                {((useLogin && showChatHistoryCosmos) || showChatHistoryBrowser) && (
+                {((useLogin && (showChatHistoryCosmos || showChatHistoryMongo)) || showChatHistoryBrowser) && (
                     <HistoryPanel
                         provider={historyProvider}
                         isOpen={isHistoryPanelOpen}
