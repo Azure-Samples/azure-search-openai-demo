@@ -114,7 +114,7 @@ class RetrieveThenReadVisionApproach(Approach):
         text_sources = []
         image_sources = []
         if send_text_to_gptvision:
-            text_sources = "\n".join(self.get_sources_content(results, use_semantic_captions, use_image_citation=True))
+            text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
         if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)

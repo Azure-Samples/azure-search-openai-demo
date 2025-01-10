@@ -6,7 +6,6 @@ from typing import Any, AsyncGenerator, Optional
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach
-from approaches.promptmanager import RenderedPrompt
 
 
 class ChatApproach(Approach, ABC):
@@ -19,7 +18,7 @@ class ChatApproach(Approach, ABC):
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
-    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> RenderedPrompt:
+    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
         if override_prompt is None:
             return {}
