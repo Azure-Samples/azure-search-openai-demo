@@ -6,6 +6,7 @@ from azure.search.documents.aio import SearchClient
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.promptmanager import PromptyManager
 
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
@@ -33,6 +34,7 @@ def chat_approach():
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
+        prompt_manager=PromptyManager(),
     )
 
 
@@ -178,6 +180,7 @@ async def test_search_results_filtering_by_scores(
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
+        prompt_manager=PromptyManager(),
     )
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
