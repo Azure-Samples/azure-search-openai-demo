@@ -1,4 +1,6 @@
 ---
+name: Ask with vision
+description: Answer a single question (with no chat history) using both text and image sources.
 model:
     api: chat
 ---
@@ -11,19 +13,13 @@ The text and image source can be the same file name, don't use the image title w
 If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts.
 
 user:
-(EXAMPLE) What is the deductible for the employee plan for a visit to Overlake in Bellevue
-
-Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.",
-info2.pdf: Overlake is in-network for the employee plan.",
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.",
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region."
-
-assistant:
-In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].
-
-user:
 {{ user_query }}
-
+{% for image_source in image_sources %}
+![Image]({{image_source}})
+{% endfor %}
+{% if text_sources is defined %}
 Sources:
-{{ content }}
+{% for text_source in text_sources %}
+{{ text_source }}
+{% endfor %}
+{% endif %}

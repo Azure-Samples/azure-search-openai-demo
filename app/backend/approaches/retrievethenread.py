@@ -92,13 +92,9 @@ class RetrieveThenReadApproach(Approach):
         )
 
         # Process results
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-
-        # Append user message
-        content = "\n".join(sources_content)
-
+        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
         rendered_answer_prompt = self.prompt_manager.render_prompt(
-            self.answer_prompt, {"user_query": q, "content": content}
+            self.answer_prompt, {"user_query": q, "text_sources": text_sources}
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
@@ -111,7 +107,7 @@ class RetrieveThenReadApproach(Approach):
             seed=seed,
         )
 
-        data_points = {"text": sources_content}
+        data_points = {"text": text_sources}
         extra_info = {
             "data_points": data_points,
             "thoughts": [

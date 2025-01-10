@@ -15,7 +15,7 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 
 user:
-(EXAMPLE) How did crypto do last year?"
+(EXAMPLE) How did crypto do last year?
 
 assistant:
 Summarize Cryptocurrency Market Dynamics from last year
@@ -26,7 +26,10 @@ user:
 assistant:
 Show available health plans
 
-{{ past_messages }}
+{% for message in past_messages %}
+{{ message["role"] }}:
+{{ message["content"] }}
+{% endfor %}
 
 user:
 Generate search query for: {{ user_query }}

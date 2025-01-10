@@ -6,8 +6,6 @@ from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
-    ChatCompletionContentPartImageParam,
-    ChatCompletionContentPartParam,
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
 )
@@ -154,51 +152,45 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             minimum_search_score,
             minimum_reranker_score,
         )
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
-        content = "\n".join(sources_content)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-
-        # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
-        rendered_answer_prompt = self.render_answer_prompt(
-            overrides.get("prompt_template"),
-            include_follow_up_questions=bool(overrides.get("suggest_followup_questions")),
-            past_messages=messages[:-1],
-            user_query=original_user_query,
-            sources=content,
-        )
-
-        user_content: list[ChatCompletionContentPartParam] = [
-            {"text": rendered_answer_prompt.new_user_content, "type": "text"}
-        ]
-        image_list: list[ChatCompletionContentPartImageParam] = []
-
+        text_sources = []
+        image_sources = []
         if send_text_to_gptvision:
-            user_content.append({"text": "\n\nSources:\n" + content, "type": "text"})
+            text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
         if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
                 if url:
-                    image_list.append({"image_url": url, "type": "image_url"})
-            user_content.extend(image_list)
+                    image_sources.append(url)
+
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": text_sources,
+                "image_sources": image_sources,
+            },
+        )
 
         response_token_limit = 1024
         messages = build_messages(
             model=self.gpt4v_model,
             system_prompt=rendered_answer_prompt.system_content,
             past_messages=rendered_answer_prompt.past_messages,
-            new_user_content=user_content,
+            new_user_content=rendered_answer_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
-        data_points = {
-            "text": sources_content,
-            "images": [d["image_url"] for d in image_list],
-        }
-
         extra_info = {
-            "data_points": data_points,
+            "data_points": {
+                "text": text_sources,
+                "images": image_sources,
+            },
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",

@@ -1,4 +1,6 @@
 ---
+name: Chat with vision
+description: Answer a question (with chat history) using both text and image sources.
 model:
     api: chat
 ---
@@ -22,10 +24,15 @@ Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}
 
-{{ past_messages }}
+{% for message in past_messages %}
+{{ message["role"] }}:
+{{ message["content"] }}
+{% endfor %}
 
 user:
 {{ user_query }}
 
 Sources:
-{{ sources }}
+{% for text_source in text_sources %}
+{{ text_source }}
+{% endfor %}

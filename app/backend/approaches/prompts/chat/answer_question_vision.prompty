@@ -27,10 +27,19 @@ Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}
 
-{{ past_messages }}
+{% for message in past_messages %}
+{{ message["role"] }}:
+{{ message["content"] }}
+{% endfor %}
 
 user:
 {{ user_query }}
-
+{% for image_source in image_sources %}
+![Image]({{image_source}})
+{% endfor %}
+{% if text_sources is defined %}
 Sources:
-{{ content }}
+{% for text_source in text_sources %}
+{{ text_source }}
+{% endfor %}
+{% endif %}

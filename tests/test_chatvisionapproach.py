@@ -8,6 +8,7 @@ from azure.search.documents.models import (
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
+from approaches.promptmanager import PromptyManager
 from core.authentication import AuthenticationHelper
 
 from .mocks import MOCK_EMBEDDING_DIMENSIONS, MOCK_EMBEDDING_MODEL_NAME
@@ -63,6 +64,7 @@ def chat_approach(openai_client, mock_confidential_client_success):
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
+        prompt_manager=PromptyManager(),
     )
 
 

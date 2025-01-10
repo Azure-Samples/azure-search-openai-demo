@@ -149,18 +149,17 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             minimum_reranker_score,
         )
 
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        content = "\n".join(sources_content)
-
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-
-        # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
-        rendered_answer_prompt = self.render_answer_prompt(
-            overrides.get("prompt_template"),
-            include_follow_up_questions=bool(overrides.get("suggest_followup_questions")),
-            past_messages=messages[:-1],
-            user_query=original_user_query,
-            sources=content,
+        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": text_sources,
+            },
         )
 
         response_token_limit = 1024
@@ -173,10 +172,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
-        data_points = {"text": sources_content}
-
         extra_info = {
-            "data_points": data_points,
+            "data_points": {"text": text_sources},
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",

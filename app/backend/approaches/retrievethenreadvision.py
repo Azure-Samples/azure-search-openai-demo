@@ -4,8 +4,6 @@ from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI
 from openai.types.chat import (
-    ChatCompletionContentPartImageParam,
-    ChatCompletionContentPartParam,
     ChatCompletionMessageParam,
 )
 from openai_messages_token_helper import get_token_limit
@@ -112,24 +110,19 @@ class RetrieveThenReadVisionApproach(Approach):
             minimum_reranker_score,
         )
 
-        image_list: list[ChatCompletionContentPartImageParam] = []
-        user_content: list[ChatCompletionContentPartParam] = [{"text": q, "type": "text"}]
-
         # Process results
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
-
+        text_sources = []
+        image_sources = []
         if send_text_to_gptvision:
-            content = "\n".join(sources_content)
-            user_content.append({"text": content, "type": "text"})
+            text_sources = "\n".join(self.get_sources_content(results, use_semantic_captions, use_image_citation=True))
         if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
                 if url:
-                    image_list.append({"image_url": url, "type": "image_url"})
-            user_content.extend(image_list)
+                    image_sources.append(url)
 
         rendered_answer_prompt = self.prompt_manager.render_prompt(
-            self.answer_prompt, {"user_query": q, "content": content}
+            self.answer_prompt, {"user_query": q, "text_sources": text_sources, "image_sources": image_sources}
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
@@ -142,8 +135,8 @@ class RetrieveThenReadVisionApproach(Approach):
         )
 
         data_points = {
-            "text": sources_content,
-            "images": [d["image_url"] for d in image_list],
+            "text": text_sources,
+            "images": image_sources,
         }
 
         extra_info = {
