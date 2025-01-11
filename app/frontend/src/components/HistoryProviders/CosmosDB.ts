@@ -48,4 +48,19 @@ export class CosmosDBProvider implements IHistoryProvider {
         await deleteChatHistoryApi(id, idToken || "");
         return;
     }
+
+    async updateFeedback(id: string, feedback: number): Promise<void> {
+        // Assuming you have an API endpoint for updating feedback in CosmosDB
+        try {
+            await fetch(`/api/history/${id}/feedback`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ feedback })
+            });
+        } catch (error) {
+            console.error("Error updating feedback in CosmosDB:", error);
+        }
+    }
 }

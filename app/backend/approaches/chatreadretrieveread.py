@@ -193,6 +193,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         data_points = {"text": sources_content}
 
+        # Get trace_id from all possible locations
+        trace_id = (
+            overrides.get("trace_id") or overrides.get("context", {}).get("trace_id") or auth_claims.get("trace_id")
+        )
+
         extra_info = {
             "data_points": data_points,
             "thoughts": [
@@ -231,7 +236,14 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     ),
                 ),
             ],
+            "trace_id": trace_id,  # Add trace_id
         }
+
+        # Log for verification
+        print(f"trace_id in extra_info: {extra_info['trace_id']}")
+
+        # Log for debugging
+        print(f"extra_info in run_until_final_call: {extra_info}")
 
         chat_coroutine = self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name
