@@ -142,24 +142,42 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
 
         try {
             setFeedbackValue(value);
-
             await feedbackStore.setFeedback(feedback.traceId, value);
 
-            if (useAuth) {
-                await Promise.all([
-                    historyManager.updateFeedback(feedback.traceId, value),
-                    fetch("/feedback", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            trace_id: feedback.traceId,
-                            value,
-                            type: "thumbs"
-                        })
-                    }).then(res => {
-                        if (!res.ok) throw new Error("Failed to submit feedback to server");
+            // Send single feedback request that handles both history and Langfuse
+            try {
+                const res = await fetch("/feedback", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        trace_id: feedback.traceId,
+                        value, // For history
+                        score: value, // For Langfuse
+                        type: "user_feedback", // For Langfuse
+                        comment: value === 1 ? "👍 Positive feedback" : "👎 Negative feedback" // For Langfuse
                     })
-                ]);
+                });
+
+                const responseBody = await res.text();
+                const isHtmlError = responseBody.trim().startsWith("<!doctype") || responseBody.trim().startsWith("<html");
+
+                if (res.ok) {
+                    console.log(`Server: Successfully sent feedback=${value} for ${feedback.traceId}`);
+                } else {
+                    const errorDetails = isHtmlError ? `Received HTML error page (${res.status})` : `Response: ${responseBody}`;
+                    console.warn(`Server: HTTP ${res.status} when sending feedback=${value} for ${feedback.traceId}`, errorDetails);
+                }
+            } catch (error) {
+                if (error instanceof TypeError || error instanceof SyntaxError) {
+                    console.error(`Server: Network/parsing error sending feedback=${value} for ${feedback.traceId}:`, error);
+                } else {
+                    console.warn(`Server: Failed to send feedback=${value} for ${feedback.traceId}:`, error);
+                }
+            }
+
+            // Update history store if authenticated
+            if (useAuth) {
+                await historyManager.updateFeedback(feedback.traceId, value);
             }
 
             const storedValue = await feedbackStore.getFeedback(feedback.traceId);
