@@ -41,7 +41,7 @@ interface FeedbackData {
     historyValue: number | undefined;
 }
 
-// Add this new hook to manage feedback state properly
+// New custom hook for feedback state management
 const useFeedbackState = (traceId: string | undefined, historyFeedback: number | undefined) => {
     const [feedbackValue, setFeedbackValue] = useState<number | null>(null);
     const initializeAttempted = useRef(false);
@@ -53,7 +53,7 @@ const useFeedbackState = (traceId: string | undefined, historyFeedback: number |
         initializeAttempted.current = false;
     }, [traceId]);
 
-    // Load feedback data
+    // Load feedback data with improved error handling
     useEffect(() => {
         const loadFeedback = async () => {
             if (!traceId || initializeAttempted.current) return;
@@ -62,7 +62,6 @@ const useFeedbackState = (traceId: string | undefined, historyFeedback: number |
                 initializeAttempted.current = true;
                 console.log(`Initializing feedback for trace ${traceId}`);
 
-                // First try to get cached feedback
                 const cachedValue = await feedbackStore.getFeedback(traceId);
                 if (cachedValue !== null) {
                     console.log(`Found cached feedback for ${traceId}:`, cachedValue);
@@ -70,7 +69,6 @@ const useFeedbackState = (traceId: string | undefined, historyFeedback: number |
                     return;
                 }
 
-                // Then try history feedback
                 if (historyFeedback !== undefined) {
                     console.log(`Using history feedback for ${traceId}:`, historyFeedback);
                     setFeedbackValue(historyFeedback);
@@ -137,6 +135,7 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
             .catch(err => console.error("Failed to copy text: ", err));
     };
 
+    // Enhanced error handling in feedback submission
     const handleFeedback = async (value: number) => {
         if (!feedback.traceId) return;
 
@@ -144,17 +143,16 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
             setFeedbackValue(value);
             await feedbackStore.setFeedback(feedback.traceId, value);
 
-            // Send single feedback request that handles both history and Langfuse
             try {
                 const res = await fetch("/feedback", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         trace_id: feedback.traceId,
-                        value, // For history
-                        score: value, // For Langfuse
-                        type: "user_feedback", // For Langfuse
-                        comment: value === 1 ? "👍 Positive feedback" : "👎 Negative feedback" // For Langfuse
+                        value,
+                        score: value,
+                        type: "user_feedback",
+                        comment: value === 1 ? "👍 Positive feedback" : "👎 Negative feedback"
                     })
                 });
 
@@ -185,7 +183,7 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
                 console.warn(`Local feedback verification failed: stored=${storedValue}, expected=${value}`);
             }
 
-            // Show success message
+            // Show success message with proper cleanup
             const feedbackMessage = document.createElement("div");
             feedbackMessage.className = styles.feedbackMessage;
             feedbackMessage.textContent = value ? "Thanks for the positive feedback!" : "Thanks for the feedback. We'll work to improve.";
@@ -193,7 +191,8 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
             setTimeout(() => feedbackMessage.remove(), 3000);
         } catch (error) {
             console.error(`Failed to store feedback for ${feedback.traceId}:`, error);
-            // Show error in UI
+
+            // Show error message with proper cleanup
             const errorMessage = document.createElement("div");
             errorMessage.className = styles.errorMessage;
             errorMessage.textContent = error instanceof Error ? error.message : "Failed to submit feedback";

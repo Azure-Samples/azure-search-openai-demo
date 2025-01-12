@@ -487,29 +487,33 @@ async def feedback(auth_claims: Dict[str, Any]):
     try:
         request_json = await request.get_json()
         trace_id = request_json.get("trace_id")
-        value = request_json.get("value")
+        value = request_json.get("value")  # For thumbs history
+        score = request_json.get("score", value)  # For Langfuse, fallback to value if not provided
+        feedback_type = request_json.get("type", "thumbs")
+        comment = request_json.get("comment")
 
         current_app.logger.info(f"Received feedback request: {request_json}")
 
-        if not trace_id or value is None:
-            return jsonify({"error": "trace_id and value are required"}), 400
+        if not trace_id or (value is None and score is None):
+            return jsonify({"error": "trace_id and value/score are required"}), 400
 
         # Add LLM provider info to the feedback
         llm_provider = os.getenv("OPENAI_HOST", "openai")
         score = langfuse.score(
             trace_id=trace_id,
             name="user_feedback_thumbs",
-            value=value,
-            comment=None,
+            value=score,  # Use score for Langfuse
+            comment=comment,
             metadata={
                 "llm_provider": llm_provider,
                 "model": os.getenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4") if llm_provider == "azure" else "gpt-4",
+                "feedback_type": feedback_type,
             },
         )
 
-        current_app.logger.info(f"Successfully submitted feedback: {score}")
-
+        current_app.logger.info(f"Successfully submitted feedback to Langfuse: {score}")
         return jsonify({"message": "Feedback received successfully", "trace_id": trace_id, "value": value}), 200
+
     except Exception as error:
         current_app.logger.error(f"Error in feedback endpoint: {error}")
         return jsonify({"error": str(error)}), 500
