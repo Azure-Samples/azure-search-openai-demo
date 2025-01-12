@@ -18,6 +18,7 @@ import { HistoryProviderOptions } from "../HistoryProviders/IProvider";
 import { FeedbackStore } from "./FeedbackStore";
 import { useLogin } from "../../authConfig";
 import { LoginContext } from "../../loginContext";
+import { FeedbackDialog } from "./FeedbackDialog";
 
 interface Props {
     answer: ChatAppResponse;
@@ -123,6 +124,9 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
 
     const { feedbackValue, setFeedbackValue, feedbackStore } = useFeedbackState(answer.context?.trace_id, historyFeedback);
 
+    const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+    const [pendingFeedbackValue, setPendingFeedbackValue] = useState<number | null>(null);
+
     const handleCopy = () => {
         const textToCopy = sanitizedAnswerHtml.replace(/<a [^>]*><sup>\d+<\/sup><\/a>|<[^>]+>/g, "");
 
@@ -138,10 +142,16 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
     // Enhanced error handling in feedback submission
     const handleFeedback = async (value: number) => {
         if (!feedback.traceId) return;
+        setPendingFeedbackValue(value);
+        setShowFeedbackDialog(true);
+    };
+
+    const handleFeedbackSubmit = async (comment: string) => {
+        if (!feedback.traceId || pendingFeedbackValue === null) return;
 
         try {
-            setFeedbackValue(value);
-            await feedbackStore.setFeedback(feedback.traceId, value);
+            setFeedbackValue(pendingFeedbackValue);
+            await feedbackStore.setFeedback(feedback.traceId, pendingFeedbackValue);
 
             try {
                 const res = await fetch("/feedback", {
@@ -149,10 +159,10 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         trace_id: feedback.traceId,
-                        value,
-                        score: value,
+                        value: pendingFeedbackValue,
+                        score: pendingFeedbackValue,
                         type: "user_feedback",
-                        comment: value === 1 ? "👍 Positive feedback" : "👎 Negative feedback"
+                        comment: comment || (pendingFeedbackValue === 1 ? "👍 Positive feedback" : "👎 Negative feedback")
                     })
                 });
 
@@ -160,33 +170,33 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
                 const isHtmlError = responseBody.trim().startsWith("<!doctype") || responseBody.trim().startsWith("<html");
 
                 if (res.ok) {
-                    console.log(`Server: Successfully sent feedback=${value} for ${feedback.traceId}`);
+                    console.log(`Server: Successfully sent feedback=${pendingFeedbackValue} for ${feedback.traceId}`);
                 } else {
                     const errorDetails = isHtmlError ? `Received HTML error page (${res.status})` : `Response: ${responseBody}`;
-                    console.warn(`Server: HTTP ${res.status} when sending feedback=${value} for ${feedback.traceId}`, errorDetails);
+                    console.warn(`Server: HTTP ${res.status} when sending feedback=${pendingFeedbackValue} for ${feedback.traceId}`, errorDetails);
                 }
             } catch (error) {
                 if (error instanceof TypeError || error instanceof SyntaxError) {
-                    console.error(`Server: Network/parsing error sending feedback=${value} for ${feedback.traceId}:`, error);
+                    console.error(`Server: Network/parsing error sending feedback=${pendingFeedbackValue} for ${feedback.traceId}:`, error);
                 } else {
-                    console.warn(`Server: Failed to send feedback=${value} for ${feedback.traceId}:`, error);
+                    console.warn(`Server: Failed to send feedback=${pendingFeedbackValue} for ${feedback.traceId}:`, error);
                 }
             }
 
             // Update history store if authenticated
             if (useAuth) {
-                await historyManager.updateFeedback(feedback.traceId, value);
+                await historyManager.updateFeedback(feedback.traceId, pendingFeedbackValue);
             }
 
             const storedValue = await feedbackStore.getFeedback(feedback.traceId);
-            if (storedValue !== value) {
-                console.warn(`Local feedback verification failed: stored=${storedValue}, expected=${value}`);
+            if (storedValue !== pendingFeedbackValue) {
+                console.warn(`Local feedback verification failed: stored=${storedValue}, expected=${pendingFeedbackValue}`);
             }
 
             // Show success message with proper cleanup
             const feedbackMessage = document.createElement("div");
             feedbackMessage.className = styles.feedbackMessage;
-            feedbackMessage.textContent = value ? "Thanks for the positive feedback!" : "Thanks for the feedback. We'll work to improve.";
+            feedbackMessage.textContent = "Thanks for your feedback!";
             document.body.appendChild(feedbackMessage);
             setTimeout(() => feedbackMessage.remove(), 3000);
         } catch (error) {
@@ -198,6 +208,9 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
             errorMessage.textContent = error instanceof Error ? error.message : "Failed to submit feedback";
             document.body.appendChild(errorMessage);
             setTimeout(() => errorMessage.remove(), 3000);
+        } finally {
+            setShowFeedbackDialog(false);
+            setPendingFeedbackValue(null);
         }
     };
 
@@ -242,87 +255,96 @@ export const Answer = ({ answer, historyFeedback, ...props }: Props) => {
     };
 
     return (
-        <Stack className={`${styles.answerContainer} ${props.isSelected && styles.selected}`} verticalAlign="space-between">
-            <Stack.Item>
-                <Stack horizontal horizontalAlign="space-between">
-                    <AnswerIcon />
-                    <div>
-                        {renderFeedbackButton()}
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: copied ? "CheckMark" : "Copy" }}
-                            title={copied ? t("tooltips.copied") : t("tooltips.copy")}
-                            ariaLabel={copied ? t("tooltips.copied") : t("tooltips.copy")}
-                            onClick={handleCopy}
-                        />
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "Lightbulb" }}
-                            title={t("tooltips.showThoughtProcess")}
-                            ariaLabel={t("tooltips.showThoughtProcess")}
-                            onClick={() => props.onThoughtProcessClicked()}
-                            disabled={!answer.context.thoughts?.length}
-                        />
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "ClipboardList" }}
-                            title={t("tooltips.showSupportingContent")}
-                            ariaLabel={t("tooltips.showSupportingContent")}
-                            onClick={() => props.onSupportingContentClicked()}
-                            disabled={!answer.context.data_points}
-                        />
-                        {props.showSpeechOutputAzure && (
-                            <SpeechOutputAzure
-                                answer={sanitizedAnswerHtml}
-                                index={props.index}
-                                speechConfig={props.speechConfig}
-                                isStreaming={props.isStreaming}
+        <>
+            <Stack className={`${styles.answerContainer} ${props.isSelected && styles.selected}`} verticalAlign="space-between">
+                <Stack.Item>
+                    <Stack horizontal horizontalAlign="space-between">
+                        <AnswerIcon />
+                        <div>
+                            {renderFeedbackButton()}
+                            <IconButton
+                                style={{ color: "black" }}
+                                iconProps={{ iconName: copied ? "CheckMark" : "Copy" }}
+                                title={copied ? t("tooltips.copied") : t("tooltips.copy")}
+                                ariaLabel={copied ? t("tooltips.copied") : t("tooltips.copy")}
+                                onClick={handleCopy}
                             />
-                        )}
-                        {props.showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                            <IconButton
+                                style={{ color: "black" }}
+                                iconProps={{ iconName: "Lightbulb" }}
+                                title={t("tooltips.showThoughtProcess")}
+                                ariaLabel={t("tooltips.showThoughtProcess")}
+                                onClick={() => props.onThoughtProcessClicked()}
+                                disabled={!answer.context.thoughts?.length}
+                            />
+                            <IconButton
+                                style={{ color: "black" }}
+                                iconProps={{ iconName: "ClipboardList" }}
+                                title={t("tooltips.showSupportingContent")}
+                                ariaLabel={t("tooltips.showSupportingContent")}
+                                onClick={() => props.onSupportingContentClicked()}
+                                disabled={!answer.context.data_points}
+                            />
+                            {props.showSpeechOutputAzure && (
+                                <SpeechOutputAzure
+                                    answer={sanitizedAnswerHtml}
+                                    index={props.index}
+                                    speechConfig={props.speechConfig}
+                                    isStreaming={props.isStreaming}
+                                />
+                            )}
+                            {props.showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+                        </div>
+                    </Stack>
+                </Stack.Item>
+
+                <Stack.Item grow>
+                    <div className={styles.answerText}>
+                        <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
                     </div>
-                </Stack>
-            </Stack.Item>
+                </Stack.Item>
 
-            <Stack.Item grow>
-                <div className={styles.answerText}>
-                    <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
-                </div>
-            </Stack.Item>
+                {!!parsedAnswer.citations.length && (
+                    <Stack.Item>
+                        <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
+                            <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
+                            {parsedAnswer.citations.map((x, i) => {
+                                const path = getCitationFilePath(x);
+                                return (
+                                    <a key={i} className={styles.citation} title={x} onClick={() => props.onCitationClicked(path)}>
+                                        {`${++i}. ${x}`}
+                                    </a>
+                                );
+                            })}
+                        </Stack>
+                    </Stack.Item>
+                )}
 
-            {!!parsedAnswer.citations.length && (
-                <Stack.Item>
-                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
-                        <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
-                        {parsedAnswer.citations.map((x, i) => {
-                            const path = getCitationFilePath(x);
-                            return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => props.onCitationClicked(path)}>
-                                    {`${++i}. ${x}`}
+                {!!followupQuestions?.length && props.showFollowupQuestions && props.onFollowupQuestionClicked && (
+                    <Stack.Item>
+                        <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
+                            <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
+                            {followupQuestions.map((x, i) => (
+                                <a
+                                    key={i}
+                                    className={styles.followupQuestion}
+                                    title={x}
+                                    onClick={() => props.onFollowupQuestionClicked && props.onFollowupQuestionClicked(x)}
+                                >
+                                    {x}
                                 </a>
-                            );
-                        })}
-                    </Stack>
-                </Stack.Item>
-            )}
+                            ))}
+                        </Stack>
+                    </Stack.Item>
+                )}
+            </Stack>
 
-            {!!followupQuestions?.length && props.showFollowupQuestions && props.onFollowupQuestionClicked && (
-                <Stack.Item>
-                    <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
-                        <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
-                        {followupQuestions.map((x, i) => (
-                            <a
-                                key={i}
-                                className={styles.followupQuestion}
-                                title={x}
-                                onClick={() => props.onFollowupQuestionClicked && props.onFollowupQuestionClicked(x)}
-                            >
-                                {x}
-                            </a>
-                        ))}
-                    </Stack>
-                </Stack.Item>
-            )}
-        </Stack>
+            <FeedbackDialog
+                isOpen={showFeedbackDialog}
+                value={pendingFeedbackValue ?? 0}
+                onDismiss={() => setShowFeedbackDialog(false)}
+                onSubmit={handleFeedbackSubmit}
+            />
+        </>
     );
 };
