@@ -1,4 +1,6 @@
 ---
+name: Ask
+description: Answer a single question (with no chat history) using solely text sources.
 model:
     api: chat
 ---

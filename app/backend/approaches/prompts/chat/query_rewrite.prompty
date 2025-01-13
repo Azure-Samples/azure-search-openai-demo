@@ -1,4 +1,6 @@
 ---
+name: Rewrite RAG query
+description: Suggest the optimal search query based on the user's query, examples, and chat history.
 model:
     api: chat
     parameters:

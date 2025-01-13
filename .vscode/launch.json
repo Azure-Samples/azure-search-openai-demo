@@ -36,7 +36,6 @@
         {
             "name": "Tests (Python)",
             "type": "debugpy",
-            "python": "${workspaceFolder}/.venv/bin/python",
             "request": "launch",
             "program": "${file}",
             "purpose": ["debug-test"],

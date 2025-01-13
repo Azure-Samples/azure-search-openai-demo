@@ -1,4 +1,6 @@
 ---
+name: Chat with vision
+description: Answer a question (with chat history) using both text and image sources.
 model:
     api: chat
 ---
