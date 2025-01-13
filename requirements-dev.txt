@@ -12,4 +12,4 @@ pytest-snapshot
 pre-commit
 locust
 pip-tools
-mypy==1.13.0
+mypy==1.14.1
