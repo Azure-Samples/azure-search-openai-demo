@@ -59,7 +59,7 @@
                         "role": "assistant"
                     },
                     {
-                        "content": "What is the capital of France?\nSources: \n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "content": "What is the capital of France?\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
                         "role": "user"
                     }
                 ],

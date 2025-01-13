@@ -134,13 +134,8 @@ class RetrieveThenReadVisionApproach(Approach):
             seed=seed,
         )
 
-        data_points = {
-            "text": text_sources,
-            "images": image_sources,
-        }
-
         extra_info = {
-            "data_points": data_points,
+            "data_points": {"text": text_sources, "images": image_sources},
             "thoughts": [
                 ThoughtStep(
                     "Search using user query",

@@ -59,7 +59,7 @@
                         "role": "assistant"
                     },
                     {
-                        "content": "Are interest rates high?\nSources: \n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "content": "Are interest rates high?\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
                         "role": "user"
                     }
                 ],

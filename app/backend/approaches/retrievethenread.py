@@ -107,9 +107,8 @@ class RetrieveThenReadApproach(Approach):
             seed=seed,
         )
 
-        data_points = {"text": text_sources}
         extra_info = {
-            "data_points": data_points,
+            "data_points": {"text": text_sources},
             "thoughts": [
                 ThoughtStep(
                     "Search using user query",
