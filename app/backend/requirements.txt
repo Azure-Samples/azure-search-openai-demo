@@ -637,6 +637,8 @@ yarl==1.17.1
     # via aiohttp
 zipp==3.20.2
     # via importlib-metadata
+instructor==1.7.2
+    # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

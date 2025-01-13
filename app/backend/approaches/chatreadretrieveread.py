@@ -118,6 +118,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        # Output guardrail check
         if messages[-1]["role"] == "assistant":
             if self.output_guardrails:
                 guardrail_results = await self.output_guardrails.process_chat_history(messages)
@@ -138,7 +139,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                             extra_info["modified_message"] = result.modified_message
                             break
                 return (extra_info, guardrail_results.messages)
-
 
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]

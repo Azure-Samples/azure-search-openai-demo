@@ -17,6 +17,7 @@ from approaches.chatapproach import ChatApproach
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 from guardrails import GuardrailsOrchestrator
+from guardrails.datamodels import GuardrailOnErrorAction
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
@@ -93,12 +94,26 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        # Output guardrail check
+        if messages[-1]["role"] == "assistant":
+            if self.output_guardrails:
+                guardrail_results = await self.output_guardrails.process_chat_history(messages)
+                if guardrail_results.immediate_response:
+                    return ({"validation_failed": True,
+                             "action": guardrail_results.action.value},
+                             guardrail_results.messages)
+            return ({"validation_passed": True}, messages[-1:]) 
+
         # Input guardrail check
-        if self.input_guardrails:
+        if self.input_guardrails and messages[-1]["role"] == "user":
             guardrail_results = await self.input_guardrails.process_chat_history(messages)
-            messages = guardrail_results.messages
             if guardrail_results.immediate_response:
-                extra_info = {}
+                extra_info = {"action": guardrail_results.action.value}
+                if guardrail_results.action.value == GuardrailOnErrorAction.CONTINUE_WITH_MODIFIED_INPUT.value:
+                    for result in guardrail_results.results:
+                        if result.state == "failed" and result.modified_message:
+                            extra_info["modified_message"] = result.modified_message
+                            break
                 return (extra_info, guardrail_results.messages)
 
         seed = overrides.get("seed", None)
