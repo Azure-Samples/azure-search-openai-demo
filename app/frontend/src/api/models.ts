@@ -79,6 +79,7 @@ export type ChatAppRequest = {
     messages: ResponseMessage[];
     context?: ChatAppRequestContext;
     session_state?: any;
+    recaptcha_token?: string;
 };
 
 export type Config = {

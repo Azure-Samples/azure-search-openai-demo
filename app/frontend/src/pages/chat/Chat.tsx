@@ -3,6 +3,7 @@ import { Checkbox, Panel, DefaultButton, TextField, ITextFieldProps, ICheckboxPr
 import { SparkleFilled } from "@fluentui/react-icons";
 import { useId } from "@fluentui/react-hooks";
 import readNDJSONStream from "ndjson-readablestream";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import styles from "./Chat.module.css";
 import Modal from "../../components/DislaimerModal/Modal";
@@ -271,7 +272,7 @@ const Chat = () => {
     const client = useLogin ? useMsal().instance : undefined;
     const { loggedIn } = useContext(LoginContext);
 
-    const makeApiRequest = async (question: string) => {
+    const makeApiRequest = async (question: string, recaptchaToken: string) => {
         lastQuestionRef.current = question;
         setOriginalUserMessages(prev => [...prev, question]);
 
@@ -311,7 +312,8 @@ const Chat = () => {
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
-                session_state: answers.length ? answers[answers.length - 1][1].session_state : null
+                session_state: answers.length ? answers[answers.length - 1][1].session_state : null,
+                recaptcha_token: recaptchaToken
             };
 
             const response = await chatApi(request, shouldStream, token);
@@ -414,8 +416,8 @@ const Chat = () => {
         setUseGroupsSecurityFilter(!!checked);
     };
 
-    const onExampleClicked = (example: string) => {
-        makeApiRequest(example);
+    const onExampleClicked = (example: string, token: string) => {
+        makeApiRequest(example, token);
     };
 
     const onShowCitation = (citation: string, index: number) => {
@@ -438,14 +440,25 @@ const Chat = () => {
 
         setSelectedAnswer(index);
     };
+
+    const recaptchaRef = useRef<ReCAPTCHA>(null);
+
     // just keep the same naming as prod version but don't need recaptcha
     const handleCaptchaOnClick = async (value: string) => {
-        try {
-            makeApiRequest(value);
-        } catch (error) {
-            console.error("API request error:", error);
-            alert("API request failed. Please try again.");
-        }
+        if (recaptchaRef.current) {
+            try {
+                const token = await recaptchaRef.current.executeAsync();
+                if (token) {
+                    recaptchaRef.current.reset();
+                    makeApiRequest(value, token);
+                } else {
+                    console.error("reCAPTCHA token is null");
+                    alert("reCAPTCHA verification failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("reCAPTCHA execution error:", error);
+                alert("reCAPTCHA timed out. Please try again.");
+            }
     };
 
     // IDs for form labels and their associated callouts
@@ -480,7 +493,7 @@ const Chat = () => {
 
     return (
         <div className={styles.container}>
-            {/* <ReCAPTCHA sitekey="6LfMIV4qAAAAAPg4D_EMBKndtGzO6xDlzCO8vQTv" size="invisible" ref={recaptchaRef} /> */}
+            <ReCAPTCHA sitekey="6LfMIV4qAAAAAPg4D_EMBKndtGzO6xDlzCO8vQTv" size="invisible" ref={recaptchaRef} />
             <DisclaimerModal />
             <div className={styles.commandsContainer}>
                 <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />

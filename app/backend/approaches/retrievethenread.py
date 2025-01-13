@@ -54,7 +54,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         query_language: str,
         query_speller: str,
         input_guardrails: Optional[GuardrailsOrchestrator],
-        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -71,7 +70,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model)
         self.input_guardrails = input_guardrails
-        self.output_guardrails = output_guardrails
 
     async def run(
         self,
@@ -178,15 +176,6 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 ),
             ],
         }
-        # Output guardrail check
-        if self.output_guardrails:
-            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
-                messages
-            )
-            if return_response_immediately:
-                # TODO will need to debug
-                return (None, messages)
-
         return {
             "message": {
                 "content": chat_completion.choices[0].message.content,

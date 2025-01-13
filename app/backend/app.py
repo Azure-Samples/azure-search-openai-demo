@@ -98,6 +98,18 @@ bp = Blueprint("routes", __name__, static_folder="static")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
+RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
+
+
+def verify_recaptcha(recaptcha_token):
+    url = "https://www.google.com/recaptcha/api/siteverify"
+    payload = {"secret": RECAPTCHA_SECRET_KEY, "response": recaptcha_token}
+
+    response = requests.post(url, data=payload)
+    result = response.json()
+
+    return result.get("success", False)
+
 
 @bp.route("/")
 async def index():
@@ -254,6 +266,16 @@ async def chat_stream(auth_claims: Dict[str, Any]):
     request_json = await request.get_json()
     context = request_json.get("context", {})
     context["auth_claims"] = auth_claims
+
+    recaptcha_token = request_json.get("recaptcha_token")
+
+    if not recaptcha_token:
+        return jsonify({"error": "reCAPTCHA token is missing"}), 400
+
+    is_valid = verify_recaptcha(recaptcha_token)
+
+    if not is_valid:
+        return jsonify({"error": "Invalid reCAPTCHA token"}), 400
 
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
@@ -630,7 +652,6 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         input_guardrails=input_guardrails,
-        output_guardrails=output_guardrails,
     )
 
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
@@ -673,7 +694,6 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             input_guardrails=input_guardrails,
-            output_guardrails=output_guardrails,
         )
 
         current_app.config[CONFIG_CHAT_VISION_APPROACH] = ChatReadRetrieveReadVisionApproach(

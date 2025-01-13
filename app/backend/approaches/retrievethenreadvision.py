@@ -52,7 +52,6 @@ class RetrieveThenReadVisionApproach(Approach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         input_guardrails: Optional[GuardrailsOrchestrator],
-        output_guardrails: Optional[GuardrailsOrchestrator],
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -71,7 +70,6 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model)
         self.input_guardrails = input_guardrails
-        self.output_guardrails = output_guardrails
 
     async def run(
         self,
@@ -198,15 +196,6 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
             ],
         }
-        # Output guardrail check
-        if self.output_guardrails:
-            guardrail_results, messages, return_response_immediately = await self.output_guardrails.update_chat_history(
-                messages
-            )
-            if return_response_immediately:
-                # TODO will need to debug
-                return (None, messages)
-
         return {
             "message": {
                 "content": chat_completion.choices[0].message.content,
