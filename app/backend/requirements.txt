@@ -277,7 +277,7 @@ opentelemetry-instrumentation-psycopg2==0.47b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-requests==0.47b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib==0.47b0
+opentelemetry-instrumentation-urllib==0.50b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-urllib3==0.47b0
     # via azure-monitor-opentelemetry
