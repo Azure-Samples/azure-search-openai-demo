@@ -580,6 +580,8 @@ async def test_chat_prompt_template_concat(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["context"]["thoughts"][3]["description"][0]["content"].startswith("Assistant helps")
+    assert result["context"]["thoughts"][3]["description"][0]["content"].endswith("Meow like a cat.")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

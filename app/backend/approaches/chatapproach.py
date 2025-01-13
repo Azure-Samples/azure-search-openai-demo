@@ -20,7 +20,7 @@ class ChatApproach(Approach, ABC):
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
         if override_prompt is None:
             return {}
-        elif override_prompt.startswith("<<<"):
+        elif override_prompt.startswith(">>>"):
             return {"injected_prompt": override_prompt[3:]}
         else:
             return {"override_prompt": override_prompt}
