@@ -30,5 +30,6 @@ types-beautifulsoup4
 msgraph-sdk
 openai-messages-token-helper
 python-dotenv
+prompty
 rich
 typing-extensions

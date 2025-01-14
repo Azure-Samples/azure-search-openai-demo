@@ -24,8 +24,8 @@ from azure.search.documents.models import (
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
-from text import nonewlines
 
 
 @dataclass
@@ -109,6 +109,7 @@ class Approach(ABC):
         openai_host: str,
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
+        prompt_manager: PromptManager,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -121,6 +122,7 @@ class Approach(ABC):
         self.openai_host = openai_host
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
+        self.prompt_manager = prompt_manager
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -205,6 +207,10 @@ class Approach(ABC):
     def get_sources_content(
         self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool
     ) -> list[str]:
+
+        def nonewlines(s: str) -> str:
+            return s.replace("\n", " ").replace("\r", " ")
+
         if use_semantic_captions:
             return [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))

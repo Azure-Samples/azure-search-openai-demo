@@ -33,11 +33,8 @@ async def download_blob_as_base64(blob_container_client: ContainerClient, file_p
         return None
 
 
-async def fetch_image(blob_container_client: ContainerClient, result: Document) -> Optional[ImageURL]:
+async def fetch_image(blob_container_client: ContainerClient, result: Document) -> Optional[str]:
     if result.sourcepage:
         img = await download_blob_as_base64(blob_container_client, result.sourcepage)
-        if img:
-            return {"url": img, "detail": "auto"}
-        else:
-            return None
+        return img
     return None
