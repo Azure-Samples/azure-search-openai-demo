@@ -58,7 +58,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_token_provider = vision_token_provider
         self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
-        self.answer_prompt = self.prompt_manager.load_prompt("ask/answer_question_vision.prompty")
+        self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
 
     async def run(
         self,

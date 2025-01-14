@@ -55,9 +55,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat/query_rewrite.prompty")
-        self.query_rewrite_tools = self.prompt_manager.load_tools("chat/query_rewrite_tools.json")
-        self.answer_prompt = self.prompt_manager.load_prompt("chat/answer_question.prompty")
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
+        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
 
     @overload
     async def run_until_final_call(

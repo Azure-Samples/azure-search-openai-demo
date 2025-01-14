@@ -4,7 +4,14 @@ description: Suggest the optimal search query based on the user's query, example
 model:
     api: chat
     parameters:
-        tools: ${file:query_rewrite_tools.json}
+        tools: ${file:chat_query_rewrite_tools.json}
+sample:
+    user_query: Does it include hearing?
+    past_messages:
+        - role: user
+          content: "What is included in my Northwind Health Plus plan that is not in standard?"
+        - role: assistant
+          content: "The Northwind Health Plus plan includes coverage for emergency services, mental health and substance abuse coverage, and out-of-network services, which are not included in the Northwind Standard plan. [Benefit_Options.pdf#page=3]"
 ---
 system:
 Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.

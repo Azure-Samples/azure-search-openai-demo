@@ -50,7 +50,7 @@ class RetrieveThenReadApproach(Approach):
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
-        self.answer_prompt = self.prompt_manager.load_prompt("ask/answer_question.prompty")
+        self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
 
     async def run(
         self,
