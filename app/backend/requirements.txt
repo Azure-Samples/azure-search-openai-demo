@@ -342,7 +342,7 @@ portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
-prompty==0.1.44
+prompty==0.1.45
     # via -r requirements.in
 propcache==0.2.0
     # via yarl
