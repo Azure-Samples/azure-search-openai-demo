@@ -32,6 +32,7 @@ module = [
     "kiota.*",
     "azure.cognitiveservices.*",
     "azure.cognitiveservices.speech.*",
-    "pymupdf.*"
+    "pymupdf.*",
+    "prompty.*",
 ]
 ignore_missing_imports = true
