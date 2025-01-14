@@ -26,14 +26,18 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import ContainerClient
 from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
-from azure.storage.filedatalake.aio import FileSystemClient
-from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
+from azure.storage.filedatalake.aio import (
+    FileSystemClient,
+)
+from azure.storage.filedatalake.aio import (
+    StorageStreamDownloader as DatalakeDownloader,
+)
+from langfuse import Langfuse
+from langfuse.decorators import observe
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
-from opentelemetry.instrumentation.httpx import (
-    HTTPXClientInstrumentor,
-)
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from quart import (
     Blueprint,
@@ -93,6 +97,13 @@ from prepdocs import (
 )
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
+
+# Initialize Langfuse client
+langfuse = Langfuse(
+    secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+    public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+    host=os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
+)
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -169,13 +180,26 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
 
 @bp.route("/ask", methods=["POST"])
 @authenticated
+@observe()
 async def ask(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
+
     request_json = await request.get_json()
     context = request_json.get("context", {})
     context["auth_claims"] = auth_claims
+
     try:
+        # Create a trace for this ask request
+        trace = langfuse.trace(
+            metadata={"endpoint": "/ask", "method": "POST", "entra_oid": auth_claims.get("oid", "anonymous")}
+        )
+
+        # Create a generation
+        generation = trace.generation(
+            name="ask_response", metadata={"messages": request_json.get("messages", []), "context": context}
+        )
+
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
         if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
@@ -185,8 +209,14 @@ async def ask(auth_claims: Dict[str, Any]):
         r = await approach.run(
             request_json["messages"], context=context, session_state=request_json.get("session_state")
         )
+
+        # End the generation after getting response
+        generation.end(metadata={"model": approach.__class__.__name__, "use_gpt4v": use_gpt4v})
+
         return jsonify(r)
     except Exception as error:
+        if "generation" in locals():
+            generation.end(error=str(error))
         return error_response(error, "/ask")
 
 
@@ -208,6 +238,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 @bp.route("/chat", methods=["POST"])
 @authenticated
+@observe()
 async def chat(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
@@ -242,39 +273,80 @@ async def chat(auth_claims: Dict[str, Any]):
 
 @bp.route("/chat/stream", methods=["POST"])
 @authenticated
+@observe()
 async def chat_stream(auth_claims: Dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
+
     request_json = await request.get_json()
     context = request_json.get("context", {})
     context["auth_claims"] = auth_claims
-    try:
-        use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
-        approach: Approach
-        if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
-            approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
-        else:
-            approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
-        # If session state is provided, persists the session state,
-        # else creates a new session_id depending on the chat history options enabled.
-        session_state = request_json.get("session_state")
-        if session_state is None:
-            session_state = create_session_id(
-                current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
-                current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
-            )
-        result = await approach.run_stream(
-            request_json["messages"],
-            context=context,
-            session_state=session_state,
+    try:
+        # Create trace_id at the start
+        trace_id = create_session_id(True, True)
+
+        # Make trace_id available at all levels
+        context["trace_id"] = trace_id
+        if "overrides" not in context:
+            context["overrides"] = {}
+        context["overrides"]["trace_id"] = trace_id
+
+        current_app.logger.info(f"Generated trace_id: {trace_id}")
+
+        # Create a new trace with unique ID and generation at the start
+        trace = langfuse.trace(
+            id=trace_id,
+            metadata={"endpoint": "/chat/stream", "method": "POST", "entra_oid": auth_claims.get("oid", "anonymous")},
         )
-        response = await make_response(format_as_ndjson(result))
-        response.timeout = None  # type: ignore
-        response.mimetype = "application/json-lines"
-        return response
+
+        # Create generation early
+        generation = trace.generation(
+            name="chat_stream_response", metadata={"messages": request_json.get("messages", []), "context": context}
+        )
+
+        current_app.logger.info(f"Generated trace_id: {trace_id}")
+
+        try:
+            use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+            approach: Approach
+            if use_gpt4v and CONFIG_CHAT_VISION_APPROACH in current_app.config:
+                approach = cast(Approach, current_app.config[CONFIG_CHAT_VISION_APPROACH])
+            else:
+                approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
+
+            session_state = request_json.get("session_state")
+            if session_state is None:
+                session_state = create_session_id(
+                    current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
+                    current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
+                )
+
+            # Get result first
+            result = await approach.run_stream(
+                request_json["messages"],
+                context=context,
+                session_state=session_state,
+            )
+
+            # Create response after getting result
+            response = await make_response(format_as_ndjson(result))
+            response.timeout = None  # type: ignore
+            response.mimetype = "application/json-lines"
+
+            # End generation before returning response
+            generation.end(metadata={"model": approach.__class__.__name__, "use_gpt4v": use_gpt4v, "status": "success"})
+
+            return response
+
+        except Exception as inner_error:
+            current_app.logger.error(f"Error in chat processing: {inner_error}")
+            generation.end(error=str(inner_error), metadata={"status": "error"})
+            raise inner_error
+
     except Exception as error:
-        return error_response(error, "/chat")
+        current_app.logger.error(f"Error in chat_stream: {error}")
+        return error_response(error, "/chat/stream")
 
 
 # Send MSAL.js settings to the client UI
@@ -404,6 +476,47 @@ async def list_uploaded(auth_claims: dict[str, Any]):
         if error.status_code != 404:
             current_app.logger.exception("Error listing uploaded files", error)
     return jsonify(files), 200
+
+
+@bp.route("/feedback", methods=["POST"])
+@authenticated
+async def feedback(auth_claims: Dict[str, Any]):
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+
+    try:
+        request_json = await request.get_json()
+        trace_id = request_json.get("trace_id")
+        value = request_json.get("value")  # For thumbs history
+        score = request_json.get("score", value)  # For Langfuse, fallback to value if not provided
+        feedback_type = request_json.get("type", "thumbs")
+        comment = request_json.get("comment")
+
+        current_app.logger.info(f"Received feedback request: {request_json}")
+
+        if not trace_id or (value is None and score is None):
+            return jsonify({"error": "trace_id and value/score are required"}), 400
+
+        # Add LLM provider info to the feedback
+        llm_provider = os.getenv("OPENAI_HOST", "openai")
+        score = langfuse.score(
+            trace_id=trace_id,
+            name="user_feedback_thumbs",
+            value=score,  # Use score for Langfuse
+            comment=comment,
+            metadata={
+                "llm_provider": llm_provider,
+                "model": os.getenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4") if llm_provider == "azure" else "gpt-4",
+                "feedback_type": feedback_type,
+            },
+        )
+
+        current_app.logger.info(f"Successfully submitted feedback to Langfuse: {score}")
+        return jsonify({"message": "Feedback received successfully", "trace_id": trace_id, "value": value}), 200
+
+    except Exception as error:
+        current_app.logger.error(f"Error in feedback endpoint: {error}")
+        return jsonify({"error": str(error)}), 500
 
 
 @bp.before_app_serving

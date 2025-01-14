@@ -76,17 +76,42 @@ export class IndexedDBProvider implements IHistoryProvider {
 
     async addItem(id: string, answers: Answers): Promise<void> {
         const timestamp = new Date().getTime();
-        const db = await this.init(); // 自動的に初期化
+        const db = await this.init();
+        const tx = db.transaction(this.storeName, "readwrite");
+        const current = await tx.objectStore(this.storeName).get(id);
+
+        if (current) {
+            await tx.objectStore(this.storeName).put({
+                ...current,
+                id,
+                timestamp,
+                answers,
+                feedback: current.feedback // Preserve existing feedback
+            });
+        } else {
+            const title = answers[0][0].length > 50 ? answers[0][0].substring(0, 50) + "..." : answers[0][0];
+            await tx.objectStore(this.storeName).add({
+                id,
+                title,
+                timestamp,
+                answers,
+                feedback: undefined
+            });
+        }
+        await tx.done;
+    }
+
+    async updateFeedback(id: string, feedback: number): Promise<void> {
+        const db = await this.init();
         const tx = db.transaction(this.storeName, "readwrite");
         const current = await tx.objectStore(this.storeName).get(id);
         if (current) {
-            await tx.objectStore(this.storeName).put({ ...current, id, timestamp, answers });
-        } else {
-            const title = answers[0][0].length > 50 ? answers[0][0].substring(0, 50) + "..." : answers[0][0];
-            await tx.objectStore(this.storeName).add({ id, title, timestamp, answers });
+            await tx.objectStore(this.storeName).put({
+                ...current,
+                feedback
+            });
         }
         await tx.done;
-        return;
     }
 
     async getItem(id: string): Promise<Answers | null> {

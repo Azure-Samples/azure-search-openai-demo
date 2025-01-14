@@ -1,3 +1,5 @@
+import { FeedbackProviderOptions } from "../components/HistoryProviders/IProvider";
+
 export const enum RetrievalMode {
     Hybrid = "hybrid",
     Vectors = "vectors",
@@ -54,6 +56,7 @@ export type ResponseContext = {
     data_points: string[];
     followup_questions: string[] | null;
     thoughts: Thoughts[];
+    trace_id: string; // Make this required
 };
 
 export type ChatAppResponseOrError = {
@@ -67,7 +70,13 @@ export type ChatAppResponseOrError = {
 export type ChatAppResponse = {
     message: ResponseMessage;
     delta: ResponseMessage;
-    context: ResponseContext;
+    context: {
+        data_points: string[];
+        followup_questions: string[] | null;
+        thoughts: Thoughts[];
+        trace_id?: string;
+        feedback?: number;
+    };
     session_state: any;
 };
 
@@ -122,4 +131,21 @@ export type HistroyApiResponse = {
     title: string;
     answers: any;
     timestamp: number;
+};
+
+export interface AppConfig {
+    showUserFeedback: boolean;
+    feedbackProvider: FeedbackProviderOptions;
+}
+
+export interface FeedbackRequest {
+    trace_id: string;
+    value: number;
+    type: "thumbs";
+}
+
+export type FeedbackResponse = {
+    trace_id: string;
+    status: "success" | "error";
+    message?: string;
 };

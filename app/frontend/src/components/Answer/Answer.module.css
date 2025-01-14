@@ -119,6 +119,53 @@ sup {
     width: fit-content;
 }
 
+.feedbackMessage {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    padding: 0.625rem 1.25rem;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 0.25rem;
+    z-index: 1000;
+    animation: fadeInOut 3s ease;
+}
+
+.feedbackButtonClicked i {
+    color: #323130 !important; /* Darker color for solid icons */
+}
+
+.feedbackButton:hover i {
+    color: #201f1e !important; /* Darker on hover */
+}
+
+.errorMessage {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    padding: 0.625rem 1.25rem;
+    background-color: #f44336;
+    color: white;
+    border-radius: 0.25rem;
+    z-index: 1000;
+    animation: fadeInOut 3s ease;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 @keyframes loading {
     0% {
         content: "";

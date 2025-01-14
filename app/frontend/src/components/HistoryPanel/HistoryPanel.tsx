@@ -1,28 +1,25 @@
 import { useMsal } from "@azure/msal-react";
 import { getToken, useLogin } from "../../authConfig";
 import { Panel, PanelType, Spinner } from "@fluentui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { HistoryData, HistoryItem } from "../HistoryItem";
 import { Answers, HistoryProviderOptions } from "../HistoryProviders/IProvider";
 import { useHistoryManager, HistoryMetaData } from "../HistoryProviders";
 import { useTranslation } from "react-i18next";
 import styles from "./HistoryPanel.module.css";
+import { type ChatAppResponse } from "../../api";
 
 const HISTORY_COUNT_PER_LOAD = 20;
 
-export const HistoryPanel = ({
-    provider,
-    isOpen,
-    notify,
-    onClose,
-    onChatSelected
-}: {
+type HistoryPanelProps = {
     provider: HistoryProviderOptions;
     isOpen: boolean;
     notify: boolean;
     onClose: () => void;
-    onChatSelected: (answers: Answers) => void;
-}) => {
+    onChatSelected: (answers: [string, ChatAppResponse][]) => void;
+};
+
+export const HistoryPanel = ({ provider, isOpen, notify, onClose, onChatSelected }: HistoryPanelProps) => {
     const historyManager = useHistoryManager(provider);
     const [history, setHistory] = useState<HistoryMetaData[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,13 +47,20 @@ export const HistoryPanel = ({
         setIsLoading(() => false);
     };
 
-    const handleSelect = async (id: string) => {
-        const token = client ? await getToken(client) : undefined;
-        const item = await historyManager.getItem(id, token);
-        if (item) {
-            onChatSelected(item);
-        }
-    };
+    const handleSelect = useCallback(
+        async (id: string) => {
+            try {
+                const item = await historyManager.getItem(id);
+                if (item) {
+                    onChatSelected(item);
+                    onClose();
+                }
+            } catch (error) {
+                console.error("Error loading chat history:", error);
+            }
+        },
+        [historyManager, onChatSelected, onClose]
+    );
 
     const handleDelete = async (id: string) => {
         const token = client ? await getToken(client) : undefined;
