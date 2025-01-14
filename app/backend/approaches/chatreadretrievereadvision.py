@@ -97,7 +97,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         # Use prompty to prepare the query prompt
         rendered_query_prompt = self.prompt_manager.render_prompt(
-            self.query_rewrite_prompt, {"user_query": original_user_query}
+            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
