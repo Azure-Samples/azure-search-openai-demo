@@ -38,7 +38,7 @@ var encryption = (storageInfrastructureEncryption == 'Enabled') ? {
   requireInfrastructureEncryption: false
 }
 
-resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: name
   location: location
   tags: tags
