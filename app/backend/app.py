@@ -645,7 +645,8 @@ async def setup_clients():
 
     prompt_manager = PromptyManager()
 
-    # Used by the /ask tab
+    # Set up the two default RAG approaches for /ask and /chat
+    # RetrieveThenReadApproach is used by /ask for single-turn Q&A
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client=search_client,
         openai_client=openai_client,
@@ -662,7 +663,7 @@ async def setup_clients():
         prompt_manager=prompt_manager,
     )
 
-    # Used by the /chat tab
+    # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         openai_client=openai_client,
