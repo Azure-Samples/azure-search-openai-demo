@@ -16,15 +16,6 @@ class ChatApproach(Approach, ABC):
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
-    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
-        # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
-        if override_prompt is None:
-            return {}
-        elif override_prompt.startswith(">>>"):
-            return {"injected_prompt": override_prompt[3:]}
-        else:
-            return {"override_prompt": override_prompt}
-
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
 

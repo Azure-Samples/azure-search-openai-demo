@@ -4,6 +4,7 @@ description: Answer a question (with chat history) using both text and image sou
 model:
     api: chat
 ---
+system:
 {% if override_prompt %}
 {{ override_prompt }}
 {% else %}
