@@ -94,7 +94,9 @@ class RetrieveThenReadApproach(Approach):
         # Process results
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
         rendered_answer_prompt = self.prompt_manager.render_prompt(
-            self.answer_prompt, {"user_query": q, "text_sources": text_sources}
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {"user_query": q, "text_sources": text_sources},
         )
 
         chat_completion = await self.openai_client.chat.completions.create(

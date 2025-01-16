@@ -274,6 +274,15 @@ class Approach(ABC):
                 image_query_vector = json["vector"]
         return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding")
 
+    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
+        # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
+        if override_prompt is None:
+            return {}
+        elif override_prompt.startswith(">>>"):
+            return {"injected_prompt": override_prompt[3:]}
+        else:
+            return {"override_prompt": override_prompt}
+
     async def run(
         self,
         messages: list[ChatCompletionMessageParam],

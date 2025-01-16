@@ -122,7 +122,9 @@ class RetrieveThenReadVisionApproach(Approach):
                     image_sources.append(url)
 
         rendered_answer_prompt = self.prompt_manager.render_prompt(
-            self.answer_prompt, {"user_query": q, "text_sources": text_sources, "image_sources": image_sources}
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {"user_query": q, "text_sources": text_sources, "image_sources": image_sources},
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
