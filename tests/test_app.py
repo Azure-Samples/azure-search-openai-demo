@@ -564,6 +564,24 @@ async def test_chat_prompt_template(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    assert result["context"]["thoughts"][3]["description"][0]["content"].startswith("You are a cat.")
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_prompt_template(client, snapshot):
+    response = await client.post(
+        "/ask",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text", "prompt_template": "You are a cat."},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][2]["description"][0]["content"].startswith("You are a cat.")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -582,6 +600,24 @@ async def test_chat_prompt_template_concat(client, snapshot):
     result = await response.get_json()
     assert result["context"]["thoughts"][3]["description"][0]["content"].startswith("Assistant helps")
     assert result["context"]["thoughts"][3]["description"][0]["content"].endswith("Meow like a cat.")
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_prompt_template_concat(client, snapshot):
+    response = await client.post(
+        "/ask",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text", "prompt_template": ">>> Meow like a cat."},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][2]["description"][0]["content"].startswith("You are an intelligent assistant")
+    assert result["context"]["thoughts"][2]["description"][0]["content"].endswith("Meow like a cat.")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
