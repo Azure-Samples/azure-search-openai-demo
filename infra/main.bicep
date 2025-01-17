@@ -52,6 +52,7 @@ param azureOpenAiCustomUrl string = ''
 param azureOpenAiApiVersion string = ''
 @secure()
 param azureOpenAiApiKey string = ''
+param azureOpenAiDisableKeys bool = true
 param openAiServiceName string = ''
 param openAiResourceGroupName string = ''
 
@@ -598,7 +599,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzure
     }
     sku: openAiSkuName
     deployments: openAiDeployments
-    disableLocalAuth: true
+    disableLocalAuth: azureOpenAiDisableKeys
   }
 }
 
