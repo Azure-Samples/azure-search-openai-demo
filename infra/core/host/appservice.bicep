@@ -50,11 +50,6 @@ param publicNetworkAccess string = 'Enabled'
 param enableUnauthenticatedAccess bool = false
 param disableAppServicesAuthentication bool = false
 
-var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
-var loginEndpoint = environment().authentication.loginEndpoint
-var loginEndpointFixed = lastIndexOf(loginEndpoint, '/') == length(loginEndpoint) - 1 ? substring(loginEndpoint, 0, length(loginEndpoint) - 1) : loginEndpoint
-var allMsftAllowedOrigins = !(empty(clientAppId)) ? union(msftAllowedOrigins, [ loginEndpointFixed ]) : msftAllowedOrigins
-
 // .default must be the 1st scope for On-Behalf-Of-Flow combined consent to work properly
 // Please see https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#default-and-combined-consent
 var requiredScopes = [ 'api://${serverAppId}/.default', 'openid', 'profile', 'email', 'offline_access' ]
@@ -72,7 +67,7 @@ var coreConfig = {
   functionAppScaleLimit: functionAppScaleLimit != -1 ? functionAppScaleLimit : null
   healthCheckPath: healthCheckPath
   cors: {
-    allowedOrigins: union(allMsftAllowedOrigins, allowedOrigins)
+    allowedOrigins: allowedOrigins
   }
 }
 

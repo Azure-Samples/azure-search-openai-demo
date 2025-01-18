@@ -123,13 +123,14 @@ The following instructions explain how to setup the two apps using the Azure Por
   - In the **Name** section, enter a meaningful application name. This name will be displayed to users of the app, for example `Azure Search OpenAI Chat Web App`.
   - Under **Supported account types**, select **Accounts in this organizational directory only**.
   - Under `Redirect URI (optional)` section, select `Single-page application (SPA)` in the combo-box and enter the following redirect URI:
-    - If you are running the sample locally, use `http://localhost:50505/redirect`.
-    - If you are running the sample on Azure, use the endpoint provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/redirect`.
-    - If you are running the sample from Github Codespaces, use the Codespaces endpoint: `https://<your-codespace>-50505.app.github.dev/`
+    - If you are running the sample locally, add the endpoints `http://localhost:50505/redirect` and `http://localhost:5173/redirect`
+    - If you are running the sample on Azure, add the endpoints provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/redirect`.
+    - If you are running the sample from Github Codespaces, add the Codespaces endpoint: `https://<your-codespace>-50505.app.github.dev/redirect`
 - Select **Register** to create the application
 - In the app's registration screen, find the **Application (client) ID**.
   - Run the following `azd` command to save this ID: `azd env set AZURE_CLIENT_APP_ID <Application (client) ID>`.
 - In the left hand menu, select **Authentication**.
+  - Under Web, add a redirect URI with the endpoint provided by `azd up`: `https://<your-endpoint>.azurewebsites.net/.auth/login/aad/callback`.
   - Under **Implicit grant and hybrid flows**, select **ID Tokens (used for implicit and hybrid flows)**
   - Select **Save**
 - In the left hand menu, select **API permissions**. You will add permission to access the **access_as_user** API on the server app. This permission is required for the [On Behalf Of Flow](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#protocol-diagram) to work.
@@ -137,6 +138,11 @@ The following instructions explain how to setup the two apps using the Azure Por
   - In the list of applications, select your server application **Azure Search OpenAI Chat API**
   - Ensure **Delegated permissions** is selected.
   - In the **Select permissions** section, select the **access_as_user** permission
+  - Select **Add permissions**.
+- Stay in the **API permissions** section and select **Add a permission**.
+  - Select **Microsoft Graph**.
+  - Select **Delegated permissions**.
+  - Search for and select `User.Read`.
   - Select **Add permissions**.
 
 #### Configure Server App Known Client Applications

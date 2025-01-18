@@ -22,9 +22,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    groups:
-      python-requirements:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: azure-search-documents

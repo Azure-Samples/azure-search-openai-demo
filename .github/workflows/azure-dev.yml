@@ -13,7 +13,7 @@ on:
 # To configure required secrets for connecting to Azure, simply run `azd pipeline config`
 
 # Set up permissions for deploying with secretless Azure federated credentials
-# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+# https://learn.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
   id-token: write
   contents: read
@@ -68,6 +68,7 @@ jobs:
       AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY }}
       AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION }}
       AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU }}
+      AZURE_OPENAI_DISABLE_KEYS: ${{ vars.AZURE_OPENAI_DISABLE_KEYS }}
       OPENAI_HOST: ${{ vars.OPENAI_HOST }}
       OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
       OPENAI_ORGANIZATION: ${{ vars.OPENAI_ORGANIZATION }}
@@ -103,12 +104,13 @@ jobs:
       DEPLOYMENT_TARGET: ${{ vars.DEPLOYMENT_TARGET }}
       AZURE_CONTAINER_APPS_WORKLOAD_PROFILE: ${{ vars.AZURE_CONTAINER_APPS_WORKLOAD_PROFILE }}
       USE_CHAT_HISTORY_BROWSER: ${{ vars.USE_CHAT_HISTORY_BROWSER }}
+      USE_MEDIA_DESCRIBER_AZURE_CU: ${{ vars.USE_MEDIA_DESCRIBER_AZURE_CU }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install azd
-        uses: Azure/setup-azd@v1.0.0
+        uses: Azure/setup-azd@v2.0.0
 
       - name: Install Nodejs
         uses: actions/setup-node@v4

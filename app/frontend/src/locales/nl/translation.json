@@ -61,7 +61,9 @@
         "showSupportingContent": "Ondersteunende inhoud tonen",
         "speakAnswer": "Antwoord uitspreken",
         "info": "Info",
-        "save": "Opslaan"
+        "save": "Opslaan",
+        "copy": "Kopieer",
+        "copied": "Gekopieerd!"
     },
 
     "headerTexts": {

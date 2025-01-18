@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Coroutine, Optional, Union
+from typing import Any, Awaitable, Callable, Coroutine, List, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -6,14 +6,14 @@ from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
-    ChatCompletionContentPartImageParam,
-    ChatCompletionContentPartParam,
     ChatCompletionMessageParam,
+    ChatCompletionToolParam,
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 
@@ -44,7 +44,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]]
+        vision_token_provider: Callable[[], Awaitable[str]],
+        prompt_manager: PromptManager,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -64,22 +65,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.chatgpt_token_limit = get_token_limit(gpt4v_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
-
-    @property
-    def system_message_chat_conversation(self):
-        return """
-        You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd., The documents contain text, graphs, tables and images.
-        Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
-        Each text source starts in a new line and has the file name followed by colon and the actual information
-        Always include the source name from the image or text for each fact you use in the response in the format: [filename]
-        Answer the following question using only the data provided in the sources below.
-        If asking a clarifying question to the user would help, ask the question.
-        Be brief in your answers.
-        The text and image source can be the same file name, don't use the image title when citing the image source, only use the file name as mentioned
-        If you cannot answer using the sources below, say you don't know. Return just the answer without any input texts.
-        {follow_up_questions_prompt}
-        {injected_prompt}
-        """
+        self.prompt_manager = prompt_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
+        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question_vision.prompty")
 
     async def run_until_final_call(
         self,
@@ -105,29 +94,34 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
-        past_messages: list[ChatCompletionMessageParam] = messages[:-1]
+
+        # Use prompty to prepare the query prompt
+        rendered_query_prompt = self.prompt_manager.render_prompt(
+            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+        )
+        tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        user_query_request = "Generate search query for: " + original_user_query
-
         query_response_token_limit = 100
         query_model = self.chatgpt_model
         query_deployment = self.chatgpt_deployment
         query_messages = build_messages(
             model=query_model,
-            system_prompt=self.query_prompt_template,
-            few_shots=self.query_prompt_few_shots,
-            past_messages=past_messages,
-            new_user_content=user_query_request,
+            system_prompt=rendered_query_prompt.system_content,
+            few_shots=rendered_query_prompt.few_shot_messages,
+            past_messages=rendered_query_prompt.past_messages,
+            new_user_content=rendered_query_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            model=query_deployment if query_deployment else query_model,
             messages=query_messages,
+            # Azure OpenAI takes the deployment name as the model name
+            model=query_deployment if query_deployment else query_model,
             temperature=0.0,  # Minimize creativity for search query generation
             max_tokens=query_response_token_limit,
             n=1,
+            tools=tools,
             seed=seed,
         )
 
@@ -158,46 +152,45 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             minimum_search_score,
             minimum_reranker_score,
         )
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
-        content = "\n".join(sources_content)
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-
-        # Allow client to replace the entire prompt, or to inject into the existing prompt using >>>
-        system_message = self.get_system_prompt(
-            overrides.get("prompt_template"),
-            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
-        )
-
-        user_content: list[ChatCompletionContentPartParam] = [{"text": original_user_query, "type": "text"}]
-        image_list: list[ChatCompletionContentPartImageParam] = []
-
+        text_sources = []
+        image_sources = []
         if send_text_to_gptvision:
-            user_content.append({"text": "\n\nSources:\n" + content, "type": "text"})
+            text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
         if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
                 if url:
-                    image_list.append({"image_url": url, "type": "image_url"})
-            user_content.extend(image_list)
+                    image_sources.append(url)
+
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": text_sources,
+                "image_sources": image_sources,
+            },
+        )
 
         response_token_limit = 1024
         messages = build_messages(
             model=self.gpt4v_model,
-            system_prompt=system_message,
-            past_messages=messages[:-1],
-            new_user_content=user_content,
+            system_prompt=rendered_answer_prompt.system_content,
+            past_messages=rendered_answer_prompt.past_messages,
+            new_user_content=rendered_answer_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
-        data_points = {
-            "text": sources_content,
-            "images": [d["image_url"] for d in image_list],
-        }
-
         extra_info = {
-            "data_points": data_points,
+            "data_points": {
+                "text": text_sources,
+                "images": image_sources,
+            },
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",

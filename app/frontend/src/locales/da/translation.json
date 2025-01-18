@@ -59,7 +59,9 @@
         "showSupportingContent": "Vis understøttende indhold",
         "speakAnswer": "Afspil svar",
         "info": "Info",
-        "save": "Gem"
+        "save": "Gem",
+        "copy": "Kopier",
+        "copied": "Kopieret!"
     },
     "headerTexts": {
         "thoughtProcess": "Tankeproces",

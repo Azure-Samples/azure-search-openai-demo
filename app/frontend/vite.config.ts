@@ -4,6 +4,9 @@ import react from "@vitejs/plugin-react";
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [react()],
+    resolve: {
+        preserveSymlinks: true
+    },
     build: {
         outDir: "../backend/static",
         emptyOutDir: true,
@@ -34,7 +37,8 @@ export default defineConfig({
             "/config": "http://localhost:50505",
             "/upload": "http://localhost:50505",
             "/delete_uploaded": "http://localhost:50505",
-            "/list_uploaded": "http://localhost:50505"
+            "/list_uploaded": "http://localhost:50505",
+            "/chat_history": "http://localhost:50505"
         }
     }
 });

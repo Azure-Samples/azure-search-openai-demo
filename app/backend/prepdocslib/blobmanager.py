@@ -5,7 +5,7 @@ import os
 import re
 from typing import List, Optional, Union
 
-import fitz  # type: ignore
+import pymupdf
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
     BlobSasPermissions,
@@ -77,7 +77,7 @@ class BlobManager:
         with open(file.content.name, "rb") as reopened_file:
             reader = PdfReader(reopened_file)
             page_count = len(reader.pages)
-        doc = fitz.open(file.content.name)
+        doc = pymupdf.open(file.content.name)
         sas_uris = []
         start_time = datetime.datetime.now(datetime.timezone.utc)
         expiry_time = start_time + datetime.timedelta(days=1)
@@ -95,7 +95,7 @@ class BlobManager:
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
             logger.info("Converting page %s to image and uploading -> %s", i, blob_name)
 
-            doc = fitz.open(file.content.name)
+            doc = pymupdf.open(file.content.name)
             page = doc.load_page(i)
             pix = page.get_pixmap()
             original_img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)  # type: ignore
@@ -171,7 +171,7 @@ class BlobManager:
 
     @classmethod
     def blob_image_name_from_file_page(cls, filename, page=0) -> str:
-        return os.path.splitext(os.path.basename(filename))[0] + f"-{page}" + ".png"
+        return os.path.splitext(os.path.basename(filename))[0] + f"-{page+1}" + ".png"
 
     @classmethod
     def blob_name_from_file_name(cls, filename) -> str:

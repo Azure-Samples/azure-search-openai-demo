@@ -35,6 +35,12 @@
     "computerVisionSkuName": {
       "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
     },
+    "contentUnderstandingServiceName": {
+      "value": "${AZURE_CONTENT_UNDERSTANDING_SERVICE}"
+    },
+    "contentUnderstandingResourceGroupName": {
+      "value": "${AZURE_CONTENT_UNDERSTANDING_RESOURCE_GROUP}"
+    },
     "documentIntelligenceServiceName": {
       "value": "${AZURE_DOCUMENTINTELLIGENCE_SERVICE}"
     },
@@ -149,6 +155,9 @@
     "azureOpenAiApiKey":{
       "value": "${AZURE_OPENAI_API_KEY_OVERRIDE}"
     },
+    "azureOpenAiDisableKeys": {
+      "value": "${AZURE_OPENAI_DISABLE_KEYS=true}"
+    },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
     },
@@ -185,9 +194,6 @@
     "useSpeechOutputAzure": {
       "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
     },
-    "useChatHistoryBrowser": {
-      "value": "${USE_CHAT_HISTORY_BROWSER=false}"
-    },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
     },
@@ -199,6 +205,27 @@
     },
     "speechServiceLocation": {
       "value": "${AZURE_SPEECH_SERVICE_LOCATION}"
+    },
+    "useChatHistoryBrowser": {
+      "value": "${USE_CHAT_HISTORY_BROWSER=false}"
+    },
+    "useChatHistoryCosmos": {
+      "value": "${USE_CHAT_HISTORY_COSMOS=false}"
+    },
+    "cosmosDbSkuName": {
+      "value": "${AZURE_COSMOSDB_SKU=serverless}"
+    },
+    "cosmodDbResourceGroupName": {
+      "value": "${AZURE_COSMOSDB_RESOURCE_GROUP}"
+    },
+    "cosmosDbLocation": {
+      "value": "${AZURE_COSMOSDB_LOCATION}"
+    },
+    "cosmosDbAccountName": {
+      "value": "${AZURE_COSMOSDB_ACCOUNT}"
+    },
+    "cosmosDbThroughput": {
+      "value": "${AZURE_COSMOSDB_THROUGHPUT}"
     },
     "speechServiceVoice": {
       "value": "${AZURE_SPEECH_SERVICE_VOICE}"
@@ -271,6 +298,9 @@
     },
     "azureContainerAppsWorkloadProfile": {
       "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
+    },
+    "useMediaDescriberAzureCU": {
+      "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
     }
   }
 }
