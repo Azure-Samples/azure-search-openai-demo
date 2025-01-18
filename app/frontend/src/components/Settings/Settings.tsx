@@ -141,8 +141,10 @@ export const Settings = ({
                 id={seedFieldId}
                 className={styles.settingsSeparator}
                 label={t("labels.seed")}
-                type="text"
-                defaultValue={seed?.toString() || ""}
+                type="number"
+                min={0}                
+                step={1}
+                defaultValue={seed?.toString()}
                 onChange={(_ev, val) => onChange("seed", val ? parseInt(val) : null)}
                 aria-labelledby={seedId}
                 onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
