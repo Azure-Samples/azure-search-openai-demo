@@ -12,7 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.26.1",
+    "@azure/msal-browser": "^3.28.1",
     "@azure/msal-react": "^2.2.0",
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.56.2",
