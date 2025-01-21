@@ -25,6 +25,7 @@ You should set these values before running `azd up`. Once you've set them, retur
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
+1. Run `azd env set AZURE_OPENAI_LOCATION {Location of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing chat deployment}`. Only needed if your chat deployment is not the default 'chat'.
 1. Run `azd env set AZURE_OPENAI_CHATGPT_MODEL {Model name of existing chat deployment}`. Only needed if your chat model is not the default 'gpt-35-turbo'.
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION {Version string for existing chat deployment}`. Only needed if your chat deployment model version is not the default '0613'. You definitely need to change this if you changed the model.
