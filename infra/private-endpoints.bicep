@@ -81,7 +81,8 @@ module monitorDnsZones './core/networking/private-dns-zones.bicep' = [for monito
   }
 }]
 // Get blob DNS zone index for monitor private link
-var dnsZoneBlobIndex = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')[0].dnsZoneIndex
+var blobEndpointInfo = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')
+var dnsZoneBlobIndex = empty(blobEndpointInfo) ? 0 : blobEndpointInfo[0].dnsZoneIndex
 
 // Azure Monitor Private Link Scope
 // https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security
@@ -150,9 +151,9 @@ module monitorPrivateEndpoint './core/networking/private-endpoint.bicep' = {
         }
       }
       {
-        name: dnsZones[dnsZoneBlobIndex].name
+        name: 'blob-dnszone' // dnsZones[dnsZoneBlobIndex].name
         properties: {
-          privateDnsZoneId: dnsZones[dnsZoneBlobIndex].outputs.id
+          privateDnsZoneId: '/subscriptions/77d8a3d0-8b18-47e9-b773-08bee327bb4a/resourceGroups/rg-pf-ragprivate/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net' // dnsZones[dnsZoneBlobIndex].outputs.id
         }
       }
     ]
