@@ -281,6 +281,12 @@
     "useBingSearch": {
       "value": "${USE_BING_SEARCH}"
     },
+    "bingSearchApiKey": {
+      "value": "${BING_SEARCH_API_KEY}"
+    },
+    "bingSearchEndpoint": {
+      "value": "${BING_SEARCH_ENDPOINT}"
+    },
     "useLocalPdfParser": {
       "value": "${USE_LOCAL_PDF_PARSER}"
     },

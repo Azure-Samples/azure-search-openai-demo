@@ -54,6 +54,7 @@ from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionAppr
 from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
+from bing_client import AsyncBingClient
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_ASK_APPROACH,
@@ -82,6 +83,7 @@ from config import (
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
     CONFIG_BING_SEARCH_ENABLED,
+    CONFIG_BING_SEARCH_CLIENT,
 )
 from core.authentication import AuthenticationHelper
 from core.sessionhelper import create_session_id
@@ -469,6 +471,8 @@ async def setup_clients():
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     USE_BING_SEARCH = os.getenv("USE_BING_SEARCH", "").lower() == "true"
+    BING_SEARCH_API_KEY = os.getenv("BING_SEARCH_API_KEY")
+    BING_SEARCH_ENDPOINT = os.getenv("BING_SEARCH_ENDPOINT")
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
@@ -590,6 +594,18 @@ async def setup_clients():
         current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_SERVICE_VOICE
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
+
+    if USE_BING_SEARCH:
+        current_app.logger.info("USE_BING_SEARCH is true, setting up Bing search client")
+        if not BING_SEARCH_API_KEY:
+            raise ValueError("BING_SEARCH_API_KEY must be set when USE_BING_SEARCH is true")
+        if not BING_SEARCH_ENDPOINT:
+            raise ValueError("BING_SEARCH_ENDPOINT must be set when USE_BING_SEARCH is true")
+        bing_search_client = AsyncBingClient(BING_SEARCH_API_KEY, BING_SEARCH_ENDPOINT)
+        current_app.config[CONFIG_BING_SEARCH_CLIENT] = bing_search_client
+    else:
+        current_app.logger.info("USE_BING_SEARCH is false, Bing search client not set up")
+        bing_search_client = None
 
     if OPENAI_HOST.startswith("azure"):
         if OPENAI_HOST == "azure_custom":
