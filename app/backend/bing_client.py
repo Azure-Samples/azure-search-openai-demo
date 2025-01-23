@@ -1,10 +1,10 @@
 """
-An async client for Bing Web Search API
+An async client for Bing Web Search API.
 """
 
 import httpx
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, Optional
 
 
 class WebPage(BaseModel):
