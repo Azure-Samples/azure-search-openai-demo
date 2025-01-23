@@ -24,6 +24,7 @@ export interface SettingsProps {
     retrievalMode: RetrievalMode;
     useGPT4V: boolean;
     gpt4vInput: GPT4VInput;
+    useBingSearch: boolean;
     vectorFieldList: VectorFieldOptions[];
     showSemanticRankerOption: boolean;
     showGPT4VOptions: boolean;
@@ -40,6 +41,7 @@ export interface SettingsProps {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     showSuggestFollowupQuestions?: boolean;
+    showBingSearchOption: boolean;
 }
 
 export const Settings = ({
