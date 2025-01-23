@@ -14,7 +14,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import Document, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
-from bing_client import AsyncBingClient
+from bing_client import AsyncBingClient, WebPage
 from core.authentication import AuthenticationHelper
 
 
@@ -167,9 +167,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-
+        web_sources: list[WebPage] = []
         if use_bing_search and bing_results.totalEstimatedMatches > 0:
-            web_sources = [hit.snippet for hit in bing_results.value[:2]]
+            web_sources = bing_results.value[:2]
+            web_sources_text = self.get_links(web_sources)
 
             rendered_answer_prompt = self.prompt_manager.render_prompt(
                 self.bing_answer_prompt,
@@ -179,7 +180,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "past_messages": messages[:-1],
                     "user_query": original_user_query,
                     "text_sources": text_sources,
-                    "web_search_snippets": web_sources,
+                    "web_search_snippets": web_sources_text,
                 },
             )
         else:
@@ -205,7 +206,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         extra_info = {
-            "data_points": {"text": text_sources},
+            "data_points": {"text": text_sources, "web_search": [hit.model_dump() for hit in web_sources]},
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",

@@ -26,6 +26,7 @@ from openai.types.chat import ChatCompletionMessageParam
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from bing_client import WebPage
 
 
 @dataclass
@@ -235,6 +236,9 @@ class Approach(ABC):
                 return f"{path[:page_idx]}.pdf#page={page_number}"
 
             return sourcepage
+
+    def get_links(self, webpages: list[WebPage]) -> list[str]:
+        return [f"{page.id}: {page.snippet}" for page in webpages]
 
     async def compute_text_embedding(self, q: str):
         SUPPORTED_DIMENSIONS_MODEL = {
