@@ -14,8 +14,8 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import Document, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from bing_client import AsyncBingClient
+from core.authentication import AuthenticationHelper
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):

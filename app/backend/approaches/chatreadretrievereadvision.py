@@ -14,9 +14,9 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
+from bing_client import AsyncBingClient
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
-from bing_client import AsyncBingClient
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
@@ -85,7 +85,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
-        use_bing_search = True if overrides.get("use_bing_search") else False
+        # use_bing_search = True if overrides.get("use_bing_search") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
