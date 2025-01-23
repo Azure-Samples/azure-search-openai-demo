@@ -143,7 +143,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 {"user_query": original_user_query, "past_messages": messages[:-1]},
             )
             _, bing_query_text = await keyword_rewrite(bing_search_prompt, self.bing_ground_rewrite_tools)
-            bing_results = await self.bing_client.search(bing_query_text)
+            bing_results = await self.bing_client.search(bing_query_text, lang=self.query_language)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
