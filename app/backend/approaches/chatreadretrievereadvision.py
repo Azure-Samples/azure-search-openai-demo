@@ -16,6 +16,7 @@ from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
+from bing_client import AsyncBingClient
 
 
 class ChatReadRetrieveReadVisionApproach(ChatApproach):
@@ -46,10 +47,12 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        bing_client: Optional[AsyncBingClient] = None,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
+        self.bing_client = bing_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
@@ -152,7 +155,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             use_semantic_captions,
             minimum_search_score,
             minimum_reranker_score,
-            use_bing_search,
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history

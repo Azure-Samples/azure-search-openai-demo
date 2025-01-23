@@ -340,7 +340,7 @@ The local parsers will be used the next time you run the data ingestion script. 
 
 ## Using Bing Search Grounding
 
-To enable Bing Search, first provision a Bing.Search API endpoint in the [Azure Portal](https://portal.azure.com/#create/Microsoft.BingSearch).
+To enable Bing Search, first provision a Bing.Search API endpoint in the [Azure Portal](https://portal.azure.com/#create/Microsoft.BingSearch). You will need access to the Web Search API. The [F1 (free), S1, or S2 SKUS will be suitable](https://www.microsoft.com/bing/apis/pricing).
 
 Then enable the feature:
 

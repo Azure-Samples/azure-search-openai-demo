@@ -3,36 +3,36 @@ An async client for Bing Web Search API.
 """
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Any, Optional
 
 
 class WebPage(BaseModel):
-    about: Any
-    dateLastCrawled: str
-    datePublished: str
-    datePublishedDisplayText: str
-    contractualRules: Any
-    deepLinks: Any
-    displayUrl: str
     id: str
-    isFamilyFriendly: bool
-    isNavigational: bool
-    language: str
-    malware: Any
     name: str
-    mentions: Any
-    searchTags: Any
-    snippet: str
     url: str
+    displayUrl: str
+    dateLastCrawled: str
+    language: str
+    snippet: Optional[str] = None
+    isFamilyFriendly: Optional[bool] = True
+    siteName: Optional[str] = None
+
+    # There are more fields in the response, but we only care about these for now.
+    model_config = ConfigDict(
+        extra='allow',
+    )
 
 
 class WebAnswer(BaseModel):
-    id: str
-    someResultsRemoved: bool
     totalEstimatedMatches: int
     value: list[WebPage]
     webSearchUrl: str
+
+    # There are more fields in the response, but we only care about these for now.
+    model_config = ConfigDict(
+        extra='allow',
+    )
 
 
 class AsyncBingClient:

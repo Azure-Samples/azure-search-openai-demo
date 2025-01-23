@@ -601,8 +601,10 @@ async def setup_clients():
         current_app.logger.info("USE_BING_SEARCH is true, setting up Bing search client")
         if not BING_SEARCH_API_KEY:
             raise ValueError("BING_SEARCH_API_KEY must be set when USE_BING_SEARCH is true")
-        
-        bing_search_client = AsyncBingClient(BING_SEARCH_API_KEY, BING_SEARCH_ENDPOINT)
+        if BING_SEARCH_ENDPOINT:
+            bing_search_client = AsyncBingClient(BING_SEARCH_API_KEY, BING_SEARCH_ENDPOINT)
+        else:
+            bing_search_client = AsyncBingClient(BING_SEARCH_API_KEY)
         current_app.config[CONFIG_BING_SEARCH_CLIENT] = bing_search_client
     else:
         current_app.logger.info("USE_BING_SEARCH is false, Bing search client not set up")
@@ -699,6 +701,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
+        bing_client=bing_search_client,
     )
 
     if USE_GPT4V:
@@ -745,6 +748,7 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
+            bing_client=bing_search_client,
         )
 
 

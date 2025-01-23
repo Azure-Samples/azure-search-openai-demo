@@ -1,0 +1,51 @@
+---
+name: Rewrite RAG query for web search
+description: Suggest the optimal search query based on the user's query, examples, and chat history.
+model:
+    api: chat
+    parameters:
+        tools: ${file:chat_query_rewrite_tools.json}
+sample:
+    user_query: Does it include hearing?
+    past_messages:
+        - role: user
+          content: "What is included in my Northwind Health Plus plan that is not in standard?"
+        - role: assistant
+          content: "The Northwind Health Plus plan includes coverage for emergency services, mental health and substance abuse coverage, and out-of-network services, which are not included in the Northwind Standard plan. [Benefit_Options.pdf#page=3]"
+---
+system:
+Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base and/or a web search.
+If the user question requires grounding from an Internet search, generate a Bing search query based on the conversation and the new question.
+If you cannot generate a search query, return just the number 0.
+
+user:
+(EXAMPLE) Who won the 2020 NBA championship?
+
+assistant:
+2020 NBA championship winner
+
+user:
+(EXAMPLE) What are my health plans?
+
+assistant:
+0
+
+user:
+(EXAMPLE) What is the corporate pay scheme?
+
+assistant:
+0
+
+user:
+(EXAMPLE) What is the address of Microsoft headquarters?
+
+assistant:
+Microsoft headquarters address
+
+{% for message in past_messages %}
+{{ message["role"] }}:
+{{ message["content"] }}
+{% endfor %}
+
+user:
+Generate Bing search query for: {{ user_query }}

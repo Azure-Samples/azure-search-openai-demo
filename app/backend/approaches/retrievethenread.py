@@ -90,7 +90,6 @@ class RetrieveThenReadApproach(Approach):
             use_semantic_captions,
             minimum_search_score,
             minimum_reranker_score,
-            use_bing_search,
         )
 
         # Process results
