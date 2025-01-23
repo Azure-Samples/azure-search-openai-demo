@@ -118,7 +118,8 @@
         },
         "useOidSecurityFilter": "Use oid security filter",
         "useGroupsSecurityFilter": "Use groups security filter",
-        "shouldStream": "Stream chat completion responses"
+        "shouldStream": "Stream chat completion responses",
+        "useBingSearch": "Use Bing search"
     },
 
     "helpTexts": {
@@ -151,6 +152,7 @@
             "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
-        "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups."
+        "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
+        "useBingSearch": "Use Bing search to ground search results."
     }
 }

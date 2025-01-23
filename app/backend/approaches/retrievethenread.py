@@ -68,6 +68,7 @@ class RetrieveThenReadApproach(Approach):
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
+        use_bing_search = True if overrides.get("use_bing_search") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
@@ -89,6 +90,7 @@ class RetrieveThenReadApproach(Approach):
             use_semantic_captions,
             minimum_search_score,
             minimum_reranker_score,
+            use_bing_search,
         )
 
         # Process results

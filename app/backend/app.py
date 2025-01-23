@@ -302,7 +302,7 @@ def config():
             "showSpeechOutputAzure": current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED],
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
-            "showBingSearch": current_app.config[CONFIG_BING_SEARCH_ENABLED],
+            "showBingSearchOption": current_app.config[CONFIG_BING_SEARCH_ENABLED],
         }
     )
 

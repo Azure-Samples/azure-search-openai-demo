@@ -56,10 +56,12 @@ export const Settings = ({
     retrievalMode,
     useGPT4V,
     gpt4vInput,
+    useBingSearch,
     vectorFieldList,
     showSemanticRankerOption,
     showGPT4VOptions,
     showVectorOption,
+    showBingSearchOption,
     useOidSecurityFilter,
     useGroupsSecurityFilter,
     useLogin,
@@ -104,6 +106,8 @@ export const Settings = ({
     const shouldStreamFieldId = useId("shouldStreamField");
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
+    const useBingSearchId = useId("useBingSearch");
+    const useBingSearchFieldId = useId("useBingSearchField");
 
     const renderLabel = (props: RenderLabelType | undefined, labelId: string, fieldId: string, helpText: string) => (
         <HelpCallout labelId={labelId} fieldId={fieldId} helpText={helpText} label={props?.label} />
@@ -309,6 +313,18 @@ export const Settings = ({
                     onRenderLabel={props =>
                         renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
                     }
+                />
+            )}
+
+            {showBingSearchOption && (
+                <Checkbox
+                    id={useBingSearchFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useBingSearch}
+                    label={t("labels.useBingSearch")}
+                    onChange={(_ev, checked) => onChange("useBingSearch", !!checked)}
+                    aria-labelledby={useBingSearchId}
+                    onRenderLabel={props => renderLabel(props, useBingSearchId, useBingSearchFieldId, t("helpTexts.useBingSearch"))}
                 />
             )}
         </div>
