@@ -46,11 +46,15 @@ class AsyncBingClient:
             # "X-Search-Location": "" # this would be useful in future
         }
 
-    async def search(self, query: str) -> WebAnswer:
-        params: dict[str, Union[str,bool]]  = {
+    async def search(self, query: str, lang="en-US") -> WebAnswer:
+        params: dict[str, Union[str, bool, int]] = {
             "q": query,
+            "mkt": lang,
             "textDecorations": True,
             "textFormat": "HTML",
+            "responseFilter": "Webpages",
+            "safeSearch": "Strict",
+            "setLang": lang,
         }
         async with httpx.AsyncClient() as client:
             response = await client.get(self.base_url, headers=self.headers, params=params)
