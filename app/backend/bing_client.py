@@ -21,7 +21,7 @@ class WebPage(BaseModel):
 
     # There are more fields in the response, but we only care about these for now.
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
 
 
@@ -32,7 +32,7 @@ class WebAnswer(BaseModel):
 
     # There are more fields in the response, but we only care about these for now.
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
 
 
@@ -45,7 +45,7 @@ class AsyncBingClient:
             "User-Agent": "azure-search-openai-demo",
             # "X-Search-Location": "" # this would be useful in future
         }
-    
+
     async def search(self, query: str) -> WebAnswer:
         params = {
             "q": query,
@@ -55,4 +55,4 @@ class AsyncBingClient:
         async with httpx.AsyncClient() as client:
             response = await client.get(self.base_url, headers=self.headers, params=params)
             response.raise_for_status()
-            return WebAnswer.model_validate(response.json()['webPages'])
+            return WebAnswer.model_validate(response.json()["webPages"])

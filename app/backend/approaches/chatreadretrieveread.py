@@ -216,12 +216,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         else {"model": self.chatgpt_model}
                     ),
                 ),
-                ThoughtStep(
-                    "Bing search query",
-                    bing_query_text if use_bing_search else None,
-                    {
-                    }
-                ),
+                ThoughtStep("Bing search query", bing_query_text if use_bing_search else None, {}),
                 ThoughtStep(
                     "Bing search results",
                     [result.snippet for result in bing_results.value[:2]] if use_bing_search else None,
