@@ -278,6 +278,9 @@
     "useUserUpload": {
       "value": "${USE_USER_UPLOAD}"
     },
+    "useBingSearch": {
+      "value": "${USE_BING_SEARCH}"
+    },
     "useLocalPdfParser": {
       "value": "${USE_LOCAL_PDF_PARSER}"
     },

@@ -230,6 +230,9 @@ param useUserUpload bool = false
 param useLocalPdfParser bool = false
 param useLocalHtmlParser bool = false
 
+@description('Use Bing search for web search grounding')
+param useBingSearch bool = false
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
@@ -407,6 +410,7 @@ var appEnvVariables = {
   USE_VECTORS: useVectors
   USE_GPT4V: useGPT4V
   USE_USER_UPLOAD: useUserUpload
+  USE_BING_SEARCH: useBingSearch
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
