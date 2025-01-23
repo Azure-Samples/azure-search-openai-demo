@@ -145,10 +145,15 @@ export async function postChatHistoryApi(item: any, idToken: string): Promise<an
 
 export async function getChatHistoryListApi(count: number, continuationToken: string | undefined, idToken: string): Promise<HistoryListApiResponse> {
     const headers = await getHeaders(idToken);
-    const response = await fetch("/chat_history/items", {
-        method: "POST",
-        headers: { ...headers, "Content-Type": "application/json" },
-        body: JSON.stringify({ count: count, continuation_token: continuationToken })
+    const url = new URL("/chat_history/items", BACKEND_URI);
+    url.searchParams.append("count", count.toString());
+    if (continuationToken) {
+        url.searchParams.append("continuationToken", continuationToken);
+    }
+
+    const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: { ...headers, "Content-Type": "application/json" }
     });
 
     if (!response.ok) {
