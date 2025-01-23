@@ -2,7 +2,7 @@
 An async client for Bing Web Search API.
 """
 
-from typing import Optional
+from typing import Optional, Union
 
 import httpx
 from pydantic import BaseModel, ConfigDict
@@ -47,7 +47,7 @@ class AsyncBingClient:
         }
 
     async def search(self, query: str) -> WebAnswer:
-        params = {
+        params: dict[str, Union[str,bool]]  = {
             "q": query,
             "textDecorations": True,
             "textFormat": "HTML",

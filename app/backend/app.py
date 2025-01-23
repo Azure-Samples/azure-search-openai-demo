@@ -473,8 +473,6 @@ async def setup_clients():
     USE_BING_SEARCH = os.getenv("USE_BING_SEARCH", "").lower() == "true"
     BING_SEARCH_API_KEY = os.getenv("BING_SEARCH_API_KEY")
     BING_SEARCH_ENDPOINT = os.getenv("BING_SEARCH_ENDPOINT")
-    if BING_SEARCH_ENDPOINT is not None and BING_SEARCH_ENDPOINT.trim() == "":
-        BING_SEARCH_ENDPOINT = None
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None

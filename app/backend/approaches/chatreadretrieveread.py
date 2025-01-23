@@ -137,7 +137,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
         query_messages, query_text = await keyword_rewrite(rendered_query_prompt, tools)
-        if use_bing_search:
+        if use_bing_search and self.bing_client:
             bing_search_prompt = self.prompt_manager.render_prompt(
                 self.bing_ground_rewrite_prompt,
                 {"user_query": original_user_query, "past_messages": messages[:-1]},
