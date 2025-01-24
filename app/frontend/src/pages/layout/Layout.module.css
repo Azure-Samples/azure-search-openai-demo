@@ -5,7 +5,7 @@
 }
 
 .header {
-    background-color: #222222;
+    background: linear-gradient(to right, black, red, yellow);
     color: #f2f2f2;
 }
 
