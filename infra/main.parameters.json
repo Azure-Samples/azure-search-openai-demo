@@ -155,6 +155,9 @@
     "azureOpenAiApiKey":{
       "value": "${AZURE_OPENAI_API_KEY_OVERRIDE}"
     },
+    "azureOpenAiDisableKeys": {
+      "value": "${AZURE_OPENAI_DISABLE_KEYS=true}"
+    },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
     },

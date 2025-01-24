@@ -189,7 +189,7 @@ def mock_openai_chatcompletion(monkeypatch):
             answer = "capital of France"
         elif last_question == "Generate search query for: Are interest rates high?":
             answer = "interest rates"
-        elif isinstance(last_question, list) and last_question[2].get("image_url"):
+        elif isinstance(last_question, list) and any([part.get("image_url") for part in last_question]):
             answer = "From the provided sources, the impact of interest rates and GDP growth on financial markets can be observed through the line graph. [Financial Market Analysis Report 2023-7.png]"
         else:
             answer = "The capital of France is Paris. [Benefit_Options-2.pdf]."
@@ -319,7 +319,7 @@ def mock_env(monkeypatch, request):
             yield
 
 
-@pytest_asyncio.fixture()
+@pytest_asyncio.fixture(scope="function")
 async def client(
     monkeypatch,
     mock_env,
@@ -338,7 +338,7 @@ async def client(
         yield test_app.test_client()
 
 
-@pytest_asyncio.fixture()
+@pytest_asyncio.fixture(scope="function")
 async def client_with_expiring_token(
     monkeypatch,
     mock_env,
@@ -358,7 +358,7 @@ async def client_with_expiring_token(
         yield test_app.test_client()
 
 
-@pytest_asyncio.fixture(params=auth_envs)
+@pytest_asyncio.fixture(params=auth_envs, scope="function")
 async def auth_client(
     monkeypatch,
     mock_openai_chatcompletion,
@@ -397,7 +397,7 @@ async def auth_client(
             yield client
 
 
-@pytest_asyncio.fixture(params=auth_public_envs)
+@pytest_asyncio.fixture(params=auth_public_envs, scope="function")
 async def auth_public_documents_client(
     monkeypatch,
     mock_openai_chatcompletion,

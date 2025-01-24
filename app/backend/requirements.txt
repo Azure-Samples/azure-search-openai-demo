@@ -5,7 +5,9 @@
 #    pip-compile requirements.in
 #
 aiofiles==24.1.0
-    # via quart
+    # via
+    #   prompty
+    #   quart
 aiohappyeyeballs==2.4.0
     # via aiohttp
 aiohttp==3.10.11
@@ -82,6 +84,7 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via
     #   flask
+    #   prompty
     #   quart
     #   uvicorn
 cryptography==44.0.0
@@ -152,6 +155,7 @@ itsdangerous==2.2.0
 jinja2==3.1.5
     # via
     #   flask
+    #   prompty
     #   quart
 jiter==0.8.2
     # via openai
@@ -197,7 +201,7 @@ msal==1.30.0
     #   msal-extensions
 msal-extensions==1.2.0
     # via azure-identity
-msgraph-core==1.1.8
+msgraph-core==1.1.7
     # via msgraph-sdk
 msgraph-sdk==1.16.0
     # via -r requirements.in
@@ -215,7 +219,7 @@ openai==1.59.4
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
-openai-messages-token-helper==0.1.10
+openai-messages-token-helper==0.1.11
     # via -r requirements.in
 opentelemetry-api==1.26.0
     # via
@@ -338,6 +342,8 @@ portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
+prompty==0.1.45
+    # via -r requirements.in
 propcache==0.2.0
     # via yarl
 psutil==5.9.8
@@ -345,7 +351,9 @@ psutil==5.9.8
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
-    # via openai
+    # via
+    #   openai
+    #   prompty
 pydantic-core==2.20.1
     # via pydantic
 pygments==2.18.0
@@ -364,14 +372,18 @@ python-dateutil==2.9.0.post0
     #   pendulum
     #   time-machine
 python-dotenv==1.0.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   prompty
+pyyaml==6.0.2
+    # via prompty
 quart==0.20.0
     # via
     #   -r requirements.in
     #   quart-cors
 quart-cors==0.7.0
     # via -r requirements.in
-regex==2024.7.24
+regex==2024.11.6
     # via tiktoken
 requests==2.32.3
     # via
@@ -450,7 +462,7 @@ wsproto==1.2.0
     # via hypercorn
 yarl==1.17.2
     # via aiohttp
-zipp==3.20.0
+zipp==3.21.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

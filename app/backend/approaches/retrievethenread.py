@@ -4,9 +4,10 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
-from openai_messages_token_helper import build_messages, get_token_limit
+from openai_messages_token_helper import get_token_limit
 
 from approaches.approach import Approach, ThoughtStep
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
 
@@ -16,26 +17,6 @@ class RetrieveThenReadApproach(Approach):
     top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion
     (answer) with that prompt.
     """
-
-    system_chat_template = (
-        "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions. "
-        + "Use 'you' to refer to the individual asking the questions even if they ask with 'I'. "
-        + "Answer the following question using only the data provided in the sources below. "
-        + "Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. "
-        + "If you cannot answer using the sources below, say you don't know. Use below example to answer"
-    )
-
-    # shots/sample conversation
-    question = """
-'What is the deductible for the employee plan for a visit to Overlake in Bellevue?'
-
-Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region
-"""
-    answer = "In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf]."
 
     def __init__(
         self,
@@ -52,6 +33,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         content_field: str,
         query_language: str,
         query_speller: str,
+        prompt_manager: PromptManager,
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -67,6 +49,8 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
+        self.prompt_manager = prompt_manager
+        self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
 
     async def run(
         self,
@@ -108,35 +92,25 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
         )
 
         # Process results
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-
-        # Append user message
-        content = "\n".join(sources_content)
-        user_content = q + "\n" + f"Sources:\n {content}"
-
-        response_token_limit = 1024
-        updated_messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=overrides.get("prompt_template", self.system_chat_template),
-            few_shots=[{"role": "user", "content": self.question}, {"role": "assistant", "content": self.answer}],
-            new_user_content=user_content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
+        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {"user_query": q, "text_sources": text_sources},
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
             # Azure OpenAI takes the deployment name as the model name
             model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            messages=updated_messages,
+            messages=rendered_answer_prompt.all_messages,
             temperature=overrides.get("temperature", 0.3),
-            max_tokens=response_token_limit,
+            max_tokens=1024,
             n=1,
             seed=seed,
         )
 
-        data_points = {"text": sources_content}
         extra_info = {
-            "data_points": data_points,
+            "data_points": {"text": text_sources},
             "thoughts": [
                 ThoughtStep(
                     "Search using user query",
@@ -156,7 +130,7 @@ info4.pdf: In-network institutions include Overlake, Swedish and others in the r
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    updated_messages,
+                    rendered_answer_prompt.all_messages,
                     (
                         {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
                         if self.chatgpt_deployment
