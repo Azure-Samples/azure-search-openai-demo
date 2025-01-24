@@ -139,12 +139,13 @@ var chatGpt = {
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
 
-param embeddingModelName string = ''
-param embeddingDeploymentName string = ''
-param embeddingDeploymentVersion string = ''
-param embeddingDeploymentSkuName string = ''
-param embeddingDeploymentCapacity int = 0
-param embeddingDimensions int = 0
+param embeddingModelName string = 'text-embedding-ada-002'
+param embeddingDeploymentName string = 'embedding'
+param embeddingDeploymentVersion string = '2'
+param embeddingDeploymentSkuName string = 'Standard'
+param embeddingDeploymentCapacity int = 30
+param embeddingDimensions int = 1536
+
 var embedding = {
   modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
