@@ -2,7 +2,7 @@ import { parseSupportingContentItem } from "./SupportingContentParser";
 
 import styles from "./SupportingContent.module.css";
 
-interface WebPage {
+export interface WebPage {
     id: string;
     name: string;
     url: string;
