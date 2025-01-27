@@ -145,10 +145,9 @@ export async function postChatHistoryApi(item: any, idToken: string): Promise<an
 
 export async function getChatHistoryListApi(count: number, continuationToken: string | undefined, idToken: string): Promise<HistoryListApiResponse> {
     const headers = await getHeaders(idToken);
-    const url = new URL("/chat_history/items", BACKEND_URI);
-    url.searchParams.append("count", count.toString());
+    let url = `${BACKEND_URI}/chat_history/sessions?count=${count}`;
     if (continuationToken) {
-        url.searchParams.append("continuationToken", continuationToken);
+        url += `&continuationToken=${continuationToken}`;
     }
 
     const response = await fetch(url.toString(), {
@@ -166,7 +165,7 @@ export async function getChatHistoryListApi(count: number, continuationToken: st
 
 export async function getChatHistoryApi(id: string, idToken: string): Promise<HistroyApiResponse> {
     const headers = await getHeaders(idToken);
-    const response = await fetch(`/chat_history/items/${id}`, {
+    const response = await fetch(`/chat_history/sessions/${id}`, {
         method: "GET",
         headers: { ...headers, "Content-Type": "application/json" }
     });
@@ -181,7 +180,7 @@ export async function getChatHistoryApi(id: string, idToken: string): Promise<Hi
 
 export async function deleteChatHistoryApi(id: string, idToken: string): Promise<any> {
     const headers = await getHeaders(idToken);
-    const response = await fetch(`/chat_history/items/${id}`, {
+    const response = await fetch(`/chat_history/sessions/${id}`, {
         method: "DELETE",
         headers: { ...headers, "Content-Type": "application/json" }
     });
@@ -189,7 +188,4 @@ export async function deleteChatHistoryApi(id: string, idToken: string): Promise
     if (!response.ok) {
         throw new Error(`Deleting chat history failed: ${response.statusText}`);
     }
-
-    const dataResponse: any = await response.json();
-    return dataResponse;
 }

@@ -799,6 +799,7 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (use
         containers: [
           {
             name: chatHistoryContainerName
+            kind: 'MultiHash'
             paths: [
               '/entra_oid'
               '/session_id'

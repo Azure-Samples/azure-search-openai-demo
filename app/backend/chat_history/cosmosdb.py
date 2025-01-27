@@ -5,9 +5,8 @@ from typing import Any, Dict, Union
 
 from azure.cosmos import exceptions
 from azure.cosmos.aio import ContainerProxy, CosmosClient
-from azure.cosmos.partition_key import PartitionKey
 from azure.identity.aio import AzureDeveloperCliCredential, ManagedIdentityCredential
-from quart import Blueprint, current_app, jsonify, request
+from quart import Blueprint, current_app, jsonify, make_response, request
 
 from config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
@@ -21,14 +20,6 @@ from error import error_response
 logger = logging.getLogger("scripts")
 
 chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_folder="static")
-
-
-def make_partition_key(entra_id, session_id=None):
-    if entra_id and session_id:
-        # Need multihash for hierachical partitioning
-        return PartitionKey(path=["/entra_id", "/session_id"], kind="MultiHash")
-    else:
-        return PartitionKey(path="/entra_id")
 
 
 @chat_history_cosmosdb_bp.post("/chat_history")
@@ -48,13 +39,14 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
     try:
         request_json = await request.get_json()
         session_id = request_json.get("id")
-        answers = request_json.get("answers")
-        title = answers[0][0][:50] + "..." if len(answers[0][0]) > 50 else answers[0][0]
+        message_pairs = request_json.get("answers")
+        first_message_question = message_pairs[0][0]
+        title = first_message_question + "..." if len(first_message_question) > 50 else first_message_question
         timestamp = int(time.time() * 1000)
 
         # Insert the session item:
-        session_item = {
-            "id": id,
+        session = {
+            "id": session_id,
             "session_id": session_id,
             "entra_oid": entra_oid,
             "type": "session",
@@ -62,42 +54,25 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
             "timestamp": timestamp,
         }
 
-        message_items = []
+        messages = []
         # Now insert a message item for each question/response pair:
-        for ind, message_pair in enumerate(zip(answers[::2], answers[1::2])):
-            # The id: what if you delete a message and then add a new one? The id will be the same.
-            # If we had delete mechanism, and you deleted item 5 in a history, then item 6 would still hang around
-            # and youd have two of item 6.
-            # abc-0
-            # abc-1
-            # abc-2 <-- DELETE
-            # abc-3
-            # One approach would be to delete EVERYTHING, then upsert everything.
-            # Another approach would be to delete item plus everything after, then upsert everything after.
-            # Or: Change the frontend?
-            # We can do this first, and change the frontend after
-            message_items.append(
+        for ind, message_pair in enumerate(message_pairs):
+            messages.append(
                 {
                     "id": f"{session_id}-{ind}",
-                    "session_id": id,
+                    "session_id": session_id,
                     "entra_oid": entra_oid,
                     "type": "message",
                     "question": message_pair[0],
                     "response": message_pair[1],
-                    "timestamp": timestamp,  # <-- This is the timestamp of the session, not the message
+                    "timestamp": None,
                 }
             )
 
-        batch_operations = [("upsert", tuple([session_item] + message_items), {})]
+        batch_operations = [("upsert", (session,))] + [("upsert", (message,)) for message in messages]
 
         try:
-            # Run that list of operations
-            batch_results = container.execute_item_batch(
-                batch_operations=batch_operations, partition_key=make_partition_key(entra_oid, session_id)
-            )
-            # Batch results are returned as a list of item operation results - or raise a CosmosBatchOperationError if
-            # one of the operations failed within your batch request.
-            print(f"\nResults for the batch operations: {batch_results}\n")
+            await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
         except exceptions.CosmosBatchOperationError as e:
             error_operation_index = e.error_index
             error_operation_response = e.operation_responses[error_operation_index]
@@ -109,9 +84,9 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
         return error_response(error, "/chat_history")
 
 
-@chat_history_cosmosdb_bp.get("/chat_history/items")
+@chat_history_cosmosdb_bp.get("/chat_history/sessions")
 @authenticated
-async def get_chat_history(auth_claims: Dict[str, Any]):
+async def get_chat_history_sessions(auth_claims: Dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
@@ -125,14 +100,13 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
 
     try:
         # get the count and continuation token from the request URL
-        count = request.args.get("count", 10)
+        count = int(request.args.get("count", 10))
         continuation_token = request.args.get("continuation_token")
 
         res = container.query_items(
-            # TODO: do we need distinct? per Mark's code - Mark says no!
             query="SELECT c.id, c.entra_oid, c.title, c.timestamp FROM c WHERE c.entra_oid = @entra_oid AND c.type = @type ORDER BY c.timestamp DESC",
             parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@type", value="session")],
-            partition_key=make_partition_key(entra_oid),
+            partition_key=[entra_oid],
             max_item_count=count,
         )
 
@@ -140,13 +114,13 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
         pager = res.by_page(continuation_token)
 
         # Get the first page, and the continuation token
+        sessions = []
         try:
             page = await pager.__anext__()
             continuation_token = pager.continuation_token  # type: ignore
 
-            items = []
             async for item in page:
-                items.append(
+                sessions.append(
                     {
                         "id": item.get("id"),
                         "entra_oid": item.get("entra_oid"),
@@ -157,18 +131,17 @@ async def get_chat_history(auth_claims: Dict[str, Any]):
 
         # If there are no more pages, StopAsyncIteration is raised
         except StopAsyncIteration:
-            items = []
             continuation_token = None
 
-        return jsonify({"items": items, "continuation_token": continuation_token}), 200
+        return jsonify({"sessions": sessions, "continuation_token": continuation_token}), 200
 
     except Exception as error:
-        return error_response(error, "/chat_history/items")
+        return error_response(error, "/chat_history/sessions")
 
 
-@chat_history_cosmosdb_bp.get("/chat_history/items/<item_id>")
+@chat_history_cosmosdb_bp.get("/chat_history/sessions/<session_id>")
 @authenticated
-async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
+async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
@@ -182,33 +155,39 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
 
     try:
         res = container.query_items(
-            # TODO: do we need distinct? per Mark's code
-            query="SELECT c.id, c.entra_oid, c.title, c.timestamp FROM c WHERE c.session_id = @session_id ORDER BY c.timestamp DESC",
-            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@session_id", value=item_id)],
-            partition_key=make_partition_key(entra_oid, item_id),
-            # max_item_count=?
+            query="SELECT * FROM c WHERE c.session_id = @session_id",
+            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@session_id", value=session_id)],
+            partition_key=[entra_oid, session_id],
         )
 
-        res = await container.read_item(item=item_id, partition_key=entra_oid)
+        message_pairs = []
+        session = None
+        async for page in res.by_page():
+            async for item in page:
+                if item.get("type") == "session":
+                    session = item
+                else:
+                    message_pairs.append([item["question"], item["response"]])
+
         return (
             jsonify(
                 {
-                    "id": res.get("id"),
-                    "entra_oid": res.get("entra_oid"),
-                    "title": res.get("title", "untitled"),
-                    "timestamp": res.get("timestamp"),
-                    "answers": res.get("answers", []),
+                    "id": session.get("id"),
+                    "entra_oid": entra_oid,
+                    "title": session.get("title"),
+                    "timestamp": session.get("timestamp"),
+                    "answers": message_pairs,
                 }
             ),
             200,
         )
     except Exception as error:
-        return error_response(error, f"/chat_history/items/{item_id}")
+        return error_response(error, f"/chat_history/sessions/{session_id}")
 
 
-@chat_history_cosmosdb_bp.delete("/chat_history/items/<item_id>")
+@chat_history_cosmosdb_bp.delete("/chat_history/sessions/<session_id>")
 @authenticated
-async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str):
+async def delete_chat_history_session(auth_claims: Dict[str, Any], session_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
@@ -221,12 +200,22 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], item_id: str)
         return jsonify({"error": "User OID not found"}), 401
 
     try:
-        await container.delete_item(item=item_id, partition_key=entra_oid)
-        # Delete session, and all the message items associated with it
-        # TODO: Delete all the message items as well
-        return jsonify({}), 204
+        res = container.query_items(
+            query="SELECT * FROM c WHERE c.session_id = @session_id",
+            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@session_id", value=session_id)],
+            partition_key=[entra_oid, session_id],
+        )
+
+        ids_to_delete = []
+        async for page in res.by_page():
+            async for item in page:
+                ids_to_delete.append(item["id"])
+
+        batch_operations = [("delete", (id,)) for id in ids_to_delete]
+        await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
+        return make_response("", 204)
     except Exception as error:
-        return error_response(error, f"/chat_history/items/{item_id}")
+        return error_response(error, f"/chat_history/sessions/{session_id}")
 
 
 @chat_history_cosmosdb_bp.before_app_serving
