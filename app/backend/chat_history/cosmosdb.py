@@ -1,9 +1,7 @@
-import logging
 import os
 import time
 from typing import Any, Dict, Union
 
-from azure.cosmos import exceptions
 from azure.cosmos.aio import ContainerProxy, CosmosClient
 from azure.identity.aio import AzureDeveloperCliCredential, ManagedIdentityCredential
 from quart import Blueprint, current_app, jsonify, make_response, request
@@ -16,8 +14,6 @@ from config import (
 )
 from decorators import authenticated
 from error import error_response
-
-logger = logging.getLogger("scripts")
 
 chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_folder="static")
 
@@ -71,14 +67,7 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
 
         batch_operations = [("upsert", (session,))] + [("upsert", (message,)) for message in messages]
 
-        try:
-            await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
-        except exceptions.CosmosBatchOperationError as e:
-            error_operation_index = e.error_index
-            error_operation_response = e.operation_responses[error_operation_index]
-            error_operation = batch_operations[error_operation_index]
-            logger.error(f"Batch operation failed: {error_operation_response} for operation {error_operation}")
-            return jsonify({"error": "Batch operation failed"}), 400
+        await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
         return jsonify({}), 201
     except Exception as error:
         return error_response(error, "/chat_history")
@@ -99,7 +88,6 @@ async def get_chat_history_sessions(auth_claims: Dict[str, Any]):
         return jsonify({"error": "User OID not found"}), 401
 
     try:
-        # get the count and continuation token from the request URL
         count = int(request.args.get("count", 10))
         continuation_token = request.args.get("continuation_token")
 
@@ -110,7 +98,6 @@ async def get_chat_history_sessions(auth_claims: Dict[str, Any]):
             max_item_count=count,
         )
 
-        # set the continuation token for the next page
         pager = res.by_page(continuation_token)
 
         # Get the first page, and the continuation token
