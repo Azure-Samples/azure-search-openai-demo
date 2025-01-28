@@ -36,12 +36,12 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
         request_json = await request.get_json()
         session_id = request_json.get("id")
         message_pairs = request_json.get("answers")
-        first_message_question = message_pairs[0][0]
-        title = first_message_question + "..." if len(first_message_question) > 50 else first_message_question
+        first_question = message_pairs[0][0]
+        title = first_question + "..." if len(first_question) > 50 else first_question
         timestamp = int(time.time() * 1000)
 
         # Insert the session item:
-        session = {
+        session_item = {
             "id": session_id,
             "session_id": session_id,
             "entra_oid": entra_oid,
@@ -50,22 +50,24 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
             "timestamp": timestamp,
         }
 
-        messages = []
+        message_pair_items = []
         # Now insert a message item for each question/response pair:
         for ind, message_pair in enumerate(message_pairs):
-            messages.append(
+            message_pair_items.append(
                 {
                     "id": f"{session_id}-{ind}",
                     "session_id": session_id,
                     "entra_oid": entra_oid,
-                    "type": "message",
+                    "type": "message_pair",
                     "question": message_pair[0],
                     "response": message_pair[1],
                     "timestamp": None,
                 }
             )
 
-        batch_operations = [("upsert", (session,))] + [("upsert", (message,)) for message in messages]
+        batch_operations = [("upsert", (session_item,))] + [
+            ("upsert", (message_pair_item,)) for message_pair_item in message_pair_items
+        ]
 
         await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
         return jsonify({}), 201
@@ -153,7 +155,7 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str)
             async for item in page:
                 if item.get("type") == "session":
                     session = item
-                else:
+                elif item.get("type") == "message_pair":
                     message_pairs.append([item["question"], item["response"]])
 
         if session is None:
