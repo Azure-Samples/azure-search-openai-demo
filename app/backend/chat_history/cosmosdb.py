@@ -156,6 +156,9 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str)
                 else:
                     message_pairs.append([item["question"], item["response"]])
 
+        if session is None:
+            return jsonify({"error": "Session not found"}), 404
+
         return (
             jsonify(
                 {
@@ -200,7 +203,7 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], session_id: s
 
         batch_operations = [("delete", (id,)) for id in ids_to_delete]
         await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
-        return make_response("", 204)
+        return await make_response("", 204)
     except Exception as error:
         return error_response(error, f"/chat_history/sessions/{session_id}")
 

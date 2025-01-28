@@ -1,7 +1,8 @@
 {
     "answers": [
         [
-            "This is a test message"
+            "This is a test message",
+            "This is a test answer"
         ]
     ],
     "entra_oid": "OID_X",
