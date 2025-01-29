@@ -54,11 +54,14 @@ from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionAppr
 from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
+from bing_client import AsyncBingClient
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_ASK_APPROACH,
     CONFIG_ASK_VISION_APPROACH,
     CONFIG_AUTH_CLIENT,
+    CONFIG_BING_SEARCH_CLIENT,
+    CONFIG_BING_SEARCH_ENABLED,
     CONFIG_BLOB_CONTAINER_CLIENT,
     CONFIG_CHAT_APPROACH,
     CONFIG_CHAT_HISTORY_BROWSER_ENABLED,
@@ -299,6 +302,7 @@ def config():
             "showSpeechOutputAzure": current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED],
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
+            "showBingSearchOption": current_app.config[CONFIG_BING_SEARCH_ENABLED],
         }
     )
 
@@ -466,6 +470,9 @@ async def setup_clients():
     USE_SPEECH_OUTPUT_AZURE = os.getenv("USE_SPEECH_OUTPUT_AZURE", "").lower() == "true"
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
+    USE_BING_SEARCH = os.getenv("USE_BING_SEARCH", "").lower() == "true"
+    BING_SEARCH_API_KEY = os.getenv("BING_SEARCH_API_KEY")
+    BING_SEARCH_ENDPOINT = os.getenv("BING_SEARCH_ENDPOINT")
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
@@ -588,6 +595,19 @@ async def setup_clients():
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
 
+    if USE_BING_SEARCH:
+        current_app.logger.info("USE_BING_SEARCH is true, setting up Bing search client")
+        if not BING_SEARCH_API_KEY:
+            raise ValueError("BING_SEARCH_API_KEY must be set when USE_BING_SEARCH is true")
+        if BING_SEARCH_ENDPOINT:
+            bing_search_client = AsyncBingClient(BING_SEARCH_API_KEY, BING_SEARCH_ENDPOINT)
+        else:
+            bing_search_client = AsyncBingClient(BING_SEARCH_API_KEY)
+        current_app.config[CONFIG_BING_SEARCH_CLIENT] = bing_search_client
+    else:
+        current_app.logger.info("USE_BING_SEARCH is false, Bing search client not set up")
+        bing_search_client = None
+
     if OPENAI_HOST.startswith("azure"):
         if OPENAI_HOST == "azure_custom":
             current_app.logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
@@ -642,6 +662,7 @@ async def setup_clients():
     current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED] = USE_SPEECH_OUTPUT_AZURE
     current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED] = USE_CHAT_HISTORY_BROWSER
     current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED] = USE_CHAT_HISTORY_COSMOS
+    current_app.config[CONFIG_BING_SEARCH_ENABLED] = USE_BING_SEARCH
 
     prompt_manager = PromptyManager()
 
@@ -678,6 +699,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
+        bing_client=bing_search_client,
     )
 
     if USE_GPT4V:
@@ -724,6 +746,7 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
+            bing_client=bing_search_client,
         )
 
 

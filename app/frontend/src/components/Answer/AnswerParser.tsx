@@ -1,10 +1,39 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { ChatAppResponse, getCitationFilePath } from "../../api";
+import { WebPage } from "../SupportingContent";
 
 type HtmlParsedAnswer = {
     answerHtml: string;
     citations: string[];
 };
+
+type Citation = {
+    id: string;
+    type: "document" | "web";
+    citation: string | WebPage;
+};
+
+export function citationIdToCitation(citationId: string, contextDataPoints: any): Citation {
+    // See if this is a web page citation
+    const webSearch = contextDataPoints.web_search;
+    if (Array.isArray(webSearch)) {
+        const webPage = webSearch.find((page: WebPage) => page.id === citationId);
+        if (webPage) {
+            return {
+                id: citationId,
+                type: "web",
+                citation: webPage
+            };
+        }
+    }
+
+    // Otherwise, assume it's a document citation
+    return {
+        id: citationId,
+        type: "document",
+        citation: citationId
+    };
+}
 
 // Function to validate citation format and check if dataPoint starts with possible citation
 function isCitationValid(contextDataPoints: any, citationCandidate: string): boolean {
@@ -21,6 +50,14 @@ function isCitationValid(contextDataPoints: any, citationCandidate: string): boo
         dataPointsArray = contextDataPoints.text;
     } else {
         return false;
+    }
+    // If there are web_sources, add those to the list of identifiers
+    if (Array.isArray(contextDataPoints.web_search)) {
+        contextDataPoints.web_search.forEach((source: any) => {
+            if (source.id) {
+                dataPointsArray.push(source.id);
+            }
+        });
     }
 
     const isValidCitation = dataPointsArray.some(dataPoint => {

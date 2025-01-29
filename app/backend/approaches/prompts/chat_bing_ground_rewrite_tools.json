@@ -1,0 +1,17 @@
+[{
+    "type": "function",
+    "function": {
+        "name": "search_bing",
+        "description": "Retrieve sources from Bing",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "bing_search_query": {
+                    "type": "string",
+                    "description": "Query string to retrieve documents from bing e.g.: 'Microsoft headquarters address'"
+                }
+            },
+            "required": ["bing_search_query"]
+        }
+    }
+}]

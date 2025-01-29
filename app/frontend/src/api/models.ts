@@ -37,6 +37,7 @@ export type ChatAppRequestOverrides = {
     gpt4v_input?: GPT4VInput;
     vector_fields: VectorFieldOptions[];
     language: string;
+    use_bing_search?: boolean;
 };
 
 export type ResponseMessage = {
@@ -85,6 +86,7 @@ export type Config = {
     showGPT4VOptions: boolean;
     showSemanticRankerOption: boolean;
     showVectorOption: boolean;
+    showBingSearchOption: boolean;
     showUserUpload: boolean;
     showLanguagePicker: boolean;
     showSpeechInput: boolean;
