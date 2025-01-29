@@ -91,7 +91,7 @@ param chatHistoryContainerName string = 'chat-history'
     type: 'location'
   }
 })
-param openAiResourceGroupLocation string
+param openAiLocation string
 
 param openAiSkuName string = 'S0'
 
@@ -586,7 +586,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzure
   scope: openAiResourceGroup
   params: {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
-    location: openAiResourceGroupLocation
+    location: openAiLocation
     tags: tags
     kind: 'OpenAI'
     customSubDomainName: !empty(openAiServiceName)
