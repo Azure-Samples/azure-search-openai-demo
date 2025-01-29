@@ -10,6 +10,7 @@ from config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_COSMOS_HISTORY_CLIENT,
     CONFIG_COSMOS_HISTORY_CONTAINER,
+    CONFIG_COSMOS_HISTORY_VERSION,
     CONFIG_CREDENTIAL,
 )
 from decorators import authenticated
@@ -43,6 +44,7 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
         # Insert the session item:
         session_item = {
             "id": session_id,
+            "version": current_app.config[CONFIG_COSMOS_HISTORY_VERSION],
             "session_id": session_id,
             "entra_oid": entra_oid,
             "type": "session",
@@ -56,11 +58,13 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
             message_pair_items.append(
                 {
                     "id": f"{session_id}-{ind}",
+                    "version": current_app.config[CONFIG_COSMOS_HISTORY_VERSION],
                     "session_id": session_id,
                     "entra_oid": entra_oid,
                     "type": "message_pair",
                     "question": message_pair[0],
                     "response": message_pair[1],
+                    "order": ind,
                     "timestamp": None,
                 }
             )
@@ -193,7 +197,7 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], session_id: s
 
     try:
         res = container.query_items(
-            query="SELECT * FROM c WHERE c.session_id = @session_id",
+            query="SELECT c.id FROM c WHERE c.session_id = @session_id",
             parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@session_id", value=session_id)],
             partition_key=[entra_oid, session_id],
         )
@@ -237,6 +241,7 @@ async def setup_clients():
 
         current_app.config[CONFIG_COSMOS_HISTORY_CLIENT] = cosmos_client
         current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER] = cosmos_container
+        current_app.config[CONFIG_COSMOS_HISTORY_VERSION] = os.environ["AZURE_CHAT_HISTORY_VERSION"]
 
 
 @chat_history_cosmosdb_bp.after_app_serving
