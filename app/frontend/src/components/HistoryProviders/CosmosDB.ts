@@ -23,10 +23,10 @@ export class CosmosDBProvider implements IHistoryProvider {
             if (!this.continuationToken) {
                 this.isItemEnd = true;
             }
-            return response.items.map(item => ({
-                id: item.id,
-                title: item.title,
-                timestamp: item.timestamp
+            return response.sessions.map(session => ({
+                id: session.id,
+                title: session.title,
+                timestamp: session.timestamp
             }));
         } catch (e) {
             console.error(e);
