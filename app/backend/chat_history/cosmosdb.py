@@ -64,15 +64,12 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
                     "type": "message_pair",
                     "question": message_pair[0],
                     "response": message_pair[1],
-                    "order": ind,
-                    "timestamp": None,
                 }
             )
 
         batch_operations = [("upsert", (session_item,))] + [
             ("upsert", (message_pair_item,)) for message_pair_item in message_pair_items
         ]
-
         await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
         return jsonify({}), 201
     except Exception as error:
@@ -148,30 +145,21 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str)
 
     try:
         res = container.query_items(
-            query="SELECT * FROM c WHERE c.session_id = @session_id",
-            parameters=[dict(name="@session_id", value=session_id)],
+            query="SELECT * FROM c WHERE c.session_id = @session_id AND c.type = @type",
+            parameters=[dict(name="@session_id", value=session_id), dict(name="@type", value="message_pair")],
             partition_key=[entra_oid, session_id],
         )
 
         message_pairs = []
-        session = None
         async for page in res.by_page():
             async for item in page:
-                if item.get("type") == "session":
-                    session = item
-                elif item.get("type") == "message_pair":
-                    message_pairs.append([item["question"], item["response"]])
-
-        if session is None:
-            return jsonify({"error": "Session not found"}), 404
+                message_pairs.append([item["question"], item["response"]])
 
         return (
             jsonify(
                 {
-                    "id": session.get("id"),
+                    "id": session_id,
                     "entra_oid": entra_oid,
-                    "title": session.get("title"),
-                    "timestamp": session.get("timestamp"),
                     "answers": message_pairs,
                 }
             ),
