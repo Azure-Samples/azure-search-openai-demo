@@ -23,19 +23,30 @@ for_session_id_query = [
     [
         {
             "id": "123",
+            "version": "cosmosdb-v2",
             "session_id": "123",
             "entra_oid": "OID_X",
-            "title": "This is a test message",
-            "timestamp": 123456789,
             "type": "session",
+            "title": "What does a Product Manager do?",
+            "timestamp": 1738174630204,
         },
         {
             "id": "123-0",
+            "version": "cosmosdb-v2",
             "session_id": "123",
             "entra_oid": "OID_X",
-            "question": "This is a test message",
-            "response": "This is a test answer",
-            "type": "message",
+            "type": "message_pair",
+            "question": "What does a Product Manager do?",
+            "response": {
+                "delta": {"role": "assistant"},
+                "session_state": "143c0240-b2ee-4090-8e90-2a1c58124894",
+                "message": {
+                    "content": "A Product Manager is responsible for leading the product management team and providing guidance on product strategy, design, development, and launch. They collaborate with internal teams and external partners to ensure successful product execution. They also develop and implement product life-cycle management processes, monitor industry trends, develop product marketing plans, research customer needs, collaborate with internal teams, develop pricing strategies, oversee product portfolio, analyze product performance, and identify areas for improvement [role_library.pdf#page=29][role_library.pdf#page=12][role_library.pdf#page=23].",
+                    "role": "assistant",
+                },
+            },
+            "order": 0,
+            "timestamp": None,
         },
     ]
 ]

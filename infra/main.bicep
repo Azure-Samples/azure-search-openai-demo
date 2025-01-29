@@ -822,6 +822,9 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (use
                 {
                   path: '/type/?'
                 }
+                {
+                  path: '/order/?'
+                }
               ]
               excludedPaths: [
                 {

@@ -149,7 +149,7 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str)
     try:
         res = container.query_items(
             query="SELECT * FROM c WHERE c.session_id = @session_id",
-            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@session_id", value=session_id)],
+            parameters=[dict(name="@session_id", value=session_id)],
             partition_key=[entra_oid, session_id],
         )
 
@@ -198,7 +198,7 @@ async def delete_chat_history_session(auth_claims: Dict[str, Any], session_id: s
     try:
         res = container.query_items(
             query="SELECT c.id FROM c WHERE c.session_id = @session_id",
-            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@session_id", value=session_id)],
+            parameters=[dict(name="@session_id", value=session_id)],
             partition_key=[entra_oid, session_id],
         )
 
