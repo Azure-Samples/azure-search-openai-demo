@@ -30,6 +30,7 @@ types-beautifulsoup4
 msgraph-sdk
 openai-messages-token-helper
 python-dotenv
+datetime
 prompty
 rich
 typing-extensions

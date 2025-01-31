@@ -465,5 +465,8 @@ yarl==1.17.2
 zipp==3.21.0
     # via importlib-metadata
 
+# used for adlsgen2setup.py
+datetime==4.3.0
+    # via -r requirements.in
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
