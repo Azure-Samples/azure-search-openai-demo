@@ -55,6 +55,7 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' = {
   }
   sku: sku
 
+  // https://github.com/Azure/bicep-types-az/issues/2421
   resource sharedPrivateLinkResource 'sharedPrivateLinkResources@2023-11-01' = [for (resourceId, i) in sharedPrivateLinkStorageAccounts: {
     name: 'search-shared-private-link-${i}'
     properties: {

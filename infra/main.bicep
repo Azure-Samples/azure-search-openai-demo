@@ -701,7 +701,7 @@ module searchService 'core/search/search-services.bicep' = {
     publicNetworkAccess: publicNetworkAccess == 'Enabled'
       ? 'enabled'
       : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [storage.outputs.id] : []
+    sharedPrivateLinkStorageAccounts: (usePrivateEndpoint && useIntegratedVectorization) ? [storage.outputs.id] : []
   }
 }
 
