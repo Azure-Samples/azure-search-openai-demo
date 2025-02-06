@@ -106,7 +106,7 @@ Execute the following commands inside your terminal:
 > * `azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo` to set the name of your old GPT 3.5 model.
 > * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 30` to set the capacity of your old GPT 3.5 deployment.
 > * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU Standard` to set the Sku name back to Standard.
-> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0613` to set the version number of your old GPT 3.5.
+> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0125` to set the version number of your old GPT 3.5.
 > * `azd up` to update the provisioned resources.
 >
 > Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse an old GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
