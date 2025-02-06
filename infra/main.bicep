@@ -1062,7 +1062,7 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
 
 var environmentData = environment()
 
-var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi && deploymentTarget == 'appservice')
+var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi)
   ? [
       {
         groupId: 'account'
@@ -1075,7 +1075,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
       }
     ]
   : []
-var otherPrivateEndpointConnections = (usePrivateEndpoint && deploymentTarget == 'appservice')
+var otherPrivateEndpointConnections = (usePrivateEndpoint)
   ? [
       {
         groupId: 'blob'
@@ -1088,9 +1088,9 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint && deploymentTarget ==
         resourceIds: [searchService.outputs.id]
       }
       {
-        groupId: 'sites'
-        dnsZoneName: 'privatelink.azurewebsites.net'
-        resourceIds: [backend.outputs.id]
+        groupId: 'managedEnvironments'
+        dnsZoneName: 'privatelink.${location}.azurecontainerapps.io'
+        resourceIds: [containerApps.outputs.environmentId]
       }
       {
         groupId: 'cosmosdb'
