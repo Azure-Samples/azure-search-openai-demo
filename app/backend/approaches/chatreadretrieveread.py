@@ -13,6 +13,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
 
@@ -38,6 +39,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
+        prompt_manager: PromptManager
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -52,16 +54,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
-
-    @property
-    def system_message_chat_conversation(self):
-        return """Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
-        Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-        If the question is not in English, answer in the language used in the question.
-        Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
-        {follow_up_questions_prompt}
-        {injected_prompt}
-        """
+        self.prompt_manager = prompt_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
+        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
 
     @overload
     async def run_until_final_call(
@@ -101,37 +97,21 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
-        user_query_request = "Generate search query for: " + original_user_query
 
-        tools: List[ChatCompletionToolParam] = [
-            {
-                "type": "function",
-                "function": {
-                    "name": "search_sources",
-                    "description": "Retrieve sources from the Azure AI Search index",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "search_query": {
-                                "type": "string",
-                                "description": "Query string to retrieve documents from azure search eg: 'Health care plan'",
-                            }
-                        },
-                        "required": ["search_query"],
-                    },
-                },
-            }
-        ]
+        rendered_query_prompt = self.prompt_manager.render_prompt(
+            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+        )
+        tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         query_response_token_limit = 100
         query_messages = build_messages(
             model=self.chatgpt_model,
-            system_prompt=self.query_prompt_template,
+            system_prompt=rendered_query_prompt.system_content,
+            few_shots=rendered_query_prompt.few_shot_messages,
+            past_messages=rendered_query_prompt.past_messages,
+            new_user_content=rendered_query_prompt.new_user_content,
             tools=tools,
-            few_shots=self.query_prompt_few_shots,
-            past_messages=messages[:-1],
-            new_user_content=user_query_request,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
@@ -169,32 +149,31 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             minimum_reranker_score,
         )
 
-        sources_content = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        content = "\n".join(sources_content)
-
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-
-        # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        system_message = self.get_system_prompt(
-            overrides.get("prompt_template"),
-            self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else "",
+        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        rendered_answer_prompt = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": text_sources,
+            },
         )
 
         response_token_limit = 1024
         messages = build_messages(
             model=self.chatgpt_model,
-            system_prompt=system_message,
-            past_messages=messages[:-1],
-            # Model does not handle lengthy system messages well. Moving sources to latest user conversation to solve follow up questions prompt.
-            new_user_content=original_user_query + "\n\nSources:\n" + content,
+            system_prompt=rendered_answer_prompt.system_content,
+            past_messages=rendered_answer_prompt.past_messages,
+            new_user_content=rendered_answer_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - response_token_limit,
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
-        data_points = {"text": sources_content}
-
         extra_info = {
-            "data_points": data_points,
+            "data_points": {"text": text_sources},
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",

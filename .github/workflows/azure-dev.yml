@@ -30,6 +30,7 @@ jobs:
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
       # project specific
       AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
+      AZURE_OPENAI_LOCATION: ${{ vars.AZURE_OPENAI_LOCATION }}
       AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
       AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
       AZURE_DOCUMENTINTELLIGENCE_SERVICE: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SERVICE }}
@@ -68,6 +69,7 @@ jobs:
       AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY }}
       AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION }}
       AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU }}
+      AZURE_OPENAI_DISABLE_KEYS: ${{ vars.AZURE_OPENAI_DISABLE_KEYS }}
       OPENAI_HOST: ${{ vars.OPENAI_HOST }}
       OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
       OPENAI_ORGANIZATION: ${{ vars.OPENAI_ORGANIZATION }}
@@ -109,7 +111,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install azd
-        uses: Azure/setup-azd@v1.0.0
+        uses: Azure/setup-azd@v2.1.0
 
       - name: Install Nodejs
         uses: actions/setup-node@v4

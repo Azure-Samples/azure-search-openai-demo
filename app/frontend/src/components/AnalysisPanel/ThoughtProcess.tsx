@@ -23,7 +23,7 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                         <Stack horizontal tokens={{ childrenGap: 5 }}>
                             {t.props &&
                                 (Object.keys(t.props) || []).map((k: any) => (
-                                    <span className={styles.tProp}>
+                                    <span className={styles.tProp} key={k}>
                                         {k}: {JSON.stringify(t.props?.[k])}
                                     </span>
                                 ))}

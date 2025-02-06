@@ -163,7 +163,6 @@ By default, if your documents contain image-like figures, the data ingestion pro
 so users will not be able to ask questions about them.
 
 You can optionably enable the description of media content using Azure Content Understanding. When enabled, the data ingestion process will send figures to Azure Content Understanding and replace the figure with the description in the indexed document.
-To learn more about this process and compare it to the gpt-4 vision integration, see [this guide](./data_ingestion.md#media-description).
 
 To enable media description with Azure Content Understanding, run:
 
@@ -174,6 +173,9 @@ azd env set USE_MEDIA_DESCRIBER_AZURE_CU true
 If you have already run `azd up`, you will need to run `azd provision` to create the new Content Understanding service.
 If you have already indexed your documents and want to re-index them with the media descriptions,
 first [remove the existing documents](./data_ingestion.md#removing-documents) and then [re-ingest the data](./data_ingestion.md#indexing-additional-documents).
+
+⚠️ This feature does not yet support DOCX, PPTX, or XLSX formats. If you have figures in those formats, they will be ignored.
+Convert them first to PDF or image formats to enable media description.
 
 ## Enabling client-side chat history
 
