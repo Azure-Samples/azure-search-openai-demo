@@ -1,4 +1,6 @@
 dotenv-azd==0.2.0
-azure-ai-evaluation==1.0.1
 rich
-git+https://github.com/Azure-Samples/ai-rag-chat-evaluator
+ragas==0.2.13
+rapidfuzz==3.12.1
+langchain==0.3.17
+git+https://github.com/Azure-Samples/ai-rag-chat-evaluator.git@2025-02-06

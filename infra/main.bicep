@@ -178,7 +178,7 @@ var eval = {
   modelName: !empty(evalModelName) ? evalModelName : 'gpt-4o'
   deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'gpt-4o'
   deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'GlobalStandard'
+  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'Standard'
   deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
 }
 
