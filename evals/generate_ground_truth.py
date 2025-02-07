@@ -79,20 +79,18 @@ def generate_ground_truth_ragas(num_questions=200, num_search_documents=None, kg
     )
 
     # Load or create the knowledge graph
-    if kg_file and os.path.exists(kg_file):
-        logger.info("Loading existing knowledge graph from %s", kg_file)
-        kg = KnowledgeGraph.load(kg_file)
+    if kg_file:
+        full_path_to_kg = root_dir / kg_file
+        if not os.path.exists(full_path_to_kg):
+            raise FileNotFoundError(f"Knowledge graph file {full_path_to_kg} not found.")
+        logger.info("Loading existing knowledge graph from %s", full_path_to_kg)
+        kg = KnowledgeGraph.load(full_path_to_kg)
     else:
         # Make a knowledge_graph from Azure AI Search documents
+        logger.info("Fetching %d document chunks from Azure AI Search", num_search_documents)
         search_docs = get_search_documents(azure_credential, num_search_documents)
-        # Create the transforms
-        transforms = default_transforms(
-            documents=[LCDocument(page_content=doc["content"]) for doc in search_docs],
-            llm=generator_llm,
-            embedding_model=generator_embeddings,
-        )
 
-        # Convert the documents to RAGAS nodes
+        logger.info("Creating a RAGAS knowledge graph with based off of %d search documents", len(search_docs))
         nodes = []
         for doc in search_docs:
             content = doc["content"]
@@ -107,9 +105,18 @@ def generate_ground_truth_ragas(num_questions=200, num_search_documents=None, kg
             nodes.append(node)
 
         kg = KnowledgeGraph(nodes=nodes)
+
+        logger.info("Using RAGAS to apply transforms to knowledge graph", len(search_docs))
+        transforms = default_transforms(
+            documents=[LCDocument(page_content=doc["content"]) for doc in search_docs],
+            llm=generator_llm,
+            embedding_model=generator_embeddings,
+        )
+        apply_transforms(kg, transforms)
+
         kg.save(root_dir / "ground_truth_kg.json")
 
-    apply_transforms(kg, transforms)
+    logger.info("Using RAGAS knowledge graph to generate %d questions", num_questions)
     generator = TestsetGenerator(llm=generator_llm, embedding_model=generator_embeddings, knowledge_graph=kg)
     dataset = generator.generate(testset_size=num_questions, with_debugging_logs=True)
 
@@ -128,6 +135,7 @@ def generate_ground_truth_ragas(num_questions=200, num_search_documents=None, kg
         qa_pairs.append({"question": question, "truth": truth})
 
     with open(root_dir / "ground_truth.jsonl", "a") as f:
+        logger.info("Writing %d QA pairs to %s", len(qa_pairs), f.name)
         for qa_pair in qa_pairs:
             f.write(json.dumps(qa_pair) + "\n")
 
