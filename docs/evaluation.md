@@ -64,6 +64,7 @@ The options are:
 * `numquestions`: The number of questions to generate. We suggest at least 200.
 * `numsearchdocs`: The number of documents (chunks) to retrieve from your search index. You can leave off the option to fetch all documents, but that will significantly increase time it takes to generate ground truth data. You may want to at least start with a subset.
 * `kgfile`: An existing RAGAS knowledge base JSON file, which is usually `ground_truth_kg.json`. You may want to specify this if you already created a knowledge base and just want to tweak the question generation steps.
+* `groundtruthfile`: The file to write the generated ground truth answwers. By default, this is `evals/ground_truth.jsonl`.
 
 🕰️ This may take a long time, possibly several hours, depending on the size of the search index.
 

@@ -41,7 +41,10 @@ def get_search_documents(azure_credential, num_search_documents=None) -> str:
     )
     all_documents = []
     if num_search_documents is None:
+        logger.info("Fetching all document chunks from Azure AI Search")
         num_search_documents = 100000
+    else:
+        logger.info("Fetching %d document chunks from Azure AI Search", num_search_documents)
     response = search_client.search(search_text="*", top=num_search_documents).by_page()
     for page in response:
         page = list(page)
@@ -87,10 +90,9 @@ def generate_ground_truth_ragas(num_questions=200, num_search_documents=None, kg
         kg = KnowledgeGraph.load(full_path_to_kg)
     else:
         # Make a knowledge_graph from Azure AI Search documents
-        logger.info("Fetching %d document chunks from Azure AI Search", num_search_documents)
         search_docs = get_search_documents(azure_credential, num_search_documents)
 
-        logger.info("Creating a RAGAS knowledge graph with based off of %d search documents", len(search_docs))
+        logger.info("Creating a RAGAS knowledge graph based off of %d search documents", len(search_docs))
         nodes = []
         for doc in search_docs:
             content = doc["content"]
@@ -106,7 +108,7 @@ def generate_ground_truth_ragas(num_questions=200, num_search_documents=None, kg
 
         kg = KnowledgeGraph(nodes=nodes)
 
-        logger.info("Using RAGAS to apply transforms to knowledge graph", len(search_docs))
+        logger.info("Using RAGAS to apply transforms to knowledge graph")
         transforms = default_transforms(
             documents=[LCDocument(page_content=doc["content"]) for doc in search_docs],
             llm=generator_llm,
