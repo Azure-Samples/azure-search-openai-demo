@@ -1,7 +1,7 @@
 {
     "testdata_path": "ground_truth.jsonl",
     "results_dir": "results/experiment<TIMESTAMP>",
-    "requested_metrics": ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "answer_length", "latency"],
+    "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched"],
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {

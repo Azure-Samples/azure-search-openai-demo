@@ -1,14 +1,45 @@
 import argparse
 import logging
 import os
+import re
 from pathlib import Path
 
 from azure.identity import AzureDeveloperCliCredential
 from dotenv_azd import load_azd_env
 from evaltools.eval.evaluate import run_evaluate_from_config
+from evaltools.eval.evaluate_metrics import register_metric
+from evaltools.eval.evaluate_metrics.base_metric import BaseMetric
 from rich.logging import RichHandler
 
 logger = logging.getLogger("ragapp")
+
+
+class CitationsMatchedMetric(BaseMetric):
+    METRIC_NAME = "citations_matched"
+
+    @classmethod
+    def evaluator_fn(cls, **kwargs):
+        def citations_matched(*, response, ground_truth, **kwargs):
+            if response is None:
+                logger.warning("Received response of None, can't compute citation_match metric. Setting to -1.")
+                return {cls.METRIC_NAME: -1}
+            # Return true if all citations in the truth are present in the response
+            truth_citations = set(re.findall(r"\[([^\]]+)\.\w{3,4}(#page=\d+)*\]", ground_truth))
+            response_citations = set(re.findall(r"\[([^\]]+)\.\w{3,4}(#page=\d+)*\]", response))
+            # Count the percentage of citations that are present in the response
+            num_citations = len(truth_citations)
+            num_matched_citations = len(truth_citations.intersection(response_citations))
+            return {cls.METRIC_NAME: num_matched_citations / num_citations}
+
+        return citations_matched
+
+    @classmethod
+    def get_aggregate_stats(cls, df):
+        df = df[df[cls.METRIC_NAME] != -1]
+        return {
+            "total": int(df[cls.METRIC_NAME].sum()),
+            "rate": round(df[cls.METRIC_NAME].mean(), 2),
+        }
 
 
 def get_openai_config():
@@ -33,8 +64,10 @@ def get_azure_credential():
 
 if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.INFO, format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)]
+        level=logging.WARNING, format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)]
     )
+    logger.setLevel(logging.INFO)
+    logging.getLogger("evaltools").setLevel(logging.INFO)
     load_azd_env()
 
     parser = argparse.ArgumentParser(description="Run evaluation with OpenAI configuration.")
@@ -46,6 +79,7 @@ if __name__ == "__main__":
 
     openai_config = get_openai_config()
 
+    register_metric(CitationsMatchedMetric)
     run_evaluate_from_config(
         working_dir=Path(__file__).parent,
         config_path="evaluate_config.json",
