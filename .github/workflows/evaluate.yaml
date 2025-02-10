@@ -14,8 +14,8 @@ permissions:
 
 jobs:
   evaluate:
+    #contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
     if: |
-      contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
       github.event.issue.pull_request &&
       github.event.comment.body == '/evaluate'
     runs-on: ubuntu-latest
