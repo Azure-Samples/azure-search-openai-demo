@@ -189,6 +189,8 @@ jobs:
           azd env new $AZURE_ENV_NAME
           azd env refresh -e $AZURE_ENV_NAME
           azd env get-values
+        env:
+          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
 
       - name: Evaluate local RAG flow
         run: |
