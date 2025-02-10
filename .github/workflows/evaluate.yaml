@@ -114,7 +114,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "Starting evaluation! Check the Actions tab for progress, or wait for a comment with the results."
+              body: "Starting evaluation. Check the Actions tab for progress, or wait for a comment with the results."
             })
 
       - name: Checkout pull request
@@ -128,6 +128,7 @@ jobs:
           enable-cache: true
           version: "0.4.20"
           cache-dependency-glob: "requirements**.txt"
+          python-version: "3.12"
 
       - name: Setup node
         uses: actions/setup-node@v4

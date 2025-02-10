@@ -1,8 +1,8 @@
 {
     "evaluation_gpt_model": "gpt-4",
-    "evaluation_timestamp": 1738976093,
+    "evaluation_timestamp": 1739212680,
     "testdata_path": "/Users/pamelafox/azure-search-openai-demo/evals/ground_truth.jsonl",
-    "target_url": "https://capps-backend-v3v4cax5h4fjk.mangomushroom-6a80d999.westus.azurecontainerapps.io/chat",
+    "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {
             "top": 3,
