@@ -62,6 +62,7 @@ param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
 param speechServiceVoice string = ''
 param useGPT4V bool = false
+param useEval bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
 param cosmosDbSkuName string // Set in main.parameters.json
@@ -167,6 +168,20 @@ var gpt4v = {
   deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'Standard'
   deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
+
+param evalModelName string = ''
+param evalDeploymentName string = ''
+param evalModelVersion string = ''
+param evalDeploymentSkuName string = ''
+param evalDeploymentCapacity int = 0
+var eval = {
+  modelName: !empty(evalModelName) ? evalModelName : 'gpt-4o'
+  deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'gpt-4o'
+  deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2024-08-06'
+  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'Standard'
+  deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
+}
+
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -565,6 +580,21 @@ var defaultOpenAiDeployments = [
 
 var openAiDeployments = concat(
   defaultOpenAiDeployments,
+  useEval
+    ? [
+      {
+        name: eval.deploymentName
+        model: {
+          format: 'OpenAI'
+          name: eval.modelName
+          version: eval.deploymentVersion
+        }
+        sku: {
+          name: eval.deploymentSkuName
+          capacity: eval.deploymentCapacity
+        }
+      }
+    ] : [],
   useGPT4V
     ? [
         {
@@ -1197,7 +1227,9 @@ output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersi
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4v.deploymentName : ''
+output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentName : ''
+output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval.deploymentName : ''
+output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.modelName : ''
 
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
