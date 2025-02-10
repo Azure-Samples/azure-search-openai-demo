@@ -153,6 +153,14 @@ class Approach(ABC):
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
         if use_semantic_ranker:
+            print("Using semantic ranker")
+            print("Search text: ", search_text)
+            print("Filter: ", filter)
+            print("Top: ", top)
+            print("Query language: ", self.query_language)
+            print("Query speller: ", self.query_speller)
+            print("Semantic configuration: ", "default")
+            print("Semantic query: ", query_text)
             results = await self.search_client.search(
                 search_text=search_text,
                 filter=filter,
@@ -166,6 +174,7 @@ class Approach(ABC):
                 semantic_query=query_text,
             )
         else:
+            print("Not using semantic ranker")
             results = await self.search_client.search(
                 search_text=search_text,
                 filter=filter,
