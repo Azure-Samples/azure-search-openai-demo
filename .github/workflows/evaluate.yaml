@@ -189,9 +189,10 @@ jobs:
           uv pip install -r requirements-dev.txt
 
       - name: Run local server in background
+        # RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
         run: |
           cd app/backend
-          RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
+          python3 -m quart --app main:app run --port 50505
           cd ../..
 
       - name: Install evaluate dependencies
