@@ -172,6 +172,12 @@ jobs:
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
 
+      - name: Refresh azd environment variables
+        run: |
+            azd env refresh -e $AZURE_ENV_NAME --no-prompt
+        env:
+            AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+
       - name: Build frontend
         run: |
           cd ./app/frontend
@@ -184,18 +190,13 @@ jobs:
 
       - name: Run local server in background
         run: |
+          cd app/backend
           RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
+          cd ../..
 
       - name: Install evaluate dependencies
         run: |
           uv pip install -r evals/requirements.txt
-
-      - name: Run azd env get values command
-        run: |
-          azd env refresh -e $AZURE_ENV_NAME --no-prompt
-          azd env get-values
-        env:
-          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
 
       - name: Evaluate local RAG flow
         run: |
