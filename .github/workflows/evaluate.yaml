@@ -187,6 +187,7 @@ jobs:
       - name: Run azd env get values command
         run: |
           azd env new $AZURE_ENV_NAME
+          azd env refresh -e $AZURE_ENV_NAME
           azd env get-values
 
       - name: Evaluate local RAG flow
