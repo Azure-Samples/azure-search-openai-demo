@@ -3,6 +3,7 @@ name: Evaluate RAG answer flow
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch:
 
 # Set up permissions for deploying with secretless Azure federated credentials
 # https://learn.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
@@ -114,7 +115,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "Starting evaluation. Check the Actions tab for progress, or wait for a comment with the results."
+              body: "Starting evaluation! Check the Actions tab for progress, or wait for a comment with the results."
             })
 
       - name: Checkout pull request
@@ -177,6 +178,10 @@ jobs:
       - name: Install evaluate dependencies
         run: |
           uv pip install -r evals/requirements.txt
+
+      - name: Run azd env get values command
+        run: |
+          azd env get-values
 
       - name: Evaluate local RAG flow
         run: |
