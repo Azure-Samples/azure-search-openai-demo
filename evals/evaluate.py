@@ -14,6 +14,28 @@ from rich.logging import RichHandler
 logger = logging.getLogger("ragapp")
 
 
+class AnyCitationMetric(BaseMetric):
+    METRIC_NAME = "any_citation"
+
+    @classmethod
+    def evaluator_fn(cls, **kwargs):
+        def any_citation(*, response, **kwargs):
+            if response is None:
+                logger.warning("Received response of None, can't compute any_citation metric. Setting to -1.")
+                return {cls.METRIC_NAME: -1}
+            return {cls.METRIC_NAME: bool(re.search(r"\[([^\]]+)\.\w{3,4}(#page=\d+)*\]", response))}
+
+        return any_citation
+
+    @classmethod
+    def get_aggregate_stats(cls, df):
+        df = df[df[cls.METRIC_NAME] != -1]
+        return {
+            "total": int(df[cls.METRIC_NAME].sum()),
+            "rate": round(df[cls.METRIC_NAME].mean(), 2),
+        }
+
+
 class CitationsMatchedMetric(BaseMetric):
     METRIC_NAME = "citations_matched"
 
@@ -80,6 +102,8 @@ if __name__ == "__main__":
     openai_config = get_openai_config()
 
     register_metric(CitationsMatchedMetric)
+    register_metric(AnyCitationMetric)
+
     run_evaluate_from_config(
         working_dir=Path(__file__).parent,
         config_path="evaluate_config.json",
