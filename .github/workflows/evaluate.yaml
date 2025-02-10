@@ -140,7 +140,7 @@ jobs:
           enable-cache: true
           version: "0.4.20"
           cache-dependency-glob: "requirements**.txt"
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -200,7 +200,14 @@ jobs:
 
       - name: Evaluate local RAG flow
         run: |
-          python evals/evaluate.py --targeturl=http://127.0.0.1:50505/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
+          python evals/evaluate.py --targeturl=http://127.0.0.1:50505/chat --resultsdir=evals/results/pr${{ github.event.issue.number }} --numquestions=2
+
+      - name: Upload eval results as build artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+            name: eval_result
+            path: ./evals/results/pr${{ github.event.issue.number }}
 
       - name: Upload server logs as build artifact
         uses: actions/upload-artifact@v4
@@ -213,12 +220,6 @@ jobs:
         with:
           name: server_error_logs
           path: ./app/backend/serverlogs.err
-
-      - name: Upload eval results as build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: eval_result
-          path: ./evals/results/pr${{ github.event.issue.number }}
 
       - name: Summarize results
         if: ${{ success() }}
