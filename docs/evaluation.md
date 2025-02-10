@@ -81,7 +81,13 @@ Run the evaluation script by running the following command:
 python evals/evaluate.py
 ```
 
-🕰️ This may take a long time, possibly several hours, depending on the number of ground truth questions. You can specify `--numquestions` argument for a test run on a subset of the questions.
+The options are:
+
+* `numquestions`: The number of questions to evaluate. By default, this is all questions in the ground truth data.
+* `resultsdir`: The directory to write the evaluation results. By default, this is a timestamped folder in `evals/results`. This option can also be specified in `eval_config.json`.
+* `targeturl`: The URL of the running application to evaluate. By default, this is `http://localhost:50505`. This option can also be specified in `eval_config.json`.
+
+🕰️ This may take a long time, possibly several hours, depending on the number of ground truth questions.
 
 ## Review the evaluation results
 
@@ -93,10 +99,16 @@ You can see a summary of results across all evaluation runs by running the follo
 python -m evaltools summary evals/results
 ```
 
-Compare answers across runs by running the following command:
+Compare answers to the ground truth by running the following command:
 
 ```bash
 python -m evaltools diff evals/results/baseline/
+```
+
+Compare answers across two runs by running the following command:
+
+```bash
+python -m evaltools diff evals/results/baseline/ evals/results/SECONDRUNHERE
 ```
 
 ## Run bulk evaluation on a PR
