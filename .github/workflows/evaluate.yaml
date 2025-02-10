@@ -3,7 +3,6 @@ name: Evaluate RAG answer flow
 on:
   issue_comment:
     types: [created]
-  workflow_dispatch:
 
 # Set up permissions for deploying with secretless Azure federated credentials
 # https://learn.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
@@ -68,6 +67,12 @@ jobs:
       AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY }}
       AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION }}
       AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU }}
+      USE_EVAL: ${{ vars.USE_EVAL }}
+      AZURE_OPENAI_EVAL_MODEL: ${{ vars.AZURE_OPENAI_EVAL_MODEL }}
+      AZURE_OPENAI_EVAL_MODEL_VERSION: ${{ vars.AZURE_OPENAI_EVAL_MODEL_VERSION }}
+      AZURE_OPENAI_EVAL_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EVAL_DEPLOYMENT }}
+      AZURE_OPENAI_EVAL_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_EVAL_DEPLOYMENT_SKU }}
+      AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY }}
       AZURE_OPENAI_DISABLE_KEYS: ${{ vars.AZURE_OPENAI_DISABLE_KEYS }}
       OPENAI_HOST: ${{ vars.OPENAI_HOST }}
       OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
@@ -129,7 +134,7 @@ jobs:
           enable-cache: true
           version: "0.4.20"
           cache-dependency-glob: "requirements**.txt"
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -161,6 +166,12 @@ jobs:
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
 
+      - name: Refresh azd environment variables
+        run: |
+            azd env refresh -e $AZURE_ENV_NAME --no-prompt
+        env:
+            AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+
       - name: Build frontend
         run: |
           cd ./app/frontend
@@ -173,37 +184,36 @@ jobs:
 
       - name: Run local server in background
         run: |
-          RUNNER_TRACKING_ID="" && (nohup python3 -m uvicorn fastapi_app:create_app --factory > serverlogs.out 2> serverlogs.err &)
+          cd app/backend
+          RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
+          cd ../..
 
       - name: Install evaluate dependencies
         run: |
           uv pip install -r evals/requirements.txt
 
-      - name: Run azd env get values command
-        run: |
-          azd env get-values
-
       - name: Evaluate local RAG flow
         run: |
-          python evals/evaluate.py --targeturl=http://127.0.0.1:8000/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
+          python evals/evaluate.py --targeturl=http://127.0.0.1:50505/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
+
+      - name: Upload eval results as build artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+            name: eval_result
+            path: ./evals/results/pr${{ github.event.issue.number }}
 
       - name: Upload server logs as build artifact
         uses: actions/upload-artifact@v4
         with:
           name: server_logs
-          path: ./serverlogs.out
+          path: ./app/backend/serverlogs.out
 
       - name: Upload server error logs as build artifact
         uses: actions/upload-artifact@v4
         with:
           name: server_error_logs
-          path: ./serverlogs.err
-
-      - name: Upload eval results as build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: eval_result
-          path: ./evals/results/pr${{ github.event.issue.number }}
+          path: ./app/backend/serverlogs.err
 
       - name: Summarize results
         if: ${{ success() }}

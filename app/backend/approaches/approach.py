@@ -152,7 +152,18 @@ class Approach(ABC):
     ) -> List[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
+        import logging
+
+        logger = logging.getLogger("scripts")
         if use_semantic_ranker:
+            logger.info("Using semantic ranker")
+            logger.info("Search text: %s", search_text)
+            logger.info("Filter: %s", filter)
+            logger.info("Top: %s", top)
+            logger.info("Query language: %s", self.query_language)
+            logger.info("Query speller: %s", self.query_speller)
+            logger.info("Semantic configuration: %s", "default")
+            logger.info("Semantic query: %s", query_text)
             results = await self.search_client.search(
                 search_text=search_text,
                 filter=filter,
@@ -166,6 +177,7 @@ class Approach(ABC):
                 semantic_query=query_text,
             )
         else:
+            logger.info("Not using semantic ranker")
             results = await self.search_client.search(
                 search_text=search_text,
                 filter=filter,
