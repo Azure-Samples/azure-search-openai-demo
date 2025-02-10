@@ -18,10 +18,10 @@ permissions:
 
 jobs:
   evaluate:
-    # if: |
-    #   contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
-    #   github.event.issue.pull_request &&
-    #   github.event.comment.body == '/evaluate'
+    if: |
+      contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/evaluate'
     runs-on: ubuntu-latest
     env:
       # azd required
@@ -116,23 +116,21 @@ jobs:
       USE_MEDIA_DESCRIBER_AZURE_CU: ${{ vars.USE_MEDIA_DESCRIBER_AZURE_CU }}
     steps:
 
-    #   - name: Comment on pull request
-    #     uses: actions/github-script@v7
-    #     with:
-    #       script: |
-    #         github.rest.issues.createComment({
-    #           issue_number: context.issue.number,
-    #           owner: context.repo.owner,
-    #           repo: context.repo.repo,
-    #           body: "Starting evaluation! Check the Actions tab for progress, or wait for a comment with the results."
-    #         })
+      - name: Comment on pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Starting evaluation! Check the Actions tab for progress, or wait for a comment with the results."
+            })
 
-    #   - name: Checkout pull request
-    #     uses: actions/checkout@v4
-    #     with:
-    #       ref: refs/pull/${{ github.event.issue.number }}/head
-
-      - uses: actions/checkout@v4
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
