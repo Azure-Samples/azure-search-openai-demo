@@ -3,6 +3,7 @@ name: Evaluate RAG answer flow
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch:
 
 # Set up permissions for deploying with secretless Azure federated credentials
 # https://learn.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
@@ -14,10 +15,6 @@ permissions:
 
 jobs:
   evaluate:
-    #contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
-    if: |
-      github.event.issue.pull_request &&
-      github.event.comment.body == '/evaluate'
     runs-on: ubuntu-latest
     env:
       # azd required
