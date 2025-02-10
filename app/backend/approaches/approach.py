@@ -171,8 +171,8 @@ class Approach(ABC):
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
                 vector_queries=search_vectors,
                 query_type=QueryType.SEMANTIC,
-                query_language=self.query_language,
-                query_speller=self.query_speller,
+                # query_language=self.query_language,
+                # query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 semantic_query=query_text,
             )
