@@ -184,7 +184,7 @@ jobs:
 
       - name: Run local server in background
         run: |
-          RUNNER_TRACKING_ID="" && (nohup python3 -m uvicorn fastapi_app:create_app --factory > serverlogs.out 2> serverlogs.err &)
+          RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
 
       - name: Install evaluate dependencies
         run: |
@@ -192,15 +192,14 @@ jobs:
 
       - name: Run azd env get values command
         run: |
-          azd env new $AZURE_ENV_NAME
-          azd env refresh -e $AZURE_ENV_NAME
+          azd env refresh -e $AZURE_ENV_NAME --no-prompt
           azd env get-values
         env:
           AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
 
       - name: Evaluate local RAG flow
         run: |
-          python evals/evaluate.py --targeturl=http://127.0.0.1:8000/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
+          python evals/evaluate.py --targeturl=http://127.0.0.1:50505/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
 
       - name: Upload server logs as build artifact
         uses: actions/upload-artifact@v4
