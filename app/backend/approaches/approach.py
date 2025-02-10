@@ -157,13 +157,13 @@ class Approach(ABC):
         logger = logging.getLogger("scripts")
         if use_semantic_ranker:
             logger.info("Using semantic ranker")
-            logger.info("Search text: ", search_text)
-            logger.info("Filter: ", filter)
-            logger.info("Top: ", top)
-            logger.info("Query language: ", self.query_language)
-            logger.info("Query speller: ", self.query_speller)
-            logger.info("Semantic configuration: ", "default")
-            logger.info("Semantic query: ", query_text)
+            logger.info("Search text: %s", search_text)
+            logger.info("Filter: %s", filter)
+            logger.info("Top: %s", top)
+            logger.info("Query language: %s", self.query_language)
+            logger.info("Query speller: %s", self.query_speller)
+            logger.info("Semantic configuration: %s", "default")
+            logger.info("Semantic query: %s", query_text)
             results = await self.search_client.search(
                 search_text=search_text,
                 filter=filter,
