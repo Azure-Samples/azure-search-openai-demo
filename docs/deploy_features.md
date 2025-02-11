@@ -179,6 +179,8 @@ Convert them first to PDF or image formats to enable media description.
 
 ## Enabling client-side chat history
 
+[📺 Watch: (RAG Deep Dive series) Storing chat history](https://www.youtube.com/watch?v=1YiTFnnLVIA)
+
 This feature allows users to view the chat history of their conversation, stored in the browser using [IndexedDB](https://developer.mozilla.org/docs/Web/API/IndexedDB_API). That means the chat history will be available only on the device where the chat was initiated. To enable browser-stored chat history, run:
 
 ```shell
@@ -186,6 +188,8 @@ azd env set USE_CHAT_HISTORY_BROWSER true
 ```
 
 ## Enabling persistent chat history with Azure Cosmos DB
+
+[📺 Watch: (RAG Deep Dive series) Storing chat history](https://www.youtube.com/watch?v=1YiTFnnLVIA)
 
 This feature allows authenticated users to view the chat history of their conversations, stored in the server-side storage using [Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/).This option requires that authentication be enabled. The chat history will be persistent and accessible from any device where the user logs in with the same account. To enable server-stored chat history, run:
 

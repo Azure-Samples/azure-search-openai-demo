@@ -19,6 +19,8 @@ urlFragment: azure-search-openai-demo-private-access
 
 # RAG chat: Deploying with private access
 
+[📺 Watch: (RAG Deep Dive series) Private network deployment](https://www.youtube.com/watch?v=08wtL1eB15g)
+
 The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring private endpoints.
 
 ⚠️ This feature is not yet compatible with Azure Container Apps, so you will need to [deploy to Azure App Service](./azure_app_service.md) instead.
