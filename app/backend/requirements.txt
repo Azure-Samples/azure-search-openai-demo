@@ -87,7 +87,7 @@ click==8.1.7
     #   prompty
     #   quart
     #   uvicorn
-cryptography==44.0.0
+cryptography==44.0.1
     # via
     #   -r requirements.in
     #   azure-identity
