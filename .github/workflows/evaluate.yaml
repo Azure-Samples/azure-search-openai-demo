@@ -1,25 +1,23 @@
-name: Deploy
+name: Evaluate RAG answer flow
 
 on:
-  workflow_dispatch:
-  push:
-    # Run when commits are pushed to mainline branch (main or master)
-    # Set this to the mainline branch you are using
-    branches:
-      - main
-      - master
-
-# GitHub Actions workflow to deploy to Azure using azd
-# To configure required secrets for connecting to Azure, simply run `azd pipeline config`
+  issue_comment:
+    types: [created]
 
 # Set up permissions for deploying with secretless Azure federated credentials
 # https://learn.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
   id-token: write
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
-  build:
+  evaluate:
+    if: |
+      contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/evaluate'
     runs-on: ubuntu-latest
     env:
       # azd required
@@ -113,18 +111,53 @@ jobs:
       USE_CHAT_HISTORY_BROWSER: ${{ vars.USE_CHAT_HISTORY_BROWSER }}
       USE_MEDIA_DESCRIBER_AZURE_CU: ${{ vars.USE_MEDIA_DESCRIBER_AZURE_CU }}
     steps:
-      - name: Checkout
+
+      - name: Comment on pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Starting evaluation! Check the Actions tab for progress, or wait for a comment with the results."
+            })
+
+      - name: Checkout pull request
         uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
 
-      - name: Install azd
-        uses: Azure/setup-azd@v2.1.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "0.4.20"
+          cache-dependency-glob: "requirements**.txt"
+          python-version: "3.11"
 
-      - name: Install Nodejs
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Log in with Azure (Federated Credentials)
+      - name: Install azd
+        uses: Azure/setup-azd@v2.0.0
+
+      - name: Login to Azure with az CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set az account
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az account set --subscription ${{env.AZURE_SUBSCRIPTION_ID}}
+
+      - name: Login to with Azure with azd (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
           azd auth login `
@@ -133,26 +166,78 @@ jobs:
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
 
-      - name: Log in with Azure (Client Credentials)
-        if: ${{ env.AZURE_CREDENTIALS != '' }}
+      - name: Refresh azd environment variables
         run: |
-          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-          Write-Host "::add-mask::$($info.clientSecret)"
-
-          azd auth login `
-            --client-id "$($info.clientId)" `
-            --client-secret "$($info.clientSecret)" `
-            --tenant-id "$($info.tenantId)"
-        shell: pwsh
+            azd env refresh -e $AZURE_ENV_NAME --no-prompt
         env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+            AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
 
-      - name: Provision Infrastructure
-        run: azd provision --no-prompt
-        env:
-          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
-          AZURE_SERVER_APP_SECRET: ${{ secrets.AZURE_SERVER_APP_SECRET }}
-          AZURE_CLIENT_APP_SECRET: ${{ secrets.AZURE_CLIENT_APP_SECRET }}
+      - name: Build frontend
+        run: |
+          cd ./app/frontend
+          npm install
+          npm run build
 
-      - name: Deploy Application
-        run: azd deploy --no-prompt
+      - name: Install dependencies
+        run: |
+          uv pip install -r requirements-dev.txt
+
+      - name: Run local server in background
+        run: |
+          cd app/backend
+          RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
+          cd ../..
+
+      - name: Install evaluate dependencies
+        run: |
+          uv pip install -r evals/requirements.txt
+
+      - name: Evaluate local RAG flow
+        run: |
+          python evals/evaluate.py --targeturl=http://127.0.0.1:50505/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
+
+      - name: Upload eval results as build artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+            name: eval_result
+            path: ./evals/results/pr${{ github.event.issue.number }}
+
+      - name: Upload server logs as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server_logs
+          path: ./app/backend/serverlogs.out
+
+      - name: Upload server error logs as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server_error_logs
+          path: ./app/backend/serverlogs.err
+
+      - name: Summarize results
+        if: ${{ success() }}
+        run: |
+          echo "## Evaluation results" >> eval-summary.md
+          python -m evaltools summary evals/results --output=markdown >> eval-summary.md
+          echo "## Answer differences across runs" >> run-diff.md
+          python -m evaltools diff evals/results/baseline evals/results/pr${{ github.event.issue.number }} --output=markdown >> run-diff.md
+          cat eval-summary.md >> $GITHUB_STEP_SUMMARY
+          cat run-diff.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summaryPath = "eval-summary.md";
+            const summary = fs.readFileSync(summaryPath, 'utf8');
+            const runId = process.env.GITHUB_RUN_ID;
+            const repo = process.env.GITHUB_REPOSITORY;
+            const actionsUrl = `https://github.com/${repo}/actions/runs/${runId}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${summary}\n\n[Check the workflow run for more details](${actionsUrl}).`
+            })

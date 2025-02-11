@@ -19,6 +19,8 @@ urlFragment: azure-search-openai-demo-document-security
 
 # RAG chat: Setting up optional login and document level access control
 
+[📺 Watch: (RAG Deep Dive series) Login and access control](https://www.youtube.com/watch?v=GwEiYJgM8Vw)
+
 The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring login and access control.
 
 ## Table of Contents

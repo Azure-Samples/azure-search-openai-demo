@@ -1,6 +1,8 @@
 # RAG chat: Customizing the chat app
 
-This guide provides more details for customizing the Chat App.
+[📺 Watch: (RAG Deep Dive series) Customizing the app](https://www.youtube.com/watch?v=D3slfMqydHc)
+
+This guide provides more details for customizing the RAG chat app.
 
 - [Using your own data](#using-your-own-data)
 - [Customizing the UI](#customizing-the-ui)
@@ -124,7 +126,7 @@ You can also try changing the ChatCompletion parameters, like temperature, to se
 
 ### Improving Azure AI Search results
 
-If the problem is with Azure AI Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however. Check out this blog post which [evaluates AI search strategies](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167) for a better understanding of the differences.
+If the problem is with Azure AI Search (step 2 above), the first step is to check what search parameters you're using. Generally, the best results are found with hybrid search (text + vectors) plus the additional semantic re-ranking step, and that's what we've enabled by default. There may be some domains where that combination isn't optimal, however. Check out this blog post which [evaluates AI search strategies](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167) for a better understanding of the differences, or watch this [RAG Deep Dive video on AI Search](https://www.youtube.com/watch?v=ugJy9QkgLYg).
 
 #### Configuring parameters in the app
 
@@ -175,4 +177,4 @@ Here are additional ways for improving the search results:
 
 ### Evaluating answer quality
 
-Once you've made changes to the prompts or settings, you'll want to rigorously evaluate the results to see if they've improved. You can use tools in [the AI RAG Chat evaluator](https://github.com/Azure-Samples/ai-rag-chat-evaluator) repository to run evaluations, review results, and compare answers across runs.
+Once you've made changes to the prompts or settings, you'll want to rigorously evaluate the results to see if they've improved. Follow the [evaluation guide](./evaluation.md) to learn how to run evaluations, review results, and compare answers across runs.
