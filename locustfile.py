@@ -38,7 +38,7 @@ class ChatUser(HttpUser):
                         "semantic_ranker": True,
                         "semantic_captions": False,
                         "top": 3,
-                        "suggest_followup_questions": False,
+                        "suggest_followup_questions": True,
                     },
                 },
             },
@@ -50,7 +50,7 @@ class ChatUser(HttpUser):
 
         self.client.post(
             "/chat",
-            name="follow up chat"
+            name="follow up chat",
             json={
                 "messages": [
                     {"content": first_question, "role": "user"},
