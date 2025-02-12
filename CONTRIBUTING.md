@@ -145,3 +145,4 @@ Here are community contributors that can review translations:
 | Portugese| @glaucia86          |
 | Spanish  | @miguelmsft         |
 | Turkish  | @mertcakdogan       |
+| Italian  | @ivanvaccarics      |
