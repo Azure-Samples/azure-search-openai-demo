@@ -11,16 +11,17 @@ class ChatUser(HttpUser):
     def ask_question(self):
         self.client.get(
             "/",
-            name="home",    
+            name="home",
         )
         time.sleep(self.wait_time())
         first_question = random.choice(
-                            [
-                                "What is included in my Northwind Health Plus plan that is not in standard?",
-                                "What does a Product Manager do?",
-                                "What happens in a performance review?",
-                                "Whats your whistleblower policy?",
-                            ])
+            [
+                "What is included in my Northwind Health Plus plan that is not in standard?",
+                "What does a Product Manager do?",
+                "What happens in a performance review?",
+                "Whats your whistleblower policy?",
+            ]
+        )
 
         response = self.client.post(
             "/chat",
