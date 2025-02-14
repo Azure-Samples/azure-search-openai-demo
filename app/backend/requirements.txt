@@ -211,11 +211,9 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-numpy==2.0.1
-    # via -r requirements.in
 oauthlib==3.2.2
     # via requests-oauthlib
-openai==1.59.4
+openai==1.63.0
     # via
     #   -r requirements.in
     #   openai-messages-token-helper
