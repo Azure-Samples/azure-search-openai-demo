@@ -20,7 +20,7 @@
     "@react-spring/web": "^9.7.5",
     "dompurify": "^3.2.0",
     "i18next": "^24.2.0",
-    "i18next-browser-languagedetector": "^8.0.0",
+    "i18next-browser-languagedetector": "^8.0.2",
     "i18next-http-backend": "^3.0.1",
     "idb": "^8.0.0",
     "ndjson-readablestream": "^1.2.0",
@@ -44,7 +44,7 @@
     "@vitejs/plugin-react": "^4.3.3",
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
-    "vite": "^5.4.11",
+    "vite": "^5.4.14",
     "rollup-plugin-visualizer": "^5.12.0"
   }
 }

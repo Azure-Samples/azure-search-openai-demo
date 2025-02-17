@@ -9,21 +9,27 @@ class ChatUser(HttpUser):
 
     @task
     def ask_question(self):
-        self.client.get("/")
-        time.sleep(5)
-        self.client.post(
+        self.client.get(
+            "/",
+            name="home",
+        )
+        time.sleep(self.wait_time())
+        first_question = random.choice(
+            [
+                "What is included in my Northwind Health Plus plan that is not in standard?",
+                "What does a Product Manager do?",
+                "What happens in a performance review?",
+                "Whats your whistleblower policy?",
+            ]
+        )
+
+        response = self.client.post(
             "/chat",
+            name="initial chat",
             json={
                 "messages": [
                     {
-                        "content": random.choice(
-                            [
-                                "What is included in my Northwind Health Plus plan that is not in standard?",
-                                "What does a Product Manager do?",
-                                "What happens in a performance review?",
-                                "Whats your whistleblower policy?",
-                            ]
-                        ),
+                        "content": first_question,
                         "role": "user",
                     },
                 ],
@@ -33,22 +39,27 @@ class ChatUser(HttpUser):
                         "semantic_ranker": True,
                         "semantic_captions": False,
                         "top": 3,
-                        "suggest_followup_questions": False,
+                        "suggest_followup_questions": True,
                     },
                 },
             },
         )
-        time.sleep(5)
+        time.sleep(self.wait_time())
+        # use one of the follow up questions.
+        follow_up_question = random.choice(response.json()["context"]["followup_questions"])
+        result_message = response.json()["message"]["content"]
+
         self.client.post(
             "/chat",
+            name="follow up chat",
             json={
                 "messages": [
-                    {"content": "What happens in a performance review?", "role": "user"},
+                    {"content": first_question, "role": "user"},
                     {
-                        "content": "During a performance review, employees will receive feedback on their performance over the past year, including both successes and areas for improvement. The feedback will be provided by the employee's supervisor and is intended to help the employee develop and grow in their role [employee_handbook-3.pdf]. The review is a two-way dialogue between the employee and their manager, so employees are encouraged to be honest and open during the process [employee_handbook-3.pdf]. The employee will also have the opportunity to discuss their goals and objectives for the upcoming year [employee_handbook-3.pdf]. A written summary of the performance review will be provided to the employee, which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
+                        "content": result_message,
                         "role": "assistant",
                     },
-                    {"content": "Does my plan cover eye exams?", "role": "user"},
+                    {"content": follow_up_question, "role": "user"},
                 ],
                 "context": {
                     "overrides": {
@@ -69,7 +80,7 @@ class ChatVisionUser(HttpUser):
     @task
     def ask_question(self):
         self.client.get("/")
-        time.sleep(5)
+        time.sleep(self.wait_time())
         self.client.post(
             "/chat/stream",
             json={
@@ -99,7 +110,7 @@ class ChatVisionUser(HttpUser):
                 "session_state": None,
             },
         )
-        time.sleep(5)
+        time.sleep(self.wait_time())
         self.client.post(
             "/chat/stream",
             json={

@@ -109,7 +109,7 @@ export interface SpeechConfig {
 }
 
 export type HistoryListApiResponse = {
-    items: {
+    sessions: {
         id: string;
         entra_oid: string;
         title: string;
@@ -118,10 +118,8 @@ export type HistoryListApiResponse = {
     continuation_token?: string;
 };
 
-export type HistroyApiResponse = {
+export type HistoryApiResponse = {
     id: string;
     entra_oid: string;
-    title: string;
     answers: any;
-    timestamp: number;
 };

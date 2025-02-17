@@ -1,6 +1,6 @@
 {
     "continuation_token": "next",
-    "items": [
+    "sessions": [
         {
             "entra_oid": "OID_X",
             "id": "123",

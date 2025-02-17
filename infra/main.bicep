@@ -62,6 +62,7 @@ param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
 param speechServiceVoice string = ''
 param useGPT4V bool = false
+param useEval bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
 param cosmosDbSkuName string // Set in main.parameters.json
@@ -70,7 +71,8 @@ param cosmosDbLocation string = ''
 param cosmosDbAccountName string = ''
 param cosmosDbThroughput int = 400
 param chatHistoryDatabaseName string = 'chat-database'
-param chatHistoryContainerName string = 'chat-history'
+param chatHistoryContainerName string = 'chat-history-v2'
+param chatHistoryVersion string = 'cosmosdb-v2'
 
 // https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cstandard%2Cstandard-chat-completions#standard-deployment-model-availability
 @description('Location for the OpenAI resource group')
@@ -91,7 +93,7 @@ param chatHistoryContainerName string = 'chat-history'
     type: 'location'
   }
 })
-param openAiResourceGroupLocation string
+param openAiLocation string
 
 param openAiSkuName string = 'S0'
 
@@ -134,7 +136,7 @@ var chatGpt = {
     ? chatGptModelName
     : startsWith(openAiHost, 'azure') ? 'gpt-35-turbo' : 'gpt-3.5-turbo'
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
-  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0613'
+  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '0125'
   deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
@@ -166,6 +168,20 @@ var gpt4v = {
   deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'Standard'
   deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
+
+param evalModelName string = ''
+param evalDeploymentName string = ''
+param evalModelVersion string = ''
+param evalDeploymentSkuName string = ''
+param evalDeploymentCapacity int = 0
+var eval = {
+  modelName: !empty(evalModelName) ? evalModelName : 'gpt-4o'
+  deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'gpt-4o'
+  deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2024-08-06'
+  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'Standard'
+  deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
+}
+
 
 param tenantId string = tenant().tenantId
 param authTenantId string = ''
@@ -380,6 +396,7 @@ var appEnvVariables = {
   AZURE_COSMOSDB_ACCOUNT: (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
   AZURE_CHAT_HISTORY_DATABASE: chatHistoryDatabaseName
   AZURE_CHAT_HISTORY_CONTAINER: chatHistoryContainerName
+  AZURE_CHAT_HISTORY_VERSION: chatHistoryVersion
   // Shared by all OpenAI deployments
   OPENAI_HOST: openAiHost
   AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
@@ -571,6 +588,21 @@ var defaultOpenAiDeployments = [
 
 var openAiDeployments = concat(
   defaultOpenAiDeployments,
+  useEval
+    ? [
+      {
+        name: eval.deploymentName
+        model: {
+          format: 'OpenAI'
+          name: eval.modelName
+          version: eval.deploymentVersion
+        }
+        sku: {
+          name: eval.deploymentSkuName
+          capacity: eval.deploymentCapacity
+        }
+      }
+    ] : [],
   useGPT4V
     ? [
         {
@@ -594,7 +626,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzure
   scope: openAiResourceGroup
   params: {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
-    location: openAiResourceGroupLocation
+    location: openAiLocation
     tags: tags
     kind: 'OpenAI'
     customSubDomainName: !empty(openAiServiceName)
@@ -807,26 +839,31 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (use
         containers: [
           {
             name: chatHistoryContainerName
+            kind: 'MultiHash'
             paths: [
               '/entra_oid'
+              '/session_id'
             ]
             indexingPolicy: {
               indexingMode: 'consistent'
               automatic: true
               includedPaths: [
                 {
-                  path: '/*'
+                  path: '/entra_oid/?'
+                }
+                {
+                  path: '/session_id/?'
+                }
+                {
+                  path: '/timestamp/?'
+                }
+                {
+                  path: '/type/?'
                 }
               ]
               excludedPaths: [
                 {
-                  path: '/title/?'
-                }
-                {
-                  path: '/answers/*'
-                }
-                {
-                  path: '/"_etag"/?'
+                  path: '/*'
                 }
               ]
             }
@@ -1198,7 +1235,9 @@ output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersi
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost ? gpt4v.deploymentName : ''
+output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentName : ''
+output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval.deploymentName : ''
+output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.modelName : ''
 
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
@@ -1218,6 +1257,7 @@ output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.princ
 output AZURE_COSMOSDB_ACCOUNT string = (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
 output AZURE_CHAT_HISTORY_DATABASE string = chatHistoryDatabaseName
 output AZURE_CHAT_HISTORY_CONTAINER string = chatHistoryContainerName
+output AZURE_CHAT_HISTORY_VERSION string = chatHistoryVersion
 
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName

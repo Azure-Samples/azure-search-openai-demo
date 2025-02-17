@@ -423,6 +423,7 @@ async def auth_public_documents_client(
     monkeypatch.setenv("AZURE_COSMOSDB_ACCOUNT", "test-cosmosdb-account")
     monkeypatch.setenv("AZURE_CHAT_HISTORY_DATABASE", "test-cosmosdb-database")
     monkeypatch.setenv("AZURE_CHAT_HISTORY_CONTAINER", "test-cosmosdb-container")
+    monkeypatch.setenv("AZURE_CHAT_HISTORY_VERSION", "cosmosdb-v2")
 
     for key, value in request.param.items():
         monkeypatch.setenv(key, value)

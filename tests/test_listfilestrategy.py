@@ -41,7 +41,7 @@ def test_file_filename_to_id():
     # test ascii filename
     assert File(empty).filename_to_id() == "file-foo_pdf-666F6F2E706466"
     # test filename containing unicode
-    empty.name = "foo\u00A9.txt"
+    empty.name = "foo\u00a9.txt"
     assert File(empty).filename_to_id() == "file-foo__txt-666F6FC2A92E747874"
     # test filenaming starting with unicode
     empty.name = "ファイル名.pdf"

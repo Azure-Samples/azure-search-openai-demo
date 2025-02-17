@@ -1,5 +1,7 @@
 # RAG chat: Using GPT vision model with RAG approach
 
+[📺 Watch: (RAG Deep Dive series) Multimedia data ingestion](https://www.youtube.com/watch?v=5FfIy7G2WW0)
+
 This repository includes an optional feature that uses the GPT vision model to generate responses based on retrieved content. This feature is useful for answering questions based on the visual content of documents, such as photos and charts.
 
 ## How it works

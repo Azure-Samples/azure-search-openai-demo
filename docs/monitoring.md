@@ -12,7 +12,7 @@ By default, deployed apps use Application Insights for the tracing of each reque
 To see the performance data, go to the Application Insights resource in your resource group, click on the "Investigate -> Performance" blade and navigate to any HTTP request to see the timing data.
 To inspect the performance of chat requests, use the "Drill into Samples" button to see end-to-end traces of all the API calls made for any chat request:
 
-![Tracing screenshot](docs/images/transaction-tracing.png)
+![Tracing screenshot](images/transaction-tracing.png)
 
 ## Failures
 
