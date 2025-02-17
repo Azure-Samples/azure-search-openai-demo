@@ -119,7 +119,7 @@
         "useOidSecurityFilter": "Use oid security filter",
         "useGroupsSecurityFilter": "Use groups security filter",
         "shouldStream": "Stream chat completion responses",
-        "useBingSearch": "Use Bing search"
+        "useGroundingSearch": "Use Grounding search"
     },
 
     "helpTexts": {
@@ -153,6 +153,6 @@
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
         "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
-        "useBingSearch": "Use Bing search to ground search results."
+        "useGroundingSearch": "Use Grounding search to ground search results."
     }
 }

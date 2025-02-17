@@ -58,7 +58,7 @@ const Chat = () => {
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
-    const [useBingSearch, setUseBingSearch] = useState<boolean>(false);
+    const [useGroundingSearch, setUseGroundingSearch] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -78,7 +78,7 @@ const Chat = () => {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
-    const [showBingSearchOption, setShowBingSearchOption] = useState<boolean>(false);
+    const [showGroundingSearchOption, setShowGroundingSearchOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showLanguagePicker, setshowLanguagePicker] = useState<boolean>(false);
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
@@ -113,7 +113,7 @@ const Chat = () => {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowChatHistoryBrowser(config.showChatHistoryBrowser);
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
-            setShowBingSearchOption(config.showBingSearchOption);
+            setShowGroundingSearchOption(config.showGroundingSearchOption);
         });
     };
 
@@ -207,7 +207,7 @@ const Chat = () => {
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
-                        use_bing_search: useBingSearch,
+                        use_grounding_search: useGroundingSearch,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -322,8 +322,8 @@ const Chat = () => {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
-            case "useBingSearch":
-                setUseBingSearch(value);
+            case "useGroundingSearch":
+                setUseGroundingSearch(value);
                 break;
         }
     };
@@ -510,13 +510,13 @@ const Chat = () => {
                         includeCategory={includeCategory}
                         retrievalMode={retrievalMode}
                         useGPT4V={useGPT4V}
-                        useBingSearch={useBingSearch}
+                        useGroundingSearch={useGroundingSearch}
                         gpt4vInput={gpt4vInput}
                         vectorFieldList={vectorFieldList}
                         showSemanticRankerOption={showSemanticRankerOption}
                         showGPT4VOptions={showGPT4VOptions}
                         showVectorOption={showVectorOption}
-                        showBingSearchOption={showBingSearchOption}
+                        showGroundingSearchOption={showGroundingSearchOption}
                         useOidSecurityFilter={useOidSecurityFilter}
                         useGroupsSecurityFilter={useGroupsSecurityFilter}
                         useLogin={!!useLogin}

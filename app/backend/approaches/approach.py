@@ -25,7 +25,7 @@ from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
 from approaches.promptmanager import PromptManager
-from bing_client import WebPage
+from app.backend.search_client import WebPage
 from core.authentication import AuthenticationHelper
 
 

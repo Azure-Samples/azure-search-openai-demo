@@ -36,7 +36,15 @@ class WebAnswer(BaseModel):
     )
 
 
-class AsyncBingClient:
+class AsyncGroundingSearchClient:
+    def __init__(self, api_key: str, endpoint: Optional[str] = None):
+        ...
+
+    async def search(self, query: str, lang="en-US") -> WebAnswer:
+        ...
+
+
+class AsyncBingSearchClient(AsyncGroundingSearchClient):
     def __init__(self, api_key: str, bing_endpoint: Optional[str] = "api.bing.microsoft.com"):
         self.api_key = api_key
         self.base_url = f"https://{bing_endpoint}/v7.0/search"

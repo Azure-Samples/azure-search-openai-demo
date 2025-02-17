@@ -14,7 +14,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import Document, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
-from bing_client import AsyncBingClient, WebPage
+from search_client import AsyncGroundingSearchClient, WebPage
 from core.authentication import AuthenticationHelper
 
 
@@ -41,11 +41,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
-        bing_client: Optional[AsyncBingClient] = None,
+        grounding_search_client: Optional[AsyncGroundingSearchClient] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
-        self.bing_client = bing_client
+        self.grounding_search_client = grounding_search_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
@@ -61,9 +61,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
-        self.bing_answer_prompt = self.prompt_manager.load_prompt("chat_bing_answer_question.prompty")
-        self.bing_ground_rewrite_prompt = self.prompt_manager.load_prompt("chat_bing_ground_rewrite.prompty")
-        self.bing_ground_rewrite_tools = self.prompt_manager.load_tools("chat_bing_ground_rewrite_tools.json")
+        self.ground_answer_prompt = self.prompt_manager.load_prompt("chat_ground_answer_question.prompty")
+        self.ground_rewrite_prompt = self.prompt_manager.load_prompt("chat_ground_rewrite.prompty")
+        self.ground_rewrite_tools = self.prompt_manager.load_tools("chat_ground_rewrite_tools.json")
 
     @overload
     async def run_until_final_call(
@@ -95,7 +95,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
-        use_bing_search = True if overrides.get("use_bing_search") else False
+        use_grounding_search = True if overrides.get("use_grounding_search") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
@@ -137,13 +137,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
         query_messages, query_text = await keyword_rewrite(rendered_query_prompt, tools)
-        if use_bing_search and self.bing_client:
-            bing_search_prompt = self.prompt_manager.render_prompt(
-                self.bing_ground_rewrite_prompt,
+        if use_grounding_search and self.grounding_search_client:
+            ground_search_prompt = self.prompt_manager.render_prompt(
+                self.ground_rewrite_prompt,
                 {"user_query": original_user_query, "past_messages": messages[:-1]},
             )
-            _, bing_query_text = await keyword_rewrite(bing_search_prompt, self.bing_ground_rewrite_tools)
-            bing_results = await self.bing_client.search(bing_query_text, lang=self.query_language)
+            _, ground_query_text = await keyword_rewrite(ground_search_prompt, self.ground_rewrite_tools)
+            ground_results = await self.grounding_search_client.search(ground_query_text, lang=self.query_language)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -168,12 +168,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
         web_sources: list[WebPage] = []
-        if use_bing_search and bing_results.totalEstimatedMatches > 0:
-            web_sources = bing_results.value[:2]
+        if use_grounding_search and ground_results.totalEstimatedMatches > 0:
+            web_sources = ground_results.value[:2]
             web_sources_text = self.get_links(web_sources)
 
             rendered_answer_prompt = self.prompt_manager.render_prompt(
-                self.bing_answer_prompt,
+                self.ground_answer_prompt,
                 self.get_system_prompt_variables(overrides.get("prompt_template"))
                 | {
                     "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
@@ -217,10 +217,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         else {"model": self.chatgpt_model}
                     ),
                 ),
-                ThoughtStep("Bing search query", bing_query_text if use_bing_search else None, {}),
+                ThoughtStep("Grounding search query", ground_query_text if use_grounding_search else None, {}),
                 ThoughtStep(
-                    "Bing search results",
-                    [result.snippet for result in bing_results.value[:2]] if use_bing_search else None,
+                    "Grounding search results",
+                    [result.snippet for result in ground_results.value[:2]] if use_grounding_search else None,
                 ),
                 ThoughtStep(
                     "Search using generated search query",
