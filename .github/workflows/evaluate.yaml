@@ -142,7 +142,7 @@ jobs:
           node-version: 18
 
       - name: Install azd
-        uses: Azure/setup-azd@v2.0.0
+        uses: Azure/setup-azd@v2.1.0
 
       - name: Login to Azure with az CLI
         uses: azure/login@v2
