@@ -14,6 +14,7 @@ from openai_messages_token_helper import build_messages, get_token_limit
 from approaches.approach import ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
+from search_client import AsyncGroundingSearchClient
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
 
@@ -46,10 +47,12 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        grounding_search_client: Optional[AsyncGroundingSearchClient] = None,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
         self.openai_client = openai_client
+        self.grounding_search_client = grounding_search_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment

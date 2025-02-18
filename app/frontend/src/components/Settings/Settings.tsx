@@ -24,6 +24,7 @@ export interface SettingsProps {
     retrievalMode: RetrievalMode;
     useGPT4V: boolean;
     gpt4vInput: GPT4VInput;
+    useGroundingSearch: boolean;
     vectorFieldList: VectorFieldOptions[];
     showSemanticRankerOption: boolean;
     showGPT4VOptions: boolean;
@@ -40,6 +41,7 @@ export interface SettingsProps {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     showSuggestFollowupQuestions?: boolean;
+    showGroundingSearchOption: boolean;
 }
 
 export const Settings = ({
@@ -56,10 +58,12 @@ export const Settings = ({
     retrievalMode,
     useGPT4V,
     gpt4vInput,
+    useGroundingSearch,
     vectorFieldList,
     showSemanticRankerOption,
     showGPT4VOptions,
     showVectorOption,
+    showGroundingSearchOption,
     useOidSecurityFilter,
     useGroupsSecurityFilter,
     useLogin,
@@ -104,6 +108,8 @@ export const Settings = ({
     const shouldStreamFieldId = useId("shouldStreamField");
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
+    const useGroundingSearchId = useId("useGroundingSearch");
+    const useGroundingSearchFieldId = useId("useGroundingSearchField");
 
     const renderLabel = (props: RenderLabelType | undefined, labelId: string, fieldId: string, helpText: string) => (
         <HelpCallout labelId={labelId} fieldId={fieldId} helpText={helpText} label={props?.label} />
@@ -309,6 +315,18 @@ export const Settings = ({
                     onRenderLabel={props =>
                         renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
                     }
+                />
+            )}
+
+            {showGroundingSearchOption && (
+                <Checkbox
+                    id={useGroundingSearchFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useGroundingSearch}
+                    label={t("labels.useGroundingSearch")}
+                    onChange={(_ev, checked) => onChange("useGroundingSearch", !!checked)}
+                    aria-labelledby={useGroundingSearchId}
+                    onRenderLabel={props => renderLabel(props, useGroundingSearchId, useGroundingSearchFieldId, t("helpTexts.useGroundingSearch"))}
                 />
             )}
         </div>

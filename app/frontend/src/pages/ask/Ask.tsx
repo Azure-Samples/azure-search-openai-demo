@@ -33,6 +33,7 @@ export function Component(): JSX.Element {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
+    const [useGroundingSearch, setUseGroundingSearch] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
@@ -48,6 +49,7 @@ export function Component(): JSX.Element {
     const [showSpeechInput, setShowSpeechInput] = useState<boolean>(false);
     const [showSpeechOutputBrowser, setShowSpeechOutputBrowser] = useState<boolean>(false);
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
+    const [showGroundingSearchOption, setShowGroundingSearchOption] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -79,6 +81,7 @@ export function Component(): JSX.Element {
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
             setShowVectorOption(config.showVectorOption);
+            setShowGroundingSearchOption(config.showGroundingSearchOption);
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
             }
@@ -132,6 +135,7 @@ export function Component(): JSX.Element {
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
+                        use_grounding_search: useGroundingSearch,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -203,6 +207,9 @@ export function Component(): JSX.Element {
                 break;
             case "retrievalMode":
                 setRetrievalMode(value);
+                break;
+            case "useGroundingSearch":
+                setUseGroundingSearch(value);
                 break;
         }
     };
@@ -325,11 +332,13 @@ export function Component(): JSX.Element {
                     includeCategory={includeCategory}
                     retrievalMode={retrievalMode}
                     useGPT4V={useGPT4V}
+                    useGroundingSearch={useGroundingSearch}
                     gpt4vInput={gpt4vInput}
                     vectorFieldList={vectorFieldList}
                     showSemanticRankerOption={showSemanticRankerOption}
                     showGPT4VOptions={showGPT4VOptions}
                     showVectorOption={showVectorOption}
+                    showGroundingSearchOption={showGroundingSearchOption}
                     useOidSecurityFilter={useOidSecurityFilter}
                     useGroupsSecurityFilter={useGroupsSecurityFilter}
                     useLogin={!!useLogin}

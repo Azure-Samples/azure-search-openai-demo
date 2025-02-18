@@ -1,0 +1,249 @@
+{
+    "_type": "SearchResponse",
+    "queryContext": {
+        "originalQuery": "Who won the 2024 NBA northern division?"
+    },
+    "webPages": {
+        "webSearchUrl": "https:\\/\\/www.bing.com\\/search?q=Who+won+the+2024+NBA+northern+division%3f",
+        "totalEstimatedMatches": 237000,
+        "value": [
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.0",
+                "name": "NBA Team Standings &amp; Stats | NBA.com",
+                "url": "https:\\/\\/www.nba.com\\/standings?Season=2024-25&os=vb..&ref=app",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/<b>www.nba.com</b>\\/standings?Season=<b>2024</b>-25&amp;os=vb..&amp;ref=app",
+                "snippet": "<b>NBA</b> <b>2024</b>-25 Regular Season Standings. Season ... Head-to-head <b>won</b>-lost percentage (2) <b>Division</b> leader wins tie from team not leading a <b>division</b> (3) <b>Division</b> <b>won</b>-lost percentage for teams in the ...",
+                "dateLastCrawled": "2025-01-21T07:08:00.0000000Z",
+                "language": "en",
+                "isNavigational": true,
+                "noCache": false,
+                "siteName": "NBA"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.1",
+                "name": "2024-25 NBA Standings: Division - FOX Sports",
+                "url": "https:\\/\\/www.foxsports.com\\/nba\\/standings?type=division",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/www.foxsports.com\\/<b>nba</b>\\/standings?type=<b>division</b>",
+                "snippet": "<b>2024</b>-25 <b>nba division</b> standings. atlantic. w-l pct gb pf pa home away conf div l10 strk 1. celtics 30-13 .698 - 117.7 108.1 ...",
+                "dateLastCrawled": "2025-01-20T16:38:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "Fox Sports"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.2",
+                "contractualRules": [
+                    {
+                        "_type": "ContractualRules\\/LicenseAttribution",
+                        "targetPropertyName": "snippet",
+                        "targetPropertyIndex": 2,
+                        "mustBeCloseToContent": true,
+                        "license": {
+                            "name": "CC-BY-SA",
+                            "url": "http:\\/\\/creativecommons.org\\/licenses\\/by-sa\\/3.0\\/"
+                        },
+                        "licenseNotice": "Text under CC-BY-SA licence"
+                    }
+                ],
+                "name": "2024 NBA playoffs - Wikipedia",
+                "url": "https:\\/\\/en.wikipedia.org\\/wiki\\/2024_NBA_playoffs",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/<b>en.wikipedia.org</b>\\/wiki\\/<b>2024</b>_<b>NBA</b>_playoffs",
+                "snippet": "<b>The 2024</b> <b>NBA</b> playoffs was the postseason tournament of the National Basketball Association&#39;s (<b>NBA</b>) 2023–24 season. ... and the numbers to the right indicate the number of games the team <b>won</b> in that round. The <b>division</b> champions are marked by an asterisk. Teams with home court advantage, the higher seeded team, are shown in italics.",
+                "dateLastCrawled": "2025-01-22T16:35:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "Wikipedia"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.3",
+                "name": "2024 NBA Playoffs | Official Bracket, Schedule and Series Matchups",
+                "url": "https:\\/\\/www.nba.com\\/playoffs\\/2024?os=win&ref=app",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/<b>www.nba.com</b>\\/playoffs\\/<b>2024</b>?os=<b>win</b>&amp;ref=app",
+                "snippet": "The official site of <b>the 2024</b> <b>NBA</b> Playoffs. Latest news, schedules, matchups, highlights, bracket and more. ... clinching title with a 4-1 series <b>win</b>. Horford finally champ after key sacrifice.",
+                "dateLastCrawled": "2025-01-17T08:53:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "NBA"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.4",
+                "name": "2024-2025 NBA Schedule and Scores: Full List - LandOfBasketball.com",
+                "url": "https:\\/\\/www.landofbasketball.com\\/results\\/2024_2025_scores_full.htm",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/www.landofbasketball.com\\/results\\/<b>2024</b>_2025_scores_full.htm",
+                "snippet": "All the results of <b>NBA</b> games played in <b>the 2024</b>-25 Season. Complete list with date, points scored, location and other information. October \\/ November \\/ December \\/ January \\/ February \\/ March \\/ April \\/ May \\/ June. <b>2024</b>-25 <b>NBA</b> Schedule and Scores: Full List Full List - <b>NBA</b> Regular Season Oct. 22, <b>2024</b>:",
+                "dateLastCrawled": "2025-01-22T07:16:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "LandOfBasketball.com"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.5",
+                "name": "2024-2025 NBA Standings - plaintextsports.com",
+                "url": "https:\\/\\/plaintextsports.com\\/nba\\/2024-2025\\/standings",
+                "thumbnailUrl": "https:\\/\\/www.bing.com\\/th?id=OIP.XG7Vso_hVPpfTXTNNgr67gHaHa&w=80&h=80&c=1&pid=5.1",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/plaintextsports.com\\/<b>nba</b>\\/<b>2024</b>-2025\\/standings",
+                "snippet": "<b>2024</b>-2025 <b>NBA</b> Standings. <b>Division</b> Conference Overall <b>NBA</b> Cup. Eastern Conference. Atlantic: W-L PCT GB STRK L10 HOME AWAY. 1:BOS 30-13 .698 - W1 6-4 15-8 15-5. 2:NYK 28-16 .636 2.5 W1 4-6 14-8 14-8. ... What is the <b>NBA</b> Cup? Home games are in italics. Eastern Conference. East A:",
+                "dateLastCrawled": "2025-01-21T23:11:00.0000000Z",
+                "primaryImageOfPage": {
+                    "thumbnailUrl": "https:\\/\\/www.bing.com\\/th?id=OIP.XG7Vso_hVPpfTXTNNgr67gHaHa&w=80&h=80&c=1&pid=5.1",
+                    "width": 80,
+                    "height": 80,
+                    "sourceWidth": 474,
+                    "sourceHeight": 474,
+                    "imageId": "OIP.XG7Vso_hVPpfTXTNNgr67gHaHa"
+                },
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.6",
+                "name": "2023-24 NBA Standings - Basketball-Reference.com",
+                "url": "https:\\/\\/www.basketball-reference.com\\/leagues\\/NBA_2024_standings.html",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/<b>www.basketball-reference.com</b>\\/leagues\\/<b>NBA</b>_<b>2024</b>_standings.html",
+                "snippet": "Checkout the latest 2023-24 <b>NBA</b> Standing including Conference and <b>Division</b> Standings, Expanding Standings, Team vs Team Stats and more on <b>Basketball-Reference.com</b>. ... 2022-23 Standings <b>2024</b>-25 Standings. League Champion: Boston Celtics.",
+                "dateLastCrawled": "2025-01-22T02:07:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "Basketball-Reference.com"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.7",
+                "name": "2024 NBA Playoffs Summary - Basketball-Reference.com",
+                "url": "https:\\/\\/www.basketball-reference.com\\/playoffs\\/NBA_2024.html",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/<b>www.basketball-reference.com</b>\\/playoffs\\/<b>NBA</b>_<b>2024</b>.html",
+                "snippet": "<b>2024</b> <b>NBA</b> Playoffs Summary 2023 Playoffs Summary. League Champion: Boston Celtics. Finals MVP: Jaylen Brown (20.8 \\/ 5.4 \\/ 5.0) <b>2024</b> Playoff Leaders:",
+                "dateLastCrawled": "2025-01-21T08:09:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "Basketball-Reference.com"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.8",
+                "name": "NBA 2023-24 Regular Season Standings - LandOfBasketball.com",
+                "url": "https:\\/\\/www.landofbasketball.com\\/yearbyyear\\/2023_2024_standings.htm",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/www.landofbasketball.com\\/yearbyyear\\/2023_<b>2024</b>_standings.htm",
+                "snippet": "Complete 2023-<b>2024</b> <b>NBA</b> season standings, with conference and <b>division</b> rank and teams that qualified for the playoffs. Land Of Basketball.com. Teams, players profiles, awards, stats, records and championships. Menu. <b>NBA</b> Seasons: 2023-<b>2024</b> Season Final Standings. ...",
+                "dateLastCrawled": "2025-01-21T00:40:00.0000000Z",
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "LandOfBasketball.com"
+            },
+            {
+                "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.9",
+                "name": "2024 NBA Finals | NBA.com",
+                "url": "https:\\/\\/www.nba.com\\/playoffs\\/2024\\/nba-finals?os=wtmbTQtAJk9ya&ref=app",
+                "thumbnailUrl": "https:\\/\\/www.bing.com\\/th?id=OIP.DoilHjZHaPBaU4LsW342SgHaEK&w=80&h=80&c=1&pid=5.1",
+                "isFamilyFriendly": true,
+                "displayUrl": "https:\\/\\/<b>www.nba.com</b>\\/playoffs\\/<b>2024</b>\\/<b>nba</b>-finals?os=wtmbTQtAJk9ya&amp;ref=app",
+                "snippet": "Even with Kristaps Porzingis missing much of <b>the 2024</b> <b>NBA</b> playoffs, the Celtics prove deep enough to emerge as champions. ... Tatum: Title <b>win</b> is &#39;10x better than imagined&#39; 00:58. Porzingis on ...",
+                "dateLastCrawled": "2025-01-22T11:02:00.0000000Z",
+                "primaryImageOfPage": {
+                    "thumbnailUrl": "https:\\/\\/www.bing.com\\/th?id=OIP.DoilHjZHaPBaU4LsW342SgHaEK&w=80&h=80&c=1&pid=5.1",
+                    "width": 80,
+                    "height": 80,
+                    "sourceWidth": 474,
+                    "sourceHeight": 266,
+                    "imageId": "OIP.DoilHjZHaPBaU4LsW342SgHaEK"
+                },
+                "language": "en",
+                "isNavigational": false,
+                "noCache": false,
+                "siteName": "NBA"
+            }
+        ],
+        "someResultsRemoved": true
+    },
+    "rankingResponse": {
+        "mainline": {
+            "items": [
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 0,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.0"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 1,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.1"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 2,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.2"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 3,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.3"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 4,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.4"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 5,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.5"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 6,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.6"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 7,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.7"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 8,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.8"
+                    }
+                },
+                {
+                    "answerType": "WebPages",
+                    "resultIndex": 9,
+                    "value": {
+                        "id": "https:\\/\\/api.bing.microsoft.com\\/api\\/v7\\/#WebPages.9"
+                    }
+                }
+            ]
+        }
+    }
+}

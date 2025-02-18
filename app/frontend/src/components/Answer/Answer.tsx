@@ -8,10 +8,11 @@ import rehypeRaw from "rehype-raw";
 
 import styles from "./Answer.module.css";
 import { ChatAppResponse, getCitationFilePath, SpeechConfig } from "../../api";
-import { parseAnswerToHtml } from "./AnswerParser";
+import { citationIdToCitation, parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
 import { SpeechOutputAzure } from "./SpeechOutputAzure";
+import { WebPage } from "../SupportingContent";
 
 interface Props {
     answer: ChatAppResponse;
@@ -110,11 +111,23 @@ export const Answer = ({
                         <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
                         {parsedAnswer.citations.map((x, i) => {
                             const path = getCitationFilePath(x);
-                            return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
-                                    {`${++i}. ${x}`}
-                                </a>
-                            );
+                            const citation = citationIdToCitation(x, answer.context.data_points);
+
+                            if (citation.type === "document")
+                                return (
+                                    <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
+                                        {`${++i}. ${x}`}
+                                    </a>
+                                );
+                            else if (citation.type === "web") {
+                                const webPage = citation.citation as WebPage;
+                                const label = webPage.siteName ? webPage.siteName : webPage.url;
+                                return (
+                                    <a key={i} className={styles.citation} title={label} href={webPage.url} target="_blank" rel="noreferrer">
+                                        {`${++i}. ${label}`}
+                                    </a>
+                                );
+                            }
                         })}
                     </Stack>
                 </Stack.Item>

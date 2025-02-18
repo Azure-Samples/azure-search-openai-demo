@@ -54,6 +54,7 @@ from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionAppr
 from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
+from search_client import AsyncGroundingSearchClient
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_ASK_APPROACH,
@@ -66,6 +67,8 @@ from config import (
     CONFIG_CHAT_VISION_APPROACH,
     CONFIG_CREDENTIAL,
     CONFIG_GPT4V_DEPLOYED,
+    CONFIG_GROUNDING_SEARCH_CLIENT,
+    CONFIG_GROUNDING_SEARCH_ENABLED,
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_OPENAI_CLIENT,
@@ -299,6 +302,7 @@ def config():
             "showSpeechOutputAzure": current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED],
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
+            "showGroundingSearchOption": current_app.config[CONFIG_GROUNDING_SEARCH_ENABLED],
         }
     )
 
@@ -466,6 +470,9 @@ async def setup_clients():
     USE_SPEECH_OUTPUT_AZURE = os.getenv("USE_SPEECH_OUTPUT_AZURE", "").lower() == "true"
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
+    USE_GROUNDING_SEARCH = os.getenv("USE_GROUNDING_SEARCH", "").lower() == "true"
+    GROUNDING_SEARCH_API_KEY = os.getenv("GROUNDING_SEARCH_API_KEY")
+    GROUNDING_SEARCH_ENDPOINT = os.getenv("GROUNDING_SEARCH_ENDPOINT")
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
@@ -588,6 +595,19 @@ async def setup_clients():
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
 
+    if USE_GROUNDING_SEARCH:
+        current_app.logger.info("USE_GROUNDING_SEARCH is true, setting up search client")
+        if not GROUNDING_SEARCH_API_KEY:
+            raise ValueError("GROUNDING_SEARCH_API_KEY must be set when USE_GROUNDING_SEARCH is true")
+        if GROUNDING_SEARCH_ENDPOINT:
+            grounding_search_client = AsyncGroundingSearchClient(GROUNDING_SEARCH_API_KEY, GROUNDING_SEARCH_ENDPOINT)
+        else:
+            grounding_search_client = AsyncGroundingSearchClient(GROUNDING_SEARCH_API_KEY)
+        current_app.config[CONFIG_GROUNDING_SEARCH_CLIENT] = grounding_search_client
+    else:
+        current_app.logger.info("USE_GROUNDING_SEARCH is false, search client not set up")
+        grounding_search_client = None
+
     if OPENAI_HOST.startswith("azure"):
         if OPENAI_HOST == "azure_custom":
             current_app.logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
@@ -642,6 +662,7 @@ async def setup_clients():
     current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED] = USE_SPEECH_OUTPUT_AZURE
     current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED] = USE_CHAT_HISTORY_BROWSER
     current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED] = USE_CHAT_HISTORY_COSMOS
+    current_app.config[CONFIG_GROUNDING_SEARCH_ENABLED] = USE_GROUNDING_SEARCH
 
     prompt_manager = PromptyManager()
 
@@ -678,6 +699,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
+        grounding_search_client=grounding_search_client,
     )
 
     if USE_GPT4V:
@@ -724,6 +746,7 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
+            grounding_search_client=grounding_search_client,
         )
 
 

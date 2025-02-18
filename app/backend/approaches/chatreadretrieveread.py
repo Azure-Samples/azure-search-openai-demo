@@ -11,9 +11,10 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
-from approaches.approach import ThoughtStep
+from approaches.approach import Document, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
+from search_client import AsyncGroundingSearchClient, WebPage
 from core.authentication import AuthenticationHelper
 
 
@@ -39,10 +40,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
-        prompt_manager: PromptManager
+        prompt_manager: PromptManager,
+        grounding_search_client: Optional[AsyncGroundingSearchClient] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
+        self.grounding_search_client = grounding_search_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
@@ -58,6 +61,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
+        self.ground_answer_prompt = self.prompt_manager.load_prompt("chat_ground_answer_question.prompty")
+        self.ground_rewrite_prompt = self.prompt_manager.load_prompt("chat_ground_rewrite.prompty")
+        self.ground_rewrite_tools = self.prompt_manager.load_tools("chat_ground_rewrite_tools.json")
 
     @overload
     async def run_until_final_call(
@@ -89,6 +95,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
+        use_grounding_search = True if overrides.get("use_grounding_search") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
@@ -98,36 +105,45 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
+        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
+        async def keyword_rewrite(rendered_prompt, tools):
+            query_response_token_limit = 100
+            query_messages = build_messages(
+                model=self.chatgpt_model,
+                system_prompt=rendered_prompt.system_content,
+                few_shots=rendered_prompt.few_shot_messages,
+                past_messages=rendered_prompt.past_messages,
+                new_user_content=rendered_prompt.new_user_content,
+                tools=tools,
+                max_tokens=self.chatgpt_token_limit - query_response_token_limit,
+                fallback_to_default=self.ALLOW_NON_GPT_MODELS,
+            )
+
+            chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
+                messages=query_messages,  # type: ignore
+                # Azure OpenAI takes the deployment name as the model name
+                model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
+                temperature=0.0,  # Minimize creativity for search query generation
+                max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
+                n=1,
+                tools=tools,
+                seed=seed,
+            )
+
+            return query_messages, self.get_search_query(chat_completion, original_user_query)
+
         rendered_query_prompt = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
-
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 100
-        query_messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=rendered_query_prompt.system_content,
-            few_shots=rendered_query_prompt.few_shot_messages,
-            past_messages=rendered_query_prompt.past_messages,
-            new_user_content=rendered_query_prompt.new_user_content,
-            tools=tools,
-            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
-        )
-
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=query_messages,  # type: ignore
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
-            n=1,
-            tools=tools,
-            seed=seed,
-        )
-
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_messages, query_text = await keyword_rewrite(rendered_query_prompt, tools)
+        if use_grounding_search and self.grounding_search_client:
+            ground_search_prompt = self.prompt_manager.render_prompt(
+                self.ground_rewrite_prompt,
+                {"user_query": original_user_query, "past_messages": messages[:-1]},
+            )
+            _, ground_query_text = await keyword_rewrite(ground_search_prompt, self.ground_rewrite_tools)
+            ground_results = await self.grounding_search_client.search(ground_query_text, lang=self.query_language)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -136,7 +152,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         if use_vector_search:
             vectors.append(await self.compute_text_embedding(query_text))
 
-        results = await self.search(
+        results: list[Document] = await self.search(
             top,
             query_text,
             filter,
@@ -151,16 +167,33 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
-            self.answer_prompt,
-            self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {
-                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
-                "past_messages": messages[:-1],
-                "user_query": original_user_query,
-                "text_sources": text_sources,
-            },
-        )
+        web_sources: list[WebPage] = []
+        if use_grounding_search and ground_results.totalEstimatedMatches > 0:
+            web_sources = ground_results.value[:2]
+            web_sources_text = self.get_links(web_sources)
+
+            rendered_answer_prompt = self.prompt_manager.render_prompt(
+                self.ground_answer_prompt,
+                self.get_system_prompt_variables(overrides.get("prompt_template"))
+                | {
+                    "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                    "past_messages": messages[:-1],
+                    "user_query": original_user_query,
+                    "text_sources": text_sources,
+                    "web_search_snippets": web_sources_text,
+                },
+            )
+        else:
+            rendered_answer_prompt = self.prompt_manager.render_prompt(
+                self.answer_prompt,
+                self.get_system_prompt_variables(overrides.get("prompt_template"))
+                | {
+                    "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                    "past_messages": messages[:-1],
+                    "user_query": original_user_query,
+                    "text_sources": text_sources,
+                },
+            )
 
         response_token_limit = 1024
         messages = build_messages(
@@ -173,7 +206,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         extra_info = {
-            "data_points": {"text": text_sources},
+            "data_points": {"text": text_sources, "web_search": [hit.model_dump() for hit in web_sources]},
             "thoughts": [
                 ThoughtStep(
                     "Prompt to generate search query",
@@ -183,6 +216,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         if self.chatgpt_deployment
                         else {"model": self.chatgpt_model}
                     ),
+                ),
+                ThoughtStep("Grounding search query", ground_query_text if use_grounding_search else None, {}),
+                ThoughtStep(
+                    "Grounding search results",
+                    [result.snippet for result in ground_results.value[:2]] if use_grounding_search else None,
                 ),
                 ThoughtStep(
                     "Search using generated search query",

@@ -1,0 +1,17 @@
+[{
+    "type": "function",
+    "function": {
+        "name": "search_internet",
+        "description": "Retrieve sources from the Internet",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "internet_search_query": {
+                    "type": "string",
+                    "description": "Query string to retrieve documents from an Internet search e.g.: 'Microsoft headquarters address'"
+                }
+            },
+            "required": ["internet_search_query"]
+        }
+    }
+}]
