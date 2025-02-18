@@ -1,0 +1,40 @@
+<h1 id="rag-chat-deploying-with-a-free-trial-account">RAG chat:
+Deploying with a free trial account</h1>
+<p>If you have just created an Azure free trial account and are using
+the free trial credits, there are several modifications you need to
+make, due to restrictions on the free trial account.</p>
+<p>Follow these instructions <em>before</em> you run
+<code>azd up</code>.</p>
+<h2 id="accomodate-for-low-openai-quotas">Accomodate for low OpenAI
+quotas</h2>
+<p>The free trial accounts currently get a max of 1K TPM
+(tokens-per-minute), whereas our Bicep templates try to allocate 30K
+TPM.</p>
+<p>To reduce the TPM allocation, run these commands:</p>
+<pre class="shell"><code>azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 1
+azd env set AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY 1</code></pre>
+<p>Alternatively, if you have an OpenAI.com account, you can use that
+instead:</p>
+<pre class="shell"><code>azd env set OPENAI_HOST openai
+azd env set OPENAI_ORGANIZATION {Your OpenAI organization}
+azd env set OPENAI_API_KEY {Your OpenAI API key}</code></pre>
+<h2 id="accomodate-for-azure-container-apps-restrictions">Accomodate for
+Azure Container Apps restrictions</h2>
+<p>By default, this project deploys to Azure Container Apps, using a
+remote build process that builds the Docker image in the cloud.
+Unfortunately, free trial accounts cannot use that remote build
+process.</p>
+<p>You have two options:</p>
+<ol type="1">
+<li><p>Comment out or delete <code>remoteBuild: true</code> in
+<code>azure.yaml</code>, and make sure you have Docker installed in your
+environment.</p></li>
+<li><p>Deploy using App Service instead:</p>
+<ul>
+<li><p>Comment out <code>host: containerapp</code> and uncomment
+<code>host: appservice</code> in the <a
+href="../azure.yaml">azure.yaml</a> file.</p></li>
+<li><p>Set the deployment target to <code>appservice</code>:</p>
+<pre class="shell"><code>azd env set DEPLOYMENT_TARGET appservice</code></pre></li>
+</ul></li>
+</ol>

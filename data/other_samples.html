@@ -1,0 +1,139 @@
+<h1 id="rag-chat-alternative-rag-chat-samples">RAG chat: Alternative RAG
+chat samples</h1>
+<p>There are an increasingly large number of ways to build RAG chat
+apps.</p>
+<h2 id="other-language-samples">Other language samples</h2>
+<p>Inspired by this repo, there are similar apps for other
+languages:</p>
+<ul>
+<li><a
+href="https://aka.ms/azai/js/code"><strong>JavaScript</strong></a></li>
+<li><a
+href="https://aka.ms/azai/net/code"><strong>.NET</strong></a></li>
+<li><a
+href="https://aka.ms/azai/java/code"><strong>Java</strong></a></li>
+</ul>
+<p>They do not all support the same features as this repo, but they
+provide a good starting point for building a RAG chat app in your
+preferred language.</p>
+<h2 id="other-python-samples">Other Python samples</h2>
+<p>Another popular repository for this use case is here: <a
+href="https://github.com/Microsoft/sample-app-aoai-chatGPT/">https://github.com/Microsoft/sample-app-aoai-chatGPT/</a></p>
+<p>That repository is designed for use by customers using Azure OpenAI
+studio and Azure Portal for setup. It also includes <code>azd</code>
+support for folks who want to deploy it completely from scratch.</p>
+<p>The primary differences:</p>
+<ul>
+<li>This repository includes multiple RAG (retrieval-augmented
+generation) approaches that chain the results of multiple API calls (to
+Azure OpenAI and ACS) together in different ways. The other repository
+uses only the built-in data sources option for the ChatCompletions API,
+which uses a RAG approach on the specified ACS index. That should work
+for most uses, but if you needed more flexibility, this sample may be a
+better option.</li>
+<li>This repository is also a bit more experimental in other ways, since
+it’s not tied to the Azure OpenAI Studio like the other repository.</li>
+</ul>
+<p>Feature comparison:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>azure-search-openai-demo</th>
+<th>sample-app-aoai-chatGPT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAG approach</td>
+<td>Multiple approaches</td>
+<td>Only via ChatCompletion API data_sources</td>
+</tr>
+<tr>
+<td>Vector support</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>Data ingestion</td>
+<td>✅ Yes (<a href="data_ingestion.md#supported-document-formats">Many
+formats</a>)</td>
+<td>✅ Yes (<a
+href="https://learn.microsoft.com/azure/ai-services/openai/concepts/use-your-data?tabs=ai-search#data-formats-and-file-types">Many
+formats</a>)</td>
+</tr>
+<tr>
+<td>Persistent chat history</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>User feedback</td>
+<td>❌ No</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>GPT-4-vision</td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+</tr>
+<tr>
+<td>Auth + ACL</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>User upload</td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+</tr>
+<tr>
+<td>Speech I/O</td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+</tr>
+</tbody>
+</table>
+<p>Technology comparison:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Tech</th>
+<th>azure-search-openai-demo</th>
+<th>sample-app-aoai-chatGPT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>React</td>
+<td>React</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Python (Quart)</td>
+<td>Python (Quart)</td>
+</tr>
+<tr>
+<td>Vector DB</td>
+<td>Azure AI Search</td>
+<td>Azure AI Search, CosmosDB Mongo vCore, ElasticSearch, Pinecone,
+AzureML</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Azure Developer CLI (azd)</td>
+<td>Azure Portal, az, azd</td>
+</tr>
+</tbody>
+</table>

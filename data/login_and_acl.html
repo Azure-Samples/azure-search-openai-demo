@@ -1,0 +1,689 @@
+<!--
+---
+name: RAG chat with document security
+description: This guide demonstrates how to add an optional login and document level access control system to a RAG chat app for your domain data. This system can be used to restrict access to indexed data to specific users.
+languages:
+- python
+- typescript
+- bicep
+- azdeveloper
+products:
+- azure-openai
+- azure-cognitive-search
+- azure-app-service
+- azure
+page_type: sample
+urlFragment: azure-search-openai-demo-document-security
+---
+-->
+<h1
+id="rag-chat-setting-up-optional-login-and-document-level-access-control">RAG
+chat: Setting up optional login and document level access control</h1>
+<p><a href="https://www.youtube.com/watch?v=GwEiYJgM8Vw">📺 Watch: (RAG
+Deep Dive series) Login and access control</a></p>
+<p>The <a href="/">azure-search-openai-demo</a> project can set up a
+full RAG chat app on Azure AI Search and OpenAI so that you can chat on
+custom data, like internal enterprise data or domain-specific knowledge
+sets. For full instructions on setting up the project, consult the <a
+href="/README.md">main README</a>, and then return here for detailed
+instructions on configuring login and access control.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#setting-up-microsoft-entra-applications">Setting up
+Microsoft Entra applications</a>
+<ul>
+<li><a href="#automatic-setup">Automatic Setup</a></li>
+<li><a href="#manual-setup">Manual Setup</a>
+<ul>
+<li><a href="#server-app">Server App</a></li>
+<li><a href="#client-app">Client App</a></li>
+<li><a href="#configure-server-app-known-client-applications">Configure
+Server App Known Client Applications</a></li>
+<li><a href="#testing">Testing</a></li>
+<li><a href="#programmatic-access-with-authentication">Programmatic
+Access With Authentication</a></li>
+</ul></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ul></li>
+<li><a href="#adding-data-with-document-level-access-control">Adding
+data with document level access control</a>
+<ul>
+<li><a href="#using-the-add-documents-api">Using the Add Documents
+API</a></li>
+<li><a href="#azure-data-lake-storage-gen2-setup">Azure Data Lake
+Storage Gen2 and prepdocs</a></li>
+</ul></li>
+<li><a href="#environment-variables-reference">Environment variables
+reference</a>
+<ul>
+<li><a href="#authentication-behavior-by-environment">Authentication
+behavior by environment</a></li>
+</ul></li>
+</ul>
+<p>This guide demonstrates how to add an optional login and document
+level access control system to the sample. This system can be used to
+restrict access to indexed data to specific users based on what <a
+href="https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups">Microsoft
+Entra groups</a> they are a part of, or their <a
+href="https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id">user
+object id</a>.</p>
+<figure>
+<img src="/docs/images/applogincomponents.png"
+alt="AppLoginArchitecture" />
+<figcaption aria-hidden="true">AppLoginArchitecture</figcaption>
+</figure>
+<h2 id="requirements">Requirements</h2>
+<p><strong>IMPORTANT:</strong> In order to add optional login and
+document level access control, you’ll need the following in addition to
+the normal sample requirements</p>
+<ul>
+<li><strong>Azure account permissions</strong>: Your Azure account must
+have <a
+href="https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference#cloud-application-administrator">permission
+to manage applications in Microsoft Entra</a>.</li>
+</ul>
+<h2 id="setting-up-microsoft-entra-applications">Setting up Microsoft
+Entra applications</h2>
+<p>Two Microsoft Entra applications must be registered in order to make
+the optional login and document level access control system work
+correctly. One app is for the client UI. The client UI is implemented as
+a <a
+href="https://learn.microsoft.com/entra/identity-platform/scenario-spa-app-registration">single
+page application</a>. The other app is for the API server. The API
+server uses a <a
+href="https://learn.microsoft.com/entra/identity-platform/msal-client-applications">confidential
+client</a> to call the <a
+href="https://learn.microsoft.com/graph/use-the-api">Microsoft Graph
+API</a>.</p>
+<h3 id="automatic-setup">Automatic Setup</h3>
+<p>The easiest way to setup the two apps is to use the <code>azd</code>
+CLI. We’ve written scripts that will automatically create the two apps
+and configure them for use with the sample. To trigger the automatic
+setup, run the following commands:</p>
+<ol type="1">
+<li>Run <code>azd env set AZURE_USE_AUTHENTICATION true</code> to enable
+the login UI and use App Service authentication by default.</li>
+<li>Ensure access control is enabled on your search index. If your index
+doesn’t exist yet, run prepdocs with
+<code>AZURE_USE_AUTHENTICATION</code> set to <code>true</code>. If your
+index already exists, run
+<code>python ./scripts/manageacl.py --acl-action enable_acls</code>.</li>
+<li>(Optional) To require access control when using the app, run
+<code>azd env set AZURE_ENFORCE_ACCESS_CONTROL true</code>.
+Authentication is always required to search on documents with access
+control assigned, regardless of if unauthenticated access is enabled or
+not.</li>
+<li>(Optional) To allow authenticated users to search on documents that
+have no access controls assigned, even when access control is required,
+run
+<code>azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true</code>.</li>
+<li>(Optional) To allow unauthenticated users to use the app, even when
+access control is enforced, run
+<code>azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true</code>.
+<code>AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS</code> should also be set to
+true if you want unauthenticated users to be able to search on documents
+with no access control.</li>
+<li>Run
+<code>azd env set AZURE_AUTH_TENANT_ID &lt;YOUR-TENANT-ID&gt;</code> to
+set the tenant ID associated with authentication.</li>
+<li>If your auth tenant ID is different from your currently logged in
+tenant ID, run
+<code>azd auth login --tenant-id &lt;YOUR-TENANT-ID&gt;</code> to login
+to the authentication tenant simultaneously.</li>
+<li>Run <code>azd up</code> to deploy the app.</li>
+</ol>
+<h3 id="manual-setup">Manual Setup</h3>
+<p>The following instructions explain how to setup the two apps using
+the Azure Portal.</p>
+<h4 id="server-app">Server App</h4>
+<ul>
+<li><p>Sign in to the <a href="https://portal.azure.com/">Azure
+portal</a>.</p></li>
+<li><p>Select the Microsoft Entra ID service.</p></li>
+<li><p>In the left hand menu, select <strong>Application
+Registrations</strong>.</p></li>
+<li><p>Select <strong>New Registration</strong>.</p>
+<ul>
+<li>In the <strong>Name</strong> section, enter a meaningful application
+name. This name will be displayed to users of the app, for example
+<code>Azure Search OpenAI Chat API</code>.</li>
+<li>Under <strong>Supported account types</strong>, select
+<strong>Accounts in this organizational directory only</strong>.</li>
+</ul></li>
+<li><p>Select <strong>Register</strong> to create the
+application</p></li>
+<li><p>In the app’s registration screen, find the <strong>Application
+(client) ID</strong>.</p>
+<ul>
+<li>Run the following <code>azd</code> command to save this ID:
+<code>azd env set AZURE_SERVER_APP_ID &lt;Application (client) ID&gt;</code>.</li>
+</ul></li>
+<li><p>Microsoft Entra supports three types of credentials to
+authenticate an app using the <a
+href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow">client
+credentials</a>: passwords (app secrets), certificates, and federated
+identity credentials. For a higher level of security, either <a
+href="https://learn.microsoft.com/entra/identity-platform/howto-create-self-signed-certificate">certificates</a>
+or federated identity credentials are recommended. This sample currently
+uses an app secret for ease of provisioning.</p></li>
+<li><p>Select <strong>Certificates &amp; secrets</strong> in the left
+hand menu.</p></li>
+<li><p>In the <strong>Client secrets</strong> section, select
+<strong>New client secret</strong>.</p>
+<ul>
+<li>Type a description, for example
+<code>Azure Search OpenAI Chat Key</code>.</li>
+<li>Select one of the available key durations.</li>
+<li>The generated key value will be displayed after you select
+<strong>Add</strong>.</li>
+<li>Copy the generated key value and run the following <code>azd</code>
+command to save this ID:
+<code>azd env set AZURE_SERVER_APP_SECRET &lt;generated key value&gt;</code>.</li>
+</ul></li>
+<li><p>Select <strong>API Permissions</strong> in the left hand menu. By
+default, the <a
+href="https://learn.microsoft.com/graph/permissions-reference#user-permissions">delegated
+<code>User.Read</code></a> permission should be present. This permission
+is required to read the signed-in user’s profile to get the security
+information used for document level access control. If this permission
+is not present, it needs to be added to the application.</p>
+<ul>
+<li>Select <strong>Add a permission</strong>, and then <strong>Microsoft
+Graph</strong>.</li>
+<li>Select <strong>Delegated permissions</strong>.</li>
+<li>Search for and and select <code>User.Read</code>.</li>
+<li>Select <strong>Add permissions</strong>.</li>
+</ul></li>
+<li><p>Select <strong>Expose an API</strong> in the left hand menu. The
+server app works by using the <a
+href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#protocol-diagram">On
+Behalf Of Flow</a>, which requires the server app to expose at least 1
+API.</p>
+<ul>
+<li>The application must define a URI to expose APIs. Select
+<strong>Add</strong> next to <strong>Application ID URI</strong>.
+<ul>
+<li>By default, the Application ID URI is set to
+<code>api://&lt;application client id&gt;</code>. Accept the default by
+selecting <strong>Save</strong>.</li>
+</ul></li>
+<li>Under <strong>Scopes defined by this API</strong>, select
+<strong>Add a scope</strong>.</li>
+<li>Fill in the values as indicated:
+<ul>
+<li>For <strong>Scope name</strong>, use
+<strong>access_as_user</strong>.</li>
+<li>For <strong>Who can consent?</strong>, select <strong>Admins and
+users</strong>.</li>
+<li>For <strong>Admin consent display name</strong>, type <strong>Access
+Azure Search OpenAI Chat API</strong>.</li>
+<li>For <strong>Admin consent description</strong>, type <strong>Allows
+the app to access Azure Search OpenAI Chat API as the signed-in
+user.</strong>.</li>
+<li>For <strong>User consent display name</strong>, type <strong>Access
+Azure Search OpenAI Chat API</strong>.</li>
+<li>For <strong>User consent description</strong>, type <strong>Allow
+the app to access Azure Search OpenAI Chat API on your
+behalf</strong>.</li>
+<li>Leave <strong>State</strong> set to <strong>Enabled</strong>.</li>
+<li>Select <strong>Add scope</strong> at the bottom to save the
+scope.</li>
+</ul></li>
+</ul></li>
+<li><p>(Optional) Enable group claims. Include which Microsoft Entra
+groups the user is part of as part of the login in the <a
+href="https://learn.microsoft.com/entra/identity-platform/optional-claims">optional
+claims</a>. The groups are used for <a
+href="https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search">optional
+security filtering</a> in the search results.</p>
+<ul>
+<li>In the left hand menu, select <strong>Token
+configuration</strong></li>
+<li>Under <strong>Optional claims</strong>, select <strong>Add groups
+claim</strong></li>
+<li>Select which <a
+href="https://learn.microsoft.com/entra/identity/hybrid/connect/how-to-connect-fed-group-claims">group
+types</a> to include in the claim. Note that a <a
+href="https://learn.microsoft.com/entra/identity-platform/access-token-claims-reference#groups-overage-claim">overage
+claim</a> will be emitted if the user is part of too many groups. In
+this case, the API server will use the <a
+href="https://learn.microsoft.com/graph/api/user-list-memberof?view=graph-rest-*0&amp;tabs=http">Microsoft
+Graph</a> to list the groups the user is part of instead of relying on
+the groups in the claim.</li>
+<li>Select <strong>Add</strong> to save your changes</li>
+</ul></li>
+</ul>
+<h4 id="client-app">Client App</h4>
+<ul>
+<li>Sign in to the <a href="https://portal.azure.com/">Azure
+portal</a>.</li>
+<li>Select the Microsoft Entra ID service.</li>
+<li>In the left hand menu, select <strong>Application
+Registrations</strong>.</li>
+<li>Select <strong>New Registration</strong>.
+<ul>
+<li>In the <strong>Name</strong> section, enter a meaningful application
+name. This name will be displayed to users of the app, for example
+<code>Azure Search OpenAI Chat Web App</code>.</li>
+<li>Under <strong>Supported account types</strong>, select
+<strong>Accounts in this organizational directory only</strong>.</li>
+<li>Under <code>Redirect URI (optional)</code> section, select
+<code>Single-page application (SPA)</code> in the combo-box and enter
+the following redirect URI:
+<ul>
+<li>If you are running the sample locally, add the endpoints
+<code>http://localhost:50505/redirect</code> and
+<code>http://localhost:5173/redirect</code></li>
+<li>If you are running the sample on Azure, add the endpoints provided
+by <code>azd up</code>:
+<code>https://&lt;your-endpoint&gt;.azurewebsites.net/redirect</code>.</li>
+<li>If you are running the sample from Github Codespaces, add the
+Codespaces endpoint:
+<code>https://&lt;your-codespace&gt;-50505.app.github.dev/redirect</code></li>
+</ul></li>
+</ul></li>
+<li>Select <strong>Register</strong> to create the application</li>
+<li>In the app’s registration screen, find the <strong>Application
+(client) ID</strong>.
+<ul>
+<li>Run the following <code>azd</code> command to save this ID:
+<code>azd env set AZURE_CLIENT_APP_ID &lt;Application (client) ID&gt;</code>.</li>
+</ul></li>
+<li>In the left hand menu, select <strong>Authentication</strong>.
+<ul>
+<li>Under Web, add a redirect URI with the endpoint provided by
+<code>azd up</code>:
+<code>https://&lt;your-endpoint&gt;.azurewebsites.net/.auth/login/aad/callback</code>.</li>
+<li>Under <strong>Implicit grant and hybrid flows</strong>, select
+<strong>ID Tokens (used for implicit and hybrid flows)</strong></li>
+<li>Select <strong>Save</strong></li>
+</ul></li>
+<li>In the left hand menu, select <strong>API permissions</strong>. You
+will add permission to access the <strong>access_as_user</strong> API on
+the server app. This permission is required for the <a
+href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#protocol-diagram">On
+Behalf Of Flow</a> to work.
+<ul>
+<li>Select <strong>Add a permission</strong>, and then <strong>My
+APIs</strong>.</li>
+<li>In the list of applications, select your server application
+<strong>Azure Search OpenAI Chat API</strong></li>
+<li>Ensure <strong>Delegated permissions</strong> is selected.</li>
+<li>In the <strong>Select permissions</strong> section, select the
+<strong>access_as_user</strong> permission</li>
+<li>Select <strong>Add permissions</strong>.</li>
+</ul></li>
+<li>Stay in the <strong>API permissions</strong> section and select
+<strong>Add a permission</strong>.
+<ul>
+<li>Select <strong>Microsoft Graph</strong>.</li>
+<li>Select <strong>Delegated permissions</strong>.</li>
+<li>Search for and select <code>User.Read</code>.</li>
+<li>Select <strong>Add permissions</strong>.</li>
+</ul></li>
+</ul>
+<h4 id="configure-server-app-known-client-applications">Configure Server
+App Known Client Applications</h4>
+<p>Consent from the user must be obtained for use of the client and
+server app. The client app can prompt the user for consent through a
+dialog when they log in. The server app has no ability to show a dialog
+for consent. Client apps can be <a
+href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#gaining-consent-for-the-middle-tier-application">added
+to the list of known clients</a> to access the server app, so a consent
+dialog is shown for the server app.</p>
+<ul>
+<li>Navigate to the server app registration</li>
+<li>In the left hand menu, select <strong>Manifest</strong></li>
+<li>Replace <code>"knownClientApplications": []</code> with
+<code>"knownClientApplications": ["&lt;client application id&gt;"]</code></li>
+<li>Select <strong>Save</strong></li>
+</ul>
+<h4 id="testing">Testing</h4>
+<p>If you are running setup for the first time, ensure you have run
+<code>azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT &lt;YOUR-STORAGE_ACCOUNT&gt;</code>
+before running <code>azd up</code>. If you do not set this environment
+variable, your index will not be initialized with access control support
+when <code>prepdocs</code> is run for the first time. To manually enable
+access control in your index, use the <a
+href="#azure-data-lake-storage-gen2-setup">manual setup script</a>.</p>
+<p>Ensure you run <code>azd env set AZURE_USE_AUTHENTICATION</code> to
+enable the login UI once you have setup the two Microsoft Entra apps
+before you deploy or run the application. The login UI will not appear
+unless all <a href="#environment-variables-reference">required
+environment variables</a> have been setup.</p>
+<p>In both the chat and ask a question modes, under <strong>Developer
+settings</strong> optional <strong>Use oid security filter</strong> and
+<strong>Use groups security filter</strong> checkboxes will appear. The
+oid (User ID) filter maps to the <code>oids</code> field in the search
+index and the groups (Group ID) filter maps to the <code>groups</code>
+field in the search index. If <code>AZURE_ENFORCE_ACCESS_CONTROL</code>
+has been set, then both the <strong>Use oid security filter</strong> and
+<strong>Use groups security filter</strong> options are always enabled
+and cannot be disabled.</p>
+<h4 id="programmatic-access-with-authentication">Programmatic Access
+with Authentication</h4>
+<p>If you want to use the chat endpoint without the UI and still use
+authentication, you must disable <a
+href="https://learn.microsoft.com/azure/app-service/overview-authentication-authorization">App
+Service built-in authentication</a> and use only the app’s MSAL-based
+authentication flow. Ensure the
+<code>AZURE_DISABLE_APP_SERVICES_AUTHENTICATION</code> environment
+variable is set before deploying.</p>
+<p>Get an access token that can be used for calling the chat API using
+the following code:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>token <span class="op">=</span> DefaultAzureCredential().get_token(<span class="ss">f&quot;api://</span><span class="sc">{</span>os<span class="sc">.</span>environ[<span class="st">&#39;AZURE_SERVER_APP_ID&#39;</span>]<span class="sc">}</span><span class="ss">/access_as_user&quot;</span>, tenant_id<span class="op">=</span>os.getenv(<span class="st">&#39;AZURE_AUTH_TENANT_ID&#39;</span>, os.getenv(<span class="st">&#39;AZURE_TENANT_ID&#39;</span>)))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(token.token)</span></code></pre></div>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<ul>
+<li>If your primary tenant restricts the ability to create Entra
+applications, you’ll need to use a separate tenant to create the Entra
+applications. You can create a new tenant by following <a
+href="https://learn.microsoft.com/entra/identity-platform/quickstart-create-new-tenant">these
+instructions</a>. Then run
+<code>azd env set AZURE_AUTH_TENANT_ID &lt;YOUR-AUTH-TENANT-ID&gt;</code>
+before running <code>azd up</code>.</li>
+<li>If any Entra apps need to be recreated, you can avoid redeploying
+the app by <a
+href="https://learn.microsoft.com/azure/app-service/configure-common?tabs=portal#configure-app-settings">changing
+the app settings in the portal</a>. Any of the <a
+href="#environment-variables-reference">required environment
+variables</a> can be changed. Once the environment variables have been
+changed, restart the web app.</li>
+<li>It’s possible a consent dialog will not appear when you log into the
+app for the first time. If this consent dialog doesn’t appear, you will
+be unable to use the security filters because the API server app does
+not have permission to read your authorization information. A consent
+dialog can be forced to appear by adding
+<code>"prompt": "consent"</code> to the <code>loginRequest</code>
+property in <a
+href="/app/backend/core/authentication.py"><code>authentication.py</code></a></li>
+<li>It’s possible that your tenant admin has placed a restriction on
+consent to apps with <a
+href="https://learn.microsoft.com/entra/identity-platform/publisher-verification-overview">unverified
+publishers</a>. In this case, only admins may consent to the client and
+server apps, and normal user accounts are unable to use the login system
+until the admin consents on behalf of the entire organization.</li>
+<li>It’s possible that your tenant admin requires <a
+href="https://learn.microsoft.com/entra/identity/enterprise-apps/manage-consent-requests">admin
+approval of all new apps</a>. Regardless of whether you select the
+delegated or admin permissions, the app will not work without tenant
+admin consent. See this guide for <a
+href="https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent?pivots=portal">granting
+consent to an app</a>.</li>
+</ul>
+<h2 id="adding-data-with-document-level-access-control">Adding data with
+document level access control</h2>
+<p>The sample supports 2 main strategies for adding data with document
+level access control.</p>
+<ul>
+<li><a href="#using-the-add-documents-api">Using the Add Documents
+API</a>. Sample scripts are provided which use the Azure AI Search
+Service Add Documents API to directly manage access control information
+on <em>existing documents</em> in the index.</li>
+<li><a href="#azure-data-lake-storage-gen2-setup">Using prepdocs and
+Azure Data Lake Storage Gen 2</a>. Sample scripts are provided which set
+up an <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Azure
+Data Lake Storage Gen 2</a> account, set the <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control">access
+control information</a> on files and folders stored there, and ingest
+those documents into the search index with their access control
+information.</li>
+</ul>
+<h3 id="using-the-add-documents-api">Using the Add Documents API</h3>
+<p>Manually enable document level access control on a search index and
+manually set access control values using the <a
+href="/scripts/manageacl.py">manageacl.py</a> script.</p>
+<p>Prior to running the script:</p>
+<ul>
+<li>Run <code>azd up</code> or use <code>azd env set</code> to manually
+set the <code>AZURE_SEARCH_SERVICE</code> and
+<code>AZURE_SEARCH_INDEX</code> azd environment variables</li>
+<li>Activate the Python virtual environment for your shell session</li>
+</ul>
+<p>The script supports the following commands. All commands support
+<code>-v</code> for verbose logging.</p>
+<ul>
+<li><p><code>python ./scripts/manageacl.py --acl-action enable_acls</code>:
+Creates the required <code>oids</code> (User ID) and <code>groups</code>
+(Group IDs) <a
+href="https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search">security
+filter</a> fields for document level access control on your index, as
+well as the <code>storageUrl</code> field for storing the Blob storage
+URL. Does nothing if these fields already exist.</p>
+<p>Example usage:</p>
+<pre class="shell"><code>python ./scripts/manageacl.py -v --acl-action enable_acls</code></pre></li>
+<li><p><code>python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action view --url [https://url.pdf]</code>:
+Prints access control values associated with either User IDs or Group
+IDs for the document at the specified URL.</p>
+<p>Example to view all Group IDs:</p>
+<pre class="shell"><code>python ./scripts/manageacl.py -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf</code></pre></li>
+<li><p><code>python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action add --acl [ID of group or user] --url [https://url.pdf]</code>:
+Adds an access control value associated with either User IDs or Group
+IDs for the document at the specified URL.</p>
+<p>Example to add a Group ID:</p>
+<pre class="shell"><code>python ./scripts/manageacl.py -v --acl-type groups --acl-action add --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf</code></pre></li>
+<li><p><code>python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action remove_all --url [https://url.pdf]</code>:
+Removes all access control values associated with either User IDs or
+Group IDs for a specific document.</p>
+<p>Example to remove all Group IDs:</p>
+<pre class="shell"><code>python ./scripts/manageacl.py -v --acl-type groups --acl-action remove_all --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf</code></pre></li>
+<li><p><code>python ./scripts/manageacl.py --url [https://url.pdf] --acl-type [oids or groups]--acl-action remove --acl [ID of group or user]</code>:
+Removes an access control value associated with either User IDs or Group
+IDs for a specific document.</p>
+<p>Example to remove a specific User ID:</p>
+<pre class="shell"><code>python ./scripts/manageacl.py -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf</code></pre></li>
+</ul>
+<h3 id="azure-data-lake-storage-gen2-setup">Azure Data Lake Storage Gen2
+Setup</h3>
+<p><a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Azure
+Data Lake Storage Gen2</a> implements an <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control">access
+control model</a> that can be used for document level access control.
+The <a href="/scripts/adlsgen2setup.py">adlsgen2setup.py</a> script
+uploads the sample data included in the <a href="./data">data</a> folder
+to a Data Lake Storage Gen2 storage account. The <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control-model#role-based-access-control-azure-rbac">Storage
+Blob Data Owner</a> role is required to use the script.</p>
+<p>In order to use this script, an existing Data Lake Storage Gen2
+storage account is required. Run
+<code>azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT &lt;your-storage-account&gt;</code>
+prior to running the script.</p>
+<p>Then run the script inside your Python environment:</p>
+<pre class="shell"><code>python /scripts/adlsgen2setup.py &#39;./data/*&#39; --data-access-control &#39;./scripts/sampleacls.json&#39; -v</code></pre>
+<p>The script performs the following steps:</p>
+<ul>
+<li>Creates example <a
+href="https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups">groups</a>
+listed in the <a href="/scripts/sampleacls.json">sampleacls.json</a>
+file.</li>
+<li>Creates a filesystem / container <code>gptkbcontainer</code> in the
+storage account.</li>
+<li>Creates the directories listed in the <a
+href="/scripts/sampleacls.json">sampleacls.json</a> file.</li>
+<li>Uploads the sample PDFs referenced in the <a
+href="/scripts/sampleacls.json">sampleacls.json</a> file into the
+appropriate directories.</li>
+<li><a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli">Recursively
+sets Access Control Lists (ACLs)</a> using the information from the <a
+href="/scripts/sampleacls.json">sampleacls.json</a> file.</li>
+</ul>
+<p>In order to use the sample access control, you need to join these
+groups in your Microsoft Entra tenant.</p>
+<p>Note that this optional script may not work in Codespaces if your
+administrator has applied a <a
+href="https://learn.microsoft.com/entra/identity/conditional-access/overview">Conditional
+Access policy</a> to your tenant.</p>
+<h4 id="azure-data-lake-storage-gen2-prep-docs">Azure Data Lake Storage
+Gen2 Prep Docs</h4>
+<p>Once a Data Lake Storage Gen2 storage account has been setup with
+sample data and access control lists, <a
+href="/app/backend/prepdocs.py">prepdocs.py</a> can be used to
+automatically process PDFs in the storage account and store them with
+their <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control">access
+control lists in the search index</a>.</p>
+<p>To run this script with a Data Lake Storage Gen2 account, first set
+the following environment variables:</p>
+<ul>
+<li><code>AZURE_ADLS_GEN2_STORAGE_ACCOUNT</code>: Name of existing <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Data
+Lake Storage Gen2 storage account</a>.</li>
+<li>(Optional) <code>AZURE_ADLS_GEN2_FILESYSTEM</code>: Name of existing
+Data Lake Storage Gen2 filesystem / container in the storage account. If
+empty, <code>gptkbcontainer</code> is used.</li>
+<li>(Optional) <code>AZURE_ADLS_GEN2_FILESYSTEM_PATH</code>: Specific
+path in the Data Lake Storage Gen2 filesystem / container to process.
+Only PDFs contained in this path will be processed.</li>
+</ul>
+<p>Once the environment variables are set, run the script using the
+following command: <code>/scripts/prepdocs.ps1</code> or
+<code>/scripts/prepdocs.sh</code>.</p>
+<h2 id="environment-variables-reference">Environment variables
+reference</h2>
+<p>The following environment variables are used to setup the optional
+login and document level access control:</p>
+<ul>
+<li><code>AZURE_USE_AUTHENTICATION</code>: Enables Entra ID login and
+document level access control. Set to true before running
+<code>azd up</code>.</li>
+<li><code>AZURE_ENFORCE_ACCESS_CONTROL</code>: Enforces Entra ID based
+login and document level access control on documents with access control
+assigned. Set to true before running <code>azd up</code>. If
+<code>AZURE_ENFORCE_ACCESS_CONTROL</code> is enabled and
+<code>AZURE_ENABLE_UNAUTHENTICATED_ACCESS</code> is not enabled, then
+authentication is required to use the app.</li>
+<li><code>AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS</code>: Allows users to
+search on documents that have no access controls assigned</li>
+<li><code>AZURE_ENABLE_UNAUTHENTICATED_ACCESS</code>: Allows
+unauthenticated users to access the chat app, even when
+<code>AZURE_ENFORCE_ACCESS_CONTROL</code> is enabled.
+<code>AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS</code> should be set to true
+to allow unauthenticated users to search on documents that have no
+access control assigned. Unauthenticated users cannot search on
+documents with access control assigned.</li>
+<li><code>AZURE_DISABLE_APP_SERVICES_AUTHENTICATION</code>: Disables <a
+href="https://learn.microsoft.com/azure/app-service/overview-authentication-authorization">use
+of built-in authentication for App Services</a>. An authentication flow
+based on the MSAL SDKs is used instead. Useful when you want to provide
+programmatic access to the chat endpoints with authentication.</li>
+<li><code>AZURE_SERVER_APP_ID</code>: (Required) Application ID of the
+Microsoft Entra app for the API server.</li>
+<li><code>AZURE_SERVER_APP_SECRET</code>: <a
+href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow">Client
+secret</a> used by the API server to authenticate using the Microsoft
+Entra server app.</li>
+<li><code>AZURE_CLIENT_APP_ID</code>: Application ID of the Microsoft
+Entra app for the client UI.</li>
+<li><code>AZURE_AUTH_TENANT_ID</code>: <a
+href="https://learn.microsoft.com/entra/fundamentals/how-to-find-tenant">Tenant
+ID</a> associated with the Microsoft Entra tenant used for login and
+document level access control. Defaults to <code>AZURE_TENANT_ID</code>
+if not defined.</li>
+<li><code>AZURE_ADLS_GEN2_STORAGE_ACCOUNT</code>: (Optional) Name of
+existing <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Data
+Lake Storage Gen2 storage account</a> for storing sample data with <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control">access
+control lists</a>. Only used with the optional Data Lake Storage Gen2 <a
+href="#azure-data-lake-storage-gen2-setup">setup</a> and <a
+href="#azure-data-lake-storage-gen2-prep-docs">prep docs</a>
+scripts.</li>
+<li><code>AZURE_ADLS_GEN2_FILESYSTEM</code>: (Optional) Name of existing
+<a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Data
+Lake Storage Gen2 filesystem</a> for storing sample data with <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control">access
+control lists</a>. Only used with the optional Data Lake Storage Gen2 <a
+href="#azure-data-lake-storage-gen2-setup">setup</a> and <a
+href="#azure-data-lake-storage-gen2-prep-docs">prep docs</a>
+scripts.</li>
+<li><code>AZURE_ADLS_GEN2_FILESYSTEM_PATH</code>: (Optional) Name of
+existing path in a <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">Data
+Lake Storage Gen2 filesystem</a> for storing sample data with <a
+href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control">access
+control lists</a>. Only used with the optional Data Lake Storage Gen2 <a
+href="#azure-data-lake-storage-gen2-prep-docs">prep docs</a>
+script.</li>
+</ul>
+<h3 id="authentication-behavior-by-environment">Authentication behavior
+by environment</h3>
+<p>This application uses an in-memory token cache. User sessions are
+only available in memory while the application is running. When the
+application server is restarted, all users will need to log-in
+again.</p>
+<p>The following table describes the impact of the
+<code>AZURE_USE_AUTHENTICATION</code> and
+<code>AZURE_ENFORCE_ACCESS_CONTROL</code> variables depending on the
+environment you are deploying the application in:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>AZURE_USE_AUTHENTICATION</th>
+<th>AZURE_ENFORCE_ACCESS_CONTROL</th>
+<th>Environment</th>
+<th>Default Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>True</td>
+<td>False</td>
+<td>App Services</td>
+<td>Use integrated auth <br /> Login page blocks access to app <br />
+User can opt-into access control in developer settings <br /> Allows
+unrestricted access to sources</td>
+</tr>
+<tr>
+<td>True</td>
+<td>True</td>
+<td>App Services</td>
+<td>Use integrated auth <br /> Login page blocks access to app <br />
+User must use access control</td>
+</tr>
+<tr>
+<td>True</td>
+<td>False</td>
+<td>Local or Codespaces</td>
+<td>Do not use integrated auth <br /> Can use app without login <br />
+User can opt-into access control in developer settings <br /> Allows
+unrestricted access to sources</td>
+</tr>
+<tr>
+<td>True</td>
+<td>True</td>
+<td>Local or Codespaces</td>
+<td>Do not use integrated auth <br /> Cannot use app without login
+<br /> Behavior is chat box is greyed out with default “Please login
+message” <br /> User must use login button to make chat box usable
+<br /> User must use access control when logged in</td>
+</tr>
+<tr>
+<td>False</td>
+<td>False</td>
+<td>All</td>
+<td>No login or access control</td>
+</tr>
+<tr>
+<td>False</td>
+<td>True</td>
+<td>All</td>
+<td>Invalid setting</td>
+</tr>
+</tbody>
+</table>

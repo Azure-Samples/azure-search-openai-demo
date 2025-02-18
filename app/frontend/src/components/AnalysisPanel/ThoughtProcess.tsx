@@ -28,7 +28,7 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                                     </span>
                                 ))}
                         </Stack>
-                        {Array.isArray(t.description) ? (
+                        {Array.isArray(t.description) || typeof t.description === "object" ? (
                             <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, null, 2)}
                             </SyntaxHighlighter>

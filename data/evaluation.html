@@ -1,0 +1,131 @@
+<h1 id="evaluating-the-rag-answer-quality">Evaluating the RAG answer
+quality</h1>
+<p><a href="https://www.youtube.com/watch?v=lyCLu53fb3g">📺 Watch: (RAG
+Deep Dive series) Evaluating RAG answer quality</a></p>
+<p>Follow these steps to evaluate the quality of the answers generated
+by the RAG flow.</p>
+<ul>
+<li><a href="#deploy-an-evaluation-model">Deploy an evaluation
+model</a></li>
+<li><a href="#setup-the-evaluation-environment">Setup the evaluation
+environment</a></li>
+<li><a href="#generate-ground-truth-data">Generate ground truth
+data</a></li>
+<li><a href="#run-bulk-evaluation">Run bulk evaluation</a></li>
+<li><a href="#review-the-evaluation-results">Review the evaluation
+results</a></li>
+<li><a href="#run-bulk-evaluation-on-a-pr">Run bulk evaluation on a
+PR</a></li>
+</ul>
+<h2 id="deploy-an-evaluation-model">Deploy an evaluation model</h2>
+<ol type="1">
+<li><p>Run this command to tell <code>azd</code> to deploy a GPT-4 level
+model for evaluation:</p>
+<pre class="shell"><code>azd env set USE_EVAL true</code></pre></li>
+<li><p>Set the capacity to the highest possible value to ensure that the
+evaluation runs relatively quickly. Even with a high capacity, it can
+take a long time to generate ground truth data and run bulk
+evaluations.</p>
+<pre class="shell"><code>azd env set AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY 100</code></pre>
+<p>By default, that will provision a <code>gpt-4o</code> model, version
+<code>2024-08-06</code>. To change those settings, set the azd
+environment variables <code>AZURE_OPENAI_EVAL_MODEL</code> and
+<code>AZURE_OPENAI_EVAL_MODEL_VERSION</code> to the desired
+values.</p></li>
+<li><p>Then, run the following command to provision the model:</p>
+<pre class="shell"><code>azd provision</code></pre></li>
+</ol>
+<h2 id="setup-the-evaluation-environment">Setup the evaluation
+environment</h2>
+<p>Make a new Python virtual environment and activate it. This is
+currently required due to incompatibilities between the dependencies of
+the evaluation script and the main project.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .evalenv</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .evalenv/bin/activate</span></code></pre></div>
+<p>Install all the dependencies for the evaluation script by running the
+following command:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> evals/requirements.txt</span></code></pre></div>
+<h2 id="generate-ground-truth-data">Generate ground truth data</h2>
+<p>Modify the search terms and tasks in
+<code>evals/generate_config.json</code> to match your domain.</p>
+<p>Generate ground truth data by running the following command:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> evals/generate_ground_truth.py <span class="at">--numquestions</span><span class="op">=</span>200 <span class="at">--numsearchdocs</span><span class="op">=</span>1000</span></code></pre></div>
+<p>The options are:</p>
+<ul>
+<li><code>numquestions</code>: The number of questions to generate. We
+suggest at least 200.</li>
+<li><code>numsearchdocs</code>: The number of documents (chunks) to
+retrieve from your search index. You can leave off the option to fetch
+all documents, but that will significantly increase time it takes to
+generate ground truth data. You may want to at least start with a
+subset.</li>
+<li><code>kgfile</code>: An existing RAGAS knowledge base JSON file,
+which is usually <code>ground_truth_kg.json</code>. You may want to
+specify this if you already created a knowledge base and just want to
+tweak the question generation steps.</li>
+<li><code>groundtruthfile</code>: The file to write the generated ground
+truth answwers. By default, this is
+<code>evals/ground_truth.jsonl</code>.</li>
+</ul>
+<p>🕰️ This may take a long time, possibly several hours, depending on
+the size of the search index.</p>
+<p>Review the generated data in <code>evals/ground_truth.jsonl</code>
+after running that script, removing any question/answer pairs that don’t
+seem like realistic user input.</p>
+<h2 id="run-bulk-evaluation">Run bulk evaluation</h2>
+<p>Review the configuration in <code>evals/eval_config.json</code> to
+ensure that everything is correctly setup. You may want to adjust the
+metrics used. See <a
+href="https://github.com/Azure-Samples/ai-rag-chat-evaluator">the
+ai-rag-chat-evaluator README</a> for more information on the available
+metrics.</p>
+<p>By default, the evaluation script will evaluate every question in the
+ground truth data. Run the evaluation script by running the following
+command:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> evals/evaluate.py</span></code></pre></div>
+<p>The options are:</p>
+<ul>
+<li><code>numquestions</code>: The number of questions to evaluate. By
+default, this is all questions in the ground truth data.</li>
+<li><code>resultsdir</code>: The directory to write the evaluation
+results. By default, this is a timestamped folder in
+<code>evals/results</code>. This option can also be specified in
+<code>eval_config.json</code>.</li>
+<li><code>targeturl</code>: The URL of the running application to
+evaluate. By default, this is <code>http://localhost:50505</code>. This
+option can also be specified in <code>eval_config.json</code>.</li>
+</ul>
+<p>🕰️ This may take a long time, possibly several hours, depending on
+the number of ground truth questions, and the TPM capacity of the
+evaluation model, and the number of GPT metrics requested.</p>
+<h2 id="review-the-evaluation-results">Review the evaluation
+results</h2>
+<p>The evaluation script will output a summary of the evaluation
+results, inside the <code>evals/results</code> directory.</p>
+<p>You can see a summary of results across all evaluation runs by
+running the following command:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> evaltools summary evals/results</span></code></pre></div>
+<p>Compare answers to the ground truth by running the following
+command:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> evaltools diff evals/results/baseline/</span></code></pre></div>
+<p>Compare answers across two runs by running the following command:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> evaltools diff evals/results/baseline/ evals/results/SECONDRUNHERE</span></code></pre></div>
+<h2 id="run-bulk-evaluation-on-a-pr">Run bulk evaluation on a PR</h2>
+<p>This repository includes a GitHub Action workflow
+<code>evaluate.yaml</code> that can be used to run the evaluation on the
+changes in a PR.</p>
+<p>In order for the workflow to run successfully, you must first set up
+<a href="./azd.md#github-actions">continuous integration</a> for the
+repository.</p>
+<p>To run the evaluation on the changes in a PR, a repository member can
+post a <code>/evaluate</code> comment to the PR. This will trigger the
+evaluation workflow to run the evaluation on the PR changes and will
+post the results to the PR.</p>

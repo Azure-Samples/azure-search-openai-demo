@@ -1,0 +1,124 @@
+<h1 id="rag-chat-local-development-of-chat-app">RAG chat: Local
+development of chat app</h1>
+<p>After deploying the app to Azure, you may want to continue
+development locally. This guide explains how to run the app locally,
+including hot reloading and debugging.</p>
+<ul>
+<li><a href="#running-development-server-from-the-command-line">Running
+development server from the command line</a></li>
+<li><a href="#hot-reloading-frontend-and-backend-files">Hot reloading
+frontend and backend files</a></li>
+<li><a href="#using-vs-code-run-and-debug">Using VS Code “Run and
+Debug”</a></li>
+<li><a href="#using-a-local-openai-compatible-api">Using a local
+OpenAI-compatible API</a>
+<ul>
+<li><a href="#using-ollama-server">Using Ollama server</a></li>
+<li><a href="#using-llamafile-server">Using llamafile server</a></li>
+</ul></li>
+</ul>
+<h2 id="running-development-server-from-the-command-line">Running
+development server from the command line</h2>
+<p>You can only run locally <strong>after</strong> having successfully
+run the <code>azd up</code> command. If you haven’t yet, follow the
+steps in <a href="../README.md#azure-deployment">Azure deployment</a>
+above.</p>
+<ol type="1">
+<li>Run <code>azd auth login</code></li>
+<li>Start the server:</li>
+</ol>
+<p>Windows:</p>
+<pre class="shell"><code>./app/start.ps1</code></pre>
+<p>Linux/Mac:</p>
+<pre class="shell"><code>./app/start.sh</code></pre>
+<p>VS Code: Run the “VS Code Task: Start App” task.</p>
+<h2 id="hot-reloading-frontend-and-backend-files">Hot reloading frontend
+and backend files</h2>
+<p>When you run <code>./start.ps1</code> or <code>./start.sh</code>, the
+backend files will be watched and reloaded automatically. However, the
+frontend files will not be watched and reloaded automatically.</p>
+<p>To enable hot reloading of frontend files, open a new terminal and
+navigate to the frontend directory:</p>
+<pre class="shell"><code>cd app/frontend</code></pre>
+<p>Then run:</p>
+<pre class="shell"><code>npm run dev</code></pre>
+<p>You should see:</p>
+<pre class="shell"><code>&gt; frontend@0.0.0 dev
+&gt; vite
+
+
+  VITE v4.5.1  ready in 957 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help</code></pre>
+<p>Navigate to the URL shown in the terminal (in this case,
+<code>http://localhost:5173/</code>). This local server will watch and
+reload frontend files. All backend requests will be routed to the Python
+server according to <code>vite.config.ts</code>.</p>
+<p>Then, whenever you make changes to frontend files, the changes will
+be automatically reloaded, without any browser refresh needed.</p>
+<h2 id="using-vs-code-run-and-debug">Using VS Code “Run and Debug”</h2>
+<p>This project includes configurations defined in
+<code>.vscode/launch.json</code> that allow you to run and debug the app
+directly from VS Code:</p>
+<ul>
+<li>“Backend (Python)”: Starts the Python backend server, defaulting to
+port 50505.</li>
+<li>“Frontend”: Starts the frontend server using Vite, typically at port
+5173.</li>
+<li>“Frontend &amp; Backend”: A compound configuration that starts both
+the frontend and backend servers.</li>
+</ul>
+<p>When you run these configurations, you can set breakpoints in your
+code and debug as you would in a normal VS Code debugging session.</p>
+<h2 id="using-a-local-openai-compatible-api">Using a local
+OpenAI-compatible API</h2>
+<p>You may want to save costs by developing against a local LLM server,
+such as <a
+href="https://github.com/Mozilla-Ocho/llamafile/">llamafile</a>. Note
+that a local LLM will generally be slower and not as sophisticated.</p>
+<p>Once the local LLM server is running and serving an OpenAI-compatible
+endpoint, set these environment variables:</p>
+<pre class="shell"><code>azd env set USE_VECTORS false
+azd env set OPENAI_HOST local
+azd env set OPENAI_BASE_URL &lt;your local endpoint&gt;
+azd env set AZURE_OPENAI_CHATGPT_MODEL local-model-name</code></pre>
+<p>Then restart the local development server. You should now be able to
+use the “Ask” tab.</p>
+<p>⚠️ Limitations:</p>
+<ul>
+<li>The “Chat” tab will only work if the local language model supports
+function calling.</li>
+<li>Your search mode must be text only (no vectors), since the search
+index is only populated with OpenAI-generated embeddings, and the local
+OpenAI host can’t generate those.</li>
+<li>The conversation history will be truncated using the GPT tokenizers,
+which may not be the same as the local model’s tokenizer, so if you have
+a long conversation, you may end up with token limit errors.</li>
+</ul>
+<blockquote>
+<p>[!NOTE] You must set <code>OPENAI_HOST</code> back to a non-local
+value (“azure”, “azure_custom”, or “openai”) before running
+<code>azd up</code> or <code>azd provision</code>, since the deployed
+backend can’t access your local server.</p>
+</blockquote>
+<h3 id="using-ollama-server">Using Ollama server</h3>
+<p>For example, to point at a local Ollama server running the
+<code>llama3.1:8b</code> model:</p>
+<pre class="shell"><code>azd env set OPENAI_HOST local
+azd env set OPENAI_BASE_URL http://localhost:11434/v1
+azd env set AZURE_OPENAI_CHATGPT_MODEL llama3.1:8b
+azd env set USE_VECTORS false</code></pre>
+<p>If you’re running the app inside a VS Code Dev Container, use this
+local URL instead:</p>
+<pre class="shell"><code>azd env set OPENAI_BASE_URL http://host.docker.internal:11434/v1</code></pre>
+<h3 id="using-llamafile-server">Using llamafile server</h3>
+<p>To point at a local llamafile server running on its default port:</p>
+<pre class="shell"><code>azd env set OPENAI_HOST local
+azd env set OPENAI_BASE_URL http://localhost:8080/v1
+azd env set USE_VECTORS false</code></pre>
+<p>Llamafile does <em>not</em> require a model name to be specified.</p>
+<p>If you’re running the app inside a VS Code Dev Container, use this
+local URL instead:</p>
+<pre class="shell"><code>azd env set OPENAI_BASE_URL http://host.docker.internal:8080/v1</code></pre>

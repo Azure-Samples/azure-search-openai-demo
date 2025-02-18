@@ -1,0 +1,62 @@
+<h1 id="rag-chat-deploying-on-azure-container-apps">RAG chat: Deploying
+on Azure Container Apps</h1>
+<p>Due to <a href="https://github.com/Azure/azure-dev/issues/2736">a
+limitation</a> of the Azure Developer CLI (<code>azd</code>), there can
+be only one host option in the <a href="../azure.yaml">azure.yaml</a>
+file. By default, <code>host: containerapp</code> is used and
+<code>host: appservice</code> is commented out.</p>
+<p>However, if you have an older version of the repo, you may need to
+follow these steps to deploy to Container Apps instead, or you can stick
+with Azure App Service.</p>
+<p>To deploy to Azure Container Apps, please follow the following
+steps:</p>
+<ol type="1">
+<li><p>Comment out <code>host: appservice</code> and uncomment
+<code>host: containerapp</code> in the <a
+href="../azure.yaml">azure.yaml</a> file.</p></li>
+<li><p>Login to your Azure account:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">azd</span> auth login</span></code></pre></div></li>
+<li><p>Create a new <code>azd</code> environment to store the deployment
+parameters:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">azd</span> env new</span></code></pre></div>
+<p>Enter a name that will be used for the resource group. This will
+create a new folder in the <code>.azure</code> folder, and set it as the
+active environment for any calls to <code>azd</code> going
+forward.</p></li>
+<li><p>Set the deployment target to <code>containerapps</code>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">azd</span> env set DEPLOYMENT_TARGET containerapps</span></code></pre></div></li>
+<li><p>(Optional) This is the point where you can customize the
+deployment by setting other `azd1 environment variables, in order to <a
+href="docs/deploy_existing.md">use existing resources</a>, <a
+href="docs/deploy_features.md">enable optional features (such as auth or
+vision)</a>, or <a href="docs/deploy_lowcost.md">deploy to free
+tiers</a>.</p></li>
+<li><p>Provision the resources and deploy the code:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">azd</span> up</span></code></pre></div>
+<p>This will provision Azure resources and deploy this sample to those
+resources, including building the search index based on the files found
+in the <code>./data</code> folder.</p>
+<p><strong>Important</strong>: Beware that the resources created by this
+command will incur immediate costs, primarily from the AI Search
+resource. These resources may accrue costs even if you interrupt the
+command before it is fully executed. You can run <code>azd down</code>
+or delete the resources manually to avoid unnecessary spending.</p></li>
+</ol>
+<h2 id="customizing-workload-profile">Customizing Workload Profile</h2>
+<p>The default workload profile is Consumption. If you want to use a
+dedicated workload profile like D4, please run:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">azd</span> env AZURE_CONTAINER_APPS_WORKLOAD_PROFILE D4</span></code></pre></div>
+<p>For a full list of workload profiles, please check <a
+href="https://learn.microsoft.com/azure/container-apps/workload-profiles-overview#profile-types">here</a>.
+Please note dedicated workload profiles have a different billing model
+than Consumption plan. Please check <a
+href="https://learn.microsoft.com/azure/container-apps/billing">here</a>
+for details.</p>
+<h2 id="private-endpoints">Private endpoints</h2>
+<p>Private endpoints is still in private preview for Azure Container
+Apps and not supported for now.</p>

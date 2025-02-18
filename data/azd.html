@@ -1,0 +1,77 @@
+<h1 id="rag-chat-deploying-with-the-azure-developer-cli">RAG chat:
+Deploying with the Azure Developer CLI</h1>
+<p>This guide includes advanced topics that are not necessary for a
+basic deployment. If you are new to the project, please consult the main
+<a href="../README.md#deploying">README</a> for steps on deploying the
+project.</p>
+<p><a href="https://www.youtube.com/watch?v=mDFZdmn7nhk">📺 Watch:
+Deployment of your chat app</a></p>
+<ul>
+<li><a href="#how-does-azd-up-work">How does <code>azd up</code>
+work?</a></li>
+<li><a href="#configuring-continuous-deployment">Configuring continuous
+deployment</a>
+<ul>
+<li><a href="#github-actions">GitHub actions</a></li>
+<li><a href="#azure-devops">Azure DevOps</a></li>
+</ul></li>
+</ul>
+<h2 id="how-does-azd-up-work">How does <code>azd up</code> work?</h2>
+<p>The <code>azd up</code> command comes from the <a
+href="https://learn.microsoft.com/azure/developer/azure-developer-cli/overview">Azure
+Developer CLI</a>, and takes care of both provisioning the Azure
+resources and deploying code to the selected Azure hosts.</p>
+<p>The <code>azd up</code> command uses the <code>azure.yaml</code> file
+combined with the infrastructure-as-code <code>.bicep</code> files in
+the <code>infra/</code> folder. The <code>azure.yaml</code> file for
+this project declares several “hooks” for the prepackage step and
+postprovision steps. The <code>up</code> command first runs the
+<code>prepackage</code> hook which installs Node dependencies and builds
+the React.JS-based JavaScript files. It then packages all the code (both
+frontend and backend) into a zip file which it will deploy later.</p>
+<p>Next, it provisions the resources based on <code>main.bicep</code>
+and <code>main.parameters.json</code>. At that point, since there is no
+default value for the OpenAI resource location, it asks you to pick a
+location from a short list of available regions. Then it will send
+requests to Azure to provision all the required resources. With
+everything provisioned, it runs the <code>postprovision</code> hook to
+process the local data and add it to an Azure AI Search index.</p>
+<p>Finally, it looks at <code>azure.yaml</code> to determine the Azure
+host and uploads the zip to Azure App Service. The <code>azd up</code>
+command is now complete, but it may take another 5-10 minutes for the
+App Service app to be fully available and working, especially for the
+initial deploy.</p>
+<p>Related commands are <code>azd provision</code> for just provisioning
+(if infra files change) and <code>azd deploy</code> for just deploying
+updated app code.</p>
+<h2 id="configuring-continuous-deployment">Configuring continuous
+deployment</h2>
+<p>This repository includes both a GitHub Actions workflow and an Azure
+DevOps pipeline for continuous deployment with every push to
+<code>main</code>. The GitHub Actions workflow is the default, but you
+can switch to Azure DevOps if you prefer.</p>
+<p>More details are available in <a
+href="https://learn.microsoft.com/azure/developer/azure-developer-cli/configure-devops-pipeline?tabs=GitHub">Learn.com:
+Configure a pipeline and push updates</a></p>
+<h3 id="github-actions">GitHub actions</h3>
+<p>After you have deployed the app once with <code>azd up</code>, you
+can enable continuous deployment with GitHub Actions.</p>
+<p>Run this command to set up a Service Principal account for CI
+deployment and to store your <code>azd</code> environment variables in
+GitHub Actions secrets:</p>
+<pre class="shell"><code>azd pipeline config</code></pre>
+<p>You can trigger the “Deploy” workflow manually from your GitHub
+actions, or wait for the next push to main.</p>
+<p>If you change your <code>azd</code> environment variables at any time
+(via <code>azd env set</code> or as a result of provisioning), re-run
+that command in order to update the GitHub Actions secrets.</p>
+<h3 id="azure-devops">Azure DevOps</h3>
+<p>After you have deployed the app once with <code>azd up</code>, you
+can enable continuous deployment with Azure DevOps.</p>
+<p>Run this command to set up a Service Principal account for CI
+deployment and to store your <code>azd</code> environment variables in
+GitHub Actions secrets:</p>
+<pre class="shell"><code>azd pipeline config --provider azdo</code></pre>
+<p>If you change your <code>azd</code> environment variables at any time
+(via <code>azd env set</code> or as a result of provisioning), re-run
+that command in order to update the GitHub Actions secrets.</p>

@@ -1,0 +1,309 @@
+<h1 id="rag-chat-customizing-the-chat-app">RAG chat: Customizing the
+chat app</h1>
+<p><a href="https://www.youtube.com/watch?v=D3slfMqydHc">📺 Watch: (RAG
+Deep Dive series) Customizing the app</a></p>
+<p>This guide provides more details for customizing the RAG chat
+app.</p>
+<ul>
+<li><a href="#using-your-own-data">Using your own data</a></li>
+<li><a href="#customizing-the-ui">Customizing the UI</a></li>
+<li><a href="#customizing-the-backend">Customizing the backend</a>
+<ul>
+<li><a href="#chatask-tabs">Chat/Ask tabs</a>
+<ul>
+<li><a href="#chat-approach">Chat approach</a>
+<ul>
+<li><a href="#chat-with-vision">Chat with vision</a></li>
+</ul></li>
+<li><a href="#ask-tab">Ask tab</a>
+<ul>
+<li><a href="#ask-with-vision">Ask with vision</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#improving-answer-quality">Improving answer quality</a>
+<ul>
+<li><a href="#identify-the-problem-point">Identify the problem
+point</a></li>
+<li><a href="#improving-openai-chatcompletion-results">Improving OpenAI
+ChatCompletion results</a></li>
+<li><a href="#improving-azure-ai-search-results">Improving Azure AI
+Search results</a></li>
+<li><a href="#evaluating-answer-quality">Evaluating answer
+quality</a></li>
+</ul></li>
+</ul>
+<h2 id="using-your-own-data">Using your own data</h2>
+<p>The Chat App is designed to work with any PDF documents. The sample
+data is provided to help you get started quickly, but you can easily
+replace it with your own data. You’ll want to first remove all the
+existing data, then add your own. See the <a
+href="data_ingestion.md">data ingestion guide</a> for more details.</p>
+<h2 id="customizing-the-ui">Customizing the UI</h2>
+<p>The frontend is built using <a href="https://reactjs.org/">React</a>
+and <a href="https://react.fluentui.dev/">Fluent UI components</a>. The
+frontend components are stored in the <code>app/frontend/src</code>
+folder. To modify the page title, header text, example questions, and
+other UI elements, you can customize the
+<code>app/frontend/src/locales/{en/es/fr/jp/it}/translation.json</code>
+file for different languages(English is the default). The primary
+strings and labels used throughout the application are defined within
+these files.</p>
+<h2 id="customizing-the-backend">Customizing the backend</h2>
+<p>The backend is built using <a
+href="https://quart.palletsprojects.com/">Quart</a>, a Python framework
+for asynchronous web applications. The backend code is stored in the
+<code>app/backend</code> folder. The frontend and backend communicate
+using the <a href="https://aka.ms/chatprotocol">AI Chat HTTP
+Protocol</a>.</p>
+<h3 id="chatask-tabs">Chat/Ask tabs</h3>
+<p>Typically, the primary backend code you’ll want to customize is the
+<code>app/backend/approaches</code> folder, which contains the classes
+powering the Chat and Ask tabs. Each class uses a different RAG
+(Retrieval Augmented Generation) approach, which include system messages
+that should be changed to match your data</p>
+<h4 id="chat-approach">Chat approach</h4>
+<p>The chat tab uses the approach programmed in <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py">chatreadretrieveread.py</a>.</p>
+<ol type="1">
+<li>It calls the OpenAI ChatCompletion API to turn the user question
+into a good search query, using the prompt and tools from <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_query_rewrite.prompty">chat_query_rewrite.prompty</a>.</li>
+<li>It queries Azure AI Search for search results for that query
+(optionally using the vector embeddings for that query).</li>
+<li>It then calls the OpenAI ChatCompletion API to answer the question
+based on the sources, using the prompt from <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question.prompty">chat_answer_question.prompty</a>.
+That call includes the past message history as well (or as many messages
+fit inside the model’s token limit).</li>
+</ol>
+<p>The prompts are currently tailored to the sample data since they
+start with “Assistant helps the company employees with their healthcare
+plan questions, and questions about the employee handbook.” Modify the
+<a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_query_rewrite.prompty">chat_query_rewrite.prompty</a>
+and <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question.prompty">chat_answer_question.prompty</a>
+prompts to match your data.</p>
+<h5 id="chat-with-vision">Chat with vision</h5>
+<p>If you followed the instructions in <a
+href="gpt4v.md">docs/gpt4v.md</a> to enable a GPT Vision model and then
+select “Use GPT vision model”, then the chat tab will use the
+<code>chatreadretrievereadvision.py</code> approach instead. This
+approach is similar to the <code>chatreadretrieveread.py</code>
+approach, with a few differences:</p>
+<ol type="1">
+<li>Step 1 is the same as before, except it uses the GPT-4 Vision model
+instead of the default GPT-3.5 model.</li>
+<li>For this step, it also calculates a vector embedding for the user
+question using <a
+href="https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api">the
+Computer Vision vectorize text API</a>, and passes that to the Azure AI
+Search to compare against the <code>imageEmbeddings</code> fields in the
+indexed documents. For each matching document, it downloads the image
+blob and converts it to a base 64 encoding.</li>
+<li>When it combines the search results and user question, it includes
+the base 64 encoded images, and sends along both the text and images to
+the GPT4 Vision model (similar to this <a
+href="https://platform.openai.com/docs/guides/vision/quick-start">documentation
+example</a>). The model generates a response that includes citations to
+the images, and the UI renders the base64 encoded images when a citation
+is clicked.</li>
+</ol>
+<p>The prompt for step 2 is currently tailored to the sample data since
+it starts with “You are an intelligent assistant helping analyze the
+Annual Financial Report of Contoso Ltd.”. Modify the <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question_vision.prompty">chat_answer_question_vision.prompty</a>
+prompt to match your data.</p>
+<h4 id="ask-tab">Ask tab</h4>
+<p>The ask tab uses the approach programmed in <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py">retrievethenread.py</a>.</p>
+<ol type="1">
+<li>It queries Azure AI Search for search results for the user question
+(optionally using the vector embeddings for that question).</li>
+<li>It then combines the search results and user question, and calls the
+OpenAI ChatCompletion API to answer the question based on the sources,
+using the prompt from <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty">ask_answer_question.prompty</a>.</li>
+</ol>
+<p>The prompt for step 2 is currently tailored to the sample data since
+it starts with “You are an intelligent assistant helping Contoso Inc
+employees with their healthcare plan questions and employee handbook
+questions.” Modify <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty">ask_answer_question.prompty</a>
+to match your data.</p>
+<h4 id="ask-with-vision">Ask with vision</h4>
+<p>If you followed the instructions in <a
+href="gpt4v.md">docs/gpt4v.md</a> to enable the GPT-4 Vision model and
+then select “Use GPT vision model”, then the ask tab will use the
+<code>retrievethenreadvision.py</code> approach instead. This approach
+is similar to the <code>retrievethenread.py</code> approach, with a few
+differences:</p>
+<ol type="1">
+<li>For this step, it also calculates a vector embedding for the user
+question using <a
+href="https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api">the
+Computer Vision vectorize text API</a>, and passes that to the Azure AI
+Search to compare against the <code>imageEmbeddings</code> fields in the
+indexed documents. For each matching document, it downloads the image
+blob and converts it to a base 64 encoding.</li>
+<li>When it combines the search results and user question, it includes
+the base 64 encoded images, and sends along both the text and images to
+the GPT4 Vision model (similar to this <a
+href="https://platform.openai.com/docs/guides/vision/quick-start">documentation
+example</a>). The model generates a response that includes citations to
+the images, and the UI renders the base64 encoded images when a citation
+is clicked.</li>
+</ol>
+<p>The prompt for step 2 is currently tailored to the sample data since
+it starts with “You are an intelligent assistant helping analyze the
+Annual Financial Report of Contoso Ltd”. Modify the <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question_vision.prompty">ask_answer_question_vision.prompty</a>
+prompt to match your data.</p>
+<h4 id="making-settings-overrides-permanent">Making settings overrides
+permanent</h4>
+<p>The UI provides a “Developer Settings” menu for customizing the
+approaches, like disabling semantic ranker or using vector search. Those
+settings are passed in the “context” field of the request to the
+backend, and are not saved permanently. However, if you find a setting
+that you do want to make permanent, there are two approaches:</p>
+<ol type="1">
+<li><p>Change the defaults in the frontend. You’ll find the defaults in
+<code>Chat.tsx</code> and <code>Ask.tsx</code>. For example, this line
+of code sets the default retrieval mode to Hybrid:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> [retrievalMode<span class="op">,</span> setRetrievalMode] <span class="op">=</span> <span class="fu">useState</span><span class="op">&lt;</span>RetrievalMode<span class="op">&gt;</span>(RetrievalMode<span class="op">.</span><span class="at">Hybrid</span>)<span class="op">;</span></span></code></pre></div>
+<p>You can change the default to Text by changing the code to:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> [retrievalMode<span class="op">,</span> setRetrievalMode] <span class="op">=</span> <span class="fu">useState</span><span class="op">&lt;</span>RetrievalMode<span class="op">&gt;</span>(RetrievalMode<span class="op">.</span><span class="at">Text</span>)<span class="op">;</span></span></code></pre></div></li>
+<li><p>Change the overrides in the backend. Each of the approaches has a
+<code>run</code> method that takes a <code>context</code> parameter, and
+the first line of code extracts the overrides from that
+<code>context</code>. That’s where you can override any of the settings.
+For example, to change the retrieval mode to text:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>overrides <span class="op">=</span> context.get(<span class="st">&quot;overrides&quot;</span>, {})</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>overrides[<span class="st">&quot;retrieval_mode&quot;</span>] <span class="op">=</span> <span class="st">&quot;text&quot;</span></span></code></pre></div>
+<p>By changing the setting on the backend, you can safely remove the
+Developer Settings UI from the frontend, if you don’t wish to expose
+that to your users.</p></li>
+</ol>
+<h2 id="improving-answer-quality">Improving answer quality</h2>
+<p>Once you are running the chat app on your own data and with your own
+tailored system prompt, the next step is to test the app with questions
+and note the quality of the answers. If you notice any answers that
+aren’t as good as you’d like, here’s a process for improving them.</p>
+<h3 id="identify-the-problem-point">Identify the problem point</h3>
+<p>The first step is to identify where the problem is occurring. For
+example, if using the Chat tab, the problem could be:</p>
+<ol type="1">
+<li>OpenAI ChatCompletion API is not generating a good search query
+based on the user question</li>
+<li>Azure AI Search is not returning good search results for the
+query</li>
+<li>OpenAI ChatCompletion API is not generating a good answer based on
+the search results and user question</li>
+</ol>
+<p>You can look at the “Thought process” tab in the chat app to see each
+of those steps, and determine which one is the problem.</p>
+<h3 id="improving-openai-chatcompletion-results">Improving OpenAI
+ChatCompletion results</h3>
+<p>If the problem is with the ChatCompletion API calls (steps 1 or 3
+above), you can try changing the relevant prompt.</p>
+<p>Once you’ve changed the prompt, make sure you ask the same question
+multiple times to see if the overall quality has improved, and <a
+href="#evaluating-answer-quality">run an evaluation</a> when you’re
+satisfied with the changes. The ChatCompletion API can yield different
+results every time, even for a temperature of 0.0, but especially for a
+higher temperature than that (like our default of 0.7 for step 3).</p>
+<p>You can also try changing the ChatCompletion parameters, like
+temperature, to see if that improves results for your domain.</p>
+<h3 id="improving-azure-ai-search-results">Improving Azure AI Search
+results</h3>
+<p>If the problem is with Azure AI Search (step 2 above), the first step
+is to check what search parameters you’re using. Generally, the best
+results are found with hybrid search (text + vectors) plus the
+additional semantic re-ranking step, and that’s what we’ve enabled by
+default. There may be some domains where that combination isn’t optimal,
+however. Check out this blog post which <a
+href="https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167">evaluates
+AI search strategies</a> for a better understanding of the differences,
+or watch this <a href="https://www.youtube.com/watch?v=ugJy9QkgLYg">RAG
+Deep Dive video on AI Search</a>.</p>
+<h4 id="configuring-parameters-in-the-app">Configuring parameters in the
+app</h4>
+<p>You can change many of the search parameters in the “Developer
+settings” in the frontend and see if results improve for your queries.
+The most relevant options:</p>
+<figure>
+<img src="images/screenshot_searchoptions.png"
+alt="Screenshot of search options in developer settings" />
+<figcaption aria-hidden="true">Screenshot of search options in developer
+settings</figcaption>
+</figure>
+<h4 id="configuring-parameters-in-the-azure-portal">Configuring
+parameters in the Azure Portal</h4>
+<p>You may find it easier to experiment with search options with the
+index explorer in the Azure Portal. Open up the Azure AI Search
+resource, select the Indexes tab, and select the index there.</p>
+<p>Then use the JSON view of the search explorer, and make sure you
+specify the same options you’re using in the app. For example, this
+query represents a search with semantic ranker configured:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;search&quot;</span><span class="fu">:</span> <span class="st">&quot;eye exams&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;queryType&quot;</span><span class="fu">:</span> <span class="st">&quot;semantic&quot;</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;semanticConfiguration&quot;</span><span class="fu">:</span> <span class="st">&quot;default&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;queryLanguage&quot;</span><span class="fu">:</span> <span class="st">&quot;en-us&quot;</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;speller&quot;</span><span class="fu">:</span> <span class="st">&quot;lexicon&quot;</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;top&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>You can also use the <code>highlight</code> parameter to see what
+text is being matched in the <code>content</code> field in the search
+results.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;search&quot;</span><span class="fu">:</span> <span class="st">&quot;eye exams&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;highlight&quot;</span><span class="fu">:</span> <span class="st">&quot;content&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<figure>
+<img src="images/screenshot_searchindex.png"
+alt="Screenshot of search explorer with highlighted results" />
+<figcaption aria-hidden="true">Screenshot of search explorer with
+highlighted results</figcaption>
+</figure>
+<p>The search explorer works well for testing text, but is harder to use
+with vectors, since you’d also need to compute the vector embedding and
+send it in. It is probably easier to use the app frontend for testing
+vectors/hybrid search.</p>
+<h4 id="other-approaches-to-improve-search-results">Other approaches to
+improve search results</h4>
+<p>Here are additional ways for improving the search results:</p>
+<ul>
+<li>Adding additional metadata to the “content” field, like the document
+title, so that it can be matched in the search results. Modify <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/prepdocslib/searchmanager.py">searchmanager.py</a>
+to include more text in the <code>content</code> field.</li>
+<li>Making additional fields searchable by the full text search step.
+For example, the “sourcepage” field is not currently searchable, but you
+could make that into a <code>SearchableField</code> with
+<code>searchable=True</code> in <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/prepdocslib/searchmanager.py">searchmanager.py</a>.
+A change like that requires <a
+href="https://learn.microsoft.com/azure/search/search-howto-reindex#change-an-index-schema">re-building
+the index</a>.</li>
+<li>Using function calling to search by particular fields, like
+searching by the filename. See this blog post on <a
+href="https://blog.pamelafox.org/2024/03/rag-techniques-using-function-calling.html">function
+calling for structured retrieval</a>.</li>
+<li>Using a different splitting strategy for the documents, or modifying
+the existing ones, to improve the chunks that are indexed. You can find
+the currently available splitters in <a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/prepdocslib/textsplitter.py">textsplitter.py</a>.</li>
+</ul>
+<h3 id="evaluating-answer-quality">Evaluating answer quality</h3>
+<p>Once you’ve made changes to the prompts or settings, you’ll want to
+rigorously evaluate the results to see if they’ve improved. Follow the
+<a href="./evaluation.md">evaluation guide</a> to learn how to run
+evaluations, review results, and compare answers across runs.</p>

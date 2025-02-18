@@ -1,0 +1,27 @@
+<h1 id="rag-chat-sharing-deployment-environments">RAG chat: Sharing
+deployment environments</h1>
+<p>If you’ve deployed the RAG chat solution already following the steps
+in the <a href="../README.md#deploying">deployment guide</a>, you may
+want to share the environment with a colleague. Either you or they can
+follow these steps:</p>
+<ol type="1">
+<li>Install the <a
+href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure
+CLI</a></li>
+<li>Run <code>azd init -t azure-search-openai-demo</code> or clone this
+repository.</li>
+<li>Run <code>azd env refresh -e {environment name}</code> They will
+need the azd environment name, subscription ID, and location to run this
+command. You can find those values in your
+<code>.azure/{env name}/.env</code> file. This will populate their azd
+environment’s <code>.env</code> file with all the settings needed to run
+the app locally.</li>
+<li>Set the environment variable <code>AZURE_PRINCIPAL_ID</code> either
+in that <code>.env</code> file or in the active shell to their Azure ID,
+which they can get with <code>az ad signed-in-user show</code>.</li>
+<li>Run <code>./scripts/roles.ps1</code> or
+<code>.scripts/roles.sh</code> to assign all of the necessary roles to
+the user. If they do not have the necessary permission to create roles
+in the subscription, then you may need to run this script for them. Once
+the script runs, they should be able to run the app locally.</li>
+</ol>

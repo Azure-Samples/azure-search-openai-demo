@@ -1,0 +1,93 @@
+<!--
+---
+name: RAG chat with private endpoints
+description: Configure access to a chat app so that it's only accessible from private endpoints.
+languages:
+- python
+- typescript
+- bicep
+- azdeveloper
+products:
+- azure-openai
+- azure-cognitive-search
+- azure-app-service
+- azure
+page_type: sample
+urlFragment: azure-search-openai-demo-private-access
+---
+-->
+<h1 id="rag-chat-deploying-with-private-access">RAG chat: Deploying with
+private access</h1>
+<p><a href="https://www.youtube.com/watch?v=08wtL1eB15g">📺 Watch: (RAG
+Deep Dive series) Private network deployment</a></p>
+<p>The <a href="/">azure-search-openai-demo</a> project can set up a
+full RAG chat app on Azure AI Search and OpenAI so that you can chat on
+custom data, like internal enterprise data or domain-specific knowledge
+sets. For full instructions on setting up the project, consult the <a
+href="/README.md">main README</a>, and then return here for detailed
+instructions on configuring private endpoints.</p>
+<p>⚠️ This feature is not yet compatible with Azure Container Apps, so
+you will need to <a href="./azure_app_service.md">deploy to Azure App
+Service</a> instead.</p>
+<p>If you want to disable public access when deploying the Chat App, you
+can do so by setting <code>azd</code> environment values.</p>
+<h2 id="before-you-begin">Before you begin</h2>
+<p>Deploying with public access disabled adds additional cost to your
+deployment. Please see pricing for the following products:</p>
+<ol type="1">
+<li><a
+href="https://azure.microsoft.com/pricing/details/private-link/">Private
+Endpoints</a>
+<ol type="1">
+<li>The exact number of private endpoints created depends on the <a
+href="./deploy_features.md">optional features</a> used.</li>
+</ol></li>
+<li><a href="https://azure.microsoft.com/pricing/details/dns/">Private
+DNS Zones</a></li>
+</ol>
+<h2 id="environment-variables-controlling-private-access">Environment
+variables controlling private access</h2>
+<ol type="1">
+<li><code>AZURE_PUBLIC_NETWORK_ACCESS</code>: Controls the value of
+public network access on supported Azure resources. Valid values are
+‘Enabled’ or ‘Disabled’.
+<ol type="1">
+<li>When public network access is ‘Enabled’, Azure resources are open to
+the internet.</li>
+<li>When public network access is ‘Disabled’, Azure resources are only
+accessible over a virtual network.</li>
+</ol></li>
+<li><code>AZURE_USE_PRIVATE_ENDPOINT</code>: Controls deployment of <a
+href="https://learn.microsoft.com/azure/private-link/private-endpoint-overview">private
+endpoints</a> which connect Azure resources to the virtual network.
+<ol type="1">
+<li>When set to ‘true’, ensures private endpoints are deployed for
+connectivity even when <code>AZURE_PUBLIC_NETWORK_ACCESS</code> is
+‘Disabled’.</li>
+<li>Note that private endpoints do not make the chat app accessible from
+the internet. Connections must be initiated from inside the virtual
+network.</li>
+</ol></li>
+</ol>
+<h2 id="recommended-deployment-strategy-for-private-access">Recommended
+deployment strategy for private access</h2>
+<ol type="1">
+<li>Deploy the app with private endpoints enabled and public access
+enabled.</li>
+</ol>
+<pre class="shell"><code>azd env set AZURE_USE_PRIVATE_ENDPOINT true
+azd env set AZURE_PUBLIC_NETWORK_ACCESS Enabled
+azd up</code></pre>
+<ol type="1">
+<li>Validate that you can connect to the chat app and it’s working as
+expected from the internet.</li>
+<li>Re-provision the app with public access disabled.</li>
+</ol>
+<pre class="shell"><code>azd env set AZURE_PUBLIC_NETWORK_ACCESS Disabled
+azd provision</code></pre>
+<ol type="1">
+<li>Log into your network using a tool like <a
+href="https://azure.microsoft.com/services/vpn-gateway/">Azure VPN
+Gateway</a> and validate that you can connect to the chat app from
+inside the network.</li>
+</ol>

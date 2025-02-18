@@ -1,0 +1,122 @@
+<h1 id="rag-chat-deploying-with-minimal-costs">RAG chat: Deploying with
+minimal costs</h1>
+<p>This AI RAG chat application is designed to be easily deployed using
+the Azure Developer CLI, which provisions the infrastructure according
+to the Bicep files in the <code>infra</code> folder. Those files
+describe each of the Azure resources needed, and configures their SKU
+(pricing tier) and other parameters. Many Azure services offer a free
+tier, but the infrastructure files in this project do <em>not</em>
+default to the free tier as there are often limitations in that
+tier.</p>
+<p>However, if your goal is to minimize costs while prototyping your
+application, follow the steps below <em>before</em> running
+<code>azd up</code>. Once you’ve gone through these steps, return to the
+<a href="../README.md#deploying">deployment steps</a>.</p>
+<p><a href="https://www.youtube.com/watch?v=nlIyos0RXHw">📺 Live stream:
+Deploying from a free account</a></p>
+<ol type="1">
+<li><p>Log in to your Azure account using the Azure Developer CLI:</p>
+<pre class="shell"><code>azd auth login</code></pre></li>
+<li><p>Create a new azd environment for the free resource group:</p>
+<pre class="shell"><code>azd env new</code></pre>
+<p>Enter a name that will be used for the resource group. This will
+create a new folder in the <code>.azure</code> folder, and set it as the
+active environment for any calls to <code>azd</code> going
+forward.</p></li>
+<li><p>Switch from Azure Container Apps to the free tier of Azure App
+Service:</p>
+<p>Azure Container Apps has a consumption-based pricing model that is
+very low cost, but it is not free, plus Azure Container Registry costs a
+small amount each month.</p>
+<p>To deploy to App Service instead:</p>
+<ul>
+<li><p>Comment out <code>host: containerapp</code> and uncomment
+<code>host: appservice</code> in the <a
+href="../azure.yaml">azure.yaml</a> file.</p></li>
+<li><p>Set the deployment target to <code>appservice</code>:</p>
+<pre class="shell"><code>azd env set DEPLOYMENT_TARGET appservice</code></pre></li>
+<li><p>Set the App Service SKU to the free tier:</p>
+<pre class="shell"><code>azd env set AZURE_APP_SERVICE_SKU F1</code></pre></li>
+</ul>
+<p>Limitation: You are only allowed a certain number of free App Service
+instances per region. If you have exceeded your limit in a region, you
+will get an error during the provisioning stage. If that happens, you
+can run <code>azd down</code>, then <code>azd env new</code> to create a
+new environment with a new region.</p></li>
+<li><p>Use the free tier of Azure AI Search:</p>
+<pre class="shell"><code>azd env set AZURE_SEARCH_SERVICE_SKU free</code></pre>
+<p>Limitations:</p>
+<ol type="1">
+<li>You are only allowed one free search service across all regions. If
+you have one already, either delete that service or follow instructions
+to reuse your <a
+href="../README.md#existing-azure-ai-search-resource">existing search
+service</a>.</li>
+<li>The free tier does not support semantic ranker, so the app UI will
+no longer display the option to use the semantic ranker. Note that will
+generally result in <a
+href="https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167">decreased
+search relevance</a>.</li>
+</ol></li>
+<li><p>Use the free tier of Azure Document Intelligence (used in
+analyzing files):</p>
+<pre class="shell"><code>azd env set AZURE_DOCUMENTINTELLIGENCE_SKU F0</code></pre>
+<p><strong>Limitation for PDF files:</strong></p>
+<p>The free tier will only scan the first two pages of each PDF. In our
+sample documents, those first two pages are just title pages, so you
+won’t be able to get answers from the documents. You can either use your
+own documents that are only 2-pages long, or you can use a local Python
+package for PDF parsing by setting:</p>
+<pre class="shell"><code>azd env set USE_LOCAL_PDF_PARSER true</code></pre>
+<p><strong>Limitation for HTML files:</strong></p>
+<p>The free tier will only scan the first two pages of each HTML file.
+So, you might not get very accurate answers from the files. You can
+either use your own files that are only 2-pages long, or you can use a
+local Python package for HTML parsing by setting:</p>
+<pre class="shell"><code>azd env set USE_LOCAL_HTML_PARSER true</code></pre></li>
+<li><p>Use the free tier of Azure Cosmos DB:</p>
+<pre class="shell"><code>azd env set AZURE_COSMOSDB_SKU free</code></pre>
+<p>Limitation: You can have only one free Cosmos DB account. To keep
+your account free of charge, ensure that you do not exceed the free tier
+limits. For more information, see the <a
+href="https://learn.microsoft.com/azure/cosmos-db/free-tier">Azure
+Cosmos DB lifetime free tier</a>.</p></li>
+<li><p>⚠️ This step is currently only possible if you’re deploying to
+App Service (<a
+href="https://github.com/Azure-Samples/azure-search-openai-demo/issues/2281">see
+issue 2281</a>):</p>
+<p>Turn off Azure Monitor (Application Insights):</p>
+<pre class="shell"><code>azd env set AZURE_USE_APPLICATION_INSIGHTS false</code></pre>
+<p>Application Insights is quite inexpensive already, so turning this
+off may not be worth the costs saved, but it is an option for those who
+want to minimize costs.</p></li>
+<li><p>Use OpenAI.com instead of Azure OpenAI: This should not be
+necessary, as the costs are same for both services, but you may need
+this step if your account does not have access to Azure OpenAI for some
+reason.</p>
+<pre class="shell"><code>azd env set OPENAI_HOST openai
+azd env set OPENAI_ORGANIZATION {Your OpenAI organization}
+azd env set OPENAI_API_KEY {Your OpenAI API key}</code></pre>
+<p>Both Azure OpenAI and openai.com OpenAI accounts will incur costs,
+based on tokens used, but the costs are fairly low for the amount of
+sample data (less than $10).</p></li>
+<li><p>Disable vector search:</p>
+<pre class="shell"><code>azd env set USE_VECTORS false</code></pre>
+<p>By default, the application computes vector embeddings for documents
+during the data ingestion phase, and then computes a vector embedding
+for user questions asked in the application. Those computations require
+an embedding model, which incurs costs per tokens used. The costs are
+fairly low, so the benefits of vector search would typically outweigh
+the costs, but it is possible to disable vector support. If you do so,
+the application will fall back to a keyword search, which is less
+accurate.</p></li>
+<li><p>Once you’ve made the desired customizations, follow the steps in
+the README <a href="../README.md#deploying-from-scratch">to run
+<code>azd up</code></a>. We recommend using “eastus” as the region, for
+availability reasons.</p></li>
+</ol>
+<h2 id="reducing-costs-locally">Reducing costs locally</h2>
+<p>To save costs for local development, you could use an
+OpenAI-compatible model. Follow steps in <a
+href="localdev.md#using-a-local-openai-compatible-api">local development
+guide</a>.</p>

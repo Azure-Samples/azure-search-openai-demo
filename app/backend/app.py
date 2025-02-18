@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
 
+import aiohttp
 from azure.cognitiveservices.speech import (
     ResultReason,
     SpeechConfig,
@@ -133,6 +134,16 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
     if AZURE_ENFORCE_ACCESS_CONTROL is set to true, logged in users can only access files they have access to
     This is also slow and memory hungry.
     """
+    # if the path looks like issue-NNN.html, fetch it from github.com/Azure-samples/azure-search-openai-demo/issues instead
+    if path.startswith("issue-") and path.endswith(".html"):
+        issue_id = path.split("-")[1].split(".")[0]
+        url = f"https://github.com/Azure-Samples/azure-search-openai-demo/issues/{issue_id}"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    abort(404)
+                return await response.text()
+
     # Remove page number from path, filename-1.txt -> filename.txt
     # This shouldn't typically be necessary as browsers don't send hash fragments to servers
     if path.find("#page=") > 0:

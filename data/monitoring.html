@@ -1,0 +1,73 @@
+<h1 id="rag-chat-monitoring-with-application-insights">RAG chat:
+Monitoring with Application Insights</h1>
+<p>By default, deployed apps use Application Insights for the tracing of
+each request, along with the logging of errors.</p>
+<ul>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#failures">Failures</a></li>
+<li><a href="#dashboard">Dashboard</a></li>
+<li><a href="#customizing-the-traces">Customizing the traces</a></li>
+</ul>
+<h2 id="performance">Performance</h2>
+<p>To see the performance data, go to the Application Insights resource
+in your resource group, click on the “Investigate -&gt; Performance”
+blade and navigate to any HTTP request to see the timing data. To
+inspect the performance of chat requests, use the “Drill into Samples”
+button to see end-to-end traces of all the API calls made for any chat
+request:</p>
+<figure>
+<img src="images/transaction-tracing.png" alt="Tracing screenshot" />
+<figcaption aria-hidden="true">Tracing screenshot</figcaption>
+</figure>
+<h2 id="failures">Failures</h2>
+<p>To see any exceptions and server errors, navigate to the “Investigate
+-&gt; Failures” blade and use the filtering tools to locate a specific
+exception. You can see Python stack traces on the right-hand side.</p>
+<h2 id="dashboard">Dashboard</h2>
+<p>You can see chart summaries on a dashboard by running the following
+command:</p>
+<pre class="shell"><code>azd monitor</code></pre>
+<p>You can modify the contents of that dashboard by updating
+<code>infra/backend-dashboard.bicep</code>, which is a Bicep file that
+defines the dashboard contents and layout.</p>
+<h2 id="customizing-the-traces">Customizing the traces</h2>
+<p>The tracing is done using these OpenTelemetry Python packages:</p>
+<ul>
+<li><a
+href="https://pypi.org/project/azure-monitor-opentelemetry/">azure-monitor-opentelemetry</a></li>
+<li><a
+href="https://pypi.org/project/opentelemetry-instrumentation-asgi/">opentelemetry-instrumentation-asgi</a></li>
+<li><a
+href="https://pypi.org/project/opentelemetry-instrumentation-httpx/">opentelemetry-instrumentation-httpx</a></li>
+<li><a
+href="https://pypi.org/project/opentelemetry-instrumentation-aiohttp-client/">opentelemetry-instrumentation-aiohttp-client</a></li>
+<li><a
+href="https://pypi.org/project/opentelemetry-instrumentation-openai/">opentelemetry-instrumentation-openai</a></li>
+</ul>
+<p>Those packages are configured in the <code>app.py</code> file:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.getenv(<span class="st">&quot;APPLICATIONINSIGHTS_CONNECTION_STRING&quot;</span>):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    configure_azure_monitor()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This tracks HTTP requests made by aiohttp:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    AioHttpClientInstrumentor().instrument()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This tracks HTTP requests made by httpx:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    HTTPXClientInstrumentor().instrument()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This tracks OpenAI SDK requests:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    OpenAIInstrumentor().instrument()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This middleware tracks app route requests:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    app.asgi_app <span class="op">=</span> OpenTelemetryMiddleware(app.asgi_app)</span></code></pre></div>
+<p>You can pass in parameters to <code>configure_azure_monitor()</code>
+to customize the tracing, like to add custom span processors. You can
+also set <a
+href="https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/">OpenTelemetry
+environment variables</a> to customize the tracing, like to set the
+sampling rate. See the <a
+href="https://pypi.org/project/azure-monitor-opentelemetry/">azure-monitor-opentelemetry</a>
+documentation for more details.</p>
+<p>By default, <a
+href="https://pypi.org/project/opentelemetry-instrumentation-openai/">opentelemetry-instrumentation-openai</a>
+traces all requests made to the OpenAI API, including the messages and
+responses. To disable that for privacy reasons, set the
+<code>TRACELOOP_TRACE_CONTENT=false</code> environment variable.</p>
+<p>To set environment variables, update <code>appEnvVariables</code> in
+<code>infra/main.bicep</code> and re-run <code>azd up</code>.</p>

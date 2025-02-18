@@ -1,11 +1,11 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, List, Optional, Union
 
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from approaches.approach import Approach
+from approaches.approach import Approach, AzureAISearch, GitHubIssueSearch
 
 
 class ChatApproach(Approach, ABC):
@@ -16,23 +16,27 @@ class ChatApproach(Approach, ABC):
     async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
         pass
 
-    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
+    def get_search_query(self, chat_completion: ChatCompletion, user_query: str) -> List[Union[AzureAISearch, GitHubIssueSearch]]:
         response_message = chat_completion.choices[0].message
+        search_queries = []
 
         if response_message.tool_calls:
             for tool in response_message.tool_calls:
                 if tool.type != "function":
                     continue
                 function = tool.function
-                if function.name == "search_sources":
+                if function.name == "azure_ai_search_docs":
                     arg = json.loads(function.arguments)
                     search_query = arg.get("search_query", self.NO_RESPONSE)
                     if search_query != self.NO_RESPONSE:
-                        return search_query
-        elif query_text := response_message.content:
-            if query_text.strip() != self.NO_RESPONSE:
-                return query_text
-        return user_query
+                        search_queries.append(AzureAISearch(aisearch_query=search_query))
+                elif function.name == "github_search_issues":
+                    arg = json.loads(function.arguments)
+                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    if search_query != self.NO_RESPONSE:
+                        search_queries.append(GitHubIssueSearch(github_query=search_query))
+
+        return search_queries
 
     def extract_followup_questions(self, content: Optional[str]):
         if content is None:

@@ -1,0 +1,35 @@
+<h1 id="rag-chat-troubleshooting-deployment">RAG chat: Troubleshooting
+deployment</h1>
+<p>If you are experiencing an error when deploying the RAG chat solution
+using the <a href="../README.md#deploying">deployment steps</a>, this
+guide will help you troubleshoot common issues.</p>
+<ol type="1">
+<li><p>You’re attempting to create resources in regions not enabled for
+Azure OpenAI (e.g. East US 2 instead of East US), or where the model
+you’re trying to use isn’t enabled. See <a
+href="https://aka.ms/oai/models">this matrix of model
+availability</a>.</p></li>
+<li><p>You’ve exceeded a quota, most often number of resources per
+region. See <a href="https://aka.ms/oai/quotas">this article on quotas
+and limits</a>.</p></li>
+<li><p>You’re getting “same resource name not allowed” conflicts. That’s
+likely because you’ve run the sample multiple times and deleted the
+resources you’ve been creating each time, but are forgetting to purge
+them. Azure keeps resources for 48 hours unless you purge from soft
+delete. See <a
+href="https://learn.microsoft.com/azure/cognitive-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource">this
+article on purging resources</a>.</p></li>
+<li><p>You see <code>CERTIFICATE_VERIFY_FAILED</code> when the
+<code>prepdocs.py</code> script runs. That’s typically due to incorrect
+SSL certificates setup on your machine. Try the suggestions in this <a
+href="https://stackoverflow.com/questions/35569042/ssl-certificate-verify-failed-with-python3/43855394#43855394">StackOverflow
+answer</a>.</p></li>
+<li><p>After running <code>azd up</code> and visiting the website, you
+see a ‘404 Not Found’ in the browser. Wait 10 minutes and try again, as
+it might be still starting up. Then try running <code>azd deploy</code>
+and wait again. If you still encounter errors with the deployed app and
+are deploying to App Service, consult the <a
+href="/docs/appservice.md">guide on debugging App Service
+deployments</a>. Please file an issue if the logs don’t help you resolve
+the error.</p></li>
+</ol>

@@ -1,0 +1,209 @@
+<h1 id="rag-chat-deploying-with-existing-azure-resources">RAG chat:
+Deploying with existing Azure resources</h1>
+<p>If you already have existing Azure resources, or if you want to
+specify the exact name of new Azure Resource, you can do so by setting
+<code>azd</code> environment values. You should set these values before
+running <code>azd up</code>. Once you’ve set them, return to the <a
+href="../README.md#deploying">deployment steps</a>.</p>
+<ul>
+<li><a href="#resource-group">Resource group</a></li>
+<li><a href="#openai-resource">OpenAI resource</a></li>
+<li><a href="#azure-ai-search-resource">Azure AI Search
+resource</a></li>
+<li><a href="#azure-app-service-plan-and-app-service-resources">Azure
+App Service Plan and App Service resources</a></li>
+<li><a href="#azure-application-insights-and-related-resources">Azure
+Application Insights and related resources</a></li>
+<li><a href="#azure-computer-vision-resources">Azure Computer Vision
+resources</a></li>
+<li><a href="#azure-document-intelligence-resource">Azure Document
+Intelligence resource</a></li>
+<li><a href="#azure-speech-resource">Azure Speech resource</a></li>
+<li><a href="#other-azure-resources">Other Azure resources</a></li>
+</ul>
+<h2 id="resource-group">Resource group</h2>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_RESOURCE_GROUP {Name of existing resource group}</code></li>
+<li>Run
+<code>azd env set AZURE_LOCATION {Location of existing resource group}</code></li>
+</ol>
+<h2 id="openai-resource">OpenAI resource</h2>
+<h3 id="azure-openai">Azure OpenAI</h3>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}</code></li>
+<li>Run
+<code>azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}</code></li>
+<li>Run
+<code>azd env set AZURE_OPENAI_LOCATION {Location of existing OpenAI service}</code></li>
+<li>Run
+<code>azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing chat deployment}</code>.
+Only needed if your chat deployment is not the default ‘chat’.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_CHATGPT_MODEL {Model name of existing chat deployment}</code>.
+Only needed if your chat model is not the default ‘gpt-35-turbo’.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION {Version string for existing chat deployment}</code>.
+Only needed if your chat deployment model version is not the default
+‘0125’. You definitely need to change this if you changed the
+model.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU {Name of SKU for existing chat deployment}</code>.
+Only needed if your chat deployment SKU is not the default ‘Standard’,
+like if it is ‘GlobalStandard’ instead.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing embedding deployment}</code>.
+Only needed if your embeddings deployment is not the default
+‘embedding’.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_EMB_MODEL_NAME {Model name of existing embedding deployment}</code>.
+Only needed if your embeddings model is not the default
+‘text-embedding-ada-002’.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_EMB_DIMENSIONS {Dimensions for existing embedding deployment}</code>.
+Only needed if your embeddings model is not the default
+‘text-embedding-ada-002’.</li>
+<li>Run
+<code>azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION {Version string for existing embedding deployment}</code>.
+If your embeddings deployment is one of the ‘text-embedding-3’ models,
+set this to the number 1.</li>
+<li>This project does <em>not</em> use keys when authenticating to Azure
+OpenAI. However, if your Azure OpenAI service must have key access
+enabled for some reason (like for use by other projects), then run
+<code>azd env set AZURE_OPENAI_DISABLE_KEYS false</code>. The default
+value is <code>true</code> so you should only run the command if you
+need key access.</li>
+</ol>
+<p>When you run <code>azd up</code> after and are prompted to select a
+value for <code>openAiResourceGroupLocation</code>, make sure to select
+the same location as the existing OpenAI resource group.</p>
+<h3 id="openai.com-openai">Openai.com OpenAI</h3>
+<ol type="1">
+<li>Run <code>azd env set OPENAI_HOST openai</code></li>
+<li>Run
+<code>azd env set OPENAI_ORGANIZATION {Your OpenAI organization}</code></li>
+<li>Run
+<code>azd env set OPENAI_API_KEY {Your OpenAI API key}</code></li>
+<li>Run <code>azd up</code></li>
+</ol>
+<p>You can retrieve your OpenAI key by checking <a
+href="https://platform.openai.com/account/api-keys">your user page</a>
+and your organization by navigating to <a
+href="https://platform.openai.com/account/org-settings">your
+organization page</a>. Learn more about creating an OpenAI free trial at
+<a href="https://openai.com/pricing">this link</a>. Do <em>not</em>
+check your key into source control.</p>
+<p>When you run <code>azd up</code> after and are prompted to select a
+value for <code>openAiResourceGroupLocation</code>, you can select any
+location as it will not be used.</p>
+<h2 id="azure-ai-search-resource">Azure AI Search resource</h2>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_SEARCH_SERVICE {Name of existing Azure AI Search service}</code></li>
+<li>Run
+<code>azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}</code></li>
+<li>If that resource group is in a different location than the one
+you’ll pick for the <code>azd up</code> step, then run
+<code>azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}</code></li>
+<li>If the search service’s SKU is not standard, then run
+<code>azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}</code>. If you
+specify the free tier, then your app will no longer be able to use
+semantic ranker. Be advised that <a
+href="https://learn.microsoft.com/azure/search/search-sku-tier#tier-upgrade-or-downgrade">search
+SKUs cannot be changed</a>. (<a
+href="https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku">See
+other possible SKU values</a>)</li>
+<li>If you have an existing index that is set up with all the expected
+fields, then run
+<code>azd env set AZURE_SEARCH_INDEX {Name of existing index}</code>.
+Otherwise, the <code>azd up</code> command will create a new index.</li>
+</ol>
+<p>You can also customize the search service (new or existing) for
+non-English searches:</p>
+<ol type="1">
+<li>To configure the language of the search query to a value other than
+“en-US”, run
+<code>azd env set AZURE_SEARCH_QUERY_LANGUAGE {Name of query language}</code>.
+(<a
+href="https://learn.microsoft.com/rest/api/searchservice/preview-api/search-documents#queryLanguage">See
+other possible values</a>)</li>
+<li>To turn off the spell checker, run
+<code>azd env set AZURE_SEARCH_QUERY_SPELLER none</code>. Consult <a
+href="https://learn.microsoft.com/rest/api/searchservice/preview-api/search-documents#queryLanguage">this
+table</a> to determine if spell checker is supported for your query
+language.</li>
+<li>To configure the name of the analyzer to use for a searchable text
+field to a value other than “en.microsoft”, run
+<code>azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}</code>.
+(<a
+href="https://learn.microsoft.com/dotnet/api/microsoft.azure.search.models.field.analyzer?view=azure-dotnet-legacy&amp;viewFallbackFrom=azure-dotnet">See
+other possible values</a>)</li>
+</ol>
+<h2 id="azure-app-service-plan-and-app-service-resources">Azure App
+Service Plan and App Service resources</h2>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_APP_SERVICE_PLAN {Name of existing Azure App Service Plan}</code></li>
+<li>Run
+<code>azd env set AZURE_APP_SERVICE {Name of existing Azure App Service}</code>.</li>
+<li>Run
+<code>azd env set AZURE_APP_SERVICE_SKU {SKU of Azure App Service, defaults to B1}</code>.</li>
+</ol>
+<h2 id="azure-application-insights-and-related-resources">Azure
+Application Insights and related resources</h2>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_APPLICATION_INSIGHTS {Name of existing Azure App Insights}</code>.</li>
+<li>Run
+<code>azd env set AZURE_APPLICATION_INSIGHTS_DASHBOARD {Name of existing Azure App Insights Dashboard}</code>.</li>
+<li>Run
+<code>azd env set AZURE_LOG_ANALYTICS {Name of existing Azure Log Analytics Workspace Name}</code>.</li>
+</ol>
+<h2 id="azure-computer-vision-resources">Azure Computer Vision
+resources</h2>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_COMPUTER_VISION_SERVICE {Name of existing Azure Computer Vision Service Name}</code></li>
+<li>Run
+<code>azd env set AZURE_COMPUTER_VISION_RESOURCE_GROUP {Name of existing Azure Computer Vision Resource Group Name}</code></li>
+<li>Run
+<code>azd env set AZURE_COMPUTER_VISION_LOCATION {Name of existing Azure Computer Vision Location}</code></li>
+<li>Run
+<code>azd env set AZURE_COMPUTER_VISION_SKU {SKU of Azure Computer Vision service, defaults to F0}</code></li>
+</ol>
+<h2 id="azure-document-intelligence-resource">Azure Document
+Intelligence resource</h2>
+<p>In order to support analysis of many document formats, this
+repository uses a preview version of Azure Document Intelligence
+(formerly Form Recognizer) that is only available in <a
+href="https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout">limited
+regions</a>. If your existing resource is in one of those regions, then
+you can re-use it by setting the following environment variables:</p>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_DOCUMENTINTELLIGENCE_SERVICE {Name of existing Azure AI Document Intelligence service}</code></li>
+<li>Run
+<code>azd env set AZURE_DOCUMENTINTELLIGENCE_LOCATION {Location of existing service}</code></li>
+<li>Run
+<code>azd env set AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP {Name of resource group with existing service, defaults to main resource group}</code></li>
+<li>Run
+<code>azd env set AZURE_DOCUMENTINTELLIGENCE_SKU {SKU of existing service, defaults to S0}</code></li>
+</ol>
+<h2 id="azure-speech-resource">Azure Speech resource</h2>
+<ol type="1">
+<li>Run
+<code>azd env set AZURE_SPEECH_SERVICE {Name of existing Azure Speech service}</code></li>
+<li>Run
+<code>azd env set AZURE_SPEECH_SERVICE_RESOURCE_GROUP {Name of existing resource group with speech service}</code></li>
+<li>If that resource group is in a different location than the one
+you’ll pick for the <code>azd up</code> step, then run
+<code>azd env set AZURE_SPEECH_SERVICE_LOCATION {Location of existing service}</code></li>
+<li>If the speech service’s SKU is not “S0”, then run
+<code>azd env set AZURE_SPEECH_SERVICE_SKU {Name of SKU}</code>.</li>
+</ol>
+<h2 id="other-azure-resources">Other Azure resources</h2>
+<p>You can also use existing Azure AI Storage Accounts. See
+<code>./infra/main.parameters.json</code> for list of environment
+variables to pass to <code>azd env set</code> to configure those
+existing resources.</p>

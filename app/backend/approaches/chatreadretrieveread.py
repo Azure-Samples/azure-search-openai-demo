@@ -12,7 +12,7 @@ from openai.types.chat import (
 from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import ThoughtStep
-from approaches.chatapproach import ChatApproach
+from approaches.chatapproach import ChatApproach, GitHubIssueSearch
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
@@ -124,33 +124,40 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
             n=1,
             tools=tools,
+            tool_choice="auto",
             seed=seed,
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        search_queries = self.get_search_query(chat_completion, original_user_query)
+        results = []
 
-        # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
+        for query in search_queries:
+            if isinstance(query, GitHubIssueSearch):
+                # Handle GitHub issue search
+                results.extend(await self.search_github_issues(query))
+            else:
+                # Handle regular AI search query
 
-        # If retrieval mode includes vectors, compute an embedding for the query
-        vectors: list[VectorQuery] = []
-        if use_vector_search:
-            vectors.append(await self.compute_text_embedding(query_text))
+                vectors: list[VectorQuery] = []
+                if use_vector_search:
+                    vectors.append(await self.compute_text_embedding(query.aisearch_query))
 
-        results = await self.search(
-            top,
-            query_text,
-            filter,
-            vectors,
-            use_text_search,
-            use_vector_search,
-            use_semantic_ranker,
-            use_semantic_captions,
-            minimum_search_score,
-            minimum_reranker_score,
-        )
+                results.extend(await self.search(
+                    top,
+                    query.aisearch_query,
+                    filter,
+                    vectors,
+                    use_text_search,
+                    use_vector_search,
+                    use_semantic_ranker,
+                    use_semantic_captions,
+                    minimum_search_score,
+                    minimum_reranker_score,
+                ))
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+
         rendered_answer_prompt = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -186,7 +193,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),
                 ThoughtStep(
                     "Search using generated search query",
-                    query_text,
+                    search_queries,
                     {
                         "use_semantic_captions": use_semantic_captions,
                         "use_semantic_ranker": use_semantic_ranker,
@@ -222,4 +229,5 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             stream=should_stream,
             seed=seed,
         )
+
         return (extra_info, chat_coroutine)
