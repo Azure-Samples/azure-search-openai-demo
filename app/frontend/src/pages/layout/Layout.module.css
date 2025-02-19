@@ -8,8 +8,8 @@
 }
 
 .header {
-    background: linear-gradient(to bottom, #4a90e2, #50e3c2);
-    color: #fff;
+    background: linear-gradient(to bottom, black, #FF0000, #FFCC00);
+    color: #f2f2f2;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
