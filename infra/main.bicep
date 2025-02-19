@@ -866,6 +866,54 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (use
   }
 }
 
+
+module keyVault 'br/public:avm/res/key-vault/vault:0.6.2' = {
+  name: 'keyvault'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.keyVaultVaults}${resourceToken}'
+    location: location
+    tags: tags
+    sku: 'standard'
+    enableRbacAuthorization: true
+    accessPolicies: [
+      {
+        objectId: principalId
+        permissions: { secrets: ['get', 'list'] }
+        tenantId: subscription().tenantId
+      }
+    ]
+    // TODO: Virtual network connection
+    diagnosticSettings: [
+      {
+        logCategoriesAndGroups: [
+          {
+            category: 'AuditEvent'
+          }
+        ]
+        name: 'auditEventLogging'
+        workspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
+      }
+    ]
+  }
+}
+
+module ai 'core/ai/ai-environment.bicep' = {
+  name: 'ai'
+  scope: resourceGroup
+  params: {
+    location: location
+    tags: tags
+    hubName: 'aihub-${resourceToken}'
+    projectName: 'aiproj-${resourceToken}'
+    keyVaultName: keyVault.outputs.name
+    keyVaultId: keyVault.outputs.resourceId
+    storageAccountId: storage.outputs.id
+    applicationInsightsId: !useApplicationInsights ? '' : monitoring.outputs.applicationInsightsId
+  }
+}
+
+
 // USER ROLES
 var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
 
@@ -1258,6 +1306,8 @@ output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.name : ''
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_AI_PROJECT string = ai.outputs.projectName
 
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 
