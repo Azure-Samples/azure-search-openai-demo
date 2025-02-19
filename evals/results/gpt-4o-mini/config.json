@@ -1,0 +1,28 @@
+{
+    "testdata_path": "ground_truth.jsonl",
+    "results_dir": "results/gpt-4o-mini",
+    "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched", "any_citation"],
+    "target_url": "http://localhost:50505/chat",
+    "target_parameters": {
+        "overrides": {
+            "top": 3,
+            "temperature": 0.3,
+            "minimum_reranker_score": 0,
+            "minimum_search_score": 0,
+            "retrieval_mode": "hybrid",
+            "semantic_ranker": true,
+            "semantic_captions": false,
+            "suggest_followup_questions": false,
+            "use_oid_security_filter": false,
+            "use_groups_security_filter": false,
+            "vector_fields": [
+                "embedding"
+            ],
+            "use_gpt4v": false,
+            "gpt4v_input": "textAndImages",
+            "seed": 1
+        }
+    },
+    "target_response_answer_jmespath": "message.content",
+    "target_response_context_jmespath": "context.data_points.text"
+}

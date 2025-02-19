@@ -92,7 +92,9 @@ However, if your goal is to minimize costs while prototyping your application, f
 
     Limitation: You can have only one free Cosmos DB account. To keep your account free of charge, ensure that you do not exceed the free tier limits. For more information, see the [Azure Cosmos DB lifetime free tier](https://learn.microsoft.com/azure/cosmos-db/free-tier).
 
-1. Turn off Azure Monitor (Application Insights):
+1. ⚠️ This step is currently only possible if you're deploying to App Service ([see issue 2281](https://github.com/Azure-Samples/azure-search-openai-demo/issues/2281)):
+
+    Turn off Azure Monitor (Application Insights):
 
     ```shell
     azd env set AZURE_USE_APPLICATION_INSIGHTS false
