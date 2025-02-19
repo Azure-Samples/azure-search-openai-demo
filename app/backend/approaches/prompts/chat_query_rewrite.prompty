@@ -30,10 +30,16 @@ assistant:
 Summarize Cryptocurrency Market Dynamics from last year
 
 user:
-(EXAMPLE) What are my health plans?
+(EXAMPLE) What are the main points of the SPD's election program?
 
 assistant:
-Show available health plans
+Show main points of SPD's election program
+
+user:
+(EXAMPLE) What are the main points of the CDU's election program?
+
+assistant:
+Show main points of CDU's election program
 
 {% for message in past_messages %}
 {{ message["role"] }}:

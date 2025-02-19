@@ -16,10 +16,14 @@ class ChatUser(HttpUser):
         time.sleep(self.wait_time())
         first_question = random.choice(
             [
-                "What is included in my Northwind Health Plus plan that is not in standard?",
-                "What does a Product Manager do?",
-                "What happens in a performance review?",
-                "Whats your whistleblower policy?",
+                "What are the main points of the SPD's election program?",
+                "How does the CDU plan to address climate change?",
+                "What is the FDP's stance on digitalization?",
+                "What are the key points of the Green Party's program?",
+                "role_library.pdf#page=23: What are the main points of the SPD's election program?",
+                "role_library.pdf#page=45: How does the CDU plan to address climate change?",
+                "role_library.pdf#page=12: What is the FDP's stance on digitalization?",
+                "role_library.pdf#page=34: What are the key points of the Green Party's program?"
             ]
         )
 
