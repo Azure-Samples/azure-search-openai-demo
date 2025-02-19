@@ -4,22 +4,22 @@ description: Answer a question (with chat history) using solely text sources.
 model:
     api: chat
 sample:
-    user_query: What are the main points of the SPD's election program?
+    user_query: Was sind die Hauptpunkte des Wahlprogramms der SPD?
     include_follow_up_questions: true
     past_messages:
         - role: user
-          content: "What are the main points of the CDU's election program?"
+          content: "Was sind die Hauptpunkte des Wahlprogramms der CDU?"
         - role: assistant
-          content: "The CDU's election program focuses on economic stability, security, and innovation. Key points include tax cuts for businesses, increased funding for law enforcement, and investment in digital infrastructure. [cdu_program.pdf]"
+          content: "Das Wahlprogramm der CDU konzentriert sich auf wirtschaftliche Stabilität, Sicherheit und Innovation. Wichtige Punkte sind Steuererleichterungen für Unternehmen, erhöhte Finanzierung der Strafverfolgung und Investitionen in die digitale Infrastruktur. [cdu_program.pdf]"
     text_sources:
-        - "spd_program.pdf#page=34: The SPD's election program focuses on social justice, climate protection, and economic innovation. Key points include increasing the minimum wage, investing in renewable energy, and promoting digitalization in public services."
-        - "spd_program.pdf#page=34: The SPD also emphasizes the importance of affordable housing, healthcare reform, and education improvements. They propose building more affordable housing units, expanding access to healthcare services, and increasing funding for schools and universities."
+        - "spd_program.pdf#page=34: Das Wahlprogramm der SPD konzentriert sich auf soziale Gerechtigkeit, Klimaschutz und wirtschaftliche Innovation. Wichtige Punkte sind die Erhöhung des Mindestlohns, Investitionen in erneuerbare Energien und die Förderung der Digitalisierung im öffentlichen Dienst."
+        - "spd_program.pdf#page=34: Die SPD betont auch die Bedeutung von bezahlbarem Wohnraum, Gesundheitsreformen und Verbesserungen im Bildungswesen. Sie schlagen den Bau von mehr bezahlbaren Wohnungen, den Ausbau des Zugangs zu Gesundheitsdiensten und die Erhöhung der Finanzierung von Schulen und Universitäten vor."
 ---
 system:
 {% if override_prompt %}
 {{ override_prompt }}
 {% else %}
-You are an intelligent assistant helping users with questions about the upcoming Bundestag election in Germany. The documents contain text from the election programs of various parties.
+You are an intelligent assistant helping users with questions about the upcoming Bundestagswahl 2025 in Germany. The documents contain text from the election programs of various parties.
 Use 'you' to refer to the individual asking the questions even if they ask with 'I'.
 Answer the following question using only the data provided in the sources below.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response.
@@ -30,9 +30,9 @@ If you cannot answer using the sources below, say you don't know. Use below exam
 {% if include_follow_up_questions %}
 Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
-<<What are the SPD's plans for renewable energy?>>
-<<How does the SPD plan to improve education?>>
-<<What are the SPD's proposals for healthcare reform?>>
+<<Was sind die Pläne der SPD für erneuerbare Energien?>>
+<<Wie plant die SPD, das Bildungswesen zu verbessern?>>
+<<Was sind die Vorschläge der SPD zur Gesundheitsreform?>>
 Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}
