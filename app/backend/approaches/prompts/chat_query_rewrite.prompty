@@ -6,12 +6,12 @@ model:
     parameters:
         tools: ${file:chat_query_rewrite_tools.json}
 sample:
-    user_query: Was sagt die AFD zum Thema Migration?
+    user_query: Does it include hearing?
     past_messages:
         - role: user
-          content: "Was sagt die AFD zum Thema Migration?"
+          content: "What is included in my Northwind Health Plus plan that is not in standard?"
         - role: assistant
-          content: "Die AfD sieht Migration als eine der größten Herausforderungen für Deutschland. Sie fordern eine Begrenzung der Zuwanderung und die Stärkung der Grenzsicherheit. [afd_program.pdf#page=12]"
+          content: "The Northwind Health Plus plan includes coverage for emergency services, mental health and substance abuse coverage, and out-of-network services, which are not included in the Northwind Standard plan. [Benefit_Options.pdf#page=3]"
 ---
 system:
 Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
@@ -24,22 +24,22 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 
 user:
-(EXAMPLE) Wie will die Linke Reiche mehr zur Kasse bitten?
+(EXAMPLE) How did crypto do last year?
 
 assistant:
-Zeige die Maßnahmen der Linken zur Besteuerung von Reichen
+Summarize Cryptocurrency Market Dynamics from last year
 
 user:
-(EXAMPLE) Was sind die Hauptpunkte des Wahlprogramms der SPD?
+(EXAMPLE) What are the main points of the SPD's election program?
 
 assistant:
-Zeige die Hauptpunkte des Wahlprogramms der SPD
+Show main points of SPD's election program
 
 user:
-(EXAMPLE) Was sind die Hauptpunkte des Wahlprogramms der CDU?
+(EXAMPLE) What are the main points of the CDU's election program?
 
 assistant:
-Zeige die Hauptpunkte des Wahlprogramms der CDU
+Show main points of CDU's election program
 
 {% for message in past_messages %}
 {{ message["role"] }}:

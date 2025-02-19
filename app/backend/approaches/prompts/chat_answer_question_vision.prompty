@@ -21,9 +21,9 @@ If you cannot answer using the sources below, say you don't know. Return just th
 {% if include_follow_up_questions %}
 Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
-<<Was sind die Hauptpunkte des Wahlprogramms der Grünen?>>
-<<Welche Maßnahmen plant die FDP zur Wirtschaftsförderung?>>
-<<Wie steht die Linke zur Außenpolitik?>>
+<<Are there exclusions for prescriptions?>>
+<<Which pharmacies can be ordered from?>>
+<<What is the limit for over-the-counter medication?>>
 Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}

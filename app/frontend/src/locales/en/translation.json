@@ -5,7 +5,7 @@
     "qa": "Ask a question",
     "login": "Login",
     "logout": "Logout",
-    "clearWahlprogrammeChat": "Clear Wahlprogramme chat",
+    "clearChat": "Clear wahlprogrammeChat",
     "history": {
         "chatHistory": "Chat history",
         "openChatHistory": "Open chat history",
@@ -36,18 +36,18 @@
 
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
+    "defaultExamples": {
+        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
+        "2": "What happens in a performance review?",
+        "3": "What does a Product Manager do?",
+        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+    },
+    "askTitle": "Ask your data",
     "wahlprogrammeExamples": {
         "1": "What are the main points of the SPD's election program?",
         "2": "How does the CDU plan to address climate change?",
         "3": "What is the FDP's stance on digitalization?",
-        "placeholder": "Type a new question (e.g. what are the key points of the Green Party's program?)"
-    },
-    "askTitle": "Ask your data",
-    "gpt4vExamples": {
-        "1": "Compare the impact of interest rates and GDP in financial markets.",
-        "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-        "3": "Can you identify any correlation between oil prices and stock market trends?",
-        "placeholder": "Example: Does my plan cover annual eye exams?"
+        "placeholder": "Example: What are the key points of the Green Party's program?"
     },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",
@@ -62,14 +62,14 @@
         "speakAnswer": "Speak answer",
         "info": "Info",
         "save": "Save",
-        "wahlprogrammeCopy": "Copy",
-        "wahlprogrammeCopied": "Copied!"
+        "copy": "Copy",
+        "copied": "wahlprogrammeCopied!"
     },
 
     "headerTexts":{
         "thoughtProcess": "Thought Process",
         "supportingContent": "Supporting Content",
-        "wahlprogramme": "Wahlprogramme"
+        "citation": "wahlprogramme"
     },
 
     "labels": {
