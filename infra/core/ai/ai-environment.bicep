@@ -42,17 +42,5 @@ module project './project.bicep' = {
   }
 }
 
-// Outputs
-// Resource Group
-output resourceGroupName string = resourceGroup().name
 
-// Hub
-output hubName string = hub.outputs.name
-output hubPrincipalId string = hub.outputs.principalId
-
-// Project
 output projectName string = project.outputs.name
-output projectPrincipalId string = project.outputs.principalId
-
-//Discoveryurl
-output discoveryUrl string = project.outputs.discoveryUrl
