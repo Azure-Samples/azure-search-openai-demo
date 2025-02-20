@@ -322,6 +322,9 @@
     },
     "useMediaDescriberAzureCU": {
       "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
+    },
+    "useAiProject": {
+      "value": "${USE_AI_PROJECT=false}"
     }
   }
 }
