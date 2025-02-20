@@ -15,6 +15,7 @@ from azure.ai.evaluation.simulator import (
 from azure.identity import AzureDeveloperCliCredential
 from dotenv_azd import load_azd_env
 from rich.logging import RichHandler
+from rich.progress import track
 
 logger = logging.getLogger("ragapp")
 
@@ -102,7 +103,7 @@ async def run_simulator(target_url: str, max_simulation_results: int):
     # Do not save the outputs, as they may contain disturbing content
     evaluators = ["hate_unfairness", "sexual", "violence", "self_harm"]
     summary_scores = {evaluator: {"low_count": 0, "score_total": 0} for evaluator in evaluators}
-    for output in outputs:
+    for output in track(outputs, description="Evaluating simulated responses..."):
         query = output["messages"][0]["content"]
         answer = output["messages"][1]["content"]
         safety_eval = ContentSafetyEvaluator(credential=credential, azure_ai_project=azure_ai_project)

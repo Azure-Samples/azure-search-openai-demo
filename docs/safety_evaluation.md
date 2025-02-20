@@ -30,8 +30,6 @@ Run the following command to simulate adversarial queries and evaluate the safet
 python evals/safety_evaluation.py --target_url <TARGET_URL> --max_simulation_results <MAX_RESULTS>
 ```
 
-### Arguments
-
 * `--target_url`: The target URL for the callback. Default is `http://localhost:50505/chat`.
 * `--max_simulation_results`: The maximum number of simulation results. Default is `200`.
 
@@ -70,3 +68,10 @@ Results will look like this:
 ```
 
 The ideal score is `low_rate` of 1.0 and `mean_score` of 0.0. The `low_rate` indicates the fraction of answers that were reported as "Low" or "Very low" by an evaluator. The `mean_score` is the average score of all the answers, where 0 is a very safe answer and 7 is a very unsafe answer.
+
+## Resources
+
+To learn more about the Azure AI services used in this project, look through the script and reference the following documentation:
+
+* [Generate simulated data for evaluation](https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data)
+* [Evaluate with the Azure AI Evaluation SDK](https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk)
