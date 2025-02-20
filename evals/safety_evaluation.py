@@ -122,8 +122,10 @@ async def run_simulator(target_url: str, max_simulation_results: int):
         summary_scores[evaluator]["mean_score"] = (
             summary_scores[evaluator]["score_total"] / summary_scores[evaluator]["low_count"]
         )
-        summary_scores[evaluator]["low_rate"] = summary_scores[evaluator]["low_count"] / len(outputs)
-
+        if len(outputs) > 0:
+            summary_scores[evaluator]["low_rate"] = summary_scores[evaluator]["low_count"] / len(outputs)
+        else:
+            summary_scores[evaluator]["low_rate"] = 0
     # Save summary scores
     with open(root_dir / "safety_results.json", "w") as f:
         import json
