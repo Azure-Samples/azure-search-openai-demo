@@ -4,8 +4,6 @@ param name string
 param displayName string = name
 @description('The name of the AI Foundry Hub Resource where this project should be created')
 param hubName string
-@description('The name of the key vault resource to grant access to the project')
-param keyVaultName string
 
 @description('The SKU name to use for the AI Foundry Hub Resource')
 param skuName string = 'Basic'
@@ -37,14 +35,6 @@ resource project 'Microsoft.MachineLearningServices/workspaces@2024-01-01-previe
     v1LegacyMode: false
     publicNetworkAccess: publicNetworkAccess
     hubResourceId: hub.id
-  }
-}
-
-module keyVaultAccess '../security/keyvault-access.bicep' = {
-  name: 'keyvault-access'
-  params: {
-    keyVaultName: keyVaultName
-    principalId: project.identity.principalId
   }
 }
 

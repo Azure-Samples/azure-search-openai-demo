@@ -4,8 +4,7 @@ param name string
 param displayName string = name
 @description('The storage account ID to use for the AI Foundry Hub Resource')
 param storageAccountId string
-@description('The key vault ID to use for the AI Foundry Hub Resource')
-param keyVaultId string
+
 @description('The application insights ID to use for the AI Foundry Hub Resource')
 param applicationInsightsId string = ''
 @description('The container registry ID to use for the AI Foundry Hub Resource')
@@ -44,7 +43,6 @@ resource hub 'Microsoft.MachineLearningServices/workspaces@2024-07-01-preview' =
   properties: {
     friendlyName: displayName
     storageAccount: storageAccountId
-    keyVault: keyVaultId
     applicationInsights: !empty(applicationInsightsId) ? applicationInsightsId : null
     containerRegistry: !empty(containerRegistryId) ? containerRegistryId : null
     hbiWorkspace: false

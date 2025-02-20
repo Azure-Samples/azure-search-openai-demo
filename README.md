@@ -262,6 +262,7 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
 - [Customizing the app](docs/customization.md)
 - [Data ingestion](docs/data_ingestion.md)
 - [Evaluation](docs/evaluation.md)
+- [Safety evaluation](docs/safety_evaluation.md)
 - [Monitoring with Application Insights](docs/monitoring.md)
 - [Productionizing](docs/productionizing.md)
 - [Alternative RAG chat samples](docs/other_samples.md)

@@ -18,6 +18,7 @@ These are advanced topics that are not necessary for a basic deployment.
 - [Local development](localdev.md)
 - [Customizing the app](customization.md)
 - [Evaluation](docs/evaluation.md)
+- [Safety evaluation](safety_evaluation.md)
 - [Data ingestion](data_ingestion.md)
 - [Monitoring with Application Insights](monitoring.md)
 - [Productionizing](productionizing.md)

@@ -246,6 +246,9 @@ param useUserUpload bool = false
 param useLocalPdfParser bool = false
 param useLocalHtmlParser bool = false
 
+@description('Use AI project')
+param useAiProject bool = false
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
@@ -866,48 +869,14 @@ module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (use
   }
 }
 
-
-module keyVault 'br/public:avm/res/key-vault/vault:0.6.2' = {
-  name: 'keyvault'
-  scope: resourceGroup
-  params: {
-    name: '${abbrs.keyVaultVaults}${resourceToken}'
-    location: location
-    tags: tags
-    sku: 'standard'
-    enableRbacAuthorization: true
-    accessPolicies: [
-      {
-        objectId: principalId
-        permissions: { secrets: ['get', 'list'] }
-        tenantId: subscription().tenantId
-      }
-    ]
-    // TODO: Virtual network connection
-    diagnosticSettings: [
-      {
-        logCategoriesAndGroups: [
-          {
-            category: 'AuditEvent'
-          }
-        ]
-        name: 'auditEventLogging'
-        workspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
-      }
-    ]
-  }
-}
-
-module ai 'core/ai/ai-environment.bicep' = {
+module ai 'core/ai/ai-environment.bicep' = if (useAiProject) {
   name: 'ai'
   scope: resourceGroup
   params: {
-    location: location
+    location: openAiLocation
     tags: tags
     hubName: 'aihub-${resourceToken}'
     projectName: 'aiproj-${resourceToken}'
-    keyVaultName: keyVault.outputs.name
-    keyVaultId: keyVault.outputs.resourceId
     storageAccountId: storage.outputs.id
     applicationInsightsId: !useApplicationInsights ? '' : monitoring.outputs.applicationInsightsId
   }
@@ -1307,7 +1276,7 @@ output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.na
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
-output AZURE_AI_PROJECT string = ai.outputs.projectName
+output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 

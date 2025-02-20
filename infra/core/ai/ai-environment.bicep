@@ -6,10 +6,6 @@ param location string
 param hubName string
 @description('The AI Project resource name.')
 param projectName string
-@description('The Key Vault resource name.')
-param keyVaultId string
-@description('The Key Vault resource name.')
-param keyVaultName string
 @description('The Storage Account resource ID.')
 param storageAccountId string
 @description('The Application Insights resource ID.')
@@ -27,7 +23,6 @@ module hub './hub.bicep' = {
     tags: tags
     name: hubName
     displayName: hubName
-    keyVaultId: keyVaultId
     storageAccountId: storageAccountId
     containerRegistryId: null
     applicationInsightsId: applicationInsightsId
@@ -44,7 +39,6 @@ module project './project.bicep' = {
     name: projectName
     displayName: projectName
     hubName: hub.outputs.name
-    keyVaultName: keyVaultName
   }
 }
 
