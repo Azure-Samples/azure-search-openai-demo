@@ -70,8 +70,8 @@ export const Answer = ({
                         <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: copied ? "CheckMark" : "Copy" }}
-                            title={copied ? t("tooltips.wahlprogrammeCopied") : t("tooltips.wahlprogrammeCopy")}
-                            ariaLabel={copied ? t("tooltips.wahlprogrammeCopied") : t("tooltips.wahlprogrammeCopy")}
+                            title={copied ? t("tooltips.copied") : t("tooltips.copy")}
+                            ariaLabel={copied ? t("tooltips.copied") : t("tooltips.copy")}
                             onClick={handleCopy}
                         />
                         <IconButton
