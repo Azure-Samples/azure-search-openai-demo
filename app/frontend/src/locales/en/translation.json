@@ -49,13 +49,6 @@
         "3": "What is the FDP's stance on digitalization?",
         "placeholder": "Type a new question (e.g. what are the key points of the Green Party's program?)"
     },
-    "askTitle": "Ask your data",
-    "gpt4vExamples": {
-        "1": "Compare the impact of interest rates and GDP in financial markets.",
-        "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-        "3": "Can you identify any correlation between oil prices and stock market trends?",
-        "placeholder": "Example: Does my plan cover annual eye exams?"
-    },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",
     "followupQuestions": "Follow-up questions:",

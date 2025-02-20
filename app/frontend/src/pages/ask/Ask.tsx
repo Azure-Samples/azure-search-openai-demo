@@ -253,7 +253,7 @@ export function Component(): JSX.Element {
                 <h1 className={styles.askTitle}>{t("askTitle")}</h1>
                 <div className={styles.askQuestionInput}>
                     <QuestionInput
-                        placeholder={t("wahlprogrammeExamples.placeholder")}
+                        placeholder={t("gpt4vExamples.placeholder")}
                         disabled={isLoading}
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}

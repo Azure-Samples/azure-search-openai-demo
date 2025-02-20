@@ -10,10 +10,10 @@ sample:
         - role: user
           content: "Was sind die Hauptpunkte des Wahlprogramms der CDU?"
         - role: assistant
-          content: "Das Wahlprogramm der CDU konzentriert sich auf wirtschaftliche Stabilität, Sicherheit und Innovation. Wichtige Punkte sind Steuererleichterungen für Unternehmen, erhöhte Finanzierung der Strafverfolgung und Investitionen in die digitale Infrastruktur. [cdu_program.pdf]"
+          content: "Das Wahlprogramm der CDU konzentriert sich auf wirtschaftliche Stabilität, Sicherheit und Innovation. Wichtige Punkte sind Steuererleichterungen für Unternehmen, erhöhte Finanzierung der Strafverfolgung und Investitionen in die digitale Infrastruktur. [cdu_programm.pdf#page=1][cdu_programm.pdf#page=3]"
     text_sources:
-        - "spd_program.pdf#page=34: Das Wahlprogramm der SPD konzentriert sich auf soziale Gerechtigkeit, Klimaschutz und wirtschaftliche Innovation. Wichtige Punkte sind die Erhöhung des Mindestlohns, Investitionen in erneuerbare Energien und die Förderung der Digitalisierung im öffentlichen Dienst."
-        - "spd_program.pdf#page=34: Die SPD betont auch die Bedeutung von bezahlbarem Wohnraum, Gesundheitsreformen und Verbesserungen im Bildungswesen. Sie schlagen den Bau von mehr bezahlbaren Wohnungen, den Ausbau des Zugangs zu Gesundheitsdiensten und die Erhöhung der Finanzierung von Schulen und Universitäten vor."
+        - "cdu_programm.pdf#page=1: Das Wahlprogramm der SPD konzentriert sich auf soziale Gerechtigkeit, Klimaschutz und wirtschaftliche Innovation. Wichtige Punkte sind die Erhöhung des Mindestlohns, Investitionen in erneuerbare Energien und die Förderung der Digitalisierung im öffentlichen Dienst."
+        - "cdu_programm.pdf#page=3: Die SPD betont auch die Bedeutung von bezahlbarem Wohnraum, Gesundheitsreformen und Verbesserungen im Bildungswesen. Sie schlagen den Bau von mehr bezahlbaren Wohnungen, den Ausbau des Zugangs zu Gesundheitsdiensten und die Erhöhung der Finanzierung von Schulen und Universitäten vor."
 ---
 system:
 {% if override_prompt %}
