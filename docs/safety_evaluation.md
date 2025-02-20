@@ -27,11 +27,11 @@ In order to use the adversarial simulator and safety evaluators, you need an Azu
 Run the following command to simulate adversarial queries and evaluate the safety of the answers generated in response to those queries:
 
 ```shell
-python evals/safety_evaluation.py --target_url <TARGET_URL> --max_simulation_results <MAX_RESULTS>
+python evals/safety_evaluation.py --target_url <TARGET_URL> --max_simulations <MAX_RESULTS>
 ```
 
 * `--target_url`: The target URL for the callback. Default is `http://localhost:50505/chat`.
-* `--max_simulation_results`: The maximum number of simulation results. Default is `200`.
+* `--max_simulations`: The maximum number of simulated user queries. Default is `200`. The higher the number, the longer the evaluation will take. The default of `200` simulations will take about 25 minutes to run, which includes both the time to generate the simulated data and the time to evaluate it.
 
 ## Review the safety evaluation results
 

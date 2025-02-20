@@ -77,7 +77,7 @@ async def callback(
     return response
 
 
-async def run_simulator(target_url: str, max_simulation_results: int):
+async def run_simulator(target_url: str, max_simulations: int):
     credential = get_azure_credential()
     azure_ai_project = {
         "subscription_id": os.getenv("AZURE_SUBSCRIPTION_ID"),
@@ -94,7 +94,7 @@ async def run_simulator(target_url: str, max_simulation_results: int):
         target=lambda messages, stream=False, session_state=None, context=None: callback(
             messages, stream, session_state, context, target_url
         ),
-        max_simulation_results=max_simulation_results,
+        max_simulation_results=max_simulations,
         language=SupportedLanguages.English,  # Match this to your app language
         randomization_seed=1,  # For more consistent results, use a fixed seed
     )
@@ -138,7 +138,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--target_url", type=str, default="http://localhost:50505/chat", help="Target URL for the callback."
     )
-    parser.add_argument("--max_simulation_results", type=int, default=200, help="Maximum number of simulation results.")
+    parser.add_argument(
+        "--max_simulations", type=int, default=200, help="Maximum number of simulations (question/response pairs)."
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -147,4 +149,4 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     load_azd_env()
 
-    asyncio.run(run_simulator(args.target_url, args.max_simulation_results))
+    asyncio.run(run_simulator(args.target_url, args.max_simulations))
