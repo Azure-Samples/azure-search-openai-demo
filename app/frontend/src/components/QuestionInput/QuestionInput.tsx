@@ -60,24 +60,45 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     }
 
     return (
+        // <Stack horizontal className={styles.questionInputContainer}>
+        //     <TextField
+        //         className={styles.questionInputTextArea}
+        //         disabled={disableRequiredAccessControl}
+        //         placeholder={placeholder}
+        //         multiline
+        //         resizable={false}
+        //         borderless
+        //         value={question}
+        //         onChange={onQuestionChange}
+        //         onKeyDown={onEnterPress}
+        //     />
+        //     <div className={styles.questionInputButtonsContainer}>
+        //         <Tooltip content="Submit question" relationship="label">
+        //             <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+        //         </Tooltip>
+        //     </div>
+        //     {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
+        // </Stack>
         <Stack horizontal className={styles.questionInputContainer}>
+        <div className={styles.inputWrapper}>
+            {/* Styled Input Field */}
             <TextField
                 className={styles.questionInputTextArea}
                 disabled={disableRequiredAccessControl}
-                placeholder={placeholder}
-                multiline
+                placeholder={placeholder || "Type here..."}
+                multiline={false}
                 resizable={false}
                 borderless
                 value={question}
                 onChange={onQuestionChange}
                 onKeyDown={onEnterPress}
             />
-            <div className={styles.questionInputButtonsContainer}>
-                <Tooltip content="Submit question" relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
-                </Tooltip>
+            {/* Send Button */}
+            <div className={styles.sendButton} onClick={sendQuestion}>
+                <Send28Filled className={styles.sendIcon} />
             </div>
-            {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
-        </Stack>
+        </div>
+    </Stack>
+    
     );
 };
