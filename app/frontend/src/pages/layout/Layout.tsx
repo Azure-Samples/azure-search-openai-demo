@@ -11,8 +11,9 @@ const Layout = () => {
             {/* Sidebar */}
             <aside className={styles.sidebar}>
                 <div className={styles.sidebarContent}>
+                    <a href='#' style={{textDecoration: 'none'}}><p className={styles.poweredBy}>Powered by</p></a>
                     <Link to="/" className={styles.logoContainer}>
-                        <img src="/pow_whiddon.svg" alt="Whiddon logo" className={styles.logo} />
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCUBECfpk4SqfCAkBtYz5LpMD9AVXcTMtGiA&s" alt="Whiddon logo" className={styles.logo} />
                     </Link>
                 </div>
             </aside>

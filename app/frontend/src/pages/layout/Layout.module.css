@@ -104,12 +104,20 @@
     height: auto;
 }
 
+
 /* Powered By Text */
 .poweredBy {
     font-size: 12px;
     color: #888;
     margin-top: 10px;
+    margin-left: 10px;
 }
+
+.poweredBy a {
+    text-decoration: none !important; /* Removes underline for any linked text */
+    color: inherit; /* Keeps default color */
+}
+
 
 /* Main Content */
 .mainContent {
