@@ -31,12 +31,13 @@ const Layout = () => {
             <div className={styles.layout}>
                 <aside className={styles.sidebar}>
                     <div className={styles.sidebarContent}>
-                        <a href="#" style={{ textDecoration: "none" }}>
+                        {/* <a href="#" style={{ textDecoration: "none" }}>
                             <p className={styles.poweredBy}>Powered by</p>
-                        </a>
+                        </a> */}
                         <Link to="/" className={styles.logoContainer}>
                             <img
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCUBECfpk4SqfCAkBtYz5LpMD9AVXcTMtGiA&s"
+                                src="https://staudiolydevaueast001.blob.core.windows.net/images-blob/pow_whiddon.svg"
+                               // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCUBECfpk4SqfCAkBtYz5LpMD9AVXcTMtGiA&s"
                                 alt="Whiddon logo"
                                 className={styles.logo}
                             />

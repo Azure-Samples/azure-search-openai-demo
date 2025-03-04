@@ -10,7 +10,8 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onLogin }) => {
         <div className={styles.splashScreen}>
             <div className={styles.imageContainer}>
                 <img
-                    src="/splash_screen_svg.svg"
+                src="https://staudiolydevaueast001.blob.core.windows.net/images-blob/splash_screen_svg.svg"
+                    //src="/splash_screen_svg.svg"
                     alt="Splash Screen"
                     className={styles.splashImage}
                 />
