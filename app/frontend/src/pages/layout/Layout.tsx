@@ -11,9 +11,15 @@ const Layout = () => {
             {/* Sidebar */}
             <aside className={styles.sidebar}>
                 <div className={styles.sidebarContent}>
-                    <a href='#' style={{textDecoration: 'none'}}><p className={styles.poweredBy}>Powered by</p></a>
+                    <a href="#" style={{ textDecoration: "none" }}>
+                        <p className={styles.poweredBy}>Powered by</p>
+                    </a>
                     <Link to="/" className={styles.logoContainer}>
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCUBECfpk4SqfCAkBtYz5LpMD9AVXcTMtGiA&s" alt="Whiddon logo" className={styles.logo} />
+                        <img
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCUBECfpk4SqfCAkBtYz5LpMD9AVXcTMtGiA&s"
+                            alt="Whiddon logo"
+                            className={styles.logo}
+                        />
                     </Link>
                 </div>
             </aside>
@@ -27,9 +33,7 @@ const Layout = () => {
                 </header>
 
                 {/* Page Content */}
-                <main className={styles.pageContent}>
-                    <Outlet />
-                </main>
+                <main className={styles.pageContent}>{useLogin ? <LoginButton /> : <Outlet />}</main>
             </div>
         </div>
     );
