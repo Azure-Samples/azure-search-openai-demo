@@ -5,7 +5,12 @@ import styles from "./LoginButton.module.css";
 import { getRedirectUri, loginRequest } from "../../authConfig";
 import { appServicesToken, appServicesLogout } from "../../authConfig";
 
-export const LoginButton = () => {
+interface LoginButtonProps {
+    onLogin?: () => void;
+    onLogout?: () => void;
+}
+
+export const LoginButton: React.FC<LoginButtonProps> = ({ onLogin, onLogout }) => {
     const { instance } = useMsal();
     const activeAccount = instance.getActiveAccount();
     const isLoggedIn = (activeAccount || appServicesToken) != null;
@@ -21,6 +26,10 @@ export const LoginButton = () => {
                 ...loginRequest,
                 redirectUri: getRedirectUri()
             })
+            .then(() => {
+                localStorage.setItem("isLoggedIn", "true");
+                onLogin && onLogin(); // Notify MainLayout about login
+            })
             .catch(error => console.log(error));
     };
     const handleLogoutPopup = () => {
@@ -30,6 +39,10 @@ export const LoginButton = () => {
                     mainWindowRedirectUri: "/", // redirects the top level app after logout
                     account: instance.getActiveAccount()
                 })
+                .then(() => {
+                    localStorage.removeItem("isLoggedIn");
+                    onLogout && onLogout(); // Notify MainLayout about logout
+                })
                 .catch(error => console.log(error));
         } else {
             appServicesLogout();
@@ -37,10 +50,12 @@ export const LoginButton = () => {
     };
     const logoutText = `Logout\n${activeAccount?.username ?? appServicesToken?.user_claims?.preferred_username}`;
     return (
-        <DefaultButton
-            text={isLoggedIn ? logoutText : "Login"}
-            className={styles.loginButton}
-            onClick={isLoggedIn ? handleLogoutPopup : handleLoginPopup}
-        ></DefaultButton>
+        // <DefaultButton
+        //     text={isLoggedIn ? logoutText : "Login"}
+        //     className={styles.loginButton}
+        //     onClick={isLoggedIn ? handleLogoutPopup : handleLoginPopup}
+        // ></DefaultButton>
+        <button className={styles.loginButton}
+        onClick={isLoggedIn ? handleLogoutPopup : handleLoginPopup}>{isLoggedIn ? logoutText : "Get Started"}</button>
     );
 };

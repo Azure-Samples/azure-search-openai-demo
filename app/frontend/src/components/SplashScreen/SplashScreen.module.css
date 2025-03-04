@@ -1,0 +1,61 @@
+.splashScreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw; /* Ensure full width */
+    background-color: #f0f0f0;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+.imageContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.splashImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the entire screen without distortion */
+    display: block;
+}
+
+.textOverlay {
+    position: absolute;
+    top: 50%;
+    left: 26%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    width: 80%;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 400;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.getStartedButton {
+    background-color: #ff6b4a;
+    color: white;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.getStartedButton:hover {
+    background-color: #e05a3d;
+}

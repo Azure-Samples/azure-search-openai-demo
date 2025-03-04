@@ -148,6 +148,7 @@
     font-size: 24px;
     color: #1abc9c;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 /* Page Content */
@@ -155,4 +156,75 @@
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
+}
+
+
+.landingPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url("/image.png") no-repeat center center;
+    background-size: cover;
+    color: white;
+    text-align: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.content {
+    z-index: 2;
+    text-align: center;
+    max-width: 500px;
+}
+
+.boldText {
+    font-weight: bold;
+}
+
+.subText {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.getStartedButton {
+    background-color: #ff7f50;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.getStartedButton:hover {
+    background-color: #ff6333;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay for better readability */
+    z-index: 1;
+}
+
+.logoutContainer
+{
+    display:flex;
+}
+
+.logoutButton
+{
+    margin-top: 1px;
+    margin-left: 10px;
+    background-color: #f36f4c;
+    color: white;
+    border: 5px;
+    border-radius: 5px;
+    width: 10vh;
+    cursor: pointer;
 }

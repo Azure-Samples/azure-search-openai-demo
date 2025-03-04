@@ -1,5 +1,20 @@
-.loginButton {
+/* .loginButton {
     border-radius: 5px;
     padding: 30px 30px;
     font-weight: 100;
+} */
+
+.loginButton {
+    background-color: #ff6b4a;
+    color: white;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.loginButton:hover {
+    background-color: #e05a3d;
 }
