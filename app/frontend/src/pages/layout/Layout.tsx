@@ -18,7 +18,6 @@ const Layout = () => {
             const activeAccount = instance.getActiveAccount();
             if (activeAccount || appServicesToken) {
                 setIsLoggedIn(true);
-                navigate("/", { replace: true }); // ✅ Redirect after login
             } else {
                 setIsLoggedIn(false);
             }
@@ -26,14 +25,14 @@ const Layout = () => {
 
         checkAuthStatus();
         
-        // ✅ Use EventType enum for MSAL event listener
+        // ✅ Use MSAL event listener to detect login state change
         const accountListener = instance.addEventCallback((event) => {
-            if (
-                event.eventType === EventType.LOGIN_SUCCESS || 
-                event.eventType === EventType.LOGOUT_SUCCESS ||
-                event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
-            ) {
-                checkAuthStatus();
+            if (event.eventType === EventType.LOGIN_SUCCESS) {
+                setIsLoggedIn(true);
+                navigate("/", { replace: true }); // ✅ Navigate only after login
+            } else if (event.eventType === EventType.LOGOUT_SUCCESS) {
+                setIsLoggedIn(false);
+                navigate("/"); // ✅ Go back to splash screen on logout
             }
         });
 
@@ -59,7 +58,7 @@ const Layout = () => {
     };
 
     if (isLoggedIn === null) {
-        return <SplashScreen />; // Prevents UI flickering during auth check
+        return <SplashScreen />; // ✅ Shows splash screen initially
     }
 
     return isLoggedIn ? (
