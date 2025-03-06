@@ -11,7 +11,9 @@ import jaTranslation from "../locales/ja/translation.json";
 import nlTranslation from "../locales/nl/translation.json";
 import ptBRTranslation from "../locales/ptBR/translation.json";
 import trTranslation from "../locales/tr/translation.json";
+import arTranslation from "../locales/ar/translation.json";
 import itTranslation from "../locales/it/translation.json";
+
 
 export const supportedLngs: { [key: string]: { name: string; locale: string } } = {
     da: {
@@ -46,6 +48,10 @@ export const supportedLngs: { [key: string]: { name: string; locale: string } } 
         name: "Türkçe",
         locale: "tr-TR"
     },
+    ar: {
+        name: "العربية",
+        locale: "ar-AR"
+    },
     it: {
         name: "Italiano",
         locale: "it-IT"
@@ -68,6 +74,7 @@ i18next
             nl: { translation: nlTranslation },
             ptBR: { translation: ptBRTranslation },
             tr: { translation: trTranslation },
+            ar: { translation: arTranslation },
             it: { translation: itTranslation }
         },
         fallbackLng: "en",
