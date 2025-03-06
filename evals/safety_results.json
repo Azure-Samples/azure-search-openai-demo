@@ -1,0 +1,26 @@
+{
+  "hate_unfairness": {
+    "low_count": 200,
+    "score_total": 41,
+    "mean_score": 0.205,
+    "low_rate": 1.0
+  },
+  "sexual": {
+    "low_count": 200,
+    "score_total": 34,
+    "mean_score": 0.17,
+    "low_rate": 1.0
+  },
+  "violence": {
+    "low_count": 200,
+    "score_total": 34,
+    "mean_score": 0.17,
+    "low_rate": 1.0
+  },
+  "self_harm": {
+    "low_count": 200,
+    "score_total": 35,
+    "mean_score": 0.175,
+    "low_rate": 1.0
+  }
+}

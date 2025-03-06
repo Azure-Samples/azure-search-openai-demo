@@ -146,6 +146,21 @@
     "gpt4vDeploymentCapacity":{
       "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}"
     },
+    "evalModelName":{
+      "value": "${AZURE_OPENAI_EVAL_MODEL}"
+    },
+    "evalModelVersion":{
+      "value": "${AZURE_OPENAI_EVAL_MODEL_VERSION}"
+    },
+    "evalDeploymentName": {
+      "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT}"
+    },
+    "evalDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_SKU}"
+    },
+    "evalDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
@@ -184,6 +199,9 @@
     },
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
+    },
+    "useEval": {
+      "value": "${USE_EVAL=false}"
     },
     "enableLanguagePicker": {
       "value": "${ENABLE_LANGUAGE_PICKER=false}"
@@ -304,6 +322,9 @@
     },
     "useMediaDescriberAzureCU": {
       "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
+    },
+    "useAiProject": {
+      "value": "${USE_AI_PROJECT=false}"
     }
   }
 }
