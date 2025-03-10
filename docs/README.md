@@ -1,5 +1,5 @@
 # Additional documentation
-
+This document outlines the overview of the project.
 Consult the main [README](../README.md) for general information about the project.
 These are advanced topics that are not necessary for a basic deployment.
 
