@@ -48,6 +48,7 @@ const Chat = () => {
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
+    const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [includeCategory, setIncludeCategory] = useState<string>("");
@@ -76,6 +77,7 @@ const Chat = () => {
 
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
+    const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showLanguagePicker, setshowLanguagePicker] = useState<boolean>(false);
@@ -100,6 +102,8 @@ const Chat = () => {
             setShowGPT4VOptions(config.showGPT4VOptions);
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
+            setUseQueryRewriting(config.showQueryRewritingOption);
+            setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowVectorOption(config.showVectorOption);
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
@@ -197,6 +201,7 @@ const Chat = () => {
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
+                        query_rewriting: useQueryRewriting,
                         suggest_followup_questions: useSuggestFollowupQuestions,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
@@ -284,6 +289,9 @@ const Chat = () => {
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
+                break;
+            case "useQueryRewriting":
+                setUseQueryRewriting(value);
                 break;
             case "useSemanticCaptions":
                 setUseSemanticCaptions(value);
@@ -500,6 +508,7 @@ const Chat = () => {
                         minimumRerankerScore={minimumRerankerScore}
                         useSemanticRanker={useSemanticRanker}
                         useSemanticCaptions={useSemanticCaptions}
+                        useQueryRewriting={useQueryRewriting}
                         excludeCategory={excludeCategory}
                         includeCategory={includeCategory}
                         retrievalMode={retrievalMode}
@@ -507,6 +516,7 @@ const Chat = () => {
                         gpt4vInput={gpt4vInput}
                         vectorFieldList={vectorFieldList}
                         showSemanticRankerOption={showSemanticRankerOption}
+                        showQueryRewritingOption={showQueryRewritingOption}
                         showGPT4VOptions={showGPT4VOptions}
                         showVectorOption={showVectorOption}
                         useOidSecurityFilter={useOidSecurityFilter}

@@ -71,6 +71,7 @@ from config import (
     CONFIG_OPENAI_CLIENT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_QUERY_REWRITING_ENABLED,
     CONFIG_SPEECH_INPUT_ENABLED,
     CONFIG_SPEECH_OUTPUT_AZURE_ENABLED,
     CONFIG_SPEECH_OUTPUT_BROWSER_ENABLED,
@@ -291,6 +292,7 @@ def config():
         {
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
+            "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
             "showLanguagePicker": current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED],
@@ -453,6 +455,7 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE") or "en-us"
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER") or "lexicon"
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
+    AZURE_SEARCH_QUERY_REWRITING = os.getenv("AZURE_SEARCH_QUERY_REWRITING", "false").lower()
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
@@ -634,6 +637,7 @@ async def setup_clients():
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
+    current_app.config[CONFIG_QUERY_REWRITING_ENABLED] = AZURE_SEARCH_QUERY_REWRITING == "true" and AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER

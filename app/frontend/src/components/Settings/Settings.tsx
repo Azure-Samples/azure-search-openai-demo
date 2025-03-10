@@ -19,6 +19,7 @@ export interface SettingsProps {
     minimumRerankerScore: number;
     useSemanticRanker: boolean;
     useSemanticCaptions: boolean;
+    useQueryRewriting: boolean;
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
@@ -26,6 +27,7 @@ export interface SettingsProps {
     gpt4vInput: GPT4VInput;
     vectorFieldList: VectorFieldOptions[];
     showSemanticRankerOption: boolean;
+    showQueryRewritingOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -51,6 +53,7 @@ export const Settings = ({
     minimumRerankerScore,
     useSemanticRanker,
     useSemanticCaptions,
+    useQueryRewriting,
     excludeCategory,
     includeCategory,
     retrievalMode,
@@ -58,6 +61,7 @@ export const Settings = ({
     gpt4vInput,
     vectorFieldList,
     showSemanticRankerOption,
+    showQueryRewritingOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -94,6 +98,7 @@ export const Settings = ({
     const excludeCategoryFieldId = useId("excludeCategoryField");
     const semanticRankerId = useId("semanticRanker");
     const semanticRankerFieldId = useId("semanticRankerField");
+    const queryRewritingFieldId = useId("queryRewritingField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
@@ -235,6 +240,21 @@ export const Settings = ({
                         disabled={!useSemanticRanker}
                         aria-labelledby={semanticCaptionsId}
                         onRenderLabel={props => renderLabel(props, semanticCaptionsId, semanticCaptionsFieldId, t("helpTexts.useSemanticCaptions"))}
+                    />
+                </>
+            )}
+
+            {showQueryRewritingOption && (
+                <>
+                    <Checkbox
+                        id={queryRewritingFieldId}
+                        className={styles.settingsSeparator}
+                        checked={useQueryRewriting}
+                        disabled={!useSemanticRanker}
+                        label={t("labels.useQueryRewriting")}
+                        onChange={(_ev, checked) => onChange("useQueryRewriting", !!checked)}
+                        aria-labelledby={queryRewritingFieldId}
+                        onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.useQueryRewriting"))}
                     />
                 </>
             )}
