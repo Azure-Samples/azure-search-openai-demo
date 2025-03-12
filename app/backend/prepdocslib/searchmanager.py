@@ -141,6 +141,8 @@ class SearchManager:
                 if self.use_int_vectorization:
                     logger.info("Including parent_id field in new index %s", self.search_info.index_name)
                     fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
+                    logger.info("Including title field in new index %s", self.search_info.index_name)
+                    fields.append(SimpleField(name="title", type="Edm.String", searchable=True, retrievable=True))
                 if self.search_images:
                     logger.info("Including imageEmbedding field in new index %s", self.search_info.index_name)
                     fields.append(
