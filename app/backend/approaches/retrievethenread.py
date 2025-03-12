@@ -11,6 +11,10 @@ from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
 
+# To-do: 
+# 1. eliminate the document search
+# 2. chat instead of asking one question
+
 class RetrieveThenReadApproach(Approach):
     """
     Simple retrieve-then-read implementation, using the AI Search and OpenAI APIs directly. It first retrieves

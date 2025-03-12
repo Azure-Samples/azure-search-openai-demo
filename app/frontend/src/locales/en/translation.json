@@ -1,8 +1,8 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
-    "chat": "Chat",
-    "qa": "Ask a question",
+    "pageTitle": "dbrainsAI",
+    "headerTitle": "dbrainsAI",
+    "chat": "Documents",
+    "qa": "Web",
     "login": "Login",
     "logout": "Logout",
     "clearChat": "Clear chat",
@@ -37,17 +37,17 @@
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "1": "Fasse die Struktur und Anforderungen der Mechatronik-Lehrabschlussprüfung zusammen.",
+        "2": "Wie erstellt man klare und faire Prüfungsaufgaben für die LAP?",
+        "3": "Vergleiche die Prüfungsanforderungen mit den Best Practices zur Aufgabenerstellung.",
+        "placeholder": "Wie kann ich dir mit den Dokumenten helfen? Zusammenfassung, Analyse oder etwas anderes?"
     },
-    "askTitle": "Ask your data",
+    "askTitle": "Ask the web",
     "gpt4vExamples": {
-        "1": "Compare the impact of interest rates and GDP in financial markets.",
-        "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-        "3": "Can you identify any correlation between oil prices and stock market trends?",
-        "placeholder": "Example: Does my plan cover annual eye exams?"
+        "1": "Wie kann ich mich am besten auf die Lehrabschlussprüfung in einem technischen Beruf vorbereiten?",
+        "2": "Wie ist eine typische LAP aufgebaut und welche Anforderungen muss ich erfüllen?",
+        "3": "Welche häufigen Fehler machen Lehrlinge bei der LAP und wie kann ich sie vermeiden?",
+        "placeholder": "Hast du Fragen zur LAP oder allgemein? Ich kann dir bei der Vorbereitung, dem Prüfungsaufbau oder Tipps helfen!"
     },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",
