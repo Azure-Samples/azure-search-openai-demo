@@ -183,6 +183,30 @@ It will look like the following:
 
 > NOTE: It may take 5-10 minutes after you see 'SUCCESS' for the application to be fully deployed. If you see a "Python Developer" welcome screen or an error page, then wait a bit and refresh the page.
 
+### Login error troubleshooting
+
+If you encounter a login error or need to switch to a different account, follow these steps:
+
+1. ** Log out of the current session**:
+
+```shell
+az logout
+```
+2. Log in again:
+
+```shell
+az login
+```
+Opens a browser to authenticate.
+
+3. Verify account:
+
+```shell
+az account show
+```
+Confirms your active account details.
+
+
 ### Deploying again
 
 If you've only changed the backend/frontend code in the `app` folder, then you don't need to re-provision the Azure resources. You can just run:
