@@ -157,7 +157,7 @@ The steps below will provision Azure resources and deploy the application code t
     ```shell
     azd auth login
     ```
-
+    
     For GitHub Codespaces users, if the previous command fails, try:
 
    ```shell
@@ -187,16 +187,18 @@ It will look like the following:
 
 If you encounter a login error or need to switch to a different account, follow these steps:
 
-1. ** Log out of the current session**:
+1. Log out of the current session:
 
 ```shell
 az logout
 ```
+
 2. Log in again:
 
 ```shell
 az login
 ```
+
 Opens a browser to authenticate.
 
 3. Verify account:
@@ -204,8 +206,8 @@ Opens a browser to authenticate.
 ```shell
 az account show
 ```
-Confirms your active account details.
 
+Confirms your active account details.
 
 ### Deploying again
 
