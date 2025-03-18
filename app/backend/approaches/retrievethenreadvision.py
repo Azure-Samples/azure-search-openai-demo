@@ -109,7 +109,7 @@ class RetrieveThenReadVisionApproach(Approach):
             use_semantic_captions,
             minimum_search_score,
             minimum_reranker_score,
-            use_query_rewriting
+            use_query_rewriting,
         )
 
         # Process results

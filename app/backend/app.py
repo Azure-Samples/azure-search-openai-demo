@@ -637,7 +637,9 @@ async def setup_clients():
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
-    current_app.config[CONFIG_QUERY_REWRITING_ENABLED] = AZURE_SEARCH_QUERY_REWRITING == "true" and AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
+    current_app.config[CONFIG_QUERY_REWRITING_ENABLED] = (
+        AZURE_SEARCH_QUERY_REWRITING == "true" and AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
+    )
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER
