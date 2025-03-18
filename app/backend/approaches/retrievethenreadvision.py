@@ -147,6 +147,7 @@ class RetrieveThenReadVisionApproach(Approach):
                     {
                         "use_semantic_captions": use_semantic_captions,
                         "use_semantic_ranker": use_semantic_ranker,
+                        "use_query_rewriting": use_query_rewriting,
                         "top": top,
                         "filter": filter,
                         "vector_fields": vector_fields,

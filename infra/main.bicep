@@ -30,7 +30,7 @@ param searchServiceSemanticRankerLevel string // Set in main.parameters.json
 var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free')
   ? 'disabled'
   : searchServiceSemanticRankerLevel
-
+param searchServiceQueryRewriting string // Set in main.parameters.json
 param storageAccountName string = '' // Set in main.parameters.json
 param storageResourceGroupName string = '' // Set in main.parameters.json
 param storageResourceGroupLocation string = location
@@ -375,6 +375,7 @@ var appEnvVariables = {
   AZURE_SEARCH_INDEX: searchIndexName
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
+  AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
   AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
