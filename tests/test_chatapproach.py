@@ -202,6 +202,7 @@ async def test_search_results_filtering_by_scores(
         len(filtered_results) == expected_result_count
     ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
 
+
 async def test_search_results_query_rewriting(monkeypatch):
     chat_approach = ChatReadRetrieveReadApproach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
@@ -220,6 +221,7 @@ async def test_search_results_query_rewriting(monkeypatch):
     )
 
     query_rewrites = None
+
     async def validate_qr_and_mock_search(*args, **kwargs):
         nonlocal query_rewrites
         query_rewrites = kwargs.get("query_rewrites")
@@ -236,6 +238,7 @@ async def test_search_results_query_rewriting(monkeypatch):
         use_vector_search=True,
         use_semantic_ranker=True,
         use_semantic_captions=True,
-        use_query_rewrites=True)
+        use_query_rewrites=True,
+    )
     assert len(results) == 1
     assert query_rewrites == "generative"
