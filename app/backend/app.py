@@ -183,13 +183,59 @@ async def ask(auth_claims: Dict[str, Any]):
             approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
-        r = await approach.run(
-            request_json["messages"], context=context, session_state=request_json.get("session_state")
+
+        # If session state is provided, persists the session state,
+        # else creates a new session_id depending on the chat history options enabled.
+        session_state = request_json.get("session_state")
+        if session_state is None:
+            session_state = create_session_id(
+                current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
+                current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
+            )
+        result = await approach.run(
+            request_json["messages"],
+            context=context,
+            session_state=session_state,
         )
-        return jsonify(r)
+        return jsonify(result)
     except Exception as error:
         return error_response(error, "/ask")
 
+@bp.route("/ask/stream", methods=["POST"])
+@authenticated
+async def ask_stream(auth_claims: Dict[str, Any]):
+    if not request.is_json:
+        return jsonify({"error": "request must be json"}), 415
+    request_json = await request.get_json()
+    context = request_json.get("context", {})
+    context["auth_claims"] = auth_claims
+    try:
+        use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
+        approach: Approach
+        if use_gpt4v and CONFIG_ASK_VISION_APPROACH in current_app.config:
+            approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
+        else:
+            approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
+
+        # If session state is provided, persists the session state,
+        # else creates a new session_id depending on the chat history options enabled.
+        session_state = request_json.get("session_state")
+        if session_state is None:
+            session_state = create_session_id(
+                current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
+                current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
+            )
+        result = await approach.run_stream(
+            request_json["messages"],
+            context=context,
+            session_state=session_state,
+        )
+        response = await make_response(format_as_ndjson(result))
+        response.timeout = None  # type: ignore
+        response.mimetype = "application/json-lines"
+        return response
+    except Exception as error:
+        return error_response(error, "/ask")
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):

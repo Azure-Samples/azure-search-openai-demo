@@ -24,11 +24,15 @@ const router = createHashRouter([
             },
             {
                 path: "qa",
-                lazy: () => import("./pages/ask/Ask")
+                lazy: async () => ({
+                    Component: (await import("./pages/ask/Ask")).default
+                })
             },
             {
                 path: "*",
-                lazy: () => import("./pages/NoPage")
+                lazy: async () => ({
+                    Component: (await import("./pages/NoPage")).default
+                })
             }
         ]
     }
