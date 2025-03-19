@@ -515,8 +515,8 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     identityType: 'UserAssigned'
     tags: union(tags, { 'azd-service-name': 'backend' })
     targetPort: 8000
-    containerCpuCoreCount: '0.5'
-    containerMemory: '1Gi'
+    containerCpuCoreCount: '1.0'
+    containerMemory: '2Gi'
     containerMinReplicas: 0
     allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {

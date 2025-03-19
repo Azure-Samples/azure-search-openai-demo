@@ -77,7 +77,7 @@ and scale up the maximum/minimum based on load.
 
 ### Azure Container Apps
 
-The default container app uses a "Consumption" workload profile with 0.5 CPU cores and 1.0 GB RAM,
+The default container app uses a "Consumption" workload profile with 1 CPU core and 2 GB RAM,
 and scaling rules that allow for scaling all the way down to 0 replicas when idle.
 For production, consider either increasing the CPU cores and memory or
 [switching to a "Dedicated" workload profile](azure_container_apps.md#customizing-workload-profile),
