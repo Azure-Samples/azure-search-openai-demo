@@ -75,6 +75,15 @@ We recommend using a Premium level SKU, starting with 1 CPU core.
 You can use auto-scaling rules or scheduled scaling rules,
 and scale up the maximum/minimum based on load.
 
+### Azure Container Apps
+
+The default container app uses a "Consumption" workload profile with 1 CPU core and 2 GB RAM,
+and scaling rules that allow for scaling all the way down to 0 replicas when idle.
+For production, consider either increasing the CPU cores and memory or
+[switching to a "Dedicated" workload profile](azure_container_apps.md#customizing-workload-profile),
+and configure the scaling rules to keep at least two replicas running at all times.
+Learn more in the [Azure Container Apps documentation](https://learn.microsoft.com/azure/container-apps).
+
 ## Additional security measures
 
 * **Authentication**: By default, the deployed app is publicly accessible.
