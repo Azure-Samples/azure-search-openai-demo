@@ -80,6 +80,9 @@
     "searchServiceSemanticRankerLevel": {
       "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
     },
+    "searchServiceQueryRewriting": {
+      "value": "${AZURE_SEARCH_QUERY_REWRITING=false}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },

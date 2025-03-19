@@ -90,6 +90,7 @@
         "excludeCategory": "Excluir categoría",
         "useSemanticRanker": "Usar clasificador semántico para la recuperación",
         "useSemanticCaptions": "Usar subtítulos semánticos",
+        "useQueryRewriting": "Utiliza la reescritura de consultas para la recuperación",
         "useSuggestFollowupQuestions": "Sugerir preguntas de seguimiento",
         "useGPT4V": "Usar modelo de visión GPT",
         "gpt4VInput": {

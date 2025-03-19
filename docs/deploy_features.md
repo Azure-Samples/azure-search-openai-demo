@@ -17,6 +17,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
+* [Enabling query rewriting](#enabling-query-rewriting)
 * [Adding an OpenAI load balancer](#adding-an-openai-load-balancer)
 * [Deploying with private endpoints](#deploying-with-private-endpoints)
 * [Using local parsers](#using-local-parsers)
@@ -320,6 +321,14 @@ For an alternate frontend that's written in Web Components and deployed to Stati
 [azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
 on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
 Both these repositories adhere to the same [HTTP protocol for AI chat apps](https://aka.ms/chatprotocol).
+
+## Enabling query rewriting
+
+By default, the [query rewriting feature](https://learn.microsoft.com/azure/search/semantic-how-to-query-rewrite) from the Azure AI Search service is not enabled. Note that the search service query rewriting feature is different from the query rewriting step that is used by the Chat tab in the codebase. The in-repo query rewriting step also incorporates conversation history, while the search service query rewriting feature only considers the query itself. To enable search service query rewriting, set the following environment variables:
+
+1. Check that your Azure AI Search service is using one of the [supported regions](https://learn.microsoft.com/azure/search/semantic-how-to-query-rewrite#prerequisites) for query rewriting.
+1. Ensure semantic ranker is enabled. Query rewriting may only be used with semantic ranker. Run `azd env set AZURE_SEARCH_SEMANTIC_RANKER free` or `azd env set AZURE_SEARCH_SEMANTIC_RANKER standard` depending on your desired [semantic ranker tier](https://learn.microsoft.com/azure/search/semantic-how-to-configure).
+1. Enable query rewriting. Run `azd env set AZURE_SEARCH_QUERY_REWRITING true`. An option in developer settings will appear allowing you to toggle query rewriting on and off. It will be on by default.
 
 ## Adding an OpenAI load balancer
 

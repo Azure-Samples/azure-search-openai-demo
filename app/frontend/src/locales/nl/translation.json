@@ -90,6 +90,7 @@
         "excludeCategory": "Categorie uitsluiten",
         "useSemanticRanker": "Semantische rangschikking gebruiken",
         "useSemanticCaptions": "Semantische bijschriften gebruiken",
+        "useQueryRewriting": "Gebruik de herformulering van zoekopdrachten om informatie op te halen",
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
         "useGPT4V": "GPT-visiemodel gebruiken",
         "gpt4VInput": {
