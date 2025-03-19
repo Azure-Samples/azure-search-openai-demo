@@ -90,6 +90,7 @@
         "excludeCategory": "Escludi categoria",
         "useSemanticRanker": "Usa il reranker semantico",
         "useSemanticCaptions": "Usa didascalie semantiche",
+        "useQueryRewriting": "Usa la riscrittura delle query per il recupero",
         "useSuggestFollowupQuestions": "Suggerisci domande di follow-up",
         "useGPT4V": "Usa il modello GPT Vision",
         "gpt4VInput": {

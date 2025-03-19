@@ -324,10 +324,10 @@ Both these repositories adhere to the same [HTTP protocol for AI chat apps](http
 
 ## Enabling query rewriting
 
-By default, [query rewriting](https://learn.microsoft.com/azure/search/semantic-how-to-query-rewrite) from the search service is not enabled. To enable query rewriting, set the following environment variables:
+By default, [query rewriting](https://learn.microsoft.com/azure/search/semantic-how-to-query-rewrite) from the search service is not enabled. Note that the search service query rewriting feature is different from the query rewriting step that is used by the Chat tab in the codebase. That query rewriting step also incorporates conversation history, while the search service query rewriting step only considers the query itself. To enable search service query rewriting, set the following environment variables:
 
 1. Ensure semantic ranker is enabled. Query rewriting may only be used with semantic ranker. Run `azd env set AZURE_SEARCH_SEMANTIC_RANKER free` or `azd env set AZURE_SEARCH_SEMANTIC_RANKER standard` depending on your desired [semantic ranker tier](https://learn.microsoft.com/azure/search/semantic-how-to-configure).
-1. Enable query rewriting. Run `azd env set AUZRE_SEARCH_QUERY_REWRITING true`. An option in developer settings will appear allowing you to toggle query rewriting on and off. It will be on by default.
+1. Enable query rewriting. Run `azd env set AZURE_SEARCH_QUERY_REWRITING true`. An option in developer settings will appear allowing you to toggle query rewriting on and off. It will be on by default.
 
 ## Adding an OpenAI load balancer
 

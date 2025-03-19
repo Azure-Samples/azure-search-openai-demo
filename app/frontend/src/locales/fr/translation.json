@@ -91,6 +91,7 @@
         "useSemanticRanker": "Utiliser le reclasseur sémantique",
         "useSemanticCaptions": "Utiliser les titres sémantiques",
         "useSuggestFollowupQuestions": "Suggérer des questions de suivi",
+        "useQueryRewriting": "Utilisez la réécriture des requêtes pour la récupération",
         "useGPT4V": "Utiliser le modèle GPT Vision",
         "gpt4VInput": {
             "label": "Entrées du modèle GPT Vision",

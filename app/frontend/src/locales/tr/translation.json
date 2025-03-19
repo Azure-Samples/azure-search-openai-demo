@@ -90,6 +90,7 @@
         "excludeCategory": "Kategori hariç tut",
         "useSemanticRanker": "Anlamsal sıralayıcı kullan",
         "useSemanticCaptions": "Anlamsal altyazılar kullan",
+        "useQueryRewriting": "Bilgi erişimi için sorgu yeniden yazımını kullanın",
         "useSuggestFollowupQuestions": "Takip soruları öner",
         "useGPT4V": "GPT vizyon modelini kullan",
         "gpt4VInput": {
