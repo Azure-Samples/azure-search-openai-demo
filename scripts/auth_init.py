@@ -81,7 +81,7 @@ async def create_or_update_application_with_secret(
 
 
 def update_azd_env(name, val):
-    subprocess.run(f"azd env set {name} {val}", shell=True)
+    subprocess.run(f'azd env set {name} "{val}"', shell=True)
 
 
 def random_app_identifier():
