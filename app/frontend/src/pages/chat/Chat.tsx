@@ -385,6 +385,21 @@ const Chat = () => {
                                     <div key={index}>
                                         <UserChatMessage message={streamedAnswer[0]} />
                                         <div className={styles.chatMessageGpt}>
+                                            {/* Render images from data_points before text streams in */}
+                                            {!Array.isArray(streamedAnswer[1].context.data_points) &&
+                                                streamedAnswer[1].context.data_points.images &&
+                                                streamedAnswer[1].context.data_points.images.length > 0 && (
+                                                    <div className={styles.answerImages}>
+                                                        {streamedAnswer[1].context.data_points.images.map((img, i) => (
+                                                            <img
+                                                                key={`answer-image-${i}`}
+                                                                src={img}
+                                                                alt={`Answer image ${i + 1}`}
+                                                                className={styles.answerImage}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                )}
                                             <Answer
                                                 isStreaming={true}
                                                 key={index}
@@ -408,6 +423,22 @@ const Chat = () => {
                                     <div key={index}>
                                         <UserChatMessage message={answer[0]} />
                                         <div className={styles.chatMessageGpt}>
+                                            {/* Render images from data_points before text content */}
+                                            {!Array.isArray(answer[1].context.data_points) &&
+                                                answer[1].context.data_points.images &&
+                                                answer[1].context.data_points.images.length > 0 && (
+                                                    <div className={styles.answerImages}>
+                                                        {answer[1].context.data_points.images.map((img, i) => (
+                                                            <img
+                                                                key={`answer-image-${i}`}
+                                                                src={img}
+                                                                width="100"
+                                                                alt={`Answer image ${i + 1}`}
+                                                                className={styles.answerImage}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                )}
                                             <Answer
                                                 isStreaming={false}
                                                 key={index}
