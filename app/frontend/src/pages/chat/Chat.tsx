@@ -394,6 +394,7 @@ const Chat = () => {
                                                             <img
                                                                 key={`answer-image-${i}`}
                                                                 src={img}
+                                                                width="100"
                                                                 alt={`Answer image ${i + 1}`}
                                                                 className={styles.answerImage}
                                                             />
