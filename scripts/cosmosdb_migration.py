@@ -82,6 +82,8 @@ class CosmosDBMigrator:
         """
         if not self.client:
             await self.connect()
+        if not self.old_container or not self.new_container:
+            raise ValueError("Containers do not exist")
 
         query_results = self.old_container.query_items(query="SELECT * FROM c")
 
