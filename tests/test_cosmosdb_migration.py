@@ -168,25 +168,25 @@ async def test_migrate_method():
 
 
 @pytest.mark.asyncio
-async def test_migrate_cosmosdb_data():
+async def test_migrate_cosmosdb_data(monkeypatch):
     """Test the main migrate_cosmosdb_data function"""
-    # Set required environment variables
-    os.environ["USE_CHAT_HISTORY_COSMOS"] = "true"
-    os.environ["AZURE_COSMOSDB_ACCOUNT"] = "dummy_account"
-    os.environ["AZURE_CHAT_HISTORY_DATABASE"] = "dummy_db"
+    with patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("USE_CHAT_HISTORY_COSMOS", "true")
+        monkeypatch.setenv("AZURE_COSMOSDB_ACCOUNT", "dummy_account")
+        monkeypatch.setenv("AZURE_CHAT_HISTORY_DATABASE", "dummy_db")
 
-    # Create a mock for the CosmosDBMigrator
-    with patch("scripts.cosmosdb_migration.CosmosDBMigrator") as mock_migrator_class:
-        # Set up the mock for the migrator instance
-        mock_migrator = AsyncMock()
-        mock_migrator_class.return_value = mock_migrator
+        # Create a mock for the CosmosDBMigrator
+        with patch("scripts.cosmosdb_migration.CosmosDBMigrator") as mock_migrator_class:
+            # Set up the mock for the migrator instance
+            mock_migrator = AsyncMock()
+            mock_migrator_class.return_value = mock_migrator
 
-        # Call the function
-        await migrate_cosmosdb_data()
+            # Call the function
+            await migrate_cosmosdb_data()
 
-        # Verify the migrator was created with the right parameters
-        mock_migrator_class.assert_called_once_with("dummy_account", "dummy_db")
+            # Verify the migrator was created with the right parameters
+            mock_migrator_class.assert_called_once_with("dummy_account", "dummy_db")
 
-        # Verify migrate and close were called
-        mock_migrator.migrate.assert_called_once()
-        mock_migrator.close.assert_called_once()
+            # Verify migrate and close were called
+            mock_migrator.migrate.assert_called_once()
+            mock_migrator.close.assert_called_once()
