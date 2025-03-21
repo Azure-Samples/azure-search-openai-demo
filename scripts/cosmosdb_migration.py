@@ -15,6 +15,7 @@ entra_oid: str
 title: str
 timestamp: int
 type: str (always "session")
+version: str (always "cosmosdb-v2")
 
 For message_pair items:
 id: str
@@ -66,7 +67,6 @@ class CosmosDBMigrator:
         self.database = self.client.get_database_client(self.database_name)
         self.old_container = self.database.get_container_client("chat-history")
         self.new_container = self.database.get_container_client("chat-history-v2")
-        # check to see that both containers actually exist
         try:
             await self.old_container.read()
         except Exception:
@@ -83,14 +83,13 @@ class CosmosDBMigrator:
         if not self.client:
             await self.connect()
 
-        # Migration: read from old_container, transform, and insert into new_container
         query_results = self.old_container.query_items(query="SELECT * FROM c")
 
         item_migration_count = 0
         async for page in query_results.by_page():
             async for old_item in page:
                 batch_operations = []
-                # Build session item operation
+                # Build session item
                 session_item = {
                     "id": old_item["id"],
                     "version": "cosmosdb-v2",
@@ -102,7 +101,7 @@ class CosmosDBMigrator:
                 }
                 batch_operations.append(("upsert", (session_item,)))
 
-                # Build message_pair operations
+                # Build message_pair
                 answers = old_item.get("answers", [])
                 for idx, answer in enumerate(answers):
                     question = answer[0]
@@ -140,7 +139,6 @@ async def migrate_cosmosdb_data():
     Legacy function for backward compatibility.
     Migrate data from CosmosDB to a new format.
     """
-    # Setup CosmosDB client using configuration similar to cosmosdb.py
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     if not USE_CHAT_HISTORY_COSMOS:
         raise ValueError("USE_CHAT_HISTORY_COSMOS must be set to true")
