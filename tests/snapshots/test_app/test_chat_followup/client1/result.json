@@ -38,7 +38,7 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-35-turbo"
+                    "model": "gpt-4o-mini"
                 },
                 "title": "Prompt to generate search query"
             },
@@ -93,7 +93,7 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-35-turbo"
+                    "model": "gpt-4o-mini"
                 },
                 "title": "Prompt to generate answer"
             }

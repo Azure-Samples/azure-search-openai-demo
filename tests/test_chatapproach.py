@@ -25,7 +25,7 @@ def chat_approach():
         search_client=None,
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
@@ -44,7 +44,7 @@ def test_get_search_query(chat_approach):
 	"id": "chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM",
 	"object": "chat.completion",
 	"created": 1695324963,
-	"model": "gpt-35-turbo",
+	"model": "gpt-4o-mini",
 	"prompt_filter_results": [
 		{
 			"prompt_index": 0,
@@ -106,7 +106,7 @@ def test_get_search_query(chat_approach):
 
 
 def test_get_search_query_returns_default(chat_approach):
-    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
+    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-4o-mini","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
     default_query = "hello"
     chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
     query = chat_approach.get_search_query(chatcompletions, default_query)
@@ -171,7 +171,7 @@ async def test_search_results_filtering_by_scores(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
