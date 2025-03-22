@@ -1,6 +1,7 @@
 import os
 from abc import ABC
 from dataclasses import dataclass
+import copy
 from typing import (
     Any,
     AsyncGenerator,
@@ -22,7 +23,7 @@ from azure.search.documents.models import (
     VectorQuery,
 )
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolParam
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -95,6 +96,35 @@ class Approach(ABC):
     # Allows usage of non-GPT model even if no tokenizer is available for accurate token counting
     # Useful for using local small language models, for example
     ALLOW_NON_GPT_MODELS = True
+    # List of GPT reasoning models. These models don't support the same set of parameters as other models
+    # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
+    GPT_REASONING_MODELS = {
+        "o1": {
+            "reasoning_effort": True,
+            "tools": True,
+            "system_messages": True,
+            "streaming": False
+        },
+        "o1-preview": {
+            "reasoning_effort": False,
+            "tools": False,
+            "system_messages": False,
+            "streaming": False
+        },
+        "o1-mini": {
+            "reasoning_effort": False,
+            "tools": False,
+            "system_messages": False,
+            "streaming": False 
+        },
+        "o3-mini": {
+            "reasoning_effort": True,
+            "tools": True,
+            "system_messages": True,
+            "streaming": True
+        }
+        
+    }
 
     def __init__(
         self,
@@ -110,6 +140,7 @@ class Approach(ABC):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -123,6 +154,7 @@ class Approach(ABC):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
+        self.reasoning_effort = reasoning_effort
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -284,6 +316,60 @@ class Approach(ABC):
             return {"injected_prompt": override_prompt[3:]}
         else:
             return {"override_prompt": override_prompt}
+
+    def get_chat_completion_params(
+            self,
+            chatgpt_deployment: Optional[str],
+            chatgpt_model: str,
+            messages: list[ChatCompletionMessageParam],
+            overrides: dict[str, any],
+            should_stream: bool = False,
+            response_token_limit: int = 1024,
+            tools: Optional[List[ChatCompletionToolParam]] = None,
+            temperature: Optional[float] = None,
+            n: Optional[int] = None) -> dict[str, Any]:
+        # Common set of parameters for all models
+        common_params = {
+            # Azure OpenAI takes the deployment name as the model name
+            "model": chatgpt_deployment if chatgpt_deployment else chatgpt_model,
+            "messages": messages,
+            "seed": overrides.get("seed", None),
+            "n": n or 1
+        }
+
+        if chatgpt_model in self.GPT_REASONING_MODELS:
+            # Adjust parameters for reasoning models
+            params = {
+                **common_params,
+                # max_tokens is not supported
+                "max_completion_tokens": response_token_limit
+            }
+
+            # Different reasoning models have different parameters
+            supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
+            if supported_features["streaming"]:
+                params["stream"] = should_stream
+            if supported_features["tools"]:
+                params["tools"] = tools
+            if supported_features["reasoning_effort"]:
+                params["reasoning_effort"] = overrides.get("reasoning_effort", self.reasoning_effort)
+
+            # For reasoning models that don't support system messages - migrate to developer messages
+            # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages
+            if not supported_features["system_messages"]:
+                messages = copy.deepcopy(messages)
+                messages[0]["role"] = "developer"
+                params["messages"] = messages
+            return params
+
+        # Include parameters that may not be supported for reasoning models
+        return {
+            **common_params,
+            "max_tokens": response_token_limit,
+            "temperature": temperature or overrides.get("temperature", 0.3),
+            "stream": should_stream,
+            "tools": tools,
+        }
 
     async def run(
         self,

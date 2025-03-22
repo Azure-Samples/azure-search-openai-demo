@@ -40,6 +40,7 @@ class RetrieveThenReadVisionApproach(Approach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -59,6 +60,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
+        self.reasoning_effort = reasoning_effort
 
     async def run(
         self,
@@ -71,7 +73,6 @@ class RetrieveThenReadVisionApproach(Approach):
             raise ValueError("The most recent message content must be a string.")
 
         overrides = context.get("overrides", {})
-        seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -130,12 +131,12 @@ class RetrieveThenReadVisionApproach(Approach):
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
-            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=rendered_answer_prompt.all_messages,
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=1024,
-            n=1,
-            seed=seed,
+            **self.get_chat_completion_params(
+                self.gpt4v_deployment,
+                self.gpt4v_model,
+                messages=rendered_answer_prompt.all_messages,
+                overrides=overrides
+            )
         )
 
         extra_info = {
@@ -162,11 +163,11 @@ class RetrieveThenReadVisionApproach(Approach):
                 ThoughtStep(
                     "Prompt to generate answer",
                     rendered_answer_prompt.all_messages,
-                    (
-                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
-                        if self.gpt4v_deployment
-                        else {"model": self.gpt4v_model}
-                    ),
+                    {
+                        "model": self.gpt4v_model,
+                        **({"deployment": self.gpt4v_deployment} if self.gpt4v_deployment else {}),
+                        **({"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {})
+                    }
                 ),
             ],
         }

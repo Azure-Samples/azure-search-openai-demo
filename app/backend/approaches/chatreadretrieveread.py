@@ -39,7 +39,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         content_field: str,
         query_language: str,
         query_speller: str,
-        prompt_manager: PromptManager
+        prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -58,6 +59,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
+        self.reasoning_effort = reasoning_effort
 
     @overload
     async def run_until_final_call(
@@ -84,7 +86,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
-        seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -98,6 +99,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
+
+        if should_stream:
+            if self.chatgpt_model in self.GPT_REASONING_MODELS and self.chatgpt_model not in self.GPT_REASONING_STREAMING_MODELS:
+                raise Exception(f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming.")
 
         rendered_query_prompt = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
@@ -118,14 +123,15 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=query_messages,  # type: ignore
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
-            n=1,
-            tools=tools,
-            seed=seed,
+            **self.get_chat_completion_params(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages=query_messages,
+                overrides=overrides,
+                response_token_limit=query_response_token_limit, # Setting too low risks malformed JSON, setting too high may affect performance
+                temperature = 0.0, # Minimize creativity for search query generation
+                tools=tools
+            )
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -206,23 +212,23 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ThoughtStep(
                     "Prompt to generate answer",
                     messages,
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+                    {
+                        "model": self.chatgpt_model,
+                        **({"deployment": self.chatgpt_deployment} if self.chatgpt_deployment else {}),
+                        **({"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {})
+                    }
                 ),
             ],
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            messages=messages,
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=response_token_limit,
-            n=1,
-            stream=should_stream,
-            seed=seed,
+            **self.get_chat_completion_params(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages,
+                overrides,
+                should_stream,
+                response_token_limit
+            )
         )
         return (extra_info, chat_coroutine)

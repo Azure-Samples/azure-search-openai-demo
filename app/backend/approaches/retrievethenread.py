@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, NotGiven
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -34,6 +34,7 @@ class RetrieveThenReadApproach(Approach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -51,6 +52,7 @@ class RetrieveThenReadApproach(Approach):
         self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
+        self.reasoning_effort = reasoning_effort
 
     async def run(
         self,
@@ -62,7 +64,6 @@ class RetrieveThenReadApproach(Approach):
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
-        seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -102,13 +103,12 @@ class RetrieveThenReadApproach(Approach):
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            messages=rendered_answer_prompt.all_messages,
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=1024,
-            n=1,
-            seed=seed,
+            **self.get_chat_completion_params(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages=rendered_answer_prompt.all_messages,
+                overrides=overrides
+            )
         )
 
         extra_info = {
@@ -134,11 +134,11 @@ class RetrieveThenReadApproach(Approach):
                 ThoughtStep(
                     "Prompt to generate answer",
                     rendered_answer_prompt.all_messages,
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+                    {
+                        "model": self.chatgpt_model,
+                        **({"deployment": self.chatgpt_deployment} if self.chatgpt_deployment else {}),
+                        **({"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {})
+                    }
                 ),
             ],
         }
