@@ -94,6 +94,14 @@ class ThoughtStep:
     kind: Optional[str] = None
 
 @dataclass
+class GenerateAnswerThoughtStep(ThoughtStep):
+    kind: str = field(init=False, default="generate_answer")
+
+    def update_usage(self, usage: CompletionUsage) -> None:
+        if self.props:
+            self.props["usage"] = TokenUsageProps.from_completion_usage(usage)
+
+@dataclass
 class DataPoints:
     text: Optional[List[str]] = None
     images: Optional[List] = None
@@ -102,30 +110,28 @@ class DataPoints:
 class ExtraInfo:
     data_points: DataPoints
     thoughts: Optional[List[ThoughtStep]] = None
+    followup_questions: Optional[List[Any]] = None
 
 @dataclass
-class GenerateAnswerThoughtStep(ThoughtStep):
-    kind: str = field(init=False, default="GenerateAnswer")
-
-class GenerateAnswerUsageProps(TypedDict, total=False):
+class TokenUsageProps:
     prompt_tokens: int
     completion_tokens: int
-    reasoning_effort_tokens: Optional[int]
+    reasoning_tokens: Optional[int]
     total_tokens: int
 
     @classmethod
-    def from_completion_usage(cls, usage: CompletionUsage) -> "GenerateAnswerUsageProps":
+    def from_completion_usage(cls, usage: CompletionUsage) -> "TokenUsageProps":
         return cls(
             prompt_tokens=usage.prompt_tokens,
             completion_tokens=usage.completion_tokens,
-            reasoning_effort_tokens=usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None,
+            reasoning_tokens=usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None,
             total_tokens=usage.total_tokens,
         )
 
-    def update_usage(self, usage: CompletionUsage) -> CompletionUsage:
-        self.prompt_tokens = usage.prompt_tokens,
-        self.completion_tokens = usage.completion_tokens,
-        self.reasoning_effort_tokens = usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None,
+    def update_usage(self, usage: CompletionUsage) -> None:
+        self.prompt_tokens = usage.prompt_tokens
+        self.completion_tokens = usage.completion_tokens
+        self.reasoning_tokens = usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
         self.total_tokens = usage.total_tokens
 
 class Approach(ABC):
@@ -338,7 +344,7 @@ class Approach(ABC):
         chatgpt_deployment: Optional[str],
         chatgpt_model: str,
         messages: list[ChatCompletionMessageParam],
-        overrides: dict[str, any],
+        overrides: dict[str, Any],
         should_stream: bool = False,
         response_token_limit: int = 1024,
         tools: Optional[List[ChatCompletionToolParam]] = None,
@@ -377,7 +383,7 @@ class Approach(ABC):
             if not supported_features["system_messages"]:
                 messages = copy.deepcopy(messages)
                 developer_message = cast(ChatCompletionDeveloperMessageParam, messages[0])
-                developer_message.role = "developer"
+                developer_message["role"] = "developer"
 
             params["messages"] = messages
             return params
@@ -392,25 +398,16 @@ class Approach(ABC):
         }
 
     def get_generate_answer_thought_step(
-        self, messages: List[ChatCompletionMessageParam], model: str, deployment: str, usage: Optional[CompletionUsage] = None
+        self, messages: List[ChatCompletionMessageParam], model: str, deployment: Optional[str], usage: Optional[CompletionUsage] = None
     ) -> ThoughtStep:
-        properties = { "model": model }
+        properties: Dict[str, Any] = { "model": model }
         if deployment:
             properties["deployment"] = deployment
         if self.GPT_REASONING_MODELS.get(model, {}).get("reasoning_effort"):
             properties["reasoning_effort"] = self.reasoning_effort
         if usage:
-            properties["usage"] = GenerateAnswerUsageProps.from_completion_usage(usage)
+            properties["usage"] = TokenUsageProps.from_completion_usage(usage)
         return GenerateAnswerThoughtStep("Prompt to generate answer", messages, properties)
-
-    def find_generate_answer_thought_step(extra_info: Optional[ExtraInfo]) -> Optional[GenerateAnswerThoughtStep]:
-            thoughts = extra_info.thoughts if extra_info else None
-            if thoughts:
-                for thought in thoughts:
-                    if isinstance(thought, GenerateAnswerThoughtStep):
-                        return thought
-            
-            return None
 
     async def run(
         self,

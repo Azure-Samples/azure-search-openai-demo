@@ -76,7 +76,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -226,7 +226,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         )
 
-        chat_coroutine: ChatCompletion = self.openai_client.chat.completions.create(
+        chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.openai_client.chat.completions.create(
             **self.get_chat_completion_params(
                 self.gpt4v_deployment,
                 self.gpt4v_model,

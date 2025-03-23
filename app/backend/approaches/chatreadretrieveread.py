@@ -1,4 +1,4 @@
-from typing import Any, Coroutine, List, Literal, Optional, Union, overload
+from typing import Any, Coroutine, List, Literal, Optional, Union, overload, Awaitable
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -61,31 +61,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
 
-    @overload
-    async def run_until_final_call(
-        self,
-        messages: list[ChatCompletionMessageParam],
-        overrides: dict[str, Any],
-        auth_claims: dict[str, Any],
-        should_stream: Literal[False],
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, ChatCompletion]]: ...
-
-    @overload
-    async def run_until_final_call(
-        self,
-        messages: list[ChatCompletionMessageParam],
-        overrides: dict[str, Any],
-        auth_claims: dict[str, Any],
-        should_stream: Literal[True],
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, AsyncStream[ChatCompletionChunk]]]: ...
-
     async def run_until_final_call(
         self,
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -213,7 +195,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ],
         )
 
-        chat_coroutine: ChatCompletion = self.openai_client.chat.completions.create(
+        chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.openai_client.chat.completions.create(
             **self.get_chat_completion_params(
                 self.chatgpt_deployment, self.chatgpt_model, messages, overrides, should_stream, response_token_limit
             )

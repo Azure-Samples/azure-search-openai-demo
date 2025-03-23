@@ -1,13 +1,14 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Dict, Optional
+from typing import Any, AsyncGenerator, Dict, Optional, Awaitable, cast
 from pydantic import ValidationError
 
+from openai import  AsyncStream
 from openai.types import CompletionUsage
-from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam, ChatCompletionChunk
 
-from approaches.approach import Approach, ExtraInfo, GenerateAnswerThoughtStep
+from approaches.approach import Approach, ExtraInfo, ThoughtStep, GenerateAnswerThoughtStep, TokenUsageProps
 
 
 class ChatApproach(Approach, ABC):
@@ -15,7 +16,7 @@ class ChatApproach(Approach, ABC):
     NO_RESPONSE = "0"
 
     @abstractmethod
-    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple[ExtraInfo, ChatCompletion]:
+    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         pass
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
@@ -51,12 +52,12 @@ class ChatApproach(Approach, ABC):
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=False
         )
-        chat_completion_response: ChatCompletion = await chat_coroutine
+        chat_completion_response: ChatCompletion = await cast(Awaitable[ChatCompletion], chat_coroutine)
         content = chat_completion_response.choices[0].message.content
         role = chat_completion_response.choices[0].message.role
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
-            extra_info["followup_questions"] = followup_questions
+            extra_info.followup_questions = followup_questions
         chat_app_response = {
             "message": {"content": content, "role": role},
             "context": extra_info,
@@ -74,9 +75,9 @@ class ChatApproach(Approach, ABC):
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
+        chat_coroutine = cast(Awaitable[AsyncStream[ChatCompletionChunk]], chat_coroutine)
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
-        generate_answer_thought_step = self.get_generate_answer_thought_step(extra_info.thoughts)
         followup_questions_started = False
         followup_content = ""
         async for event_chunk in await chat_coroutine:
@@ -106,13 +107,14 @@ class ChatApproach(Approach, ABC):
                     yield completion
             else:
                 # Final chunk at end of streaming should contain usage
-                usage = event.get("usage", {})
-                try:
-                    completion_usage = CompletionUsage.model_validate(usage)
-                    generate_answer_thought_step.update_usage(completion_usage)
+                if event_chunk.usage and extra_info.thoughts:
+                    for thought in extra_info.thoughts:
+                        if isinstance(thought, GenerateAnswerThoughtStep):
+                            # Update usage for the generate answer step
+                            thought.update_usage(event_chunk.usage)
+                            break
+
                     yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
-                except ValidationError:
-                    pass
 
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
