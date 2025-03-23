@@ -143,6 +143,8 @@ class TokenUsageProps:
         self.total_tokens = usage.total_tokens
 
 
+# GPT reasoning models don't support the same set of parameters as other models
+# https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
 @dataclass
 class GPTReasoningModelSupport:
     reasoning_effort: bool
@@ -156,8 +158,7 @@ class Approach(ABC):
     # Allows usage of non-GPT model even if no tokenizer is available for accurate token counting
     # Useful for using local small language models, for example
     ALLOW_NON_GPT_MODELS = True
-    # List of GPT reasoning models. These models don't support the same set of parameters as other models
-    # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
+    # List of GPT reasoning models support
     GPT_REASONING_MODELS = {
         "o1": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=False),
         "o1-preview": GPTReasoningModelSupport(
@@ -382,14 +383,13 @@ class Approach(ABC):
         }
 
         if chatgpt_model in self.GPT_REASONING_MODELS:
-            # Adjust parameters for reasoning models
             params = {
                 **common_params,
                 # max_tokens is not supported
                 "max_completion_tokens": response_token_limit,
             }
 
-            # Different reasoning models have different parameters
+            # Adjust parameters for reasoning models
             supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
             if supported_features.streaming and should_stream:
                 params["stream"] = True

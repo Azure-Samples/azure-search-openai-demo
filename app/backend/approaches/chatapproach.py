@@ -114,9 +114,10 @@ class ChatApproach(Approach, ABC):
                     yield completion
             else:
                 # Final chunk at end of streaming should contain usage
+                # https://cookbook.openai.com/examples/how_to_stream_completions#4-how-to-get-token-usage-data-for-streamed-chat-completion-response
                 if event_chunk.usage and extra_info.answer_thought_tag and extra_info.thoughts:
                     for thought in extra_info.thoughts:
-                        # Update usage for the generate answer step
+                        # Assume usage is for answer step, update usage
                         if thought.tag == extra_info.answer_thought_tag:
                             thought.update_token_usage(event_chunk.usage)
                             break

@@ -201,6 +201,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     tag="generate_answer",
                 ),
             ],
+            answer_thought_tag="generate_answer",
         )
 
         chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.openai_client.chat.completions.create(
