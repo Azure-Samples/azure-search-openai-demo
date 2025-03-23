@@ -671,7 +671,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
-        reasoning_effort=OPENAI_REASONING_EFFORT
+        reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -689,7 +689,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
-        reasoning_effort=OPENAI_REASONING_EFFORT
+        reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
     if USE_GPT4V:
@@ -715,7 +715,7 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
-            reasoning_effort=OPENAI_REASONING_EFFORT
+            reasoning_effort=OPENAI_REASONING_EFFORT,
         )
 
         current_app.config[CONFIG_CHAT_VISION_APPROACH] = ChatReadRetrieveReadVisionApproach(
@@ -737,7 +737,7 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
-            reasoning_effort=OPENAI_REASONING_EFFORT
+            reasoning_effort=OPENAI_REASONING_EFFORT,
         )
 
 

@@ -1,7 +1,7 @@
+import copy
 import os
 from abc import ABC
 from dataclasses import dataclass
-import copy
 from typing import (
     Any,
     AsyncGenerator,
@@ -99,31 +99,10 @@ class Approach(ABC):
     # List of GPT reasoning models. These models don't support the same set of parameters as other models
     # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
     GPT_REASONING_MODELS = {
-        "o1": {
-            "reasoning_effort": True,
-            "tools": True,
-            "system_messages": True,
-            "streaming": False
-        },
-        "o1-preview": {
-            "reasoning_effort": False,
-            "tools": False,
-            "system_messages": False,
-            "streaming": False
-        },
-        "o1-mini": {
-            "reasoning_effort": False,
-            "tools": False,
-            "system_messages": False,
-            "streaming": False 
-        },
-        "o3-mini": {
-            "reasoning_effort": True,
-            "tools": True,
-            "system_messages": True,
-            "streaming": True
-        }
-        
+        "o1": {"reasoning_effort": True, "tools": True, "system_messages": True, "streaming": False},
+        "o1-preview": {"reasoning_effort": False, "tools": False, "system_messages": False, "streaming": False},
+        "o1-mini": {"reasoning_effort": False, "tools": False, "system_messages": False, "streaming": False},
+        "o3-mini": {"reasoning_effort": True, "tools": True, "system_messages": True, "streaming": True},
     }
 
     def __init__(
@@ -140,7 +119,7 @@ class Approach(ABC):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
-        reasoning_effort: Optional[str] = None
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -318,23 +297,24 @@ class Approach(ABC):
             return {"override_prompt": override_prompt}
 
     def get_chat_completion_params(
-            self,
-            chatgpt_deployment: Optional[str],
-            chatgpt_model: str,
-            messages: list[ChatCompletionMessageParam],
-            overrides: dict[str, any],
-            should_stream: bool = False,
-            response_token_limit: int = 1024,
-            tools: Optional[List[ChatCompletionToolParam]] = None,
-            temperature: Optional[float] = None,
-            n: Optional[int] = None) -> dict[str, Any]:
+        self,
+        chatgpt_deployment: Optional[str],
+        chatgpt_model: str,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, any],
+        should_stream: bool = False,
+        response_token_limit: int = 1024,
+        tools: Optional[List[ChatCompletionToolParam]] = None,
+        temperature: Optional[float] = None,
+        n: Optional[int] = None,
+    ) -> dict[str, Any]:
         # Common set of parameters for all models
         common_params = {
             # Azure OpenAI takes the deployment name as the model name
             "model": chatgpt_deployment if chatgpt_deployment else chatgpt_model,
             "messages": messages,
             "seed": overrides.get("seed", None),
-            "n": n or 1
+            "n": n or 1,
         }
 
         if chatgpt_model in self.GPT_REASONING_MODELS:
@@ -342,7 +322,7 @@ class Approach(ABC):
             params = {
                 **common_params,
                 # max_tokens is not supported
-                "max_completion_tokens": response_token_limit
+                "max_completion_tokens": response_token_limit,
             }
 
             # Different reasoning models have different parameters
@@ -371,8 +351,10 @@ class Approach(ABC):
             "tools": tools,
         }
 
-    def get_generate_answer_thought_step(self, messages: List[ChatCompletionMessageParam], model: str, deployment: str) -> ThoughtStep:
-        properties = { "model": model }
+    def get_generate_answer_thought_step(
+        self, messages: List[ChatCompletionMessageParam], model: str, deployment: str
+    ) -> ThoughtStep:
+        properties = {"model": model}
         if deployment:
             properties["deployment"] = deployment
         if self.GPT_REASONING_MODELS.get(model, {}).get("reasoning_effort"):

@@ -1,4 +1,4 @@
-from typing import Any, Optional, NotGiven
+from typing import Any, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -107,7 +107,7 @@ class RetrieveThenReadApproach(Approach):
                 self.chatgpt_deployment,
                 self.chatgpt_model,
                 messages=rendered_answer_prompt.all_messages,
-                overrides=overrides
+                overrides=overrides,
             )
         )
 
@@ -131,7 +131,7 @@ class RetrieveThenReadApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment)
+                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment),
             ],
         }
 

@@ -96,8 +96,13 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
 
         if should_stream:
-            if self.gpt4v_model in self.GPT_REASONING_MODELS and self.gpt4v_model not in self.GPT_REASONING_STREAMING_MODELS:
-                raise Exception(f"{self.gpt4v_model} does not support streaming. Please use a different model or disable streaming.")
+            if (
+                self.gpt4v_model in self.GPT_REASONING_MODELS
+                and self.gpt4v_model not in self.GPT_REASONING_STREAMING_MODELS
+            ):
+                raise Exception(
+                    f"{self.gpt4v_model} does not support streaming. Please use a different model or disable streaming."
+                )
 
         # Use prompty to prepare the query prompt
         rendered_query_prompt = self.prompt_manager.render_prompt(
@@ -126,7 +131,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 overrides=overrides,
                 response_token_limit=query_response_token_limit,
                 temperature=0.0,  # Minimize creativity for search query generation
-                tools=tools
+                tools=tools,
             )
         )
 
@@ -224,7 +229,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment)
+                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment),
             ],
         }
 

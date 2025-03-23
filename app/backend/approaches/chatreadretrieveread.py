@@ -101,8 +101,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
 
         if should_stream:
-            if self.chatgpt_model in self.GPT_REASONING_MODELS and self.chatgpt_model not in self.GPT_REASONING_STREAMING_MODELS:
-                raise Exception(f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming.")
+            if (
+                self.chatgpt_model in self.GPT_REASONING_MODELS
+                and self.chatgpt_model not in self.GPT_REASONING_STREAMING_MODELS
+            ):
+                raise Exception(
+                    f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
+                )
 
         rendered_query_prompt = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
@@ -128,9 +133,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 self.chatgpt_model,
                 messages=query_messages,
                 overrides=overrides,
-                response_token_limit=query_response_token_limit, # Setting too low risks malformed JSON, setting too high may affect performance
-                temperature = 0.0, # Minimize creativity for search query generation
-                tools=tools
+                response_token_limit=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
+                temperature=0.0,  # Minimize creativity for search query generation
+                tools=tools,
             )
         )
 
@@ -209,18 +214,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment)
+                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment),
             ],
         }
 
         chat_coroutine = self.openai_client.chat.completions.create(
             **self.get_chat_completion_params(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages,
-                overrides,
-                should_stream,
-                response_token_limit
+                self.chatgpt_deployment, self.chatgpt_model, messages, overrides, should_stream, response_token_limit
             )
         )
         return (extra_info, chat_coroutine)
