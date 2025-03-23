@@ -95,7 +95,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
-        if should_stream and not self.GPT_REASONING_MODELS.get(self.gpt4v_model, {}).get("streaming", True):
+        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.gpt4v_model)
+        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
             raise Exception(
                 f"{self.gpt4v_model} does not support streaming. Please use a different model or disable streaming."
             )
@@ -196,14 +197,13 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         extra_info = ExtraInfo(
             DataPoints(text=text_sources, images=image_sources),
             thoughts=[
-                ThoughtStep(
-                    "Prompt to generate search query",
-                    query_messages,
-                    {
-                        "model": query_model,
-                        **({"deployment": query_deployment} if query_deployment else {}),
-                        **({"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {}),
-                    },
+                self.create_generate_thought_step(
+                    title="Prompt to generate search query",
+                    messages=query_messages,
+                    model=query_model,
+                    deployment=query_deployment,
+                    usage=chat_completion.usage,
+                    tag="generate_query",
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -222,7 +222,14 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment, usage=None),
+                self.create_generate_thought_step(
+                    title="Prompt to generate answer",
+                    messages=messages,
+                    model=self.gpt4v_model,
+                    deployment=self.gpt4v_deployment,
+                    usage=None,
+                    tag="generate_answer",
+                ),
             ],
         )
 

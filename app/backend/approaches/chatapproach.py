@@ -13,7 +13,6 @@ from openai.types.chat import (
 from approaches.approach import (
     Approach,
     ExtraInfo,
-    GenerateAnswerThoughtStep,
 )
 
 
@@ -92,7 +91,7 @@ class ChatApproach(Approach, ABC):
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
-                # No usage should come during streaming
+                # No usage during streaming
                 completion = {
                     "delta": {
                         "content": event["choices"][0]["delta"].get("content"),
@@ -115,11 +114,11 @@ class ChatApproach(Approach, ABC):
                     yield completion
             else:
                 # Final chunk at end of streaming should contain usage
-                if event_chunk.usage and extra_info.thoughts:
+                if event_chunk.usage and extra_info.answer_thought_tag and extra_info.thoughts:
                     for thought in extra_info.thoughts:
-                        if isinstance(thought, GenerateAnswerThoughtStep):
-                            # Update usage for the generate answer step
-                            thought.update_usage(event_chunk.usage)
+                        # Update usage for the generate answer step
+                        if thought.tag == extra_info.answer_thought_tag:
+                            thought.update_token_usage(event_chunk.usage)
                             break
 
                     yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}

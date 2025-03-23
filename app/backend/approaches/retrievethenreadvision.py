@@ -161,8 +161,13 @@ class RetrieveThenReadVisionApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(
-                    messages, self.gpt4v_model, self.gpt4v_deployment, chat_completion.usage
+                self.create_generate_thought_step(
+                    title="Prompt to generate answer",
+                    messages=messages,
+                    model=self.gpt4v_model,
+                    deployment=self.gpt4v_deployment,
+                    usage=chat_completion.usage,
+                    tag="generate_answer",
                 ),
             ],
         )

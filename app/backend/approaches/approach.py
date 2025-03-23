@@ -1,7 +1,7 @@
 import copy
 import os
 from abc import ABC
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import (
     Any,
     AsyncGenerator,
@@ -95,16 +95,11 @@ class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
-    kind: Optional[str] = None
+    tag: Optional[str] = None
 
-
-@dataclass
-class GenerateAnswerThoughtStep(ThoughtStep):
-    kind: str = field(init=False, default="generate_answer")
-
-    def update_usage(self, usage: CompletionUsage) -> None:
+    def update_token_usage(self, usage: CompletionUsage) -> None:
         if self.props:
-            self.props["usage"] = TokenUsageProps.from_completion_usage(usage)
+            self.props["token_usage"] = TokenUsageProps.from_completion_usage(usage)
 
 
 @dataclass
@@ -118,6 +113,7 @@ class ExtraInfo:
     data_points: DataPoints
     thoughts: Optional[List[ThoughtStep]] = None
     followup_questions: Optional[List[Any]] = None
+    answer_thought_tag: Optional[str] = None
 
 
 @dataclass
@@ -147,6 +143,14 @@ class TokenUsageProps:
         self.total_tokens = usage.total_tokens
 
 
+@dataclass
+class GPTReasoningModelSupport:
+    reasoning_effort: bool
+    tools: bool
+    system_messages: bool
+    streaming: bool
+
+
 class Approach(ABC):
 
     # Allows usage of non-GPT model even if no tokenizer is available for accurate token counting
@@ -155,10 +159,14 @@ class Approach(ABC):
     # List of GPT reasoning models. These models don't support the same set of parameters as other models
     # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
     GPT_REASONING_MODELS = {
-        "o1": {"reasoning_effort": True, "tools": True, "system_messages": True, "streaming": False},
-        "o1-preview": {"reasoning_effort": False, "tools": False, "system_messages": False, "streaming": False},
-        "o1-mini": {"reasoning_effort": False, "tools": False, "system_messages": False, "streaming": False},
-        "o3-mini": {"reasoning_effort": True, "tools": True, "system_messages": True, "streaming": True},
+        "o1": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=False),
+        "o1-preview": GPTReasoningModelSupport(
+            reasoning_effort=False, tools=False, system_messages=False, streaming=False
+        ),
+        "o1-mini": GPTReasoningModelSupport(
+            reasoning_effort=False, tools=False, system_messages=False, streaming=False
+        ),
+        "o3-mini": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=True),
     }
 
     def __init__(
@@ -383,17 +391,17 @@ class Approach(ABC):
 
             # Different reasoning models have different parameters
             supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
-            if supported_features["streaming"]:
-                params["stream"] = should_stream
+            if supported_features.streaming and should_stream:
+                params["stream"] = True
                 params["stream_options"] = {"include_usage": True}
-            if supported_features["tools"]:
+            if supported_features.tools:
                 params["tools"] = tools
-            if supported_features["reasoning_effort"]:
+            if supported_features.reasoning_effort:
                 params["reasoning_effort"] = overrides.get("reasoning_effort", self.reasoning_effort)
 
             # For reasoning models that don't support system messages - migrate to developer messages
             # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages
-            if not supported_features["system_messages"]:
+            if not supported_features.system_messages:
                 messages = copy.deepcopy(messages)
                 developer_message = cast(ChatCompletionDeveloperMessageParam, messages[0])
                 developer_message["role"] = "developer"
@@ -402,29 +410,36 @@ class Approach(ABC):
             return params
 
         # Include parameters that may not be supported for reasoning models
-        return {
+        params = {
             **common_params,
             "max_tokens": response_token_limit,
             "temperature": temperature or overrides.get("temperature", 0.3),
-            "stream": should_stream,
             "tools": tools,
         }
+        if should_stream:
+            params["stream"] = True
+            params["stream_options"] = {"include_usage": True}
 
-    def get_generate_answer_thought_step(
+        return params
+
+    def create_generate_thought_step(
         self,
+        title: str,
         messages: List[ChatCompletionMessageParam],
         model: str,
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
+        tag: Optional[str] = None,
     ) -> ThoughtStep:
         properties: Dict[str, Any] = {"model": model}
         if deployment:
             properties["deployment"] = deployment
-        if self.GPT_REASONING_MODELS.get(model, {}).get("reasoning_effort"):
+        # Only add reasoning_effort setting if the model supports it
+        if (supported_features := self.GPT_REASONING_MODELS.get(model)) and supported_features.reasoning_effort:
             properties["reasoning_effort"] = self.reasoning_effort
         if usage:
-            properties["usage"] = TokenUsageProps.from_completion_usage(usage)
-        return GenerateAnswerThoughtStep("Prompt to generate answer", messages, properties)
+            properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+        return ThoughtStep(title, messages, properties, tag)
 
     async def run(
         self,
