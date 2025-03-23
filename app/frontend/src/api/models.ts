@@ -84,6 +84,7 @@ export type ChatAppRequest = {
 };
 
 export type Config = {
+    defaultReasoningEffort: string;
     showGPT4VOptions: boolean;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;

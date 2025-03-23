@@ -86,7 +86,7 @@ export function Component(): JSX.Element {
             setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
             if (config.showReasoningEffortOption) {
-                setReasoningEffort("medium");
+                setReasoningEffort(config.defaultReasoningEffort);
             }
             setShowVectorOption(config.showVectorOption);
             if (!config.showVectorOption) {

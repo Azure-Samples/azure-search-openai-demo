@@ -269,8 +269,11 @@ export const Settings = ({
                 <OptionSlider
                     id={reasoningEffortFieldId}
                     value={reasoningEffort}
+                    label={t("labels.reasoningEffort")}
                     options={["Low", "Medium", "High"]}
-                    onChange={val => onChange("retrievalMode", val)}
+                    onChange={val => onChange("reasoningEffort", val)}
+                    aria-labelledby={reasoningEffortFieldId}
+                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
                 />
             )}
 
