@@ -3,10 +3,10 @@ from typing import Any, Optional
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletion
 from openai_messages_token_helper import get_token_limit
 
-from approaches.approach import Approach, ThoughtStep
+from approaches.approach import Approach, ExtraInfo, DataPoints, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
@@ -102,7 +102,7 @@ class RetrieveThenReadApproach(Approach):
             | {"user_query": q, "text_sources": text_sources},
         )
 
-        chat_completion = await self.openai_client.chat.completions.create(
+        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             **self.get_chat_completion_params(
                 self.chatgpt_deployment,
                 self.chatgpt_model,
@@ -111,9 +111,9 @@ class RetrieveThenReadApproach(Approach):
             )
         )
 
-        extra_info = {
-            "data_points": {"text": text_sources},
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts = [
                 ThoughtStep(
                     "Search using user query",
                     q,
@@ -131,9 +131,9 @@ class RetrieveThenReadApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment),
+                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment, chat_completion.usage),
             ],
-        }
+        )
 
         return {
             "message": {

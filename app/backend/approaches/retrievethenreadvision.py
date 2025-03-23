@@ -4,11 +4,12 @@ from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI
 from openai.types.chat import (
+    ChatCompletion,
     ChatCompletionMessageParam,
 )
 from openai_messages_token_helper import get_token_limit
 
-from approaches.approach import Approach, ThoughtStep
+from approaches.approach import Approach, ExtraInfo, DataPoints, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -130,7 +131,7 @@ class RetrieveThenReadVisionApproach(Approach):
             | {"user_query": q, "text_sources": text_sources, "image_sources": image_sources},
         )
 
-        chat_completion = await self.openai_client.chat.completions.create(
+        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             **self.get_chat_completion_params(
                 self.gpt4v_deployment,
                 self.gpt4v_model,
@@ -139,9 +140,9 @@ class RetrieveThenReadVisionApproach(Approach):
             )
         )
 
-        extra_info = {
-            "data_points": {"text": text_sources, "images": image_sources},
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources, images=image_sources),
+            thoughts = [
                 ThoughtStep(
                     "Search using user query",
                     q,
@@ -160,9 +161,9 @@ class RetrieveThenReadVisionApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment),
+                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment, chat_completion.usage),
             ],
-        }
+        )
 
         return {
             "message": {

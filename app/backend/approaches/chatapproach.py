@@ -1,11 +1,13 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Dict, Optional
+from pydantic import ValidationError
 
+from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from approaches.approach import Approach
+from approaches.approach import Approach, ExtraInfo, GenerateAnswerThoughtStep
 
 
 class ChatApproach(Approach, ABC):
@@ -13,7 +15,7 @@ class ChatApproach(Approach, ABC):
     NO_RESPONSE = "0"
 
     @abstractmethod
-    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple:
+    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple[ExtraInfo, ChatCompletion]:
         pass
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
@@ -74,12 +76,14 @@ class ChatApproach(Approach, ABC):
         )
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
+        generate_answer_thought_step = self.get_generate_answer_thought_step(extra_info.thoughts)
         followup_questions_started = False
         followup_content = ""
         async for event_chunk in await chat_coroutine:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
+                # No usage should come during streaming
                 completion = {
                     "delta": {
                         "content": event["choices"][0]["delta"].get("content"),
@@ -100,9 +104,19 @@ class ChatApproach(Approach, ABC):
                     followup_content += content
                 else:
                     yield completion
+            else:
+                # Final chunk at end of streaming should contain usage
+                usage = event.get("usage", {})
+                try:
+                    completion_usage = CompletionUsage.model_validate(usage)
+                    generate_answer_thought_step.update_usage(completion_usage)
+                    yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+                except ValidationError:
+                    pass
+
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
-            yield {"delta": {"role": "assistant"}, "context": {"followup_questions": followup_questions}}
+            yield {"delta": {"role": "assistant"}, "context": { "context": extra_info, "followup_questions": followup_questions}}
 
     async def run(
         self,

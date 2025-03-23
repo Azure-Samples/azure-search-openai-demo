@@ -1,13 +1,15 @@
 import copy
 import os
 from abc import ABC
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import (
     Any,
     AsyncGenerator,
     Awaitable,
     Callable,
+    Dict,
     List,
+    Literal,
     Optional,
     TypedDict,
     cast,
@@ -23,7 +25,8 @@ from azure.search.documents.models import (
     VectorQuery,
 )
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolParam
+from openai.types import CompletionUsage
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletionDeveloperMessageParam, ChatCompletionStreamOptionsParam, ChatCompletionToolParam
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -83,13 +86,47 @@ class Document:
 
         return None
 
-
 @dataclass
 class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
+    kind: Optional[str] = None
 
+@dataclass
+class DataPoints:
+    text: Optional[List[str]] = None
+    images: Optional[List] = None
+
+@dataclass
+class ExtraInfo:
+    data_points: DataPoints
+    thoughts: Optional[List[ThoughtStep]] = None
+
+@dataclass
+class GenerateAnswerThoughtStep(ThoughtStep):
+    kind: str = field(init=False, default="GenerateAnswer")
+
+class GenerateAnswerUsageProps(TypedDict, total=False):
+    prompt_tokens: int
+    completion_tokens: int
+    reasoning_effort_tokens: Optional[int]
+    total_tokens: int
+
+    @classmethod
+    def from_completion_usage(cls, usage: CompletionUsage) -> "GenerateAnswerUsageProps":
+        return cls(
+            prompt_tokens=usage.prompt_tokens,
+            completion_tokens=usage.completion_tokens,
+            reasoning_effort_tokens=usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None,
+            total_tokens=usage.total_tokens,
+        )
+
+    def update_usage(self, usage: CompletionUsage) -> CompletionUsage:
+        self.prompt_tokens = usage.prompt_tokens,
+        self.completion_tokens = usage.completion_tokens,
+        self.reasoning_effort_tokens = usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None,
+        self.total_tokens = usage.total_tokens
 
 class Approach(ABC):
 
@@ -329,6 +366,7 @@ class Approach(ABC):
             supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
             if supported_features["streaming"]:
                 params["stream"] = should_stream
+                params["stream_options"] = { "include_usage": True }
             if supported_features["tools"]:
                 params["tools"] = tools
             if supported_features["reasoning_effort"]:
@@ -338,8 +376,10 @@ class Approach(ABC):
             # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages
             if not supported_features["system_messages"]:
                 messages = copy.deepcopy(messages)
-                messages[0]["role"] = "developer"
-                params["messages"] = messages
+                developer_message = cast(ChatCompletionDeveloperMessageParam, messages[0])
+                developer_message.role = "developer"
+
+            params["messages"] = messages
             return params
 
         # Include parameters that may not be supported for reasoning models
@@ -352,15 +392,25 @@ class Approach(ABC):
         }
 
     def get_generate_answer_thought_step(
-        self, messages: List[ChatCompletionMessageParam], model: str, deployment: str
+        self, messages: List[ChatCompletionMessageParam], model: str, deployment: str, usage: Optional[CompletionUsage] = None
     ) -> ThoughtStep:
-        properties = {"model": model}
+        properties = { "model": model }
         if deployment:
             properties["deployment"] = deployment
         if self.GPT_REASONING_MODELS.get(model, {}).get("reasoning_effort"):
             properties["reasoning_effort"] = self.reasoning_effort
+        if usage:
+            properties["usage"] = GenerateAnswerUsageProps.from_completion_usage(usage)
+        return GenerateAnswerThoughtStep("Prompt to generate answer", messages, properties)
 
-        return ThoughtStep("Prompt to generate answer", messages, properties)
+    def find_generate_answer_thought_step(extra_info: Optional[ExtraInfo]) -> Optional[GenerateAnswerThoughtStep]:
+            thoughts = extra_info.thoughts if extra_info else None
+            if thoughts:
+                for thought in thoughts:
+                    if isinstance(thought, GenerateAnswerThoughtStep):
+                        return thought
+            
+            return None
 
     async def run(
         self,

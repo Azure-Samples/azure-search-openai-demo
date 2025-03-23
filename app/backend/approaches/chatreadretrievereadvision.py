@@ -11,7 +11,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
-from approaches.approach import ThoughtStep
+from approaches.approach import ExtraInfo, DataPoints, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -76,7 +76,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -95,14 +95,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
-        if should_stream:
-            if (
-                self.gpt4v_model in self.GPT_REASONING_MODELS
-                and self.gpt4v_model not in self.GPT_REASONING_STREAMING_MODELS
-            ):
-                raise Exception(
-                    f"{self.gpt4v_model} does not support streaming. Please use a different model or disable streaming."
-                )
+        if should_stream and not self.GPT_REASONING_MODELS.get(self.gpt4v_model, {}).get("streaming", True):
+            raise Exception(
+                f"{self.gpt4v_model} does not support streaming. Please use a different model or disable streaming."
+            )
 
         # Use prompty to prepare the query prompt
         rendered_query_prompt = self.prompt_manager.render_prompt(
@@ -197,12 +193,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
-        extra_info = {
-            "data_points": {
-                "text": text_sources,
-                "images": image_sources,
-            },
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources, images=image_sources),
+            thoughts = [
                 ThoughtStep(
                     "Prompt to generate search query",
                     query_messages,
@@ -229,11 +222,11 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment),
+                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment, usage=None),
             ],
-        }
+        )
 
-        chat_coroutine = self.openai_client.chat.completions.create(
+        chat_coroutine: ChatCompletion = self.openai_client.chat.completions.create(
             **self.get_chat_completion_params(
                 self.gpt4v_deployment,
                 self.gpt4v_model,
