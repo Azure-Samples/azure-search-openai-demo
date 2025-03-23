@@ -9,7 +9,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import get_token_limit
 
-from approaches.approach import Approach, ExtraInfo, DataPoints, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -142,7 +142,7 @@ class RetrieveThenReadVisionApproach(Approach):
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources, images=image_sources),
-            thoughts = [
+            thoughts=[
                 ThoughtStep(
                     "Search using user query",
                     q,
@@ -161,7 +161,9 @@ class RetrieveThenReadVisionApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.gpt4v_model, self.gpt4v_deployment, chat_completion.usage),
+                self.get_generate_answer_thought_step(
+                    messages, self.gpt4v_model, self.gpt4v_deployment, chat_completion.usage
+                ),
             ],
         )
 

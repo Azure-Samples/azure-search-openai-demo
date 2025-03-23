@@ -1,4 +1,4 @@
-from typing import Any, Coroutine, List, Literal, Optional, Union, overload, Awaitable
+from typing import Any, Awaitable, List, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -11,7 +11,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
-from approaches.approach import ExtraInfo, DataPoints, ThoughtStep
+from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -164,7 +164,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
-            thoughts = [
+            thoughts=[
                 ThoughtStep(
                     "Prompt to generate search query",
                     query_messages,
@@ -191,7 +191,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment, usage=None),
+                self.get_generate_answer_thought_step(
+                    messages, self.chatgpt_model, self.chatgpt_deployment, usage=None
+                ),
             ],
         )
 

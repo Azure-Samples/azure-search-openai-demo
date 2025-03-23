@@ -9,7 +9,6 @@ from typing import (
     Callable,
     Dict,
     List,
-    Literal,
     Optional,
     TypedDict,
     cast,
@@ -26,7 +25,11 @@ from azure.search.documents.models import (
 )
 from openai import AsyncOpenAI
 from openai.types import CompletionUsage
-from openai.types.chat import ChatCompletionMessageParam, ChatCompletionDeveloperMessageParam, ChatCompletionStreamOptionsParam, ChatCompletionToolParam
+from openai.types.chat import (
+    ChatCompletionDeveloperMessageParam,
+    ChatCompletionMessageParam,
+    ChatCompletionToolParam,
+)
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -86,12 +89,14 @@ class Document:
 
         return None
 
+
 @dataclass
 class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
     kind: Optional[str] = None
+
 
 @dataclass
 class GenerateAnswerThoughtStep(ThoughtStep):
@@ -101,16 +106,19 @@ class GenerateAnswerThoughtStep(ThoughtStep):
         if self.props:
             self.props["usage"] = TokenUsageProps.from_completion_usage(usage)
 
+
 @dataclass
 class DataPoints:
     text: Optional[List[str]] = None
     images: Optional[List] = None
+
 
 @dataclass
 class ExtraInfo:
     data_points: DataPoints
     thoughts: Optional[List[ThoughtStep]] = None
     followup_questions: Optional[List[Any]] = None
+
 
 @dataclass
 class TokenUsageProps:
@@ -124,15 +132,20 @@ class TokenUsageProps:
         return cls(
             prompt_tokens=usage.prompt_tokens,
             completion_tokens=usage.completion_tokens,
-            reasoning_tokens=usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None,
+            reasoning_tokens=(
+                usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
+            ),
             total_tokens=usage.total_tokens,
         )
 
     def update_usage(self, usage: CompletionUsage) -> None:
         self.prompt_tokens = usage.prompt_tokens
         self.completion_tokens = usage.completion_tokens
-        self.reasoning_tokens = usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
+        self.reasoning_tokens = (
+            usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
+        )
         self.total_tokens = usage.total_tokens
+
 
 class Approach(ABC):
 
@@ -372,7 +385,7 @@ class Approach(ABC):
             supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
             if supported_features["streaming"]:
                 params["stream"] = should_stream
-                params["stream_options"] = { "include_usage": True }
+                params["stream_options"] = {"include_usage": True}
             if supported_features["tools"]:
                 params["tools"] = tools
             if supported_features["reasoning_effort"]:
@@ -398,9 +411,13 @@ class Approach(ABC):
         }
 
     def get_generate_answer_thought_step(
-        self, messages: List[ChatCompletionMessageParam], model: str, deployment: Optional[str], usage: Optional[CompletionUsage] = None
+        self,
+        messages: List[ChatCompletionMessageParam],
+        model: str,
+        deployment: Optional[str],
+        usage: Optional[CompletionUsage] = None,
     ) -> ThoughtStep:
-        properties: Dict[str, Any] = { "model": model }
+        properties: Dict[str, Any] = {"model": model}
         if deployment:
             properties["deployment"] = deployment
         if self.GPT_REASONING_MODELS.get(model, {}).get("reasoning_effort"):

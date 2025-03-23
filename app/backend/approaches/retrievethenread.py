@@ -3,10 +3,10 @@ from typing import Any, Optional
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam, ChatCompletion
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 from openai_messages_token_helper import get_token_limit
 
-from approaches.approach import Approach, ExtraInfo, DataPoints, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
@@ -113,7 +113,7 @@ class RetrieveThenReadApproach(Approach):
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
-            thoughts = [
+            thoughts=[
                 ThoughtStep(
                     "Search using user query",
                     q,
@@ -131,7 +131,9 @@ class RetrieveThenReadApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment, chat_completion.usage),
+                self.get_generate_answer_thought_step(
+                    messages, self.chatgpt_model, self.chatgpt_deployment, chat_completion.usage
+                ),
             ],
         )
 

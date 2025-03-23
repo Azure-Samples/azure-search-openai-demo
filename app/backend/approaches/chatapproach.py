@@ -1,14 +1,20 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Dict, Optional, Awaitable, cast
-from pydantic import ValidationError
+from typing import Any, AsyncGenerator, Awaitable, Optional, cast
 
-from openai import  AsyncStream
-from openai.types import CompletionUsage
-from openai.types.chat import ChatCompletion, ChatCompletionMessageParam, ChatCompletionChunk
+from openai import AsyncStream
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+)
 
-from approaches.approach import Approach, ExtraInfo, ThoughtStep, GenerateAnswerThoughtStep, TokenUsageProps
+from approaches.approach import (
+    Approach,
+    ExtraInfo,
+    GenerateAnswerThoughtStep,
+)
 
 
 class ChatApproach(Approach, ABC):
@@ -16,7 +22,9 @@ class ChatApproach(Approach, ABC):
     NO_RESPONSE = "0"
 
     @abstractmethod
-    async def run_until_final_call(self, messages, overrides, auth_claims, should_stream) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
+    async def run_until_final_call(
+        self, messages, overrides, auth_claims, should_stream
+    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         pass
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
@@ -118,7 +126,10 @@ class ChatApproach(Approach, ABC):
 
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
-            yield {"delta": {"role": "assistant"}, "context": { "context": extra_info, "followup_questions": followup_questions}}
+            yield {
+                "delta": {"role": "assistant"},
+                "context": {"context": extra_info, "followup_questions": followup_questions},
+            }
 
     async def run(
         self,

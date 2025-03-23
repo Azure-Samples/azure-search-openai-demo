@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Coroutine, List, Optional, Union
+from typing import Any, Awaitable, Callable, List, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -11,7 +11,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
-from approaches.approach import ExtraInfo, DataPoints, ThoughtStep
+from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -195,7 +195,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources, images=image_sources),
-            thoughts = [
+            thoughts=[
                 ThoughtStep(
                     "Prompt to generate search query",
                     query_messages,
