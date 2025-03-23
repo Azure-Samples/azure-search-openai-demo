@@ -44,6 +44,7 @@
                 "props": {
                     "filter": null,
                     "top": 3,
+                    "use_query_rewriting": false,
                     "use_semantic_captions": true,
                     "use_semantic_ranker": true,
                     "use_text_search": true,

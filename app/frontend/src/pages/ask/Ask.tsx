@@ -32,6 +32,7 @@ export function Component(): JSX.Element {
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
+    const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
     const [includeCategory, setIncludeCategory] = useState<string>("");
@@ -42,6 +43,7 @@ export function Component(): JSX.Element {
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
+    const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showLanguagePicker, setshowLanguagePicker] = useState<boolean>(false);
@@ -78,6 +80,8 @@ export function Component(): JSX.Element {
             setShowGPT4VOptions(config.showGPT4VOptions);
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
+            setUseQueryRewriting(config.showQueryRewritingOption);
+            setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowVectorOption(config.showVectorOption);
             if (!config.showVectorOption) {
                 setRetrievalMode(RetrievalMode.Text);
@@ -126,6 +130,7 @@ export function Component(): JSX.Element {
                         retrieval_mode: retrievalMode,
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
+                        query_rewriting: useQueryRewriting,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFieldList,
@@ -179,6 +184,9 @@ export function Component(): JSX.Element {
                 break;
             case "useSemanticCaptions":
                 setUseSemanticCaptions(value);
+                break;
+            case "useQueryRewriting":
+                setUseQueryRewriting(value);
                 break;
             case "excludeCategory":
                 setExcludeCategory(value);
@@ -321,6 +329,7 @@ export function Component(): JSX.Element {
                     minimumRerankerScore={minimumRerankerScore}
                     useSemanticRanker={useSemanticRanker}
                     useSemanticCaptions={useSemanticCaptions}
+                    useQueryRewriting={useQueryRewriting}
                     excludeCategory={excludeCategory}
                     includeCategory={includeCategory}
                     retrievalMode={retrievalMode}
@@ -328,6 +337,7 @@ export function Component(): JSX.Element {
                     gpt4vInput={gpt4vInput}
                     vectorFieldList={vectorFieldList}
                     showSemanticRankerOption={showSemanticRankerOption}
+                    showQueryRewritingOption={showQueryRewritingOption}
                     showGPT4VOptions={showGPT4VOptions}
                     showVectorOption={showVectorOption}
                     useOidSecurityFilter={useOidSecurityFilter}

@@ -149,6 +149,7 @@ class Approach(ABC):
         use_semantic_captions: bool,
         minimum_search_score: Optional[float],
         minimum_reranker_score: Optional[float],
+        use_query_rewriting: Optional[bool] = None,
     ) -> List[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
@@ -158,6 +159,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                query_rewrites="generative" if use_query_rewriting else None,
                 vector_queries=search_vectors,
                 query_type=QueryType.SEMANTIC,
                 query_language=self.query_language,

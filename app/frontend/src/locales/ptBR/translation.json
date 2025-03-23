@@ -91,6 +91,7 @@
         "useSemanticRanker": "Usar rankeador semântico para recuperação",
         "useSemanticCaptions": "Usar legendas semânticas",
         "useSuggestFollowupQuestions": "Sugerir perguntas complementares",
+        "useQueryRewriting": "Utilize a reescrita de consultas para a recuperação",
         "useGPT4V": "Usar modelo de visão GPT",
         "gpt4VInput": {
             "label": "Entradas do modelo de visão GPT",

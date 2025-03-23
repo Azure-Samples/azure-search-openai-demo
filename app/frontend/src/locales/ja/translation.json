@@ -90,6 +90,7 @@
         "excludeCategory": "カテゴリを除外",
         "useSemanticRanker": "取得にセマンティック・ランカーを使用",
         "useSemanticCaptions": "セマンティック・キャプションを使用",
+        "useQueryRewriting": "検索のためにクエリの書き換えを使用する",
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
         "useGPT4V": "GPT Visionモデルを使用",
         "gpt4VInput": {

@@ -201,3 +201,44 @@ async def test_search_results_filtering_by_scores(
     assert (
         len(filtered_results) == expected_result_count
     ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
+
+
+async def test_search_results_query_rewriting(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+    )
+
+    query_rewrites = None
+
+    async def validate_qr_and_mock_search(*args, **kwargs):
+        nonlocal query_rewrites
+        query_rewrites = kwargs.get("query_rewrites")
+        return mock_search(*args, **kwargs)
+
+    monkeypatch.setattr(SearchClient, "search", validate_qr_and_mock_search)
+
+    results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
+        use_semantic_ranker=True,
+        use_semantic_captions=True,
+        use_query_rewrites=True,
+    )
+    assert len(results) == 1
+    assert query_rewrites == "generative"

@@ -89,6 +89,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
+        use_query_rewriting = True if overrides.get("query_rewriting") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
@@ -147,6 +148,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             use_semantic_captions,
             minimum_search_score,
             minimum_reranker_score,
+            use_query_rewriting,
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
@@ -190,6 +192,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     {
                         "use_semantic_captions": use_semantic_captions,
                         "use_semantic_ranker": use_semantic_ranker,
+                        "use_query_rewriting": use_query_rewriting,
                         "top": top,
                         "filter": filter,
                         "use_vector_search": use_vector_search,

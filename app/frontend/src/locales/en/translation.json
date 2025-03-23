@@ -90,6 +90,7 @@
         "excludeCategory": "Exclude category",
         "useSemanticRanker": "Use semantic ranker for retrieval",
         "useSemanticCaptions": "Use semantic captions",
+        "useQueryRewriting": "Use query rewriting for retrieval",
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
         "useGPT4V": "Use GPT vision model",
         "gpt4VInput": {
@@ -139,6 +140,8 @@
             "Specifies a category to exclude from the search results. There are no categories used in the default data set.",
          "useSemanticReranker":
             "Enables the Azure AI Search semantic ranker, a model that re-ranks search results based on semantic similarity to the user's query.",
+        "useQueryRewriting":
+            "Enables Azure AI Search query rewriting, a process that modifies the user's query to improve search results. Requires semantic ranker to be enabled.",
         "useSemanticCaptions":
              "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",

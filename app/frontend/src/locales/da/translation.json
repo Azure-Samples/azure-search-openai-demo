@@ -86,6 +86,7 @@
         "excludeCategory": "Ekskludér kategori",
         "useSemanticRanker": "Brug semantisk ranking til søgning",
         "useSemanticCaptions": "Brug semantiske billedtekster",
+        "useQueryRewriting": "Brug forespørgselsomskrivning til informationsgenfinding",
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
         "useGPT4V": "Brug GPT vision model",
         "gpt4VInput": {
