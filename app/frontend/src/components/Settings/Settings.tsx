@@ -5,6 +5,7 @@ import { HelpCallout } from "../HelpCallout";
 import { GPT4VSettings } from "../GPT4VSettings";
 import { VectorSettings } from "../VectorSettings";
 import { RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
+import { OptionSlider } from "../OptionSlider";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -20,6 +21,7 @@ export interface SettingsProps {
     useSemanticRanker: boolean;
     useSemanticCaptions: boolean;
     useQueryRewriting: boolean;
+    reasoningEffort: string;
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
@@ -28,6 +30,7 @@ export interface SettingsProps {
     vectorFieldList: VectorFieldOptions[];
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
+    showReasoningEffortOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -54,6 +57,7 @@ export const Settings = ({
     useSemanticRanker,
     useSemanticCaptions,
     useQueryRewriting,
+    reasoningEffort,
     excludeCategory,
     includeCategory,
     retrievalMode,
@@ -62,6 +66,7 @@ export const Settings = ({
     vectorFieldList,
     showSemanticRankerOption,
     showQueryRewritingOption,
+    showReasoningEffortOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -99,6 +104,7 @@ export const Settings = ({
     const semanticRankerId = useId("semanticRanker");
     const semanticRankerFieldId = useId("semanticRankerField");
     const queryRewritingFieldId = useId("queryRewritingField");
+    const reasoningEffortFieldId = useId("reasoningEffortField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
@@ -257,6 +263,15 @@ export const Settings = ({
                         onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.useQueryRewriting"))}
                     />
                 </>
+            )}
+
+            {showReasoningEffortOption && (
+                <OptionSlider
+                    id={reasoningEffortFieldId}
+                    value={reasoningEffort}
+                    options={["Low", "Medium", "High"]}
+                    onChange={val => onChange("retrievalMode", val)}
+                />
             )}
 
             {useLogin && (

@@ -209,15 +209,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                ThoughtStep(
-                    "Prompt to generate answer",
-                    messages,
-                    {
-                        "model": self.chatgpt_model,
-                        **({"deployment": self.chatgpt_deployment} if self.chatgpt_deployment else {}),
-                        **({"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {})
-                    }
-                ),
+                self.get_generate_answer_thought_step(messages, self.chatgpt_model, self.chatgpt_deployment)
             ],
         }
 

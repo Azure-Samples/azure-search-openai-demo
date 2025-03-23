@@ -371,6 +371,15 @@ class Approach(ABC):
             "tools": tools,
         }
 
+    def get_generate_answer_thought_step(self, messages: List[ChatCompletionMessageParam], model: str, deployment: str) -> ThoughtStep:
+        properties = { "model": model }
+        if deployment:
+            properties["deployment"] = deployment
+        if self.GPT_REASONING_MODELS.get(model, {}).get("reasoning_effort"):
+            properties["reasoning_effort"] = self.reasoning_effort
+
+        return ThoughtStep("Prompt to generate answer", messages, properties)
+
     async def run(
         self,
         messages: list[ChatCompletionMessageParam],

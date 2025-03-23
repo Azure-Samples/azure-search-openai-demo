@@ -1,8 +1,4 @@
-.settingsSeparator {
-    margin-top: 0.75rem;
-}
-
-.option-slider {
+.optionSlider {
     width: 100%;
     max-width: 400px;
     margin: 20px auto;
@@ -10,7 +6,7 @@
     user-select: none;
 }
 
-.slider-track {
+.sliderTrack {
     width: 100%;
     height: 40px;
     background: #e0e0e0;
@@ -18,7 +14,7 @@
     position: relative;
 }
 
-.slider-thumb {
+.sliderThumb {
     position: absolute;
     top: 0;
     width: 33.33%;
@@ -32,7 +28,7 @@
     cursor: pointer;
 }
 
-.slider-options {
+.sliderOptions {
     display: flex;
     justify-content: space-between;
     position: absolute;
@@ -41,7 +37,7 @@
     height: 40px;
 }
 
-.slider-option {
+.sliderOption {
     width: 33.33%;
     text-align: center;
     line-height: 40px;
@@ -49,7 +45,7 @@
     cursor: pointer;
 }
 
-.slider-option.active {
+.sliderOption.active {
     font-weight: bold;
     color: #fff;
 }
