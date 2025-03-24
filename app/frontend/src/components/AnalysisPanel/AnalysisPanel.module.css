@@ -77,18 +77,18 @@ margin-bottom: 8px;
 }
 
 .tokenUsageGraph {
-    margin: 16px 0;
-    }
+margin: 16px 0;
+}
     
 .tokenBar {
-height: 20px;
-margin-bottom: 4px;
-padding-left: 4px;
-font-size: 12px;
-display: flex;
-align-items: center;
-white-space: nowrap;
-overflow: hidden;
+    height: 20px;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 

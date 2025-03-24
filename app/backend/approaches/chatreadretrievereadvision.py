@@ -46,6 +46,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -69,6 +70,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question_vision.prompty")
+        self.reasoning_effort = reasoning_effort
 
     async def run_until_final_call(
         self,
@@ -110,6 +112,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         query_response_token_limit = 100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
         query_model = self.chatgpt_model
+        print(f"Using {query_model} for query generation")
         query_deployment = self.chatgpt_deployment
         query_messages = build_messages(
             model=query_model,
@@ -118,6 +121,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             past_messages=rendered_query_prompt.past_messages,
             new_user_content=rendered_query_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
+            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(

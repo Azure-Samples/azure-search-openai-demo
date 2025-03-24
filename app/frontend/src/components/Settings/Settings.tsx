@@ -31,6 +31,7 @@ export interface SettingsProps {
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
+    showVisionReasoningEffortOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -67,6 +68,7 @@ export const Settings = ({
     showSemanticRankerOption,
     showQueryRewritingOption,
     showReasoningEffortOption,
+    showVisionReasoningEffortOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -265,18 +267,6 @@ export const Settings = ({
                 </>
             )}
 
-            {showReasoningEffortOption && (
-                <OptionSlider
-                    id={reasoningEffortFieldId}
-                    value={reasoningEffort}
-                    label={t("labels.reasoningEffort")}
-                    options={["Low", "Medium", "High"]}
-                    onChange={val => onChange("reasoningEffort", val.toLowerCase())}
-                    aria-labelledby={reasoningEffortFieldId}
-                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
-                />
-            )}
-
             {useLogin && (
                 <>
                     <Checkbox
@@ -310,6 +300,19 @@ export const Settings = ({
                     isUseGPT4V={useGPT4V}
                     updateUseGPT4V={val => onChange("useGPT4V", val)}
                     updateGPT4VInputs={val => onChange("gpt4vInput", val)}
+                />
+            )}
+
+            {(useGPT4V ? showVisionReasoningEffortOption : showReasoningEffortOption) && (
+                <OptionSlider
+                    id={reasoningEffortFieldId}
+                    value={reasoningEffort}
+                    label={t("labels.reasoningEffort")}
+                    options={["Low", "Medium", "High"]}
+                    defaultValue="Medium"
+                    onChange={val => onChange("reasoningEffort", val.toLowerCase())}
+                    aria-labelledby={reasoningEffortFieldId}
+                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
                 />
             )}
 

@@ -12,7 +12,7 @@ export interface OptionSliderProps<T extends string> {
     label: string;
     options: T[];
     onChange: (value: T) => void;
-    placeholder?: string;
+    defaultValue: T;
     onRenderLabel?: IRenderFunction<OptionSliderLabelProps>;
 }
 
@@ -22,17 +22,20 @@ export const OptionSlider = <T extends string>({
     label,
     options,
     onChange,
-    placeholder = "Select an option",
+    defaultValue,
     onRenderLabel
 }: OptionSliderProps<T>) => {
+    // When the provided value is empty (or whitespace only), use the default.
+    const normalizedValue = value.trim();
+    const displayValue = normalizedValue !== ""
+        ? options.find(option => option.toLowerCase() === normalizedValue.toLowerCase()) ?? defaultValue
+        : defaultValue;
+
     // Calculate thumb left position based on the number of options.
     const getThumbLeft = () => {
-        const index = options.findIndex(option => option.toLowerCase() === value.toLowerCase());
+        const index = options.findIndex(option => option.toLowerCase() === displayValue.toLowerCase());
         return index >= 0 ? index * (100 / options.length) : 0;
     };
-
-    // Determine displayed text; if value is not in options, display placeholder.
-    const displayValue = options.find(option => option.toLowerCase() === value.toLowerCase()) ?? placeholder;
 
     return (
         <div id={id} className={styles.optionSlider}>
@@ -52,7 +55,7 @@ export const OptionSlider = <T extends string>({
                     {options.map(option => (
                         <div
                             key={option}
-                            className={`${styles.sliderOption} ${option.toLowerCase() === value.toLowerCase() ? "active" : ""}`}
+                            className={`${styles.sliderOption} ${option.toLowerCase() === displayValue.toLowerCase() ? "active" : ""}`}
                             onClick={() => onChange(option)}
                         >
                             {option}

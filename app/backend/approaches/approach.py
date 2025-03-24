@@ -409,7 +409,7 @@ class Approach(ABC):
             if supported_features.tools:
                 params["tools"] = tools
             if supported_features.reasoning_effort:
-                params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort", self.reasoning_effort)
+                params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
 
             # For reasoning models that don't support system messages - migrate to developer messages
             # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages

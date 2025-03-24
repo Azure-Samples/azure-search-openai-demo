@@ -79,6 +79,7 @@ const Chat = () => {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
+    const [showVisionReasoningEffortOption, setShowVisionReasoningEffortOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
@@ -107,6 +108,7 @@ const Chat = () => {
             setUseQueryRewriting(config.showQueryRewritingOption);
             setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
+            setShowVisionReasoningEffortOption(config.showVisionReasoningEffortOption);
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
             }
@@ -529,6 +531,7 @@ const Chat = () => {
                         showSemanticRankerOption={showSemanticRankerOption}
                         showQueryRewritingOption={showQueryRewritingOption}
                         showReasoningEffortOption={showReasoningEffortOption}
+                        showVisionReasoningEffortOption={showVisionReasoningEffortOption}
                         showGPT4VOptions={showGPT4VOptions}
                         showVectorOption={showVectorOption}
                         useOidSecurityFilter={useOidSecurityFilter}
