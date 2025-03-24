@@ -64,7 +64,6 @@ As of late March 2025, the default chat completion model is `gpt-4o-mini`. If yo
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo
     ```
 
-
 1. To set the Azure OpenAI model version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version string.
 
     For GPT-4:
