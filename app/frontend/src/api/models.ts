@@ -49,7 +49,7 @@ export type ResponseMessage = {
 export type Thoughts = {
     title: string;
     description: any; // It can be any output from the api
-    props?: { [key: string]: string };
+    props?: { [key: string]: any };
 };
 
 export type ResponseContext = {

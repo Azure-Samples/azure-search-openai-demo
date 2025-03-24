@@ -62,3 +62,54 @@
     max-width: 100%;
     object-fit: contain;
 }
+
+.tokenUsageGraph {
+margin: 16px 0;
+}
+
+.header {
+color: #123bb6;
+position: relative;
+font-size: 0.875em;
+margin-bottom: 0.5em;
+}
+
+.reasoningEffort {
+font-size: 14px;
+margin-bottom: 8px;
+}
+
+.tokenBar {
+height: 20px;
+margin-bottom: 4px;
+padding-left: 4px;
+font-size: 12px;
+display: flex;
+align-items: center;
+white-space: nowrap;
+overflow: hidden;
+}
+
+
+
+.tokenBar {
+    height: 20px;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    background-color: #d7d7d7;
+    white-space: nowrap;
+    /* Allow the text to spill out */
+    overflow: visible;
+  }
+  
+  .tokenLabel {
+    color: #333232;
+    padding-right: 4px;
+    white-space: nowrap;
+    /* Ensure full text is shown and no ellipsis is applied */
+    overflow: visible;
+    text-overflow: unset;
+  }
