@@ -164,6 +164,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 self.create_generate_thought_step(
                     title="Prompt to generate answer",
                     messages=messages,
+                    overrides=overrides,
                     model=self.gpt4v_model,
                     deployment=self.gpt4v_deployment,
                     usage=chat_completion.usage,

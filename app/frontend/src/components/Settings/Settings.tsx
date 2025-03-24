@@ -271,7 +271,7 @@ export const Settings = ({
                     value={reasoningEffort}
                     label={t("labels.reasoningEffort")}
                     options={["Low", "Medium", "High"]}
-                    onChange={val => onChange("reasoningEffort", val)}
+                    onChange={val => onChange("reasoningEffort", val.toLowerCase())}
                     aria-labelledby={reasoningEffortFieldId}
                     onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
                 />

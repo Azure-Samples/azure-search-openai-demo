@@ -134,6 +134,7 @@ class RetrieveThenReadApproach(Approach):
                 self.create_generate_thought_step(
                     title="Prompt to generate answer",
                     messages=messages,
+                    overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
                     usage=chat_completion.usage,

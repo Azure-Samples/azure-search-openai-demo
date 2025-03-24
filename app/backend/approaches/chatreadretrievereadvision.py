@@ -108,7 +108,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 100
+        query_response_token_limit = 100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
         query_model = self.chatgpt_model
         query_deployment = self.chatgpt_deployment
         query_messages = build_messages(
@@ -129,6 +129,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 response_token_limit=query_response_token_limit,
                 temperature=0.0,  # Minimize creativity for search query generation
                 tools=tools,
+                reasoning_effort="low",  # Minimize reasoning for search query generation
             )
         )
 
@@ -184,7 +185,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             },
         )
 
-        response_token_limit = 1024
+        response_token_limit = self.get_response_token_limit(self.chatgpt_model)
         messages = build_messages(
             model=self.gpt4v_model,
             system_prompt=rendered_answer_prompt.system_content,
@@ -200,10 +201,12 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 self.create_generate_thought_step(
                     title="Prompt to generate search query",
                     messages=query_messages,
+                    overrides=overrides,
                     model=query_model,
                     deployment=query_deployment,
                     usage=chat_completion.usage,
                     tag="generate_query",
+                    reasoning_effort="low"
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -225,6 +228,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 self.create_generate_thought_step(
                     title="Prompt to generate answer",
                     messages=messages,
+                    overrides=overrides,
                     model=self.gpt4v_model,
                     deployment=self.gpt4v_deployment,
                     usage=None,

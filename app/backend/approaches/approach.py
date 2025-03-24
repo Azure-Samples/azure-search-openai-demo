@@ -29,6 +29,7 @@ from openai.types.chat import (
     ChatCompletionDeveloperMessageParam,
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
+    ChatCompletionReasoningEffort
 )
 
 from approaches.promptmanager import PromptManager
@@ -169,6 +170,9 @@ class Approach(ABC):
         ),
         "o3-mini": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=True),
     }
+    # Set a higher token limit for GPT reasoning models
+    RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
+    RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT = 8192
 
     def __init__(
         self,
@@ -361,6 +365,12 @@ class Approach(ABC):
         else:
             return {"override_prompt": override_prompt}
 
+    def get_response_token_limit(self, model: str) -> int:
+        if model in self.GPT_REASONING_MODELS:
+            return self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
+
+        return self.RESPONSE_DEFAULT_TOKEN_LIMIT
+
     def get_chat_completion_params(
         self,
         chatgpt_deployment: Optional[str],
@@ -368,10 +378,11 @@ class Approach(ABC):
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         should_stream: bool = False,
-        response_token_limit: int = 1024,
+        response_token_limit: Optional[int] = None,
         tools: Optional[List[ChatCompletionToolParam]] = None,
         temperature: Optional[float] = None,
         n: Optional[int] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None
     ) -> dict[str, Any]:
         # Common set of parameters for all models
         common_params = {
@@ -381,6 +392,7 @@ class Approach(ABC):
             "seed": overrides.get("seed", None),
             "n": n or 1,
         }
+        response_token_limit = response_token_limit or self.get_response_token_limit(chatgpt_model)
 
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params = {
@@ -397,7 +409,7 @@ class Approach(ABC):
             if supported_features.tools:
                 params["tools"] = tools
             if supported_features.reasoning_effort:
-                params["reasoning_effort"] = overrides.get("reasoning_effort", self.reasoning_effort)
+                params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort", self.reasoning_effort)
 
             # For reasoning models that don't support system messages - migrate to developer messages
             # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages
@@ -426,17 +438,19 @@ class Approach(ABC):
         self,
         title: str,
         messages: List[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
         model: str,
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
         tag: Optional[str] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
     ) -> ThoughtStep:
         properties: Dict[str, Any] = {"model": model}
         if deployment:
             properties["deployment"] = deployment
         # Only add reasoning_effort setting if the model supports it
         if (supported_features := self.GPT_REASONING_MODELS.get(model)) and supported_features.reasoning_effort:
-            properties["reasoning_effort"] = self.reasoning_effort
+            properties["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort", self.reasoning_effort)
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
         return ThoughtStep(title, messages, properties, tag)
