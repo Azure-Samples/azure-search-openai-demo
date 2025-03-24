@@ -65,6 +65,11 @@ class ChatApproach(Approach, ABC):
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
+        for thought in extra_info.thoughts:
+            # Assume usage is for answer step, update usage
+            if thought.tag == extra_info.answer_thought_tag:
+                thought.update_token_usage(chat_completion_response.usage)
+                break
         chat_app_response = {
             "message": {"content": content, "role": role},
             "context": extra_info,
