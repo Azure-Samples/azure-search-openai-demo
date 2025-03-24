@@ -63,9 +63,6 @@
     object-fit: contain;
 }
 
-.tokenUsageGraph {
-margin: 16px 0;
-}
 
 .header {
 color: #123bb6;
@@ -79,6 +76,10 @@ font-size: 14px;
 margin-bottom: 8px;
 }
 
+.tokenUsageGraph {
+    margin: 16px 0;
+    }
+    
 .tokenBar {
 height: 20px;
 margin-bottom: 4px;
@@ -92,24 +93,34 @@ overflow: hidden;
 
 
 
+/* Adjust token bar to allow wrapping */
 .tokenBar {
     height: 20px;
     margin-bottom: 4px;
     padding-left: 4px;
     font-size: 12px;
     display: flex;
+    flex-wrap: wrap; /* Allow inner content to wrap */
     align-items: center;
     background-color: #d7d7d7;
     white-space: nowrap;
-    /* Allow the text to spill out */
     overflow: visible;
+    min-width: max-content; /* ensure the bar won’t shrink below its content’s width */
+
   }
   
   .tokenLabel {
     color: #333232;
     padding-right: 4px;
     white-space: nowrap;
-    /* Ensure full text is shown and no ellipsis is applied */
     overflow: visible;
     text-overflow: unset;
+  }
+  
+/* Horizontal container for prompt and completion bars */
+.primaryBarContainer {
+    width: fit-content; /* container will expand to fit children */
+
+    display: flex;
+    gap: 4px; /* no gap between bars */
   }
