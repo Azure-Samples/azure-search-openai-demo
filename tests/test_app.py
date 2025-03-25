@@ -832,8 +832,8 @@ async def test_chat_with_long_history(client, snapshot, caplog):
                 {
                     "role": "assistant",
                     "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]"
-                    * 150,
-                },  # 3900 tokens
+                    * 5520,
+                },  # 126960 tokens
                 {"role": "user", "content": "What does a product manager do?"},  # 10 tokens
             ],
             "context": {
