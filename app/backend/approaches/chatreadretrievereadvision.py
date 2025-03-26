@@ -152,7 +152,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 if url:
                     image_sources.append(url)
 
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
+        messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
@@ -163,7 +163,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 "image_sources": image_sources,
             },
         )
-        messages = rendered_answer_prompt.all_messages
 
         extra_info = {
             "data_points": {
