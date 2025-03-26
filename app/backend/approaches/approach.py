@@ -143,8 +143,8 @@ class Approach(ABC):
         use_vector_search: bool,
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
-        minimum_search_score: Optional[float],
-        minimum_reranker_score: Optional[float],
+        minimum_search_score: Optional[float] = None,
+        minimum_reranker_score: Optional[float] = None,
         use_query_rewriting: Optional[bool] = None,
     ) -> List[Document]:
         search_text = query_text if use_text_search else ""
