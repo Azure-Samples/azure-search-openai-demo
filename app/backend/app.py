@@ -65,13 +65,13 @@ from config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_CHAT_VISION_APPROACH,
     CONFIG_CREDENTIAL,
+    CONFIG_DEFAULT_REASONING_EFFORT,
     CONFIG_GPT4V_DEPLOYED,
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
     CONFIG_REASONING_EFFORT_ENABLED,
-    CONFIG_DEFAULT_REASONING_EFFORT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
     CONFIG_SPEECH_INPUT_ENABLED,
@@ -649,7 +649,10 @@ async def setup_clients():
     )
     current_app.config[CONFIG_DEFAULT_REASONING_EFFORT] = OPENAI_REASONING_EFFORT
     current_app.config[CONFIG_REASONING_EFFORT_ENABLED] = OPENAI_CHATGPT_MODEL in Approach.GPT_REASONING_MODELS
-    current_app.config[CONFIG_STREAMING_ENABLED] = OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
+    current_app.config[CONFIG_STREAMING_ENABLED] = (
+        OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
+        or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
+    )
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER
@@ -702,8 +705,18 @@ async def setup_clients():
         current_app.logger.info("USE_GPT4V is true, setting up GPT4V approach")
         if not AZURE_OPENAI_GPT4V_MODEL:
             raise ValueError("AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
-        if any(model in Approach.GPT_REASONING_MODELS for model in [OPENAI_CHATGPT_MODEL, AZURE_OPENAI_GPT4V_MODEL, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT4V_DEPLOYMENT]):
-            raise ValueError("AZURE_OPENAI_CHATGPT_MODEL and AZURE_OPENAI_GPT4V_MODEL must not be a reasoning model when USE_GPT4V is true")
+        if any(
+            model in Approach.GPT_REASONING_MODELS
+            for model in [
+                OPENAI_CHATGPT_MODEL,
+                AZURE_OPENAI_GPT4V_MODEL,
+                AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+                AZURE_OPENAI_GPT4V_DEPLOYMENT,
+            ]
+        ):
+            raise ValueError(
+                "AZURE_OPENAI_CHATGPT_MODEL and AZURE_OPENAI_GPT4V_MODEL must not be a reasoning model when USE_GPT4V is true"
+            )
 
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 

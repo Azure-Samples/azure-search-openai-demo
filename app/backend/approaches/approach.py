@@ -29,8 +29,8 @@ from openai.types.chat import (
     ChatCompletion,
     ChatCompletionDeveloperMessageParam,
     ChatCompletionMessageParam,
+    ChatCompletionReasoningEffort,
     ChatCompletionToolParam,
-    ChatCompletionReasoningEffort
 )
 
 from approaches.promptmanager import PromptManager
@@ -176,7 +176,7 @@ class Approach(ABC):
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
-        include_token_usage: Optional[bool] = None
+        include_token_usage: Optional[bool] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -371,7 +371,7 @@ class Approach(ABC):
         tools: Optional[List[ChatCompletionToolParam]] = None,
         temperature: Optional[float] = None,
         n: Optional[int] = None,
-        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
     ) -> ChatCompletion:
         response_token_limit = response_token_limit or self.get_response_token_limit(chatgpt_model)
         if chatgpt_model in self.GPT_REASONING_MODELS:
@@ -388,7 +388,9 @@ class Approach(ABC):
             if supported_features.tools:
                 params["tools"] = tools
             if supported_features.reasoning_effort:
-                params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
+                params["reasoning_effort"] = (
+                    reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
+                )
 
             # For reasoning models that don't support system messages - migrate to developer messages
             # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages
@@ -414,7 +416,7 @@ class Approach(ABC):
             messages=messages,
             seed=overrides.get("seed", None),
             n=n or 1,
-            **params
+            **params,
         )
 
     def create_generate_thought_step(
@@ -432,7 +434,9 @@ class Approach(ABC):
             properties["deployment"] = deployment
         # Only add reasoning_effort setting if the model supports it
         if (supported_features := self.GPT_REASONING_MODELS.get(model)) and supported_features.reasoning_effort:
-            properties["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort", self.reasoning_effort)
+            properties["reasoning_effort"] = reasoning_effort or overrides.get(
+                "reasoning_effort", self.reasoning_effort
+            )
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
         return ThoughtStep(title, messages, properties)

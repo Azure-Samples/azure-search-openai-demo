@@ -134,7 +134,7 @@ class RetrieveThenReadApproach(Approach):
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
-                    usage=chat_completion.usage
+                    usage=chat_completion.usage,
                 ),
             ],
         )

@@ -93,7 +93,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
+        query_response_token_limit = (
+            100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
+        )
         chat_completion: ChatCompletion = await self.create_chat_completion(
             self.chatgpt_deployment,
             self.chatgpt_model,
@@ -151,7 +153,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
                     usage=chat_completion.usage,
-                    reasoning_effort="low"
+                    reasoning_effort="low",
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -176,16 +178,17 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
-                    usage=None
-                )
-            ]
+                    usage=None,
+                ),
+            ],
         )
 
         chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.create_chat_completion(
             self.chatgpt_deployment,
-            self.chatgpt_model, messages,
+            self.chatgpt_model,
+            messages,
             overrides,
             should_stream,
-            response_token_limit=self.get_response_token_limit(self.chatgpt_model)
+            response_token_limit=self.get_response_token_limit(self.chatgpt_model),
         )
         return (extra_info, chat_coroutine)

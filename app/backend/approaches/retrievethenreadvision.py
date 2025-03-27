@@ -7,7 +7,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 
-from approaches.approach import Approach, ExtraInfo, DataPoints, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -167,7 +167,7 @@ class RetrieveThenReadVisionApproach(Approach):
                         else {"model": self.gpt4v_model}
                     ),
                 ),
-            ]
+            ],
         )
 
         return {

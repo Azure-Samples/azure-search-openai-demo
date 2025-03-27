@@ -10,7 +10,7 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import ExtraInfo, DataPoints, ThoughtStep
+from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -165,7 +165,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             },
         )
 
-
         extra_info = ExtraInfo(
             DataPoints(text=text_sources, images=image_sources),
             [
@@ -204,7 +203,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                         else {"model": self.gpt4v_model}
                     ),
                 ),
-            ]
+            ],
         )
 
         chat_coroutine = self.openai_client.chat.completions.create(
