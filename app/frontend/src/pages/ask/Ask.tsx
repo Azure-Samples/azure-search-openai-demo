@@ -46,7 +46,6 @@ export function Component(): JSX.Element {
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
-    const [showVisionReasoningEffortOption, setShowVisionReasoningEffortOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
     const [showLanguagePicker, setshowLanguagePicker] = useState<boolean>(false);
@@ -86,7 +85,6 @@ export function Component(): JSX.Element {
             setUseQueryRewriting(config.showQueryRewritingOption);
             setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
-            setShowVisionReasoningEffortOption(config.showVisionReasoningEffortOption);
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
             }
@@ -352,7 +350,6 @@ export function Component(): JSX.Element {
                     showSemanticRankerOption={showSemanticRankerOption}
                     showQueryRewritingOption={showQueryRewritingOption}
                     showReasoningEffortOption={showReasoningEffortOption}
-                    showVisionReasoningEffortOption={showVisionReasoningEffortOption}
                     showGPT4VOptions={showGPT4VOptions}
                     showVectorOption={showVectorOption}
                     useOidSecurityFilter={useOidSecurityFilter}

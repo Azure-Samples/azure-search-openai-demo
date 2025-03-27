@@ -71,7 +71,6 @@ from config import (
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
     CONFIG_REASONING_EFFORT_ENABLED,
-    CONFIG_VISION_REASONING_EFFORT_ENABLED,
     CONFIG_DEFAULT_REASONING_EFFORT,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -82,6 +81,7 @@ from config import (
     CONFIG_SPEECH_SERVICE_LOCATION,
     CONFIG_SPEECH_SERVICE_TOKEN,
     CONFIG_SPEECH_SERVICE_VOICE,
+    CONFIG_STREAMING_ENABLED,
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
@@ -297,7 +297,7 @@ def config():
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
-            "showVisionReasoningEffortOption": current_app.config[CONFIG_VISION_REASONING_EFFORT_ENABLED],
+            "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED],
             "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
@@ -649,7 +649,7 @@ async def setup_clients():
     )
     current_app.config[CONFIG_DEFAULT_REASONING_EFFORT] = OPENAI_REASONING_EFFORT
     current_app.config[CONFIG_REASONING_EFFORT_ENABLED] = OPENAI_CHATGPT_MODEL in Approach.GPT_REASONING_MODELS
-    current_app.config[CONFIG_VISION_REASONING_EFFORT_ENABLED] = AZURE_OPENAI_GPT4V_MODEL in Approach.GPT_REASONING_MODELS
+    current_app.config[CONFIG_STREAMING_ENABLED] = OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER
@@ -702,6 +702,9 @@ async def setup_clients():
         current_app.logger.info("USE_GPT4V is true, setting up GPT4V approach")
         if not AZURE_OPENAI_GPT4V_MODEL:
             raise ValueError("AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
+        if any(model in Approach.GPT_REASONING_MODELS for model in [OPENAI_CHATGPT_MODEL, AZURE_OPENAI_GPT4V_MODEL, AZURE_OPENAI_CHATGPT_DEPLOYMENT, AZURE_OPENAI_GPT4V_DEPLOYMENT]):
+            raise ValueError("AZURE_OPENAI_CHATGPT_MODEL and AZURE_OPENAI_GPT4V_MODEL must not be a reasoning model when USE_GPT4V is true")
+
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
@@ -721,7 +724,6 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
-            reasoning_effort=OPENAI_REASONING_EFFORT,
         )
 
         current_app.config[CONFIG_CHAT_VISION_APPROACH] = ChatReadRetrieveReadVisionApproach(
@@ -743,7 +745,6 @@ async def setup_clients():
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
-            reasoning_effort=OPENAI_REASONING_EFFORT,
         )
 
 

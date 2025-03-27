@@ -26,6 +26,7 @@ from azure.search.documents.models import (
 from openai import AsyncOpenAI
 from openai.types import CompletionUsage
 from openai.types.chat import (
+    ChatCompletion,
     ChatCompletionDeveloperMessageParam,
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
@@ -96,7 +97,6 @@ class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
-    tag: Optional[str] = None
 
     def update_token_usage(self, usage: CompletionUsage) -> None:
         if self.props:
@@ -114,7 +114,6 @@ class ExtraInfo:
     data_points: DataPoints
     thoughts: Optional[List[ThoughtStep]] = None
     followup_questions: Optional[List[Any]] = None
-    answer_thought_tag: Optional[str] = None
 
 
 @dataclass
@@ -134,14 +133,6 @@ class TokenUsageProps:
             ),
             total_tokens=usage.total_tokens,
         )
-
-    def update_usage(self, usage: CompletionUsage) -> None:
-        self.prompt_tokens = usage.prompt_tokens
-        self.completion_tokens = usage.completion_tokens
-        self.reasoning_tokens = (
-            usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
-        )
-        self.total_tokens = usage.total_tokens
 
 
 # GPT reasoning models don't support the same set of parameters as other models
@@ -189,6 +180,7 @@ class Approach(ABC):
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        include_token_usage: Optional[bool] = None
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -203,6 +195,7 @@ class Approach(ABC):
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
+        self.include_token_usage = include_token_usage
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -371,7 +364,7 @@ class Approach(ABC):
 
         return self.RESPONSE_DEFAULT_TOKEN_LIMIT
 
-    def get_chat_completion_params(
+    def create_chat_completion(
         self,
         chatgpt_deployment: Optional[str],
         chatgpt_model: str,
@@ -383,20 +376,10 @@ class Approach(ABC):
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None
-    ) -> dict[str, Any]:
-        # Common set of parameters for all models
-        common_params = {
-            # Azure OpenAI takes the deployment name as the model name
-            "model": chatgpt_deployment if chatgpt_deployment else chatgpt_model,
-            "messages": messages,
-            "seed": overrides.get("seed", None),
-            "n": n or 1,
-        }
+    ) -> ChatCompletion:
         response_token_limit = response_token_limit or self.get_response_token_limit(chatgpt_model)
-
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params = {
-                **common_params,
                 # max_tokens is not supported
                 "max_completion_tokens": response_token_limit,
             }
@@ -418,21 +401,25 @@ class Approach(ABC):
                 developer_message = cast(ChatCompletionDeveloperMessageParam, messages[0])
                 developer_message["role"] = "developer"
 
-            params["messages"] = messages
-            return params
-
-        # Include parameters that may not be supported for reasoning models
-        params = {
-            **common_params,
-            "max_tokens": response_token_limit,
-            "temperature": temperature or overrides.get("temperature", 0.3),
-            "tools": tools,
-        }
+        else:
+            # Include parameters that may not be supported for reasoning models
+            params = {
+                "max_tokens": response_token_limit,
+                "temperature": temperature or overrides.get("temperature", 0.3),
+                "tools": tools,
+            }
         if should_stream:
             params["stream"] = True
             params["stream_options"] = {"include_usage": True}
 
-        return params
+        # Azure OpenAI takes the deployment name as the model name
+        return self.openai_client.chat.completions.create(
+            model=chatgpt_deployment if chatgpt_deployment else chatgpt_model,
+            messages=messages,
+            seed=overrides.get("seed", None),
+            n=n or 1,
+            **params
+        )
 
     def create_generate_thought_step(
         self,
@@ -442,7 +429,6 @@ class Approach(ABC):
         model: str,
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
-        tag: Optional[str] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
     ) -> ThoughtStep:
         properties: Dict[str, Any] = {"model": model}
@@ -453,7 +439,7 @@ class Approach(ABC):
             properties["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort", self.reasoning_effort)
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
-        return ThoughtStep(title, messages, properties, tag)
+        return ThoughtStep(title, messages, properties)
 
     async def run(
         self,

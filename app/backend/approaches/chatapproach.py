@@ -65,11 +65,9 @@ class ChatApproach(Approach, ABC):
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
-        for thought in extra_info.thoughts:
-            # Assume usage is for answer step, update usage
-            if thought.tag == extra_info.answer_thought_tag:
-                thought.update_token_usage(chat_completion_response.usage)
-                break
+        # Assume last thought is for generating answer
+        if self.include_token_usage:
+            extra_info.thoughts[-1].update_token_usage(chat_completion_response.usage)
         chat_app_response = {
             "message": {"content": content, "role": role},
             "context": extra_info,
@@ -120,13 +118,8 @@ class ChatApproach(Approach, ABC):
             else:
                 # Final chunk at end of streaming should contain usage
                 # https://cookbook.openai.com/examples/how_to_stream_completions#4-how-to-get-token-usage-data-for-streamed-chat-completion-response
-                if event_chunk.usage and extra_info.answer_thought_tag and extra_info.thoughts:
-                    for thought in extra_info.thoughts:
-                        # Assume usage is for answer step, update usage
-                        if thought.tag == extra_info.answer_thought_tag:
-                            thought.update_token_usage(event_chunk.usage)
-                            break
-
+                if event_chunk.usage and extra_info.thoughts and self.include_token_usage:
+                    extra_info.thoughts[-1].update_token_usage(event_chunk.usage)
                     yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
         if followup_content:

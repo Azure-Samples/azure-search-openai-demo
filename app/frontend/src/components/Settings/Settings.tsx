@@ -5,7 +5,6 @@ import { HelpCallout } from "../HelpCallout";
 import { GPT4VSettings } from "../GPT4VSettings";
 import { VectorSettings } from "../VectorSettings";
 import { RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
-import { OptionSlider } from "../OptionSlider";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -31,7 +30,6 @@ export interface SettingsProps {
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
-    showVisionReasoningEffortOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -41,6 +39,7 @@ export interface SettingsProps {
     requireAccessControl: boolean;
     className?: string;
     onChange: (field: string, value: any) => void;
+    streamingEnabled?: boolean; // Only used in chat
     shouldStream?: boolean; // Only used in Chat
     useSuggestFollowupQuestions?: boolean; // Only used in Chat
     promptTemplatePrefix?: string;
@@ -68,7 +67,6 @@ export const Settings = ({
     showSemanticRankerOption,
     showQueryRewritingOption,
     showReasoningEffortOption,
-    showVisionReasoningEffortOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -78,6 +76,7 @@ export const Settings = ({
     requireAccessControl,
     className,
     onChange,
+    streamingEnabled,
     shouldStream,
     useSuggestFollowupQuestions,
     promptTemplatePrefix,
@@ -267,6 +266,22 @@ export const Settings = ({
                 </>
             )}
 
+            {showReasoningEffortOption && (
+                <Dropdown
+                    id={reasoningEffortFieldId}
+                    selectedKey={reasoningEffort}
+                    label={t("labels.reasoningEffort")}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => onChange("reasoningEffort", option?.key || "")}
+                    aria-labelledby={reasoningEffortFieldId}
+                    options={[
+                        { key: "low", text: t("labels.reasoningEffortOptions.low") },
+                        { key: "medium", text: t("labels.reasoningEffortOptions.medium") },
+                        { key: "high", text: t("labels.reasoningEffortOptions.high") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
+                />
+            )}
+
             {useLogin && (
                 <>
                     <Checkbox
@@ -303,19 +318,6 @@ export const Settings = ({
                 />
             )}
 
-            {(useGPT4V ? showVisionReasoningEffortOption : showReasoningEffortOption) && (
-                <OptionSlider
-                    id={reasoningEffortFieldId}
-                    value={reasoningEffort}
-                    label={t("labels.reasoningEffort")}
-                    options={["Low", "Medium", "High"]}
-                    defaultValue="Medium"
-                    onChange={val => onChange("reasoningEffort", val.toLowerCase())}
-                    aria-labelledby={reasoningEffortFieldId}
-                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
-                />
-            )}
-
             {showVectorOption && (
                 <VectorSettings
                     defaultRetrievalMode={retrievalMode}
@@ -329,6 +331,7 @@ export const Settings = ({
             {shouldStream !== undefined && (
                 <Checkbox
                     id={shouldStreamFieldId}
+                    disabled={!streamingEnabled}
                     className={styles.settingsSeparator}
                     checked={shouldStream}
                     label={t("labels.shouldStream")}

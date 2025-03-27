@@ -53,6 +53,7 @@ class RetrieveThenReadApproach(Approach):
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
+        self.include_token_usage = True
 
     async def run(
         self,
@@ -102,13 +103,11 @@ class RetrieveThenReadApproach(Approach):
             | {"user_query": q, "text_sources": text_sources},
         )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            **self.get_chat_completion_params(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages=rendered_answer_prompt.all_messages,
-                overrides=overrides,
-            )
+        chat_completion: ChatCompletion = await self.create_chat_completion(
+            self.chatgpt_deployment,
+            self.chatgpt_model,
+            messages=rendered_answer_prompt.all_messages,
+            overrides=overrides,
         )
 
         extra_info = ExtraInfo(
@@ -137,8 +136,7 @@ class RetrieveThenReadApproach(Approach):
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
-                    usage=chat_completion.usage,
-                    tag="generate_answer",
+                    usage=chat_completion.usage
                 ),
             ],
         )

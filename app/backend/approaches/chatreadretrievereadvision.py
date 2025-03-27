@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, List, Optional
+from typing import Any, Awaitable, Callable, Coroutine, List, Optional, Union
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -11,7 +11,7 @@ from openai.types.chat import (
 )
 from openai_messages_token_helper import build_messages, get_token_limit
 
-from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
+from approaches.approach import ExtraInfo, DataPoints, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -46,7 +46,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
-        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.blob_container_client = blob_container_client
@@ -70,7 +69,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question_vision.prompty")
-        self.reasoning_effort = reasoning_effort
+        self.include_token_usage = False
 
     async def run_until_final_call(
         self,
@@ -78,7 +77,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
+    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+        seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -97,12 +97,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
-        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.gpt4v_model)
-        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
-            raise Exception(
-                f"{self.gpt4v_model} does not support streaming. Please use a different model or disable streaming."
-            )
-
         # Use prompty to prepare the query prompt
         rendered_query_prompt = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
@@ -110,9 +104,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
+        query_response_token_limit = 100
         query_model = self.chatgpt_model
-        print(f"Using {query_model} for query generation")
         query_deployment = self.chatgpt_deployment
         query_messages = build_messages(
             model=query_model,
@@ -121,20 +114,17 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             past_messages=rendered_query_prompt.past_messages,
             new_user_content=rendered_query_prompt.new_user_content,
             max_tokens=self.chatgpt_token_limit - query_response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            **self.get_chat_completion_params(
-                chatgpt_deployment=query_deployment,
-                chatgpt_model=query_model,
-                messages=query_messages,
-                overrides=overrides,
-                response_token_limit=query_response_token_limit,
-                temperature=0.0,  # Minimize creativity for search query generation
-                tools=tools,
-                reasoning_effort="low",  # Minimize reasoning for search query generation
-            )
+            messages=query_messages,
+            # Azure OpenAI takes the deployment name as the model name
+            model=query_deployment if query_deployment else query_model,
+            temperature=0.0,  # Minimize creativity for search query generation
+            max_tokens=query_response_token_limit,
+            n=1,
+            tools=tools,
+            seed=seed,
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -189,7 +179,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             },
         )
 
-        response_token_limit = self.get_response_token_limit(self.chatgpt_model)
+        response_token_limit = 1024
         messages = build_messages(
             model=self.gpt4v_model,
             system_prompt=rendered_answer_prompt.system_content,
@@ -201,16 +191,15 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources, images=image_sources),
-            thoughts=[
-                self.create_generate_thought_step(
-                    title="Prompt to generate search query",
-                    messages=query_messages,
-                    overrides=overrides,
-                    model=query_model,
-                    deployment=query_deployment,
-                    usage=chat_completion.usage,
-                    tag="generate_query",
-                    reasoning_effort="low"
+            [
+                ThoughtStep(
+                    "Prompt to generate search query",
+                    query_messages,
+                    (
+                        {"model": query_model, "deployment": query_deployment}
+                        if query_deployment
+                        else {"model": query_model}
+                    ),
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -229,27 +218,25 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.create_generate_thought_step(
-                    title="Prompt to generate answer",
-                    messages=messages,
-                    overrides=overrides,
-                    model=self.gpt4v_model,
-                    deployment=self.gpt4v_deployment,
-                    usage=None,
-                    tag="generate_answer",
+                ThoughtStep(
+                    "Prompt to generate answer",
+                    messages,
+                    (
+                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                        if self.gpt4v_deployment
+                        else {"model": self.gpt4v_model}
+                    ),
                 ),
-            ],
-            answer_thought_tag="generate_answer",
+            ]
         )
 
-        chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.openai_client.chat.completions.create(
-            **self.get_chat_completion_params(
-                self.gpt4v_deployment,
-                self.gpt4v_model,
-                messages,
-                overrides,
-                should_stream,
-                response_token_limit,
-            )
+        chat_coroutine = self.openai_client.chat.completions.create(
+            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
+            messages=messages,
+            temperature=overrides.get("temperature", 0.3),
+            max_tokens=response_token_limit,
+            n=1,
+            stream=should_stream,
+            seed=seed,
         )
         return (extra_info, chat_coroutine)

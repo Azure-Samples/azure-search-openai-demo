@@ -89,7 +89,7 @@ export type Config = {
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
-    showVisionReasoningEffortOption: boolean;
+    streamingEnabled: boolean;
     showVectorOption: boolean;
     showUserUpload: boolean;
     showLanguagePicker: boolean;

@@ -60,6 +60,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
+        self.include_token_usage = True
 
     async def run_until_final_call(
         self,
@@ -106,17 +107,15 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            **self.get_chat_completion_params(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages=query_messages,
-                overrides=overrides,
-                response_token_limit=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
-                temperature=0.0,  # Minimize creativity for search query generation
-                tools=tools,
-                reasoning_effort="low",  # Minimize reasoning for search query generation
-            )
+        chat_completion: ChatCompletion = await self.create_chat_completion(
+            self.chatgpt_deployment,
+            self.chatgpt_model,
+            messages=query_messages,
+            overrides=overrides,
+            response_token_limit=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
+            temperature=0.0,  # Minimize creativity for search query generation
+            tools=tools,
+            reasoning_effort="low",  # Minimize reasoning for search query generation
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -175,7 +174,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
                     usage=chat_completion.usage,
-                    tag="generate_query",
                     reasoning_effort="low"
                 ),
                 ThoughtStep(
@@ -196,21 +194,21 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     [result.serialize_for_results() for result in results],
                 ),
                 self.create_generate_thought_step(
-                    title="Prompt to generate answer",
-                    messages=messages,
+                    title="Prompt to generate search query",
+                    messages=query_messages,
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
-                    usage=None,
-                    tag="generate_answer",
-                ),
-            ],
-            answer_thought_tag="generate_answer",
+                    usage=None
+                )
+            ]
         )
 
-        chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.openai_client.chat.completions.create(
-            **self.get_chat_completion_params(
-                self.chatgpt_deployment, self.chatgpt_model, messages, overrides, should_stream, response_token_limit
-            )
+        chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.create_chat_completion(
+            self.chatgpt_deployment,
+            self.chatgpt_model, messages,
+            overrides,
+            should_stream,
+            response_token_limit
         )
         return (extra_info, chat_coroutine)

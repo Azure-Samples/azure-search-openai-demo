@@ -92,6 +92,11 @@
         "useSemanticCaptions": "Use semantic captions",
         "useQueryRewriting": "Use query rewriting for retrieval",
         "reasoningEffort": "Reasoning effort",
+        "reasoningEffortOptions": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
         "useGPT4V": "Use GPT vision model",
         "gpt4VInput": {
