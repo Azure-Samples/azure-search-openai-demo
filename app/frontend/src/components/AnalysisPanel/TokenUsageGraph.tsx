@@ -43,7 +43,7 @@ export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({ tokenUsage, re
           </span>
         </div>
       </div>
-      
+
       <div className={styles.tokenBar} style={{ width: calcPercent(total_tokens) }}>
         <span className={styles.tokenLabel}>Total: {total_tokens}</span>
       </div>
