@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, cast, List, Optional
+from typing import Any, Awaitable, Callable, List, Optional, cast
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -206,13 +206,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         )
 
-        chat_coroutine = cast(Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]], self.openai_client.chat.completions.create(
-            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=messages,
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=1024,
-            n=1,
-            stream=should_stream,
-            seed=seed,
-        ))
+        chat_coroutine = cast(
+            Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]],
+            self.openai_client.chat.completions.create(
+                model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
+                messages=messages,
+                temperature=overrides.get("temperature", 0.3),
+                max_tokens=1024,
+                n=1,
+                stream=should_stream,
+                seed=seed,
+            ),
+        )
         return (extra_info, chat_coroutine)
