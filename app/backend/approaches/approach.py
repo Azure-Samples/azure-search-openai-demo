@@ -146,10 +146,6 @@ class GPTReasoningModelSupport:
 
 
 class Approach(ABC):
-
-    # Allows usage of non-GPT model even if no tokenizer is available for accurate token counting
-    # Useful for using local small language models, for example
-    ALLOW_NON_GPT_MODELS = True
     # List of GPT reasoning models support
     GPT_REASONING_MODELS = {
         "o1": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=False),
@@ -220,8 +216,8 @@ class Approach(ABC):
         use_vector_search: bool,
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
-        minimum_search_score: Optional[float],
-        minimum_reranker_score: Optional[float],
+        minimum_search_score: Optional[float] = None,
+        minimum_reranker_score: Optional[float] = None,
         use_query_rewriting: Optional[bool] = None,
     ) -> List[Document]:
         search_text = query_text if use_text_search else ""

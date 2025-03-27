@@ -9,7 +9,6 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
 )
-from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import ExtraInfo, DataPoints, ThoughtStep
 from approaches.chatapproach import ChatApproach
@@ -64,7 +63,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-        self.chatgpt_token_limit = get_token_limit(gpt4v_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
@@ -98,30 +96,18 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
 
         # Use prompty to prepare the query prompt
-        rendered_query_prompt = self.prompt_manager.render_prompt(
+        query_messages = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = 100
-        query_model = self.chatgpt_model
-        query_deployment = self.chatgpt_deployment
-        query_messages = build_messages(
-            model=query_model,
-            system_prompt=rendered_query_prompt.system_content,
-            few_shots=rendered_query_prompt.few_shot_messages,
-            past_messages=rendered_query_prompt.past_messages,
-            new_user_content=rendered_query_prompt.new_user_content,
-            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
-        )
-
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=query_messages,
             # Azure OpenAI takes the deployment name as the model name
-            model=query_deployment if query_deployment else query_model,
+            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
             temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=query_response_token_limit,
+            max_tokens=100,
             n=1,
             tools=tools,
             seed=seed,
@@ -167,7 +153,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 if url:
                     image_sources.append(url)
 
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
+        messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
@@ -179,15 +165,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             },
         )
 
-        response_token_limit = 1024
-        messages = build_messages(
-            model=self.gpt4v_model,
-            system_prompt=rendered_answer_prompt.system_content,
-            past_messages=rendered_answer_prompt.past_messages,
-            new_user_content=rendered_answer_prompt.new_user_content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
-        )
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources, images=image_sources),
@@ -196,9 +173,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Prompt to generate search query",
                     query_messages,
                     (
-                        {"model": query_model, "deployment": query_deployment}
-                        if query_deployment
-                        else {"model": query_model}
+                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                        if self.chatgpt_deployment
+                        else {"model": self.chatgpt_model}
                     ),
                 ),
                 ThoughtStep(
@@ -234,7 +211,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,
             temperature=overrides.get("temperature", 0.3),
-            max_tokens=response_token_limit,
+            max_tokens=1024,
             n=1,
             stream=should_stream,
             seed=seed,

@@ -4,7 +4,6 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
-from openai_messages_token_helper import get_token_limit
 
 from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
@@ -49,7 +48,6 @@ class RetrieveThenReadApproach(Approach):
         self.content_field = content_field
         self.query_language = query_language
         self.query_speller = query_speller
-        self.chatgpt_token_limit = get_token_limit(chatgpt_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
@@ -97,7 +95,7 @@ class RetrieveThenReadApproach(Approach):
 
         # Process results
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
+        messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {"user_query": q, "text_sources": text_sources},
@@ -106,7 +104,7 @@ class RetrieveThenReadApproach(Approach):
         chat_completion: ChatCompletion = await self.create_chat_completion(
             self.chatgpt_deployment,
             self.chatgpt_model,
-            messages=rendered_answer_prompt.all_messages,
+            messages=messages,
             overrides=overrides,
         )
 

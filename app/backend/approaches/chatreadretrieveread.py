@@ -9,7 +9,6 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
 )
-from openai_messages_token_helper import build_messages, get_token_limit
 
 from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
@@ -54,7 +53,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.content_field = content_field
         self.query_language = query_language
         self.query_speller = query_speller
-        self.chatgpt_token_limit = get_token_limit(chatgpt_model, default_to_minimum=self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
@@ -89,24 +87,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
 
-        rendered_query_prompt = self.prompt_manager.render_prompt(
+        query_messages = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         query_response_token_limit = 100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
-        query_messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=rendered_query_prompt.system_content,
-            few_shots=rendered_query_prompt.few_shot_messages,
-            past_messages=rendered_query_prompt.past_messages,
-            new_user_content=rendered_query_prompt.new_user_content,
-            tools=tools,
-            max_tokens=self.chatgpt_token_limit - query_response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
-        )
-
         chat_completion: ChatCompletion = await self.create_chat_completion(
             self.chatgpt_deployment,
             self.chatgpt_model,
@@ -143,7 +130,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
+        messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
@@ -152,16 +139,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 "user_query": original_user_query,
                 "text_sources": text_sources,
             },
-        )
-
-        response_token_limit = self.get_response_token_limit(self.chatgpt_model)
-        messages = build_messages(
-            model=self.chatgpt_model,
-            system_prompt=rendered_answer_prompt.system_content,
-            past_messages=rendered_answer_prompt.past_messages,
-            new_user_content=rendered_answer_prompt.new_user_content,
-            max_tokens=self.chatgpt_token_limit - response_token_limit,
-            fallback_to_default=self.ALLOW_NON_GPT_MODELS,
         )
 
         extra_info = ExtraInfo(
@@ -209,6 +186,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             self.chatgpt_model, messages,
             overrides,
             should_stream,
-            response_token_limit
+            response_token_limit=self.get_response_token_limit(self.chatgpt_model)
         )
         return (extra_info, chat_coroutine)

@@ -6,7 +6,6 @@ from openai import AsyncOpenAI
 from openai.types.chat import (
     ChatCompletionMessageParam,
 )
-from openai_messages_token_helper import get_token_limit
 
 from approaches.approach import Approach, ExtraInfo, DataPoints, ThoughtStep
 from approaches.promptmanager import PromptManager
@@ -56,7 +55,6 @@ class RetrieveThenReadVisionApproach(Approach):
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-        self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
         self.include_token_usage = False
@@ -124,7 +122,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 if url:
                     image_sources.append(url)
 
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
+        messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {"user_query": q, "text_sources": text_sources, "image_sources": image_sources},
@@ -132,7 +130,7 @@ class RetrieveThenReadVisionApproach(Approach):
 
         chat_completion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=rendered_answer_prompt.all_messages,
+            messages=messages,
             temperature=overrides.get("temperature", 0.3),
             max_tokens=1024,
             n=1,
@@ -162,7 +160,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    rendered_answer_prompt.all_messages,
+                    messages,
                     (
                         {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
                         if self.gpt4v_deployment

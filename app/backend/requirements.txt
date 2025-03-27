@@ -216,9 +216,6 @@ oauthlib==3.2.2
 openai==1.63.0
     # via
     #   -r requirements.in
-    #   openai-messages-token-helper
-openai-messages-token-helper==0.1.11
-    # via -r requirements.in
 opentelemetry-api==1.26.0
     # via
     #   azure-core-tracing-opentelemetry
@@ -335,7 +332,6 @@ pendulum==3.0.0
 pillow==10.4.0
     # via
     #   -r requirements.in
-    #   openai-messages-token-helper
 portalocker==2.10.1
     # via msal-extensions
 priority==2.0.0
@@ -413,7 +409,6 @@ tenacity==9.0.0
 tiktoken==0.8.0
     # via
     #   -r requirements.in
-    #   openai-messages-token-helper
     #   opentelemetry-instrumentation-openai
 time-machine==2.15.0
     # via pendulum

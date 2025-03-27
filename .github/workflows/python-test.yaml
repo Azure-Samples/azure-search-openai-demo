@@ -59,7 +59,7 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-fail-under=86
+          run: pytest -s -vv --cov --cov-fail-under=89
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
