@@ -26,7 +26,7 @@ pypdf
 PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
-msgraph-sdk==1.26.0
+msgraph-sdk
 python-dotenv
 prompty
 rich
