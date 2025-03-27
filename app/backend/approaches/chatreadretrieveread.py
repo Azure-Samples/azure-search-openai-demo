@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, List, Optional
+from typing import Any, Awaitable, cast, List, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -96,7 +96,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_response_token_limit = (
             100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
         )
-        chat_completion: ChatCompletion = await self.create_chat_completion(
+        chat_completion = cast(ChatCompletion, await self.create_chat_completion(
             self.chatgpt_deployment,
             self.chatgpt_model,
             messages=query_messages,
@@ -105,7 +105,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             temperature=0.0,  # Minimize creativity for search query generation
             tools=tools,
             reasoning_effort="low",  # Minimize reasoning for search query generation
-        )
+        ))
 
         query_text = self.get_search_query(chat_completion, original_user_query)
 
@@ -183,12 +183,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ],
         )
 
-        chat_coroutine: Awaitable[AsyncStream[ChatCompletionChunk]] = self.create_chat_completion(
+        chat_coroutine  = cast(Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]], self.create_chat_completion(
             self.chatgpt_deployment,
             self.chatgpt_model,
             messages,
             overrides,
             should_stream,
             response_token_limit=self.get_response_token_limit(self.chatgpt_model),
-        )
+        ))
         return (extra_info, chat_coroutine)

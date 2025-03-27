@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Coroutine, List, Optional, Union
+from typing import Any, Awaitable, Callable, cast, List, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -75,7 +75,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -206,7 +206,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             ],
         )
 
-        chat_coroutine = self.openai_client.chat.completions.create(
+        chat_coroutine = cast(Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]], self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
             messages=messages,
             temperature=overrides.get("temperature", 0.3),
@@ -214,5 +214,5 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             n=1,
             stream=should_stream,
             seed=seed,
-        )
+        ))
         return (extra_info, chat_coroutine)

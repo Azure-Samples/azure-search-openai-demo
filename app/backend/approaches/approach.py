@@ -23,10 +23,11 @@ from azure.search.documents.models import (
     VectorizedQuery,
     VectorQuery,
 )
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.chat import (
     ChatCompletion,
+    ChatCompletionChunk,
     ChatCompletionDeveloperMessageParam,
     ChatCompletionMessageParam,
     ChatCompletionReasoningEffort,
@@ -372,10 +373,10 @@ class Approach(ABC):
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
-    ) -> ChatCompletion:
+    ) -> Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]:
         response_token_limit = response_token_limit or self.get_response_token_limit(chatgpt_model)
         if chatgpt_model in self.GPT_REASONING_MODELS:
-            params = {
+            params: Dict[str, Any] = {
                 # max_tokens is not supported
                 "max_completion_tokens": response_token_limit,
             }

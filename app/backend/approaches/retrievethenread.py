@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Awaitable, cast, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -101,12 +101,12 @@ class RetrieveThenReadApproach(Approach):
             | {"user_query": q, "text_sources": text_sources},
         )
 
-        chat_completion: ChatCompletion = await self.create_chat_completion(
+        chat_completion = cast(ChatCompletion, await self.create_chat_completion(
             self.chatgpt_deployment,
             self.chatgpt_model,
             messages=messages,
             overrides=overrides,
-        )
+        ))
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
