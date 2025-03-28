@@ -60,7 +60,10 @@ class IntegratedVectorizerStrategy(Strategy):
         self.category = category
         self.search_info = search_info
 
-    async def create_embedding_skill(self, index_name: str):
+    async def create_embedding_skill(self, index_name: str, embedding_field: str) -> SearchIndexerSkillset:
+        """
+        Create a skillset for the indexer to chunk documents and generate embeddings
+        """
         skillset_name = f"{index_name}-skillset"
 
         split_skill = SplitSkill(
@@ -87,7 +90,7 @@ class IntegratedVectorizerStrategy(Strategy):
             inputs=[
                 InputFieldMappingEntry(name="text", source="/document/pages/*"),
             ],
-            outputs=[OutputFieldMappingEntry(name="embedding", target_name="vector")],
+            outputs=[OutputFieldMappingEntry(name=embedding_field, target_name="vector")],
         )
 
         index_projection = SearchIndexerIndexProjection(
@@ -98,7 +101,7 @@ class IntegratedVectorizerStrategy(Strategy):
                     source_context="/document/pages/*",
                     mappings=[
                         InputFieldMappingEntry(name="content", source="/document/pages/*"),
-                        InputFieldMappingEntry(name="embedding", source="/document/pages/*/vector"),
+                        InputFieldMappingEntry(name=embedding_field, source="/document/pages/*/vector"),
                         InputFieldMappingEntry(name="sourcepage", source="/document/metadata_storage_name"),
                     ],
                 ),

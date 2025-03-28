@@ -55,6 +55,7 @@ class SearchManager:
         use_acls: bool = False,
         use_int_vectorization: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
+        embedding_field: str = "embedding3",  # can we make this not have a default?
         search_images: bool = False,
     ):
         self.search_info = search_info
@@ -63,7 +64,9 @@ class SearchManager:
         self.use_int_vectorization = use_int_vectorization
         self.embeddings = embeddings
         # Integrated vectorization uses the ada-002 model with 1536 dimensions
-        self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else 1536
+        # TODO: Update integrated vectorization too!
+        self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else None
+        self.embedding_field = embedding_field
         self.search_images = search_images
 
     async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
@@ -93,7 +96,7 @@ class SearchManager:
                         analyzer_name=self.search_analyzer_name,
                     ),
                     SearchField(
-                        name="embedding",
+                        name=self.embedding_field,
                         type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                         hidden=False,
                         searchable=True,
@@ -204,9 +207,7 @@ class SearchManager:
                             VectorSearchProfile(
                                 name="embedding_config",
                                 algorithm_configuration_name="hnsw_config",
-                                vectorizer_name=(
-                                    f"{self.search_info.index_name}-vectorizer" if self.use_int_vectorization else None
-                                ),
+                                vectorizer_name=(f"{self.search_info.index_name}-vectorizer"),
                             ),
                         ],
                         vectorizers=vectorizers,
@@ -228,7 +229,24 @@ class SearchManager:
                         ),
                     )
                     await search_index_client.create_or_update_index(existing_index)
-
+                # check if embedding field exists
+                if not any(field.name == self.embedding_field for field in existing_index.fields):
+                    logger.info("Adding embedding field to index %s", self.search_info.index_name)
+                    existing_index.fields.append(
+                        SearchField(
+                            name=self.embedding_field,
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                            hidden=False,
+                            searchable=True,
+                            filterable=False,
+                            sortable=False,
+                            facetable=False,
+                            # TODO: use optimizations here
+                            vector_search_dimensions=self.embedding_dimensions,
+                            vector_search_profile_name="embedding_config",
+                        ),
+                    )
+                    await search_index_client.create_or_update_index(existing_index)
                 if existing_index.vector_search is not None and (
                     existing_index.vector_search.vectorizers is None
                     or len(existing_index.vector_search.vectorizers) == 0
@@ -289,7 +307,7 @@ class SearchManager:
                         texts=[section.split_page.text for section in batch]
                     )
                     for i, document in enumerate(documents):
-                        document["embedding"] = embeddings[i]
+                        document[self.embedding_field] = embeddings[i]
                 if image_embeddings:
                     for i, (document, section) in enumerate(zip(documents, batch)):
                         document["imageEmbedding"] = image_embeddings[section.split_page.page_num]

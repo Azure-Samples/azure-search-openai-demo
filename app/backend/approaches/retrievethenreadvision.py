@@ -32,6 +32,7 @@ class RetrieveThenReadVisionApproach(Approach):
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
+        embedding_field: str,
         sourcepage_field: str,
         content_field: str,
         query_language: str,
@@ -47,6 +48,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.embedding_model = embedding_model
         self.embedding_deployment = embedding_deployment
         self.embedding_dimensions = embedding_dimensions
+        self.embedding_field = embedding_field
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.gpt4v_deployment = gpt4v_deployment
@@ -81,7 +83,7 @@ class RetrieveThenReadVisionApproach(Approach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
 
-        vector_fields = overrides.get("vector_fields", ["embedding"])
+        vector_fields = overrides.get("vector_fields", [self.embedding_field])
         send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
@@ -90,9 +92,9 @@ class RetrieveThenReadVisionApproach(Approach):
         if use_vector_search:
             for field in vector_fields:
                 vector = (
-                    await self.compute_text_embedding(q)
-                    if field == "embedding"
-                    else await self.compute_image_embedding(q)
+                    await self.compute_image_embedding(q)
+                    if field.startswith("image")
+                    else await self.compute_text_embedding(q)
                 )
                 vectors.append(vector)
 
