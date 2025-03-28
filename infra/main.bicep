@@ -74,19 +74,16 @@ param chatHistoryDatabaseName string = 'chat-database'
 param chatHistoryContainerName string = 'chat-history-v2'
 param chatHistoryVersion string = 'cosmosdb-v2'
 
-// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cstandard%2Cstandard-chat-completions#standard-deployment-model-availability
+// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=standard%2Cstandard-chat-completions#models-by-deployment-type
 @description('Location for the OpenAI resource group')
 @allowed([
-  'canadaeast'
   'eastus'
   'eastus2'
-  'francecentral'
-  'switzerlandnorth'
-  'uksouth'
-  'japaneast'
   'northcentralus'
-  'australiaeast'
+  'southcentralus'
   'swedencentral'
+  'westus'
+  'westus3'
 ])
 @metadata({
   azd: {
@@ -873,7 +870,8 @@ module ai 'core/ai/ai-environment.bicep' = if (useAiProject) {
   name: 'ai'
   scope: resourceGroup
   params: {
-    location: openAiLocation
+    // Limited region support: https://learn.microsoft.com/azure/ai-foundry/how-to/develop/evaluate-sdk#region-support
+    location: 'eastus2'
     tags: tags
     hubName: 'aihub-${resourceToken}'
     projectName: 'aiproj-${resourceToken}'
