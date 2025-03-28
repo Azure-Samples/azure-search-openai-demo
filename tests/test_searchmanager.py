@@ -258,7 +258,7 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
                             object="embedding",
                         )
                     ],
-                    model="text-embedding-ada-002",
+                    model="text-embedding-3-large",
                     usage=Usage(prompt_tokens=8, total_tokens=8),
                 )
             )
