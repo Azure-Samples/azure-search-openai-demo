@@ -271,7 +271,9 @@ export const Settings = ({
                     id={reasoningEffortFieldId}
                     selectedKey={reasoningEffort}
                     label={t("labels.reasoningEffort")}
-                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => onChange("reasoningEffort", option?.key || "")}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("reasoningEffort", option?.key || "")
+                    }
                     aria-labelledby={reasoningEffortFieldId}
                     options={[
                         { key: "low", text: t("labels.reasoningEffortOptions.low") },
