@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, List, Optional, cast
+from typing import Any, Awaitable, List, Optional, Union, cast
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -66,7 +66,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
+    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -187,7 +187,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         chat_coroutine = cast(
-            Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]],
+            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
             self.create_chat_completion(
                 self.chatgpt_deployment,
                 self.chatgpt_model,

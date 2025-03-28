@@ -1,7 +1,7 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Awaitable, Optional, cast
+from typing import Any, AsyncGenerator, Awaitable, Optional, Union, cast
 
 from openai import AsyncStream
 from openai.types.chat import (
@@ -23,7 +23,7 @@ class ChatApproach(Approach, ABC):
     @abstractmethod
     async def run_until_final_call(
         self, messages, overrides, auth_claims, should_stream
-    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
+    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
         pass
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):

@@ -11,6 +11,7 @@ from typing import (
     List,
     Optional,
     TypedDict,
+    Union,
     cast,
 )
 from urllib.parse import urljoin
@@ -373,7 +374,7 @@ class Approach(ABC):
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
-    ) -> Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]:
+    ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
         response_token_limit = response_token_limit or self.get_response_token_limit(chatgpt_model)
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params: Dict[str, Any] = {
