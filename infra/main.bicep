@@ -74,7 +74,7 @@ param chatHistoryDatabaseName string = 'chat-database'
 param chatHistoryContainerName string = 'chat-history-v2'
 param chatHistoryVersion string = 'cosmosdb-v2'
 
-// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cstandard%2Cstandard-chat-completions#standard-deployment-model-availability
+// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type
 @description('Location for the OpenAI resource group')
 @allowed([
   'australiaeast'
@@ -84,12 +84,22 @@ param chatHistoryVersion string = 'cosmosdb-v2'
   'eastus2'
   'francecentral'
   'germanywestcentral'
-  'switzerlandnorth'
-  'uksouth'
   'japaneast'
+  'koreacentral'
   'northcentralus'
-  'australiaeast'
+  'norwayeast'
+  'polandcentral'
+  'southafricanorth'
+  'southcentralus'
+  'southindia'
+  'spaincentral'
   'swedencentral'
+  'switzerlandnorth'
+  'uaenorth'
+  'uksouth'
+  'westeurope'
+  'westus'
+  'westus3'
 ])
 @metadata({
   azd: {
@@ -138,7 +148,7 @@ var chatGpt = {
   modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-4o-mini'
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4o-mini'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2024-07-18'
-  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard' // TODO, but it will break existing deployments
+  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'GlobalStandard' // Not backward-compatible
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
 
@@ -166,7 +176,7 @@ var gpt4v = {
   modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
   deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'gpt-4o'
   deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'Standard' // TODO, but it will break existing deployments
+  deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'GlobalStandard' // Not-backward compatible
   deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
 
@@ -179,7 +189,7 @@ var eval = {
   modelName: !empty(evalModelName) ? evalModelName : 'gpt-4o'
   deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'gpt-4o'
   deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'Standard' // TODO, but it will break existing deployments
+  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'GlobalStandard' // Not backward-compatible
   deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
 }
 
