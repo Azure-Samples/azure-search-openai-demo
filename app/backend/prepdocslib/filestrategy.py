@@ -19,14 +19,18 @@ async def parse_file(
     file_processors: dict[str, FileProcessor],
     category: Optional[str] = None,
     image_embeddings: Optional[ImageEmbeddings] = None,
-) -> List[Section]:
+) -> Optional[List[Section]]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
         logger.info("Skipping '%s', no parser found.", file.filename())
         return []
     logger.info("Ingesting '%s'", file.filename())
-    pages = [page async for page in processor.parser.parse(content=file.content)]
+    try:
+        pages = [page async for page in processor.parser.parse(content=file.content)]
+    except:
+        logger.exception("There was a problem parsing the file %s, skipping...", file.filename())
+        return None
     logger.info("Splitting '%s' into sections", file.filename())
     if image_embeddings:
         logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
