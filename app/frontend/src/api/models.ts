@@ -21,6 +21,7 @@ export type ChatAppRequestOverrides = {
     semantic_ranker?: boolean;
     semantic_captions?: boolean;
     query_rewriting?: boolean;
+    reasoning_effort?: string;
     include_category?: string;
     exclude_category?: string;
     seed?: number;
@@ -48,7 +49,7 @@ export type ResponseMessage = {
 export type Thoughts = {
     title: string;
     description: any; // It can be any output from the api
-    props?: { [key: string]: string };
+    props?: { [key: string]: any };
 };
 
 export type ResponseContext = {
@@ -83,9 +84,12 @@ export type ChatAppRequest = {
 };
 
 export type Config = {
+    defaultReasoningEffort: string;
     showGPT4VOptions: boolean;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
+    showReasoningEffortOption: boolean;
+    streamingEnabled: boolean;
     showVectorOption: boolean;
     showUserUpload: boolean;
     showLanguagePicker: boolean;

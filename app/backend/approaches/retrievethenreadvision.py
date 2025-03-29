@@ -7,7 +7,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 
-from approaches.approach import Approach, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -57,6 +57,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
+        self.include_token_usage = False
 
     async def run(
         self,
@@ -136,9 +137,9 @@ class RetrieveThenReadVisionApproach(Approach):
             seed=seed,
         )
 
-        extra_info = {
-            "data_points": {"text": text_sources, "images": image_sources},
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources, images=image_sources),
+            [
                 ThoughtStep(
                     "Search using user query",
                     q,
@@ -167,7 +168,7 @@ class RetrieveThenReadVisionApproach(Approach):
                     ),
                 ),
             ],
-        }
+        )
 
         return {
             "message": {
