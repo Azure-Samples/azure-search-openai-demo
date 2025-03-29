@@ -448,7 +448,7 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     appCommandLine: 'python3 -m gunicorn main:app'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
-    virtualNetworkSubnetId: isolation.outputs.appSubnetId
+    virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     publicNetworkAccess: publicNetworkAccess
     allowedOrigins: allowedOrigins
     clientAppId: clientAppId
@@ -489,6 +489,7 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     containerAppsEnvironmentName: acaManagedEnvironmentName
     containerRegistryName: '${containerRegistryName}${resourceToken}'
     logAnalyticsWorkspaceResourceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
+    virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
   }
 }
 
@@ -733,7 +734,7 @@ module searchService 'core/search/search-services.bicep' = {
     publicNetworkAccess: publicNetworkAccess == 'Enabled'
       ? 'enabled'
       : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    sharedPrivateLinkStorageAccounts: usePrivateEndpoint ? [storage.outputs.id] : []
+    sharedPrivateLinkStorageAccounts: (usePrivateEndpoint && useIntegratedVectorization) ? [storage.outputs.id] : []
   }
 }
 
@@ -1100,23 +1101,21 @@ module cosmosDbRoleBackend 'core/security/documentdb-sql-role.bicep' = if (useAu
   }
 }
 
-module isolation 'network-isolation.bicep' = {
+module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
   name: 'networks'
   scope: resourceGroup
   params: {
-    deploymentTarget: deploymentTarget
     location: location
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
-    // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
-    appServicePlanName: deploymentTarget == 'appservice' ? appServicePlan.outputs.name : ''
     usePrivateEndpoint: usePrivateEndpoint
+    containerAppsEnvName: acaManagedEnvironmentName
   }
 }
 
 var environmentData = environment()
 
-var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi && deploymentTarget == 'appservice')
+var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi)
   ? [
       {
         groupId: 'account'
@@ -1130,7 +1129,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
       }
     ]
   : []
-var otherPrivateEndpointConnections = (usePrivateEndpoint && deploymentTarget == 'appservice')
+var otherPrivateEndpointConnections = (usePrivateEndpoint)
   ? [
       {
         groupId: 'blob'
@@ -1143,9 +1142,9 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint && deploymentTarget ==
         resourceIds: [searchService.outputs.id]
       }
       {
-        groupId: 'sites'
-        dnsZoneName: 'privatelink.azurewebsites.net'
-        resourceIds: [backend.outputs.id]
+        groupId: 'managedEnvironments'
+        dnsZoneName: 'privatelink.${location}.azurecontainerapps.io'
+        resourceIds: [containerApps.outputs.environmentId]
       }
       {
         groupId: 'sql'
@@ -1157,7 +1156,7 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint && deploymentTarget ==
 
 var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection)
 
-module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint && deploymentTarget == 'appservice') {
+module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'
   scope: resourceGroup
   params: {
