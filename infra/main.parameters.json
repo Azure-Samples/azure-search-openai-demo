@@ -83,6 +83,9 @@
     "searchServiceQueryRewriting": {
       "value": "${AZURE_SEARCH_QUERY_REWRITING=false}"
     },
+    "defaultReasoningEffort": {
+      "value": "${AZURE_OPENAI_REASONING_EFFORT=medium}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
