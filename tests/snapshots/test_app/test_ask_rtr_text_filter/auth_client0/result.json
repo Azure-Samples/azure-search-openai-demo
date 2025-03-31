@@ -1,10 +1,12 @@
 {
     "context": {
         "data_points": {
+            "images": null,
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
         },
+        "followup_questions": null,
         "thoughts": [
             {
                 "description": "What is the capital of France?",

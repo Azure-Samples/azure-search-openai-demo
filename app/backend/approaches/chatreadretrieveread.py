@@ -176,8 +176,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     [result.serialize_for_results() for result in results],
                 ),
                 self.create_generate_thought_step(
-                    title="Prompt to generate search query",
-                    messages=query_messages,
+                    title="Prompt to generate answer",
+                    messages=messages,
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
