@@ -185,14 +185,14 @@ class SearchManager:
                     )
 
                 vector_search = None
-                if self.embeddings:
+                if self.embeddings and embedding_field:
                     logger.info("Including embedding field in new index %s", self.search_info.index_name)
                     fields.append(embedding_field)
 
-                    vectorizers = []
+                    vectorizers = None
                     if vectorizer is not None:
                         logger.info("Including vectorizer in new index %s", self.search_info.index_name)
-                        vectorizers.append(vectorizer)
+                        vectorizers = [vectorizer]
                     else:
                         logger.info(
                             "New index %s will not have vectorizer, since no Azure OpenAI service is set",
