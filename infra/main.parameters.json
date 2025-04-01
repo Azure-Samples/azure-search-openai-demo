@@ -83,6 +83,9 @@
     "searchServiceQueryRewriting": {
       "value": "${AZURE_SEARCH_QUERY_REWRITING=false}"
     },
+    "searchFieldNameEmbedding": {
+      "value": "${AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding3}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },

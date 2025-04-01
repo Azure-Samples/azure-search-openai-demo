@@ -6,8 +6,10 @@ from typing import List, Optional
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
     AzureOpenAIVectorizerParameters,
+    BinaryQuantizationCompression,
     HnswAlgorithmConfiguration,
     HnswParameters,
+    RescoringOptions,
     SearchableField,
     SearchField,
     SearchFieldDataType,
@@ -18,8 +20,8 @@ from azure.search.documents.indexes.models import (
     SemanticSearch,
     SimpleField,
     VectorSearch,
+    VectorSearchCompressionRescoreStorageMethod,
     VectorSearchProfile,
-    VectorSearchVectorizer,
 )
 
 from .blobmanager import BlobManager
@@ -69,10 +71,43 @@ class SearchManager:
         self.embedding_field = embedding_field
         self.search_images = search_images
 
-    async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
+    async def create_index(self):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
+
+            vectorizer = None
+            embedding_field = None
+            if self.embeddings and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                vectorizer = AzureOpenAIVectorizer(
+                    vectorizer_name=f"{self.search_info.index_name}-vectorizer",
+                    parameters=AzureOpenAIVectorizerParameters(
+                        resource_url=self.embeddings.open_ai_endpoint,
+                        deployment_name=self.embeddings.open_ai_deployment,
+                        model_name=self.embeddings.open_ai_model_name,
+                    ),
+                )
+            if self.embeddings:
+                if self.embedding_dimensions is None:
+                    raise ValueError(
+                        "Embedding dimensions must be set in order to add an embedding field to the search index"
+                    )
+                if self.embedding_field is None:
+                    raise ValueError(
+                        "Embedding field must be set in order to add an embedding field to the search index"
+                    )
+                embedding_field = SearchField(
+                    name=self.embedding_field,
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    hidden=True,
+                    searchable=True,
+                    filterable=False,
+                    sortable=False,
+                    facetable=False,
+                    vector_search_dimensions=self.embedding_dimensions,
+                    vector_search_profile_name="embedding_config",
+                    stored=False,
+                )
 
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
                 logger.info("Creating new search index %s", self.search_info.index_name)
@@ -94,17 +129,6 @@ class SearchManager:
                         name="content",
                         type="Edm.String",
                         analyzer_name=self.search_analyzer_name,
-                    ),
-                    SearchField(
-                        name=self.embedding_field,
-                        type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                        hidden=False,
-                        searchable=True,
-                        filterable=False,
-                        sortable=False,
-                        facetable=False,
-                        vector_search_dimensions=self.embedding_dimensions,
-                        vector_search_profile_name="embedding_config",
                     ),
                     SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
                     SimpleField(
@@ -160,27 +184,50 @@ class SearchManager:
                         ),
                     )
 
-                vectorizers = []
-                if self.embeddings and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
-                    logger.info(
-                        "Including vectorizer for search index %s, using Azure OpenAI service %s",
-                        self.search_info.index_name,
-                        self.embeddings.open_ai_service,
-                    )
-                    vectorizers.append(
-                        AzureOpenAIVectorizer(
-                            vectorizer_name=f"{self.search_info.index_name}-vectorizer",
-                            parameters=AzureOpenAIVectorizerParameters(
-                                resource_url=self.embeddings.open_ai_endpoint,
-                                deployment_name=self.embeddings.open_ai_deployment,
-                                model_name=self.embeddings.open_ai_model_name,
-                            ),
+                vector_search = None
+                if self.embeddings:
+                    logger.info("Including embedding field in new index %s", self.search_info.index_name)
+                    fields.append(embedding_field)
+
+                    vectorizers = []
+                    if vectorizer is not None:
+                        logger.info("Including vectorizer in new index %s", self.search_info.index_name)
+                        vectorizers.append(vectorizer)
+                    else:
+                        logger.info(
+                            "New index %s will not have vectorizer, since no Azure OpenAI service is set",
+                            self.search_info.index_name,
                         )
-                    )
-                else:
-                    logger.info(
-                        "Not including vectorizer for search index %s, no Azure OpenAI service found",
-                        self.search_info.index_name,
+
+                    vector_search = VectorSearch(
+                        profiles=[
+                            VectorSearchProfile(
+                                name="embedding_config",
+                                algorithm_configuration_name="hnsw_config",
+                                compression_name="binary-quantization",
+                                **({"vectorizer_name": vectorizer.vectorizer_name if vectorizer else None}),
+                            ),
+                        ],
+                        algorithms=[
+                            HnswAlgorithmConfiguration(
+                                name="hnsw_config",
+                                parameters=HnswParameters(metric="cosine"),
+                            )
+                        ],
+                        vectorizers=vectorizers,
+                        compressions=[
+                            BinaryQuantizationCompression(
+                                compression_name="binary-quantization",
+                                rescoring_options=RescoringOptions(
+                                    enable_rescoring=True,
+                                    default_oversampling=10,
+                                    rescore_storage_method=VectorSearchCompressionRescoreStorageMethod.PRESERVE_ORIGINALS,
+                                ),
+                                # Explicitly set deprecated parameters to None
+                                rerank_with_original_vectors=None,
+                                default_oversampling=None,
+                            )
+                        ],
                     )
 
                 index = SearchIndex(
@@ -196,22 +243,7 @@ class SearchManager:
                             )
                         ]
                     ),
-                    vector_search=VectorSearch(
-                        algorithms=[
-                            HnswAlgorithmConfiguration(
-                                name="hnsw_config",
-                                parameters=HnswParameters(metric="cosine"),
-                            )
-                        ],
-                        profiles=[
-                            VectorSearchProfile(
-                                name="embedding_config",
-                                algorithm_configuration_name="hnsw_config",
-                                vectorizer_name=(f"{self.search_info.index_name}-vectorizer"),
-                            ),
-                        ],
-                        vectorizers=vectorizers,
-                    ),
+                    vector_search=vector_search,
                 )
 
                 await search_index_client.create_index(index)
@@ -229,23 +261,10 @@ class SearchManager:
                         ),
                     )
                     await search_index_client.create_or_update_index(existing_index)
-                # check if embedding field exists
-                if not any(field.name == self.embedding_field for field in existing_index.fields):
+                # check if embedding field exists - TODO: will this really work if we havent redfined vector search?
+                if self.embeddings and not any(field.name == self.embedding_field for field in existing_index.fields):
                     logger.info("Adding embedding field to index %s", self.search_info.index_name)
-                    existing_index.fields.append(
-                        SearchField(
-                            name=self.embedding_field,
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                            hidden=False,
-                            searchable=True,
-                            filterable=False,
-                            sortable=False,
-                            facetable=False,
-                            # TODO: use optimizations here
-                            vector_search_dimensions=self.embedding_dimensions,
-                            vector_search_profile_name="embedding_config",
-                        ),
-                    )
+                    existing_index.fields.append(embedding_field)
                     await search_index_client.create_or_update_index(existing_index)
                 if existing_index.vector_search is not None and (
                     existing_index.vector_search.vectorizers is None
@@ -253,21 +272,12 @@ class SearchManager:
                 ):
                     if self.embeddings is not None and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
                         logger.info("Adding vectorizer to search index %s", self.search_info.index_name)
-                        existing_index.vector_search.vectorizers = [
-                            AzureOpenAIVectorizer(
-                                vectorizer_name=f"{self.search_info.index_name}-vectorizer",
-                                parameters=AzureOpenAIVectorizerParameters(
-                                    resource_url=self.embeddings.open_ai_endpoint,
-                                    deployment_name=self.embeddings.open_ai_deployment,
-                                    model_name=self.embeddings.open_ai_model_name,
-                                ),
-                            )
-                        ]
+                        existing_index.vector_search.vectorizers = [vectorizer]
                         await search_index_client.create_or_update_index(existing_index)
                     else:
                         logger.info(
-                            "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
-                            self.search_info,
+                            "Search index %s will not have vectorizer, since no Azure OpenAI service is set",
+                            self.search_info.index_name,
                         )
 
     async def update_content(

@@ -456,6 +456,8 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER") or "lexicon"
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
     AZURE_SEARCH_QUERY_REWRITING = os.getenv("AZURE_SEARCH_QUERY_REWRITING", "false").lower()
+    # This defaults to the previous field name "embedding", for backwards compatibility
+    AZURE_SEARCH_FIELD_NAME_EMBEDDING = os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding")
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
@@ -662,6 +664,7 @@ async def setup_clients():
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -679,6 +682,7 @@ async def setup_clients():
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -704,6 +708,7 @@ async def setup_clients():
             embedding_model=OPENAI_EMB_MODEL,
             embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
             embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+            embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
             sourcepage_field=KB_FIELDS_SOURCEPAGE,
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -725,6 +730,7 @@ async def setup_clients():
             embedding_model=OPENAI_EMB_MODEL,
             embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
             embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+            embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
             sourcepage_field=KB_FIELDS_SOURCEPAGE,
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,

@@ -57,6 +57,8 @@ def run_server(port: int):
             "AZURE_SPEECH_SERVICE_LOCATION": "eastus",
             "AZURE_OPENAI_SERVICE": "test-openai-service",
             "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4o-mini",
+            "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+            "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         },
         clear=True,
     ):

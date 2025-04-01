@@ -47,6 +47,8 @@ class Document:
         result_dict = {
             "id": self.id,
             "content": self.content,
+            # Should we rename to its actual field name in the index?
+            "embedding": Document.trim_embedding(self.embedding),
             "imageEmbedding": Document.trim_embedding(self.image_embedding),
             "category": self.category,
             "sourcepage": self.sourcepage,
@@ -68,7 +70,6 @@ class Document:
             "score": self.score,
             "reranker_score": self.reranker_score,
         }
-        result_dict[self.embedding_field] = Document.trim_embedding(self.embedding)
         return result_dict
 
     @classmethod
@@ -258,7 +259,7 @@ class Approach(ABC):
         )
         query_vector = embedding.data[0].embedding
         # TODO: use optimizations from rag time journey 3
-        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding)
+        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
     async def compute_image_embedding(self, q: str):
         endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
