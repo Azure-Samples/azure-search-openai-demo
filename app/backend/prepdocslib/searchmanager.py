@@ -218,6 +218,7 @@ class SearchManager:
                         compressions=[
                             BinaryQuantizationCompression(
                                 compression_name="binary-quantization",
+                                truncation_dimension=1024,
                                 rescoring_options=RescoringOptions(
                                     enable_rescoring=True,
                                     default_oversampling=10,
