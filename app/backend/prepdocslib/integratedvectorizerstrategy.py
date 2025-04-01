@@ -41,6 +41,8 @@ class IntegratedVectorizerStrategy(Strategy):
         blob_manager: BlobManager,
         search_info: SearchInfo,
         embeddings: AzureOpenAIEmbeddingService,
+        search_field_name_embedding: str,
+        search_field_name_image_embedding: str,
         subscription_id: str,
         search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
@@ -53,6 +55,8 @@ class IntegratedVectorizerStrategy(Strategy):
         self.blob_manager = blob_manager
         self.document_action = document_action
         self.embeddings = embeddings
+        self.search_field_name_embedding = search_field_name_embedding
+        self.search_field_name_image_embedding = search_field_name_image_embedding
         self.subscription_id = subscription_id
         self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
@@ -60,7 +64,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self.category = category
         self.search_info = search_info
 
-    async def create_embedding_skill(self, index_name: str, embedding_field: str) -> SearchIndexerSkillset:
+    async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
         """
         Create a skillset for the indexer to chunk documents and generate embeddings
         """
@@ -90,7 +94,7 @@ class IntegratedVectorizerStrategy(Strategy):
             inputs=[
                 InputFieldMappingEntry(name="text", source="/document/pages/*"),
             ],
-            outputs=[OutputFieldMappingEntry(name=embedding_field, target_name="vector")],
+            outputs=[OutputFieldMappingEntry(name=self.search_field_name_embedding, target_name="vector")],
         )
 
         index_projection = SearchIndexerIndexProjection(
@@ -101,8 +105,10 @@ class IntegratedVectorizerStrategy(Strategy):
                     source_context="/document/pages/*",
                     mappings=[
                         InputFieldMappingEntry(name="content", source="/document/pages/*"),
-                        InputFieldMappingEntry(name=embedding_field, source="/document/pages/*/vector"),
                         InputFieldMappingEntry(name="sourcepage", source="/document/metadata_storage_name"),
+                        InputFieldMappingEntry(
+                            name=self.search_field_name_embedding, source="/document/pages/*/vector"
+                        ),
                     ],
                 ),
             ],
@@ -128,6 +134,8 @@ class IntegratedVectorizerStrategy(Strategy):
             use_acls=self.use_acls,
             use_int_vectorization=True,
             embeddings=self.embeddings,
+            field_name_embedding=self.search_field_name_embedding,
+            field_name_image_embedding=self.search_field_name_image_embedding,
             search_images=False,
         )
 
