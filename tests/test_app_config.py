@@ -262,6 +262,7 @@ async def test_app_config_for_client(client):
     assert result["streamingEnabled"] is True
     assert result["showReasoningEffortOption"] is False
 
+
 @pytest.mark.asyncio
 async def test_app_config_for_reasoning(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o3-mini")
@@ -275,6 +276,7 @@ async def test_app_config_for_reasoning(monkeypatch, minimal_env):
         assert result["streamingEnabled"] is True
         assert result["showReasoningEffortOption"] is True
 
+
 @pytest.mark.asyncio
 async def test_app_config_for_reasoning_without_streaming(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o1-preview")
@@ -287,6 +289,7 @@ async def test_app_config_for_reasoning_without_streaming(monkeypatch, minimal_e
         result = await response.get_json()
         assert result["streamingEnabled"] is False
         assert result["showReasoningEffortOption"] is True
+
 
 @pytest.mark.asyncio
 async def test_app_config_for_reasoning_override_effort(monkeypatch, minimal_env):
