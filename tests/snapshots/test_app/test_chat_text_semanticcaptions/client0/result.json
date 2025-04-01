@@ -36,7 +36,13 @@
                     }
                 ],
                 "props": {
-                    "model": "gpt-4o-mini"
+                    "model": "gpt-4o-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
                 },
                 "title": "Prompt to generate search query"
             },
@@ -91,7 +97,13 @@
                     }
                 ],
                 "props": {
-                    "model": "gpt-4o-mini"
+                    "model": "gpt-4o-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
                 },
                 "title": "Prompt to generate answer"
             }
