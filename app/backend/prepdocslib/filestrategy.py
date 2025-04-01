@@ -136,12 +136,25 @@ class UploadUserFileStrategy:
         file_processors: dict[str, FileProcessor],
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
+        search_field_name_embedding: Optional[str] = None,
+        search_field_name_image_embedding: Optional[str] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_info = search_info
-        self.search_manager = SearchManager(self.search_info, None, True, False, self.embeddings)
+        self.search_manager = SearchManager(
+            search_info=self.search_info,
+            search_analyzer_name=None,
+            use_acls=True,
+            use_int_vectorization=False,
+            embeddings=self.embeddings,
+            field_name_embedding=search_field_name_embedding,
+            field_name_image_embedding=search_field_name_image_embedding,
+            search_images=False,
+        )
+        self.search_field_name_embedding = search_field_name_embedding
+        self.search_field_name_image_embedding = search_field_name_image_embedding
 
     async def add_file(self, file: File):
         if self.image_embeddings:

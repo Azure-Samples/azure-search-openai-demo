@@ -28,6 +28,7 @@ param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
 param searchFieldNameEmbedding string // Set in main.parameters.json
+param searchFieldNameImageEmbedding string // Set in main.parameters.json
 var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free')
   ? 'disabled'
   : searchServiceSemanticRankerLevel
@@ -392,6 +393,7 @@ var appEnvVariables = {
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
+  AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING: searchFieldNameImageEmbedding
   APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights
     ? monitoring.outputs.applicationInsightsConnectionString
     : ''
@@ -1288,6 +1290,7 @@ output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.n
 output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
 output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
 output AZURE_SEARCH_FIELD_NAME_EMBEDDING string = searchFieldNameEmbedding
+output AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING string = searchFieldNameEmbedding
 
 output AZURE_COSMOSDB_ACCOUNT string = (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
 output AZURE_CHAT_HISTORY_DATABASE string = chatHistoryDatabaseName

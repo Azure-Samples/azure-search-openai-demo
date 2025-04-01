@@ -86,6 +86,9 @@
     "searchFieldNameEmbedding": {
       "value": "${AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding3}"
     },
+    "searchFieldNameImageEmbedding": {
+      "value": "${AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING=imageEmbedding}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
