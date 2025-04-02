@@ -19,9 +19,22 @@ This repository includes an optional feature that uses reasoning models to gener
 
    Set the environment variables for your Azure OpenAI GPT deployments to your reasoning model
 
+   For o3-mini:
+
    ```shell
    azd env set AZURE_OPENAI_CHATGPT_MODEL o3-mini
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o3-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-01-31
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   ```
+
+   For o1:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL o1
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o1
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-12-17
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
    ```
 
 2. **(Optional) Set default reasoning effort**
@@ -34,14 +47,23 @@ This repository includes an optional feature that uses reasoning models to gener
    azd env set AZURE_OPENAI_REASONING_EFFORT medium
    ```
 
-3. **Clean old deployments (optional):**
-   Run `azd down --purge` for a fresh setup.
+3. **Update the infrastructure and application:**
 
-4. **Start the application:**
-   Execute `azd up` to build, provision, deploy, and initiate document preparation.
+   Execute `azd up` to provision the infrastructure changes (only the new model, if you ran `up` previously) and deploy the application code with the updated environment variables.
 
-5. **Try out the feature:**
-    ![Reasoning configuration screenshot](./images/reasoning.png)
-    ![Thought process token usage](./images/token-usage.png)
-   * Access the developer options in the web app and change "Reasoning Effort".
-   * Token usage is visible in the thought process tab
+4. **Try out the feature:**
+
+   Open the web app and start a new chat. The reasoning model will be used for all chat completion requests, including the query rewriting step.
+
+5. **Experiment with reasoning effort:**
+
+   Select the developer options in the web app and change "Reasoning Effort" to `low`, `medium`, or `high`. This will override the default reasoning effort of "medium".
+
+   ![Reasoning configuration screenshot](./images/reasoning.png)
+
+6. **Understand token usage:**
+
+   The reasoning models use additional billed tokens behind the scenes for the thinking process.
+   To see the token usage, select the lightbulb icon on a chat answer. This will open the "Thought process" tab, which shows the reasoning model's thought process and the token usage for each chat completion.
+
+   ![Thought process token usage](./images/token-usage.png)
