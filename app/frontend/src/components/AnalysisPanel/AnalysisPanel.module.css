@@ -116,21 +116,21 @@
 }
 
 .promptBar {
-    background-color: #A82424;
-    color: #FFFFFF; /* White text for contrast */
+    background-color: #a82424;
+    color: #ffffff; /* White text for contrast */
 }
 
 .reasoningBar {
-    background-color: #265E29;
-    color: #FFFFFF;
+    background-color: #265e29;
+    color: #ffffff;
 }
 
 .outputBar {
-    background-color: #12579B;
-    color: #FFFFFF;
+    background-color: #12579b;
+    color: #ffffff;
 }
 
 .totalBar {
     background-color: #424242;
-    color: #FFFFFF;
+    color: #ffffff;
 }

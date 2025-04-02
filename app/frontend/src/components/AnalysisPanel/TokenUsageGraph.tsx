@@ -31,7 +31,7 @@ export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({ tokenUsage, re
                         <span className={styles.tokenLabel}>Reasoning: {reasoning_tokens}</span>
                     </div>
                 )}
-                <div  className={`${styles.tokenBar} ${styles.outputBar}`} style={{ width: calcPercent(completion_tokens - reasoning_tokens) }}>
+                <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ width: calcPercent(completion_tokens - reasoning_tokens) }}>
                     <span className={styles.tokenLabel}>Output: {completion_tokens - reasoning_tokens}</span>
                 </div>
             </div>
