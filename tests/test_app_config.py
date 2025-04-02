@@ -279,8 +279,8 @@ async def test_app_config_for_reasoning(monkeypatch, minimal_env):
 
 @pytest.mark.asyncio
 async def test_app_config_for_reasoning_without_streaming(monkeypatch, minimal_env):
-    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o1-preview")
-    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "o1-preview")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o1")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "o1")
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
         client = test_app.test_client()
