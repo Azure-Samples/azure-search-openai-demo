@@ -53,9 +53,10 @@ class Document:
     reranker_score: Optional[float] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
-        return {
+        result_dict = {
             "id": self.id,
             "content": self.content,
+            # Should we rename to its actual field name in the index?
             "embedding": Document.trim_embedding(self.embedding),
             "imageEmbedding": Document.trim_embedding(self.image_embedding),
             "category": self.category,
@@ -78,6 +79,7 @@ class Document:
             "score": self.score,
             "reranker_score": self.reranker_score,
         }
+        return result_dict
 
     @classmethod
     def trim_embedding(cls, embedding: Optional[List[float]]) -> Optional[str]:
@@ -162,6 +164,7 @@ class Approach(ABC):
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
+        embedding_field: str,
         openai_host: str,
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
@@ -176,6 +179,7 @@ class Approach(ABC):
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
+        self.embedding_field = embedding_field
         self.openai_host = openai_host
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
@@ -241,7 +245,7 @@ class Approach(ABC):
                     Document(
                         id=document.get("id"),
                         content=document.get("content"),
-                        embedding=document.get("embedding"),
+                        embedding=document.get(self.embedding_field),
                         image_embedding=document.get("imageEmbedding"),
                         category=document.get("category"),
                         sourcepage=document.get("sourcepage"),
@@ -317,7 +321,8 @@ class Approach(ABC):
             **dimensions_args,
         )
         query_vector = embedding.data[0].embedding
-        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")
+        # TODO: use optimizations from rag time journey 3
+        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
     async def compute_image_embedding(self, q: str):
         endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")

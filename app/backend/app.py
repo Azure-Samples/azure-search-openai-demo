@@ -463,6 +463,9 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER") or "lexicon"
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
     AZURE_SEARCH_QUERY_REWRITING = os.getenv("AZURE_SEARCH_QUERY_REWRITING", "false").lower()
+    # This defaults to the previous field name "embedding", for backwards compatibility
+    AZURE_SEARCH_FIELD_NAME_EMBEDDING = os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding")
+    AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING = os.getenv("AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING", "imageEmbedding")
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
@@ -579,7 +582,11 @@ async def setup_clients():
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
         )
         ingester = UploadUserFileStrategy(
-            search_info=search_info, embeddings=text_embeddings_service, file_processors=file_processors
+            search_info=search_info,
+            embeddings=text_embeddings_service,
+            file_processors=file_processors,
+            search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
+            search_field_name_image_embedding=AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 
@@ -676,6 +683,7 @@ async def setup_clients():
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -694,6 +702,7 @@ async def setup_clients():
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
         sourcepage_field=KB_FIELDS_SOURCEPAGE,
         content_field=KB_FIELDS_CONTENT,
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -733,6 +742,7 @@ async def setup_clients():
             embedding_model=OPENAI_EMB_MODEL,
             embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
             embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+            embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
             sourcepage_field=KB_FIELDS_SOURCEPAGE,
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
@@ -754,6 +764,7 @@ async def setup_clients():
             embedding_model=OPENAI_EMB_MODEL,
             embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
             embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+            embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
             sourcepage_field=KB_FIELDS_SOURCEPAGE,
             content_field=KB_FIELDS_CONTENT,
             query_language=AZURE_SEARCH_QUERY_LANGUAGE,
