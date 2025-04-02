@@ -256,6 +256,7 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
     - [All features](docs/deploy_features.md)
     - [Login and access control](docs/login_and_acl.md)
     - [GPT-4 Turbo with Vision](docs/gpt4v.md)
+    - [Reasoning](docs/reasoning.md)
     - [Private endpoints](docs/deploy_private.md)
   - [Sharing deployment environments](docs/sharing_environments.md)
 - [Local development](docs/localdev.md)

@@ -1,11 +1,11 @@
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from approaches.approach import Approach, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
@@ -34,6 +34,7 @@ class RetrieveThenReadApproach(Approach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.chatgpt_deployment = chatgpt_deployment
@@ -51,6 +52,8 @@ class RetrieveThenReadApproach(Approach):
         self.query_speller = query_speller
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
+        self.reasoning_effort = reasoning_effort
+        self.include_token_usage = True
 
     async def run(
         self,
@@ -62,7 +65,6 @@ class RetrieveThenReadApproach(Approach):
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
         overrides = context.get("overrides", {})
-        seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -101,19 +103,20 @@ class RetrieveThenReadApproach(Approach):
             | {"user_query": q, "text_sources": text_sources},
         )
 
-        chat_completion = await self.openai_client.chat.completions.create(
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            messages=messages,
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=1024,
-            n=1,
-            seed=seed,
+        chat_completion = cast(
+            ChatCompletion,
+            await self.create_chat_completion(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages=messages,
+                overrides=overrides,
+                response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
+            ),
         )
 
-        extra_info = {
-            "data_points": {"text": text_sources},
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts=[
                 ThoughtStep(
                     "Search using user query",
                     q,
@@ -131,17 +134,16 @@ class RetrieveThenReadApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                ThoughtStep(
-                    "Prompt to generate answer",
-                    messages,
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+                self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate answer",
+                    messages=messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=chat_completion.usage,
                 ),
             ],
-        }
+        )
 
         return {
             "message": {

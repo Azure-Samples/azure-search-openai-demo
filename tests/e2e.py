@@ -234,6 +234,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
                     "showSemanticRankerOption": True,
                     "showUserUpload": False,
                     "showVectorOption": True,
+                    "streamingEnabled": True,
                 }
             ),
             status=200,

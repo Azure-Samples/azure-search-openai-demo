@@ -6,9 +6,11 @@ from typing import (
     AsyncGenerator,
     Awaitable,
     Callable,
+    Dict,
     List,
     Optional,
     TypedDict,
+    Union,
     cast,
 )
 from urllib.parse import urljoin
@@ -21,8 +23,15 @@ from azure.search.documents.models import (
     VectorizedQuery,
     VectorQuery,
 )
-from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai import AsyncOpenAI, AsyncStream
+from openai.types import CompletionUsage
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+    ChatCompletionReasoningEffort,
+    ChatCompletionToolParam,
+)
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -91,8 +100,59 @@ class ThoughtStep:
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
 
+    def update_token_usage(self, usage: CompletionUsage) -> None:
+        if self.props:
+            self.props["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+
+
+@dataclass
+class DataPoints:
+    text: Optional[List[str]] = None
+    images: Optional[List] = None
+
+
+@dataclass
+class ExtraInfo:
+    data_points: DataPoints
+    thoughts: Optional[List[ThoughtStep]] = None
+    followup_questions: Optional[List[Any]] = None
+
+
+@dataclass
+class TokenUsageProps:
+    prompt_tokens: int
+    completion_tokens: int
+    reasoning_tokens: Optional[int]
+    total_tokens: int
+
+    @classmethod
+    def from_completion_usage(cls, usage: CompletionUsage) -> "TokenUsageProps":
+        return cls(
+            prompt_tokens=usage.prompt_tokens,
+            completion_tokens=usage.completion_tokens,
+            reasoning_tokens=(
+                usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
+            ),
+            total_tokens=usage.total_tokens,
+        )
+
+
+# GPT reasoning models don't support the same set of parameters as other models
+# https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
+@dataclass
+class GPTReasoningModelSupport:
+    streaming: bool
+
 
 class Approach(ABC):
+    # List of GPT reasoning models support
+    GPT_REASONING_MODELS = {
+        "o1": GPTReasoningModelSupport(streaming=False),
+        "o3-mini": GPTReasoningModelSupport(streaming=True),
+    }
+    # Set a higher token limit for GPT reasoning models
+    RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
+    RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT = 8192
 
     def __init__(
         self,
@@ -109,6 +169,7 @@ class Approach(ABC):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -123,6 +184,8 @@ class Approach(ABC):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
+        self.reasoning_effort = reasoning_effort
+        self.include_token_usage = True
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -285,6 +348,81 @@ class Approach(ABC):
             return {"injected_prompt": override_prompt[3:]}
         else:
             return {"override_prompt": override_prompt}
+
+    def get_response_token_limit(self, model: str, default_limit: int) -> int:
+        if model in self.GPT_REASONING_MODELS:
+            return self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
+
+        return default_limit
+
+    def create_chat_completion(
+        self,
+        chatgpt_deployment: Optional[str],
+        chatgpt_model: str,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        response_token_limit: int,
+        should_stream: bool = False,
+        tools: Optional[List[ChatCompletionToolParam]] = None,
+        temperature: Optional[float] = None,
+        n: Optional[int] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+    ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
+        if chatgpt_model in self.GPT_REASONING_MODELS:
+            params: Dict[str, Any] = {
+                # max_tokens is not supported
+                "max_completion_tokens": response_token_limit
+            }
+
+            # Adjust parameters for reasoning models
+            supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
+            if supported_features.streaming and should_stream:
+                params["stream"] = True
+                params["stream_options"] = {"include_usage": True}
+            params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
+
+        else:
+            # Include parameters that may not be supported for reasoning models
+            params = {
+                "max_tokens": response_token_limit,
+                "temperature": temperature or overrides.get("temperature", 0.3),
+            }
+        if should_stream:
+            params["stream"] = True
+            params["stream_options"] = {"include_usage": True}
+
+        params["tools"] = tools
+
+        # Azure OpenAI takes the deployment name as the model name
+        return self.openai_client.chat.completions.create(
+            model=chatgpt_deployment if chatgpt_deployment else chatgpt_model,
+            messages=messages,
+            seed=overrides.get("seed", None),
+            n=n or 1,
+            **params,
+        )
+
+    def format_thought_step_for_chatcompletion(
+        self,
+        title: str,
+        messages: List[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        model: str,
+        deployment: Optional[str],
+        usage: Optional[CompletionUsage] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+    ) -> ThoughtStep:
+        properties: Dict[str, Any] = {"model": model}
+        if deployment:
+            properties["deployment"] = deployment
+        # Only add reasoning_effort setting if the model supports it
+        if model in self.GPT_REASONING_MODELS:
+            properties["reasoning_effort"] = reasoning_effort or overrides.get(
+                "reasoning_effort", self.reasoning_effort
+            )
+        if usage:
+            properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+        return ThoughtStep(title, messages, properties)
 
     async def run(
         self,

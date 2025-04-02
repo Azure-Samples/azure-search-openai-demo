@@ -1,10 +1,10 @@
-
 # RAG chat: Enabling optional features
 
 This document covers optional features that can be enabled in the deployed Azure resources.
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 * [Using different chat completion models](#using-different-chat-completion-models)
+* [Using reasoning models](#using-reasoning-models)
 * [Using different embedding models](#using-different-embedding-models)
 * [Enabling GPT vision feature](#enabling-gpt-vision-feature)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
@@ -121,6 +121,13 @@ This process does *not* delete your previous model deployment. If you want to de
 > [!NOTE]
 > To revert back to a previous model, run the same commands with the previous model name and version.
 
+## Using reasoning models
+
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+
+This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
+To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
+
 ## Using different embedding models
 
 By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embeddig model, you can do so by following these steps:
@@ -187,13 +194,12 @@ By default, the deployed Azure web app uses the `text-embedding-3-large` embeddi
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKU Standard
     ```
 
-5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the desired embedding model and deployment SKU. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type).
+5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the desired embedding model and deployment SKU. There are [limited regions available](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type).
 
 If you have already deployed:
 
-* You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
-* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
-* If your OpenAI resource is not in one of the supported regions, you should delete `openAiResourceGroupLocation` from `.azure/YOUR-ENV-NAME/config.json`. When running `azd up`, you will be prompted to select a new region.
+* You'll need to change the deployment name by running the appropriate commands for the model above.
+* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created. See the [data ingestion guide](./data_ingestion.md) for more details.
 
 ## Enabling GPT vision feature
 
