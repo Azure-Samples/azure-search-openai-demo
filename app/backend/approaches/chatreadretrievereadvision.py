@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Coroutine, List, Optional, Union
+from typing import Any, Awaitable, Callable, List, Optional, Union, cast
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -10,7 +10,7 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import ThoughtStep
+from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -67,6 +67,8 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question_vision.prompty")
+        # Currently disabled due to issues with rendering token usage in the UI
+        self.include_token_usage = False
 
     async def run_until_final_call(
         self,
@@ -74,7 +76,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[dict[str, Any], Coroutine[Any, Any, Union[ChatCompletion, AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -164,12 +166,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             },
         )
 
-        extra_info = {
-            "data_points": {
-                "text": text_sources,
-                "images": image_sources,
-            },
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources, images=image_sources),
+            [
                 ThoughtStep(
                     "Prompt to generate search query",
                     query_messages,
@@ -206,15 +205,18 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     ),
                 ),
             ],
-        }
+        )
 
-        chat_coroutine = self.openai_client.chat.completions.create(
-            model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=messages,
-            temperature=overrides.get("temperature", 0.3),
-            max_tokens=1024,
-            n=1,
-            stream=should_stream,
-            seed=seed,
+        chat_coroutine = cast(
+            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            self.openai_client.chat.completions.create(
+                model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
+                messages=messages,
+                temperature=overrides.get("temperature", 0.3),
+                max_tokens=1024,
+                n=1,
+                stream=should_stream,
+                seed=seed,
+            ),
         )
         return (extra_info, chat_coroutine)

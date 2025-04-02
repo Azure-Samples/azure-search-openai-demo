@@ -1,6 +1,7 @@
 {
     "context": {
         "data_points": {
+            "images": null,
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
@@ -38,7 +39,13 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-4o-mini"
+                    "model": "gpt-4o-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
                 },
                 "title": "Prompt to generate search query"
             },
@@ -94,7 +101,13 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-4o-mini"
+                    "model": "gpt-4o-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
                 },
                 "title": "Prompt to generate answer"
             }
