@@ -194,7 +194,7 @@ By default, the deployed Azure web app uses the `text-embedding-3-large` embeddi
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKU Standard
     ```
 
-5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the desired embedding model and deployment SKU. There are [limited regions available](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type).
+5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the desired embedding model and deployment SKU. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type).
 
 If you have already deployed:
 
