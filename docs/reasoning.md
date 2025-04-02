@@ -45,4 +45,3 @@ This repository includes an optional feature that uses reasoning models to gener
     ![Thought process token usage](./images/token-usage.png)
    * Access the developer options in the web app and change "Reasoning Effort".
    * Token usage is visible in the thought process tab
-
