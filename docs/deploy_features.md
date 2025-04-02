@@ -1,10 +1,10 @@
-
 # RAG chat: Enabling optional features
 
 This document covers optional features that can be enabled in the deployed Azure resources.
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
 * [Using different chat completion models](#using-different-chat-completion-models)
+* [Using reasoning models](#using-reasoning-models)
 * [Using text-embedding-3 models](#using-text-embedding-3-models)
 * [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
@@ -120,6 +120,13 @@ This process does *not* delete your previous model deployment. If you want to de
 
 > [!NOTE]
 > To revert back to a previous model, run the same commands with the previous model name and version.
+
+## Using reasoning models
+
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+
+This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
+To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
 
 ## Using text-embedding-3 models
 
