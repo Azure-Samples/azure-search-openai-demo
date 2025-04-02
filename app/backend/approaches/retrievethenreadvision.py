@@ -57,6 +57,7 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
+        # Currently disabled due to issues with rendering token usage in the UI
         self.include_token_usage = False
 
     async def run(

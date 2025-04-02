@@ -108,6 +108,7 @@ class RetrieveThenReadApproach(Approach):
                 self.chatgpt_model,
                 messages=messages,
                 overrides=overrides,
+                response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
             ),
         )
 
@@ -131,7 +132,7 @@ class RetrieveThenReadApproach(Approach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.create_generate_thought_step(
+                self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate answer",
                     messages=messages,
                     overrides=overrides,

@@ -92,6 +92,12 @@
         "useSemanticCaptions": "Usar legendas semânticas",
         "useSuggestFollowupQuestions": "Sugerir perguntas complementares",
         "useQueryRewriting": "Utilize a reescrita de consultas para a recuperação",
+        "reasoningEffort": "Esforço de raciocínio",
+        "reasoningEffortOptions": {
+            "low": "Baixo",
+            "medium": "Médio",
+            "high": "Alto"
+        },
         "useGPT4V": "Usar modelo de visão GPT",
         "gpt4VInput": {
             "label": "Entradas do modelo de visão GPT",
@@ -142,8 +148,12 @@
             "Ativa o rankeador semântico da pesquisa do Azure AI, um modelo que reordena os resultados da pesquisa com base na similaridade semântica à consulta do usuário.",
         "useSemanticCaptions":
              "Envia legendas semânticas para o LLM em vez do resultado completo da pesquisa. Uma legenda semântica é extraída durante o processo de ranqueamento semântico.",
+        "useQueryRewriting":
+             "Habilita a reescrita de consultas do Azure AI Search, um processo que modifica a consulta do usuário para melhorar os resultados da pesquisa. Requer que o rankeador semântico esteja habilitado.",
+        "reasoningEffort":
+             "Define o esforço de raciocínio para o LLM. Valores mais altos resultam em mais raciocínio, mas podem levar mais tempo para gerar uma resposta. O padrão é médio.",
         "suggestFollowupQuestions": "Solicita ao LLM que sugira perguntas de acompanhamento com base na consulta do usuário.",
-         "useGPT4Vision": "Usa GPT-4-Turbo com Visão para gerar respostas com base em imagens e texto do índice.",
+        "useGPT4Vision": "Usa GPT-4-Turbo com Visão para gerar respostas com base em imagens e texto do índice.",
         "vectorFields":
             "Especifica quais campos de incorporação (embeddings) no Índice de Pesquisa do Azure AI serão pesquisados: 'Imagens e texto', 'Imagens' ou 'Texto'.",
         "gpt4VisionInputs":
@@ -152,6 +162,7 @@
             "Define o modo de recuperação para a consulta do Azure AI Search. 'Vetores + Texto (Híbrido)' usa uma combinação de busca vetorial e de texto completo, 'Vetores' usa apenas a busca vetorial, e 'Texto' usa apenas a busca de texto completo. O híbrido geralmente é o ideal.",
         "streamChat": "Transmite continuamente a resposta para a interface do chat conforme é gerada.",
         "useOidSecurityFilter": "Filtra os resultados da pesquisa com base no OID do usuário autenticado.",
-        "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado."
+        "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado.",
+
     }
 }

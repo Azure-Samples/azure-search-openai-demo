@@ -67,6 +67,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question_vision.prompty")
+        # Currently disabled due to issues with rendering token usage in the UI
         self.include_token_usage = False
 
     async def run_until_final_call(

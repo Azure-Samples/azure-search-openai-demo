@@ -93,9 +93,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        query_response_token_limit = (
-            100 if self.chatgpt_model not in self.GPT_REASONING_MODELS else self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
-        )
+
         chat_completion = cast(
             ChatCompletion,
             await self.create_chat_completion(
@@ -103,7 +101,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 self.chatgpt_model,
                 messages=query_messages,
                 overrides=overrides,
-                response_token_limit=query_response_token_limit,  # Setting too low risks malformed JSON, setting too high may affect performance
+                response_token_limit=self.get_response_token_limit(
+                    self.chatgpt_model, 100
+                ),  # Setting too low risks malformed JSON, setting too high may affect performance
                 temperature=0.0,  # Minimize creativity for search query generation
                 tools=tools,
                 reasoning_effort="low",  # Minimize reasoning for search query generation
@@ -149,7 +149,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
             thoughts=[
-                self.create_generate_thought_step(
+                self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate search query",
                     messages=query_messages,
                     overrides=overrides,
@@ -175,7 +175,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.create_generate_thought_step(
+                self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate answer",
                     messages=messages,
                     overrides=overrides,
@@ -193,8 +193,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 self.chatgpt_model,
                 messages,
                 overrides,
+                self.get_response_token_limit(self.chatgpt_model, 1024),
                 should_stream,
-                response_token_limit=self.get_response_token_limit(self.chatgpt_model),
             ),
         )
         return (extra_info, chat_coroutine)

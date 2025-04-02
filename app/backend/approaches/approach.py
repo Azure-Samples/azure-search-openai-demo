@@ -167,7 +167,6 @@ class Approach(ABC):
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
-        include_token_usage: Optional[bool] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -182,7 +181,7 @@ class Approach(ABC):
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
-        self.include_token_usage = include_token_usage
+        self.include_token_usage = True
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -345,11 +344,11 @@ class Approach(ABC):
         else:
             return {"override_prompt": override_prompt}
 
-    def get_response_token_limit(self, model: str) -> int:
+    def get_response_token_limit(self, model: str, default_limit: int) -> int:
         if model in self.GPT_REASONING_MODELS:
             return self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
 
-        return self.RESPONSE_DEFAULT_TOKEN_LIMIT
+        return default_limit
 
     def create_chat_completion(
         self,
@@ -357,14 +356,13 @@ class Approach(ABC):
         chatgpt_model: str,
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
+        response_token_limit: int,
         should_stream: bool = False,
-        response_token_limit: Optional[int] = None,
         tools: Optional[List[ChatCompletionToolParam]] = None,
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
     ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
-        response_token_limit = response_token_limit or self.get_response_token_limit(chatgpt_model)
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params: Dict[str, Any] = {
                 # max_tokens is not supported
@@ -399,7 +397,7 @@ class Approach(ABC):
             **params,
         )
 
-    def create_generate_thought_step(
+    def format_thought_step_for_chatcompletion(
         self,
         title: str,
         messages: List[ChatCompletionMessageParam],
