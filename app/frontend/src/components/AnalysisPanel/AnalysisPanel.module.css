@@ -104,16 +104,33 @@
     min-width: max-content;
 }
 
+/* Adjust tokenLabel to allow bar-specific text color overrides */
 .tokenLabel {
-    color: #333232;
     padding-right: 4px;
-    white-space: nowrap;
-    overflow: visible;
-    text-overflow: unset;
 }
 
 .primaryBarContainer {
     width: fit-content;
     display: flex;
     gap: 4px;
+}
+
+.promptBar {
+    background-color: #A82424;
+    color: #FFFFFF; /* White text for contrast */
+}
+
+.reasoningBar {
+    background-color: #265E29;
+    color: #FFFFFF;
+}
+
+.outputBar {
+    background-color: #12579B;
+    color: #FFFFFF;
+}
+
+.totalBar {
+    background-color: #424242;
+    color: #FFFFFF;
 }

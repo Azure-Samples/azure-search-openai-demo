@@ -792,6 +792,22 @@ async def test_chat_text_reasoning(reasoning_client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_stream_text_reasoning(reasoning_client, snapshot):
+    response = await reasoning_client.post(
+        "/chat/stream",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
 async def test_chat_stream_text_filter(auth_client, snapshot):
     response = await auth_client.post(
         "/chat/stream",

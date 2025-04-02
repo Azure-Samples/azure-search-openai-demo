@@ -1,6 +1,6 @@
 import json
 import os
-from typing import IO, Dict
+from typing import IO, Any, Dict
 from unittest import mock
 
 import aiohttp
@@ -107,21 +107,8 @@ def mock_openai_embedding(monkeypatch):
 
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
-    reasoning = os.getenv("TEST_ENABLE_REASONING") is not None
-    completion_usage: Dict[str, any] = {
-        "completion_tokens": 896,
-        "prompt_tokens": 23,
-        "total_tokens": 919,
-        "completion_tokens_details": {
-            "accepted_prediction_tokens": 0,
-            "audio_tokens": 0,
-            "reasoning_tokens": 384 if reasoning else 0,
-            "rejected_prediction_tokens": 0,
-        },
-    }
-
     class AsyncChatCompletionIterator:
-        def __init__(self, answer: str):
+        def __init__(self, answer: str, reasoning: bool, usage: Dict[str, Any]):
             chunk_id = "test-id"
             model = "gpt-4o-mini" if not reasoning else "o3-mini"
             self.responses = [
@@ -190,7 +177,7 @@ def mock_openai_chatcompletion(monkeypatch):
                     "id": chunk_id,
                     "model": model,
                     "created": 1,
-                    "usage": completion_usage,
+                    "usage": usage,
                 }
             )
 
@@ -208,6 +195,19 @@ def mock_openai_chatcompletion(monkeypatch):
         assert kwargs.get("seed") is None or kwargs.get("seed") == 42
 
         messages = kwargs["messages"]
+        model = kwargs["model"]
+        reasoning = model == "o3-mini"
+        completion_usage: Dict[str, any] = {
+            "completion_tokens": 896,
+            "prompt_tokens": 23,
+            "total_tokens": 919,
+            "completion_tokens_details": {
+                "accepted_prediction_tokens": 0,
+                "audio_tokens": 0,
+                "reasoning_tokens": 384 if reasoning else 0,
+                "rejected_prediction_tokens": 0,
+            },
+        }
         last_question = messages[-1]["content"]
         if last_question == "Generate search query for: What is the capital of France?":
             answer = "capital of France"
@@ -220,7 +220,7 @@ def mock_openai_chatcompletion(monkeypatch):
             if messages[0]["content"].find("Generate 3 very brief follow-up questions") > -1:
                 answer = "The capital of France is Paris. [Benefit_Options-2.pdf]. <<What is the capital of Spain?>>"
         if "stream" in kwargs and kwargs["stream"] is True:
-            return AsyncChatCompletionIterator(answer)
+            return AsyncChatCompletionIterator(answer, reasoning, completion_usage)
         else:
             return ChatCompletion(
                 object="chat.completion",

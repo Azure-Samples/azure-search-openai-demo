@@ -1,4 +1,3 @@
-import copy
 import os
 from abc import ABC
 from dataclasses import dataclass
@@ -29,7 +28,6 @@ from openai.types import CompletionUsage
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
-    ChatCompletionDeveloperMessageParam,
     ChatCompletionMessageParam,
     ChatCompletionReasoningEffort,
     ChatCompletionToolParam,
@@ -141,23 +139,14 @@ class TokenUsageProps:
 # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
 @dataclass
 class GPTReasoningModelSupport:
-    reasoning_effort: bool
-    tools: bool
-    system_messages: bool
     streaming: bool
 
 
 class Approach(ABC):
     # List of GPT reasoning models support
     GPT_REASONING_MODELS = {
-        "o1": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=False),
-        "o1-preview": GPTReasoningModelSupport(
-            reasoning_effort=False, tools=False, system_messages=False, streaming=False
-        ),
-        "o1-mini": GPTReasoningModelSupport(
-            reasoning_effort=False, tools=False, system_messages=False, streaming=False
-        ),
-        "o3-mini": GPTReasoningModelSupport(reasoning_effort=True, tools=True, system_messages=True, streaming=True),
+        "o1": GPTReasoningModelSupport(streaming=False),
+        "o3-mini": GPTReasoningModelSupport(streaming=True),
     }
     # Set a higher token limit for GPT reasoning models
     RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
@@ -379,7 +368,7 @@ class Approach(ABC):
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params: Dict[str, Any] = {
                 # max_tokens is not supported
-                "max_completion_tokens": response_token_limit,
+                "max_completion_tokens": response_token_limit
             }
 
             # Adjust parameters for reasoning models
@@ -387,30 +376,19 @@ class Approach(ABC):
             if supported_features.streaming and should_stream:
                 params["stream"] = True
                 params["stream_options"] = {"include_usage": True}
-            if supported_features.tools:
-                params["tools"] = tools
-            if supported_features.reasoning_effort:
-                params["reasoning_effort"] = (
-                    reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
-                )
-
-            # For reasoning models that don't support system messages - migrate to developer messages
-            # https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#developer-messages
-            if not supported_features.system_messages:
-                messages = copy.deepcopy(messages)
-                developer_message = cast(ChatCompletionDeveloperMessageParam, messages[0])
-                developer_message["role"] = "developer"
+            params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
 
         else:
             # Include parameters that may not be supported for reasoning models
             params = {
                 "max_tokens": response_token_limit,
                 "temperature": temperature or overrides.get("temperature", 0.3),
-                "tools": tools,
             }
         if should_stream:
             params["stream"] = True
             params["stream_options"] = {"include_usage": True}
+
+        params["tools"] = tools
 
         # Azure OpenAI takes the deployment name as the model name
         return self.openai_client.chat.completions.create(
@@ -435,7 +413,7 @@ class Approach(ABC):
         if deployment:
             properties["deployment"] = deployment
         # Only add reasoning_effort setting if the model supports it
-        if (supported_features := self.GPT_REASONING_MODELS.get(model)) and supported_features.reasoning_effort:
+        if model in self.GPT_REASONING_MODELS:
             properties["reasoning_effort"] = reasoning_effort or overrides.get(
                 "reasoning_effort", self.reasoning_effort
             )

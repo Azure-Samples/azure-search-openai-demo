@@ -23,20 +23,20 @@ export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({ tokenUsage, re
         <div className={styles.tokenUsageGraph}>
             <div className={styles.header}>Token Usage</div>
             <div className={styles.primaryBarContainer} style={{ width: "100%" }}>
-                <div className={styles.tokenBar} style={{ width: calcPercent(prompt_tokens) }}>
+                <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ width: calcPercent(prompt_tokens) }}>
                     <span className={styles.tokenLabel}>Prompt: {prompt_tokens}</span>
                 </div>
                 {reasoningEffort != null && reasoningEffort !== "" && (
-                    <div className={styles.tokenBar} style={{ width: calcPercent(reasoning_tokens) }}>
+                    <div className={`${styles.tokenBar} ${styles.reasoningBar}`} style={{ width: calcPercent(reasoning_tokens) }}>
                         <span className={styles.tokenLabel}>Reasoning: {reasoning_tokens}</span>
                     </div>
                 )}
-                <div className={styles.tokenBar} style={{ width: calcPercent(completion_tokens - reasoning_tokens) }}>
+                <div  className={`${styles.tokenBar} ${styles.outputBar}`} style={{ width: calcPercent(completion_tokens - reasoning_tokens) }}>
                     <span className={styles.tokenLabel}>Output: {completion_tokens - reasoning_tokens}</span>
                 </div>
             </div>
 
-            <div className={styles.tokenBar} style={{ width: calcPercent(total_tokens) }}>
+            <div className={`${styles.tokenBar} ${styles.totalBar}`} style={{ width: calcPercent(total_tokens) }}>
                 <span className={styles.tokenLabel}>Total: {total_tokens}</span>
             </div>
         </div>
