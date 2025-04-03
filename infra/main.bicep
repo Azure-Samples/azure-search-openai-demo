@@ -36,6 +36,7 @@ param storageResourceGroupName string = '' // Set in main.parameters.json
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
+param storageInfrastructureEncryption string // Set in main.parameters.json
 
 param defaultReasoningEffort string // Set in main.parameters.json
 
@@ -777,6 +778,7 @@ module storage 'core/storage/storage-account.bicep' = {
         publicAccess: 'None'
       }
     ]
+    storageInfrastructureEncryption: storageInfrastructureEncryption
   }
 }
 
@@ -803,6 +805,7 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
         publicAccess: 'None'
       }
     ]
+    storageInfrastructureEncryption: storageInfrastructureEncryption
   }
 }
 
