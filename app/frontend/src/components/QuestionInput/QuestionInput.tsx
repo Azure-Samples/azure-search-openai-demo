@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip } from "@fluentui/react-components";
-import { Send28Filled } from "@fluentui/react-icons";
+import { Send28Filled, ImageAdd24Filled } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 
 import styles from "./QuestionInput.module.css";
@@ -10,7 +10,7 @@ import { LoginContext } from "../../loginContext";
 import { requireLogin } from "../../authConfig";
 
 interface Props {
-    onSend: (question: string) => void;
+    onSend: (question: string, images: File[]) => void; // Updated to include images
     disabled: boolean;
     initQuestion?: string;
     placeholder?: string;
@@ -20,6 +20,7 @@ interface Props {
 
 export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput }: Props) => {
     const [question, setQuestion] = useState<string>("");
+    const [images, setImages] = useState<File[]>([]); // State for uploaded images
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
     const [isComposing, setIsComposing] = useState(false);
@@ -29,14 +30,15 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     }, [initQuestion]);
 
     const sendQuestion = () => {
-        if (disabled || !question.trim()) {
+        if (disabled || (!question.trim() && images.length === 0)) {
             return;
         }
 
-        onSend(question);
+        onSend(question, images); // Send both text and images
 
         if (clearOnSend) {
             setQuestion("");
+            setImages([]); // Clear images after sending
         }
     };
 
@@ -64,8 +66,18 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
         }
     };
 
+    const onImageUpload = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        if (ev.target.files) {
+            setImages([...images, ...Array.from(ev.target.files)]); // Add uploaded images to state
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setImages(images.filter((_, i) => i !== index)); // Remove an image by index
+    };
+
     const disableRequiredAccessControl = requireLogin && !loggedIn;
-    const sendQuestionDisabled = disabled || !question.trim() || disableRequiredAccessControl;
+    const sendQuestionDisabled = disabled || (!question.trim() && images.length === 0) || disableRequiredAccessControl;
 
     if (disableRequiredAccessControl) {
         placeholder = "Please login to continue...";
@@ -87,11 +99,39 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
                 onCompositionEnd={handleCompositionEnd}
             />
             <div className={styles.questionInputButtonsContainer}>
+                <Tooltip content={t("tooltips.uploadImage")} relationship="label">
+                    <Button
+                        size="large"
+                        icon={<ImageAdd24Filled />}
+                        onClick={() => document.getElementById("image-upload")?.click()}
+                    />
+                </Tooltip>
+                <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    style={{ display: "none" }}
+                    onChange={onImageUpload}
+                />
                 <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+                    <Button
+                        size="large"
+                        icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />}
+                        disabled={sendQuestionDisabled}
+                        onClick={sendQuestion}
+                    />
                 </Tooltip>
             </div>
             {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
+            <div className={styles.imagePreviewContainer}>
+                {images.map((image, index) => (
+                    <div key={index} className={styles.imagePreview}>
+                        <img src={URL.createObjectURL(image)} alt={`Uploaded ${index}`} />
+                        <button onClick={() => removeImage(index)}>Remove</button>
+                    </div>
+                ))}
+            </div>
         </Stack>
     );
 };
