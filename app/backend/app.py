@@ -3,10 +3,11 @@ import io
 import json
 import logging
 import mimetypes
-import os
+import os, re
 import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Union, cast
+from docx import Document
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -94,12 +95,86 @@ from prepdocs import (
 )
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
+from utils import markdown_to_html, join_nested_dict, generate_memo
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
 
+memo_format = {
+    'k1':{[{
+            'content': 'k1.1',
+            'role': 'user'
+          }
+        ],
+        [
+          {
+            'content': 'k1.2',
+            'role': 'user'
+          }
+        ],
+        [
+          {
+            'content': 'k1.3',
+            'role': 'user'
+          }
+        ]
+    },
+    'k2': [{
+            'content': 'k2',
+            'role': 'user'
+          }
+        ],
+    'k3': {
+        [
+          {
+            'content': 'k3.1',
+            'role': 'user'
+          }
+        ],
+        [
+          {
+            'content': 'k3.2',
+            'role': 'user'
+          }
+        ]
+    },
+    'k4': [{
+            'content': 'k4',
+            'role': 'user'
+          }
+        ],
+    'k5': [{
+            'content': 'k5',
+            'role': 'user'
+          }
+        ],  
+    'k6': {
+        [
+          {
+            'content': 'k6.1',
+            'role': 'user'
+          }
+        ],
+        [
+          {
+            'content': 'k6.2',
+            'role': 'user'
+          }
+        ]
+    },
+    'k7': [{
+            'content': 'k7',
+            'role': 'user'
+          }
+        ],
+    'k8': [{
+            'content': 'k8',
+            'role': 'user'
+          }
+        ]
+}
 
 @bp.route("/")
 async def index():
@@ -171,11 +246,13 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
 @bp.route("/ask", methods=["POST"])
 @authenticated
 async def ask(auth_claims: Dict[str, Any]):
+ 
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
     context = request_json.get("context", {})
     context["auth_claims"] = auth_claims
+
     try:
         use_gpt4v = context.get("overrides", {}).get("use_gpt4v", False)
         approach: Approach
@@ -183,12 +260,75 @@ async def ask(auth_claims: Dict[str, Any]):
             approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
-        r = await approach.run(
-            request_json["messages"], context=context, session_state=request_json.get("session_state")
-        )
+       
+        memo_section = {}
+        r = None
+        for key, val in memo_format.items():
+            sub_section = {}
+            
+            pipe_count = 0
+            if isinstance(val, dict):
+                for sub_key, sub_val in val.items():
+                    r = await approach.run(
+                        sub_val, context=context, session_state=request_json.get("session_state")
+                    )
+                    content = r['message']['content']
+                    pipe_count = len(re.findall(r"\|", content))
+                    if pipe_count > 0:
+                        content = markdown_to_html(content)
+                    sub_section[sub_key] = content
+                    # sub_section[sub_key] = remove_page_source(content)
+                memo_section[key] = sub_section
+            elif isinstance(val, list):
+                r = await approach.run(
+                        val, context=context, session_state=request_json.get("session_state")
+                    )
+                content = r['message']['content']
+                pipe_count = len(re.findall(r"\|", content))
+                if pipe_count > 0:
+                        content = markdown_to_html(content)
+                # memo_section[key] = remove_page_source(content)
+                memo_section[key] = content
+
+        response = {"message": join_nested_dict(memo_section)}
+           
+        try:
+            docx_filename = 'memo_generated.docx'
+            # docx_filename = check_and_update_blob_name(docx_filename)        
+       
+            doc = Document('memo_template.docx')
+            doc_new = generate_memo(doc, memo_section)
+            doc_new.save(docx_filename)        
+            logging.info("Memo Docx Created")
+           
+           
+            with open(docx_filename, "rb") as file:
+                file_content = file.read()
+        except FileNotFoundError:
+            return jsonify({"message": "Failed to generate Memo Document.", "status": "failed"}), 400
+ 
+        except Exception as e:
+            logging.error("Error to upload Memo Docx - %s", str(e))
+       
+        user_oid = auth_claims["oid"]
+        user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
+        user_directory_client = user_blob_container_client.get_directory_client(user_oid)
+        await user_directory_client.get_directory_properties()  
+        await user_directory_client.set_access_control(owner=user_oid)
+        file_client = user_directory_client.get_file_client(docx_filename)
+       
+        # Upload the file content to the blob
+        file_io = io.BytesIO(file_content)
+        await file_client.upload_data(file_io, overwrite=True, metadata={"UploadedBy": user_oid})
+        file_io.seek(0)
+ 
+        r['message']['content'] = "Successfully generated Business Combination Memo and stored on blob storage."
+
         return jsonify(r)
     except Exception as error:
         return error_response(error, "/ask")
+ 
+ 
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -420,7 +560,7 @@ async def setup_clients():
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
-    OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", 1536))
+    OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
     AZURE_OPENAI_GPT4V_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT4V_DEPLOYMENT")
@@ -450,8 +590,8 @@ async def setup_clients():
     KB_FIELDS_CONTENT = os.getenv("KB_FIELDS_CONTENT", "content")
     KB_FIELDS_SOURCEPAGE = os.getenv("KB_FIELDS_SOURCEPAGE", "sourcepage")
 
-    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE", "en-us")
-    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER", "lexicon")
+    AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE") or "en-us"
+    AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER") or "lexicon"
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
