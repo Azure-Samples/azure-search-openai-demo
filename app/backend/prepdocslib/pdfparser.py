@@ -1,8 +1,9 @@
 import html
 import io
 import logging
+from collections.abc import AsyncGenerator
 from enum import Enum
-from typing import IO, AsyncGenerator, Union
+from typing import IO, Union
 
 import pymupdf
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient

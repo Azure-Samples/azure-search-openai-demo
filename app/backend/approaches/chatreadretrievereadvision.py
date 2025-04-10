@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Callable, List, Optional, Union, cast
+from collections.abc import Awaitable
+from typing import Any, Callable, Optional, Union, cast
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -100,7 +101,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         query_messages = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
         )
-        tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
+        tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
