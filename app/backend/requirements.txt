@@ -127,7 +127,7 @@ hypercorn==0.17.3
     # via quart
 hyperframe==6.0.1
     # via h2
-idna==3.8
+idna==3.10
     # via
     #   anyio
     #   httpx
