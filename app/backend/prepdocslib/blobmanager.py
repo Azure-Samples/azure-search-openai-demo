@@ -3,7 +3,7 @@ import io
 import logging
 import os
 import re
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pymupdf
 from azure.core.credentials_async import AsyncTokenCredential
@@ -45,7 +45,7 @@ class BlobManager:
         self.subscriptionId = subscriptionId
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
-    async def upload_blob(self, file: File) -> Optional[List[str]]:
+    async def upload_blob(self, file: File) -> Optional[list[str]]:
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
         ) as service_client, service_client.get_container_client(self.container) as container_client:
@@ -73,7 +73,7 @@ class BlobManager:
 
     async def upload_pdf_blob_images(
         self, service_client: BlobServiceClient, container_client: ContainerClient, file: File
-    ) -> List[str]:
+    ) -> list[str]:
         with open(file.content.name, "rb") as reopened_file:
             reader = PdfReader(reopened_file)
             page_count = len(reader.pages)

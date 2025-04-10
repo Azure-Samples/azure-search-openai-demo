@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -19,7 +19,7 @@ async def parse_file(
     file_processors: dict[str, FileProcessor],
     category: Optional[str] = None,
     image_embeddings: Optional[ImageEmbeddings] = None,
-) -> List[Section]:
+) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
@@ -101,7 +101,7 @@ class FileStrategy(Strategy):
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
                     if sections:
                         blob_sas_uris = await self.blob_manager.upload_blob(file)
-                        blob_image_embeddings: Optional[List[List[float]]] = None
+                        blob_image_embeddings: Optional[list[list[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
                             blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
                         await search_manager.update_content(sections, blob_image_embeddings, url=file.url)

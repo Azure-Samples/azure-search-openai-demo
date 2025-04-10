@@ -1,13 +1,10 @@
 import os
 from abc import ABC
+from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
 from typing import (
     Any,
-    AsyncGenerator,
-    Awaitable,
     Callable,
-    Dict,
-    List,
     Optional,
     TypedDict,
     Union,
@@ -41,14 +38,14 @@ from core.authentication import AuthenticationHelper
 class Document:
     id: Optional[str]
     content: Optional[str]
-    embedding: Optional[List[float]]
-    image_embedding: Optional[List[float]]
+    embedding: Optional[list[float]]
+    image_embedding: Optional[list[float]]
     category: Optional[str]
     sourcepage: Optional[str]
     sourcefile: Optional[str]
-    oids: Optional[List[str]]
-    groups: Optional[List[str]]
-    captions: List[QueryCaptionResult]
+    oids: Optional[list[str]]
+    groups: Optional[list[str]]
+    captions: list[QueryCaptionResult]
     score: Optional[float] = None
     reranker_score: Optional[float] = None
 
@@ -80,7 +77,7 @@ class Document:
         }
 
     @classmethod
-    def trim_embedding(cls, embedding: Optional[List[float]]) -> Optional[str]:
+    def trim_embedding(cls, embedding: Optional[list[float]]) -> Optional[str]:
         """Returns a trimmed list of floats from the vector embedding."""
         if embedding:
             if len(embedding) > 2:
@@ -105,15 +102,15 @@ class ThoughtStep:
 
 @dataclass
 class DataPoints:
-    text: Optional[List[str]] = None
-    images: Optional[List] = None
+    text: Optional[list[str]] = None
+    images: Optional[list] = None
 
 
 @dataclass
 class ExtraInfo:
     data_points: DataPoints
-    thoughts: Optional[List[ThoughtStep]] = None
-    followup_questions: Optional[List[Any]] = None
+    thoughts: Optional[list[ThoughtStep]] = None
+    followup_questions: Optional[list[Any]] = None
 
 
 @dataclass
@@ -201,7 +198,7 @@ class Approach(ABC):
         top: int,
         query_text: Optional[str],
         filter: Optional[str],
-        vectors: List[VectorQuery],
+        vectors: list[VectorQuery],
         use_text_search: bool,
         use_vector_search: bool,
         use_semantic_ranker: bool,
@@ -209,7 +206,7 @@ class Approach(ABC):
         minimum_search_score: Optional[float] = None,
         minimum_reranker_score: Optional[float] = None,
         use_query_rewriting: Optional[bool] = None,
-    ) -> List[Document]:
+    ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
         if use_semantic_ranker:
@@ -248,7 +245,7 @@ class Approach(ABC):
                         sourcefile=document.get("sourcefile"),
                         oids=document.get("oids"),
                         groups=document.get("groups"),
-                        captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
+                        captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
                         score=document.get("@search.score"),
                         reranker_score=document.get("@search.reranker_score"),
                     )
@@ -266,7 +263,7 @@ class Approach(ABC):
         return qualified_documents
 
     def get_sources_content(
-        self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool
+        self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool
     ) -> list[str]:
 
         def nonewlines(s: str) -> str:
@@ -358,13 +355,13 @@ class Approach(ABC):
         overrides: dict[str, Any],
         response_token_limit: int,
         should_stream: bool = False,
-        tools: Optional[List[ChatCompletionToolParam]] = None,
+        tools: Optional[list[ChatCompletionToolParam]] = None,
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
     ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
         if chatgpt_model in self.GPT_REASONING_MODELS:
-            params: Dict[str, Any] = {
+            params: dict[str, Any] = {
                 # max_tokens is not supported
                 "max_completion_tokens": response_token_limit
             }
@@ -400,14 +397,14 @@ class Approach(ABC):
     def format_thought_step_for_chatcompletion(
         self,
         title: str,
-        messages: List[ChatCompletionMessageParam],
+        messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         model: str,
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
     ) -> ThoughtStep:
-        properties: Dict[str, Any] = {"model": model}
+        properties: dict[str, Any] = {"model": model}
         if deployment:
             properties["deployment"] = deployment
         # Only add reasoning_effort setting if the model supports it

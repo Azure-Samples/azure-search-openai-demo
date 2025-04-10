@@ -1,7 +1,8 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Awaitable, Optional, Union, cast
+from collections.abc import AsyncGenerator, Awaitable
+from typing import Any, Optional, Union, cast
 
 from openai import AsyncStream
 from openai.types.chat import (
