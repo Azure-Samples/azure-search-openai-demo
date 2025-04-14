@@ -68,8 +68,9 @@ const Layout = () => {
                 <div className={styles.sidebarContent}>
                     <Link to="/" className={styles.logoContainer}>
                         <img
-                            src="https://staudiolydevaueast001.blob.core.windows.net/images-blob/pow_whiddon.svg"
-                            alt="Whiddon logo"
+                           // src="https://staudiolydevaueast001.blob.core.windows.net/images-blob/pow_whiddon.svg"
+                            src="https://images.squarespace-cdn.com/content/67a59b2813e24e4e74f84777/1738906450340-QFO8Z38UYBJU1VF7HO6L/QTX.group.png?format=1000w&content-type=image%2Fpng"
+                            alt="Qtx logo"
                             className={styles.logo}
                         />
                     </Link>
