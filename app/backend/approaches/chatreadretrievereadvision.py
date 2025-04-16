@@ -1,5 +1,5 @@
 from collections.abc import Awaitable
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast, AsyncGenerator
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -11,8 +11,8 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
-from approaches.chatapproach import ChatApproach
+from approaches.approach import DataPoints, ThoughtStep
+from approaches.chatapproach import ChatApproach, StreamingThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -77,7 +77,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+    ) -> AsyncGenerator[StreamingThoughtStep, None]:
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -104,6 +104,19 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
+        yield StreamingThoughtStep(
+            step=ThoughtStep(
+                "Prompt to generate search query",
+                query_messages,
+                (
+                    {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                    if self.chatgpt_deployment
+                    else {"model": self.chatgpt_model}
+                ),
+            ),
+            role="tool"
+        )
+
         chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
             messages=query_messages,
             # Azure OpenAI takes the deployment name as the model name
@@ -144,6 +157,14 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             use_query_rewriting,
         )
 
+        yield StreamingThoughtStep(
+            step=ThoughtStep(
+                "Search results",
+                [result.serialize_for_results() for result in results]
+            ),
+            role="tool"
+        )
+
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = []
         image_sources = []
@@ -167,50 +188,18 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             },
         )
 
-        extra_info = ExtraInfo(
-            DataPoints(text=text_sources, images=image_sources),
-            [
-                ThoughtStep(
-                    "Prompt to generate search query",
-                    query_messages,
-                    (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
-                        if self.chatgpt_deployment
-                        else {"model": self.chatgpt_model}
-                    ),
+        yield StreamingThoughtStep(
+            step=ThoughtStep(
+                "Prompt to generate answer",
+                messages,
+                (
+                    {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
+                    if self.gpt4v_deployment
+                    else {"model": self.gpt4v_model}
                 ),
-                ThoughtStep(
-                    "Search using generated search query",
-                    query_text,
-                    {
-                        "use_semantic_captions": use_semantic_captions,
-                        "use_semantic_ranker": use_semantic_ranker,
-                        "use_query_rewriting": use_query_rewriting,
-                        "top": top,
-                        "filter": filter,
-                        "vector_fields": vector_fields,
-                        "use_text_search": use_text_search,
-                    },
-                ),
-                ThoughtStep(
-                    "Search results",
-                    [result.serialize_for_results() for result in results],
-                ),
-                ThoughtStep(
-                    "Prompt to generate answer",
-                    messages,
-                    (
-                        {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
-                        if self.gpt4v_deployment
-                        else {"model": self.gpt4v_model}
-                    ),
-                ),
-            ],
-        )
-
-        chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
-            self.openai_client.chat.completions.create(
+                data_points=DataPoints(text=text_sources, images=image_sources)
+            ),
+            chat_completion=self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
                 messages=messages,
                 temperature=overrides.get("temperature", 0.3),
@@ -218,6 +207,5 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 n=1,
                 stream=should_stream,
                 seed=seed,
-            ),
+            )
         )
-        return (extra_info, chat_coroutine)

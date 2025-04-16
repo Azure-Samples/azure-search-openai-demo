@@ -18,14 +18,14 @@ interface Props {
     onActiveTabChanged: (tab: AnalysisPanelTabs) => void;
     activeCitation: string | undefined;
     citationHeight: string;
-    answer: ChatAppResponse;
+    response: ChatAppResponse;
 }
 
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
-export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
-    const isDisabledThoughtProcessTab: boolean = !answer.context.thoughts;
-    const isDisabledSupportingContentTab: boolean = !answer.context.data_points;
+export const AnalysisPanel = ({ response, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
+    const isDisabledThoughtProcessTab: boolean = !response.value.some(item => item.context?.thought);
+    const isDisabledSupportingContentTab: boolean = !response.value.some(item => item.context?.thought?.data_points);
     const isDisabledCitationTab: boolean = !activeCitation;
     const [citation, setCitation] = useState("");
 
@@ -82,14 +82,15 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess thoughts={answer.context.thoughts || []} />
+                <ThoughtProcess thoughts={response.value.flatMap(item => item.context?.thought ?? [])} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}
                 headerText={t("headerTexts.supportingContent")}
                 headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
             >
-                <SupportingContent supportingContent={answer.context.data_points} />
+                {/* TODO: How do we handle citations?*/}
+                <SupportingContent supportingContent={response.value[response.value.length - 1]?.context?.thought?.data_points ?? []} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.CitationTab}

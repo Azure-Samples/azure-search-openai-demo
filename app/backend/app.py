@@ -8,6 +8,7 @@ import time
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any, Union, cast
+import traceback
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -188,10 +189,11 @@ async def ask(auth_claims: dict[str, Any]):
             approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
-        r = await approach.run(
+        result = await approach.run(
             request_json["messages"], context=context, session_state=request_json.get("session_state")
         )
-        return jsonify(r)
+        results = [r async for r in result]
+        return jsonify({"value": results})
     except Exception as error:
         return error_response(error, "/ask")
 
@@ -208,6 +210,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         async for event in r:
             yield json.dumps(event, ensure_ascii=False, cls=JSONEncoder) + "\n"
     except Exception as error:
+        traceback.print_exc()
         logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps(error_dict(error))
 
@@ -241,7 +244,8 @@ async def chat(auth_claims: dict[str, Any]):
             context=context,
             session_state=session_state,
         )
-        return jsonify(result)
+        results = [r async for r in result]
+        return jsonify({"value": results})
     except Exception as error:
         return error_response(error, "/chat")
 
@@ -790,12 +794,12 @@ def create_app():
 
     # Log levels should be one of https://docs.python.org/3/library/logging.html#logging-levels
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.INFO)
     # Set our own logger levels to INFO by default
-    app_level = os.getenv("APP_LOG_LEVEL", "INFO")
+    app_level = os.getenv("APP_LOG_LEVEL", "DEBUG")
     app.logger.setLevel(os.getenv("APP_LOG_LEVEL", app_level))
+    app.logger.setLevel("DEBUG")
     logging.getLogger("scripts").setLevel(app_level)
-
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         allowed_origins = allowed_origin.split(";")
         if len(allowed_origins) > 0:

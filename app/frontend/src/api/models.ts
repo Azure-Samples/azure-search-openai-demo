@@ -46,32 +46,37 @@ export type ResponseMessage = {
     role: string;
 };
 
-export type Thoughts = {
+export type Thought = {
     title: string;
     description: any; // It can be any output from the api
     props?: { [key: string]: any };
+    data_points: string[] | null;
 };
 
 export type ResponseContext = {
-    data_points: string[];
     followup_questions: string[] | null;
-    thoughts: Thoughts[];
+    thought: Thought | null;
 };
 
-export type ChatAppResponseOrError = {
+export type ChatAppResponseItem = {
     message: ResponseMessage;
-    delta: ResponseMessage;
-    context: ResponseContext;
+    delta: ResponseMessage | null;
+    context: ResponseContext | null;
     session_state: any;
-    error?: string;
 };
 
 export type ChatAppResponse = {
-    message: ResponseMessage;
-    delta: ResponseMessage;
-    context: ResponseContext;
-    session_state: any;
+    value: ChatAppResponseItem[];
 };
+
+export function getLastResponse(response: ChatAppResponse): ChatAppResponseItem | null {
+    return response.value.length > 0 ? response.value[response.value.length - 1] : null;
+}
+export type ChatAppError = {
+    error?: string;
+};
+
+export type ChatAppResponseOrError = ChatAppResponse | ChatAppError;
 
 export type ChatAppRequestContext = {
     overrides?: ChatAppRequestOverrides;

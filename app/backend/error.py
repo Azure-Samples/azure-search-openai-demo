@@ -2,6 +2,7 @@ import logging
 
 from openai import APIError
 from quart import jsonify
+import traceback
 
 ERROR_MESSAGE = """The app encountered an error processing your request.
 If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.

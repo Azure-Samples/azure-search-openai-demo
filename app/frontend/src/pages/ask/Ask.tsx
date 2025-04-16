@@ -146,12 +146,12 @@ export function Component(): JSX.Element {
                         language: i18n.language,
                         ...(seed !== null ? { seed: seed } : {})
                     }
-                },
+                }
                 // AI Chat Protocol: Client must pass on any session state received from the server
-                session_state: answer ? answer.session_state : null
+                //session_state: answer ? answer.session_state : null
             };
             const result = await askApi(request, token);
-            setAnswer(result);
+            //setAnswer(result);
             setSpeechUrls([null]);
         } catch (e) {
             setError(e);
@@ -287,21 +287,7 @@ export function Component(): JSX.Element {
                         <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                     </div>
                 )}
-                {!isLoading && answer && !error && (
-                    <div className={styles.askAnswerContainer}>
-                        <Answer
-                            answer={answer}
-                            index={0}
-                            speechConfig={speechConfig}
-                            isStreaming={false}
-                            onCitationClicked={x => onShowCitation(x)}
-                            onThoughtProcessClicked={() => onToggleTab(AnalysisPanelTabs.ThoughtProcessTab)}
-                            onSupportingContentClicked={() => onToggleTab(AnalysisPanelTabs.SupportingContentTab)}
-                            showSpeechOutputAzure={showSpeechOutputAzure}
-                            showSpeechOutputBrowser={showSpeechOutputBrowser}
-                        />
-                    </div>
-                )}
+                {!isLoading && answer && !error && <div className={styles.askAnswerContainer}></div>}
                 {error ? (
                     <div className={styles.askAnswerContainer}>
                         <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />

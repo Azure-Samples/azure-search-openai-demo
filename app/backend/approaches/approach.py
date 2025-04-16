@@ -88,29 +88,21 @@ class Document:
 
         return None
 
+@dataclass
+class DataPoints:
+    text: Optional[list[str]] = None
+    images: Optional[list] = None
 
 @dataclass
 class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
+    data_points: Optional[DataPoints] = None
 
     def update_token_usage(self, usage: CompletionUsage) -> None:
         if self.props:
             self.props["token_usage"] = TokenUsageProps.from_completion_usage(usage)
-
-
-@dataclass
-class DataPoints:
-    text: Optional[list[str]] = None
-    images: Optional[list] = None
-
-
-@dataclass
-class ExtraInfo:
-    data_points: DataPoints
-    thoughts: Optional[list[ThoughtStep]] = None
-    followup_questions: Optional[list[Any]] = None
 
 
 @dataclass
@@ -403,6 +395,7 @@ class Approach(ABC):
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+        data_points: Optional[DataPoints] = None,
     ) -> ThoughtStep:
         properties: dict[str, Any] = {"model": model}
         if deployment:
@@ -414,14 +407,14 @@ class Approach(ABC):
             )
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
-        return ThoughtStep(title, messages, properties)
+        return ThoughtStep(title, messages, properties, data_points)
 
     async def run(
         self,
         messages: list[ChatCompletionMessageParam],
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> dict[str, Any]:
+    ) -> AsyncGenerator[dict[str, Any], None]:
         raise NotImplementedError
 
     async def run_stream(

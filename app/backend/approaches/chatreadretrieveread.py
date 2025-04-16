@@ -1,5 +1,5 @@
 from collections.abc import Awaitable
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, Union, cast, AsyncGenerator
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -11,8 +11,8 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
-from approaches.chatapproach import ChatApproach
+from approaches.approach import DataPoints, ThoughtStep
+from approaches.chatapproach import ChatApproach, StreamingThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
@@ -67,7 +67,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+    ) -> AsyncGenerator[StreamingThoughtStep, None]:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -88,12 +88,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
 
+        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
         query_messages = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
         )
         tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
-
-        # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
 
         chat_completion = cast(
             ChatCompletion,
@@ -111,9 +110,38 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ),
         )
 
+        yield StreamingThoughtStep(
+            step=self.format_thought_step_for_chatcompletion(
+                title="Prompt to generate search query",
+                messages=query_messages,
+                overrides=overrides,
+                model=self.chatgpt_model,
+                deployment=self.chatgpt_deployment,
+                usage=chat_completion.usage,
+                reasoning_effort="low",
+            ),
+            role="tool"
+        )
+
         query_text = self.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
+        yield StreamingThoughtStep(
+            step=ThoughtStep(
+                "Search using generated search query",
+                query_text,
+                {
+                    "use_semantic_captions": use_semantic_captions,
+                    "use_semantic_ranker": use_semantic_ranker,
+                    "use_query_rewriting": use_query_rewriting,
+                    "top": top,
+                    "filter": filter,
+                    "use_vector_search": use_vector_search,
+                    "use_text_search": use_text_search,
+                },
+            ),
+            role="tool"
+        )
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
@@ -134,6 +162,14 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             use_query_rewriting,
         )
 
+        yield StreamingThoughtStep(
+            step=ThoughtStep(
+                "Search results",
+                [result.serialize_for_results() for result in results],
+            ),
+            role="tool"
+        )
+
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
         messages = self.prompt_manager.render_prompt(
@@ -147,55 +183,22 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             },
         )
 
-        extra_info = ExtraInfo(
-            DataPoints(text=text_sources),
-            thoughts=[
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate search query",
-                    messages=query_messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=chat_completion.usage,
-                    reasoning_effort="low",
-                ),
-                ThoughtStep(
-                    "Search using generated search query",
-                    query_text,
-                    {
-                        "use_semantic_captions": use_semantic_captions,
-                        "use_semantic_ranker": use_semantic_ranker,
-                        "use_query_rewriting": use_query_rewriting,
-                        "top": top,
-                        "filter": filter,
-                        "use_vector_search": use_vector_search,
-                        "use_text_search": use_text_search,
-                    },
-                ),
-                ThoughtStep(
-                    "Search results",
-                    [result.serialize_for_results() for result in results],
-                ),
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate answer",
-                    messages=messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=None,
-                ),
-            ],
-        )
-
-        chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
-            self.create_chat_completion(
+        yield StreamingThoughtStep(
+            step=self.format_thought_step_for_chatcompletion(
+                title="Prompt to generate answer",
+                messages=messages,
+                overrides=overrides,
+                model=self.chatgpt_model,
+                deployment=self.chatgpt_deployment,
+                usage=None,
+                data_points=DataPoints(text=text_sources)
+            ),
+            chat_completion=self.create_chat_completion(
                 self.chatgpt_deployment,
                 self.chatgpt_model,
                 messages,
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, 1024),
                 should_stream,
-            ),
+            )
         )
-        return (extra_info, chat_coroutine)
