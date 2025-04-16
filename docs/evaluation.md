@@ -53,8 +53,6 @@ pip install -r evals/requirements.txt
 
 ## Generate ground truth data
 
-Modify the search terms and tasks in `evals/generate_config.json` to match your domain.
-
 Generate ground truth data by running the following command:
 
 ```bash
