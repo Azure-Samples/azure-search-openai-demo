@@ -127,7 +127,7 @@ hypercorn==0.17.3
     # via quart
 hyperframe==6.0.1
     # via h2
-idna==3.8
+idna==3.10
     # via
     #   anyio
     #   httpx
@@ -188,7 +188,7 @@ msal==1.30.0
     #   -r requirements.in
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.2.0
+msal-extensions==1.3.1
     # via azure-identity
 msgraph-core==1.3.3
     # via msgraph-sdk
@@ -394,7 +394,7 @@ tqdm==4.66.5
     # via openai
 types-beautifulsoup4==4.12.0.20240511
     # via -r requirements.in
-types-html5lib==1.1.11.20240806
+types-html5lib==1.1.11.20241018
     # via types-beautifulsoup4
 types-pillow==10.2.0.20240822
     # via -r requirements.in

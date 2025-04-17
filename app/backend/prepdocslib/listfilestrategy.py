@@ -5,8 +5,9 @@ import os
 import re
 import tempfile
 from abc import ABC
+from collections.abc import AsyncGenerator
 from glob import glob
-from typing import IO, AsyncGenerator, Dict, List, Optional, Union
+from typing import IO, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
@@ -150,7 +151,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             downloader = await file_client.download_file()
                             await downloader.readinto(temp_file)
                     # Parse out user ids and group ids
-                    acls: Dict[str, List[str]] = {"oids": [], "groups": []}
+                    acls: dict[str, list[str]] = {"oids": [], "groups": []}
                     # https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake.datalakefileclient?view=azure-python#azure-storage-filedatalake-datalakefileclient-get-access-control
                     # Request ACLs as GUIDs
                     access_control = await file_client.get_access_control(upn=False)

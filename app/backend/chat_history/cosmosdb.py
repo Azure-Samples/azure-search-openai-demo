@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 from azure.cosmos.aio import ContainerProxy, CosmosClient
 from azure.identity.aio import AzureDeveloperCliCredential, ManagedIdentityCredential
@@ -21,7 +21,7 @@ chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_fol
 
 @chat_history_cosmosdb_bp.post("/chat_history")
 @authenticated
-async def post_chat_history(auth_claims: Dict[str, Any]):
+async def post_chat_history(auth_claims: dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
@@ -78,7 +78,7 @@ async def post_chat_history(auth_claims: Dict[str, Any]):
 
 @chat_history_cosmosdb_bp.get("/chat_history/sessions")
 @authenticated
-async def get_chat_history_sessions(auth_claims: Dict[str, Any]):
+async def get_chat_history_sessions(auth_claims: dict[str, Any]):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
@@ -131,7 +131,7 @@ async def get_chat_history_sessions(auth_claims: Dict[str, Any]):
 
 @chat_history_cosmosdb_bp.get("/chat_history/sessions/<session_id>")
 @authenticated
-async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str):
+async def get_chat_history_session(auth_claims: dict[str, Any], session_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 
@@ -171,7 +171,7 @@ async def get_chat_history_session(auth_claims: Dict[str, Any], session_id: str)
 
 @chat_history_cosmosdb_bp.delete("/chat_history/sessions/<session_id>")
 @authenticated
-async def delete_chat_history_session(auth_claims: Dict[str, Any], session_id: str):
+async def delete_chat_history_session(auth_claims: dict[str, Any], session_id: str):
     if not current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED]:
         return jsonify({"error": "Chat history not enabled"}), 400
 

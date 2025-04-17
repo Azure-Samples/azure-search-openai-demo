@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import os
-from typing import List, Optional
+from typing import Optional
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
@@ -66,7 +66,7 @@ class SearchManager:
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else 1536
         self.search_images = search_images
 
-    async def create_index(self, vectorizers: Optional[List[VectorSearchVectorizer]] = None):
+    async def create_index(self, vectorizers: Optional[list[VectorSearchVectorizer]] = None):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
@@ -253,7 +253,7 @@ class SearchManager:
                         )
 
     async def update_content(
-        self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
+        self, sections: list[Section], image_embeddings: Optional[list[list[float]]] = None, url: Optional[str] = None
     ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]

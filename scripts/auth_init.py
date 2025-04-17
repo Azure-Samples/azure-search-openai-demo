@@ -4,7 +4,6 @@ import os
 import random
 import subprocess
 import uuid
-from typing import Tuple
 
 from azure.identity.aio import AzureDeveloperCliCredential
 from msgraph import GraphServiceClient
@@ -26,7 +25,7 @@ from auth_common import get_application, test_authentication_enabled
 from load_azd_env import load_azd_env
 
 
-async def create_application(graph_client: GraphServiceClient, request_app: Application) -> Tuple[str, str]:
+async def create_application(graph_client: GraphServiceClient, request_app: Application) -> tuple[str, str]:
     app = await graph_client.applications.post(request_app)
     if app is None:
         raise ValueError("Failed to create application")
@@ -55,7 +54,7 @@ async def add_client_secret(graph_client: GraphServiceClient, app_id: str) -> st
 
 async def create_or_update_application_with_secret(
     graph_client: GraphServiceClient, app_id_env_var: str, app_secret_env_var: str, request_app: Application
-) -> Tuple[str, str, bool]:
+) -> tuple[str, str, bool]:
     app_id = os.getenv(app_id_env_var, "no-id")
     created_app = False
     object_id = None
