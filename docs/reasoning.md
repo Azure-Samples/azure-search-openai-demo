@@ -26,6 +26,7 @@ This repository includes an optional feature that uses reasoning models to gener
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o3-mini
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-01-31
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2024-12-01-preview
    ```
 
    For o1:
@@ -35,6 +36,7 @@ This repository includes an optional feature that uses reasoning models to gener
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o1
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-12-17
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2024-12-01-preview
    ```
 
 2. **(Optional) Set default reasoning effort**
