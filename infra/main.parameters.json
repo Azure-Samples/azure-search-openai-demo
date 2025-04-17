@@ -95,6 +95,9 @@
     "storageSkuName": {
       "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
     },
+    "storageInfrastructureEncryption": {
+      "value": "${AZURE_STORAGE_INFRA_ENCRYPTION}"
+    },
     "appServicePlanName": {
       "value": "${AZURE_APP_SERVICE_PLAN}"
     },
