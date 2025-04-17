@@ -14,4 +14,29 @@
             "required": ["search_query"]
         }
     }
+},
+{
+    "type": "function",
+    "function": {
+        "name": "send_email",
+        "description": "Send the current chat history as an email to the user",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "to_email": {
+                    "type": "string",
+                    "description": "The email address to send the chat history to"
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "The subject line of the email"
+                },
+                "introduction": {
+                    "type": "string",
+                    "description": "A brief introduction to the chat history that will appear at the top of the email"
+                }
+            },
+            "required": ["subject", "to_email", "introduction"]
+        }
+    }
 }]

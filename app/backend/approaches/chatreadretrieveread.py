@@ -1,3 +1,4 @@
+import json
 from typing import Any, Awaitable, List, Optional, Union, cast
 
 from azure.search.documents.aio import SearchClient
@@ -88,7 +89,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             )
 
         query_messages = self.prompt_manager.render_prompt(
-            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+            self.query_rewrite_prompt,
+            {
+                "user_query": original_user_query,
+                "past_messages": messages[:-1],
+                "user_email": auth_claims.get("email", ""),
+            },
         )
         tools: List[ChatCompletionToolParam] = self.query_rewrite_tools
 
@@ -110,7 +116,56 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ),
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        tool_type = self.get_tool_type(chat_completion)
+
+        # If the model chose to send an email, handle that separately
+        if tool_type == "send_email":
+            email_data = self.get_email_data(chat_completion)
+            # Format the chat history as HTML for the email
+            chat_history_html = self.format_chat_history_as_html(messages[:-1])
+            # Add the original query at the end
+            chat_history_html += f"<p><strong>User:</strong> {original_user_query}</p>"
+
+            # Send the email via Graph API
+            if "oid" in auth_claims:
+                await self.send_chat_history_email(
+                    auth_claims,
+                    email_data["to_email"],
+                    email_data["subject"],
+                    email_data["introduction"],
+                    chat_history_html,
+                )
+
+                # Set up a response indicating email was sent
+                extra_info = ExtraInfo(
+                    DataPoints(text=""),
+                    thoughts=[ThoughtStep("Email sent", "Email with chat history sent to user", {})],
+                )
+
+                # Create a response that indicates the email was sent
+                response_message = f"I've sent an email with our conversation history to your registered email address with the subject: '{email_data['subject']}'."
+
+                # Create a chat completion object manually as we're not going through normal flow
+                chat_coroutine = self.create_chat_completion(
+                    self.chatgpt_deployment,
+                    self.chatgpt_model,
+                    [
+                        {
+                            "role": "system",
+                            "content": "You are a helpful assistant, let the user know that you've completed the requested action.",
+                        },
+                        {"role": "user", "content": "Send email with chat history"},
+                        {"role": "assistant", "content": response_message},
+                    ],
+                    overrides,
+                    self.get_response_token_limit(self.chatgpt_model, 300),
+                    should_stream,
+                )
+
+                return (extra_info, chat_coroutine)
+
+        # Extract search query if it's a search request
+        query_text = self.get_search_query(chat_completion, original_user_query, tool_type)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -198,3 +253,111 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ),
         )
         return (extra_info, chat_coroutine)
+
+    def get_search_query(self, chat_completion: ChatCompletion, original_user_query: str, tool_type: str) -> str:
+        """Extract the search query from the chat completion"""
+        if tool_type != "search_sources":
+            return original_user_query
+
+        if not chat_completion.choices or not chat_completion.choices[0].message:
+            return original_user_query
+
+        message = chat_completion.choices[0].message
+
+        if not message.tool_calls:
+            # If no tool calls but content exists, try to extract query from content
+            if message.content and message.content.strip() != "0":
+                return message.content
+            return original_user_query
+
+        # For each tool call, check if it's a search_sources call and extract the query
+        for tool_call in message.tool_calls:
+            if tool_call.function.name == "search_sources":
+                try:
+                    arguments = json.loads(tool_call.function.arguments)
+                    if "search_query" in arguments:
+                        return arguments["search_query"]
+                except (json.JSONDecodeError, KeyError):
+                    pass
+
+        return original_user_query
+
+    def is_send_email_request(self, chat_completion: ChatCompletion) -> bool:
+        """Check if the completion contains a send_email tool call"""
+        if not chat_completion.choices or not chat_completion.choices[0].message:
+            return False
+
+        message = chat_completion.choices[0].message
+        if not message.tool_calls:
+            return False
+
+        for tool_call in message.tool_calls:
+            if tool_call.function.name == "send_email":
+                return True
+
+        return False
+
+    def get_email_data(self, chat_completion: ChatCompletion) -> dict:
+        """Extract email data from a send_email tool call"""
+        message = chat_completion.choices[0].message
+
+        for tool_call in message.tool_calls:
+            if tool_call.function.name == "send_email":
+                try:
+                    arguments = json.loads(tool_call.function.arguments)
+                    return {
+                        "subject": arguments.get("subject", "Chat History"),
+                        "to_email": arguments.get("to_email", ""),
+                        "introduction": arguments.get("introduction", "Here is your requested chat history:"),
+                    }
+                except (json.JSONDecodeError, KeyError):
+                    # Return defaults if there's an error parsing the arguments
+                    return {
+                        "subject": "Chat History",
+                        "to_email": "",
+                        "introduction": "Here is your requested chat history:",
+                    }
+
+        # Fallback defaults
+        return {"subject": "Chat History", "to_email": "", "introduction": "Here is your requested chat history:"}
+
+    def format_chat_history_as_html(self, messages: list[ChatCompletionMessageParam]) -> str:
+        """Format the chat history as HTML for email"""
+        html = ""
+        for message in messages:
+            role = message.get("role", "")
+            content = message.get("content", "")
+            if not content or not isinstance(content, str):
+                continue
+
+            if role == "user":
+                html += f"<p><strong>User:</strong> {content}</p>"
+            elif role == "assistant":
+                html += f"<p><strong>Assistant:</strong> {content}</p>"
+            elif role == "system":
+                # Usually we don't include system messages in the chat history for users
+                pass
+
+        return html
+
+    async def send_chat_history_email(
+        self, auth_claims: dict, to_email: str, subject: str, introduction: str, chat_history_html: str
+    ) -> dict:
+        """Send the chat history as an email to the user"""
+        return await self.auth_helper.send_mail(
+            graph_resource_access_token=auth_claims.get("graph_resource_access_token")
+        )
+
+    def get_tool_type(self, chat_completion: ChatCompletion) -> str:
+        """Determine the type of tool call in the chat completion"""
+        if not chat_completion.choices or not chat_completion.choices[0].message:
+            return ""
+
+        message = chat_completion.choices[0].message
+        if not message.tool_calls:
+            return ""
+
+        for tool_call in message.tool_calls:
+            return tool_call.function.name
+
+        return ""

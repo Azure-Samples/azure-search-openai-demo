@@ -182,6 +182,9 @@ class AuthenticationHelper:
     async def list_groups(graph_resource_access_token: dict) -> list[str]:
         headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
         groups = []
+        # log headers
+        logging.warning(headers)
+
         async with aiohttp.ClientSession(headers=headers) as session:
             resp_json = None
             resp_status = None
@@ -207,6 +210,50 @@ class AuthenticationHelper:
 
         return groups
 
+    @staticmethod
+    async def send_mail(graph_resource_access_token: dict) -> dict:
+        """
+        Update user's birthday using the Microsoft Graph API on behalf of the authenticated user.
+
+        Args:
+            graph_resource_access_token: The access token for the Microsoft Graph API
+            to_recipients: List of user IDs to update (only first one will be used)
+            subject: Not used in this context
+            content: The birthday date in ISO format (e.g. "1990-01-15")
+            content_type: Not used in this context
+
+        Returns:
+            Response from the Graph API
+        """
+        headers = {
+            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
+            "Content-Type": "application/json",
+        }
+
+        # Create the update payload
+        update_payload = {"birthday": "1984-01-01T00:00:00Z"}  # Expecting ISO format date string
+
+        async with aiohttp.ClientSession() as session:
+            async with session.patch(
+                url="https://graph.microsoft.com/v1.0/me", headers=headers, json=update_payload
+            ) as resp:
+                # For successful requests, MS Graph returns 204 No Content
+                if resp.status in [200, 204]:
+                    return {"status": "success", "message": "User birthday updated successfully"}
+                else:
+                    error_content = await resp.text()
+                    logging.error(f"Error updating user birthday: {resp.status} - {error_content}")
+
+                    # Parse error response for better debugging
+                    try:
+                        error_json = json.loads(error_content)
+                        error_message = error_json.get("error", {}).get("message", error_content)
+                        logging.error(f"Error details: {error_message}")
+                    except Exception:
+                        pass
+
+                    raise AuthError(error=error_content, status_code=resp.status)
+
     async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str, Any]:
         if not self.use_authentication:
             return {}
@@ -229,7 +276,12 @@ class AuthenticationHelper:
             # Read the claims from the response. The oid and groups claims are used for security filtering
             # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference
             id_token_claims = graph_resource_access_token["id_token_claims"]
-            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups", [])}
+            auth_claims = {
+                "oid": id_token_claims["oid"],
+                "groups": id_token_claims.get("groups", []),
+                "email": id_token_claims.get("emailaddress", ""),
+                "graph_resource_access_token": graph_resource_access_token,
+            }
 
             # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
             # or a groups overage claim may have been emitted.
