@@ -57,14 +57,13 @@ class StreamingThoughtStep:
                         self.step.update_token_usage(chunk.usage)
                     return chunk
                 except StopAsyncIteration:
-                    # If the stream is exhausted, yield the step with token usage
+                    # Stream is exhausted
                     self._stream = None
-                    return self.step
-        
-            # Non-Streaming Implementation: return the entire response, then the step with token usage
-            result = self._stream
-            self._stream = None
-            return result
+            else:
+                # Non-Streaming Implementation: return the entire response, then the step with token usage
+                result = self._stream
+                self._stream = None
+                return result
     
         if self.step is not None:
             result = self.step
