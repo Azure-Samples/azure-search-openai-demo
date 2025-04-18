@@ -1,7 +1,7 @@
 import os
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import (
     Any,
     Callable,
@@ -105,8 +105,8 @@ class DataPoints:
 
 @dataclass
 class ExtraInfo:
-    data_points: DataPoints
-    thoughts: Optional[list[ThoughtStep]] = None
+    data_points: DataPoints = None
+    thoughts: list[ThoughtStep] = field(default_factory=list)
     followup_questions: Optional[list[Any]] = None
 
 @dataclass
@@ -398,8 +398,7 @@ class Approach(ABC):
         model: str,
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
-        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
-        data_points: Optional[DataPoints] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None
     ) -> ThoughtStep:
         properties: dict[str, Any] = {"model": model}
         if deployment:
@@ -411,7 +410,7 @@ class Approach(ABC):
             )
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
-        return ThoughtStep(title, messages, properties, data_points)
+        return ThoughtStep(title, messages, properties)
 
     async def run(
         self,

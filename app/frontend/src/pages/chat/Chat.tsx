@@ -137,11 +137,8 @@ const Chat = () => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: ChatAppResponse = {
-                        ...askResponse,
-                        message: { content: answer, role: role }
-                    };
-                    setStreamedAnswers([...answers, [question, latestResponse]]);
+                    askResponse.message = { content: answer, role: role };
+                    setStreamedAnswers([...answers, [question, { ...askResponse }]]);
                     resolve(null);
                 }, 33);
             });

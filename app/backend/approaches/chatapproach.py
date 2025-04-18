@@ -32,9 +32,6 @@ class StreamingThoughtStep:
         self.data_points = data_points
         self._stream = None
         self._is_streaming = None
-    
-    def has_content(self) -> bool:
-        return self.chat_completion is not None
 
     def __aiter__(self):
         return self
@@ -45,39 +42,38 @@ class StreamingThoughtStep:
             self._is_streaming = True
 
     async def __anext__(self) -> Union[ChatCompletion, ChatCompletionChunk, DataPoints, ThoughtStep]:
-        if self._is_streaming:
-            # Streaming Implementation: yield each chunk, then the step with token usage
-            if self._stream is None:
-                raise StopAsyncIteration
-
-            try:
-                # Get the next chunk from the async stream
-                chunk = await self._stream.__anext__()
-                if len(chunk.choices) == 0 and chunk.usage:
-                    self.step.update_token_usage(chunk.usage)
-                return chunk
-            except StopAsyncIteration:
-                # If the stream is exhausted, yield the step with token usage
-                self._stream = None
-                return self.step
+        # If there are data points, return them first to render citations
+        if self.data_points is not None:
+            result = self.data_points
+            self.data_points = None
+            return result
         
-        # Non-Streaming Implementation: return the entire response, then the step with token usage
-        if self._stream is None:
-            if self.step is None and self.data_points is None:
-                raise StopAsyncIteration
-            
-            if self.data_points is not None:
-                result = self.data_points
-                self.data_points = None
-                return result
-
+        if self._stream is not None:
+            if self._is_streaming:
+                try:
+                    # Get the next chunk from the async stream
+                    chunk = await self._stream.__anext__()
+                    if len(chunk.choices) == 0 and chunk.usage:
+                        self.step.update_token_usage(chunk.usage)
+                    return chunk
+                except StopAsyncIteration:
+                    # If the stream is exhausted, yield the step with token usage
+                    self._stream = None
+                    return self.step
+        
+            # Non-Streaming Implementation: return the entire response, then the step with token usage
+            result = self._stream
+            self._stream = None
+            return result
+    
+        if self.step is not None:
             result = self.step
             self.step = None
             return result
+    
+        # No more items to yield
+        raise StopAsyncIteration
 
-        result = self._stream
-        self._stream = None
-        return result
 
 class ChatApproach(Approach, ABC):
 
@@ -164,22 +160,23 @@ class ChatApproach(Approach, ABC):
             await thought.start()
             async for chunk in thought:
                 if isinstance(chunk, ChatCompletionChunk):
-                    content = chunk.choices[0].delta.content
-                    role = chunk.choices[0].delta.role
-                    content = content or ""  # content may either not exist in delta, or explicitly be None
-                    completion = { "delta": {"content": content, "role": role} }
-                    if overrides.get("suggest_followup_questions") and "<<" in content:
-                        # if event contains << and not >>, it is start of follow-up question, truncate
-                        followup_questions_started = True
-                        earlier_content = content[: content.index("<<")]
-                        if earlier_content:
-                            completion["delta"]["content"] = earlier_content
+                    if chunk.choices:
+                        content = chunk.choices[0].delta.content
+                        role = chunk.choices[0].delta.role
+                        content = content or ""  # content may either not exist in delta, or explicitly be None
+                        completion = { "delta": {"content": content, "role": role} }
+                        if overrides.get("suggest_followup_questions") and "<<" in content:
+                            # if event contains << and not >>, it is start of follow-up question, truncate
+                            followup_questions_started = True
+                            earlier_content = content[: content.index("<<")]
+                            if earlier_content:
+                                completion["delta"]["content"] = earlier_content
+                                yield completion
+                            followup_content += content[content.index("<<") :]
+                        elif followup_questions_started:
+                            followup_content += content
+                        else:
                             yield completion
-                        followup_content += content[content.index("<<") :]
-                    elif followup_questions_started:
-                        followup_content += content
-                    else:
-                        yield completion
                 elif isinstance(chunk, ThoughtStep):
                     extra_info.thoughts.append(chunk)
                     yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
@@ -189,9 +186,10 @@ class ChatApproach(Approach, ABC):
 
             if followup_content:
                 _, followup_questions = self.extract_followup_questions(followup_content)
+                extra_info.followup_questions = followup_questions
                 yield {
                     "delta": {"role": "assistant"},
-                    "context": {"context": extra_info, "followup_questions": followup_questions},
+                    "context": extra_info,
                 }
 
     async def run(
