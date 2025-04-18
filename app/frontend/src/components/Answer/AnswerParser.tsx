@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { ChatAppResponseItem, getCitationFilePath } from "../../api";
+import { ChatAppResponse, getCitationFilePath } from "../../api";
 
 type HtmlParsedAnswer = {
     answerHtml: string;
@@ -30,8 +30,8 @@ function isCitationValid(contextDataPoints: any, citationCandidate: string): boo
     return isValidCitation;
 }
 
-export function parseAnswerToHtml(answer: ChatAppResponseItem, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
-    const contextDataPoints = answer.context?.thought?.data_points ?? [];
+export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean, onCitationClicked: (citationFilePath: string) => void): HtmlParsedAnswer {
+    const contextDataPoints = answer.context.data_points;
     const citations: string[] = [];
 
     // Trim any whitespace from the end of the answer after removing follow-up questions

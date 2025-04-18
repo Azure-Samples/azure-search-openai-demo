@@ -22,7 +22,7 @@ export async function configApi(): Promise<Config> {
     return (await response.json()) as Config;
 }
 
-export async function askApi(request: ChatAppRequest, idToken: string | undefined): Promise<ChatAppResponse[]> {
+export async function askApi(request: ChatAppRequest, idToken: string | undefined): Promise<ChatAppResponse> {
     const headers = await getHeaders(idToken);
     const response = await fetch(`${BACKEND_URI}/ask`, {
         method: "POST",
@@ -34,11 +34,11 @@ export async function askApi(request: ChatAppRequest, idToken: string | undefine
         throw Error(`Request failed with status ${response.status}`);
     }
     const parsedResponse: ChatAppResponseOrError = await response.json();
-    if ("error" in parsedResponse) {
+    if (parsedResponse.error) {
         throw Error(parsedResponse.error);
     }
 
-    return parsedResponse as ChatAppResponse[];
+    return parsedResponse as ChatAppResponse;
 }
 
 export async function chatApi(request: ChatAppRequest, shouldStream: boolean, idToken: string | undefined): Promise<Response> {

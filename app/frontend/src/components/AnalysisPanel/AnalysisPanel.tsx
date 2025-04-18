@@ -18,14 +18,14 @@ interface Props {
     onActiveTabChanged: (tab: AnalysisPanelTabs) => void;
     activeCitation: string | undefined;
     citationHeight: string;
-    response: ChatAppResponse;
+    answer: ChatAppResponse;
 }
 
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
-export const AnalysisPanel = ({ response, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
-    const isDisabledThoughtProcessTab: boolean = !response.value.some(item => item.context?.thought);
-    const isDisabledSupportingContentTab: boolean = !response.value.some(item => item.context?.thought?.data_points);
+export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
+    const isDisabledThoughtProcessTab: boolean = !answer.context.thoughts;
+    const isDisabledSupportingContentTab: boolean = !answer.context.data_points;
     const isDisabledCitationTab: boolean = !activeCitation;
     const [citation, setCitation] = useState("");
 
@@ -82,15 +82,14 @@ export const AnalysisPanel = ({ response, activeTab, activeCitation, citationHei
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess thoughts={response.value.flatMap(item => item.context?.thought ?? [])} />
+                <ThoughtProcess thoughts={answer.context.thoughts || []} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}
                 headerText={t("headerTexts.supportingContent")}
                 headerButtonProps={isDisabledSupportingContentTab ? pivotItemDisabledStyle : undefined}
             >
-                {/* TODO: How do we handle citations?*/}
-                <SupportingContent supportingContent={response.value[response.value.length - 1]?.context?.thought?.data_points ?? []} />
+                <SupportingContent supportingContent={answer.context.data_points} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.CitationTab}

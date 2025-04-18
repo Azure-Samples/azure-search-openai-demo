@@ -7,16 +7,15 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 import styles from "./Answer.module.css";
-import { ChatAppResponse, ChatAppResponseItem, getCitationFilePath, SpeechConfig } from "../../api";
+import { ChatAppResponse, getCitationFilePath, SpeechConfig } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
 import { SpeechOutputAzure } from "./SpeechOutputAzure";
 
 interface Props {
-    answer: ChatAppResponseItem;
-    response: ChatAppResponse;
-    responseIndex: number;
+    answer: ChatAppResponse;
+    index: number;
     speechConfig: SpeechConfig;
     isSelected?: boolean;
     isStreaming: boolean;
@@ -31,8 +30,7 @@ interface Props {
 
 export const Answer = ({
     answer,
-    response,
-    responseIndex,
+    index,
     speechConfig,
     isSelected,
     isStreaming,
@@ -45,7 +43,7 @@ export const Answer = ({
     showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer.message.content]);
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer]);
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
     const [copied, setCopied] = useState(false);
@@ -82,7 +80,7 @@ export const Answer = ({
                             title={t("tooltips.showThoughtProcess")}
                             ariaLabel={t("tooltips.showThoughtProcess")}
                             onClick={() => onThoughtProcessClicked()}
-                            disabled={!response.value.some(thought => thought.context?.thought)}
+                            disabled={!answer.context.thoughts?.length}
                         />
                         <IconButton
                             style={{ color: "black" }}
@@ -90,10 +88,10 @@ export const Answer = ({
                             title={t("tooltips.showSupportingContent")}
                             ariaLabel={t("tooltips.showSupportingContent")}
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.context?.thought?.data_points?.length}
+                            disabled={!answer.context.data_points}
                         />
                         {showSpeechOutputAzure && (
-                            <SpeechOutputAzure answer={sanitizedAnswerHtml} index={responseIndex} speechConfig={speechConfig} isStreaming={isStreaming} />
+                            <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
                         )}
                         {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
                     </div>
