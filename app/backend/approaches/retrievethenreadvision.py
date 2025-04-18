@@ -1,5 +1,5 @@
 from collections.abc import Awaitable
-from typing import Any, Callable, Optional, AsyncGenerator
+from typing import Any, Callable, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -8,7 +8,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 
-from approaches.approach import Approach, DataPoints, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -66,7 +66,7 @@ class RetrieveThenReadVisionApproach(Approach):
         messages: list[ChatCompletionMessageParam],
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> AsyncGenerator[dict[str, Any], None]:
+    ) -> dict[str, Any]:
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
@@ -87,26 +87,6 @@ class RetrieveThenReadVisionApproach(Approach):
         vector_fields = overrides.get("vector_fields", ["embedding"])
         send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
-                
-        yield {
-            "context": {
-                "thought": ThoughtStep(
-                    "Search using user query",
-                    q,
-                    {
-                        "use_semantic_captions": use_semantic_captions,
-                        "use_semantic_ranker": use_semantic_ranker,
-                        "use_query_rewriting": use_query_rewriting,
-                        "top": top,
-                        "filter": filter,
-                        "vector_fields": vector_fields,
-                        "use_vector_search": use_vector_search,
-                        "use_text_search": use_text_search,
-                    },
-                ),
-            },
-            "session_state": session_state,
-        }
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
@@ -132,16 +112,6 @@ class RetrieveThenReadVisionApproach(Approach):
             minimum_reranker_score,
             use_query_rewriting,
         )
-
-        yield {
-            "context": {
-                "thought": ThoughtStep(
-                    "Search results",
-                    [result.serialize_for_results() for result in results],
-                )
-            },
-            "session_state": session_state
-        }
 
         # Process results
         text_sources = []
@@ -169,13 +139,28 @@ class RetrieveThenReadVisionApproach(Approach):
             seed=seed,
         )
 
-        yield {
-            "message": {
-                "content": chat_completion.choices[0].message.content,
-                "role": chat_completion.choices[0].message.role,
-            },
-            "context": {
-                "thought": ThoughtStep(
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources, images=image_sources),
+            [
+                ThoughtStep(
+                    "Search using user query",
+                    q,
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "use_query_rewriting": use_query_rewriting,
+                        "top": top,
+                        "filter": filter,
+                        "vector_fields": vector_fields,
+                        "use_vector_search": use_vector_search,
+                        "use_text_search": use_text_search,
+                    },
+                ),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                ThoughtStep(
                     "Prompt to generate answer",
                     messages,
                     (
@@ -183,8 +168,15 @@ class RetrieveThenReadVisionApproach(Approach):
                         if self.gpt4v_deployment
                         else {"model": self.gpt4v_model}
                     ),
-                    data_points=DataPoints(text=text_sources, images=image_sources),
-                )
+                ),
+            ],
+        )
+
+        return {
+            "message": {
+                "content": chat_completion.choices[0].message.content,
+                "role": chat_completion.choices[0].message.role,
             },
+            "context": extra_info,
             "session_state": session_state,
         }

@@ -196,8 +196,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
                     if self.gpt4v_deployment
                     else {"model": self.gpt4v_model}
-                ),
-                data_points=DataPoints(text=text_sources, images=image_sources)
+                )
             ),
             chat_completion=self.openai_client.chat.completions.create(
                 model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
@@ -207,5 +206,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 n=1,
                 stream=should_stream,
                 seed=seed,
-            )
+            ),
+            data_points=DataPoints(text=text_sources, images=image_sources)
         )

@@ -190,8 +190,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 overrides=overrides,
                 model=self.chatgpt_model,
                 deployment=self.chatgpt_deployment,
-                usage=None,
-                data_points=DataPoints(text=text_sources)
+                usage=None
             ),
             chat_completion=self.create_chat_completion(
                 self.chatgpt_deployment,
@@ -200,5 +199,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, 1024),
                 should_stream,
-            )
+            ),
+            data_points=DataPoints(text=text_sources)
         )

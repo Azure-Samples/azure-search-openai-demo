@@ -89,21 +89,25 @@ class Document:
         return None
 
 @dataclass
-class DataPoints:
-    text: Optional[list[str]] = None
-    images: Optional[list] = None
-
-@dataclass
 class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
-    data_points: Optional[DataPoints] = None
-
     def update_token_usage(self, usage: CompletionUsage) -> None:
         if self.props:
             self.props["token_usage"] = TokenUsageProps.from_completion_usage(usage)
 
+@dataclass
+class DataPoints:
+    text: Optional[list[str]] = None
+    images: Optional[list] = None
+
+
+@dataclass
+class ExtraInfo:
+    data_points: DataPoints
+    thoughts: Optional[list[ThoughtStep]] = None
+    followup_questions: Optional[list[Any]] = None
 
 @dataclass
 class TokenUsageProps:

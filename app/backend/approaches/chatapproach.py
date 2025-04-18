@@ -13,14 +13,23 @@ from openai.types.chat import (
 
 from approaches.approach import (
     Approach,
+    DataPoints,
+    ExtraInfo,
     ThoughtStep
 )
 
 class StreamingThoughtStep:
-    def __init__(self, step: ThoughtStep, chat_completion: Optional[Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]] = None, role: Optional[str] = "assistant"):
+    def __init__(
+            self,
+            step: ThoughtStep,
+            chat_completion: Optional[Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]] = None,
+            role: Optional[str] = "assistant",
+            data_points: Optional[DataPoints] = None):
+        
         self.step = step
         self.chat_completion = chat_completion
         self.role = role
+        self.data_points = data_points
         self._stream = None
         self._is_streaming = None
     
@@ -35,7 +44,7 @@ class StreamingThoughtStep:
             self._stream = await self.chat_completion
             self._is_streaming = True
 
-    async def __anext__(self) -> Union[ChatCompletion, ChatCompletionChunk, ThoughtStep]:
+    async def __anext__(self) -> Union[ChatCompletion, ChatCompletionChunk, DataPoints, ThoughtStep]:
         if self._is_streaming:
             # Streaming Implementation: yield each chunk, then the step with token usage
             if self._stream is None:
@@ -54,9 +63,14 @@ class StreamingThoughtStep:
         
         # Non-Streaming Implementation: return the entire response, then the step with token usage
         if self._stream is None:
-            if self.step is None:
+            if self.step is None and self.data_points is None:
                 raise StopAsyncIteration
             
+            if self.data_points is not None:
+                result = self.data_points
+                self.data_points = None
+                return result
+
             result = self.step
             self.step = None
             return result
@@ -93,7 +107,7 @@ class ChatApproach(Approach, ABC):
                 return query_text
         return user_query
 
-    def extract_followup_questions(self, content: Optional[str]) -> Optional[List[str]]:
+    def extract_followup_questions(self, content: Optional[str]):
         if content is None:
             return content, []
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
@@ -104,32 +118,32 @@ class ChatApproach(Approach, ABC):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         session_state: Any = None,
-    ) -> AsyncGenerator[dict[str, Any], None]:
+    ) -> dict[str, Any]:
         thoughts = self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=False
         )
+        content = None
+        role = None
+        extra_info = ExtraInfo()
         async for thought in thoughts:
-            content = None
-            role = None
-            thought_step = None
-            followup_questions = None
             await thought.start()
             async for chunk in thought:
                 if isinstance(chunk, ChatCompletion):
                     content = chunk.choices[0].message.content
                     role = chunk.choices[0].message.role
                 elif isinstance(chunk, ThoughtStep):
-                   thought_step = chunk
+                   extra_info.thoughts.append(chunk)
+                elif isinstance(chunk, DataPoints):
+                    extra_info.data_points = chunk
 
-            if overrides.get("suggest_followup_questions"):
-                content, followup_questions = self.extract_followup_questions(content)
-                followup_questions = followup_questions
-
-            yield {
-                "message": {"content": content, "role": role},
-                "context": { "thought": thought_step, "followup_questions": followup_questions },
-                "session_state": session_state,
-            }
+        if overrides.get("suggest_followup_questions"):
+            content, followup_questions = self.extract_followup_questions(content)
+            followup_questions = followup_questions
+        return {
+            "message": {"content": content, "role": role},
+            "context": extra_info,
+            "session_state": session_state,
+        }
 
     async def run_with_streaming(
         self,
@@ -137,47 +151,48 @@ class ChatApproach(Approach, ABC):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         session_state: Any = None,
-    ) -> AsyncGenerator[dict[str, Any], None]:
+    ) -> AsyncGenerator[dict, None]:
         thoughts = self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
+        extra_info = ExtraInfo()
+
+        yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+        followup_questions_started = False
+        followup_content = ""
         async for thought in thoughts:
-            yield { "delta": { "role": thought.role }, "has_content": thought.has_content() }
-
-            followup_questions_started = False
-            followup_content = ""
-            thought_step = None
             await thought.start()
-            async for event in thought:
-                if isinstance(event, ChatCompletionChunk):
-                    if event.choices:
-                        completion = {
-                            "delta": {
-                                "content": event.choices[0].delta.content,
-                                "role": event.choices[0].delta.role
-                            }
-                        }
+            async for chunk in thought:
+                if isinstance(chunk, ChatCompletionChunk):
+                    content = chunk.choices[0].delta.content
+                    role = chunk.choices[0].delta.role
+                    content = content or ""  # content may either not exist in delta, or explicitly be None
+                    completion = { "delta": {"content": content, "role": role} }
+                    if overrides.get("suggest_followup_questions") and "<<" in content:
                         # if event contains << and not >>, it is start of follow-up question, truncate
-                        content = completion["delta"].get("content")
-                        content = content or ""  # content may either not exist in delta, or explicitly be None
-                        if overrides.get("suggest_followup_questions") and "<<" in content:
-                            followup_questions_started = True
-                            earlier_content = content[: content.index("<<")]
-                            if earlier_content:
-                                completion["delta"]["content"] = earlier_content
-                                yield completion
-                            followup_content += content[content.index("<<") :]
-                        elif followup_questions_started:
-                            followup_content += content
-                        else:
+                        followup_questions_started = True
+                        earlier_content = content[: content.index("<<")]
+                        if earlier_content:
+                            completion["delta"]["content"] = earlier_content
                             yield completion
-                elif isinstance(event, ThoughtStep):
-                    thought_step = event
+                        followup_content += content[content.index("<<") :]
+                    elif followup_questions_started:
+                        followup_content += content
+                    else:
+                        yield completion
+                elif isinstance(chunk, ThoughtStep):
+                    extra_info.thoughts.append(chunk)
+                    yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+                elif isinstance(chunk, DataPoints):
+                    extra_info.data_points = chunk
+                    yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
-            followup_questions = None
             if followup_content:
                 _, followup_questions = self.extract_followup_questions(followup_content)
-            yield {"delta": {"role": thought.role, "finish_reason": "stop" }, "context": { "thought": thought_step, "followup_questions": followup_questions }, "session_state": session_state }
+                yield {
+                    "delta": {"role": "assistant"},
+                    "context": {"context": extra_info, "followup_questions": followup_questions},
+                }
 
     async def run(
         self,

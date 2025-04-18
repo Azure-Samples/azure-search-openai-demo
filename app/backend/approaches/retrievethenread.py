@@ -1,11 +1,11 @@
-from typing import Any, Optional, cast, AsyncGenerator
+from typing import Any, Optional, cast
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from approaches.approach import Approach, DataPoints, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
@@ -58,7 +58,7 @@ class RetrieveThenReadApproach(Approach):
         messages: list[ChatCompletionMessageParam],
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> AsyncGenerator[dict[str, Any], None]:
+    ) -> dict[str, Any]:
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
@@ -73,26 +73,6 @@ class RetrieveThenReadApproach(Approach):
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
-        
-        yield {
-            "context": {
-                "thought": ThoughtStep(
-                    "Search using user query",
-                    q,
-                    {
-                        "use_semantic_captions": use_semantic_captions,
-                        "use_semantic_ranker": use_semantic_ranker,
-                        "use_query_rewriting": use_query_rewriting,
-                        "top": top,
-                        "filter": filter,
-                        "use_vector_search": use_vector_search,
-                        "use_text_search": use_text_search,
-                    },
-                )
-            },
-            "session_state": session_state,
-        }
-
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
@@ -121,16 +101,6 @@ class RetrieveThenReadApproach(Approach):
             | {"user_query": q, "text_sources": text_sources},
         )
 
-        yield {
-            "context": {
-                "thought": ThoughtStep(
-                    "Search results",
-                    [result.serialize_for_results() for result in results],
-                )
-            },
-            "session_state": session_state
-        }
-
         chat_completion = cast(
             ChatCompletion,
             await self.create_chat_completion(
@@ -142,21 +112,42 @@ class RetrieveThenReadApproach(Approach):
             ),
         )
 
-        yield {
-            "message": {
-                "content": chat_completion.choices[0].message.content,
-                "role": chat_completion.choices[0].message.role,
-            },
-            "context": {
-                "thought": self.format_thought_step_for_chatcompletion(
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts=[
+                ThoughtStep(
+                    "Search using user query",
+                    q,
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "use_query_rewriting": use_query_rewriting,
+                        "top": top,
+                        "filter": filter,
+                        "use_vector_search": use_vector_search,
+                        "use_text_search": use_text_search,
+                    },
+                ),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+                self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate answer",
                     messages=messages,
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
                     usage=chat_completion.usage,
-                    data_points=DataPoints(text=text_sources)
                 ),
+            ],
+        )
+
+        return {
+            "message": {
+                "content": chat_completion.choices[0].message.content,
+                "role": chat_completion.choices[0].message.role,
             },
+            "context": extra_info,
             "session_state": session_state,
         }
