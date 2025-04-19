@@ -202,7 +202,8 @@ export const getToken = async (client: IPublicClientApplication): Promise<string
     return client
         .acquireTokenSilent({
             ...tokenRequest,
-            redirectUri: getRedirectUri()
+            redirectUri: getRedirectUri(),
+            prompt: "consent"
         })
         .then(r => r.accessToken)
         .catch(error => {

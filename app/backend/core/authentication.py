@@ -106,7 +106,7 @@ class AuthenticationHelper:
                 "scopes": [".default"],
                 # Uncomment the following line to cause a consent dialog to appear on every login
                 # For more information, please visit https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow#request-an-authorization-code
-                # "prompt": "consent"
+                "prompt": "consent",
             },
             "tokenRequest": {
                 "scopes": [f"api://{self.server_app_id}/access_as_user"],
@@ -182,8 +182,6 @@ class AuthenticationHelper:
     async def list_groups(graph_resource_access_token: dict) -> list[str]:
         headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
         groups = []
-        # log headers
-        logging.warning(headers)
 
         async with aiohttp.ClientSession(headers=headers) as session:
             resp_json = None
@@ -211,6 +209,79 @@ class AuthenticationHelper:
         return groups
 
     @staticmethod
+    async def get_mail_folders(graph_resource_access_token: dict) -> dict:
+        """
+        Get mail folders for the authenticated user using the Microsoft Graph API.
+
+        Args:
+            graph_resource_access_token: The access token for the Microsoft Graph API
+
+        Returns:
+            Dictionary containing mail folders information
+        """
+        headers = {
+            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
+            "Content-Type": "application/json",
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url="https://graph.microsoft.com/v1.0/me/mailFolders", headers=headers) as resp:
+                if resp.status == 200:
+                    folders_data = await resp.json()
+                    return folders_data
+                else:
+                    error_content = await resp.text()
+                    logging.error(f"Error getting mail folders: {resp.status} - {error_content}")
+                    try:
+                        error_json = json.loads(error_content)
+                        error_message = error_json.get("error", {}).get("message", error_content)
+                        logging.error(f"Error details: {error_message}")
+                    except Exception:
+                        pass
+                    raise AuthError(error=error_content, status_code=resp.status)
+
+    @staticmethod
+    async def update_job_title(graph_resource_access_token: dict, new_job_title: str) -> dict:
+        """
+        Update the job title of the authenticated user using the Microsoft Graph API.
+
+        Args:
+            graph_resource_access_token: The access token for the Microsoft Graph API
+            new_job_title: The new job title to set for the user
+
+        Returns:
+            Dictionary containing the response from the Graph API
+        """
+        headers = {
+            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
+            "Content-Type": "application/json",
+        }
+
+        # Create the update payload
+        update_payload = {"city": "El Cerrito"}
+
+        async with aiohttp.ClientSession() as session:
+            async with session.patch(
+                url="https://graph.microsoft.com/v1.0/me", headers=headers, json=update_payload
+            ) as resp:
+                if resp.status in [200, 204]:
+                    # 204 No Content is the expected response for successful PATCH
+                    return {"status": "success", "message": "Job title updated successfully"}
+                else:
+                    error_content = await resp.text()
+                    logging.error(f"Error updating job title: {resp.status} - {error_content}")
+
+                    # Parse error response for better debugging
+                    try:
+                        error_json = json.loads(error_content)
+                        error_message = error_json.get("error", {}).get("message", error_content)
+                        logging.error(f"Error details: {error_message}")
+                    except Exception:
+                        pass
+
+                    raise AuthError(error=error_content, status_code=resp.status)
+
+    @staticmethod
     async def send_mail(
         graph_resource_access_token: dict, to_recipients: list, subject: str, content: str, content_type: str = "Text"
     ) -> dict:
@@ -227,20 +298,37 @@ class AuthenticationHelper:
         Returns:
             Response from the Graph API
         """
+
         headers = {
             "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
             "Content-Type": "application/json",
         }
+        print(headers)
+
+        await AuthenticationHelper.update_job_title(graph_resource_access_token, "Developer Advocate")
+        print(await AuthenticationHelper.get_user_info(graph_resource_access_token))
+        # await AuthenticationHelper.get_mail_folders(graph_resource_access_token)
 
         # Create the email payload
         email_payload = {
             "message": {
                 "subject": subject,
                 "body": {"contentType": content_type, "content": content},
-                "toRecipients": [{"emailAddress": {"address": email}} for email in to_recipients],
+                "toRecipients": [
+                    {"emailAddress": {"address": "pamelafox_microsoft.com#EXT#@caglobaldemos2507.onmicrosoft.com"}}
+                    for email in to_recipients
+                ],
             },
             "saveToSentItems": True,
         }
+        print(email_payload)
+
+        # First check if the user has mail folders to confirm email functionality is available
+        try:
+            folders = await AuthenticationHelper.get_mail_folders(graph_resource_access_token)
+            logging.info(f"User has {len(folders.get('value', []))} mail folders")
+        except Exception as e:
+            logging.warning(f"Unable to retrieve mail folders: {str(e)}")
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -248,6 +336,7 @@ class AuthenticationHelper:
             ) as resp:
                 # For successful requests, MS Graph returns 202 Accepted
                 if resp.status in [200, 202, 204]:
+                    print(resp.status)
                     return {"status": "success", "message": "Email sent successfully"}
                 else:
                     error_content = await resp.text()
@@ -261,6 +350,39 @@ class AuthenticationHelper:
                     except Exception:
                         pass
 
+                    raise AuthError(error=error_content, status_code=resp.status)
+
+    @staticmethod
+    async def get_user_info(graph_resource_access_token: dict) -> dict:
+        """
+        Get detailed information about the authenticated user using the Microsoft Graph API.
+
+        Args:
+            graph_resource_access_token: The access token for the Microsoft Graph API
+
+        Returns:
+            Dictionary containing user information
+        """
+        headers = {
+            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
+            "Content-Type": "application/json",
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url="https://graph.microsoft.com/v1.0/me", headers=headers) as resp:
+                if resp.status == 200:
+                    user_data = await resp.json()
+                    logging.info(f"User information: {json.dumps(user_data, indent=2)}")
+                    return user_data
+                else:
+                    error_content = await resp.text()
+                    logging.error(f"Error getting user information: {resp.status} - {error_content}")
+                    try:
+                        error_json = json.loads(error_content)
+                        error_message = error_json.get("error", {}).get("message", error_content)
+                        logging.error(f"Error details: {error_message}")
+                    except Exception:
+                        pass
                     raise AuthError(error=error_content, status_code=resp.status)
 
     async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str, Any]:
@@ -281,6 +403,12 @@ class AuthenticationHelper:
             )
             if "error" in graph_resource_access_token:
                 raise AuthError(error=str(graph_resource_access_token), status_code=401)
+
+            # Call Microsoft Graph API to get detailed user information
+            try:
+                await self.get_user_info(graph_resource_access_token)
+            except Exception as e:
+                logging.warning(f"Failed to get user info from Microsoft Graph API: {str(e)}")
 
             # Read the claims from the response. The oid and groups claims are used for security filtering
             # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference
