@@ -211,16 +211,18 @@ class AuthenticationHelper:
         return groups
 
     @staticmethod
-    async def send_mail(graph_resource_access_token: dict) -> dict:
+    async def send_mail(
+        graph_resource_access_token: dict, to_recipients: list, subject: str, content: str, content_type: str = "Text"
+    ) -> dict:
         """
-        Update user's birthday using the Microsoft Graph API on behalf of the authenticated user.
+        Send an email using the Microsoft Graph API on behalf of the authenticated user.
 
         Args:
             graph_resource_access_token: The access token for the Microsoft Graph API
-            to_recipients: List of user IDs to update (only first one will be used)
-            subject: Not used in this context
-            content: The birthday date in ISO format (e.g. "1990-01-15")
-            content_type: Not used in this context
+            to_recipients: List of email addresses to send to
+            subject: Email subject
+            content: Email body content
+            content_type: Content type ("Text" or "HTML")
 
         Returns:
             Response from the Graph API
@@ -230,19 +232,26 @@ class AuthenticationHelper:
             "Content-Type": "application/json",
         }
 
-        # Create the update payload
-        update_payload = {"birthday": "1984-01-01T00:00:00Z"}  # Expecting ISO format date string
+        # Create the email payload
+        email_payload = {
+            "message": {
+                "subject": subject,
+                "body": {"contentType": content_type, "content": content},
+                "toRecipients": [{"emailAddress": {"address": email}} for email in to_recipients],
+            },
+            "saveToSentItems": True,
+        }
 
         async with aiohttp.ClientSession() as session:
-            async with session.patch(
-                url="https://graph.microsoft.com/v1.0/me", headers=headers, json=update_payload
+            async with session.post(
+                url="https://graph.microsoft.com/v1.0/me/sendMail", headers=headers, json=email_payload
             ) as resp:
-                # For successful requests, MS Graph returns 204 No Content
-                if resp.status in [200, 204]:
-                    return {"status": "success", "message": "User birthday updated successfully"}
+                # For successful requests, MS Graph returns 202 Accepted
+                if resp.status in [200, 202, 204]:
+                    return {"status": "success", "message": "Email sent successfully"}
                 else:
                     error_content = await resp.text()
-                    logging.error(f"Error updating user birthday: {resp.status} - {error_content}")
+                    logging.error(f"Error sending email: {resp.status} - {error_content}")
 
                     # Parse error response for better debugging
                     try:
