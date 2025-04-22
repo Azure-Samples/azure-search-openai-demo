@@ -28,6 +28,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionReasoningEffort,
     ChatCompletionToolParam,
+    ChatCompletionNamedToolChoiceParam
 )
 
 from approaches.promptmanager import PromptManager
@@ -266,17 +267,21 @@ class Approach(ABC):
             return s.replace("\n", " ").replace("\r", " ")
 
         if use_semantic_captions:
-            return [
+            results = [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))
                 + ": "
                 + nonewlines(" . ".join([cast(str, c.text) for c in (doc.captions or [])]))
                 for doc in results
             ]
         else:
-            return [
+            results = [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
                 for doc in results
             ]
+        
+        # Remove duplicates
+        results = list(set(results))
+        return results
 
     def get_citation(self, sourcepage: str, use_image_citation: bool) -> str:
         if use_image_citation:
@@ -352,6 +357,7 @@ class Approach(ABC):
         response_token_limit: int,
         should_stream: bool = False,
         tools: Optional[list[ChatCompletionToolParam]] = None,
+        tool_choice: Optional[ChatCompletionNamedToolChoiceParam] = None,
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
@@ -380,6 +386,7 @@ class Approach(ABC):
             params["stream_options"] = {"include_usage": True}
 
         params["tools"] = tools
+        params["tool_choice"] = tool_choice
 
         # Azure OpenAI takes the deployment name as the model name
         return self.openai_client.chat.completions.create(

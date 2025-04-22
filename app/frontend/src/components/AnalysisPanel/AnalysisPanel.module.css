@@ -134,3 +134,30 @@
     background-color: #424242;
     color: #ffffff;
 }
+
+.evaluationContainer {
+    margin: 16px 0;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.evaluationLabel {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.evaluationList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.evaluationList li {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #555;
+}

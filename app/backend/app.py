@@ -432,6 +432,7 @@ async def setup_clients():
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    OPENAI_CHATGPT_REFLECTION_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_REFLECTION_MODEL")
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
     OPENAI_REASONING_EFFORT = os.getenv("AZURE_OPENAI_REASONING_EFFORT")
@@ -441,6 +442,9 @@ async def setup_clients():
     AZURE_OPENAI_GPT4V_MODEL = os.environ.get("AZURE_OPENAI_GPT4V_MODEL")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = (
         os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
+    )
+    AZURE_OPENAI_CHATGPT_REFLECTION_DEPLOYMENT = (
+        os.getenv("AZURE_OPENAI_CHATGPT_REFLECTION_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     )
     AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
@@ -696,6 +700,8 @@ async def setup_clients():
         auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        chatgpt_reflection_model=OPENAI_CHATGPT_REFLECTION_MODEL,
+        chatgpt_reflection_deployment=AZURE_OPENAI_CHATGPT_REFLECTION_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         embedding_dimensions=OPENAI_EMB_DIMENSIONS,

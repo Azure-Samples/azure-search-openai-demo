@@ -26,7 +26,8 @@ class StreamingThoughtStep:
             chat_completion: Optional[Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]] = None,
             role: Optional[str] = "assistant",
             data_points: Optional[DataPoints] = None,
-            should_stream: bool = True):
+            should_stream: bool = True,
+            completion: Optional[str] = None):
         
         self.step = step
         self.chat_completion = chat_completion
@@ -36,7 +37,8 @@ class StreamingThoughtStep:
         self.should_stream = should_stream
         self._steps = []
         self._step_i = -1
-        self._completion = ""
+        self._completion = completion or ""
+        self._has_existing_completion = completion is not None
 
     def __aiter__(self):
         return self
@@ -90,6 +92,10 @@ class StreamingThoughtStep:
                 self._completion = result.choices[0].message.content if result.choices else ""
                 self._steps.append(result)
                 return result
+        elif self._has_existing_completion:
+            # Stream is none - yield already done completion
+            self._has_existing_completion = False
+            return self._completion
     
         if self.step is not None:
             result = self.step
@@ -146,7 +152,6 @@ class ChatApproach(Approach, ABC):
         response_message = chat_completion.choices[0].message
         reflection_response = ReflectionResponse()
 
-        print(response_message.model_dump())
         if response_message.tool_calls:
             for tool in response_message.tool_calls:
                 if tool.type != "function":
@@ -172,12 +177,10 @@ class ChatApproach(Approach, ABC):
                             thought_chain=correctness_reflection.get("thoughtChain"),
                             explanation=correctness_reflection.get("explanation")
                         )
-                if function.name == "search_index":
-                    arg = json.loads(function.arguments)
-                    reflection_response.next_query = arg.get("query")
-                if function.name == "rewrite_answer":
-                    arg = json.loads(function.arguments)
-                    reflection_response.next_answer = arg.get("answer")
+                    if next_answer := arg.get("next_answer"):
+                        reflection_response.next_answer = next_answer
+                    if next_query := arg.get("next_query"):
+                        reflection_response.next_query = next_query
 
         return reflection_response
 
@@ -205,6 +208,9 @@ class ChatApproach(Approach, ABC):
                 if isinstance(chunk, ChatCompletion):
                     content = chunk.choices[0].message.content
                     role = chunk.choices[0].message.role
+                elif isinstance(chunk, str):
+                    content = chunk
+                    role = "assistant" 
                 elif isinstance(chunk, ThoughtStep):
                    extra_info.thoughts.append(chunk)
                 elif isinstance(chunk, DataPoints):
@@ -255,6 +261,11 @@ class ChatApproach(Approach, ABC):
                             followup_content += content
                         else:
                             yield completion
+                elif isinstance(chunk, str):
+                    content = chunk
+                    role = "assistant" 
+                    completion = { "delta": {"content": content, "role": role} }
+                    yield completion
                 elif isinstance(chunk, ThoughtStep):
                     extra_info.thoughts.append(chunk)
                     yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}

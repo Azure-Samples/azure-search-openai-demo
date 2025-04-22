@@ -60,50 +60,22 @@
                                 "description": "A score indicating how correct the answer is to the context given, on a scale from 1 to 5."
                             }
                         }
+                    },
+                    "next_query": {
+                        "type": "string",
+                        "description": "The query to search in the index if necessary. Output an empty string if it's not necessary"
+                    },
+                    "next_answer": {
+                        "type": "string",
+                        "description": "The answer to the question asked, which may be empty if no correction is necessary or a new one based on the context."
                     }
                 },
                 "required": [
                     "relevance",
                     "groundedness",
-                    "correctness"
-                ]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "search_index",
-            "description": "Search the index to find relevant information based on the question asked.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "The query to search in the index."
-                    }
-                },
-                "required": [
-                    "query"
-                ]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "rewrite_answer",
-            "description": "Rewrite an answer to a question based on the context of the conversation and the relevance, groundedness, and correctness of the original answer.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "answer": {
-                        "type": "string",
-                        "description": "The updated answer to the query"
-                    }
-                },
-                "required": [
-                    "answer"
+                    "correctness",
+                    "next_query",
+                    "next_answer"
                 ]
             }
         }

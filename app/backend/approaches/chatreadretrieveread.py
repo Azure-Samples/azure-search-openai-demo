@@ -1,15 +1,15 @@
 from collections.abc import Awaitable
 from typing import Any, Optional, Union, cast, AsyncGenerator
-import asyncio
+from copy import deepcopy
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
-from openai import AsyncOpenAI, AsyncStream
+from openai import AsyncOpenAI
 from openai.types.chat import (
     ChatCompletion,
-    ChatCompletionChunk,
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
+    ChatCompletionNamedToolChoiceParam
 )
 
 from approaches.approach import DataPoints, ThoughtStep
@@ -34,6 +34,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
+        chatgpt_reflection_model: Optional[str],
+        chatgpt_reflection_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
@@ -50,6 +52,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
+        self.chatgpt_reflection_model = chatgpt_reflection_model
+        self.chatgpt_reflection_deployment = chatgpt_reflection_deployment
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
@@ -180,12 +184,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        messages = self.prompt_manager.render_prompt(
+        answer_messages = deepcopy(messages)
+        answer_messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
-                "past_messages": messages[:-1],
+                "past_messages": answer_messages[:-1],
                 "user_query": original_user_query,
                 "text_sources": text_sources,
             },
@@ -194,7 +199,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         answer_step = StreamingThoughtStep(
             step=self.format_thought_step_for_chatcompletion(
                 title="Prompt to generate answer",
-                messages=messages,
+                messages=answer_messages,
                 overrides=overrides,
                 model=self.chatgpt_model,
                 deployment=self.chatgpt_deployment,
@@ -202,7 +207,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             chat_completion=self.create_chat_completion(
                 self.chatgpt_deployment,
                 self.chatgpt_model,
-                messages,
+                answer_messages,
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, 1024),
                 should_stream,
@@ -214,16 +219,30 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             yield answer_step
             return
 
+        answer_passed_eval = False
+        next_answer = ""
         # Step 4: Reflection loop to improve the answer
         for i in range(reflection_max_steps):
-            answer_chunks = []
-
-            # Read the answer
+            # Read the candidate answer step
             await answer_step.start()
             async for chunk in answer_step:
-                if isinstance(chunk, ThoughtStep):
-                    answer_thought = chunk
-            
+                pass
+    
+            yield StreamingThoughtStep(
+                step=self.format_thought_step_for_chatcompletion(
+                    title="Generate candidate answer",
+                    messages=answer_messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    additional_properties={
+                        "candidate_answer": answer_step.get_completion()
+                    }
+                ),
+                data_points=DataPoints(text=text_sources),
+                should_stream=False
+            )
+
             # STEP 5: Determine the next action to take
             reflect_messages = self.prompt_manager.render_prompt(
                 self.reflect_prompt, {"text_sources": text_sources, "query": original_user_query, "response": answer_step.get_completion(), "past_messages": messages[:-1]}
@@ -233,13 +252,14 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             chat_completion = cast(
                 ChatCompletion,
                 await self.create_chat_completion(
-                    self.chatgpt_deployment,
-                    self.chatgpt_model,
+                    self.chatgpt_reflection_deployment,
+                    self.chatgpt_reflection_model,
                     messages=reflect_messages,
                     overrides=overrides,
                     response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
                     temperature=0.0,  # Minimize creativity for reflection
-                    tools=tools
+                    tools=tools,
+                    tool_choice=ChatCompletionNamedToolChoiceParam(function={"name": self.reflect_tools[0]["function"]["name"]}, type="function"),
                 )
             )
             reflection = self.get_reflection(chat_completion)
@@ -249,18 +269,124 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     title="Prompt to reflect on answer",
                     messages=reflect_messages,
                     overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
+                    model=self.chatgpt_reflection_model,
+                    deployment=self.chatgpt_reflection_deployment,
                     usage=chat_completion.usage,
                     additional_properties=dataclasses.asdict(reflection)
                 ),
                 role="tool"
             )
 
+            # If the reflection was good, stop generating
+            answer_passed_eval = reflection.groundedness.score >= 4 and reflection.correctness.score >= 4 and reflection.relevance.score >= 4
+            if answer_passed_eval:
+                break
+
+            if reflection.next_answer:
+                next_answer = reflection.next_answer
+            if reflection.next_query:
+                # Repeat STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
+                yield StreamingThoughtStep(
+                    step=ThoughtStep(
+                        "Updated search using reflected search query",
+                        reflection.next_query,
+                        {
+                            "use_semantic_captions": use_semantic_captions,
+                            "use_semantic_ranker": use_semantic_ranker,
+                            "use_query_rewriting": use_query_rewriting,
+                            "top": top,
+                            "filter": filter,
+                            "use_vector_search": use_vector_search,
+                            "use_text_search": use_text_search,
+                        },
+                    ),
+                    role="tool"
+                )
+
+                # If retrieval mode includes vectors, compute an embedding for the query
+                vectors: list[VectorQuery] = []
+                if use_vector_search:
+                    vectors.append(await self.compute_text_embedding(reflection.next_query))
+
+                reflection_results = await self.search(
+                    top,
+                    reflection.next_query,
+                    filter,
+                    vectors,
+                    use_text_search,
+                    use_vector_search,
+                    use_semantic_ranker,
+                    use_semantic_captions,
+                    minimum_search_score,
+                    minimum_reranker_score,
+                    use_query_rewriting,
+                )
+
+                # Repeat STEP 3: Generate a contextual and content specific answer using the search results and chat history
+                results.extend(reflection_results)
+                text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+                answer_messages = deepcopy(messages)
+                answer_messages = self.prompt_manager.render_prompt(
+                    self.answer_prompt,
+                    self.get_system_prompt_variables(overrides.get("prompt_template"))
+                    | {
+                        "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                        "past_messages": answer_messages[:-1],
+                        "user_query": original_user_query,
+                        "text_sources": text_sources,
+                        "previous_answer": answer_step.get_completion(),
+                        "previous_answer_evaluations": [
+                            { "label": "Groundedness", "score": reflection.groundedness.score, "explanation": reflection.groundedness.explanation },
+                            { "label": "Correctness", "score": reflection.correctness.score, "explanation": reflection.correctness.explanation },
+                            { "label": "Relevance", "score": reflection.relevance.score, "explanation": reflection.relevance.explanation },
+                        ],
+                        "revised_answer": reflection.next_answer
+                    },
+                )
+
+                answer_step = StreamingThoughtStep(
+                    step=self.format_thought_step_for_chatcompletion(
+                        title="Prompt to generate updated reflected answer",
+                        messages=answer_messages,
+                        overrides=overrides,
+                        model=self.chatgpt_model,
+                        deployment=self.chatgpt_deployment,
+                    ),
+                    chat_completion=self.create_chat_completion(
+                        self.chatgpt_deployment,
+                        self.chatgpt_model,
+                        answer_messages,
+                        overrides,
+                        self.get_response_token_limit(self.chatgpt_model, 1024),
+                        should_stream,
+                    ),
+                    data_points=DataPoints(text=text_sources),
+                    should_stream=should_stream
+                )
+            else:
+                # No new query, yield revised answer
+                break
+
+        if answer_passed_eval:
             answer_step.rewind()
             yield answer_step
-            return
-
+        else:
+            next_answer = reflection.next_answer or next_answer
+            if next_answer:
+                yield StreamingThoughtStep(
+                    step=self.format_thought_step_for_chatcompletion(
+                        title="Using reflection revised answer",
+                        messages=answer_messages,
+                        overrides=overrides,
+                        model=self.chatgpt_model,
+                        deployment=self.chatgpt_deployment,
+                    ),
+                    completion=next_answer,
+                    data_points=DataPoints(text=text_sources),
+                    should_stream=False
+                )
+            else:
+                yield answer_step
 
 
 

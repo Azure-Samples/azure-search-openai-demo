@@ -37,6 +37,28 @@ Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}
 
+{% if previous_answer %}
+You've previously attempted to answer this question and it has been evalauted that the previous answer was not sufficient
+Previous answer:
+{{ previous_answer }}
+
+Why was the previous answer insufficient?
+{% for evaluation in previous_answer_evaluations %}
+Evaluation: {{ evaluation["label"] }}
+Score: {{ evaluation["score"] }}
+Explanation: {{ evaluation["explanation"] }}
+{% endfor %}
+
+{% if revised_answer %}
+The previous answer was revised to improve the quality of the response. Use this to help generate a better answer:
+Revised answer:
+{{ revised_answer }}
+
+{% endif %}
+
+Use this information to improve the answer next time
+{% endif %}
+
 {% for message in past_messages %}
 {{ message["role"] }}:
 {{ message["content"] }}
