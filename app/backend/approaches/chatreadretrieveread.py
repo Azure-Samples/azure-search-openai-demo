@@ -1,5 +1,6 @@
 from collections.abc import Awaitable
 from typing import Any, Optional, Union, cast, AsyncGenerator
+import asyncio
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -15,6 +16,7 @@ from approaches.approach import DataPoints, ThoughtStep
 from approaches.chatapproach import ChatApproach, StreamingThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+import dataclasses
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):
@@ -41,6 +43,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        reflection_max_steps: Optional[int] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -58,8 +61,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
+        self.reflect_prompt = self.prompt_manager.load_prompt("chat_reflect_answer.prompty")
+        self.reflect_tools = self.prompt_manager.load_tools("chat_reflect_answer_tools.json")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
+        self.reflection_max_steps = reflection_max_steps or 3
 
     async def run_until_final_call(
         self,
@@ -73,6 +79,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
+        use_reflection = True if overrides.get("reflection") else True
+        reflection_max_steps = overrides.get("reflection_max_steps", self.reflection_max_steps)
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
@@ -183,14 +191,13 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             },
         )
 
-        yield StreamingThoughtStep(
+        answer_step = StreamingThoughtStep(
             step=self.format_thought_step_for_chatcompletion(
                 title="Prompt to generate answer",
                 messages=messages,
                 overrides=overrides,
                 model=self.chatgpt_model,
                 deployment=self.chatgpt_deployment,
-                usage=None
             ),
             chat_completion=self.create_chat_completion(
                 self.chatgpt_deployment,
@@ -200,5 +207,61 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 self.get_response_token_limit(self.chatgpt_model, 1024),
                 should_stream,
             ),
-            data_points=DataPoints(text=text_sources)
+            data_points=DataPoints(text=text_sources),
+            should_stream=should_stream
         )
+        if not use_reflection:
+            yield answer_step
+            return
+
+        # Step 4: Reflection loop to improve the answer
+        for i in range(reflection_max_steps):
+            answer_chunks = []
+
+            # Read the answer
+            await answer_step.start()
+            async for chunk in answer_step:
+                if isinstance(chunk, ThoughtStep):
+                    answer_thought = chunk
+            
+            # STEP 5: Determine the next action to take
+            reflect_messages = self.prompt_manager.render_prompt(
+                self.reflect_prompt, {"text_sources": text_sources, "query": original_user_query, "response": answer_step.get_completion(), "past_messages": messages[:-1]}
+            )
+            tools: list[ChatCompletionToolParam] = self.reflect_tools
+
+            chat_completion = cast(
+                ChatCompletion,
+                await self.create_chat_completion(
+                    self.chatgpt_deployment,
+                    self.chatgpt_model,
+                    messages=reflect_messages,
+                    overrides=overrides,
+                    response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
+                    temperature=0.0,  # Minimize creativity for reflection
+                    tools=tools
+                )
+            )
+            reflection = self.get_reflection(chat_completion)
+
+            yield StreamingThoughtStep(
+                step=self.format_thought_step_for_chatcompletion(
+                    title="Prompt to reflect on answer",
+                    messages=reflect_messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=chat_completion.usage,
+                    additional_properties=dataclasses.asdict(reflection)
+                ),
+                role="tool"
+            )
+
+            answer_step.rewind()
+            yield answer_step
+            return
+
+
+
+
+

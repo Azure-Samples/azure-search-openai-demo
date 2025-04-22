@@ -398,7 +398,8 @@ class Approach(ABC):
         model: str,
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
-        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
     ) -> ThoughtStep:
         properties: dict[str, Any] = {"model": model}
         if deployment:
@@ -410,6 +411,8 @@ class Approach(ABC):
             )
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+        if additional_properties:
+            properties.update(additional_properties)
         return ThoughtStep(title, messages, properties)
 
     async def run(

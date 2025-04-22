@@ -207,5 +207,6 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                 stream=should_stream,
                 seed=seed,
             ),
-            data_points=DataPoints(text=text_sources, images=image_sources)
+            data_points=DataPoints(text=text_sources, images=image_sources),
+            should_stream=should_stream
         )

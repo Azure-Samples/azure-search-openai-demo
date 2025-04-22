@@ -1,0 +1,111 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "reflect_answer",
+            "description": "Reflect on an answer to a question and decide on the next step based on the context of the conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "relevance": {
+                        "type": "object",
+                        "description": "Relevance of the answer to the question asked.",
+                        "properties": {
+                            "thoughtChain": {
+                                "type": "string",
+                                "description": "A chain of thoughts that led to the conclusion about the relevance of the answer."
+                            },
+                            "explanation": {
+                                "type": "string",
+                                "description": "An explanation of why the answer is relevant or not relevant to the question asked."
+                            },
+                            "score": {
+                                "type": "number",
+                                "description": "A score indicating how relevant the answer is to the question asked, on a scale from 1 to 5."
+                            }
+                        }
+                    },
+                    "groundedness": {
+                        "type": "object",
+                        "description": "Groundedness of the answer based on the context for the question.",
+                        "properties": {
+                            "thoughtChain": {
+                                "type": "string",
+                                "description": "A chain of thoughts that led to the conclusion about the groundedness of the answer."
+                            },
+                            "explanation": {
+                                "type": "string",
+                                "description": "An explanation of why the answer is grounded based on the context."
+                            },
+                            "score": {
+                                "type": "number",
+                                "description": "A score indicating how grounded the answer is to the context given, on a scale from 1 to 5."
+                            }
+                        }
+                    },
+                    "correctness": {
+                        "type": "object",
+                        "description": "Correctness of the answer based on the context for the question.",
+                        "properties": {
+                            "thoughtChain": {
+                                "type": "string",
+                                "description": "A chain of thoughts that led to the conclusion about the correctness of the answer."
+                            },
+                            "explanation": {
+                                "type": "string",
+                                "description": "An explanation of why the answer is correct or not correct based on the context."
+                            },
+                            "score": {
+                                "type": "number",
+                                "description": "A score indicating how correct the answer is to the context given, on a scale from 1 to 5."
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "relevance",
+                    "groundedness",
+                    "correctness"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_index",
+            "description": "Search the index to find relevant information based on the question asked.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The query to search in the index."
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "rewrite_answer",
+            "description": "Rewrite an answer to a question based on the context of the conversation and the relevance, groundedness, and correctness of the original answer.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "answer": {
+                        "type": "string",
+                        "description": "The updated answer to the query"
+                    }
+                },
+                "required": [
+                    "answer"
+                ]
+            }
+        }
+    }
+]
