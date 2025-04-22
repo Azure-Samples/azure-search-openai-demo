@@ -21,6 +21,7 @@ export type ChatAppRequestOverrides = {
     semantic_ranker?: boolean;
     semantic_captions?: boolean;
     query_rewriting?: boolean;
+    reflection?: boolean;
     reasoning_effort?: string;
     include_category?: string;
     exclude_category?: string;
@@ -89,6 +90,7 @@ export type Config = {
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
+    showReflectionOption: boolean;
     streamingEnabled: boolean;
     showVectorOption: boolean;
     showUserUpload: boolean;

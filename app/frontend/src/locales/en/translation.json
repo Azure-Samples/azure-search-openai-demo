@@ -92,6 +92,7 @@
         "useSemanticCaptions": "Use semantic captions",
         "useQueryRewriting": "Use query rewriting for retrieval",
         "reasoningEffort": "Reasoning effort",
+        "useReflection": "Use reflection",
         "reasoningEffortOptions": {
             "low": "Low",
             "medium": "Medium",
@@ -150,6 +151,8 @@
             "Enables Azure AI Search query rewriting, a process that modifies the user's query to improve search results. Requires semantic ranker to be enabled.",
         "reasoningEffort":
             "Sets the reasoning effort for the LLM. Higher values result in more reasoning, but may take longer to generate a response. The default is medium.",
+        "useReflection":
+            "Enables the LLM to reflect on the answer it generated and provide a thought process, explanation, and score for the relevance, groundedness, and correctness of the answer.",
         "useSemanticCaptions":
              "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",

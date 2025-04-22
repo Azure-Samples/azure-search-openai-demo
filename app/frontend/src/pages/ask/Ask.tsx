@@ -33,6 +33,7 @@ export function Component(): JSX.Element {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
+    const [useReflection, setUseReflection] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
@@ -45,6 +46,7 @@ export function Component(): JSX.Element {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
+    const [showReflectionOption, setShowReflectionOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
@@ -84,6 +86,8 @@ export function Component(): JSX.Element {
             setShowSemanticRankerOption(config.showSemanticRankerOption);
             setUseQueryRewriting(config.showQueryRewritingOption);
             setShowQueryRewritingOption(config.showQueryRewritingOption);
+            setUseReflection(config.showReflectionOption);
+            setShowReflectionOption(config.showReflectionOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
@@ -194,6 +198,9 @@ export function Component(): JSX.Element {
                 break;
             case "useQueryRewriting":
                 setUseQueryRewriting(value);
+                break;
+            case "useReflection":
+                setUseReflection(value);
                 break;
             case "reasoningEffort":
                 setReasoningEffort(value);
@@ -340,6 +347,7 @@ export function Component(): JSX.Element {
                     useSemanticRanker={useSemanticRanker}
                     useSemanticCaptions={useSemanticCaptions}
                     useQueryRewriting={useQueryRewriting}
+                    useReflection={useReflection}
                     reasoningEffort={reasoningEffort}
                     excludeCategory={excludeCategory}
                     includeCategory={includeCategory}
@@ -350,6 +358,7 @@ export function Component(): JSX.Element {
                     showSemanticRankerOption={showSemanticRankerOption}
                     showQueryRewritingOption={showQueryRewritingOption}
                     showReasoningEffortOption={showReasoningEffortOption}
+                    showReflectionOption={showReflectionOption}
                     showGPT4VOptions={showGPT4VOptions}
                     showVectorOption={showVectorOption}
                     useOidSecurityFilter={useOidSecurityFilter}

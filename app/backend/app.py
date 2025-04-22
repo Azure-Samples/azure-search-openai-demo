@@ -73,6 +73,7 @@ from config import (
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
+    CONFIG_REFLECTION_ENABLED,
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -301,6 +302,7 @@ def config():
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
+            "showReflectionOption": current_app.config[CONFIG_REFLECTION_ENABLED],
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
             "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED],
             "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
@@ -479,6 +481,7 @@ async def setup_clients():
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
+    USE_REFLECTION = os.getenv("USE_REFLECTION", "").lower() == "true"
     ENABLE_LANGUAGE_PICKER = os.getenv("ENABLE_LANGUAGE_PICKER", "").lower() == "true"
     USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
     USE_SPEECH_OUTPUT_BROWSER = os.getenv("USE_SPEECH_OUTPUT_BROWSER", "").lower() == "true"
@@ -663,6 +666,7 @@ async def setup_clients():
         or OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
         or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
     )
+    current_app.config[CONFIG_REFLECTION_ENABLED] = USE_REFLECTION
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER

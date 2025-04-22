@@ -83,7 +83,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
-        use_reflection = True if overrides.get("reflection") else True
+        use_reflection = True if overrides.get("reflection") else False
         reflection_max_steps = overrides.get("reflection_max_steps", self.reflection_max_steps)
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
