@@ -321,9 +321,16 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     minimum_reranker_score,
                     use_query_rewriting,
                 )
+                results.extend(reflection_results)
+                yield StreamingThoughtStep(
+                    step=ThoughtStep(
+                        "Search results",
+                        [result.serialize_for_results() for result in results],
+                    ),
+                    role="tool"
+                )
 
                 # Repeat STEP 3: Generate a contextual and content specific answer using the search results and chat history
-                results.extend(reflection_results)
                 text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
                 answer_messages = deepcopy(messages)
                 answer_messages = self.prompt_manager.render_prompt(

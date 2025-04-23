@@ -35,11 +35,7 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                                 ))}
                         </Stack>
                         {t.props?.token_usage && <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />}
-                        {t.props?.groundedness && <Evaluation label="Groundedness" value={t.props.groundedness} />}
-                        {t.props?.relevance && <Evaluation label="Relevance" value={t.props.relevance} />}
-                        {t.props?.correctness && <Evaluation label="Correctness" value={t.props.correctness} />}
-                        {(t.props?.next_query || t.props?.next_answer) && <Reflection next_query={t.props.next_query} next_answer={t.props.next_answer} />}
-                        {t.props?.candidate_answer && <CandidateAnswer candidate_answer={t.props.candidate_answer} />}
+
                         {Array.isArray(t.description) ? (
                             <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, null, 2)}
@@ -47,6 +43,12 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                         ) : (
                             <div>{t.description}</div>
                         )}
+
+                        {t.props?.groundedness && <Evaluation label="Groundedness" value={t.props.groundedness} />}
+                        {t.props?.relevance && <Evaluation label="Relevance" value={t.props.relevance} />}
+                        {t.props?.correctness && <Evaluation label="Correctness" value={t.props.correctness} />}
+                        {(t.props?.next_query || t.props?.next_answer) && <Reflection next_query={t.props.next_query} next_answer={t.props.next_answer} />}
+                        {t.props?.candidate_answer && <CandidateAnswer candidate_answer={t.props.candidate_answer} />}
                     </li>
                 );
             })}
