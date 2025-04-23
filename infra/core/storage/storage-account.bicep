@@ -31,7 +31,7 @@ var networkAcls = (publicNetworkAccess == 'Enabled') ? {
   defaultAction: 'Allow'
 } : { defaultAction: 'Deny' }
 
-resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: name
   location: location
   tags: tags
