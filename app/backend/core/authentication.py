@@ -305,9 +305,9 @@ class AuthenticationHelper:
         }
         print(headers)
 
-        await AuthenticationHelper.update_job_title(graph_resource_access_token, "Developer Advocate")
-        print(await AuthenticationHelper.get_user_info(graph_resource_access_token))
-        # await AuthenticationHelper.get_mail_folders(graph_resource_access_token)
+        # await AuthenticationHelper.update_job_title(graph_resource_access_token, "Developer Advocate")
+        # print(await AuthenticationHelper.get_user_info(graph_resource_access_token))
+        print(await AuthenticationHelper.get_mail_folders(graph_resource_access_token))
 
         # Create the email payload
         email_payload = {
@@ -315,7 +315,7 @@ class AuthenticationHelper:
                 "subject": subject,
                 "body": {"contentType": content_type, "content": content},
                 "toRecipients": [
-                    {"emailAddress": {"address": "pamelafox_microsoft.com#EXT#@caglobaldemos2507.onmicrosoft.com"}}
+                    {"emailAddress": {"address": "pamelafox-test@caglobaldemos2507.onmicrosoft.com"}}
                     for email in to_recipients
                 ],
             },
