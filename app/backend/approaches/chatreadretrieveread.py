@@ -164,6 +164,47 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
                 return (extra_info, chat_coroutine)
 
+        # If the model chose to add a note, handle that separately
+        if tool_type == "add_note":
+            note_data = self.get_note_data(chat_completion)
+            # Format the chat history as HTML for the OneNote page
+            chat_history_html = self.format_chat_history_as_html(messages[:-1])
+            # Compose the full OneNote page content
+            full_content = f"<p>{note_data['intro_content']}</p>" + chat_history_html
+            # Create the OneNote page via Graph API
+            if "oid" in auth_claims:
+                note_response = await self.auth_helper.create_onenote_page(
+                    graph_resource_access_token=auth_claims.get("graph_resource_access_token"),
+                    title=note_data["title"],
+                    content_html=full_content,
+                )
+                extra_info = ExtraInfo(
+                    DataPoints(text=""),
+                    thoughts=[ThoughtStep("OneNote page created", "OneNote page with chat history created", {})],
+                )
+                messages = [
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant, let the user know that you've completed the requested action.",
+                    },
+                    {"role": "user", "content": original_user_query},
+                    {"role": "assistant", "tool_calls": chat_completion.choices[0].message.tool_calls},
+                    {
+                        "role": "tool",
+                        "tool_call_id": chat_completion.choices[0].message.tool_calls[0].id,
+                        "content": json.dumps(note_response),
+                    },
+                ]
+                chat_coroutine = self.create_chat_completion(
+                    self.chatgpt_deployment,
+                    self.chatgpt_model,
+                    messages,
+                    overrides,
+                    self.get_response_token_limit(self.chatgpt_model, 300),
+                    should_stream,
+                )
+                return (extra_info, chat_coroutine)
+
         # Extract search query if it's a search request
         query_text = self.get_search_query(chat_completion, original_user_query, tool_type)
 
@@ -282,21 +323,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         return original_user_query
 
-    def is_send_email_request(self, chat_completion: ChatCompletion) -> bool:
-        """Check if the completion contains a send_email tool call"""
-        if not chat_completion.choices or not chat_completion.choices[0].message:
-            return False
-
-        message = chat_completion.choices[0].message
-        if not message.tool_calls:
-            return False
-
-        for tool_call in message.tool_calls:
-            if tool_call.function.name == "send_email":
-                return True
-
-        return False
-
     def get_email_data(self, chat_completion: ChatCompletion) -> dict:
         """Extract email data from a send_email tool call"""
         message = chat_completion.choices[0].message
@@ -320,6 +346,22 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # Fallback defaults
         return {"subject": "Chat History", "to_email": "", "introduction": "Here is your requested chat history:"}
+
+    def get_note_data(self, chat_completion: ChatCompletion) -> dict:
+        """Extract note data from an add_note tool call"""
+        message = chat_completion.choices[0].message
+        for tool_call in message.tool_calls:
+            if tool_call.function.name == "add_note":
+                try:
+                    arguments = json.loads(tool_call.function.arguments)
+                    title = arguments.get("title")
+                    intro_content = arguments.get("intro_content")
+                except (json.JSONDecodeError, KeyError):
+                    pass
+        return {
+            "title": title if title else "Chat History",
+            "intro_content": intro_content if intro_content else "Here is the chat history:",
+        }
 
     def format_chat_history_as_html(self, messages: list[ChatCompletionMessageParam]) -> str:
         """Format the chat history as HTML for email"""

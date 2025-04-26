@@ -303,11 +303,6 @@ class AuthenticationHelper:
             "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
             "Content-Type": "application/json",
         }
-        print(headers)
-
-        # await AuthenticationHelper.update_job_title(graph_resource_access_token, "Developer Advocate")
-        # print(await AuthenticationHelper.get_user_info(graph_resource_access_token))
-        print(await AuthenticationHelper.get_mail_folders(graph_resource_access_token))
 
         # Create the email payload
         email_payload = {
@@ -321,7 +316,6 @@ class AuthenticationHelper:
             },
             "saveToSentItems": True,
         }
-        print(email_payload)
 
         # First check if the user has mail folders to confirm email functionality is available
         try:
@@ -336,20 +330,10 @@ class AuthenticationHelper:
             ) as resp:
                 # For successful requests, MS Graph returns 202 Accepted
                 if resp.status in [200, 202, 204]:
-                    print(resp.status)
                     return {"status": "success", "message": "Email sent successfully"}
                 else:
                     error_content = await resp.text()
                     logging.error(f"Error sending email: {resp.status} - {error_content}")
-
-                    # Parse error response for better debugging
-                    try:
-                        error_json = json.loads(error_content)
-                        error_message = error_json.get("error", {}).get("message", error_content)
-                        logging.error(f"Error details: {error_message}")
-                    except Exception:
-                        pass
-
                     raise AuthError(error=error_content, status_code=resp.status)
 
     @staticmethod
@@ -377,6 +361,55 @@ class AuthenticationHelper:
                 else:
                     error_content = await resp.text()
                     logging.error(f"Error getting user information: {resp.status} - {error_content}")
+                    try:
+                        error_json = json.loads(error_content)
+                        error_message = error_json.get("error", {}).get("message", error_content)
+                        logging.error(f"Error details: {error_message}")
+                    except Exception:
+                        pass
+                    raise AuthError(error=error_content, status_code=resp.status)
+
+    @staticmethod
+    async def create_onenote_page(graph_resource_access_token: dict, title: str, content_html: str) -> dict:
+        """
+        Create a new page in the user's default OneNote notebook using the Microsoft Graph API.
+
+        Args:
+            graph_resource_access_token: The access token for the Microsoft Graph API
+            title: The title of the OneNote page
+            content_html: The HTML content of the OneNote page
+
+        Returns:
+            Response from the Graph API
+        """
+        headers = {
+            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
+            "Content-Type": "application/xhtml+xml",
+        }
+        # OneNote page content must be valid XHTML with a <title> element
+        page_content = f"""
+        <!DOCTYPE html>
+        <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+                <title>{title}</title>
+            </head>
+            <body>
+                {content_html}
+            </body>
+        </html>
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url="https://graph.microsoft.com/v1.0/me/onenote/pages",
+                headers=headers,
+                data=page_content.encode("utf-8"),
+            ) as resp:
+                if resp.status in [200, 201]:
+                    note_result = await resp.json()
+                    return {"status": "success", "url": note_result["links"]["oneNoteWebUrl"]["href"]}
+                else:
+                    error_content = await resp.text()
+                    logging.error(f"Error creating OneNote page: {resp.status} - {error_content}")
                     try:
                         error_json = json.loads(error_content)
                         error_message = error_json.get("error", {}).get("message", error_content)

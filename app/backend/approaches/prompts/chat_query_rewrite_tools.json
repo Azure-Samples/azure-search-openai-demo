@@ -39,4 +39,25 @@
             "required": ["subject", "to_email", "introduction"]
         }
     }
+},
+{
+    "type": "function",
+    "function": {
+        "name": "add_note",
+        "description": "Save a new note to the user's OneNote default notebook using Microsoft Graph.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "The title of the OneNote page, which should be reflective of the recent conversation history."
+                },
+                "intro_content": {
+                    "type": "string",
+                    "description": "Any additional content to be added to the OneNote page. The system will always add the chat history to the page after this content."
+                }
+            },
+            "required": ["title", "intro_content"]
+        }
+    }
 }]
