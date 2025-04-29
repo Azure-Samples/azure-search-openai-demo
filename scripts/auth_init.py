@@ -132,8 +132,10 @@ def server_app_permission_setup(server_app_id: str) -> Application:
                     # Graph Mail.Send
                     # https://learn.microsoft.com/graph/permissions-reference#mailsend
                     ResourceAccess(id=uuid.UUID("{e383f46e-2787-4529-855e-0e479a3ffac0}"), type="Scope"),
-                    # User.ReadWrite
-                    ResourceAccess(id=uuid.UUID("{b4e74841-8e56-480b-be8b-910348b18b4c}"), type="Scope"),
+                    # Notes.Create
+                    ResourceAccess(id=uuid.UUID("{9d822255-d64d-4b7a-afdb-833b9a97ed02}"), type="Scope"),
+                    # Notes.ReadWrite
+                    ResourceAccess(id=uuid.UUID("{615e26af-c38a-4150-ae3e-c3b0d4cb1d6a}"), type="Scope"),
                 ],
             )
         ],

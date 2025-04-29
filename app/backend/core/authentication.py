@@ -241,47 +241,6 @@ class AuthenticationHelper:
                     raise AuthError(error=error_content, status_code=resp.status)
 
     @staticmethod
-    async def update_job_title(graph_resource_access_token: dict, new_job_title: str) -> dict:
-        """
-        Update the job title of the authenticated user using the Microsoft Graph API.
-
-        Args:
-            graph_resource_access_token: The access token for the Microsoft Graph API
-            new_job_title: The new job title to set for the user
-
-        Returns:
-            Dictionary containing the response from the Graph API
-        """
-        headers = {
-            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
-            "Content-Type": "application/json",
-        }
-
-        # Create the update payload
-        update_payload = {"city": "El Cerrito"}
-
-        async with aiohttp.ClientSession() as session:
-            async with session.patch(
-                url="https://graph.microsoft.com/v1.0/me", headers=headers, json=update_payload
-            ) as resp:
-                if resp.status in [200, 204]:
-                    # 204 No Content is the expected response for successful PATCH
-                    return {"status": "success", "message": "Job title updated successfully"}
-                else:
-                    error_content = await resp.text()
-                    logging.error(f"Error updating job title: {resp.status} - {error_content}")
-
-                    # Parse error response for better debugging
-                    try:
-                        error_json = json.loads(error_content)
-                        error_message = error_json.get("error", {}).get("message", error_content)
-                        logging.error(f"Error details: {error_message}")
-                    except Exception:
-                        pass
-
-                    raise AuthError(error=error_content, status_code=resp.status)
-
-    @staticmethod
     async def send_mail(
         graph_resource_access_token: dict, to_recipients: list, subject: str, content: str, content_type: str = "Text"
     ) -> dict:
