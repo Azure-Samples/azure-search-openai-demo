@@ -209,38 +209,6 @@ class AuthenticationHelper:
         return groups
 
     @staticmethod
-    async def get_mail_folders(graph_resource_access_token: dict) -> dict:
-        """
-        Get mail folders for the authenticated user using the Microsoft Graph API.
-
-        Args:
-            graph_resource_access_token: The access token for the Microsoft Graph API
-
-        Returns:
-            Dictionary containing mail folders information
-        """
-        headers = {
-            "Authorization": f"Bearer {graph_resource_access_token['access_token']}",
-            "Content-Type": "application/json",
-        }
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url="https://graph.microsoft.com/v1.0/me/mailFolders", headers=headers) as resp:
-                if resp.status == 200:
-                    folders_data = await resp.json()
-                    return folders_data
-                else:
-                    error_content = await resp.text()
-                    logging.error(f"Error getting mail folders: {resp.status} - {error_content}")
-                    try:
-                        error_json = json.loads(error_content)
-                        error_message = error_json.get("error", {}).get("message", error_content)
-                        logging.error(f"Error details: {error_message}")
-                    except Exception:
-                        pass
-                    raise AuthError(error=error_content, status_code=resp.status)
-
-    @staticmethod
     async def send_mail(
         graph_resource_access_token: dict, to_recipients: list, subject: str, content: str, content_type: str = "Text"
     ) -> dict:
@@ -275,13 +243,6 @@ class AuthenticationHelper:
             },
             "saveToSentItems": True,
         }
-
-        # First check if the user has mail folders to confirm email functionality is available
-        try:
-            folders = await AuthenticationHelper.get_mail_folders(graph_resource_access_token)
-            logging.info(f"User has {len(folders.get('value', []))} mail folders")
-        except Exception as e:
-            logging.warning(f"Unable to retrieve mail folders: {str(e)}")
 
         async with aiohttp.ClientSession() as session:
             async with session.post(

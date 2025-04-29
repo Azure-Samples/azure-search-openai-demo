@@ -390,7 +390,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         """Send the chat history as an email to the user"""
         # Create the full email content with the introduction and chat history
         full_content = f"{introduction}\n\n{chat_history_html}"
-        print(f"Sending email to {to_email} with subject: {subject}")
         # Call send_mail with all required parameters
         return await self.auth_helper.send_mail(
             graph_resource_access_token=auth_claims.get("graph_resource_access_token"),
