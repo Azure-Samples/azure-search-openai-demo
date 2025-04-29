@@ -350,6 +350,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     def get_note_data(self, chat_completion: ChatCompletion) -> dict:
         """Extract note data from an add_note tool call"""
         message = chat_completion.choices[0].message
+        title = None
+        intro_content = None
         for tool_call in message.tool_calls:
             if tool_call.function.name == "add_note":
                 try:
