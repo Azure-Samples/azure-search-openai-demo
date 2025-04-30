@@ -56,6 +56,7 @@ async def setup_search_info(
         endpoint=f"https://{search_service}.search.windows.net/",
         credential=search_creds,
         index_name=index_name,
+        agent_name=index_name
     )
 
 

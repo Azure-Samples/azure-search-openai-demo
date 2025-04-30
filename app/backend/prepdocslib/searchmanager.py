@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from typing import Optional
+import aiohttp
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
@@ -251,6 +252,10 @@ class SearchManager:
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
+    
+    async def create_agent(self):
+        logger.info("Checking whether agent %s exists...", self.search_info.index_name)
+
 
     async def update_content(
         self, sections: list[Section], image_embeddings: Optional[list[list[float]]] = None, url: Optional[str] = None

@@ -16,10 +16,11 @@ class SearchInfo:
     To learn more, please visit https://learn.microsoft.com/azure/search/search-what-is-azure-search
     """
 
-    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], index_name: str):
+    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], index_name: str, agent_name: str):
         self.endpoint = endpoint
         self.credential = credential
         self.index_name = index_name
+        self.agent_name = agent_name
 
     def create_search_client(self) -> SearchClient:
         return SearchClient(endpoint=self.endpoint, index_name=self.index_name, credential=self.credential)
