@@ -23,6 +23,9 @@ from azure.search.documents.indexes.models import (
     VectorSearchVectorizer,
 )
 
+# REPLACE ME: SDK
+from azure.identity.aio import get_bearer_token_provider
+
 from .blobmanager import BlobManager
 from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
 from .listfilestrategy import File
@@ -66,6 +69,11 @@ class SearchManager:
         # Integrated vectorization uses the ada-002 model with 1536 dimensions
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else 1536
         self.search_images = search_images
+        self.bearer_token_provider = get_bearer_token_provider(
+            self.search_info.credential, "https://search.azure.com/.default"
+        )
+        # REPLACE ME: SDK
+        self.search_api_version = "2025-05-01-Preview"
 
     async def create_index(self, vectorizers: Optional[list[VectorSearchVectorizer]] = None):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
@@ -185,6 +193,7 @@ class SearchManager:
                     name=self.search_info.index_name,
                     fields=fields,
                     semantic_search=SemanticSearch(
+                        default_configuration_name="default",
                         configurations=[
                             SemanticConfiguration(
                                 name="default",
@@ -229,6 +238,10 @@ class SearchManager:
                         ),
                     )
                     await search_index_client.create_or_update_index(existing_index)
+                
+                if not existing_index.semantic_search.default_configuration_name:
+                    logger.info("Adding default semantic configuration to index %s", self.search_info.index_name)
+                    existing_index.semantic_search.default_configuration_name = "default"
 
                 if existing_index.vector_search is not None and (
                     existing_index.vector_search.vectorizers is None
@@ -247,15 +260,45 @@ class SearchManager:
                             )
                         ]
                         await search_index_client.create_or_update_index(existing_index)
+                    
                     else:
                         logger.info(
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
+        if self.search_info.use_agentic_retrieval:
+            await self.create_agent()
     
     async def create_agent(self):
-        logger.info("Checking whether agent %s exists...", self.search_info.index_name)
+        logger.info(f"Creating search agent named {self.search_info.agent_name}")
+        # REPLACE ME: SDK
+        async with aiohttp.ClientSession() as session:
+            async with session.put(
+                url=f"{self.search_info.endpoint}/agents/{self.search_info.agent_name}",
+                params={"api-version": self.search_api_version},
+                headers={
+                    "Authorization": "Bearer " + await self.bearer_token_provider(),
+                },
+                json={
+                    "name": self.search_info.agent_name,
+                    "targetIndexes": [ { "indexName": self.search_info.index_name } ],
+                    "models": [
+                        {
+                            "kind": "azureOpenAI",
+                            "azureOpenAIParameters": {
+                                "resourceUri": self.search_info.azure_openai_endpoint,
+                                "apiKey": None,
+                                "deploymentId": self.search_info.azure_openai_searchagent_deployment,
+                                "modelName": self.search_info.azure_openai_searchagent_model
+                            }
+                        }
+                    ]
+                },
+                raise_for_status=True
+            ) as response:
+                pass
 
+        logger.info("Agent %s created successfully", self.search_info.agent_name)
 
     async def update_content(
         self, sections: list[Section], image_embeddings: Optional[list[list[float]]] = None, url: Optional[str] = None

@@ -1,6 +1,6 @@
 from abc import ABC
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -16,11 +16,24 @@ class SearchInfo:
     To learn more, please visit https://learn.microsoft.com/azure/search/search-what-is-azure-search
     """
 
-    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], index_name: str, agent_name: str):
+    def __init__(self,
+        endpoint: str,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        index_name: str,
+        agent_name: str,
+        use_agentic_retrieval: bool,
+        azure_openai_searchagent_model: Optional[str],
+        azure_openai_searchagent_deployment: Optional[str],
+        azure_openai_endpoint: Optional[str]
+        ):
         self.endpoint = endpoint
         self.credential = credential
         self.index_name = index_name
         self.agent_name = agent_name
+        self.use_agentic_retrieval = use_agentic_retrieval
+        self.azure_openai_searchagent_model = azure_openai_searchagent_model
+        self.azure_openai_searchagent_deployment = azure_openai_searchagent_deployment
+        self.azure_openai_endpoint = azure_openai_endpoint
 
     def create_search_client(self) -> SearchClient:
         return SearchClient(endpoint=self.endpoint, index_name=self.index_name, credential=self.credential)

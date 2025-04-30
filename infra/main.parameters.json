@@ -167,6 +167,21 @@
     "evalDeploymentCapacity":{
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}"
     },
+    "searchAgentModelName":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL}"
+    },
+    "searchAgentModelVersion":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION}"
+    },
+    "searchAgentDeploymentName": {
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT}"
+    },
+    "searchAgentDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_SKU}"
+    },
+    "searchAgentDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_CAPACITY}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
@@ -331,6 +346,9 @@
     },
     "useAiProject": {
       "value": "${USE_AI_PROJECT=false}"
+    },
+    "useAgenticRetrieval": {
+      "value": "${USE_AGENTIC_RETRIEVAL=false}"
     }
   }
 }

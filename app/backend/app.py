@@ -426,6 +426,7 @@ async def setup_clients():
     AZURE_USERSTORAGE_CONTAINER = os.environ.get("AZURE_USERSTORAGE_CONTAINER")
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
+    AZURE_SEARCH_AGENT = os.getenv("AZURE_SEARCH_AGENT")
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
@@ -688,9 +689,15 @@ async def setup_clients():
         reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
+    # REPLACE ME: SDK
+    search_token_provider = get_bearer_token_provider(azure_credential, "https://search.azure.com/.default")
+
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
+        # REPLACE ME: SDK
+        search_agent_name=AZURE_SEARCH_AGENT,
+        search_token_provider=search_token_provider,
         openai_client=openai_client,
         auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,

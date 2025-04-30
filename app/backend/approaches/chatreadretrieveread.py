@@ -1,5 +1,6 @@
 from collections.abc import Awaitable
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, Union, cast, Coroutine
+import aiohttp
 
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -28,6 +29,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self,
         *,
         search_client: SearchClient,
+        # REPLACE ME: SDK
+        search_agent_name: Optional[str],
+        search_token_provider: Coroutine[Any, Any, str],
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
@@ -43,6 +47,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
+        self.search_agent_name = search_agent_name
+        self.search_token_provider = search_token_provider
         self.openai_client = openai_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
@@ -68,6 +74,60 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+
+
+        # TODO: EXPOSE MAX SUBQUERIES SETTING NOT MAX DOCS FOR RERANKER (% 50)
+        use_agentic_retrieval = True if overrides.get("agentic_retrieval") else False
+        # TODO: EXPOSE MAX OUTPUT TOKENS SETTING / GROUNDING STRING
+        # TODO: Figure out if we can take the top N of the references array (is it sorted in order?)
+        if use_agentic_retrieval:
+            extra_info, messages = self.run_agentic_retrieval_approach(
+                self,
+                messages,
+                overrides,
+                auth_claims,
+                should_stream
+            )
+        else:
+            extra_info, messages = self.run_search_approach(
+                self,
+                messages,
+                overrides,
+                auth_claims,
+                should_stream
+            )
+
+        chat_coroutine = cast(
+            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            self.create_chat_completion(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages,
+                overrides,
+                self.get_response_token_limit(self.chatgpt_model, 1024),
+                should_stream,
+            ),
+        )
+        extra_info.thoughts.append(
+            self.format_thought_step_for_chatcompletion(
+                title="Prompt to generate answer",
+                messages=messages,
+                overrides=overrides,
+                model=self.chatgpt_model,
+                deployment=self.chatgpt_deployment,
+                usage=None,
+            )
+        )
+        return (extra_info, chat_coroutine)
+       
+    
+    async def run_search_approach(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: bool = False,
+    ):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -175,27 +235,22 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ThoughtStep(
                     "Search results",
                     [result.serialize_for_results() for result in results],
-                ),
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate answer",
-                    messages=messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=None,
-                ),
+                )
             ],
         )
+        return extra_info, messages
 
-        chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
-            self.create_chat_completion(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages,
-                overrides,
-                self.get_response_token_limit(self.chatgpt_model, 1024),
-                should_stream,
-            ),
-        )
-        return (extra_info, chat_coroutine)
+    async def run_agentic_retrieval(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: bool = False,
+    ):
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        filter = self.build_filter(overrides, auth_claims)
+        top = overrides.get("top", 3)
+        max_subqueries = overrides.get("max_subqueries", 3)
+
+        # STEP 1: Invoke agentic retrieval
+
