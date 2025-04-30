@@ -30,6 +30,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         *,
         search_client: SearchClient,
         # REPLACE ME: SDK
+        search_endpoint: str,
+        search_index_name: str,
         search_agent_name: Optional[str],
         search_token_provider: Coroutine[Any, Any, str],
         auth_helper: AuthenticationHelper,
@@ -47,6 +49,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
+        self.search_endpoint = search_endpoint
+        self.search_index_name = search_index_name
         self.search_agent_name = search_agent_name
         self.search_token_provider = search_token_provider
         self.openai_client = openai_client
@@ -253,4 +257,44 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         max_subqueries = overrides.get("max_subqueries", 3)
 
         # STEP 1: Invoke agentic retrieval
-
+        retrieval_request = {
+            "messages" : [ { "role": msg["role"], "content": [ { "text": msg["content"] , "type": "text" } ] } for msg in messages ],
+            "targetIndexParams" :  [
+                { 
+                    "indexName" : self.search_index_name,
+                    "rerankerThreshold": minimum_reranker_score,
+                    # https://learn.microsoft.com/azure/search/semantic-search-overview#how-inputs-are-collected-and-summarized
+                    "maxDocsForReranker": max_subqueries * 50,
+                    "filterAddOn": filter,
+                    "includeReferenceSourceData": True
+                }
+            ]
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.put(
+                url=f"{self.search_endpoint}/agents/{self.search_agent_name}/retrieve",
+                params={"api-version": self.search_api_version},
+                headers={
+                    "Authorization": "Bearer " + await self.bearer_token_provider(),
+                },
+                json=retrieval_request,
+                raise_for_status=True
+            ) as response:
+                result = await response.json()
+                activity = result["activity"]
+                references = result["references"]
+        
+        # STEP 2: Generate a contextual and content specific answer using the search results and chat history
+        # make a list[Document]
+        results = []        
+        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        messages = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": text_sources,
+            },
+        )

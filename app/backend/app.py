@@ -425,6 +425,7 @@ async def setup_clients():
     AZURE_USERSTORAGE_ACCOUNT = os.environ.get("AZURE_USERSTORAGE_ACCOUNT")
     AZURE_USERSTORAGE_CONTAINER = os.environ.get("AZURE_USERSTORAGE_CONTAINER")
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
+    AZURE_SEARCH_ENDPOINT = f"https://{AZURE_SEARCH_SERVICE}.search.windows.net"
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     AZURE_SEARCH_AGENT = os.getenv("AZURE_SEARCH_AGENT")
     # Shared by all OpenAI deployments
@@ -514,7 +515,7 @@ async def setup_clients():
 
     # Set up clients for AI Search and Storage
     search_client = SearchClient(
-        endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+        endpoint=AZURE_SEARCH_ENDPOINT,
         index_name=AZURE_SEARCH_INDEX,
         credential=azure_credential,
     )
@@ -528,7 +529,7 @@ async def setup_clients():
     if AZURE_USE_AUTHENTICATION:
         current_app.logger.info("AZURE_USE_AUTHENTICATION is true, setting up search index client")
         search_index_client = SearchIndexClient(
-            endpoint=f"https://{AZURE_SEARCH_SERVICE}.search.windows.net",
+            endpoint=AZURE_SEARCH_ENDPOINT,
             credential=azure_credential,
         )
         search_index = await search_index_client.get_index(AZURE_SEARCH_INDEX)
@@ -696,6 +697,8 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         # REPLACE ME: SDK
+        search_endpoint=AZURE_SEARCH_ENDPOINT,
+        search_index_name=AZURE_SEARCH_INDEX,
         search_agent_name=AZURE_SEARCH_AGENT,
         search_token_provider=search_token_provider,
         openai_client=openai_client,

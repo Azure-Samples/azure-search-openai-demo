@@ -198,7 +198,7 @@ class SearchManager:
                             SemanticConfiguration(
                                 name="default",
                                 prioritized_fields=SemanticPrioritizedFields(
-                                    title_field=None, content_fields=[SemanticField(field_name="content")]
+                                    title_field=SemanticField(field_name="sourcepage"), content_fields=[SemanticField(field_name="content")]
                                 ),
                             )
                         ]
@@ -242,6 +242,11 @@ class SearchManager:
                 if not existing_index.semantic_search.default_configuration_name:
                     logger.info("Adding default semantic configuration to index %s", self.search_info.index_name)
                     existing_index.semantic_search.default_configuration_name = "default"
+                
+                existing_semantic_config = existing_index.semantic_search.configurations[0]
+                if not existing_semantic_config.prioritized_fields.title_field.field_name == "sourcepage":
+                    logger.info("Updating semantic configuration for index %s", self.search_info.index_name)
+                    existing_semantic_config.prioritized_fields.title_field = SemanticField(field_name="sourcepage")
 
                 if existing_index.vector_search is not None and (
                     existing_index.vector_search.vectorizers is None
