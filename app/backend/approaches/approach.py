@@ -48,6 +48,7 @@ class Document:
     captions: list[QueryCaptionResult]
     score: Optional[float] = None
     reranker_score: Optional[float] = None
+    search_agent_query: Optional[str] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
@@ -74,6 +75,7 @@ class Document:
             ),
             "score": self.score,
             "reranker_score": self.reranker_score,
+            "search_agent_query": self.search_agent_query
         }
 
     @classmethod

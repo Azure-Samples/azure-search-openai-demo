@@ -135,7 +135,7 @@ param chatGptDeploymentCapacity int = 0
 
 var chatGpt = {
   modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-4o-mini'
-  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4o-mini'
+  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'chat'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2024-07-18'
   deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
@@ -163,7 +163,7 @@ param gpt4vDeploymentSkuName string = ''
 param gpt4vDeploymentCapacity int = 0
 var gpt4v = {
   modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
-  deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'gpt-4o'
+  deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'vision'
   deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-08-06'
   deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'Standard'
   deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
@@ -176,10 +176,23 @@ param evalDeploymentSkuName string = ''
 param evalDeploymentCapacity int = 0
 var eval = {
   modelName: !empty(evalModelName) ? evalModelName : 'gpt-4o'
-  deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'gpt-4o'
+  deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'eval'
   deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'Standard'
+  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
+}
+
+param searchAgentModelName string = ''
+param searchAgentDeploymentName string = ''
+param searchAgentModelVersion string = ''
+param searchAgentDeploymentSkuName string = ''
+param searchAgentDeploymentCapacity int = 0
+var searchAgent = {
+  modelName: !empty(searchAgentModelName) ? searchAgentModelName : 'gpt-4o'
+  deploymentName: !empty(searchAgentDeploymentName) ? searchAgentDeploymentName : 'searchagent'
+  deploymentVersion: !empty(searchAgentModelVersion) ? searchAgentModelVersion : '2024-08-06'
+  deploymentSkuName: !empty(searchAgentDeploymentSkuName) ? searchAgentDeploymentSkuName : 'GlobalStandard'
+  deploymentCapacity: searchAgentDeploymentCapacity != 0 ? searchAgentDeploymentCapacity : 30
 }
 
 
@@ -409,6 +422,8 @@ var appEnvVariables = {
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
   AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4v.deploymentName : ''
+  AZURE_OPENAI_SEARCHAGENT_MODEL: searchAgent.modelName
+  AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT: searchAgent.deploymentName
   AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
   AZURE_OPENAI_API_KEY_OVERRIDE: azureOpenAiApiKey
   AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
@@ -614,6 +629,22 @@ var openAiDeployments = concat(
           sku: {
             name: gpt4v.deploymentSkuName
             capacity: gpt4v.deploymentCapacity
+          }
+        }
+      ]
+    : [],
+  useAgenticRetrieval
+    ? [
+        {
+          name: searchAgent.deploymentName
+          model: {
+            format: 'OpenAI'
+            name: searchAgent.modelName
+            version: searchAgent.deploymentVersion
+          }
+          sku: {
+            name: searchAgent.deploymentSkuName
+            capacity: searchAgent.deploymentCapacity
           }
         }
       ]
@@ -1253,6 +1284,8 @@ output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploy
 output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentName : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval.deploymentName : ''
 output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.modelName : ''
+output AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.deploymentName : ''
+output AZURE_OPENAI_SEARCHAGENT_MODEL string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''

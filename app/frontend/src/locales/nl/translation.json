@@ -98,6 +98,7 @@
             "high": "Hoog"
         },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
+        "useAgenticRetrieval": "Gebruik agentische retrieval",
         "useGPT4V": "GPT-visiemodel gebruiken",
         "gpt4VInput": {
             "label": "Invoer voor GPT-visiemodel",
@@ -162,6 +163,7 @@
             "Stelt de zoekmodus in voor de Azure AI zoekopdracht. `Vectoren + Tekst (Hybride)` gebruikt vector en volledige tekst, `Vectoren` alleen de vector, en `Tekst` alleen de volledige tekst. Hybride is meestal optimaal.",
         "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
-        "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker."
+        "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

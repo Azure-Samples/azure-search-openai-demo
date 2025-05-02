@@ -45,6 +45,8 @@ export interface SettingsProps {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     showSuggestFollowupQuestions?: boolean;
+    showAgenticRetrievalOption: boolean
+    useAgenticRetrieval: boolean
 }
 
 export const Settings = ({
@@ -81,7 +83,9 @@ export const Settings = ({
     useSuggestFollowupQuestions,
     promptTemplatePrefix,
     promptTemplateSuffix,
-    showSuggestFollowupQuestions
+    showSuggestFollowupQuestions,
+    showAgenticRetrievalOption,
+    useAgenticRetrieval
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -92,6 +96,8 @@ export const Settings = ({
     const temperatureFieldId = useId("temperatureField");
     const seedId = useId("seed");
     const seedFieldId = useId("seedField");
+    const agenticRetrievalId = useId("agenticRetrieval");
+    const agenticRetrievalFieldId = useId("agenticRetrievalField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
@@ -160,7 +166,20 @@ export const Settings = ({
                 onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
             />
 
-            <TextField
+            {showAgenticRetrievalOption && (
+                <Checkbox
+                    id={agenticRetrievalFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useAgenticRetrieval}
+                    label={t("labels.useAgenticRetrieval")}
+                    onChange={(_ev, checked) => onChange("useAgenticRetrieval", !!checked)}
+                    aria-labelledby={agenticRetrievalId}
+                    onRenderLabel={props =>
+                        renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.suggestFollowupQuestions"))
+                    }
+                />
+            )}
+            {!useAgenticRetrieval && ! useGPT4V && <TextField
                 id={searchScoreFieldId}
                 className={styles.settingsSeparator}
                 label={t("labels.minimumSearchScore")}
@@ -171,7 +190,7 @@ export const Settings = ({
                 onChange={(_ev, val) => onChange("minimumSearchScore", parseFloat(val || "0"))}
                 aria-labelledby={searchScoreId}
                 onRenderLabel={props => renderLabel(props, searchScoreId, searchScoreFieldId, t("helpTexts.searchScore"))}
-            />
+            />}
 
             {showSemanticRankerOption && (
                 <TextField
@@ -226,7 +245,7 @@ export const Settings = ({
                 onRenderLabel={props => renderLabel(props, excludeCategoryId, excludeCategoryFieldId, t("helpTexts.excludeCategory"))}
             />
 
-            {showSemanticRankerOption && (
+            {showSemanticRankerOption && !useAgenticRetrieval && (
                 <>
                     <Checkbox
                         id={semanticRankerFieldId}
@@ -251,7 +270,7 @@ export const Settings = ({
                 </>
             )}
 
-            {showQueryRewritingOption && (
+            {showQueryRewritingOption && !useAgenticRetrieval && (
                 <>
                     <Checkbox
                         id={queryRewritingFieldId}
@@ -311,7 +330,7 @@ export const Settings = ({
                 </>
             )}
 
-            {showGPT4VOptions && (
+            {showGPT4VOptions && !useAgenticRetrieval && (
                 <GPT4VSettings
                     gpt4vInputs={gpt4vInput}
                     isUseGPT4V={useGPT4V}
@@ -320,7 +339,7 @@ export const Settings = ({
                 />
             )}
 
-            {showVectorOption && (
+            {showVectorOption && !useAgenticRetrieval && (
                 <VectorSettings
                     defaultRetrievalMode={retrievalMode}
                     showImageOptions={useGPT4V && showGPT4VOptions}

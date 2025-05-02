@@ -39,6 +39,7 @@ export type ChatAppRequestOverrides = {
     gpt4v_input?: GPT4VInput;
     vector_fields: VectorFieldOptions[];
     language: string;
+    use_agentic_retrieval: boolean;
 };
 
 export type ResponseMessage = {
@@ -98,6 +99,7 @@ export type Config = {
     showSpeechOutputAzure: boolean;
     showChatHistoryBrowser: boolean;
     showChatHistoryCosmos: boolean;
+    showAgenticRetrievalOption: boolean;
 };
 
 export type SimpleAPIResponse = {

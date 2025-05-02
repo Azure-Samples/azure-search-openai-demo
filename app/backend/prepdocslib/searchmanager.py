@@ -2,7 +2,6 @@ import asyncio
 import logging
 import os
 from typing import Optional
-import aiohttp
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
@@ -21,10 +20,10 @@ from azure.search.documents.indexes.models import (
     VectorSearch,
     VectorSearchProfile,
     VectorSearchVectorizer,
+    KnowledgeAgent,
+    KnowledgeAgentAzureOpenAIModel,
+    KnowledgeAgentTargetIndex
 )
-
-# REPLACE ME: SDK
-from azure.identity.aio import get_bearer_token_provider
 
 from .blobmanager import BlobManager
 from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
@@ -69,11 +68,6 @@ class SearchManager:
         # Integrated vectorization uses the ada-002 model with 1536 dimensions
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else 1536
         self.search_images = search_images
-        self.bearer_token_provider = get_bearer_token_provider(
-            self.search_info.credential, "https://search.azure.com/.default"
-        )
-        # REPLACE ME: SDK
-        self.search_api_version = "2025-05-01-Preview"
 
     async def create_index(self, vectorizers: Optional[list[VectorSearchVectorizer]] = None):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
@@ -276,32 +270,25 @@ class SearchManager:
     
     async def create_agent(self):
         logger.info(f"Creating search agent named {self.search_info.agent_name}")
-        # REPLACE ME: SDK
-        async with aiohttp.ClientSession() as session:
-            async with session.put(
-                url=f"{self.search_info.endpoint}/agents/{self.search_info.agent_name}",
-                params={"api-version": self.search_api_version},
-                headers={
-                    "Authorization": "Bearer " + await self.bearer_token_provider(),
-                },
-                json={
-                    "name": self.search_info.agent_name,
-                    "targetIndexes": [ { "indexName": self.search_info.index_name } ],
-                    "models": [
-                        {
-                            "kind": "azureOpenAI",
-                            "azureOpenAIParameters": {
-                                "resourceUri": self.search_info.azure_openai_endpoint,
-                                "apiKey": None,
-                                "deploymentId": self.search_info.azure_openai_searchagent_deployment,
-                                "modelName": self.search_info.azure_openai_searchagent_model
-                            }
-                        }
+
+        async with self.search_info.create_search_index_client() as search_index_client:
+            await search_index_client.create_or_update_agent(
+                agent=KnowledgeAgent(
+                    name=self.search_info.agent_name,
+                    target_indexes=[
+                        KnowledgeAgentTargetIndex(index_name=self.search_info.index_name, default_include_reference_source_data=True)
+                    ],
+                    models=[
+                        KnowledgeAgentAzureOpenAIModel(
+                            azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+                                resource_url=self.search_info.azure_openai_endpoint,
+                                deployment_name=self.search_info.azure_openai_searchagent_deployment,
+                                model_name=self.search_info.azure_openai_searchagent_model
+                            )
+                        )
                     ]
-                },
-                raise_for_status=True
-            ) as response:
-                pass
+                )
+            )
 
         logger.info("Agent %s created successfully", self.search_info.agent_name)
 

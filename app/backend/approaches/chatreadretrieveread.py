@@ -1,9 +1,10 @@
 from collections.abc import Awaitable
 from typing import Any, Optional, Union, cast, Coroutine
-import aiohttp
 
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.agent import KnowledgeAgentRetrievalClient
 from azure.search.documents.models import VectorQuery
+from azure.search.documents.agent.models import KnowledgeAgentRetrievalRequest, KnowledgeAgentMessage, KnowledgeAgentMessageTextContent, KnowledgeAgentIndexParams, KnowledgeAgentSearchActivityRecord, KnowledgeAgentAzureSearchDocReference
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
@@ -12,7 +13,7 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
+from approaches.approach import DataPoints, ExtraInfo, ThoughtStep, Document
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -29,11 +30,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self,
         *,
         search_client: SearchClient,
-        # REPLACE ME: SDK
-        search_endpoint: str,
         search_index_name: str,
-        search_agent_name: Optional[str],
-        search_token_provider: Coroutine[Any, Any, str],
+        agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
@@ -49,10 +47,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
-        self.search_endpoint = search_endpoint
         self.search_index_name = search_index_name
-        self.search_agent_name = search_agent_name
-        self.search_token_provider = search_token_provider
+        self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
@@ -78,28 +74,39 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
-
-
         # TODO: EXPOSE MAX SUBQUERIES SETTING NOT MAX DOCS FOR RERANKER (% 50)
-        use_agentic_retrieval = True if overrides.get("agentic_retrieval") else False
+        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        original_user_query = messages[-1]["content"]
+
+        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
+        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
+            raise Exception(
+                f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
+            )
         # TODO: EXPOSE MAX OUTPUT TOKENS SETTING / GROUNDING STRING
-        # TODO: Figure out if we can take the top N of the references array (is it sorted in order?)
         if use_agentic_retrieval:
-            extra_info, messages = self.run_agentic_retrieval_approach(
-                self,
+            extra_info = await self.run_agentic_retrieval_approach(
                 messages,
                 overrides,
-                auth_claims,
-                should_stream
+                auth_claims
             )
         else:
-            extra_info, messages = self.run_search_approach(
-                self,
+            extra_info = await self.run_search_approach(
                 messages,
                 overrides,
-                auth_claims,
-                should_stream
+                auth_claims
             )
+        
+        messages = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": extra_info.data_points.text,
+            },
+        )
 
         chat_coroutine = cast(
             Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
@@ -140,17 +147,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
-        filter = self.build_filter(overrides, auth_claims)
+        search_index_filter = self.build_filter(overrides, auth_claims)
 
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
-
-        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
-        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
-            raise Exception(
-                f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
-            )
 
         query_messages = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
@@ -187,7 +188,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         results = await self.search(
             top,
             query_text,
-            filter,
+            search_index_filter,
             vectors,
             use_text_search,
             use_vector_search,
@@ -200,16 +201,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        messages = self.prompt_manager.render_prompt(
-            self.answer_prompt,
-            self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {
-                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
-                "past_messages": messages[:-1],
-                "user_query": original_user_query,
-                "text_sources": text_sources,
-            },
-        )
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -231,7 +222,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "use_semantic_ranker": use_semantic_ranker,
                         "use_query_rewriting": use_query_rewriting,
                         "top": top,
-                        "filter": filter,
+                        "filter": search_index_filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
                     },
@@ -242,59 +233,73 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 )
             ],
         )
-        return extra_info, messages
+        return extra_info
 
-    async def run_agentic_retrieval(
+    async def run_agentic_retrieval_approach(
         self,
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
-        should_stream: bool = False,
     ):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
-        filter = self.build_filter(overrides, auth_claims)
+        search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
         max_subqueries = overrides.get("max_subqueries", 3)
+        max_docs_for_reranker = max_subqueries * 50 # 50 is a magical number
 
         # STEP 1: Invoke agentic retrieval
-        retrieval_request = {
-            "messages" : [ { "role": msg["role"], "content": [ { "text": msg["content"] , "type": "text" } ] } for msg in messages ],
-            "targetIndexParams" :  [
-                { 
-                    "indexName" : self.search_index_name,
-                    "rerankerThreshold": minimum_reranker_score,
-                    # https://learn.microsoft.com/azure/search/semantic-search-overview#how-inputs-are-collected-and-summarized
-                    "maxDocsForReranker": max_subqueries * 50,
-                    "filterAddOn": filter,
-                    "includeReferenceSourceData": True
-                }
-            ]
-        }
-        async with aiohttp.ClientSession() as session:
-            async with session.put(
-                url=f"{self.search_endpoint}/agents/{self.search_agent_name}/retrieve",
-                params={"api-version": self.search_api_version},
-                headers={
-                    "Authorization": "Bearer " + await self.bearer_token_provider(),
-                },
-                json=retrieval_request,
-                raise_for_status=True
-            ) as response:
-                result = await response.json()
-                activity = result["activity"]
-                references = result["references"]
+        response = await self.agent_client.retrieve(
+            retrieval_request=KnowledgeAgentRetrievalRequest(
+                messages=[ KnowledgeAgentMessage(role=msg["role"], content=[KnowledgeAgentMessageTextContent(text=msg["content"])]) for msg in messages ],
+                target_index_params=[
+                    KnowledgeAgentIndexParams(
+                        index_name=self.search_index_name,
+                        reranker_threshold=minimum_reranker_score,
+                        max_docs_for_reranker=max_docs_for_reranker,
+                        filter_add_on=search_index_filter ) ]
+            )
+        )
         
         # STEP 2: Generate a contextual and content specific answer using the search results and chat history
-        # make a list[Document]
-        results = []        
+        activities = response.activity
+        activity_mapping = { activity.id: activity.query.search for activity in activities if isinstance(activity, KnowledgeAgentSearchActivityRecord) }
+        
+        results = []
+        for reference in response.references:
+            if isinstance(reference, KnowledgeAgentAzureSearchDocReference):
+                results.append(
+                    Document(
+                        id=reference.doc_key,
+                        content=reference.source_data["content"],
+                        sourcepage=reference.source_data["sourcepage"],
+                        search_agent_query=activity_mapping[reference.activity_source]
+                    )
+                )
+            if len(results) == top:
+                break
         text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
-        messages = self.prompt_manager.render_prompt(
-            self.answer_prompt,
-            self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {
-                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
-                "past_messages": messages[:-1],
-                "user_query": original_user_query,
-                "text_sources": text_sources,
-            },
+
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts=[
+                ThoughtStep(
+                    "Search using the knowledge search agent",
+                    messages,
+                    {
+                        "reranker_threshold": minimum_reranker_score,
+                        "max_docs_for_reranker": max_docs_for_reranker,
+                        "filter": search_index_filter,
+                        # TODO: Interaction between max output tokens and top
+                    },
+                ),
+                ThoughtStep(
+                    f"Search agent query breakdown",
+                    [activity.as_dict() for activity in response.activity]
+                ),
+                ThoughtStep(
+                    f"Search agent results (top {top})",
+                    [result.serialize_for_results() for result in results],
+                )
+            ]
         )
+        return extra_info
