@@ -297,7 +297,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),
                 ThoughtStep(
                     f"Search agent query breakdown",
-                    [activity.as_dict() for activity in response.activity]
+                    [activity.as_dict() for activity in response.activity],
+                    { "agent_plan": True }
                 ),
                 ThoughtStep(
                     f"Search agent results (top {top})",
