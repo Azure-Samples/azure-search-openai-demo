@@ -250,13 +250,16 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         # STEP 1: Invoke agentic retrieval
         response = await self.agent_client.retrieve(
             retrieval_request=KnowledgeAgentRetrievalRequest(
-                messages=[ KnowledgeAgentMessage(role=msg["role"], content=[KnowledgeAgentMessageTextContent(text=msg["content"])]) for msg in messages ],
+                messages=[ KnowledgeAgentMessage(role=msg["role"], content=[KnowledgeAgentMessageTextContent(text=msg["content"])]) for msg in messages if msg["role"] != "system" ],
                 target_index_params=[
                     KnowledgeAgentIndexParams(
                         index_name=self.search_index_name,
                         reranker_threshold=minimum_reranker_score,
                         max_docs_for_reranker=max_docs_for_reranker,
-                        filter_add_on=search_index_filter ) ]
+                        filter_add_on=search_index_filter,
+                        include_reference_source_data=True
+                    )
+                ]
             )
         )
         
