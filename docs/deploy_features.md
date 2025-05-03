@@ -130,7 +130,7 @@ To enable reasoning models, follow the steps in [the reasoning models guide](./r
 
 ## Using different embedding models
 
-By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embeddig model, you can do so by following these steps:
+By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embedding model, you can do so by following these steps:
 
 1. Run one of the following commands to set the desired model:
 

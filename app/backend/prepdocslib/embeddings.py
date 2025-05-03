@@ -238,7 +238,7 @@ class ImageEmbeddings:
     async def create_embeddings(self, blob_urls: List[str]) -> List[List[float]]:
         endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
         headers = {"Content-Type": "application/json"}
-        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
+        params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
         headers["Authorization"] = "Bearer " + await self.token_provider()
 
         embeddings: List[List[float]] = []

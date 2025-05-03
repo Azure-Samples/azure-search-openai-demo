@@ -218,7 +218,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
         overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["gpt4v_input"] == "images"
         assert overrides["use_gpt4v"] is True
-        assert overrides["vector_fields"] == ["imageEmbedding"]
+        assert overrides["vector_fields"] == "imageEmbeddingOnly"
 
         # Read the JSON from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_text/client0/result.json")

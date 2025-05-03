@@ -52,7 +52,6 @@ class FileStrategy(Strategy):
         image_embeddings: Optional[ImageEmbeddings] = None,
         search_analyzer_name: Optional[str] = None,
         search_field_name_embedding: Optional[str] = None,
-        search_field_name_image_embedding: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
         use_content_understanding: bool = False,
@@ -66,7 +65,6 @@ class FileStrategy(Strategy):
         self.image_embeddings = image_embeddings
         self.search_analyzer_name = search_analyzer_name
         self.search_field_name_embedding = search_field_name_embedding
-        self.search_field_name_image_embedding = search_field_name_image_embedding
         self.search_info = search_info
         self.use_acls = use_acls
         self.category = category
@@ -81,7 +79,6 @@ class FileStrategy(Strategy):
             False,
             self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
-            field_name_image_embedding=self.search_field_name_image_embedding,
             search_images=self.image_embeddings is not None,
         )
 
@@ -137,7 +134,6 @@ class UploadUserFileStrategy:
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
         search_field_name_embedding: Optional[str] = None,
-        search_field_name_image_embedding: Optional[str] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
@@ -150,11 +146,9 @@ class UploadUserFileStrategy:
             use_int_vectorization=False,
             embeddings=self.embeddings,
             field_name_embedding=search_field_name_embedding,
-            field_name_image_embedding=search_field_name_image_embedding,
             search_images=False,
         )
         self.search_field_name_embedding = search_field_name_embedding
-        self.search_field_name_image_embedding = search_field_name_image_embedding
 
     async def add_file(self, file: File):
         if self.image_embeddings:

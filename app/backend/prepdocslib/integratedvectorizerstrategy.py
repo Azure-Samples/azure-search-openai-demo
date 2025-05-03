@@ -41,7 +41,6 @@ class IntegratedVectorizerStrategy(Strategy):
         search_info: SearchInfo,
         embeddings: AzureOpenAIEmbeddingService,
         search_field_name_embedding: str,
-        search_field_name_image_embedding: str,
         subscription_id: str,
         search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
@@ -55,7 +54,6 @@ class IntegratedVectorizerStrategy(Strategy):
         self.document_action = document_action
         self.embeddings = embeddings
         self.search_field_name_embedding = search_field_name_embedding
-        self.search_field_name_image_embedding = search_field_name_image_embedding
         self.subscription_id = subscription_id
         self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
@@ -139,7 +137,6 @@ class IntegratedVectorizerStrategy(Strategy):
             use_int_vectorization=True,
             embeddings=self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
-            field_name_image_embedding=self.search_field_name_image_embedding,
             search_images=False,
         )
 

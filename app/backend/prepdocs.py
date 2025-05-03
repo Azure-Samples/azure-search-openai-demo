@@ -399,7 +399,6 @@ if __name__ == "__main__":
             document_action=document_action,
             embeddings=openai_embeddings_service,
             search_field_name_embedding=os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"],
-            search_field_name_image_embedding=os.environ["AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING"],
             subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
             search_service_user_assigned_id=args.searchserviceassignedid,
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
@@ -434,7 +433,6 @@ if __name__ == "__main__":
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             # Default to the previous field names for backward compatibility
             search_field_name_embedding=os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding"),
-            search_field_name_image_embedding=os.getenv("AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING", "imageEmbedding"),
             use_acls=use_acls,
             category=args.category,
             use_content_understanding=use_content_understanding,

@@ -90,7 +90,7 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
 
-        vector_fields = overrides.get("vector_fields", [self.embedding_field])
+        vector_fields = overrides.get("vector_fields", "textAndImageEmbeddings")
         send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
         send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
 
@@ -123,13 +123,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
         if use_vector_search:
-            for field in vector_fields:
-                vector = (
-                    await self.compute_image_embedding(query_text)
-                    if field.startswith("image")
-                    else await self.compute_text_embedding(query_text)
-                )
-                vectors.append(vector)
+            if vector_fields == "textEmbeddingOnly" or vector_fields == "textAndImageEmbeddings":
+                vectors.append(await self.compute_text_embedding(query_text))
+            if vector_fields == "imageEmbeddingOnly" or vector_fields == "textAndImageEmbeddings":
+                vectors.append(await self.compute_image_embedding(query_text))
 
         results = await self.search(
             top,

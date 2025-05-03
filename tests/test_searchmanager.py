@@ -50,12 +50,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
-    manager = SearchManager(
-        search_info,
-        use_int_vectorization=False,
-        field_name_embedding="embedding",
-        field_name_image_embedding="imageEmbedding",
-    )
+    manager = SearchManager(search_info, use_int_vectorization=False, field_name_embedding="embedding")
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
@@ -80,7 +75,6 @@ async def test_create_index_using_int_vectorization(monkeypatch, search_info):
         search_info,
         use_int_vectorization=True,
         field_name_embedding="embedding",
-        field_name_image_embedding="image_embedding",
     )
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
@@ -176,7 +170,6 @@ async def test_create_index_acls(monkeypatch, search_info):
         search_info,
         use_acls=True,
         field_name_embedding="embedding",
-        field_name_image_embedding="image_embedding",
     )
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
@@ -296,7 +289,6 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
         search_info,
         embeddings=embeddings,
         field_name_embedding="embedding3",
-        field_name_image_embedding="image_embedding",
     )
 
     test_io = io.BytesIO(b"test content")

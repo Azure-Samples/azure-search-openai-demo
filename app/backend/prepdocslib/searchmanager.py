@@ -61,7 +61,6 @@ class SearchManager:
         use_int_vectorization: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
-        field_name_image_embedding: Optional[str] = None,
         search_images: bool = False,
     ):
         self.search_info = search_info
@@ -71,7 +70,6 @@ class SearchManager:
         self.embeddings = embeddings
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else None
         self.field_name_embedding = field_name_embedding
-        self.field_name_image_embedding = field_name_image_embedding
         self.search_images = search_images
 
     async def create_index(self):
@@ -145,20 +143,16 @@ class SearchManager:
                 )
 
             if self.search_images:
-                if self.field_name_image_embedding is None:
-                    raise ValueError(
-                        "Image embedding field must be set in order to add an image embedding field to the search index"
-                    )
                 image_vector_algorithm = HnswAlgorithmConfiguration(
                     name="image_hnsw_config",
                     parameters=HnswParameters(metric="cosine"),
                 )
                 image_vector_search_profile = VectorSearchProfile(
-                    name=f"{self.field_name_image_embedding}-profile",
+                    name="imageEmbedding-profile",
                     algorithm_configuration_name=image_vector_algorithm.name,
                 )
                 image_embedding_field = SearchField(
-                    name=self.field_name_image_embedding,
+                    name="imageEmbedding",
                     type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                     hidden=False,
                     searchable=True,
@@ -322,9 +316,7 @@ class SearchManager:
                     existing_index.vector_search.compressions.append(text_vector_compression)
                     await search_index_client.create_or_update_index(existing_index)
 
-                if image_embedding_field and not any(
-                    field.name == self.field_name_image_embedding for field in existing_index.fields
-                ):
+                if image_embedding_field and not any(field.name == "imageEmbedding" for field in existing_index.fields):
                     logger.info("Adding %s field for image embeddings", image_embedding_field.name)
                     existing_index.fields.append(image_embedding_field)
                     if image_vector_search_profile is None or image_vector_algorithm is None:
@@ -380,10 +372,8 @@ class SearchManager:
                     for i, document in enumerate(documents):
                         document[self.field_name_embedding] = embeddings[i]
                 if image_embeddings:
-                    if self.field_name_image_embedding is None:
-                        raise ValueError("Image embedding field name must be set")
                     for i, (document, section) in enumerate(zip(documents, batch)):
-                        document[self.field_name_image_embedding] = image_embeddings[section.split_page.page_num]
+                        document["imageEmbedding"] = image_embeddings[section.split_page.page_num]
 
                 await search_client.upload_documents(documents)
 

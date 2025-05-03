@@ -465,7 +465,6 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_REWRITING = os.getenv("AZURE_SEARCH_QUERY_REWRITING", "false").lower()
     # This defaults to the previous field name "embedding", for backwards compatibility
     AZURE_SEARCH_FIELD_NAME_EMBEDDING = os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding")
-    AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING = os.getenv("AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING", "imageEmbedding")
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
@@ -586,7 +585,6 @@ async def setup_clients():
             embeddings=text_embeddings_service,
             file_processors=file_processors,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-            search_field_name_image_embedding=AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 

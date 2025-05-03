@@ -5,34 +5,39 @@ import { useTranslation } from "react-i18next";
 
 import styles from "./VectorSettings.module.css";
 import { HelpCallout } from "../../components/HelpCallout";
-import { RetrievalMode, VectorFieldOptions } from "../../api";
+import { RetrievalMode, VectorFields } from "../../api";
 
 interface Props {
     showImageOptions?: boolean;
     defaultRetrievalMode: RetrievalMode;
+    defaultVectorFields?: VectorFields;
     updateRetrievalMode: (retrievalMode: RetrievalMode) => void;
-    updateVectorFields: (options: VectorFieldOptions[]) => void;
+    updateVectorFields: (vectorFields: VectorFields) => void;
 }
 
-export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions, defaultRetrievalMode }: Props) => {
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
-    const [vectorFieldOption, setVectorFieldOption] = useState<VectorFieldOptions>(VectorFieldOptions.Both);
+export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showImageOptions, defaultRetrievalMode, defaultVectorFields }: Props) => {
+    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(defaultRetrievalMode || RetrievalMode.Hybrid);
+    const [vectorFields, setVectorFields] = useState<VectorFields>(defaultVectorFields || VectorFields.TextAndImageEmbeddings);
 
     const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined) => {
         setRetrievalMode(option?.data || RetrievalMode.Hybrid);
         updateRetrievalMode(option?.data || RetrievalMode.Hybrid);
     };
 
-    const onVectorFieldsChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined) => {
-        setVectorFieldOption(option?.key as VectorFieldOptions);
-        updateVectorFields([option?.key as VectorFieldOptions]);
+    const onVectorFieldsChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<VectorFields> | undefined) => {
+        setVectorFields(option?.data || VectorFields.TextAndImageEmbeddings);
+        updateVectorFields(option?.data || VectorFields.TextAndImageEmbeddings);
     };
 
+    // Only run if showImageOptions changes from true to false or false to true
     useEffect(() => {
-        showImageOptions
-            ? updateVectorFields([VectorFieldOptions.Embedding, VectorFieldOptions.ImageEmbedding])
-            : updateVectorFields([VectorFieldOptions.Embedding]);
-    }, [showImageOptions]);
+        if (!showImageOptions) {
+            console.log("showImageOptions is false");
+            // If images are disabled, we must force to text-only embeddings
+            setVectorFields(VectorFields.Embedding);
+            updateVectorFields(VectorFields.Embedding);
+        }
+    }, [showImageOptions, updateVectorFields]);
 
     const retrievalModeId = useId("retrievalMode");
     const retrievalModeFieldId = useId("retrievalModeField");
@@ -45,7 +50,7 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
             <Dropdown
                 id={retrievalModeFieldId}
                 label={t("labels.retrievalMode.label")}
-                selectedKey={defaultRetrievalMode.toString()}
+                selectedKey={retrievalMode.toString()}
                 options={[
                     {
                         key: "hybrid",
@@ -73,18 +78,26 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
                 <Dropdown
                     id={vectorFieldsFieldId}
                     label={t("labels.vector.label")}
+                    selectedKey={vectorFields}
                     options={[
                         {
-                            key: VectorFieldOptions.Embedding,
+                            key: VectorFields.Embedding,
                             text: t("labels.vector.options.embedding"),
-                            selected: vectorFieldOption === VectorFieldOptions.Embedding
+                            selected: vectorFields === VectorFields.Embedding,
+                            data: VectorFields.Embedding
                         },
                         {
-                            key: VectorFieldOptions.ImageEmbedding,
+                            key: VectorFields.ImageEmbedding,
                             text: t("labels.vector.options.imageEmbedding"),
-                            selected: vectorFieldOption === VectorFieldOptions.ImageEmbedding
+                            selected: vectorFields === VectorFields.ImageEmbedding,
+                            data: VectorFields.ImageEmbedding
                         },
-                        { key: VectorFieldOptions.Both, text: t("labels.vector.options.both"), selected: vectorFieldOption === VectorFieldOptions.Both }
+                        {
+                            key: VectorFields.TextAndImageEmbeddings,
+                            text: t("labels.vector.options.both"),
+                            selected: vectorFields === VectorFields.TextAndImageEmbeddings,
+                            data: VectorFields.TextAndImageEmbeddings
+                        }
                     ]}
                     onChange={onVectorFieldsChange}
                     aria-labelledby={vectorFieldsId}

@@ -86,9 +86,6 @@
     "searchFieldNameEmbedding": {
       "value": "${AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding3}"
     },
-    "searchFieldNameImageEmbedding": {
-      "value": "${AZURE_SEARCH_FIELD_NAME_IMAGE_EMBEDDING=imageEmbedding}"
-    },
     "defaultReasoningEffort": {
       "value": "${AZURE_OPENAI_REASONING_EFFORT=medium}"
     },
