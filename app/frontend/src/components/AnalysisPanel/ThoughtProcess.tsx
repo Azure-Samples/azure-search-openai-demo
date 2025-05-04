@@ -36,10 +36,9 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                             <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, null, 2)}
                             </SyntaxHighlighter>
-                            ) : (
-                                <div>{t.description}</div>
-                            )
-                        }
+                        ) : (
+                            <div>{t.description}</div>
+                        )}
                     </li>
                 );
             })}

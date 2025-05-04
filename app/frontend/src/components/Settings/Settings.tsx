@@ -45,8 +45,8 @@ export interface SettingsProps {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     showSuggestFollowupQuestions?: boolean;
-    showAgenticRetrievalOption: boolean
-    useAgenticRetrieval: boolean
+    showAgenticRetrievalOption: boolean;
+    useAgenticRetrieval: boolean;
 }
 
 export const Settings = ({
@@ -174,23 +174,23 @@ export const Settings = ({
                     label={t("labels.useAgenticRetrieval")}
                     onChange={(_ev, checked) => onChange("useAgenticRetrieval", !!checked)}
                     aria-labelledby={agenticRetrievalId}
-                    onRenderLabel={props =>
-                        renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.suggestFollowupQuestions"))
-                    }
+                    onRenderLabel={props => renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.suggestFollowupQuestions"))}
                 />
             )}
-            {!useAgenticRetrieval && ! useGPT4V && <TextField
-                id={searchScoreFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.minimumSearchScore")}
-                type="number"
-                min={0}
-                step={0.01}
-                defaultValue={minimumSearchScore.toString()}
-                onChange={(_ev, val) => onChange("minimumSearchScore", parseFloat(val || "0"))}
-                aria-labelledby={searchScoreId}
-                onRenderLabel={props => renderLabel(props, searchScoreId, searchScoreFieldId, t("helpTexts.searchScore"))}
-            />}
+            {!useAgenticRetrieval && !useGPT4V && (
+                <TextField
+                    id={searchScoreFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.minimumSearchScore")}
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    defaultValue={minimumSearchScore.toString()}
+                    onChange={(_ev, val) => onChange("minimumSearchScore", parseFloat(val || "0"))}
+                    aria-labelledby={searchScoreId}
+                    onRenderLabel={props => renderLabel(props, searchScoreId, searchScoreFieldId, t("helpTexts.searchScore"))}
+                />
+            )}
 
             {showSemanticRankerOption && (
                 <TextField
