@@ -1,7 +1,7 @@
 from typing import Any, Optional, cast
 
-from azure.search.documents.aio import SearchClient
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
@@ -76,18 +76,10 @@ class RetrieveThenReadApproach(Approach):
             raise ValueError("The most recent message content must be a string.")
 
         if use_agentic_retrieval:
-            extra_info = await self.run_agentic_retrieval_approach(
-                messages,
-                overrides,
-                auth_claims
-            )
+            extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
-            extra_info = await self.run_search_approach(
-                messages,
-                overrides,
-                auth_claims
-            )
-        
+            extra_info = await self.run_search_approach(messages, overrides, auth_claims)
+
         # Process results
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
@@ -95,7 +87,6 @@ class RetrieveThenReadApproach(Approach):
             | {"user_query": q, "text_sources": extra_info.data_points.text},
         )
 
-        
         chat_completion = cast(
             ChatCompletion,
             await self.create_chat_completion(
@@ -126,10 +117,7 @@ class RetrieveThenReadApproach(Approach):
         }
 
     async def run_search_approach(
-        self,
-        messages: list[ChatCompletionMessageParam],
-        overrides: dict[str, Any],
-        auth_claims: dict[str, Any]
+        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
     ):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -182,8 +170,8 @@ class RetrieveThenReadApproach(Approach):
                 ThoughtStep(
                     "Search results",
                     [result.serialize_for_results() for result in results],
-                )
-            ]
+                ),
+            ],
         )
 
     async def run_agentic_retrieval_approach(
@@ -210,7 +198,7 @@ class RetrieveThenReadApproach(Approach):
         )
 
         text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
-    
+
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
             thoughts=[
@@ -220,14 +208,18 @@ class RetrieveThenReadApproach(Approach):
                     {
                         "reranker_threshold": minimum_reranker_score,
                         "max_docs_for_reranker": max_docs_for_reranker,
-                        "filter": search_index_filter
+                        "filter": search_index_filter,
                     },
                 ),
                 ThoughtStep(
                     f"Agentic retrieval results (top {top})",
                     [result.serialize_for_results() for result in results],
-                    { "query_plan": [activity.as_dict() for activity in response.activity], "model": self.agent_model, "deployment": self.agent_deployment }
-                )
-            ]
+                    {
+                        "query_plan": [activity.as_dict() for activity in response.activity],
+                        "model": self.agent_model,
+                        "deployment": self.agent_deployment,
+                    },
+                ),
+            ],
         )
         return extra_info

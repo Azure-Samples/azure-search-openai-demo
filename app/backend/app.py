@@ -22,8 +22,8 @@ from azure.identity.aio import (
     ManagedIdentityCredential,
     get_bearer_token_provider,
 )
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.storage.blob.aio import ContainerClient
@@ -58,6 +58,8 @@ from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
+    CONFIG_AGENT_CLIENT,
+    CONFIG_AGENTIC_RETRIEVAL_ENABLED,
     CONFIG_ASK_APPROACH,
     CONFIG_ASK_VISION_APPROACH,
     CONFIG_AUTH_CLIENT,
@@ -75,7 +77,6 @@ from config import (
     CONFIG_QUERY_REWRITING_ENABLED,
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
-    CONFIG_AGENT_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
     CONFIG_SPEECH_INPUT_ENABLED,
     CONFIG_SPEECH_OUTPUT_AZURE_ENABLED,
@@ -88,7 +89,6 @@ from config import (
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
-    CONFIG_AGENTIC_RETRIEVAL_ENABLED
 )
 from core.authentication import AuthenticationHelper
 from core.sessionhelper import create_session_id
@@ -311,7 +311,7 @@ def config():
             "showSpeechOutputAzure": current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED],
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
-            "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED]
+            "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED],
         }
     )
 
@@ -525,9 +525,7 @@ async def setup_clients():
         credential=azure_credential,
     )
     agent_client = KnowledgeAgentRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT,
-        agent_name=AZURE_SEARCH_AGENT,
-        credential=azure_credential
+        endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
     )
 
     blob_container_client = ContainerClient(
@@ -724,7 +722,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
-        reasoning_effort=OPENAI_REASONING_EFFORT
+        reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
     if USE_GPT4V:

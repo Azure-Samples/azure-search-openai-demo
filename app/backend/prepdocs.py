@@ -46,14 +46,16 @@ def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
 
 
 async def setup_search_info(
-    search_service: str, index_name: str, azure_credential: AsyncTokenCredential,
+    search_service: str,
+    index_name: str,
+    azure_credential: AsyncTokenCredential,
     use_agentic_retrieval: bool,
     agent_name: str,
     agent_max_output_tokens: int,
     azure_openai_endpoint: str,
     azure_openai_searchagent_deployment: str,
     azure_openai_searchagent_model: Union[str, None] = None,
-    search_key: Union[str, None] = None
+    search_key: Union[str, None] = None,
 ) -> SearchInfo:
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
@@ -70,7 +72,7 @@ async def setup_search_info(
         use_agentic_retrieval=use_agentic_retrieval,
         azure_openai_endpoint=azure_openai_endpoint,
         azure_openai_searchagent_model=azure_openai_searchagent_model,
-        azure_openai_searchagent_deployment=azure_openai_searchagent_deployment
+        azure_openai_searchagent_deployment=azure_openai_searchagent_deployment,
     )
 
 
