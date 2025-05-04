@@ -54,6 +54,8 @@ export function Component(): JSX.Element {
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
+    const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -97,6 +99,8 @@ export function Component(): JSX.Element {
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
+            setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
+            setUseAgenticRetrieval(config.showAgenticRetrievalOption);
         });
     };
 
@@ -144,6 +148,7 @@ export function Component(): JSX.Element {
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
+                        use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -222,6 +227,8 @@ export function Component(): JSX.Element {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
+            case "useAgenticRetrieval":
+                setUseAgenticRetrieval(value);
         }
     };
 
@@ -357,6 +364,8 @@ export function Component(): JSX.Element {
                     useLogin={!!useLogin}
                     loggedIn={loggedIn}
                     requireAccessControl={requireAccessControl}
+                    showAgenticRetrievalOption={showAgenticRetrievalOption}
+                    useAgenticRetrieval={useAgenticRetrieval}
                     onChange={handleSettingsChange}
                 />
                 {useLogin && <TokenClaimsDisplay />}

@@ -434,6 +434,8 @@ async def setup_clients():
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    AZURE_OPENAI_SEARCHAGENT_MODEL = os.getenv("AZURE_OPENAI_SEARCHAGENT_MODEL")
+    AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT = os.getenv("AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT")
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
     OPENAI_REASONING_EFFORT = os.getenv("AZURE_OPENAI_REASONING_EFFORT")
@@ -684,6 +686,10 @@ async def setup_clients():
     # RetrieveThenReadApproach is used by /ask for single-turn Q&A
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client=search_client,
+        search_index_name=AZURE_SEARCH_INDEX,
+        agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
+        agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
+        agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
@@ -699,13 +705,12 @@ async def setup_clients():
         reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
-    # REPLACE ME: SDK
-    search_token_provider = get_bearer_token_provider(azure_credential, "https://search.azure.com/.default")
-
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         search_index_name=AZURE_SEARCH_INDEX,
+        agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
+        agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,

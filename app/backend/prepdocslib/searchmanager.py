@@ -22,7 +22,8 @@ from azure.search.documents.indexes.models import (
     VectorSearchVectorizer,
     KnowledgeAgent,
     KnowledgeAgentAzureOpenAIModel,
-    KnowledgeAgentTargetIndex
+    KnowledgeAgentTargetIndex,
+    KnowledgeAgentRequestLimits
 )
 
 from .blobmanager import BlobManager
@@ -276,7 +277,10 @@ class SearchManager:
                 agent=KnowledgeAgent(
                     name=self.search_info.agent_name,
                     target_indexes=[
-                        KnowledgeAgentTargetIndex(index_name=self.search_info.index_name, default_include_reference_source_data=True)
+                        KnowledgeAgentTargetIndex(
+                            index_name=self.search_info.index_name,
+                            default_include_reference_source_data=True
+                        )
                     ],
                     models=[
                         KnowledgeAgentAzureOpenAIModel(
@@ -286,7 +290,10 @@ class SearchManager:
                                 model_name=self.search_info.azure_openai_searchagent_model
                             )
                         )
-                    ]
+                    ],
+                    request_limits=KnowledgeAgentRequestLimits(
+                        max_output_size=self.search_info.agent_max_output_tokens
+                    )
                 )
             )
 

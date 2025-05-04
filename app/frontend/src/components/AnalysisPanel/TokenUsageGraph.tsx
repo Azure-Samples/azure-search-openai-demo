@@ -9,23 +9,19 @@ export interface TokenUsage {
 }
 
 interface TokenUsageGraphProps {
-    title?: string;
     tokenUsage: TokenUsage;
     reasoningEffort?: string;
 }
 
-export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({ title, tokenUsage, reasoningEffort }) => {
+export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({ tokenUsage, reasoningEffort }) => {
     const { prompt_tokens, completion_tokens, reasoning_tokens, total_tokens } = tokenUsage;
 
     // Calculate percentage widths relative to total_tokens
     const calcPercent = (value: number) => (total_tokens ? (value / total_tokens) * 100 : 0) + "%";
 
-    if (!title) {
-        title = "Token Usage";
-    }
     return (
         <div className={styles.tokenUsageGraph}>
-            <div className={styles.header}>{title}</div>
+            <div className={styles.header}>Token Usage</div>
             <div className={styles.primaryBarContainer} style={{ width: "100%" }}>
                 <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ width: calcPercent(prompt_tokens) }}>
                     <span className={styles.tokenLabel}>Prompt: {prompt_tokens}</span>

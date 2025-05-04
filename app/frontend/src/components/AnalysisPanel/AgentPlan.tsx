@@ -26,17 +26,18 @@ type AzureSearchQueryStep = {
 type Step = ModelQueryPlanningStep | AzureSearchQueryStep;
 
 interface Props {
-  description: Step[];
+  query_plan: Step[];
+  description: any;
 }
 
-export const AgentPlan: React.FC<Props> = ({ description }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan, description }) => {
   // find the planning step
-  const planning = description.find(
+  const planning = query_plan.find(
     (step): step is ModelQueryPlanningStep => step.type === "ModelQueryPlanning"
   );
 
   // collect all search query steps
-  const queries = description.filter(
+  const queries = query_plan.filter(
     (step): step is AzureSearchQueryStep => step.type === "AzureSearchQuery"
   );
 
@@ -44,7 +45,6 @@ export const AgentPlan: React.FC<Props> = ({ description }) => {
     <div>
       {planning && (
         <TokenUsageGraph
-          title="Query Planning Token Usage"
           tokenUsage={
             {
               prompt_tokens: planning.input_tokens,
@@ -56,13 +56,27 @@ export const AgentPlan: React.FC<Props> = ({ description }) => {
         />
       )}
 
-      {queries.map((q) => (
-        <div key={q.id} style={{ marginTop: 8 }}>
-            <SyntaxHighlighter language="json" wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
-                {JSON.stringify(q, null, 2)}
-            </SyntaxHighlighter>
-        </div>
-      ))}
+    <div className={styles.header}>Subqueries</div>
+    {queries.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Subquery</th>
+              <th>Total Result Count</th>
+              <th>Elapsed MS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {queries.map(q => (
+              <tr key={q.id}>
+                <td>{q.query.search}</td>
+                <td>{q.count}</td>
+                <td>{q.elapsed_ms}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+    )}
     </div>
   );
 };

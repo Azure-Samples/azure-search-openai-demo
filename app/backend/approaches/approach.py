@@ -9,17 +9,21 @@ from typing import (
     TypedDict,
     Union,
     cast,
+    Tuple
 )
 from urllib.parse import urljoin
 
 import aiohttp
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.models import (
     QueryCaptionResult,
     QueryType,
     VectorizedQuery,
-    VectorQuery,
+    VectorQuery
 )
+from azure.search.documents.agent.models import KnowledgeAgentRetrievalRequest, KnowledgeAgentRetrievalResponse, KnowledgeAgentMessage, KnowledgeAgentMessageTextContent, KnowledgeAgentIndexParams, KnowledgeAgentSearchActivityRecord, KnowledgeAgentAzureSearchDocReference
+
 from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.chat import (
@@ -263,6 +267,52 @@ class Approach(ABC):
             ]
 
         return qualified_documents
+
+    async def run_agentic_retrieval(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        agent_client: KnowledgeAgentRetrievalClient,
+        search_index_name: str,
+        top: Optional[int] = None,
+        filter_add_on: Optional[str] = None,
+        minimum_reranker_score: Optional[float] = None,
+        max_docs_for_reranker: Optional[int] = None,
+        ) -> Tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
+        # STEP 1: Invoke agentic retrieval
+        response = await agent_client.retrieve(
+            retrieval_request=KnowledgeAgentRetrievalRequest(
+                messages=[ KnowledgeAgentMessage(role=msg["role"], content=[KnowledgeAgentMessageTextContent(text=msg["content"])]) for msg in messages if msg["role"] != "system" ],
+                target_index_params=[
+                    KnowledgeAgentIndexParams(
+                        index_name=search_index_name,
+                        reranker_threshold=minimum_reranker_score,
+                        max_docs_for_reranker=max_docs_for_reranker,
+                        filter_add_on=filter_add_on,
+                        include_reference_source_data=True
+                    )
+                ]
+            )
+        )
+        
+        # STEP 2: Generate a contextual and content specific answer using the search results and chat history
+        activities = response.activity
+        activity_mapping = { activity.id: activity.query.search for activity in activities if isinstance(activity, KnowledgeAgentSearchActivityRecord) }
+        
+        results = []
+        for reference in response.references:
+            if isinstance(reference, KnowledgeAgentAzureSearchDocReference):
+                results.append(
+                    Document(
+                        id=reference.doc_key,
+                        content=reference.source_data["content"],
+                        sourcepage=reference.source_data["sourcepage"],
+                        search_agent_query=activity_mapping[reference.activity_source]
+                    )
+                )
+            if top and len(results) == top:
+                break
+
+        return response, results
 
     def get_sources_content(
         self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool

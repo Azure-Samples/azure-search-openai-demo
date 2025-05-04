@@ -2,9 +2,8 @@ from collections.abc import Awaitable
 from typing import Any, Optional, Union, cast, Coroutine
 
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.agent import KnowledgeAgentRetrievalClient
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.models import VectorQuery
-from azure.search.documents.agent.models import KnowledgeAgentRetrievalRequest, KnowledgeAgentMessage, KnowledgeAgentMessageTextContent, KnowledgeAgentIndexParams, KnowledgeAgentSearchActivityRecord, KnowledgeAgentAzureSearchDocReference
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
@@ -31,6 +30,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         *,
         search_client: SearchClient,
         search_index_name: str,
+        agent_model: str,
+        agent_deployment: str,
         agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
@@ -48,6 +49,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
+        self.agent_model = agent_model
+        self.agent_deployment = agent_deployment
         self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
@@ -74,7 +77,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
-        # TODO: EXPOSE MAX SUBQUERIES SETTING NOT MAX DOCS FOR RERANKER (% 50)
         use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
         original_user_query = messages[-1]["content"]
 
@@ -83,7 +85,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             raise Exception(
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
-        # TODO: EXPOSE MAX OUTPUT TOKENS SETTING / GROUNDING STRING
         if use_agentic_retrieval:
             extra_info = await self.run_agentic_retrieval_approach(
                 messages,
@@ -136,8 +137,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self,
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
-        auth_claims: dict[str, Any],
-        should_stream: bool = False,
+        auth_claims: dict[str, Any]
     ):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
@@ -241,68 +241,41 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
     ):
-        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
         max_subqueries = overrides.get("max_subqueries", 3)
-        max_docs_for_reranker = max_subqueries * 50 # 50 is a magical number
+        # 50 is the amount of documents that the reranker can process per query
+        max_docs_for_reranker = max_subqueries * 50
 
-        # STEP 1: Invoke agentic retrieval
-        response = await self.agent_client.retrieve(
-            retrieval_request=KnowledgeAgentRetrievalRequest(
-                messages=[ KnowledgeAgentMessage(role=msg["role"], content=[KnowledgeAgentMessageTextContent(text=msg["content"])]) for msg in messages if msg["role"] != "system" ],
-                target_index_params=[
-                    KnowledgeAgentIndexParams(
-                        index_name=self.search_index_name,
-                        reranker_threshold=minimum_reranker_score,
-                        max_docs_for_reranker=max_docs_for_reranker,
-                        filter_add_on=search_index_filter,
-                        include_reference_source_data=True
-                    )
-                ]
-            )
+        response, results = await self.run_agentic_retrieval(
+            messages=messages,
+            agent_client=self.agent_client,
+            search_index_name=self.search_index_name,
+            top=top,
+            filter_add_on=search_index_filter,
+            minimum_reranker_score=minimum_reranker_score,
+            max_docs_for_reranker=max_docs_for_reranker,
         )
-        
-        # STEP 2: Generate a contextual and content specific answer using the search results and chat history
-        activities = response.activity
-        activity_mapping = { activity.id: activity.query.search for activity in activities if isinstance(activity, KnowledgeAgentSearchActivityRecord) }
-        
-        results = []
-        for reference in response.references:
-            if isinstance(reference, KnowledgeAgentAzureSearchDocReference):
-                results.append(
-                    Document(
-                        id=reference.doc_key,
-                        content=reference.source_data["content"],
-                        sourcepage=reference.source_data["sourcepage"],
-                        search_agent_query=activity_mapping[reference.activity_source]
-                    )
-                )
-            if len(results) == top:
-                break
-        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
 
+        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+    
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
             thoughts=[
                 ThoughtStep(
-                    "Search using the knowledge search agent",
+                    "Use agentic retrieval",
                     messages,
                     {
                         "reranker_threshold": minimum_reranker_score,
                         "max_docs_for_reranker": max_docs_for_reranker,
-                        "filter": search_index_filter,
-                        # TODO: Interaction between max output tokens and top
+                        "filter": search_index_filter
                     },
                 ),
                 ThoughtStep(
-                    f"Search agent query breakdown",
-                    [activity.as_dict() for activity in response.activity],
-                    { "agent_plan": True }
-                ),
-                ThoughtStep(
-                    f"Search agent results (top {top})",
+                    f"Agentic retrieval results (top {top})",
                     [result.serialize_for_results() for result in results],
+                    { "query_plan": [activity.as_dict() for activity in response.activity], "model": self.agent_model, "deployment": self.agent_deployment }
                 )
             ]
         )

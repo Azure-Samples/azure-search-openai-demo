@@ -21,6 +21,7 @@ class SearchInfo:
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         index_name: str,
         agent_name: str,
+        agent_max_output_tokens: int,
         use_agentic_retrieval: bool,
         azure_openai_searchagent_model: Optional[str],
         azure_openai_searchagent_deployment: Optional[str],
@@ -30,6 +31,7 @@ class SearchInfo:
         self.credential = credential
         self.index_name = index_name
         self.agent_name = agent_name
+        self.agent_max_output_tokens = agent_max_output_tokens
         self.use_agentic_retrieval = use_agentic_retrieval
         self.azure_openai_searchagent_model = azure_openai_searchagent_model
         self.azure_openai_searchagent_deployment = azure_openai_searchagent_deployment
