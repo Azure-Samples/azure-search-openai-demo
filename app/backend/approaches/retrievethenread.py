@@ -23,8 +23,8 @@ class RetrieveThenReadApproach(Approach):
         *,
         search_client: SearchClient,
         search_index_name: str,
-        agent_model: str,
-        agent_deployment: str,
+        agent_model: Optional[str],
+        agent_deployment: Optional[str],
         agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
@@ -128,7 +128,7 @@ class RetrieveThenReadApproach(Approach):
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
-        q = messages[-1]["content"]
+        q = str(messages[-1]["content"])
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
@@ -215,7 +215,7 @@ class RetrieveThenReadApproach(Approach):
                     f"Agentic retrieval results (top {top})",
                     [result.serialize_for_results() for result in results],
                     {
-                        "query_plan": [activity.as_dict() for activity in response.activity],
+                        "query_plan": [activity.as_dict() for activity in response.activity] if response.activity else None,
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,
                     },

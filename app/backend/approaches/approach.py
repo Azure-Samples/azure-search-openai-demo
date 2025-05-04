@@ -282,7 +282,7 @@ class Approach(ABC):
             retrieval_request=KnowledgeAgentRetrievalRequest(
                 messages=[
                     KnowledgeAgentMessage(
-                        role=msg["role"], content=[KnowledgeAgentMessageTextContent(text=msg["content"])]
+                        role=str(msg["role"]), content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))]
                     )
                     for msg in messages
                     if msg["role"] != "system"
@@ -302,24 +302,25 @@ class Approach(ABC):
         # STEP 2: Generate a contextual and content specific answer using the search results and chat history
         activities = response.activity
         activity_mapping = {
-            activity.id: activity.query.search
+            activity.id: activity.query.search if activity.query else ""
             for activity in activities
             if isinstance(activity, KnowledgeAgentSearchActivityRecord)
-        }
+        } if activities else {}
 
         results = []
-        for reference in response.references:
-            if isinstance(reference, KnowledgeAgentAzureSearchDocReference):
-                results.append(
-                    Document(
-                        id=reference.doc_key,
-                        content=reference.source_data["content"],
-                        sourcepage=reference.source_data["sourcepage"],
-                        search_agent_query=activity_mapping[reference.activity_source],
+        if response and response.references:
+            for reference in response.references:
+                if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
+                    results.append(
+                        Document(
+                            id=reference.doc_key,
+                            content=reference.source_data["content"],
+                            sourcepage=reference.source_data["sourcepage"],
+                            search_agent_query=activity_mapping[reference.activity_source],
+                        )
                     )
-                )
-            if top and len(results) == top:
-                break
+                if top and len(results) == top:
+                    break
 
         return response, results
 

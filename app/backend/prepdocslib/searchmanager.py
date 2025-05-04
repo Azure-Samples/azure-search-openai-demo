@@ -235,14 +235,18 @@ class SearchManager:
                     )
                     await search_index_client.create_or_update_index(existing_index)
 
-                if not existing_index.semantic_search.default_configuration_name:
-                    logger.info("Adding default semantic configuration to index %s", self.search_info.index_name)
-                    existing_index.semantic_search.default_configuration_name = "default"
+                if existing_index.semantic_search:
+                    if not existing_index.semantic_search.default_configuration_name:
+                        logger.info("Adding default semantic configuration to index %s", self.search_info.index_name)
+                        existing_index.semantic_search.default_configuration_name = "default"
 
-                existing_semantic_config = existing_index.semantic_search.configurations[0]
-                if not existing_semantic_config.prioritized_fields.title_field.field_name == "sourcepage":
-                    logger.info("Updating semantic configuration for index %s", self.search_info.index_name)
-                    existing_semantic_config.prioritized_fields.title_field = SemanticField(field_name="sourcepage")
+                    if existing_index.semantic_search.configurations:
+                        existing_semantic_config = existing_index.semantic_search.configurations[0]
+                        if existing_semantic_config.prioritized_fields and \
+                        existing_semantic_config.prioritized_fields.title_field and \
+                        not existing_semantic_config.prioritized_fields.title_field.field_name == "sourcepage":
+                            logger.info("Updating semantic configuration for index %s", self.search_info.index_name)
+                            existing_semantic_config.prioritized_fields.title_field = SemanticField(field_name="sourcepage")
 
                 if existing_index.vector_search is not None and (
                     existing_index.vector_search.vectorizers is None
@@ -267,37 +271,38 @@ class SearchManager:
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
-        if self.search_info.use_agentic_retrieval:
+        if self.search_info.use_agentic_retrieval and self.search_info.agent_name:
             await self.create_agent()
 
     async def create_agent(self):
-        logger.info(f"Creating search agent named {self.search_info.agent_name}")
+        if self.search_info.agent_name:
+            logger.info(f"Creating search agent named {self.search_info.agent_name}")
 
-        async with self.search_info.create_search_index_client() as search_index_client:
-            await search_index_client.create_or_update_agent(
-                agent=KnowledgeAgent(
-                    name=self.search_info.agent_name,
-                    target_indexes=[
-                        KnowledgeAgentTargetIndex(
-                            index_name=self.search_info.index_name, default_include_reference_source_data=True
-                        )
-                    ],
-                    models=[
-                        KnowledgeAgentAzureOpenAIModel(
-                            azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
-                                resource_url=self.search_info.azure_openai_endpoint,
-                                deployment_name=self.search_info.azure_openai_searchagent_deployment,
-                                model_name=self.search_info.azure_openai_searchagent_model,
+            async with self.search_info.create_search_index_client() as search_index_client:
+                await search_index_client.create_or_update_agent(
+                    agent=KnowledgeAgent(
+                        name=self.search_info.agent_name,
+                        target_indexes=[
+                            KnowledgeAgentTargetIndex(
+                                index_name=self.search_info.index_name, default_include_reference_source_data=True
                             )
-                        )
-                    ],
-                    request_limits=KnowledgeAgentRequestLimits(
-                        max_output_size=self.search_info.agent_max_output_tokens
-                    ),
+                        ],
+                        models=[
+                            KnowledgeAgentAzureOpenAIModel(
+                                azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+                                    resource_url=self.search_info.azure_openai_endpoint,
+                                    deployment_name=self.search_info.azure_openai_searchagent_deployment,
+                                    model_name=self.search_info.azure_openai_searchagent_model,
+                                )
+                            )
+                        ],
+                        request_limits=KnowledgeAgentRequestLimits(
+                            max_output_size=self.search_info.agent_max_output_tokens
+                        ),
+                    )
                 )
-            )
 
-        logger.info("Agent %s created successfully", self.search_info.agent_name)
+            logger.info("Agent %s created successfully", self.search_info.agent_name)
 
     async def update_content(
         self, sections: list[Section], image_embeddings: Optional[list[list[float]]] = None, url: Optional[str] = None
