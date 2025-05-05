@@ -140,7 +140,7 @@ export function Component(): JSX.Element {
                         reasoning_effort: reasoningEffort,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFieldList,
+                        vector_fields: vectorFields,
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
