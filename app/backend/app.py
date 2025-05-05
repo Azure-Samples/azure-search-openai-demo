@@ -5,8 +5,9 @@ import logging
 import mimetypes
 import os
 import time
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Union, cast
+from typing import Any, Union, cast
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -129,7 +130,7 @@ async def assets(path):
 
 @bp.route("/content/<path>")
 @authenticated_path
-async def content_file(path: str, auth_claims: Dict[str, Any]):
+async def content_file(path: str, auth_claims: dict[str, Any]):
     """
     Serve content files from blob storage from within the app to keep the example self-contained.
     *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
@@ -174,7 +175,7 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
 
 @bp.route("/ask", methods=["POST"])
 @authenticated
-async def ask(auth_claims: Dict[str, Any]):
+async def ask(auth_claims: dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -213,7 +214,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 @bp.route("/chat", methods=["POST"])
 @authenticated
-async def chat(auth_claims: Dict[str, Any]):
+async def chat(auth_claims: dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -247,7 +248,7 @@ async def chat(auth_claims: Dict[str, Any]):
 
 @bp.route("/chat/stream", methods=["POST"])
 @authenticated
-async def chat_stream(auth_claims: Dict[str, Any]):
+async def chat_stream(auth_claims: dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()

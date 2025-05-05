@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import os
-from typing import List, Optional
+from typing import Optional
 
 from azure.search.documents.indexes.models import (
     AzureOpenAIVectorizer,
@@ -224,7 +224,7 @@ class SearchManager:
                     logger.info("Including parent_id field for integrated vectorization support in new index")
                     fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
 
-                vectorizers: List[VectorSearchVectorizer] = []
+                vectorizers: list[VectorSearchVectorizer] = []
                 vector_search_profiles = []
                 vector_algorithms: list[VectorSearchAlgorithmConfiguration] = []
                 vector_compressions: list[VectorSearchCompression] = []
@@ -332,7 +332,7 @@ class SearchManager:
                     await search_index_client.create_or_update_index(existing_index)
 
     async def update_content(
-        self, sections: List[Section], image_embeddings: Optional[List[List[float]]] = None, url: Optional[str] = None
+        self, sections: list[Section], image_embeddings: Optional[list[list[float]]] = None, url: Optional[str] = None
     ):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]

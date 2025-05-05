@@ -1,6 +1,6 @@
 import json
 import os
-from typing import IO, Any, Dict
+from typing import IO, Any
 from unittest import mock
 
 import aiohttp
@@ -108,7 +108,7 @@ def mock_openai_embedding(monkeypatch):
 @pytest.fixture
 def mock_openai_chatcompletion(monkeypatch):
     class AsyncChatCompletionIterator:
-        def __init__(self, answer: str, reasoning: bool, usage: Dict[str, Any]):
+        def __init__(self, answer: str, reasoning: bool, usage: dict[str, Any]):
             chunk_id = "test-id"
             model = "gpt-4o-mini" if not reasoning else "o3-mini"
             self.responses = [
@@ -197,7 +197,7 @@ def mock_openai_chatcompletion(monkeypatch):
         messages = kwargs["messages"]
         model = kwargs["model"]
         reasoning = model == "o3-mini"
-        completion_usage: Dict[str, any] = {
+        completion_usage: dict[str, any] = {
             "completion_tokens": 896,
             "prompt_tokens": 23,
             "total_tokens": 919,

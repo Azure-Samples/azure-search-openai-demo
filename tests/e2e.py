@@ -2,9 +2,9 @@ import json
 import os
 import socket
 import time
+from collections.abc import Generator
 from contextlib import closing
 from multiprocessing import Process
-from typing import Generator
 from unittest import mock
 
 import pytest
