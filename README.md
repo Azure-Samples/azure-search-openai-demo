@@ -134,7 +134,7 @@ A related option is VS Code Dev Containers, which will open the project in your 
     - [Python 3.9, 3.10, or 3.11](https://www.python.org/downloads/)
       - **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
       - **Important**: Ensure you can run `python --version` from console. On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.
-    - [Node.js 18+](https://nodejs.org/download/)
+    - [Node.js 20+](https://nodejs.org/download/)
     - [Git](https://git-scm.com/downloads)
     - [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
       - **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
