@@ -19,7 +19,7 @@ on:
 
 jobs:
   test_package:
-    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }}
+    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }} Node ${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
