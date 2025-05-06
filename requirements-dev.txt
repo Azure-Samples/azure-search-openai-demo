@@ -13,3 +13,6 @@ pre-commit
 locust
 pip-tools
 mypy==1.14.1
+azure-search-documents==11.6.0a20250505003
+    --extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+    # Manually added
