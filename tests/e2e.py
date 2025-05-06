@@ -249,7 +249,9 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
 
     # Customize the GPT-4-vision settings
     page.get_by_role("button", name="Developer settings").click()
-    page.get_by_text("Use GPT vision model").click()
+    # Check that "Use GPT vision model" is visible and selected
+    expect(page.get_by_text("Use GPT vision model")).to_be_visible()
+    expect(page.get_by_role("checkbox", name="Use GPT vision model")).to_be_checked()
     page.get_by_text("Images and text").click()
     page.get_by_role("option", name="Images", exact=True).click()
     page.get_by_text("Text and Image embeddings").click()
