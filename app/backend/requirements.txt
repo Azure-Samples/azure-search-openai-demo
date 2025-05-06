@@ -53,8 +53,9 @@ azure-monitor-opentelemetry==1.6.1
     # via -r requirements.in
 azure-monitor-opentelemetry-exporter==1.0.0b32
     # via azure-monitor-opentelemetry
-app\backend\azure_search_documents-11.6.0b12-py3-none-any.whl
-    # via -r requirements.in
+azure-search-documents==11.6.0a20250505003
+    --extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+    # Manually added
 azure-storage-blob==12.22.0
     # via
     #   -r requirements.in
