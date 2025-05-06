@@ -32,12 +32,15 @@ export const VectorSettings = ({ updateRetrievalMode, updateVectorFields, showIm
     // Only run if showImageOptions changes from true to false or false to true
     useEffect(() => {
         if (!showImageOptions) {
-            console.log("showImageOptions is false");
             // If images are disabled, we must force to text-only embeddings
             setVectorFields(VectorFields.Embedding);
             updateVectorFields(VectorFields.Embedding);
+        } else {
+            // When image options become available, reset to default or use TextAndImageEmbeddings
+            setVectorFields(defaultVectorFields || VectorFields.TextAndImageEmbeddings);
+            updateVectorFields(defaultVectorFields || VectorFields.TextAndImageEmbeddings);
         }
-    }, [showImageOptions, updateVectorFields]);
+    }, [showImageOptions, updateVectorFields, defaultVectorFields]);
 
     const retrievalModeId = useId("retrievalMode");
     const retrievalModeFieldId = useId("retrievalModeField");

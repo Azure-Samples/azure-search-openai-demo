@@ -103,6 +103,9 @@ const Chat = () => {
     const getConfig = async () => {
         configApi().then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
+            if (config.showGPT4VOptions) {
+                setUseGPT4V(true);
+            }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
             setUseQueryRewriting(config.showQueryRewritingOption);
