@@ -90,6 +90,13 @@
         "excludeCategory": "カテゴリを除外",
         "useSemanticRanker": "取得にセマンティック・ランカーを使用",
         "useSemanticCaptions": "セマンティック・キャプションを使用",
+        "useQueryRewriting": "検索のためにクエリの書き換えを使用する",
+        "reasoningEffort": "推論の労力",
+        "reasoningEffortOptions": {
+            "low": "低",
+            "medium": "中",
+            "high": "高"
+        },
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
         "useGPT4V": "GPT Visionモデルを使用",
         "gpt4VInput": {
@@ -139,6 +146,10 @@
             "Azure AI Searchのセマンティック・ランカーを有効にします(ユーザーのクエリに対するセマンティック類似性に基づいて検索結果をリランク付けするモデル)。",
         "useSemanticCaptions":
             "完全な検索結果ではなく、LLMにセマンティック・キャプションを送信します。セマンティック・キャプションは、セマンティック・ランキングの処理中に検索結果から抽出されます。",
+        "useQueryRewriting":
+            "Azure AI Searchのクエリの書き換えを有効にします。これは、ユーザーのクエリを変更して検索結果を改善するプロセスです。セマンティック・ランカーが有効になっている必要があります。",
+        "reasoningEffort":
+            "LLMの推論労力を設定します。値が高いほど推論が増加しますが、応答の生成に時間がかかる場合があります。デフォルトは中です。",
         "suggestFollowupQuestions": "ユーザーのクエリに基づいて、LLMにフォローアップの質問を提案するように問い合わせます。",
         "useGPT4Vision": "インデックスから画像とテキストを利用して回答を生成するためGPT-4-Turbo with Visionを使用します。",
         "vectorFields":

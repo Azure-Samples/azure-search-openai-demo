@@ -1,14 +1,13 @@
 import os
 from abc import ABC
+from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
 from typing import (
     Any,
-    AsyncGenerator,
-    Awaitable,
     Callable,
-    List,
     Optional,
     TypedDict,
+    Union,
     cast,
 )
 from urllib.parse import urljoin
@@ -21,8 +20,15 @@ from azure.search.documents.models import (
     VectorizedQuery,
     VectorQuery,
 )
-from openai import AsyncOpenAI
-from openai.types.chat import ChatCompletionMessageParam
+from openai import AsyncOpenAI, AsyncStream
+from openai.types import CompletionUsage
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+    ChatCompletionReasoningEffort,
+    ChatCompletionToolParam,
+)
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -32,14 +38,14 @@ from core.authentication import AuthenticationHelper
 class Document:
     id: Optional[str]
     content: Optional[str]
-    embedding: Optional[List[float]]
-    image_embedding: Optional[List[float]]
+    embedding: Optional[list[float]]
+    image_embedding: Optional[list[float]]
     category: Optional[str]
     sourcepage: Optional[str]
     sourcefile: Optional[str]
-    oids: Optional[List[str]]
-    groups: Optional[List[str]]
-    captions: List[QueryCaptionResult]
+    oids: Optional[list[str]]
+    groups: Optional[list[str]]
+    captions: list[QueryCaptionResult]
     score: Optional[float] = None
     reranker_score: Optional[float] = None
 
@@ -71,7 +77,7 @@ class Document:
         }
 
     @classmethod
-    def trim_embedding(cls, embedding: Optional[List[float]]) -> Optional[str]:
+    def trim_embedding(cls, embedding: Optional[list[float]]) -> Optional[str]:
         """Returns a trimmed list of floats from the vector embedding."""
         if embedding:
             if len(embedding) > 2:
@@ -89,12 +95,59 @@ class ThoughtStep:
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
 
+    def update_token_usage(self, usage: CompletionUsage) -> None:
+        if self.props:
+            self.props["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+
+
+@dataclass
+class DataPoints:
+    text: Optional[list[str]] = None
+    images: Optional[list] = None
+
+
+@dataclass
+class ExtraInfo:
+    data_points: DataPoints
+    thoughts: Optional[list[ThoughtStep]] = None
+    followup_questions: Optional[list[Any]] = None
+
+
+@dataclass
+class TokenUsageProps:
+    prompt_tokens: int
+    completion_tokens: int
+    reasoning_tokens: Optional[int]
+    total_tokens: int
+
+    @classmethod
+    def from_completion_usage(cls, usage: CompletionUsage) -> "TokenUsageProps":
+        return cls(
+            prompt_tokens=usage.prompt_tokens,
+            completion_tokens=usage.completion_tokens,
+            reasoning_tokens=(
+                usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
+            ),
+            total_tokens=usage.total_tokens,
+        )
+
+
+# GPT reasoning models don't support the same set of parameters as other models
+# https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning
+@dataclass
+class GPTReasoningModelSupport:
+    streaming: bool
+
 
 class Approach(ABC):
-
-    # Allows usage of non-GPT model even if no tokenizer is available for accurate token counting
-    # Useful for using local small language models, for example
-    ALLOW_NON_GPT_MODELS = True
+    # List of GPT reasoning models support
+    GPT_REASONING_MODELS = {
+        "o1": GPTReasoningModelSupport(streaming=False),
+        "o3-mini": GPTReasoningModelSupport(streaming=True),
+    }
+    # Set a higher token limit for GPT reasoning models
+    RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
+    RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT = 8192
 
     def __init__(
         self,
@@ -110,6 +163,7 @@ class Approach(ABC):
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -123,6 +177,8 @@ class Approach(ABC):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
+        self.reasoning_effort = reasoning_effort
+        self.include_token_usage = True
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -142,14 +198,15 @@ class Approach(ABC):
         top: int,
         query_text: Optional[str],
         filter: Optional[str],
-        vectors: List[VectorQuery],
+        vectors: list[VectorQuery],
         use_text_search: bool,
         use_vector_search: bool,
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
-        minimum_search_score: Optional[float],
-        minimum_reranker_score: Optional[float],
-    ) -> List[Document]:
+        minimum_search_score: Optional[float] = None,
+        minimum_reranker_score: Optional[float] = None,
+        use_query_rewriting: Optional[bool] = None,
+    ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
         if use_semantic_ranker:
@@ -158,6 +215,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                query_rewrites="generative" if use_query_rewriting else None,
                 vector_queries=search_vectors,
                 query_type=QueryType.SEMANTIC,
                 query_language=self.query_language,
@@ -187,7 +245,7 @@ class Approach(ABC):
                         sourcefile=document.get("sourcefile"),
                         oids=document.get("oids"),
                         groups=document.get("groups"),
-                        captions=cast(List[QueryCaptionResult], document.get("@search.captions")),
+                        captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
                         score=document.get("@search.score"),
                         reranker_score=document.get("@search.reranker_score"),
                     )
@@ -205,7 +263,7 @@ class Approach(ABC):
         return qualified_documents
 
     def get_sources_content(
-        self, results: List[Document], use_semantic_captions: bool, use_image_citation: bool
+        self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool
     ) -> list[str]:
 
         def nonewlines(s: str) -> str:
@@ -282,6 +340,81 @@ class Approach(ABC):
             return {"injected_prompt": override_prompt[3:]}
         else:
             return {"override_prompt": override_prompt}
+
+    def get_response_token_limit(self, model: str, default_limit: int) -> int:
+        if model in self.GPT_REASONING_MODELS:
+            return self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
+
+        return default_limit
+
+    def create_chat_completion(
+        self,
+        chatgpt_deployment: Optional[str],
+        chatgpt_model: str,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        response_token_limit: int,
+        should_stream: bool = False,
+        tools: Optional[list[ChatCompletionToolParam]] = None,
+        temperature: Optional[float] = None,
+        n: Optional[int] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+    ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
+        if chatgpt_model in self.GPT_REASONING_MODELS:
+            params: dict[str, Any] = {
+                # max_tokens is not supported
+                "max_completion_tokens": response_token_limit
+            }
+
+            # Adjust parameters for reasoning models
+            supported_features = self.GPT_REASONING_MODELS[chatgpt_model]
+            if supported_features.streaming and should_stream:
+                params["stream"] = True
+                params["stream_options"] = {"include_usage": True}
+            params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
+
+        else:
+            # Include parameters that may not be supported for reasoning models
+            params = {
+                "max_tokens": response_token_limit,
+                "temperature": temperature or overrides.get("temperature", 0.3),
+            }
+        if should_stream:
+            params["stream"] = True
+            params["stream_options"] = {"include_usage": True}
+
+        params["tools"] = tools
+
+        # Azure OpenAI takes the deployment name as the model name
+        return self.openai_client.chat.completions.create(
+            model=chatgpt_deployment if chatgpt_deployment else chatgpt_model,
+            messages=messages,
+            seed=overrides.get("seed", None),
+            n=n or 1,
+            **params,
+        )
+
+    def format_thought_step_for_chatcompletion(
+        self,
+        title: str,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        model: str,
+        deployment: Optional[str],
+        usage: Optional[CompletionUsage] = None,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+    ) -> ThoughtStep:
+        properties: dict[str, Any] = {"model": model}
+        if deployment:
+            properties["deployment"] = deployment
+        # Only add reasoning_effort setting if the model supports it
+        if model in self.GPT_REASONING_MODELS:
+            properties["reasoning_effort"] = reasoning_effort or overrides.get(
+                "reasoning_effort", self.reasoning_effort
+            )
+        if usage:
+            properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+        return ThoughtStep(title, messages, properties)
 
     async def run(
         self,

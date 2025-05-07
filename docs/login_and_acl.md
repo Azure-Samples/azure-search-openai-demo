@@ -19,6 +19,8 @@ urlFragment: azure-search-openai-demo-document-security
 
 # RAG chat: Setting up optional login and document level access control
 
+[📺 Watch: (RAG Deep Dive series) Login and access control](https://www.youtube.com/watch?v=GwEiYJgM8Vw)
+
 The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring login and access control.
 
 ## Table of Contents
@@ -57,14 +59,68 @@ Two Microsoft Entra applications must be registered in order to make the optiona
 
 The easiest way to setup the two apps is to use the `azd` CLI. We've written scripts that will automatically create the two apps and configure them for use with the sample. To trigger the automatic setup, run the following commands:
 
-1. Run `azd env set AZURE_USE_AUTHENTICATION true` to enable the login UI and use App Service authentication by default.
-1. Ensure access control is enabled on your search index. If your index doesn't exist yet, run prepdocs with `AZURE_USE_AUTHENTICATION` set to `true`. If your index already exists, run `python ./scripts/manageacl.py --acl-action enable_acls`.
-1. (Optional) To require access control when using the app, run `azd env set AZURE_ENFORCE_ACCESS_CONTROL true`. Authentication is always required to search on documents with access control assigned, regardless of if unauthenticated access is enabled or not.
-1. (Optional) To allow authenticated users to search on documents that have no access controls assigned, even when access control is required, run `azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true`.
-1. (Optional) To allow unauthenticated users to use the app, even when access control is enforced, run `azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true`. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true if you want unauthenticated users to be able to search on documents with no access control.
-1. Run `azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>` to set the tenant ID associated with authentication.
-1. If your auth tenant ID is different from your currently logged in tenant ID, run `azd auth login --tenant-id <YOUR-TENANT-ID>` to login to the authentication tenant simultaneously.
-1. Run `azd up` to deploy the app.
+1. **Enable authentication for the app**
+  Run the following command to show the login UI and use Entra authentication by default:
+
+    ```shell
+    azd env set AZURE_USE_AUTHENTICATION true
+    ```
+
+1. **Enable access control on your search index**
+
+    - **If the index does not exist yet:**
+      Run the `prepdocs` script.
+
+    - **If the index already exists:**
+      Execute this command to enable ACLs:
+
+      ```shell
+      python ./scripts/manageacl.py --acl-action enable_acls
+      ```
+
+1. (Optional) **Enforce access control**
+  To ensure that the app restricts search results to only documents that the user has access to, run the following command:
+
+    ```shell
+    azd env set AZURE_ENFORCE_ACCESS_CONTROL true
+    ```
+
+1. (Optional) **Allow global document access**
+  To allow users to search on documents that have no access controls assigned, even when access control is required, run the following command:
+
+    ```shell
+    azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true
+    ```
+
+1. (Optional) **Allow unauthenticated access**
+  To allow unauthenticated users to use the app, even when access control is enforced, run the following command:
+
+    ```shell
+    azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true
+    ```
+
+    Note: These users will not be able to search on documents that have access control assigned, so `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true to give them access to the remaining documents.
+
+1. **Set the authentication tenant ID**
+  Specify the tenant ID associated with authentication by running:
+
+    ```shell
+    azd env set AZURE_AUTH_TENANT_ID <YOUR-TENANT-ID>
+    ```
+
+1. **Login to the authentication tenant (if needed)**
+  If your auth tenant ID is different from your currently logged in tenant ID, run:
+
+    ```shell
+    azd auth login --tenant-id <YOUR-TENANT-ID>
+    ```
+
+1. **Deploy the app**
+  Finally, run the following command to provision and deploy the app:
+
+    ```shell
+    azd up
+    ```
 
 ### Manual Setup
 
@@ -219,7 +275,7 @@ The script supports the following commands. All commands support `-v` for verbos
   python ./scripts/manageacl.py -v --acl-type groups --acl-action view --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
-- `python ./scripts/manageacl.py --acl-type [oids or groups]--acl-action add --acl [ID of group or user] --url [https://url.pdf]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
+- `python ./scripts/manageacl.py --acl-type [oids or groups] --acl-action add --acl [ID of group or user] --url [https://url.pdf]`: Adds an access control value associated with either User IDs or Group IDs for the document at the specified URL.
 
   Example to add a Group ID:
 

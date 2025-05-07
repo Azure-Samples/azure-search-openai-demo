@@ -51,7 +51,7 @@ This template, the application code and configuration it contains, has been buil
 
 [📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
 
-This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access a GPT model (gpt-35-turbo), and Azure AI Search for data indexing and retrieval.
+This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access a GPT model (gpt-4o-mini), and Azure AI Search for data indexing and retrieval.
 
 The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
 
@@ -84,7 +84,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 Pricing varies per region and usage, so it isn't possible to predict exact costs for your usage.
 However, you can try the [Azure pricing calculator](https://azure.com/e/e3490de2372a4f9b909b0d032560e41b) for the resources below.
 
-- Azure Container Apps: Default host for app deployment as of 10/28/2024. See more details in [the ACA deployment guide](docs/azure_container_apps.md). Consumption plan with 1 CPU core, 2.0 GB RAM. Pricing with Pay-as-You-Go. [Pricing](https://azure.microsoft.com/pricing/details/container-apps/)
+- Azure Container Apps: Default host for app deployment as of 10/28/2024. See more details in [the ACA deployment guide](docs/azure_container_apps.md). Consumption plan with 1 CPU core, 2 GB RAM, minimum of 0 replicas. Pricing with Pay-as-You-Go. [Pricing](https://azure.microsoft.com/pricing/details/container-apps/)
 - Azure Container Registry: Basic tier. [Pricing](https://azure.microsoft.com/pricing/details/container-registry/)
 - Azure App Service: Only provisioned if you deploy to Azure App Service following [the App Service deployment guide](docs/azure_app_service.md).  Basic Tier with 1 CPU core, 1.75 GB RAM. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/app-service/linux/)
 - Azure OpenAI: Standard tier, GPT and Ada models. Pricing per 1K tokens used, and at least 1K tokens are used per question. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
@@ -253,13 +253,17 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
   - [Deploying with existing Azure resources](docs/deploy_existing.md)
   - [Deploying from a free account](docs/deploy_lowcost.md)
   - [Enabling optional features](docs/deploy_features.md)
+    - [All features](docs/deploy_features.md)
     - [Login and access control](docs/login_and_acl.md)
     - [GPT-4 Turbo with Vision](docs/gpt4v.md)
+    - [Reasoning](docs/reasoning.md)
     - [Private endpoints](docs/deploy_private.md)
   - [Sharing deployment environments](docs/sharing_environments.md)
 - [Local development](docs/localdev.md)
 - [Customizing the app](docs/customization.md)
 - [Data ingestion](docs/data_ingestion.md)
+- [Evaluation](docs/evaluation.md)
+- [Safety evaluation](docs/safety_evaluation.md)
 - [Monitoring with Application Insights](docs/monitoring.md)
 - [Productionizing](docs/productionizing.md)
 - [Alternative RAG chat samples](docs/other_samples.md)

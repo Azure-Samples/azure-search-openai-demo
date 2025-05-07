@@ -25,7 +25,7 @@ def chat_approach():
         search_client=None,
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
@@ -44,7 +44,7 @@ def test_get_search_query(chat_approach):
 	"id": "chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM",
 	"object": "chat.completion",
 	"created": 1695324963,
-	"model": "gpt-35-turbo",
+	"model": "gpt-4o-mini",
 	"prompt_filter_results": [
 		{
 			"prompt_index": 0,
@@ -106,7 +106,7 @@ def test_get_search_query(chat_approach):
 
 
 def test_get_search_query_returns_default(chat_approach):
-    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
+    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-4o-mini","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
     default_query = "hello"
     chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
     query = chat_approach.get_search_query(chatcompletions, default_query)
@@ -171,7 +171,7 @@ async def test_search_results_filtering_by_scores(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
@@ -201,3 +201,45 @@ async def test_search_results_filtering_by_scores(
     assert (
         len(filtered_results) == expected_result_count
     ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
+
+
+@pytest.mark.asyncio
+async def test_search_results_query_rewriting(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+    )
+
+    query_rewrites = None
+
+    async def validate_qr_and_mock_search(*args, **kwargs):
+        nonlocal query_rewrites
+        query_rewrites = kwargs.get("query_rewrites")
+        return await mock_search(*args, **kwargs)
+
+    monkeypatch.setattr(SearchClient, "search", validate_qr_and_mock_search)
+
+    results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
+        use_semantic_ranker=True,
+        use_semantic_captions=True,
+        use_query_rewriting=True,
+    )
+    assert len(results) == 1
+    assert query_rewrites == "generative"

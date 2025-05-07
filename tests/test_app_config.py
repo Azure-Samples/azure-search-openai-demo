@@ -15,7 +15,7 @@ def minimal_env(monkeypatch):
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
-        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-35-turbo")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4o-mini")
         yield
 
 
@@ -259,3 +259,49 @@ async def test_app_config_for_client(client):
     assert result["showGPT4VOptions"] == (os.getenv("USE_GPT4V") == "true")
     assert result["showSemanticRankerOption"] is True
     assert result["showVectorOption"] is True
+    assert result["streamingEnabled"] is True
+    assert result["showReasoningEffortOption"] is False
+
+
+@pytest.mark.asyncio
+async def test_app_config_for_reasoning(monkeypatch, minimal_env):
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o3-mini")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "o3-mini")
+    quart_app = app.create_app()
+    async with quart_app.test_app() as test_app:
+        client = test_app.test_client()
+        response = await client.get("/config")
+        assert response.status_code == 200
+        result = await response.get_json()
+        assert result["streamingEnabled"] is True
+        assert result["showReasoningEffortOption"] is True
+
+
+@pytest.mark.asyncio
+async def test_app_config_for_reasoning_without_streaming(monkeypatch, minimal_env):
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o1")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "o1")
+    quart_app = app.create_app()
+    async with quart_app.test_app() as test_app:
+        client = test_app.test_client()
+        response = await client.get("/config")
+        assert response.status_code == 200
+        result = await response.get_json()
+        assert result["streamingEnabled"] is False
+        assert result["showReasoningEffortOption"] is True
+
+
+@pytest.mark.asyncio
+async def test_app_config_for_reasoning_override_effort(monkeypatch, minimal_env):
+    monkeypatch.setenv("AZURE_OPENAI_REASONING_EFFORT", "low")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "o3-mini")
+    monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "o3-mini")
+    quart_app = app.create_app()
+    async with quart_app.test_app() as test_app:
+        client = test_app.test_client()
+        response = await client.get("/config")
+        assert response.status_code == 200
+        result = await response.get_json()
+        assert result["streamingEnabled"] is True
+        assert result["showReasoningEffortOption"] is True
+        assert result["defaultReasoningEffort"] == "low"

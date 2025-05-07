@@ -62,3 +62,75 @@
     max-width: 100%;
     object-fit: contain;
 }
+
+.header {
+    color: #123bb6;
+    position: relative;
+    font-size: 0.875em;
+    margin-bottom: 0.5em;
+}
+
+.reasoningEffort {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.tokenUsageGraph {
+    margin: 16px 0;
+}
+
+.tokenBar {
+    height: 20px;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.tokenBar {
+    height: 20px;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #d7d7d7;
+    white-space: nowrap;
+    overflow: visible;
+    min-width: max-content;
+}
+
+/* Adjust tokenLabel to allow bar-specific text color overrides */
+.tokenLabel {
+    padding-right: 4px;
+}
+
+.primaryBarContainer {
+    width: fit-content;
+    display: flex;
+    gap: 4px;
+}
+
+.promptBar {
+    background-color: #a82424;
+    color: #ffffff; /* White text for contrast */
+}
+
+.reasoningBar {
+    background-color: #265e29;
+    color: #ffffff;
+}
+
+.outputBar {
+    background-color: #12579b;
+    color: #ffffff;
+}
+
+.totalBar {
+    background-color: #424242;
+    color: #ffffff;
+}

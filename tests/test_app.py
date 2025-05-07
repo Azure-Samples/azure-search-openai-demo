@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from unittest import mock
 
@@ -771,6 +770,44 @@ async def test_chat_stream_text(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_text_reasoning(reasoning_client, snapshot):
+    response = await reasoning_client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][0]["props"]["token_usage"] is not None
+    assert result["context"]["thoughts"][0]["props"]["reasoning_effort"] is not None
+    assert result["context"]["thoughts"][3]["props"]["token_usage"] is not None
+    assert result["context"]["thoughts"][3]["props"]["token_usage"]["reasoning_tokens"] > 0
+    assert result["context"]["thoughts"][3]["props"]["reasoning_effort"] == os.getenv("AZURE_OPENAI_REASONING_EFFORT")
+
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_text_reasoning(reasoning_client, snapshot):
+    response = await reasoning_client.post(
+        "/chat/stream",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_data()
+    snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
 async def test_chat_stream_text_filter(auth_client, snapshot):
     response = await auth_client.post(
         "/chat/stream",
@@ -817,35 +854,6 @@ async def test_chat_with_history(client, snapshot):
     assert response.status_code == 200
     result = await response.get_json()
     assert messages_contains_text(result["context"]["thoughts"][3]["description"], "performance review")
-    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
-
-
-@pytest.mark.asyncio
-async def test_chat_with_long_history(client, snapshot, caplog):
-    """This test makes sure that the history is truncated to max tokens minus 1024."""
-    caplog.set_level(logging.DEBUG)
-    response = await client.post(
-        "/chat",
-        json={
-            "messages": [
-                {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
-                {
-                    "role": "assistant",
-                    "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]"
-                    * 150,
-                },  # 3900 tokens
-                {"role": "user", "content": "What does a product manager do?"},  # 10 tokens
-            ],
-            "context": {
-                "overrides": {"retrieval_mode": "text"},
-            },
-        },
-    )
-    assert response.status_code == 200
-    result = await response.get_json()
-    # Assert that it doesn't find the first message, since it wouldn't fit in the max tokens.
-    assert not messages_contains_text(result["context"]["thoughts"][3]["description"], "Is there a dress code?")
-    assert "Reached max tokens" in caplog.text
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

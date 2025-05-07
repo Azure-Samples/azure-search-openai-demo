@@ -19,6 +19,8 @@ export interface SettingsProps {
     minimumRerankerScore: number;
     useSemanticRanker: boolean;
     useSemanticCaptions: boolean;
+    useQueryRewriting: boolean;
+    reasoningEffort: string;
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
@@ -26,6 +28,8 @@ export interface SettingsProps {
     gpt4vInput: GPT4VInput;
     vectorFieldList: VectorFieldOptions[];
     showSemanticRankerOption: boolean;
+    showQueryRewritingOption: boolean;
+    showReasoningEffortOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -35,6 +39,7 @@ export interface SettingsProps {
     requireAccessControl: boolean;
     className?: string;
     onChange: (field: string, value: any) => void;
+    streamingEnabled?: boolean; // Only used in chat
     shouldStream?: boolean; // Only used in Chat
     useSuggestFollowupQuestions?: boolean; // Only used in Chat
     promptTemplatePrefix?: string;
@@ -51,6 +56,8 @@ export const Settings = ({
     minimumRerankerScore,
     useSemanticRanker,
     useSemanticCaptions,
+    useQueryRewriting,
+    reasoningEffort,
     excludeCategory,
     includeCategory,
     retrievalMode,
@@ -58,6 +65,8 @@ export const Settings = ({
     gpt4vInput,
     vectorFieldList,
     showSemanticRankerOption,
+    showQueryRewritingOption,
+    showReasoningEffortOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -67,6 +76,7 @@ export const Settings = ({
     requireAccessControl,
     className,
     onChange,
+    streamingEnabled,
     shouldStream,
     useSuggestFollowupQuestions,
     promptTemplatePrefix,
@@ -94,6 +104,8 @@ export const Settings = ({
     const excludeCategoryFieldId = useId("excludeCategoryField");
     const semanticRankerId = useId("semanticRanker");
     const semanticRankerFieldId = useId("semanticRankerField");
+    const queryRewritingFieldId = useId("queryRewritingField");
+    const reasoningEffortFieldId = useId("reasoningEffortField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
@@ -239,6 +251,39 @@ export const Settings = ({
                 </>
             )}
 
+            {showQueryRewritingOption && (
+                <>
+                    <Checkbox
+                        id={queryRewritingFieldId}
+                        className={styles.settingsSeparator}
+                        checked={useQueryRewriting}
+                        disabled={!useSemanticRanker}
+                        label={t("labels.useQueryRewriting")}
+                        onChange={(_ev, checked) => onChange("useQueryRewriting", !!checked)}
+                        aria-labelledby={queryRewritingFieldId}
+                        onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.useQueryRewriting"))}
+                    />
+                </>
+            )}
+
+            {showReasoningEffortOption && (
+                <Dropdown
+                    id={reasoningEffortFieldId}
+                    selectedKey={reasoningEffort}
+                    label={t("labels.reasoningEffort")}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("reasoningEffort", option?.key || "")
+                    }
+                    aria-labelledby={reasoningEffortFieldId}
+                    options={[
+                        { key: "low", text: t("labels.reasoningEffortOptions.low") },
+                        { key: "medium", text: t("labels.reasoningEffortOptions.medium") },
+                        { key: "high", text: t("labels.reasoningEffortOptions.high") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
+                />
+            )}
+
             {useLogin && (
                 <>
                     <Checkbox
@@ -288,6 +333,7 @@ export const Settings = ({
             {shouldStream !== undefined && (
                 <Checkbox
                     id={shouldStreamFieldId}
+                    disabled={!streamingEnabled}
                     className={styles.settingsSeparator}
                     checked={shouldStream}
                     label={t("labels.shouldStream")}

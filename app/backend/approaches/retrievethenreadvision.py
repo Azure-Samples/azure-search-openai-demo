@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Callable, Optional
+from collections.abc import Awaitable
+from typing import Any, Callable, Optional
 
 from azure.search.documents.aio import SearchClient
 from azure.storage.blob.aio import ContainerClient
@@ -6,9 +7,8 @@ from openai import AsyncOpenAI
 from openai.types.chat import (
     ChatCompletionMessageParam,
 )
-from openai_messages_token_helper import get_token_limit
 
-from approaches.approach import Approach, ThoughtStep
+from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import fetch_image
@@ -56,9 +56,10 @@ class RetrieveThenReadVisionApproach(Approach):
         self.query_speller = query_speller
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-        self.gpt4v_token_limit = get_token_limit(gpt4v_model, self.ALLOW_NON_GPT_MODELS)
         self.prompt_manager = prompt_manager
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
+        # Currently disabled due to issues with rendering token usage in the UI
+        self.include_token_usage = False
 
     async def run(
         self,
@@ -76,6 +77,7 @@ class RetrieveThenReadVisionApproach(Approach):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
+        use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
@@ -108,6 +110,7 @@ class RetrieveThenReadVisionApproach(Approach):
             use_semantic_captions,
             minimum_search_score,
             minimum_reranker_score,
+            use_query_rewriting,
         )
 
         # Process results
@@ -121,7 +124,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 if url:
                     image_sources.append(url)
 
-        rendered_answer_prompt = self.prompt_manager.render_prompt(
+        messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {"user_query": q, "text_sources": text_sources, "image_sources": image_sources},
@@ -129,22 +132,23 @@ class RetrieveThenReadVisionApproach(Approach):
 
         chat_completion = await self.openai_client.chat.completions.create(
             model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
-            messages=rendered_answer_prompt.all_messages,
+            messages=messages,
             temperature=overrides.get("temperature", 0.3),
             max_tokens=1024,
             n=1,
             seed=seed,
         )
 
-        extra_info = {
-            "data_points": {"text": text_sources, "images": image_sources},
-            "thoughts": [
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources, images=image_sources),
+            [
                 ThoughtStep(
                     "Search using user query",
                     q,
                     {
                         "use_semantic_captions": use_semantic_captions,
                         "use_semantic_ranker": use_semantic_ranker,
+                        "use_query_rewriting": use_query_rewriting,
                         "top": top,
                         "filter": filter,
                         "vector_fields": vector_fields,
@@ -158,7 +162,7 @@ class RetrieveThenReadVisionApproach(Approach):
                 ),
                 ThoughtStep(
                     "Prompt to generate answer",
-                    rendered_answer_prompt.all_messages,
+                    messages,
                     (
                         {"model": self.gpt4v_model, "deployment": self.gpt4v_deployment}
                         if self.gpt4v_deployment
@@ -166,7 +170,7 @@ class RetrieveThenReadVisionApproach(Approach):
                     ),
                 ),
             ],
-        }
+        )
 
         return {
             "message": {

@@ -1,5 +1,6 @@
 import re
-from typing import IO, AsyncGenerator
+from collections.abc import AsyncGenerator
+from typing import IO
 
 from .page import Page
 from .parser import Parser

@@ -90,6 +90,13 @@
         "excludeCategory": "Categorie uitsluiten",
         "useSemanticRanker": "Semantische rangschikking gebruiken",
         "useSemanticCaptions": "Semantische bijschriften gebruiken",
+        "useQueryRewriting": "Gebruik de herformulering van zoekopdrachten om informatie op te halen",
+        "reasoningEffort": "Redeneerinspanning",
+        "reasoningEffortOptions": {
+            "low": "Laag",
+            "medium": "Gemiddeld",
+            "high": "Hoog"
+        },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
         "useGPT4V": "GPT-visiemodel gebruiken",
         "gpt4VInput": {
@@ -141,6 +148,10 @@
             "Activeert de semantische ranker van Azure AI Search, een model dat zoekresultaten rangschikt op basis van semantische overeenkomst met de zoekopdracht.",
         "useSemanticCaptions":
             "Stuurt semantische bijschriften naar het taalmodel in plaats van het volledige zoekresultaat. Een semantisch bijschrift wordt geëxtraheerd voor ieder zoekresultaat tijdens het toepassen van de semantische ranker.",
+        "useQueryRewriting":
+            "Schakelt Azure AI Search query herformulering in, een proces dat de query van de gebruiker wijzigt om zoekresultaten te verbeteren. Vereist dat semantische rangschikking is ingeschakeld.",
+        "reasoningEffort":
+            "Stelt de redeneerinspanning voor het taalmodel in. Hogere waarden resulteren in meer redeneren, maar kunnen langer duren om een reactie te genereren. De standaard is gemiddeld.",
         "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
         "useGPT4Vision": "Gebruikt GPT-4-Turbo met Vision om antwoorden te genereren op basis van afbeeldingen en tekst uit de index.",
         "vectorFields":

@@ -5,9 +5,9 @@ import logging
 import mimetypes
 import os, re
 import time
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Union, cast
-from docx import Document
+from typing import Any, Union, cast
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -66,10 +66,13 @@ from config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_CHAT_VISION_APPROACH,
     CONFIG_CREDENTIAL,
+    CONFIG_DEFAULT_REASONING_EFFORT,
     CONFIG_GPT4V_DEPLOYED,
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_OPENAI_CLIENT,
+    CONFIG_QUERY_REWRITING_ENABLED,
+    CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
     CONFIG_SPEECH_INPUT_ENABLED,
@@ -79,6 +82,7 @@ from config import (
     CONFIG_SPEECH_SERVICE_LOCATION,
     CONFIG_SPEECH_SERVICE_TOKEN,
     CONFIG_SPEECH_SERVICE_VOICE,
+    CONFIG_STREAMING_ENABLED,
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
@@ -200,7 +204,7 @@ async def assets(path):
 
 @bp.route("/content/<path>")
 @authenticated_path
-async def content_file(path: str, auth_claims: Dict[str, Any]):
+async def content_file(path: str, auth_claims: dict[str, Any]):
     """
     Serve content files from blob storage from within the app to keep the example self-contained.
     *** NOTE *** if you are using app services authentication, this route will return unauthorized to all users that are not logged in
@@ -245,8 +249,7 @@ async def content_file(path: str, auth_claims: Dict[str, Any]):
 
 @bp.route("/ask", methods=["POST"])
 @authenticated
-async def ask(auth_claims: Dict[str, Any]):
- 
+async def ask(auth_claims: dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -349,7 +352,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
 
 @bp.route("/chat", methods=["POST"])
 @authenticated
-async def chat(auth_claims: Dict[str, Any]):
+async def chat(auth_claims: dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -383,7 +386,7 @@ async def chat(auth_claims: Dict[str, Any]):
 
 @bp.route("/chat/stream", methods=["POST"])
 @authenticated
-async def chat_stream(auth_claims: Dict[str, Any]):
+async def chat_stream(auth_claims: dict[str, Any]):
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415
     request_json = await request.get_json()
@@ -431,6 +434,10 @@ def config():
         {
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
+            "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
+            "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
+            "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED],
+            "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
             "showLanguagePicker": current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED],
@@ -561,6 +568,7 @@ async def setup_clients():
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
+    OPENAI_REASONING_EFFORT = os.getenv("AZURE_OPENAI_REASONING_EFFORT")
     # Used with Azure OpenAI deployments
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
     AZURE_OPENAI_GPT4V_DEPLOYMENT = os.environ.get("AZURE_OPENAI_GPT4V_DEPLOYMENT")
@@ -571,7 +579,7 @@ async def setup_clients():
     AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
-    AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
+    AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-10-21"
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -593,6 +601,7 @@ async def setup_clients():
     AZURE_SEARCH_QUERY_LANGUAGE = os.getenv("AZURE_SEARCH_QUERY_LANGUAGE") or "en-us"
     AZURE_SEARCH_QUERY_SPELLER = os.getenv("AZURE_SEARCH_QUERY_SPELLER") or "lexicon"
     AZURE_SEARCH_SEMANTIC_RANKER = os.getenv("AZURE_SEARCH_SEMANTIC_RANKER", "free").lower()
+    AZURE_SEARCH_QUERY_REWRITING = os.getenv("AZURE_SEARCH_QUERY_REWRITING", "false").lower()
 
     AZURE_SPEECH_SERVICE_ID = os.getenv("AZURE_SPEECH_SERVICE_ID")
     AZURE_SPEECH_SERVICE_LOCATION = os.getenv("AZURE_SPEECH_SERVICE_LOCATION")
@@ -774,6 +783,16 @@ async def setup_clients():
 
     current_app.config[CONFIG_GPT4V_DEPLOYED] = bool(USE_GPT4V)
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
+    current_app.config[CONFIG_QUERY_REWRITING_ENABLED] = (
+        AZURE_SEARCH_QUERY_REWRITING == "true" and AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
+    )
+    current_app.config[CONFIG_DEFAULT_REASONING_EFFORT] = OPENAI_REASONING_EFFORT
+    current_app.config[CONFIG_REASONING_EFFORT_ENABLED] = OPENAI_CHATGPT_MODEL in Approach.GPT_REASONING_MODELS
+    current_app.config[CONFIG_STREAMING_ENABLED] = (
+        bool(USE_GPT4V)
+        or OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
+        or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
+    )
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER
@@ -801,6 +820,7 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
+        reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -818,12 +838,26 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
+        reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
     if USE_GPT4V:
         current_app.logger.info("USE_GPT4V is true, setting up GPT4V approach")
         if not AZURE_OPENAI_GPT4V_MODEL:
             raise ValueError("AZURE_OPENAI_GPT4V_MODEL must be set when USE_GPT4V is true")
+        if any(
+            model in Approach.GPT_REASONING_MODELS
+            for model in [
+                OPENAI_CHATGPT_MODEL,
+                AZURE_OPENAI_GPT4V_MODEL,
+                AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+                AZURE_OPENAI_GPT4V_DEPLOYMENT,
+            ]
+        ):
+            raise ValueError(
+                "AZURE_OPENAI_CHATGPT_MODEL and AZURE_OPENAI_GPT4V_MODEL must not be a reasoning model when USE_GPT4V is true"
+            )
+
         token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
 
         current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(

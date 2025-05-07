@@ -2,9 +2,9 @@ import json
 import os
 import socket
 import time
+from collections.abc import Generator
 from contextlib import closing
 from multiprocessing import Process
-from typing import Generator
 from unittest import mock
 
 import pytest
@@ -56,7 +56,7 @@ def run_server(port: int):
             "AZURE_SPEECH_SERVICE_ID": "test-id",
             "AZURE_SPEECH_SERVICE_LOCATION": "eastus",
             "AZURE_OPENAI_SERVICE": "test-openai-service",
-            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-35-turbo",
+            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4o-mini",
         },
         clear=True,
     ):
@@ -232,6 +232,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
                     "showSemanticRankerOption": True,
                     "showUserUpload": False,
                     "showVectorOption": True,
+                    "streamingEnabled": True,
                 }
             ),
             status=200,

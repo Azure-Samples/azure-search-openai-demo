@@ -2,13 +2,12 @@ azure-identity
 quart
 quart-cors
 openai>=1.3.7
-numpy>=1,<2.1.0 # Used by openai embeddings.create to optimize embeddings (but not required). Pinned for 3.9 support.
 tiktoken
 tenacity
 azure-ai-documentintelligence==1.0.0b4
 azure-cognitiveservices-speech
 azure-cosmos
-azure-search-documents==11.6.0b6
+azure-search-documents==11.6.0b9
 azure-storage-blob
 azure-storage-file-datalake
 uvicorn
@@ -28,7 +27,6 @@ PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk
-openai-messages-token-helper
 python-dotenv
 prompty
 rich
