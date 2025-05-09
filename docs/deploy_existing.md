@@ -31,8 +31,8 @@ You should set these values before running `azd up`. Once you've set them, retur
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION {Version string for existing chat deployment}`. Only needed if your chat deployment model version is not the default '2024-07-18'. You definitely need to change this if you changed the model.
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU {Name of SKU for existing chat deployment}`. Only needed if your chat deployment SKU is not the default 'Standard', like if it is 'GlobalStandard' instead.
 1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing embedding deployment}`. Only needed if your embeddings deployment is not the default 'embedding'.
-1. Run `azd env set AZURE_OPENAI_EMB_MODEL_NAME {Model name of existing embedding deployment}`. Only needed if your embeddings model is not the default 'text-embedding-ada-002'.
-1. Run `azd env set AZURE_OPENAI_EMB_DIMENSIONS {Dimensions for existing embedding deployment}`. Only needed if your embeddings model is not the default 'text-embedding-ada-002'.
+1. Run `azd env set AZURE_OPENAI_EMB_MODEL_NAME {Model name of existing embedding deployment}`. Only needed if your embeddings model is not the default 'text-embedding-3-large'.
+1. Run `azd env set AZURE_OPENAI_EMB_DIMENSIONS {Dimensions for existing embedding deployment}`. Only needed if your embeddings model is not the default 'text-embedding-3-large'.
 1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION {Version string for existing embedding deployment}`. If your embeddings deployment is one of the 'text-embedding-3' models, set this to the number 1.
 1. This project does *not* use keys when authenticating to Azure OpenAI. However, if your Azure OpenAI service must have key access enabled for some reason (like for use by other projects), then run `azd env set AZURE_OPENAI_DISABLE_KEYS false`. The default value is `true` so you should only run the command if you need key access.
 

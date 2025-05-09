@@ -27,6 +27,7 @@ param searchIndexName string // Set in main.parameters.json
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
+param searchFieldNameEmbedding string // Set in main.parameters.json
 var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free')
   ? 'disabled'
   : searchServiceSemanticRankerLevel
@@ -76,14 +77,30 @@ param chatHistoryDatabaseName string = 'chat-database'
 param chatHistoryContainerName string = 'chat-history-v2'
 param chatHistoryVersion string = 'cosmosdb-v2'
 
-// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=standard%2Cstandard-chat-completions#models-by-deployment-type
+// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type
 @description('Location for the OpenAI resource group')
 @allowed([
+  'australiaeast'
+  'brazilsouth'
+  'canadaeast'
   'eastus'
   'eastus2'
+  'francecentral'
+  'germanywestcentral'
+  'japaneast'
+  'koreacentral'
   'northcentralus'
+  'norwayeast'
+  'polandcentral'
+  'southafricanorth'
   'southcentralus'
+  'southindia'
+  'spaincentral'
   'swedencentral'
+  'switzerlandnorth'
+  'uaenorth'
+  'uksouth'
+  'westeurope'
   'westus'
   'westus3'
 ])
@@ -134,7 +151,7 @@ var chatGpt = {
   modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-4o-mini'
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4o-mini'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2024-07-18'
-  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'Standard'
+  deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'GlobalStandard' // Not backward-compatible
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
 
@@ -145,12 +162,12 @@ param embeddingDeploymentSkuName string = ''
 param embeddingDeploymentCapacity int = 0
 param embeddingDimensions int = 0
 var embedding = {
-  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-ada-002'
-  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'embedding'
-  deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : '2'
-  deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : 'Standard'
+  modelName: !empty(embeddingModelName) ? embeddingModelName : 'text-embedding-3-large'
+  deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'text-embedding-3-large'
+  deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : (embeddingModelName == 'text-embedding-ada-002' ? '2' : '1')
+  deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : (embeddingModelName == 'text-embedding-ada-002' ? 'Standard' : 'GlobalStandard')
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
-  dimensions: embeddingDimensions != 0 ? embeddingDimensions : 1536
+  dimensions: embeddingDimensions != 0 ? embeddingDimensions : 3072
 }
 
 param gpt4vModelName string = ''
@@ -162,7 +179,7 @@ var gpt4v = {
   modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
   deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'gpt-4o'
   deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'Standard'
+  deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'GlobalStandard' // Not-backward compatible
   deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
 
@@ -175,7 +192,7 @@ var eval = {
   modelName: !empty(evalModelName) ? evalModelName : 'gpt-4o'
   deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'gpt-4o'
   deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'Standard'
+  deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'GlobalStandard' // Not backward-compatible
   deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
 }
 
@@ -376,6 +393,7 @@ var appEnvVariables = {
   AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
+  AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
   APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights
     ? monitoring.outputs.applicationInsightsConnectionString
     : ''
@@ -1236,6 +1254,7 @@ output AZURE_RESOURCE_GROUP string = resourceGroup.name
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embedding.modelName
+output AZURE_OPENAI_EMB_DIMENSIONS int = embedding.dimensions
 output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
 output AZURE_OPENAI_GPT4V_MODEL string = gpt4v.modelName
 
@@ -1244,9 +1263,17 @@ output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost && deployAzureOpenAi ? op
 output AZURE_OPENAI_API_VERSION string = isAzureOpenAiHost ? azureOpenAiApiVersion : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION string = isAzureOpenAiHost ? chatGpt.deploymentVersion : ''
+output AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU string = isAzureOpenAiHost ? chatGpt.deploymentSkuName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT_VERSION string = isAzureOpenAiHost ? embedding.deploymentVersion : ''
+output AZURE_OPENAI_EMB_DEPLOYMENT_SKU string = isAzureOpenAiHost ? embedding.deploymentSkuName : ''
 output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentName : ''
+output AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentVersion : ''
+output AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentSkuName : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval.deploymentName : ''
+output AZURE_OPENAI_EVAL_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useEval ? eval.deploymentVersion : ''
+output AZURE_OPENAI_EVAL_DEPLOYMENT_SKU string = isAzureOpenAiHost && useEval ? eval.deploymentSkuName : ''
 output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
@@ -1263,6 +1290,7 @@ output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
 output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
+output AZURE_SEARCH_FIELD_NAME_EMBEDDING string = searchFieldNameEmbedding
 
 output AZURE_COSMOSDB_ACCOUNT string = (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
 output AZURE_CHAT_HISTORY_DATABASE string = chatHistoryDatabaseName

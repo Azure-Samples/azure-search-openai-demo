@@ -38,8 +38,6 @@ from core.authentication import AuthenticationHelper
 class Document:
     id: Optional[str]
     content: Optional[str]
-    embedding: Optional[list[float]]
-    image_embedding: Optional[list[float]]
     category: Optional[str]
     sourcepage: Optional[str]
     sourcefile: Optional[str]
@@ -50,11 +48,9 @@ class Document:
     reranker_score: Optional[float] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
-        return {
+        result_dict = {
             "id": self.id,
             "content": self.content,
-            "embedding": Document.trim_embedding(self.embedding),
-            "imageEmbedding": Document.trim_embedding(self.image_embedding),
             "category": self.category,
             "sourcepage": self.sourcepage,
             "sourcefile": self.sourcefile,
@@ -75,18 +71,7 @@ class Document:
             "score": self.score,
             "reranker_score": self.reranker_score,
         }
-
-    @classmethod
-    def trim_embedding(cls, embedding: Optional[list[float]]) -> Optional[str]:
-        """Returns a trimmed list of floats from the vector embedding."""
-        if embedding:
-            if len(embedding) > 2:
-                # Format the embedding list to show the first 2 items followed by the count of the remaining items."""
-                return f"[{embedding[0]}, {embedding[1]} ...+{len(embedding) - 2} more]"
-            else:
-                return str(embedding)
-
-        return None
+        return result_dict
 
 
 @dataclass
@@ -159,6 +144,7 @@ class Approach(ABC):
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
+        embedding_field: str,
         openai_host: str,
         vision_endpoint: str,
         vision_token_provider: Callable[[], Awaitable[str]],
@@ -173,6 +159,7 @@ class Approach(ABC):
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
+        self.embedding_field = embedding_field
         self.openai_host = openai_host
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
@@ -238,8 +225,6 @@ class Approach(ABC):
                     Document(
                         id=document.get("id"),
                         content=document.get("content"),
-                        embedding=document.get("embedding"),
-                        image_embedding=document.get("imageEmbedding"),
                         category=document.get("category"),
                         sourcepage=document.get("sourcepage"),
                         sourcefile=document.get("sourcefile"),
@@ -314,12 +299,14 @@ class Approach(ABC):
             **dimensions_args,
         )
         query_vector = embedding.data[0].embedding
-        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields="embedding")
+        # This performs an oversampling due to how the search index was setup,
+        # so we do not need to explicitly pass in an oversampling parameter here
+        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
     async def compute_image_embedding(self, q: str):
         endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
         headers = {"Content-Type": "application/json"}
-        params = {"api-version": "2023-02-01-preview", "modelVersion": "latest"}
+        params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
         data = {"text": q}
 
         headers["Authorization"] = "Bearer " + await self.vision_token_provider()

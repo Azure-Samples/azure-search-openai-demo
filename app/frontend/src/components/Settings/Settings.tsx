@@ -4,7 +4,7 @@ import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdo
 import { HelpCallout } from "../HelpCallout";
 import { GPT4VSettings } from "../GPT4VSettings";
 import { VectorSettings } from "../VectorSettings";
-import { RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
+import { RetrievalMode, VectorFields, GPT4VInput } from "../../api";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -26,7 +26,7 @@ export interface SettingsProps {
     retrievalMode: RetrievalMode;
     useGPT4V: boolean;
     gpt4vInput: GPT4VInput;
-    vectorFieldList: VectorFieldOptions[];
+    vectorFields: VectorFields;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
@@ -63,7 +63,7 @@ export const Settings = ({
     retrievalMode,
     useGPT4V,
     gpt4vInput,
-    vectorFieldList,
+    vectorFields,
     showSemanticRankerOption,
     showQueryRewritingOption,
     showReasoningEffortOption,
@@ -323,8 +323,9 @@ export const Settings = ({
             {showVectorOption && (
                 <VectorSettings
                     defaultRetrievalMode={retrievalMode}
+                    defaultVectorFields={vectorFields}
                     showImageOptions={useGPT4V && showGPT4VOptions}
-                    updateVectorFields={val => onChange("vectorFieldList", val)}
+                    updateVectorFields={val => onChange("vectorFields", val)}
                     updateRetrievalMode={val => onChange("retrievalMode", val)}
                 />
             )}

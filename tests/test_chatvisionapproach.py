@@ -60,6 +60,7 @@ def chat_approach(openai_client, mock_confidential_client_success):
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
         embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
         sourcepage_field="",
         content_field="",
         query_language="en-us",
@@ -149,4 +150,4 @@ async def test_compute_text_embedding(chat_approach, openai_client, mock_openai_
     assert isinstance(result, VectorizedQuery)
     assert result.vector == [0.0023064255, -0.009327292, -0.0028842222]
     assert result.k_nearest_neighbors == 50
-    assert result.fields == "embedding"
+    assert result.fields == "embedding3"

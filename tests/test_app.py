@@ -935,7 +935,7 @@ async def test_chat_vision(client, snapshot):
                 "overrides": {
                     "use_gpt4v": True,
                     "gpt4v_input": "textAndImages",
-                    "vector_fields": ["embedding", "imageEmbedding"],
+                    "vector_fields": "textAndImageEmbeddings",
                 },
             },
         },
@@ -955,7 +955,7 @@ async def test_chat_stream_vision(client, snapshot):
                 "overrides": {
                     "use_gpt4v": True,
                     "gpt4v_input": "textAndImages",
-                    "vector_fields": ["embedding", "imageEmbedding"],
+                    "vector_fields": "textAndImageEmbeddings",
                 },
             },
         },
@@ -975,7 +975,7 @@ async def test_chat_vision_vectors(client, snapshot):
                 "overrides": {
                     "use_gpt4v": True,
                     "gpt4v_input": "textAndImages",
-                    "vector_fields": ["embedding", "imageEmbedding"],
+                    "vector_fields": "textAndImageEmbeddings",
                     "retrieval_mode": "vectors",
                 },
             },
@@ -996,7 +996,7 @@ async def test_ask_vision(client, snapshot):
                 "overrides": {
                     "use_gpt4v": True,
                     "gpt4v_input": "textAndImages",
-                    "vector_fields": ["embedding", "imageEmbedding"],
+                    "vector_fields": "textAndImageEmbeddings",
                 },
             },
         },

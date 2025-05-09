@@ -15,7 +15,7 @@ import {
     ChatAppResponseOrError,
     ChatAppRequest,
     ResponseMessage,
-    VectorFieldOptions,
+    VectorFields,
     GPT4VInput,
     SpeechConfig
 } from "../../api";
@@ -56,7 +56,7 @@ const Chat = () => {
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
-    const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding]);
+    const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
@@ -103,6 +103,9 @@ const Chat = () => {
     const getConfig = async () => {
         configApi().then(config => {
             setShowGPT4VOptions(config.showGPT4VOptions);
+            if (config.showGPT4VOptions) {
+                setUseGPT4V(true);
+            }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
             setUseQueryRewriting(config.showQueryRewritingOption);
@@ -217,7 +220,7 @@ const Chat = () => {
                         suggest_followup_questions: useSuggestFollowupQuestions,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFieldList,
+                        vector_fields: vectorFields,
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
@@ -335,8 +338,8 @@ const Chat = () => {
             case "gpt4vInput":
                 setGPT4VInput(value);
                 break;
-            case "vectorFieldList":
-                setVectorFieldList(value);
+            case "vectorFields":
+                setVectorFields(value);
                 break;
             case "retrievalMode":
                 setRetrievalMode(value);
@@ -530,7 +533,7 @@ const Chat = () => {
                         retrievalMode={retrievalMode}
                         useGPT4V={useGPT4V}
                         gpt4vInput={gpt4vInput}
-                        vectorFieldList={vectorFieldList}
+                        vectorFields={vectorFields}
                         showSemanticRankerOption={showSemanticRankerOption}
                         showQueryRewritingOption={showQueryRewritingOption}
                         showReasoningEffortOption={showReasoningEffortOption}
