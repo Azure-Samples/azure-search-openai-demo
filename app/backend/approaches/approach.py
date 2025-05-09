@@ -39,14 +39,14 @@ from core.authentication import AuthenticationHelper
 
 @dataclass
 class Document:
-    id: Optional[str]
-    content: Optional[str]
-    category: Optional[str]
-    sourcepage: Optional[str]
-    sourcefile: Optional[str]
-    oids: Optional[list[str]]
-    groups: Optional[list[str]]
-    captions: list[QueryCaptionResult]
+    id: Optional[str] = None
+    content: Optional[str] = None
+    category: Optional[str] = None
+    sourcepage: Optional[str] = None
+    sourcefile: Optional[str] = None
+    oids: Optional[list[str]] = None
+    groups: Optional[list[str]] = None
+    captions: list[QueryCaptionResult] = None
     score: Optional[float] = None
     reranker_score: Optional[float] = None
     search_agent_query: Optional[str] = None
