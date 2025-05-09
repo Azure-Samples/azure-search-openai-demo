@@ -5,7 +5,7 @@ import { Panel, DefaultButton, Spinner } from "@fluentui/react";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFieldOptions, GPT4VInput, SpeechConfig } from "../../api";
+import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFields, GPT4VInput, SpeechConfig } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -39,7 +39,7 @@ export function Component(): JSX.Element {
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [question, setQuestion] = useState<string>("");
-    const [vectorFieldList, setVectorFieldList] = useState<VectorFieldOptions[]>([VectorFieldOptions.Embedding, VectorFieldOptions.ImageEmbedding]);
+    const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
@@ -144,7 +144,7 @@ export function Component(): JSX.Element {
                         reasoning_effort: reasoningEffort,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFieldList,
+                        vector_fields: vectorFields,
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
@@ -221,8 +221,8 @@ export function Component(): JSX.Element {
             case "gpt4vInput":
                 setGPT4VInput(value);
                 break;
-            case "vectorFieldList":
-                setVectorFieldList(value);
+            case "vectorFields":
+                setVectorFields(value);
                 break;
             case "retrievalMode":
                 setRetrievalMode(value);
@@ -353,7 +353,7 @@ export function Component(): JSX.Element {
                     retrievalMode={retrievalMode}
                     useGPT4V={useGPT4V}
                     gpt4vInput={gpt4vInput}
-                    vectorFieldList={vectorFieldList}
+                    vectorFields={vectorFields}
                     showSemanticRankerOption={showSemanticRankerOption}
                     showQueryRewritingOption={showQueryRewritingOption}
                     showReasoningEffortOption={showReasoningEffortOption}

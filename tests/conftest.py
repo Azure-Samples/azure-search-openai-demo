@@ -95,7 +95,7 @@ def mock_openai_embedding(monkeypatch):
                     object="embedding",
                 )
             ],
-            model="text-embedding-ada-002",
+            model="text-embedding-3-large",
             usage=Usage(prompt_tokens=8, total_tokens=8),
         )
 
@@ -271,12 +271,16 @@ envs = [
         "OPENAI_HOST": "openai",
         "OPENAI_API_KEY": "secretkey",
         "OPENAI_ORGANIZATION": "organization",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
     },
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         "USE_GPT4V": "true",
         "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
         "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
@@ -289,6 +293,8 @@ auth_envs = [
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_USER_STORAGE_ACCOUNT": "test-user-storage-account",
         "AZURE_USER_STORAGE_CONTAINER": "test-user-storage-container",
@@ -305,6 +311,8 @@ auth_public_envs = [
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS": "true",
         "AZURE_ENABLE_UNAUTHENTICATED_ACCESS": "true",

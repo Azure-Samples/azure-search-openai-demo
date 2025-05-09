@@ -6,7 +6,6 @@ from azure.search.documents.indexes._generated.models import (
 )
 from azure.search.documents.indexes.models import (
     AzureOpenAIEmbeddingSkill,
-    FieldMapping,
     IndexProjectionMode,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
@@ -41,6 +40,7 @@ class IntegratedVectorizerStrategy(Strategy):
         blob_manager: BlobManager,
         search_info: SearchInfo,
         embeddings: AzureOpenAIEmbeddingService,
+        search_field_name_embedding: str,
         subscription_id: str,
         search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
@@ -53,18 +53,25 @@ class IntegratedVectorizerStrategy(Strategy):
         self.blob_manager = blob_manager
         self.document_action = document_action
         self.embeddings = embeddings
+        self.search_field_name_embedding = search_field_name_embedding
         self.subscription_id = subscription_id
         self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
         self.search_info = search_info
+        prefix = f"{self.search_info.index_name}-{self.search_field_name_embedding}"
+        self.skillset_name = f"{prefix}-skillset"
+        self.indexer_name = f"{prefix}-indexer"
+        self.data_source_name = f"{prefix}-blob"
 
-    async def create_embedding_skill(self, index_name: str):
-        skillset_name = f"{index_name}-skillset"
+    async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
+        """
+        Create a skillset for the indexer to chunk documents and generate embeddings
+        """
 
         split_skill = SplitSkill(
-            name=f"{index_name}-split-skill",
+            name="split-skill",
             description="Split skill to chunk documents",
             text_split_mode="pages",
             context="/document",
@@ -77,7 +84,7 @@ class IntegratedVectorizerStrategy(Strategy):
         )
 
         embedding_skill = AzureOpenAIEmbeddingSkill(
-            name=f"{index_name}-embedding-skill",
+            name="embedding-skill",
             description="Skill to generate embeddings via Azure OpenAI",
             context="/document/pages/*",
             resource_url=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
@@ -98,8 +105,12 @@ class IntegratedVectorizerStrategy(Strategy):
                     source_context="/document/pages/*",
                     mappings=[
                         InputFieldMappingEntry(name="content", source="/document/pages/*"),
-                        InputFieldMappingEntry(name="embedding", source="/document/pages/*/vector"),
                         InputFieldMappingEntry(name="sourcepage", source="/document/metadata_storage_name"),
+                        InputFieldMappingEntry(name="sourcefile", source="/document/metadata_storage_name"),
+                        InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
+                        InputFieldMappingEntry(
+                            name=self.search_field_name_embedding, source="/document/pages/*/vector"
+                        ),
                     ],
                 ),
             ],
@@ -109,7 +120,7 @@ class IntegratedVectorizerStrategy(Strategy):
         )
 
         skillset = SearchIndexerSkillset(
-            name=skillset_name,
+            name=self.skillset_name,
             description="Skillset to chunk documents and generate embeddings",
             skills=[split_skill, embedding_skill],
             index_projection=index_projection,
@@ -125,6 +136,7 @@ class IntegratedVectorizerStrategy(Strategy):
             use_acls=self.use_acls,
             use_int_vectorization=True,
             embeddings=self.embeddings,
+            field_name_embedding=self.search_field_name_embedding,
             search_images=False,
         )
 
@@ -133,7 +145,7 @@ class IntegratedVectorizerStrategy(Strategy):
         ds_client = self.search_info.create_search_indexer_client()
         ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)
         data_source_connection = SearchIndexerDataSourceConnection(
-            name=f"{self.search_info.index_name}-blob",
+            name=self.data_source_name,
             type=SearchIndexerDataSourceType.AZURE_BLOB,
             connection_string=self.blob_manager.get_managedidentity_connectionstring(),
             container=ds_container,
@@ -163,23 +175,19 @@ class IntegratedVectorizerStrategy(Strategy):
             await self.blob_manager.remove_blob()
 
         # Create an indexer
-        indexer_name = f"{self.search_info.index_name}-indexer"
-
         indexer = SearchIndexer(
-            name=indexer_name,
+            name=self.indexer_name,
             description="Indexer to index documents and generate embeddings",
-            skillset_name=f"{self.search_info.index_name}-skillset",
+            skillset_name=self.skillset_name,
             target_index_name=self.search_info.index_name,
-            data_source_name=f"{self.search_info.index_name}-blob",
-            # Map the metadata_storage_name field to the title field in the index to display the PDF title in the search results
-            field_mappings=[FieldMapping(source_field_name="metadata_storage_name", target_field_name="title")],
+            data_source_name=self.data_source_name,
         )
 
         indexer_client = self.search_info.create_search_indexer_client()
         indexer_result = await indexer_client.create_or_update_indexer(indexer)
 
         # Run the indexer
-        await indexer_client.run_indexer(indexer_name)
+        await indexer_client.run_indexer(self.indexer_name)
         await indexer_client.close()
 
         logger.info(

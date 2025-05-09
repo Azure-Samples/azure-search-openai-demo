@@ -19,17 +19,18 @@ on:
 
 jobs:
   test_package:
-    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }}
+    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }} Node ${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "windows-latest"]
         python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        node_version: ["20", "22"]
     steps:
         - uses: actions/checkout@v4
         - name: Install uv
-          uses: astral-sh/setup-uv@v5
+          uses: astral-sh/setup-uv@v6
           with:
             enable-cache: true
             version: "0.4.20"
@@ -38,7 +39,7 @@ jobs:
         - name: Setup node
           uses: actions/setup-node@v4
           with:
-            node-version: 18
+            node-version: ${{ matrix.node_version }}
         - name: Build frontend
           run: |
             cd ./app/frontend

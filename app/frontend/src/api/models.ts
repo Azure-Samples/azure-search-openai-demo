@@ -10,10 +10,10 @@ export const enum GPT4VInput {
     Texts = "texts"
 }
 
-export const enum VectorFieldOptions {
-    Embedding = "embedding",
-    ImageEmbedding = "imageEmbedding",
-    Both = "both"
+export const enum VectorFields {
+    Embedding = "textEmbeddingOnly",
+    ImageEmbedding = "imageEmbeddingOnly",
+    TextAndImageEmbeddings = "textAndImageEmbeddings"
 }
 
 export type ChatAppRequestOverrides = {
@@ -37,7 +37,7 @@ export type ChatAppRequestOverrides = {
     use_groups_security_filter?: boolean;
     use_gpt4v?: boolean;
     gpt4v_input?: GPT4VInput;
-    vector_fields: VectorFieldOptions[];
+    vector_fields: VectorFields;
     language: string;
     use_agentic_retrieval: boolean;
 };

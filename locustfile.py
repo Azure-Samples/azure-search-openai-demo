@@ -102,7 +102,7 @@ class ChatVisionUser(HttpUser):
                         "suggest_followup_questions": False,
                         "use_oid_security_filter": False,
                         "use_groups_security_filter": False,
-                        "vector_fields": ["embedding", "imageEmbedding"],
+                        "vector_fields": "textAndImageEmbeddings",
                         "use_gpt4v": True,
                         "gpt4v_input": "textAndImages",
                     }
@@ -129,7 +129,7 @@ class ChatVisionUser(HttpUser):
                         "suggest_followup_questions": False,
                         "use_oid_security_filter": False,
                         "use_groups_security_filter": False,
-                        "vector_fields": ["embedding", "imageEmbedding"],
+                        "vector_fields": "textAndImageEmbeddings",
                         "use_gpt4v": True,
                         "gpt4v_input": "textAndImages",
                     }

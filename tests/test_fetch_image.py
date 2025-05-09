@@ -78,8 +78,6 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
     test_document = Document(
         id="test",
         content="test content",
-        embedding=[1, 2, 3],
-        image_embedding=[4, 5, 6],
         oids=[],
         groups=[],
         captions=[],

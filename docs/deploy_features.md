@@ -5,8 +5,8 @@ You should typically enable these features before running `azd up`. Once you've 
 
 * [Using different chat completion models](#using-different-chat-completion-models)
 * [Using reasoning models](#using-reasoning-models)
-* [Using text-embedding-3 models](#using-text-embedding-3-models)
-* [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
+* [Using different embedding models](#using-different-embedding-models)
+* [Enabling GPT vision feature](#enabling-gpt-vision-feature)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
 * [Enabling client-side chat history](#enabling-client-side-chat-history)
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
@@ -128,11 +128,15 @@ This process does *not* delete your previous model deployment. If you want to de
 This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
 To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
 
-## Using text-embedding-3 models
+## Using different embedding models
 
-By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
+By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embedding model, you can do so by following these steps:
 
 1. Run one of the following commands to set the desired model:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-ada-002
+    ```
 
     ```shell
     azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small
@@ -144,32 +148,64 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
 
 2. Specify the desired dimensions of the model: (from 256-3072, model dependent)
 
+    Default dimensions for text-embedding-ada-002
+
     ```shell
-    azd env set AZURE_OPENAI_EMB_DIMENSIONS 256
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 1536
     ```
 
-3. Set the model version to "1" (the only version as of March 2024):
+    Default dimensions for text-embedding-3-small
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 1536
+    ```
+
+    Default dimensions for text-embedding-3-large
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 3072
+    ```
+
+3. Set the model version, depending on the model you are using:
+
+    For text-embedding-ada-002:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 2
+    ```
+
+    For text-embedding-3-small and text-embedding-3-large:
 
     ```shell
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
     ```
 
-4. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
+4. To set the embedding model deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+
+    For GlobalStandard:
+
+    ```bash
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKU GlobalStandard
+    ```
+
+    For Standard:
+
+    ```bash
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKU Standard
+    ```
+
+5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the desired embedding model and deployment SKU. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type).
 
 If you have already deployed:
 
-* You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
-* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
-* If your OpenAI resource is not in one of the supported regions, you should delete `openAiResourceGroupLocation` from `.azure/YOUR-ENV-NAME/config.json`. When running `azd up`, you will be prompted to select a new region.
+* You'll need to change the deployment name by running the appropriate commands for the model above.
+* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created. See the [data ingestion guide](./data_ingestion.md) for more details.
 
-> ![NOTE]
-> The text-embedding-3 models are not currently supported by the integrated vectorization feature.
-
-## Enabling GPT-4 Turbo with Vision
+## Enabling GPT vision feature
 
 ⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
 
-This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
+This section covers the integration of GPT vision models with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our page on [Using GPT vision model with RAG approach](gpt4v.md).
 
 ## Enabling media description with Azure Content Understanding
 

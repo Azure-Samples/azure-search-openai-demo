@@ -33,6 +33,7 @@ class RetrieveThenReadApproach(Approach):
         embedding_model: str,
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_dimensions: int,
+        embedding_field: str,
         sourcepage_field: str,
         content_field: str,
         query_language: str,
@@ -53,6 +54,7 @@ class RetrieveThenReadApproach(Approach):
         self.embedding_dimensions = embedding_dimensions
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
+        self.embedding_field = embedding_field
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.query_language = query_language
