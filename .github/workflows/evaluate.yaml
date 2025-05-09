@@ -130,7 +130,7 @@ jobs:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           version: "0.4.20"
