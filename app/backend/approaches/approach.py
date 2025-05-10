@@ -46,7 +46,7 @@ class Document:
     sourcefile: Optional[str] = None
     oids: Optional[list[str]] = None
     groups: Optional[list[str]] = None
-    captions: list[QueryCaptionResult] = None
+    captions: Optional[list[QueryCaptionResult]] = None
     score: Optional[float] = None
     reranker_score: Optional[float] = None
     search_agent_query: Optional[str] = None
