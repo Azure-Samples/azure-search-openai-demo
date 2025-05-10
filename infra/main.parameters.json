@@ -239,9 +239,6 @@
     "useSpeechOutputAzure": {
       "value": "${USE_SPEECH_OUTPUT_AZURE=false}"
     },
-    "useAgenticRetrieval": {
-      "value": "${USE_AGENTIC_RETRIEVAL=false}"
-    },
     "speechServiceName": {
       "value": "${AZURE_SPEECH_SERVICE}"
     },
