@@ -48,7 +48,7 @@ jobs:
             npm run build
         - name: Install dependencies
           run: |
-            uv pip install -r requirements-dev.txt
+            uv pip install -r requirements-dev.txt --index-strategy unsafe-best-match
         - name: Lint with ruff
           run: ruff check .
         - name: Check types with mypy
