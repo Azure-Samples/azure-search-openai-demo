@@ -286,11 +286,15 @@ class Approach(ABC):
 
         # STEP 2: Generate a contextual and content specific answer using the search results and chat history
         activities = response.activity
-        activity_mapping = {
-            activity.id: activity.query.search if activity.query else ""
-            for activity in activities
-            if isinstance(activity, KnowledgeAgentSearchActivityRecord)
-        } if activities else {}
+        activity_mapping = (
+            {
+                activity.id: activity.query.search if activity.query else ""
+                for activity in activities
+                if isinstance(activity, KnowledgeAgentSearchActivityRecord)
+            }
+            if activities
+            else {}
+        )
 
         results = []
         if response and response.references:

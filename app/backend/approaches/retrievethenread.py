@@ -217,7 +217,9 @@ class RetrieveThenReadApproach(Approach):
                     f"Agentic retrieval results (top {top})",
                     [result.serialize_for_results() for result in results],
                     {
-                        "query_plan": [activity.as_dict() for activity in response.activity] if response.activity else None,
+                        "query_plan": (
+                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                        ),
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,
                     },

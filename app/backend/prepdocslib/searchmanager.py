@@ -344,11 +344,15 @@ class SearchManager:
 
                     if existing_index.semantic_search.configurations:
                         existing_semantic_config = existing_index.semantic_search.configurations[0]
-                        if existing_semantic_config.prioritized_fields and \
-                        existing_semantic_config.prioritized_fields.title_field and \
-                        not existing_semantic_config.prioritized_fields.title_field.field_name == "sourcepage":
+                        if (
+                            existing_semantic_config.prioritized_fields
+                            and existing_semantic_config.prioritized_fields.title_field
+                            and not existing_semantic_config.prioritized_fields.title_field.field_name == "sourcepage"
+                        ):
                             logger.info("Updating semantic configuration for index %s", self.search_info.index_name)
-                            existing_semantic_config.prioritized_fields.title_field = SemanticField(field_name="sourcepage")
+                            existing_semantic_config.prioritized_fields.title_field = SemanticField(
+                                field_name="sourcepage"
+                            )
 
                 if existing_index.vector_search is not None and (
                     existing_index.vector_search.vectorizers is None
