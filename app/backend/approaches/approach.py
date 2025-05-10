@@ -1,7 +1,7 @@
 import os
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import (
     Any,
     Callable,
@@ -28,6 +28,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionReasoningEffort,
     ChatCompletionToolParam,
+    ChatCompletionNamedToolChoiceParam
 )
 
 from approaches.promptmanager import PromptManager
@@ -73,17 +74,14 @@ class Document:
         }
         return result_dict
 
-
 @dataclass
 class ThoughtStep:
     title: str
     description: Optional[Any]
     props: Optional[dict[str, Any]] = None
-
     def update_token_usage(self, usage: CompletionUsage) -> None:
         if self.props:
             self.props["token_usage"] = TokenUsageProps.from_completion_usage(usage)
-
 
 @dataclass
 class DataPoints:
@@ -93,10 +91,9 @@ class DataPoints:
 
 @dataclass
 class ExtraInfo:
-    data_points: DataPoints
-    thoughts: Optional[list[ThoughtStep]] = None
+    data_points: DataPoints = None
+    thoughts: list[ThoughtStep] = field(default_factory=list)
     followup_questions: Optional[list[Any]] = None
-
 
 @dataclass
 class TokenUsageProps:
@@ -255,17 +252,21 @@ class Approach(ABC):
             return s.replace("\n", " ").replace("\r", " ")
 
         if use_semantic_captions:
-            return [
+            results = [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))
                 + ": "
                 + nonewlines(" . ".join([cast(str, c.text) for c in (doc.captions or [])]))
                 for doc in results
             ]
         else:
-            return [
+            results = [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
                 for doc in results
             ]
+        
+        # Remove duplicates
+        results = list(set(results))
+        return results
 
     def get_citation(self, sourcepage: str, use_image_citation: bool) -> str:
         if use_image_citation:
@@ -343,6 +344,7 @@ class Approach(ABC):
         response_token_limit: int,
         should_stream: bool = False,
         tools: Optional[list[ChatCompletionToolParam]] = None,
+        tool_choice: Optional[ChatCompletionNamedToolChoiceParam] = None,
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
@@ -371,6 +373,7 @@ class Approach(ABC):
             params["stream_options"] = {"include_usage": True}
 
         params["tools"] = tools
+        params["tool_choice"] = tool_choice
 
         # Azure OpenAI takes the deployment name as the model name
         return self.openai_client.chat.completions.create(
@@ -390,6 +393,7 @@ class Approach(ABC):
         deployment: Optional[str],
         usage: Optional[CompletionUsage] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
     ) -> ThoughtStep:
         properties: dict[str, Any] = {"model": model}
         if deployment:
@@ -401,6 +405,8 @@ class Approach(ABC):
             )
         if usage:
             properties["token_usage"] = TokenUsageProps.from_completion_usage(usage)
+        if additional_properties:
+            properties.update(additional_properties)
         return ThoughtStep(title, messages, properties)
 
     async def run(
@@ -408,7 +414,7 @@ class Approach(ABC):
         messages: list[ChatCompletionMessageParam],
         session_state: Any = None,
         context: dict[str, Any] = {},
-    ) -> dict[str, Any]:
+    ) -> AsyncGenerator[dict[str, Any], None]:
         raise NotImplementedError
 
     async def run_stream(

@@ -49,6 +49,7 @@ const Chat = () => {
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
+    const [useReflection, setUseReflection] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
     const [streamingEnabled, setStreamingEnabled] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
@@ -80,6 +81,7 @@ const Chat = () => {
     const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
+    const [showReflectionOption, setShowReflectionOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
     const [showVectorOption, setShowVectorOption] = useState<boolean>(false);
     const [showUserUpload, setShowUserUpload] = useState<boolean>(false);
@@ -110,6 +112,8 @@ const Chat = () => {
             setShowSemanticRankerOption(config.showSemanticRankerOption);
             setUseQueryRewriting(config.showQueryRewritingOption);
             setShowQueryRewritingOption(config.showQueryRewritingOption);
+            setUseReflection(config.showReflectionOption);
+            setShowReflectionOption(config.showReflectionOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
             setStreamingEnabled(config.streamingEnabled);
             if (!config.streamingEnabled) {
@@ -136,15 +140,12 @@ const Chat = () => {
         let answer: string = "";
         let askResponse: ChatAppResponse = {} as ChatAppResponse;
 
-        const updateState = (newContent: string) => {
+        const updateState = (newContent: string, role: string) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    const latestResponse: ChatAppResponse = {
-                        ...askResponse,
-                        message: { content: answer, role: askResponse.message.role }
-                    };
-                    setStreamedAnswers([...answers, [question, latestResponse]]);
+                    askResponse.message = { content: answer, role: role };
+                    setStreamedAnswers([...answers, [question, { ...askResponse }]]);
                     resolve(null);
                 }, 33);
             });
@@ -152,12 +153,9 @@ const Chat = () => {
         try {
             setIsStreaming(true);
             for await (const event of readNDJSONStream(responseBody)) {
-                if (event["context"] && event["context"]["data_points"]) {
-                    event["message"] = event["delta"];
-                    askResponse = event as ChatAppResponse;
-                } else if (event["delta"] && event["delta"]["content"]) {
+                if (event["delta"] && event["delta"]["content"]) {
                     setIsLoading(false);
-                    await updateState(event["delta"]["content"]);
+                    await updateState(event["delta"]["content"], event["delta"]["role"]);
                 } else if (event["context"]) {
                     // Update context with new keys from latest event
                     askResponse.context = { ...askResponse.context, ...event["context"] };
@@ -168,11 +166,7 @@ const Chat = () => {
         } finally {
             setIsStreaming(false);
         }
-        const fullResponse: ChatAppResponse = {
-            ...askResponse,
-            message: { content: answer, role: askResponse.message.role }
-        };
-        return fullResponse;
+        return askResponse;
     };
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -216,6 +210,7 @@ const Chat = () => {
                         semantic_ranker: useSemanticRanker,
                         semantic_captions: useSemanticCaptions,
                         query_rewriting: useQueryRewriting,
+                        reflection: useReflection,
                         reasoning_effort: reasoningEffort,
                         suggest_followup_questions: useSuggestFollowupQuestions,
                         use_oid_security_filter: useOidSecurityFilter,
@@ -310,6 +305,9 @@ const Chat = () => {
                 break;
             case "reasoningEffort":
                 setReasoningEffort(value);
+                break;
+            case "useReflection":
+                setUseReflection(value);
                 break;
             case "useSemanticCaptions":
                 setUseSemanticCaptions(value);
@@ -527,6 +525,7 @@ const Chat = () => {
                         useSemanticRanker={useSemanticRanker}
                         useSemanticCaptions={useSemanticCaptions}
                         useQueryRewriting={useQueryRewriting}
+                        useReflection={useReflection}
                         reasoningEffort={reasoningEffort}
                         excludeCategory={excludeCategory}
                         includeCategory={includeCategory}
@@ -536,6 +535,7 @@ const Chat = () => {
                         vectorFields={vectorFields}
                         showSemanticRankerOption={showSemanticRankerOption}
                         showQueryRewritingOption={showQueryRewritingOption}
+                        showReflectionOption={showReflectionOption}
                         showReasoningEffortOption={showReasoningEffortOption}
                         showGPT4VOptions={showGPT4VOptions}
                         showVectorOption={showVectorOption}

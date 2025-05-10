@@ -8,6 +8,7 @@ import time
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any, Union, cast
+import traceback
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -72,6 +73,7 @@ from config import (
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
+    CONFIG_REFLECTION_ENABLED,
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -188,10 +190,11 @@ async def ask(auth_claims: dict[str, Any]):
             approach = cast(Approach, current_app.config[CONFIG_ASK_VISION_APPROACH])
         else:
             approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
-        r = await approach.run(
+        result = await approach.run(
             request_json["messages"], context=context, session_state=request_json.get("session_state")
         )
-        return jsonify(r)
+        results = [r async for r in result]
+        return jsonify({"value": results})
     except Exception as error:
         return error_response(error, "/ask")
 
@@ -208,6 +211,7 @@ async def format_as_ndjson(r: AsyncGenerator[dict, None]) -> AsyncGenerator[str,
         async for event in r:
             yield json.dumps(event, ensure_ascii=False, cls=JSONEncoder) + "\n"
     except Exception as error:
+        traceback.print_exc()
         logging.exception("Exception while generating response stream: %s", error)
         yield json.dumps(error_dict(error))
 
@@ -241,7 +245,8 @@ async def chat(auth_claims: dict[str, Any]):
             context=context,
             session_state=session_state,
         )
-        return jsonify(result)
+        results = [r async for r in result]
+        return jsonify({"value": results})
     except Exception as error:
         return error_response(error, "/chat")
 
@@ -297,6 +302,7 @@ def config():
             "showGPT4VOptions": current_app.config[CONFIG_GPT4V_DEPLOYED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
+            "showReflectionOption": current_app.config[CONFIG_REFLECTION_ENABLED],
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
             "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED],
             "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
@@ -428,6 +434,7 @@ async def setup_clients():
     # Shared by all OpenAI deployments
     OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    OPENAI_CHATGPT_REFLECTION_MODEL = os.environ.get("AZURE_OPENAI_CHATGPT_REFLECTION_MODEL")
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
     OPENAI_REASONING_EFFORT = os.getenv("AZURE_OPENAI_REASONING_EFFORT")
@@ -437,6 +444,9 @@ async def setup_clients():
     AZURE_OPENAI_GPT4V_MODEL = os.environ.get("AZURE_OPENAI_GPT4V_MODEL")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = (
         os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
+    )
+    AZURE_OPENAI_CHATGPT_REFLECTION_DEPLOYMENT = (
+        os.getenv("AZURE_OPENAI_CHATGPT_REFLECTION_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     )
     AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST.startswith("azure") else None
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
@@ -473,6 +483,7 @@ async def setup_clients():
 
     USE_GPT4V = os.getenv("USE_GPT4V", "").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
+    USE_REFLECTION = os.getenv("USE_REFLECTION", "").lower() == "true"
     ENABLE_LANGUAGE_PICKER = os.getenv("ENABLE_LANGUAGE_PICKER", "").lower() == "true"
     USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
     USE_SPEECH_OUTPUT_BROWSER = os.getenv("USE_SPEECH_OUTPUT_BROWSER", "").lower() == "true"
@@ -660,6 +671,7 @@ async def setup_clients():
         or OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
         or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
     )
+    current_app.config[CONFIG_REFLECTION_ENABLED] = USE_REFLECTION
     current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER
@@ -698,6 +710,8 @@ async def setup_clients():
         auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        chatgpt_reflection_model=OPENAI_CHATGPT_REFLECTION_MODEL,
+        chatgpt_reflection_deployment=AZURE_OPENAI_CHATGPT_REFLECTION_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
         embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
         embedding_dimensions=OPENAI_EMB_DIMENSIONS,
@@ -799,12 +813,12 @@ def create_app():
 
     # Log levels should be one of https://docs.python.org/3/library/logging.html#logging-levels
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.INFO)
     # Set our own logger levels to INFO by default
-    app_level = os.getenv("APP_LOG_LEVEL", "INFO")
+    app_level = os.getenv("APP_LOG_LEVEL", "DEBUG")
     app.logger.setLevel(os.getenv("APP_LOG_LEVEL", app_level))
+    app.logger.setLevel("DEBUG")
     logging.getLogger("scripts").setLevel(app_level)
-
     if allowed_origin := os.getenv("ALLOWED_ORIGIN"):
         allowed_origins = allowed_origin.split(";")
         if len(allowed_origins) > 0:
