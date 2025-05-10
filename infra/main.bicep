@@ -42,6 +42,7 @@ param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
 param defaultReasoningEffort string // Set in main.parameters.json
+param useAgenticRetrieval bool // Set in main.parameters.json
 
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
@@ -421,6 +422,7 @@ var appEnvVariables = {
   USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
+  USE_AGENTIC_RETRIEVAL: useAgenticRetrieval
   // Chat history settings
   USE_CHAT_HISTORY_BROWSER: useChatHistoryBrowser
   USE_CHAT_HISTORY_COSMOS: useChatHistoryCosmos
