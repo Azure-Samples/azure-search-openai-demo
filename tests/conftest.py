@@ -61,6 +61,11 @@ async def mock_search(self, *args, **kwargs):
 
 
 async def mock_retrieve(self, *args, **kwargs):
+    retrieval_request = kwargs.get("retrieval_request")
+    assert retrieval_request is not None
+    assert retrieval_request.target_index_params is not None
+    assert len(retrieval_request.target_index_params) == 1
+    self.filter = retrieval_request.target_index_params[0].filter_add_on
     return mock_retrieval_response()
 
 
@@ -377,6 +382,24 @@ agent_envs = [
     }
 ]
 
+agent_auth_envs = [
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4o-mini",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "gpt-4o-mini",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4o-mini",
+        "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4o-mini",
+        "USE_AGENTIC_RETRIEVAL": "true",
+        "AZURE_USE_AUTHENTICATION": "true",
+        "AZURE_SERVER_APP_ID": "SERVER_APP",
+        "AZURE_SERVER_APP_SECRET": "SECRET",
+        "AZURE_CLIENT_APP_ID": "CLIENT_APP",
+        "AZURE_TENANT_ID": "TENANT_ID",
+    }
+]
+
 
 @pytest.fixture(params=envs, ids=["client0", "client1"])
 def mock_env(monkeypatch, request):
@@ -429,6 +452,29 @@ def mock_reasoning_env(monkeypatch, request):
 
 @pytest.fixture(params=agent_envs, ids=["agent_client0"])
 def mock_agent_env(monkeypatch, request):
+    with mock.patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
+        monkeypatch.setenv("ENABLE_LANGUAGE_PICKER", "true")
+        monkeypatch.setenv("USE_SPEECH_INPUT_BROWSER", "true")
+        monkeypatch.setenv("USE_SPEECH_OUTPUT_AZURE", "true")
+        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+        monkeypatch.setenv("AZURE_SEARCH_AGENT", "test-search-agent")
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
+        monkeypatch.setenv("AZURE_SPEECH_SERVICE_LOCATION", "eastus")
+        monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
+        for key, value in request.param.items():
+            monkeypatch.setenv(key, value)
+
+        with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
+            mock_default_azure_credential.return_value = MockAzureCredential()
+            yield
+
+@pytest.fixture(params=agent_auth_envs, ids=["agent_auth_client0"])
+def mock_agent_auth_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -505,6 +551,31 @@ async def agent_client(
         mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
+
+@pytest_asyncio.fixture(scope="function")
+async def agent_auth_client(
+    monkeypatch,
+    mock_agent_auth_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
+    mock_acs_agent,
+    mock_blob_container_client,
+    mock_azurehttp_calls,
+    mock_confidential_client_success,
+    mock_validate_token_success,
+    mock_list_groups_success,
+):
+    quart_app = app.create_app()
+
+    async with quart_app.test_app() as test_app:
+        test_app.app.config.update({"TESTING": True})
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        client = test_app.test_client()
+        client.config = quart_app.config
+
+        yield client
 
 
 @pytest_asyncio.fixture(scope="function")
