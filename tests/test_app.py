@@ -168,6 +168,7 @@ async def test_ask_rtr_text(client, snapshot):
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
+
 @pytest.mark.asyncio
 async def test_ask_rtr_text_agent(agent_client, snapshot):
     response = await agent_client.post(
@@ -208,6 +209,7 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
 
 @pytest.mark.asyncio
 async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
@@ -504,6 +506,7 @@ async def test_chat_text(client, snapshot):
     assert result["context"]["thoughts"][1]["props"]["use_semantic_ranker"] is False
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
+
 @pytest.mark.asyncio
 async def test_chat_text_agent(agent_client, snapshot):
     response = await agent_client.post(
@@ -546,6 +549,7 @@ async def test_chat_text_filter(auth_client, snapshot):
     )
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
 
 @pytest.mark.asyncio
 async def test_chat_text_filter_agent(agent_auth_client, snapshot):

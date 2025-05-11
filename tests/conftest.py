@@ -450,6 +450,7 @@ def mock_reasoning_env(monkeypatch, request):
             mock_default_azure_credential.return_value = MockAzureCredential()
             yield
 
+
 @pytest.fixture(params=agent_envs, ids=["agent_client0"])
 def mock_agent_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
@@ -473,6 +474,7 @@ def mock_agent_env(monkeypatch, request):
             mock_default_azure_credential.return_value = MockAzureCredential()
             yield
 
+
 @pytest.fixture(params=agent_auth_envs, ids=["agent_auth_client0"])
 def mock_agent_auth_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
@@ -495,6 +497,7 @@ def mock_agent_auth_env(monkeypatch, request):
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
             yield
+
 
 @pytest_asyncio.fixture(scope="function")
 async def client(
@@ -533,6 +536,7 @@ async def reasoning_client(
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
 
+
 @pytest_asyncio.fixture(scope="function")
 async def agent_client(
     monkeypatch,
@@ -551,6 +555,7 @@ async def agent_client(
         mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         yield test_app.test_client()
+
 
 @pytest_asyncio.fixture(scope="function")
 async def agent_auth_client(
