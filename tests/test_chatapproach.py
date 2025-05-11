@@ -3,6 +3,7 @@ import json
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
@@ -23,6 +24,10 @@ async def mock_search(*args, **kwargs):
 def chat_approach():
     return ChatReadRetrieveReadApproach(
         search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential("")),
         auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-4o-mini",
@@ -170,6 +175,10 @@ async def test_search_results_filtering_by_scores(
 
     chat_approach = ChatReadRetrieveReadApproach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential("")),
         auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-4o-mini",
@@ -209,6 +218,10 @@ async def test_search_results_filtering_by_scores(
 async def test_search_results_query_rewriting(monkeypatch):
     chat_approach = ChatReadRetrieveReadApproach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential("")),
         auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-35-turbo",

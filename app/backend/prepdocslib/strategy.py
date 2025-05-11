@@ -21,12 +21,12 @@ class SearchInfo:
         endpoint: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         index_name: str,
-        use_agentic_retrieval: Optional[bool],
-        agent_name: Optional[str],
-        agent_max_output_tokens: Optional[int],
-        azure_openai_searchagent_model: Optional[str],
-        azure_openai_searchagent_deployment: Optional[str],
-        azure_openai_endpoint: Optional[str],
+        use_agentic_retrieval: Optional[bool] = False,
+        agent_name: Optional[str] = None,
+        agent_max_output_tokens: Optional[int] = None,
+        azure_openai_searchagent_model: Optional[str] = None,
+        azure_openai_searchagent_deployment: Optional[str] = None,
+        azure_openai_endpoint: Optional[str] = None,
     ):
         self.endpoint = endpoint
         self.credential = credential
