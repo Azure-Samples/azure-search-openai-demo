@@ -60,7 +60,7 @@ async def mock_search(self, *args, **kwargs):
 
 
 async def mock_retrieve(self, *args, **kwargs):
-    return 
+    return
 
 
 @pytest.fixture
@@ -249,6 +249,7 @@ def mock_openai_chatcompletion(monkeypatch):
         monkeypatch.setattr(openai_client.chat.completions, "create", mock_acreate)
 
     return patch
+
 
 @pytest.fixture
 def mock_acs_search(monkeypatch):

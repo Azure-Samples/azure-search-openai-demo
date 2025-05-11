@@ -13,12 +13,13 @@ from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
     MOCK_EMBEDDING_MODEL_NAME,
     MockAsyncSearchResultsIterator,
-    mock_retrieval_response
+    mock_retrieval_response,
 )
 
 
 async def mock_search(*args, **kwargs):
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
+
 
 async def mock_retrieval(*args, **kwargs):
     return mock_retrieval_response()
@@ -264,6 +265,7 @@ async def test_search_results_query_rewriting(monkeypatch):
     assert len(results) == 1
     assert query_rewrites == "generative"
 
+
 @pytest.mark.asyncio
 async def test_agent_retrieval_results(monkeypatch):
     chat_approach = ChatReadRetrieveReadApproach(
@@ -284,18 +286,14 @@ async def test_agent_retrieval_results(monkeypatch):
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
-        prompt_manager=PromptyManager()
+        prompt_manager=PromptyManager(),
     )
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
     monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
 
-    _, results = await chat_approach.run_agentic_retrieval(
-        messages=[],
-        agent_client=agent_client,
-        search_index_name=""
-    )
+    _, results = await chat_approach.run_agentic_retrieval(messages=[], agent_client=agent_client, search_index_name="")
 
     assert len(results) == 1
     assert results[0].id == "Benefit_Options-2.pdf"
