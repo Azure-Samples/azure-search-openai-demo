@@ -2,8 +2,8 @@ import json
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.aio import SearchClient
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
+from azure.search.documents.aio import SearchClient
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach

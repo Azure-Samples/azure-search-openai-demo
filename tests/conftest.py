@@ -10,11 +10,15 @@ import azure.storage.filedatalake.aio
 import msal
 import pytest
 import pytest_asyncio
-from azure.search.documents.aio import SearchClient
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import KnowledgeAgentRetrievalResponse
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.search.documents.indexes.models import SearchField, SearchIndex, KnowledgeAgent
+from azure.search.documents.indexes.models import (
+    KnowledgeAgent,
+    SearchField,
+    SearchIndex,
+)
 from azure.storage.blob.aio import ContainerClient
 from openai.types import CompletionUsage, CreateEmbeddingResponse, Embedding
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
@@ -48,20 +52,17 @@ MockSearchIndex = SearchIndex(
         SearchField(name="groups", type="Collection(Edm.String)"),
     ],
 )
-MockAgent = KnowledgeAgent(
-    name="test",
-    models=[],
-    target_indexes=[],
-    request_limits=[]
-)
+MockAgent = KnowledgeAgent(name="test", models=[], target_indexes=[], request_limits=[])
 
 
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
+
 async def mock_retrieve(self, *args, **kwargs):
     return KnowledgeAgentRetrievalResponse()
+
 
 @pytest.fixture
 def mock_azurehttp_calls(monkeypatch):
@@ -259,6 +260,7 @@ def mock_acs_search(monkeypatch):
         return MockSearchIndex
 
     monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+
 
 @pytest.fixture
 def mock_acs_agent(monkeypatch):
