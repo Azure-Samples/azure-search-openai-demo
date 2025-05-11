@@ -13,11 +13,15 @@ from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
     MOCK_EMBEDDING_MODEL_NAME,
     MockAsyncSearchResultsIterator,
+    mock_retrieval_response
 )
 
 
 async def mock_search(*args, **kwargs):
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
+
+async def mock_retrieval(*args, **kwargs):
+    return mock_retrieval_response()
 
 
 @pytest.fixture
@@ -27,7 +31,7 @@ def chat_approach():
         search_index_name=None,
         agent_model=None,
         agent_deployment=None,
-        agent_client=KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential("")),
+        agent_client=None,
         auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-4o-mini",
@@ -178,7 +182,7 @@ async def test_search_results_filtering_by_scores(
         search_index_name=None,
         agent_model=None,
         agent_deployment=None,
-        agent_client=KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential("")),
+        agent_client=None,
         auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-4o-mini",
@@ -221,7 +225,7 @@ async def test_search_results_query_rewriting(monkeypatch):
         search_index_name=None,
         agent_model=None,
         agent_deployment=None,
-        agent_client=KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential("")),
+        agent_client=None,
         auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-35-turbo",
@@ -259,3 +263,42 @@ async def test_search_results_query_rewriting(monkeypatch):
     )
     assert len(results) == 1
     assert query_rewrites == "generative"
+
+@pytest.mark.asyncio
+async def test_agent_retrieval_results(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager()
+    )
+
+    agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
+
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+
+    _, results = await chat_approach.run_agentic_retrieval(
+        messages=[],
+        agent_client=agent_client,
+        search_index_name=""
+    )
+
+    assert len(results) == 1
+    assert results[0].id == "Benefit_Options-2.pdf"
+    assert results[0].content == "There is a whistleblower policy."
+    assert results[0].sourcepage == "Benefit_Options-2.pdf"
+    assert results[0].search_agent_query == "whistleblower query"

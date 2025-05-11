@@ -11,7 +11,6 @@ import msal
 import pytest
 import pytest_asyncio
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
-from azure.search.documents.agent.models import KnowledgeAgentRetrievalResponse
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
@@ -61,7 +60,7 @@ async def mock_search(self, *args, **kwargs):
 
 
 async def mock_retrieve(self, *args, **kwargs):
-    return KnowledgeAgentRetrievalResponse()
+    return 
 
 
 @pytest.fixture
@@ -250,7 +249,6 @@ def mock_openai_chatcompletion(monkeypatch):
         monkeypatch.setattr(openai_client.chat.completions, "create", mock_acreate)
 
     return patch
-
 
 @pytest.fixture
 def mock_acs_search(monkeypatch):

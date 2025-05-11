@@ -10,6 +10,8 @@ from azure.search.documents.models import (
     VectorQuery,
 )
 from azure.storage.blob import BlobProperties
+from azure.search.documents.agent.models import KnowledgeAgentRetrievalResponse, KnowledgeAgentMessage, KnowledgeAgentMessageTextContent, KnowledgeAgentModelQueryPlanningActivityRecord, KnowledgeAgentSearchActivityRecord, KnowledgeAgentSearchActivityRecordQuery, KnowledgeAgentAzureSearchDocReference
+
 
 MOCK_EMBEDDING_DIMENSIONS = 1536
 MOCK_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
@@ -207,6 +209,30 @@ def mock_computervision_response():
         ),
     )
 
+def mock_retrieval_response():
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[KnowledgeAgentMessageTextContent(text=r'[{"ref_id":0,"title":"Benefit_Options-2.pdf","content":"There is a whistleblower policy."}]')],
+            )
+        ],
+        activity=[
+            KnowledgeAgentModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeAgentSearchActivityRecord(id=1, target_index="index", query=KnowledgeAgentSearchActivityRecordQuery(search="whistleblower query"),count=10, elapsed_ms=50)
+        ],
+        references=[
+            KnowledgeAgentAzureSearchDocReference(
+                id=0,
+                activity_source=1,
+                doc_key="Benefit_Options-2.pdf",
+                source_data={
+                    "content": "There is a whistleblower policy.",
+                    "sourcepage": "Benefit_Options-2.pdf"
+                }
+            )
+        ]
+    )
 
 class MockAudio:
     def __init__(self, audio_data):
