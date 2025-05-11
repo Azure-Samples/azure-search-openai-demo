@@ -168,6 +168,21 @@ async def test_ask_rtr_text(client, snapshot):
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
+@pytest.mark.asyncio
+async def test_ask_rtr_text_agent(agent_client, snapshot):
+    response = await agent_client.post(
+        "/ask",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text", "use_agentic_retrieval": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
 
 @pytest.mark.asyncio
 async def test_ask_rtr_text_filter(auth_client, snapshot):
